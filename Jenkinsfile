@@ -110,7 +110,8 @@ pipeline {
              branch 'master'
          }
          steps {
-             sonarScanBranch project: 'com.sdase.rest-common', javaBaseDir: '.'
+             // FIXME All modules should be checked
+             sonarScanBranch project: 'com.sdase.rest-common', javaBaseDir: './sda-commons-server-jackson'
          }
       }
       /*
@@ -124,7 +125,8 @@ pipeline {
              changeRequest()
          }
          steps {
-             sonarScanPullRequest project: 'com.sdase.rest-common', javaBaseDir: '.'
+             // FIXME All modules should be checked
+             sonarScanPullRequest project: 'com.sdase.rest-common', javaBaseDir: './sda-commons-server-jackson'
          }
       }
       /*
