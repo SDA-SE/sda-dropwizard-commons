@@ -65,12 +65,12 @@ subprojects {
 
     // release
     scmVersion {
-        versionIncrementer 'incrementMinor'
+        versionIncrementer 'incrementPatch'
         checks {
             uncommittedChanges = false
             aheadOfRemote = false
         }
-        tag { prefix = 'v' }
+        tag { prefix = '' }
     }
     version = scmVersion.version
 
