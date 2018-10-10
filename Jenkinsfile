@@ -78,6 +78,27 @@ pipeline {
 				}
 			}
 		}
+		/*
+    	 * Stage: Java Gradle: Integration Test Service
+    	 *
+    	 * Same as Module Test but calling gradlew 'iT'
+    	 *
+    	 */
+		stage('Gradle Java: Integration Test') {
+			agent {
+				docker {
+					image 'openjdk:8-jdk-alpine'
+				}
+			}
+			steps {
+				javaGradlew gradleCommand: 'integrationTest'
+			}
+			post {
+				always {
+					junit '**/build/integTest-results/*.xml'
+				}
+			}
+		}
       /*
        * Run Sonar Scan on all sources for the default branch and publish the results to SonarQube
        *

@@ -5,14 +5,13 @@ import com.sdase.commons.server.jackson.test.PersonResource;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.assertj.core.api.Assertions;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
 import java.util.Map;
-
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class JacksonConfigurationBundleIT {
 
@@ -24,10 +23,10 @@ public class JacksonConfigurationBundleIT {
    public void shouldGetJohnDoe() {
       PersonResource johnny = DW.client()
             .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
-            .request(APPLICATION_JSON)
+            .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
-      assertThat(johnny)
+      Assertions.assertThat(johnny)
             .extracting(
                   p -> p.getSelf().getHref(),
                   PersonResource::getFirstName,
@@ -47,10 +46,10 @@ public class JacksonConfigurationBundleIT {
       Map<String, Object> johnny = DW.client()
             .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
             .queryParam("fields", "nickName")
-            .request(APPLICATION_JSON)
+            .request(MediaType.APPLICATION_JSON)
             .get(new GenericType<Map<String, Object>>() {});
 
-      assertThat(johnny)
+      Assertions.assertThat(johnny)
             .containsKeys("_links", "nickName")
             .doesNotContainKeys("firstName", "lastName");
    }
@@ -60,10 +59,10 @@ public class JacksonConfigurationBundleIT {
       PersonResource johnny = DW.client()
             .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
             .queryParam("fields", "nickName")
-            .request(APPLICATION_JSON)
+            .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
-      assertThat(johnny)
+      Assertions.assertThat(johnny)
             .extracting(
                   p -> p.getSelf().getHref(),
                   PersonResource::getFirstName,
@@ -84,10 +83,10 @@ public class JacksonConfigurationBundleIT {
             .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
             .queryParam("fields", "firstName")
             .queryParam("fields", "lastName")
-            .request(APPLICATION_JSON)
+            .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
-      assertThat(johnny)
+      Assertions.assertThat(johnny)
             .extracting(
                   p -> p.getSelf().getHref(),
                   PersonResource::getFirstName,
@@ -107,10 +106,10 @@ public class JacksonConfigurationBundleIT {
       PersonResource johnny = DW.client()
             .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
             .queryParam("fields", "firstName, lastName")
-            .request(APPLICATION_JSON)
+            .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
-      assertThat(johnny)
+      Assertions.assertThat(johnny)
             .extracting(
                   p -> p.getSelf().getHref(),
                   PersonResource::getFirstName,

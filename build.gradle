@@ -3,6 +3,7 @@ plugins {
     id 'maven'
     id 'jacoco'
     id 'org.owasp.dependencycheck' version '3.3.2'
+    id "nebula.integtest" version "3.4.0"
     id 'pl.allegro.tech.build.axion-release' version '1.9.3'
 }
 
@@ -12,6 +13,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'jacoco'
+    apply plugin: 'nebula.integtest'
     apply plugin: 'org.owasp.dependencycheck'
 
     sourceCompatibility = 1.8
@@ -59,6 +61,9 @@ subprojects {
             output.resourcesDir = output.classesDirs.singleFile
         }
         test {
+            output.resourcesDir = output.classesDirs.singleFile
+        }
+        integTest {
             output.resourcesDir = output.classesDirs.singleFile
         }
     }
