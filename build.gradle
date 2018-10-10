@@ -65,7 +65,7 @@ subprojects {
 
     // release
     scmVersion {
-        versionIncrementer 'incrementPatch'
+        versionIncrementer 'incrementPrerelease'
         checks {
             uncommittedChanges = false
             aheadOfRemote = false
