@@ -101,7 +101,7 @@ pipeline {
 		}
       /*
        * Run Sonar Scan on all sources for the default branch and publish the results to SonarQube
-       *
+       */
       stage('Sonar Scan Sources (Publish to SonarQube)') {
          agent {
              label 'master'
@@ -113,10 +113,9 @@ pipeline {
              sonarScanBranch project: 'com.sdase.rest-common', javaBaseDir: '.'
          }
       }
-      */
       /*
        * Run Sonar Scan on all sources for a pull request and annotate the Pull Request on GitHub
-       *
+       */
       stage('Sonar Scan Sources (Annotate Pull Request)') {
          agent {
              label 'master'
@@ -128,7 +127,6 @@ pipeline {
              sonarScanPullRequest project: 'com.sdase.rest-common', javaBaseDir: '.'
          }
       }
-      */
 		/*
 		 * Stage: Publish release
 		 *
