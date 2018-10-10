@@ -1,0 +1,5 @@
+rootProject.name = 'sda-commons'
+include 'sda-commons-server-jackson'
+include 'sda-commons-server-dropwizard'
+include 'sda-commons-server-testing'
+

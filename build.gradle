@@ -1,0 +1,100 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'jacoco'
+    id 'org.owasp.dependencycheck' version '3.3.2'
+    id 'pl.allegro.tech.build.axion-release' version '1.9.3'
+}
+
+subprojects {
+    group 'com.sdase.commons.test' // TODO remove test, when pipeline is fine and delete artifacts
+
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'jacoco'
+    apply plugin: 'org.owasp.dependencycheck'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://nexus.dev.sda-se.com/repository/sda-se-releases/"
+            credentials {
+                username sdaNexusUser
+                password sdaNexusPassword
+            }
+        }
+    }
+
+    project.ext {
+
+        dropwizardVersion         = '1.3.5'
+        guavaVersion              = '24.0-jre'
+        findbugsVersion           = '3.0.2'
+        jodaTimeVersion           = '2.9.9'
+        javaassistVersion         = '3.22.0-GA'
+        hibernateValidatorVersion = '5.4.2.Final'
+        openApiToolVersion        = '1.0.4'
+
+        junit4Version             = '4.12'
+        mockitoVersion            = '2.23.0'
+        assertjVersion            = '3.11.1'
+        googleTruthVersion        = '0.42'
+
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            // Fail on version conflict (includes transitive dependencies)
+            // Manage the dependencies by excludes and explicit dependencies in each module to have convergent versions.
+            // Using 'force' in this resolutionStrategy can't be used because it is only applied to a specific module
+            // but not to the modules and applications that use the module as dependency.
+            failOnVersionConflict()
+        }
+    }
+
+    sourceSets {
+        main {
+            output.resourcesDir = output.classesDirs.singleFile
+        }
+        test {
+            output.resourcesDir = output.classesDirs.singleFile
+        }
+    }
+
+    // release
+    scmVersion {
+        versionIncrementer 'incrementPrerelease'
+        checks {
+            uncommittedChanges = false
+            aheadOfRemote = false
+        }
+        tag { prefix = '' }
+    }
+    version = scmVersion.version
+
+    task('sourcesJar', type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+    artifacts {
+        archives jar
+        archives sourcesJar
+    }
+    jar {
+        version = null
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: "https://nexus.dev.sda-se.com/repository/sda-se-releases/") {
+                    authentication(userName: sdaNexusUser, password: sdaNexusPassword)
+                }
+            }
+        }
+    }
+}
+
+
