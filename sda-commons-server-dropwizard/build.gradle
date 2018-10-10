@@ -1,0 +1,16 @@
+dependencies {
+    compile 'io.dropwizard:dropwizard-core:' + dropwizardVersion, {
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'joda-time', module: 'joda-time'
+        exclude group: 'org.javassist', module: 'javassist'
+        exclude group: 'org.hibernate', module: 'hibernate-validator'
+    }
+    compile 'com.google.guava:guava:' + guavaVersion, {
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    }
+    compile 'com.google.code.findbugs:jsr305:' + findbugsVersion
+    compile 'joda-time:joda-time:' + jodaTimeVersion
+    compile 'org.javassist:javassist:' + javaassistVersion
+    compile 'org.hibernate:hibernate-validator:' + hibernateValidatorVersion
+}

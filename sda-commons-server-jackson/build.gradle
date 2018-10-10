@@ -1,0 +1,10 @@
+dependencies {
+
+    compile project(':sda-commons-server-dropwizard')
+    compile 'io.openapitools.jackson.dataformat:jackson-dataformat-hal:' + openApiToolVersion, {
+        exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+
+    testCompile project(':sda-commons-server-testing')
+}
