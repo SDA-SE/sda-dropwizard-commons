@@ -1,23 +1,17 @@
 package com.sdase.commons.server.jackson;
 
 import com.sdase.commons.server.jackson.test.JacksonConfigurationNoFieldFilterTestApp;
-import com.sdase.commons.server.jackson.test.JacksonConfigurationTestApp;
-import com.sdase.commons.server.jackson.test.JacksonConfigurationTestAppConfig;
 import com.sdase.commons.server.jackson.test.PersonResource;
 import io.dropwizard.Configuration;
-import io.dropwizard.server.ServerFactory;
-import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.eclipse.jetty.server.Server;
+import org.assertj.core.api.Assertions;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
 import java.util.Map;
-
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class JacksonConfigurationNoFieldFilterBundleIT {
 
@@ -29,10 +23,10 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
    public void shouldGetJohnDoe() {
       PersonResource johnny = DW.client()
             .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
-            .request(APPLICATION_JSON)
+            .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
-      assertThat(johnny)
+      Assertions.assertThat(johnny)
             .extracting(
                   p -> p.getSelf().getHref(),
                   PersonResource::getFirstName,
@@ -52,10 +46,10 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
       Map<String, Object> johnny = DW.client()
             .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
             .queryParam("fields", "nickName")
-            .request(APPLICATION_JSON)
+            .request(MediaType.APPLICATION_JSON)
             .get(new GenericType<Map<String, Object>>() {});
 
-      assertThat(johnny)
+      Assertions.assertThat(johnny)
             .containsKeys("_links", "firstName", "lastName", "nickName");
    }
 
@@ -64,10 +58,10 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
       PersonResource johnny = DW.client()
             .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
             .queryParam("fields", "nickName")
-            .request(APPLICATION_JSON)
+            .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
-      assertThat(johnny)
+      Assertions.assertThat(johnny)
             .extracting(
                   p -> p.getSelf().getHref(),
                   PersonResource::getFirstName,
@@ -88,10 +82,10 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
             .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
             .queryParam("fields", "firstName")
             .queryParam("fields", "lastName")
-            .request(APPLICATION_JSON)
+            .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
-      assertThat(johnny)
+      Assertions.assertThat(johnny)
             .extracting(
                   p -> p.getSelf().getHref(),
                   PersonResource::getFirstName,
@@ -111,10 +105,10 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
       PersonResource johnny = DW.client()
             .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
             .queryParam("fields", "firstName, lastName")
-            .request(APPLICATION_JSON)
+            .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
-      assertThat(johnny)
+      Assertions.assertThat(johnny)
             .extracting(
                   p -> p.getSelf().getHref(),
                   PersonResource::getFirstName,
