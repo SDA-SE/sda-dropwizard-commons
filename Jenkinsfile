@@ -1,4 +1,4 @@
-@Library('jenkins-library') _
+@Library('jenkins-library@v-0.17.0') _
 
 pipeline {
    agent none
@@ -6,7 +6,7 @@ pipeline {
       /*
        * Stage: Prepare Workspace
        *
-       * Checks out scm, sets up gradle.properties and replaces placehodlers within 
+       * Checks out scm, sets up gradle.properties and replaces placehodlers within
        * feature branch files
        *
        */
@@ -37,7 +37,7 @@ pipeline {
       }
       /*
        * Stage: Gradle Java: Jar
-       * 
+       *
        * Calls the Gradle Wrapper and builds the Jar.
        *
        * Runs in its own Docker container
@@ -54,10 +54,10 @@ pipeline {
       }
       /*
        * Stage: Java Gradle: Module Test Service
-       * 
+       *
        * Calls the Gradle wrapper with the "test" task in order
        * to module test the software.
-       * 
+       *
        * Publishes an HTML Report if tests are failing
        *
        * Runs in its own Docker container
@@ -110,8 +110,7 @@ pipeline {
              branch 'master'
          }
          steps {
-             // FIXME All modules should be checked
-             sonarScanBranch project: 'com.sdase.rest-common', javaBaseDir: './sda-commons-server-jackson'
+             sonarScanBranch project: 'com.sdase.sda-commons', javaBaseDir: './'
          }
       }
       /*
@@ -125,8 +124,7 @@ pipeline {
              changeRequest()
          }
          steps {
-             // FIXME All modules should be checked
-             sonarScanPullRequest project: 'com.sdase.rest-common', javaBaseDir: './sda-commons-server-jackson'
+             sonarScanPullRequest project: 'com.sdase.sda-commons', javaBaseDir: './'
          }
       }
       /*
