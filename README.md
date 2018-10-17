@@ -44,7 +44,9 @@ with HAL and adds the ability to filter fields on client request.
 
 #### Swagger
 
-Coming soon
+The module [`sda-commons-server-swagger`](./sda-commons-server-swagger/README.md) is the base 
+module to add [Swagger](https://github.com/swagger-api/swagger-core) support for applications
+in the SDA SE infrastructure.
 
 
 #### Hibernate

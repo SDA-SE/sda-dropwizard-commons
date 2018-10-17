@@ -1,0 +1,14 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+logging:
+  loggers:
+    org.reflections: WARN
+    org.eclipse.jetty: WARN
+    io.dropwizard: WARN
+    io.dropwizard.setup.AdminEnvironment: 'OFF'
+    com.sdase.commons.server.swagger.SwaggerBundle: WARN
