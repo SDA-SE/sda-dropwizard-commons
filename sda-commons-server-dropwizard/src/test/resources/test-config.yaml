@@ -1,0 +1,12 @@
+envReplaced: ${envReplaced}
+envDefault: ${envDefault:-DEFAULT}
+envWithDefaultReplaced: ${envReplaced:-DEFAULT}
+envMissing: ${envMissing}
+
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0

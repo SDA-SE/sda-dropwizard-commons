@@ -1,0 +1,23 @@
+dependencies {
+    compile project(':sda-commons-server-dropwizard')
+    compile 'io.dropwizard:dropwizard-hibernate:' + dropwizardVersion, {
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+        exclude group: 'joda-time', module: 'joda-time'
+        exclude group: 'org.hibernate', module: 'hibernate-validator'
+        exclude group: 'org.javassist', module :'javassist'
+        exclude group: 'com.fasterxml', module: 'classmate'
+    }
+    compile 'org.postgresql:postgresql:42.1.1'
+    compile 'org.flywaydb:flyway-core:4.2.0'
+
+
+    testCompile project(':sda-commons-server-testing')
+    testCompile 'com.h2database:h2:1.4.193'
+    testCompile 'com.github.database-rider:rider-parent:1.2.1'
+    testCompile 'com.github.database-rider:rider-core:1.2.1', {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.yaml', module: 'snakeyaml'
+    }
+
+}

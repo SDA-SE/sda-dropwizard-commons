@@ -26,7 +26,8 @@ to provide REST Endpoints.
 
 The module [`sda-commons-server-dropwizard`](./sda-commons-server-dropwizard/README.md) provides 
 `io.dropwizard:dropwizard-core` with convergent dependencies. All other SDA Commons Server modules use this dependency
-and are aligned to the versions provided by `sda-commons-server-dropwizard`.
+and are aligned to the versions provided by `sda-commons-server-dropwizard`. It also provides some common bundles that
+require no additional dependencies.
 
 
 #### Testing
@@ -51,4 +52,5 @@ in the SDA SE infrastructure.
 
 #### Hibernate
 
-Coming soon 
+The module [`sda-commons-server-hibernate`](./sda-commons-server-hibernate/README.md) provides access to relational
+databases with hibernate.
