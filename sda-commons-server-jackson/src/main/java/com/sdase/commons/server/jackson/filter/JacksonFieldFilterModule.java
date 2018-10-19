@@ -11,7 +11,7 @@ import javax.ws.rs.core.FeatureContext;
 
 public class JacksonFieldFilterModule extends SimpleModule implements Feature {
 
-   private FieldFilterSerializerModifier fieldFilterSerializerModifier;
+   private final FieldFilterSerializerModifier fieldFilterSerializerModifier;
 
    /**
     * Use {@link JacksonConfigurationBundle} to create and register a managed instance.

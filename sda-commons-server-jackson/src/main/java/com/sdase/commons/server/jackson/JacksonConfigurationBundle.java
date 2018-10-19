@@ -45,11 +45,11 @@ public class JacksonConfigurationBundle implements Bundle {
 
    private static final Logger LOG = LoggerFactory.getLogger(JacksonConfigurationBundle.class);
 
-   private boolean disableHalSupport;
+   private final boolean disableHalSupport;
 
-   private boolean disableFieldFilter;
+   private final boolean disableFieldFilter;
 
-   private Consumer<ObjectMapper> objectMapperCustomizer;
+   private final Consumer<ObjectMapper> objectMapperCustomizer;
 
    public static Builder builder() {
       return new Builder();
@@ -114,6 +114,8 @@ public class JacksonConfigurationBundle implements Bundle {
       /**
        * Skips registration of the HAL module. This may be used when links and embedded resources are not required or
        * are achieved with other tooling.
+       *
+       * @return the builder
        */
       public Builder withoutHalSupport() {
          this.disableHalSupport = true;
@@ -123,6 +125,8 @@ public class JacksonConfigurationBundle implements Bundle {
       /**
        * Disables the field filter entirely. The field filter may be used by clients to request only a subset of the
        * properties of a resource and has to be activated with {@link EnableFieldFilter} for each resource.
+       *
+       * @return the builder
        */
       public Builder withoutFieldFilter() {
          this.disableFieldFilter = true;
@@ -134,6 +138,7 @@ public class JacksonConfigurationBundle implements Bundle {
        * multiple times.
        * @param customizer receives the used {@link ObjectMapper} for customization, e.g. to enable or disable specific
        *                   features or configure formatting.
+       * @return the builder
        */
       public Builder withCustomization(Consumer<ObjectMapper> customizer) {
          this.customizer = this.customizer.andThen(customizer);

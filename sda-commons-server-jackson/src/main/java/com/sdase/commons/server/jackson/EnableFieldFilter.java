@@ -17,15 +17,15 @@ import java.lang.annotation.Target;
  *    If an annotated resource has three properties:
  * </p>
  * <pre>
- *    {@code
- *    @EnableFieldFilter
+ *    <code>
+ *    &#64;EnableFieldFilter
  *    public class Person {
  *      private String firstName;
  *      private String surName;
  *      private String nickName;
  *      // ...
  *    }
- *    }
+ *    </code>
  * </pre>
  * <p>
  *    And the client requests {@code GET /person/ID?fields=firstName,surName} or

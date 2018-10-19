@@ -23,7 +23,7 @@ public class JacksonConfigurationBundleTest {
 
    private Environment environment;
 
-   private Bootstrap bootstrap;
+   private Bootstrap<?> bootstrap;
 
    @Before
    public void setUp() {

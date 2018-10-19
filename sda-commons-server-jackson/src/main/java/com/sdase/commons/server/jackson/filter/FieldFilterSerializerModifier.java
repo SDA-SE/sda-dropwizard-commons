@@ -43,9 +43,9 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
          }
       }
 
-      private class SkipFieldBeanPropertyWriter extends BeanPropertyWriter {
+      private static class SkipFieldBeanPropertyWriter extends BeanPropertyWriter {
 
-         private UriInfo uriInfo;
+         private final UriInfo uriInfo;
 
          SkipFieldBeanPropertyWriter(BeanPropertyWriter prop, UriInfo uriInfo) {
             super(prop);
