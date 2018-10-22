@@ -45,6 +45,9 @@ subprojects {
         assertjVersion             = '3.11.1'
         googleTruthVersion         = '0.42'
         jsonSchemaValidatorVersion = '2.2.10'
+        h2Version                  = '1.4.197'
+        databaseRiderVersion       = '1.4.0'
+        dbUnitVersion              = '2.5.4'
     }
 
     configurations.all {

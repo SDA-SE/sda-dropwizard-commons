@@ -106,19 +106,12 @@ database:
 
 ## Testing
 
-For testing database access we suggest to use [H2](http://www.h2database.com) and 
-[Database Rider](https://github.com/database-rider/database-rider) together with `sda-commons-server-testing` in the 
-same version as `sda-commons-server-hibernate`.
+For testing database access with Hibernate we suggest to use [sda-commons-hibernate-testing](../sda-commons-server-hibernate-testing/README.md) module.
 
 Dependencies to be added:
 
 ```
-    testCompile 'com.h2database:h2:1.4.193'
-    testCompile 'com.github.database-rider:rider-parent:1.2.1'
-    testCompile 'com.github.database-rider:rider-core:1.2.1', {
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'org.yaml', module: 'snakeyaml'
-    }
+    testCompile 'com.sdase.commons:sda-commons-server-hibernate-testing:<VERSION>'
 ```
 
 For creating tests without a Dropwizard application please refer to the 

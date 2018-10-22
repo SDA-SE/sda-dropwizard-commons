@@ -13,7 +13,6 @@ technologies that are recommended for services in the SDA SE Platform. These tec
 - [Swagger](https://swagger.io/)
 - [Hibernate](http://hibernate.org/)
 
-
 ## Modules in SDA Commons
 
 ### Server
@@ -22,19 +21,22 @@ All modules prefixed with `sda-commons-server-` provide technology and configura
 to provide REST Endpoints.
 
 
+#### Testing
+
+The module [`sda-commons-server-testing`](./sda-commons-server-testing/README.md) is the base module to add unit and 
+integration tests for applications in the SDA SE infrastructure.
+
+Some modules have a more specialized testing module, e.g. the
+[`sda-commons-server-hibernate`](./sda-commons-server-hibernate/README.md) module has a 
+[`sda-commons-server-hibernate-testing`](./sda-commons-server-hibernate-testing/README.md) module, providing further
+support.
+
 #### Dropwizard
 
 The module [`sda-commons-server-dropwizard`](./sda-commons-server-dropwizard/README.md) provides 
 `io.dropwizard:dropwizard-core` with convergent dependencies. All other SDA Commons Server modules use this dependency
 and are aligned to the versions provided by `sda-commons-server-dropwizard`. It also provides some common bundles that
 require no additional dependencies.
-
-
-#### Testing
-
-The module [`sda-commons-server-testing`](./sda-commons-server-testing/README.md) is the base module to add unit and 
-integrations test for applications in the SDA SE infrastructure.
-
 
 #### Jackson
 
