@@ -39,6 +39,7 @@ subprojects {
         hibernateValidatorVersion = '5.4.2.Final'
         openApiToolVersion        = '1.0.4'
         swaggerVersion            = '1.5.21'
+        slf4jVersion              = '1.7.25'
 
         junit4Version              = '4.12'
         mockitoVersion             = '2.23.0'
@@ -46,7 +47,7 @@ subprojects {
         googleTruthVersion         = '0.42'
         jsonSchemaValidatorVersion = '2.2.10'
         h2Version                  = '1.4.197'
-        databaseRiderVersion       = '1.4.0'
+        databaseRiderVersion       = '1.2.9' // latest version that supports Parameterized tests: https://github.com/database-rider/database-rider/issues/104
         dbUnitVersion              = '2.5.4'
     }
 
