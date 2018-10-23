@@ -12,4 +12,6 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'org.apache.poi', module: 'poi-ooxml'
     }
+
+    testCompile 'org.slf4j:slf4j-api:' + slf4jVersion
 }
