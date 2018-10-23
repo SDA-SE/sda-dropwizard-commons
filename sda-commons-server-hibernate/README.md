@@ -21,18 +21,20 @@ library. Implementations need to refer to the instance to get access to the `Ses
 some differences when using Weld as CDI implementation. Extending documentation for this scenario will be added when
 Weld joins this library. This task is addressed in [SEBP-490](https://sda-se.atlassian.net/browse/SEBP-490)._
 
-The Dropwizard applications config class needs to extend Dropwizard's `Configuration` and implement the 
-[`DatabaseConfigurable`](./src/main/java/com/sdase/commons/server/hibernate/DatabaseConfigurable.java) interface.
+The Dropwizard applications config class needs to provide a `DataSourceFactory`.
 
-The bundle builder requires to define the configuration class and one or more packages that should be scanned for
-entity classes. Entity classes should be described using JPA annotations. The packages to scan may be either added as 
-String or can be derived from a class or marker interface in the root of the model packages. 
+The bundle builder requires to define the getter of the `DataSourceFactory` as method reference to access the 
+configuration. One or more packages that should be scanned for entity classes must be defined. 
+
+Entity classes should be described using 
+[JPA annotations](https://docs.jboss.org/hibernate/annotations/3.5/reference/en/html/entity.html). The packages to scan 
+may be either added as String or can be derived from a class or marker interface in the root of the model packages. 
 
 ```java
 public class MyApplication extends Application<MyConfiguration> {
    
    private final HibernateBundle<HibernateITestConfiguration> hibernateBundle = HibernateBundle.builder()
-                          .withConfigClass(MyConfiguration.class)
+                          .withConfigurationProvider(MyConfiguration::getDatabase)
                           .withEntityScanPackageClass(MyEntity.class)
                           .build();
    
@@ -45,7 +47,8 @@ public class MyApplication extends Application<MyConfiguration> {
 
 The database connection is configured in the `config.yaml` of the application. It uses the format of 
 [Dropwizard Hibernate](https://www.dropwizard.io/1.3.5/docs/manual/hibernate.html). Defaults are defined for PostgreSQL.
-The default PostgreSQL schema is `public`.
+The default PostgreSQL schema is `public`. The key (_database_ in the examples) depends on the applications 
+configuration class.
 
 Example config for **production**:
 ```yaml
@@ -84,15 +87,44 @@ has an example. The required `SessionFactory` is provided by the `HibernateBundl
 
 ### Schema migration
 
-For database schema migration, [Flyway](https://flywaydb.org/) is wrapped in a 
-[Dropwizard Command](https://www.dropwizard.io/1.3.5/docs/manual/core.html#man-core-commands). The command is 
-registered as `migrateDB` and is executed from the command line:
+For database schema migration, [Flyway](https://flywaydb.org/) is used by the 
+[`DbMigrationService`](./src/main/java/com/sdase/commons/server/hibernate/DbMigrationService.java) and works with the
+same `DataSourceFactory` as the `HibernateBundle`. It may be used in a custom `ConfiguredCommand` in each application.
+Therefore defaults for the command name and the documentation is provided:
 
+```java
+public class DbMigrationCommand extends ConfiguredCommand<MyAppConfig> {
+
+   public DbMigrationCommand() {
+      super(DbMigrationService.DEFAULT_COMMAND_NAME, DbMigrationService.DEFAULT_COMMAND_DOC);
+   }
+
+   @Override
+   protected void run(Bootstrap<MyAppConfig> bootstrap, Namespace namespace, MyAppConfig configuration) {
+      new DbMigrationService(configuration.getDatabase()).migrateDatabase();
+   }
+}
+```
+
+The command needs to be added to the application:
+```java
+public class HibernateApp extends Application<MyAppConfig> {
+   @Override
+   public void initialize(Bootstrap<MyAppConfig> bootstrap) {
+      // ...
+      bootstrap.addCommand(new DbMigrationCommand());
+      // ...
+   }
+   // ...
+}
+```
+
+The command is then executed from command line to migrate the database:
 ```
 java -jar my-application.jar migrateDB ./config.yaml
 ```
 
-DB migration scripts are expected in `src/main/resources/db.migration/*.sql` and 
+DB migration scripts are expected in `src/main/resources/db.migration/*.sql`.
 
 ### Health check
 
@@ -115,7 +147,7 @@ Dependencies to be added:
 ```
 
 For creating tests without a Dropwizard application please refer to the 
-[DbMigrationCommandTest](./src/test/java/com/sdase/commons/server/hibernate/DbMigrationCommandTest.java) as example.
+[`DbMigrationServiceTest`](./src/test/java/com/sdase/commons/server/hibernate/DbMigrationServiceTest.java) as example.
 
 For creating full integration tests of a Dropwizard application please refer to
-[HibernateIT](./src/integTest/java/com/sdase/commons/server/hibernate/HibernateIT.java) as example. 
+[`HibernateIT`](./src/integTest/java/com/sdase/commons/server/hibernate/HibernateIT.java) as example. 

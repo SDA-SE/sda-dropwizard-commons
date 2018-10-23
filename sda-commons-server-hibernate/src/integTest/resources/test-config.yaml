@@ -12,3 +12,5 @@ server:
   adminConnectors:
   - type: http
     port: 0
+
+propertyForOtherBundle: A property from another required configuration that should be ignored in the DbMigration

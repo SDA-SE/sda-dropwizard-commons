@@ -4,8 +4,6 @@ import com.sdase.commons.server.hibernate.test.model.Person;
 import io.dropwizard.hibernate.AbstractDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.query.Query;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;

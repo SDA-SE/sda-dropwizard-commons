@@ -10,7 +10,7 @@ import io.dropwizard.setup.Environment;
 public class HibernateApp extends Application<HibernateITestConfiguration> {
 
    private final HibernateBundle<HibernateITestConfiguration> hibernateBundle = HibernateBundle.builder()
-         .withConfigClass(HibernateITestConfiguration.class)
+         .withConfigurationProvider(HibernateITestConfiguration::getDatabase)
          .withEntityScanPackageClass(Person.class)
          .build();
 
@@ -22,6 +22,7 @@ public class HibernateApp extends Application<HibernateITestConfiguration> {
    public void initialize(Bootstrap<HibernateITestConfiguration> bootstrap) {
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
       bootstrap.addBundle(hibernateBundle);
+      bootstrap.addCommand(new DbMigrationCommand());
    }
 
    @Override

@@ -2,7 +2,6 @@ package com.sdase.commons.server.hibernate.test;
 
 import com.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import com.sdase.commons.server.hibernate.HibernateBundle;
-import com.sdase.commons.server.hibernate.test.model.Person;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -10,7 +9,7 @@ import io.dropwizard.setup.Environment;
 public class HibernatePackageScanApp extends Application<HibernateITestConfiguration> {
 
    private final HibernateBundle<HibernateITestConfiguration> hibernateBundle = HibernateBundle.builder()
-         .withConfigClass(HibernateITestConfiguration.class)
+         .withConfigurationProvider(HibernateITestConfiguration::getDatabase)
          .withEntityScanPackage("com.sdase.commons.server.hibernate.test.model")
          .build();
 
@@ -22,6 +21,7 @@ public class HibernatePackageScanApp extends Application<HibernateITestConfigura
    public void initialize(Bootstrap<HibernateITestConfiguration> bootstrap) {
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
       bootstrap.addBundle(hibernateBundle);
+      bootstrap.addCommand(new DbMigrationCommand());
    }
 
    @Override

@@ -14,7 +14,7 @@ import org.hibernate.SessionFactory;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
-public class HibernateBundle<T extends Configuration & DatabaseConfigurable> implements ConfiguredBundle<T> {
+public class HibernateBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
    private static final String POSTGRES_DRIVER_CLASS = "org.postgresql.Driver";
    private static final Map<String, String> DEFAULT_PROPERTIES = initDefaultProperties();
@@ -27,14 +27,14 @@ public class HibernateBundle<T extends Configuration & DatabaseConfigurable> imp
       return defaults;
    }
 
-   private ScanningHibernateBundle<T> delegate;
+   private ScanningHibernateBundle<C> delegate;
 
-   private HibernateBundle(Set<String> packagesToScanForEntities) {
+   private HibernateBundle(Set<String> packagesToScanForEntities, DatabaseConfigurationProvider<C> configurationProvider) {
       String[] packagesToScan = packagesToScanForEntities.toArray(new String[]{});
-      delegate = new ScanningHibernateBundle<T>(packagesToScan, new SessionFactoryFactory()) {
+      delegate = new ScanningHibernateBundle<C>(packagesToScan, new SessionFactoryFactory()) {
          @Override
-         public PooledDataSourceFactory getDataSourceFactory(T configuration) {
-            DataSourceFactory database = configuration.getDatabase();
+         public PooledDataSourceFactory getDataSourceFactory(C configuration) {
+            DataSourceFactory database = configurationProvider.apply(configuration);
             applyDefaultSettings(database);
             return database;
          }
@@ -65,11 +65,10 @@ public class HibernateBundle<T extends Configuration & DatabaseConfigurable> imp
    @Override
    public void initialize(Bootstrap<?> bootstrap) {
       delegate.initialize(bootstrap);
-      bootstrap.addCommand(new DbMigrationCommand());
    }
 
    @Override
-   public void run(T configuration, Environment environment) throws Exception {
+   public void run(C configuration, Environment environment) throws Exception {
       delegate.run(configuration, environment);
       environment.jersey().register(this);
    }
@@ -81,14 +80,14 @@ public class HibernateBundle<T extends Configuration & DatabaseConfigurable> imp
 
    public interface InitialBuilder {
       /**
-       *
-       * @param configurationClass the mandatory configuration class of the application
+       * @param configurationProvider the method reference that provides the {@link DataSourceFactory} from the
+       *                              applications configuration class
        */
-      <T extends Configuration & DatabaseConfigurable> ScanPackageBuilder<T> withConfigClass(
-            @NotNull Class<T> configurationClass);
+      <T extends Configuration> ScanPackageBuilder<T> withConfigurationProvider(
+            @NotNull DatabaseConfigurationProvider<T> configurationProvider);
    }
 
-   public interface ScanPackageBuilder<T extends Configuration & DatabaseConfigurable> {
+   public interface ScanPackageBuilder<T extends Configuration> {
       /**
        * @param packageToScanForEntities The package that should be scanned for entities recursively.
        */
@@ -101,22 +100,28 @@ public class HibernateBundle<T extends Configuration & DatabaseConfigurable> imp
       FinalBuilder<T> withEntityScanPackageClass(@NotNull Class<?> markerClass);
    }
 
-   public interface FinalBuilder<T extends Configuration & DatabaseConfigurable> extends ScanPackageBuilder<T> {
+   public interface FinalBuilder<T extends Configuration> extends ScanPackageBuilder<T> {
       HibernateBundle<T> build();
    }
 
-   public static class Builder<T extends Configuration & DatabaseConfigurable>
+   public static class Builder<T extends Configuration>
          implements InitialBuilder, ScanPackageBuilder<T>, FinalBuilder<T> {
 
       private Set<String> packagesToScan = new LinkedHashSet<>();
 
+      private DatabaseConfigurationProvider<T> configurationProvider;
+
       private Builder() {
       }
 
+      private Builder(DatabaseConfigurationProvider<T> configurationProvider) {
+         this.configurationProvider = configurationProvider;
+      }
+
       @Override
-      public <C extends Configuration & DatabaseConfigurable> ScanPackageBuilder<C> withConfigClass(
-            @NotNull Class<C> configurationClass) {
-         return new Builder<>();
+      public <C extends Configuration> ScanPackageBuilder<C> withConfigurationProvider(
+            DatabaseConfigurationProvider<C> configurationProvider) {
+         return new Builder<>(configurationProvider);
       }
 
       @Override
@@ -132,7 +137,7 @@ public class HibernateBundle<T extends Configuration & DatabaseConfigurable> imp
 
       @Override
       public HibernateBundle<T> build() {
-         return new HibernateBundle<>(packagesToScan);
+         return new HibernateBundle<>(packagesToScan, configurationProvider);
       }
    }
 }

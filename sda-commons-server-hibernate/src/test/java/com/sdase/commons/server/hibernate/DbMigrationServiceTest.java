@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 
 import static org.junit.Assert.assertTrue;
 
-public class DbMigrationCommandTest {
+public class DbMigrationServiceTest {
 
    private static final String DB_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
 
@@ -28,16 +28,13 @@ public class DbMigrationCommandTest {
    @Test
    public void testDBMigration() throws Exception {
       // given
-      DbMigrationCommand migrationCommand = new DbMigrationCommand();
       DataSourceFactory dataSourceFactory = new DataSourceFactory();
       dataSourceFactory.setUrl(DB_URL);
       dataSourceFactory.setUser("sa");
       dataSourceFactory.setPassword("sa");
-      DbMigrationConfiguration config = new DbMigrationConfiguration();
-      config.setDatabase(dataSourceFactory);
 
       // when
-      migrationCommand.run(null, null, config);
+      new DbMigrationService(dataSourceFactory).migrateDatabase();
 
       // then see annotation
       Connection connection = ((SessionImpl) daoTestRule.getSessionFactory().getCurrentSession()).connection();
