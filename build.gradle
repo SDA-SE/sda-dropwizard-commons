@@ -24,7 +24,7 @@ plugins {
 }
 
 subprojects {
-    group 'com.sdase.commons.test' // TODO remove test, when pipeline is fine and delete artifacts
+    group 'com.sdase.commons'
 
     apply plugin: 'java'
     apply plugin: 'maven'
