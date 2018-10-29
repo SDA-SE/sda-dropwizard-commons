@@ -45,6 +45,8 @@ public class AuthRule implements TestRule {
    private static final String DEFAULT_PRIVATE_KEY_LOCATION = AuthRule.class.getResource("rsa-private.key").getFile();
    private static final String DEFAULT_CERTIFICATE_LOCATION = AuthRule.class.getResource("rsa-x.509.pem").getFile();
 
+   private final boolean disableAuth;
+
    private final String keyId;
 
    private final String issuer;
@@ -67,12 +69,14 @@ public class AuthRule implements TestRule {
       return new Builder();
    }
 
-   public AuthRule(
+   private AuthRule(
+         boolean disableAuth,
          String keyId,
          String issuer,
          String subject,
          String certificateLocation,
          String privateKeyLocation) {
+      this.disableAuth = disableAuth;
       this.keyId = keyId;
       this.issuer = issuer;
       this.subject = subject;
@@ -85,6 +89,9 @@ public class AuthRule implements TestRule {
     * @return a builder to configure JWT content and create a signed token that will be accepted by the application
     */
    public AuthBuilder auth() {
+      if (disableAuth) {
+         throw new IllegalStateException("Could not create token when auth is disabled.");
+      }
       return new AuthBuilder(keyId, publicKey, privateKey).withIssuer(issuer).withSubject(subject);
    }
 
@@ -94,7 +101,19 @@ public class AuthRule implements TestRule {
    }
 
    private void init() {
+      if (disableAuth) {
+         initDisabledTestAuth();
+      }
+      else {
+         initEnabledTestAuth();
+      }
+   }
 
+   private void initDisabledTestAuth() {
+      delegate = RuleChain.outerRule(new EnvironmentRule().setEnv(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}"));
+   }
+
+   private void initEnabledTestAuth() {
       this.privateKey = loadPrivateKey(this.privateKeyLocation);
       this.publicKey = loadPublicKey(this.certificateLocation);
 
@@ -151,11 +170,17 @@ public class AuthRule implements TestRule {
       AuthRuleBuilder withIssuer(String issuer);
       AuthRuleBuilder withSubject(String subject);
       AuthRuleBuilder withCustomKeyPair(String publicKeyCertificateLocation, String privateKeyLocation);
+      DisabledBuilder withDisabledAuth();
       AuthRule build();
    }
 
-   public static class Builder implements AuthRuleBuilder {
+   public interface DisabledBuilder {
+      AuthRule build();
+   }
 
+   public static class Builder implements AuthRuleBuilder, DisabledBuilder {
+
+      private boolean disableAuth;
       private String keyId = DEFAULT_KEY_ID;
       private String issuer = DEFAULT_ISSUER;
       private String subject = DEFAULT_SUBJECT;
@@ -191,8 +216,14 @@ public class AuthRule implements TestRule {
       }
 
       @Override
+      public DisabledBuilder withDisabledAuth() {
+         this.disableAuth = true;
+         return this;
+      }
+
+      @Override
       public AuthRule build() {
-         return new AuthRule(keyId, issuer, subject, publicKeyCertificateLocation, privateKeyLocation);
+         return new AuthRule(disableAuth, keyId, issuer, subject, publicKeyCertificateLocation, privateKeyLocation);
       }
    }
 

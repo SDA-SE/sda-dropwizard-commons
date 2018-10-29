@@ -2,7 +2,6 @@ package com.sdase.commons.server.auth.testing;
 
 import com.sdase.commons.server.auth.testing.test.AuthTestApp;
 import com.sdase.commons.server.auth.testing.test.AuthTestConfig;
-import com.sdase.commons.server.testing.EnvironmentRule;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
@@ -20,10 +19,10 @@ public class AuthDisabledIT {
    private static DropwizardAppRule<AuthTestConfig> DW = new DropwizardAppRule<>(
          AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-   private static EnvironmentRule ENV = new EnvironmentRule().setEnv("AUTH_RULE", "{\"disableAuth\": true}");
+   private static AuthRule AUTH = AuthRule.builder().withDisabledAuth().build();
 
    @ClassRule
-   public static RuleChain CHAIN = RuleChain.outerRule(ENV).around(DW);
+   public static RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
 
    @Test
    public void shouldAccessOpenEndPointWithoutToken() {
@@ -54,5 +53,10 @@ public class AuthDisabledIT {
             .get();
 
       assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+   }
+
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionIfRequestingTokenWhileAuthIsDisabled() {
+      AUTH.auth().buildToken();
    }
 }
