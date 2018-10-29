@@ -60,6 +60,9 @@ subprojects {
         weldVersion               = '3.0.4.Final'
         jerseyVersion             = '2.25.1'
         jbossLoggingVersion       = '3.3.0.Final'
+        auth0Version              = '3.3.0'
+        commonsCodecVersion       = '1.11'
+        apacheHttpClientVersion   = '4.5.5'
 
         junit4Version              = '4.12'
         mockitoVersion             = '2.23.0'

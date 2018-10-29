@@ -1,0 +1,8 @@
+dependencies {
+    compile project(':sda-commons-server-dropwizard')
+    compile project(':sda-commons-server-testing')
+    compile project(':sda-commons-server-auth')
+    compile 'com.auth0:java-jwt:' + auth0Version, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+}

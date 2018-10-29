@@ -51,6 +51,11 @@ The module [`sda-commons-server-swagger`](./sda-commons-server-swagger/README.md
 module to add [Swagger](https://github.com/swagger-api/swagger-core) support for applications
 in the SDA SE infrastructure.
 
+### Auth
+
+The module [`sda-commons-server-auth`](./sda-commons-server-auth/README.md) provides support to add authentication
+using JSON Web Tokens with different sources for the public keys of the signing authorities.
+
 #### Hibernate
 
 The module [`sda-commons-server-hibernate`](./sda-commons-server-hibernate/README.md) provides access to relational
