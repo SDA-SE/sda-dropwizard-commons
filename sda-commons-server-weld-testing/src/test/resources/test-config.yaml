@@ -1,0 +1,14 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 3456
+  adminConnectors:
+  - type: http
+    port: 0
+  rootPath: "/api/*"
+
+logging:
+  appenders:
+    - type: console
+      threshold: DEBUG
+      logFormat: "[%thread] %X{audit-identifier} %-5level %logger{36} - %X{Trace-Token} - %msg%n"

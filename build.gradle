@@ -57,6 +57,9 @@ subprojects {
         openApiToolVersion        = '1.0.4'
         swaggerVersion            = '1.5.21'
         slf4jVersion              = '1.7.25'
+        weldVersion               = '3.0.4.Final'
+        jerseyVersion             = '2.25.1'
+        jbossLoggingVersion       = '3.3.0.Final'
 
         junit4Version              = '4.12'
         mockitoVersion             = '2.23.0'

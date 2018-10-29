@@ -51,8 +51,12 @@ The module [`sda-commons-server-swagger`](./sda-commons-server-swagger/README.md
 module to add [Swagger](https://github.com/swagger-api/swagger-core) support for applications
 in the SDA SE infrastructure.
 
-
 #### Hibernate
 
 The module [`sda-commons-server-hibernate`](./sda-commons-server-hibernate/README.md) provides access to relational
 databases with hibernate.
+
+#### Weld
+
+The module [`sda-commons-server-weld`](./sda-commons-server-weld/README.md) is used to bootstrap Dropwizard applications 
+inside a Weld-SE container and provides CDI support for servlets, listeners and resources.
