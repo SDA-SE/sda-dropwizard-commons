@@ -8,7 +8,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +18,6 @@ import java.util.Map;
  * created from the {@link AuthRule} using {@link AuthRule#auth()} within the test.
  */
 public class AuthBuilder {
-
-   private final RSAPublicKey publicKey;
 
    private final RSAPrivateKey privateKey;
 
@@ -35,12 +32,10 @@ public class AuthBuilder {
    /**
     * Use {@link AuthRule#auth()} to create {@code AuthBuilder} instances.
     * @param keyId the {@code kid} written in the token header
-    * @param publicKey the public key that verifies the token
     * @param privateKey the private key that signs the token
     */
-   AuthBuilder(String keyId, RSAPublicKey publicKey, RSAPrivateKey privateKey) {
+   AuthBuilder(String keyId, RSAPrivateKey privateKey) {
       this.keyId = keyId;
-      this.publicKey = publicKey;
       this.privateKey = privateKey;
    }
 
@@ -123,7 +118,7 @@ public class AuthBuilder {
     * @return the signed and encoded token, e.g. {@code eyXXX.eyYYY.ZZZ}
     */
    public String buildToken() {
-      Algorithm algorithm = Algorithm.RSA256(publicKey, privateKey);
+      Algorithm algorithm = Algorithm.RSA256(null, privateKey);
       JWTCreator.Builder builder = JWT
             .create()
             .withKeyId(keyId)

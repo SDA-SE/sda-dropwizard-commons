@@ -11,18 +11,13 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 
@@ -42,8 +37,11 @@ public class AuthRule implements TestRule {
    private static final String DEFAULT_KEY_ID = AuthRule.class.getSimpleName();
    private static final String DEFAULT_ISSUER = "AuthRule";
    private static final String DEFAULT_SUBJECT = "test";
-   private static final String DEFAULT_PRIVATE_KEY_LOCATION = AuthRule.class.getResource("rsa-private.key").getFile();
-   private static final String DEFAULT_CERTIFICATE_LOCATION = AuthRule.class.getResource("rsa-x.509.pem").getFile();
+   private static final String DEFAULT_INTERNAL_KEY_PATH = "/com/sdase/commons/server/auth/testing"; // NOSONAR classpath Url is intentionally hardcoded
+   private static final String DEFAULT_PRIVATE_KEY_LOCATION =
+         AuthRule.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-private.key").toString();
+   private static final String DEFAULT_CERTIFICATE_LOCATION =
+         AuthRule.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-x.509.pem").toString();
 
    private final boolean disableAuth;
 
@@ -56,7 +54,6 @@ public class AuthRule implements TestRule {
    private RuleChain delegate;
 
    private RSAPrivateKey privateKey;
-   private RSAPublicKey publicKey;
 
    private final String privateKeyLocation;
 
@@ -92,7 +89,7 @@ public class AuthRule implements TestRule {
       if (disableAuth) {
          throw new IllegalStateException("Could not create token when auth is disabled.");
       }
-      return new AuthBuilder(keyId, publicKey, privateKey).withIssuer(issuer).withSubject(subject);
+      return new AuthBuilder(keyId, privateKey).withIssuer(issuer).withSubject(subject);
    }
 
    @Override
@@ -115,11 +112,9 @@ public class AuthRule implements TestRule {
 
    private void initEnabledTestAuth() {
       this.privateKey = loadPrivateKey(this.privateKeyLocation);
-      this.publicKey = loadPublicKey(this.certificateLocation);
-
       KeyLocation keyLocation = new KeyLocation();
       keyLocation.setPemKeyId(keyId);
-      keyLocation.setLocation(URI.create("file://" + certificateLocation));
+      keyLocation.setLocation(URI.create(certificateLocation));
       keyLocation.setType(KeyUriType.PEM);
       AuthConfig authConfig = new AuthConfig();
       authConfig.setKeys(singletonList(keyLocation));
@@ -132,31 +127,25 @@ public class AuthRule implements TestRule {
       }
    }
 
-   private static RSAPublicKey loadPublicKey(String publicKeyLocation) {
-      try (InputStream fis = new FileInputStream(new File(publicKeyLocation))) {
-         CertificateFactory fact = CertificateFactory.getInstance("X.509");
-
-         X509Certificate cer = (X509Certificate) fact.generateCertificate(fis);
-
-         return (RSAPublicKey) cer.getPublicKey();
-      } catch (CertificateException | IOException e) {
+   private RSAPrivateKey loadPrivateKey(String privateKeyLocation) {
+      try (InputStream is = URI.create(privateKeyLocation).toURL().openStream()) {
+         byte[] privateKeyBytes = read(is);
+         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privateKeyBytes);
+         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+         return (RSAPrivateKey) keyFactory.generatePrivate(spec);
+      } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
          return null;
       }
    }
 
-   private RSAPrivateKey loadPrivateKey(String privateKeyLocation) {
-      File file = new File(privateKeyLocation);
-      byte[] privateKeyBytes = new byte[(int) file.length()];
-      try (InputStream fis = new FileInputStream(file)) {
-         if (fis.read(privateKeyBytes) > 0) {
-
-            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privateKeyBytes);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            return (RSAPrivateKey) keyFactory.generatePrivate(spec);
+   private byte[] read(InputStream is) throws IOException {
+      try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+         int nRead;
+         byte[] data = new byte[1024];
+         while ((nRead = is.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
          }
-         return null;
-      } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-         return null;
+         return buffer.toByteArray();
       }
    }
 

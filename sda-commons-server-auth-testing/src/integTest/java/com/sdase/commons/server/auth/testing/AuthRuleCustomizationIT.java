@@ -28,8 +28,8 @@ public class AuthRuleCustomizationIT {
          .withIssuer("customIssuer")
          .withSubject("customSubject")
          .withCustomKeyPair(
-               AuthRuleCustomizationIT.class.getResource("/test.pem").getFile(),
-               AuthRuleCustomizationIT.class.getResource("/test.key").getFile()
+               AuthRuleCustomizationIT.class.getResource("/test.pem").toString(),
+               AuthRuleCustomizationIT.class.getResource("/test.key").toString()
          )
          .build();
 
