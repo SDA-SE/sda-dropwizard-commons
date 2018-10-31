@@ -11,7 +11,7 @@ public class WeldSupport {
 
    public static void initializeCDIProviderIfRequired() {
       if (!isCDIProviderInitialized) {
-         // Register Weld provider to allow access via CDI.current()
+         // Register Weld provider to allow access via CDI.current(), this is only possible once per application!
          CDI.setCDIProvider(new WeldSEProvider());
          isCDIProviderInitialized = true;
       }
