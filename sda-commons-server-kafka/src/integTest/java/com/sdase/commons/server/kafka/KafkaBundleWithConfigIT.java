@@ -1,18 +1,16 @@
 package com.sdase.commons.server.kafka;
 
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
-import com.sdase.commons.server.kafka.config.ListenerConfig;
-import com.sdase.commons.server.kafka.config.ProducerConfig;
-import com.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
-import com.sdase.commons.server.kafka.consumer.KafkaMessageHandlingException;
-import com.sdase.commons.server.kafka.consumer.MessageListener;
-import com.sdase.commons.server.kafka.dropwizard.AppConfiguration;
-import com.sdase.commons.server.kafka.dropwizard.KafkaApplication;
-import com.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
-import com.sdase.commons.server.kafka.builder.ProducerRegistration;
-import com.sdase.commons.server.kafka.producer.MessageProducer;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -28,21 +26,28 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+import com.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
+import com.sdase.commons.server.kafka.builder.ProducerRegistration;
+import com.sdase.commons.server.kafka.config.ListenerConfig;
+import com.sdase.commons.server.kafka.config.ProducerConfig;
+import com.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
+import com.sdase.commons.server.kafka.consumer.KafkaMessageHandlingException;
+import com.sdase.commons.server.kafka.consumer.MessageListener;
+import com.sdase.commons.server.kafka.dropwizard.AppConfiguration;
+import com.sdase.commons.server.kafka.dropwizard.KafkaApplication;
+import com.sdase.commons.server.kafka.exception.ConfigurationException;
+import com.sdase.commons.server.kafka.producer.MessageProducer;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 
 public class KafkaBundleWithConfigIT {
 
-    protected static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
+   private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
          .withBrokerProperty("port", "9091");
 
-   protected static final DropwizardAppRule<AppConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
+   private static final DropwizardAppRule<AppConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaApplication.class, ResourceHelpers.resourceFilePath("test-config-con-prod.yml"));
 
    @ClassRule
@@ -62,7 +67,7 @@ public class KafkaBundleWithConfigIT {
    }
 
    @Test
-   public void allTopicsDescriptionsGenerated() {
+   public void allTopicsDescriptionsGenerated() throws ConfigurationException {
       assertThat(kafkaBundle.getTopicConfiguration("topicId1"), is(notNullValue()));
       assertThat(kafkaBundle.getTopicConfiguration("topicId1").getReplicationFactor().count(), is(2));
       assertThat(kafkaBundle.getTopicConfiguration("topicId1").getPartitions().count(), is(2));
@@ -71,7 +76,7 @@ public class KafkaBundleWithConfigIT {
    }
 
    @Test
-   public void createProducerWithTopic() {
+   public void createProducerWithTopic() throws ConfigurationException {
       MessageProducer<String, String> topicName2 = kafkaBundle
             .registerProducer(ProducerRegistration
                   .<String, String>builder()
@@ -85,7 +90,7 @@ public class KafkaBundleWithConfigIT {
 
 
    @Test
-   public void testConsumerCanReadMessages() throws InterruptedException {
+   public void testConsumerCanReadMessages() throws ConfigurationException {
       String topic = "testConsumerCanReadMessages";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -109,17 +114,12 @@ public class KafkaBundleWithConfigIT {
       producer.send(1L, 1L);
       producer.send(2L, 2L);
 
-      int waitCount = 0;
-      while (results.size() < 2 && waitCount <= KafkaBundleConsts.N_MAX_WAIT_MS) {
-         Thread.sleep(KafkaBundleConsts.N_WAIT_MS);
-         waitCount += KafkaBundleConsts.N_WAIT_MS;
-      }
-
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> results.size() == 2);
       assertThat(results, containsInAnyOrder(1L, 2L));
    }
 
    @Test
-   public void testConsumerCanReadMessagesNamed() throws InterruptedException {
+   public void testConsumerCanReadMessagesNamed() throws ConfigurationException {
       String topic  = "testConsumerCanReadMessagesNamed";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -144,17 +144,12 @@ public class KafkaBundleWithConfigIT {
       producer.send("1l", "1l");
       producer.send("2l", "2l");
 
-      int waitCount = 0;
-      while (resultsString.size() < 2 && waitCount <= KafkaBundleConsts.N_MAX_WAIT_MS) {
-         Thread.sleep(KafkaBundleConsts.N_WAIT_MS);
-         waitCount += KafkaBundleConsts.N_WAIT_MS;
-      }
-
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
       assertThat(resultsString, containsInAnyOrder("1l", "2l"));
    }
 
    @Test
-   public void defaultConProdShouldHaveStringSerializer() throws InterruptedException {
+   public void defaultConProdShouldHaveStringSerializer() throws ConfigurationException {
       String topic = "defaultConProdShouldHaveStringSerializer";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -179,17 +174,13 @@ public class KafkaBundleWithConfigIT {
       producer.send("1l", "1l");
       producer.send("2l", "2l");
 
-      int waitCount = 0;
-      while (resultsString.size() < 2 && waitCount <= KafkaBundleConsts.N_MAX_WAIT_MS) {
-         Thread.sleep(KafkaBundleConsts.N_WAIT_MS);
-         waitCount += KafkaBundleConsts.N_WAIT_MS;
-      }
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
 
       assertThat(resultsString, containsInAnyOrder("1l", "2l"));
    }
 
    @Test
-   public void testKafkaMessages() throws InterruptedException {
+   public void testKafkaMessages() throws ConfigurationException {
       String topic = "testKafkaMessages";
 
       List<String> checkMessages = new ArrayList<>();
@@ -218,19 +209,14 @@ public class KafkaBundleWithConfigIT {
          producer.send(new ProducerRecord<>(topic, message));
       }
 
-      int waitCount = 0;
-      while (results.size() < checkMessages.size() && waitCount <= KafkaBundleConsts.N_MAX_WAIT_MS) {
-         Thread.sleep(KafkaBundleConsts.N_WAIT_MS);
-         waitCount += KafkaBundleConsts.N_WAIT_MS;
-      }
-
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == checkMessages.size());
       assertThat(resultsString, containsInAnyOrder(checkMessages.toArray()));
 
    }
 
 
    @Test
-   public void producerShouldSendMessagesToKafka() throws InterruptedException {
+   public void producerShouldSendMessagesToKafka() throws ConfigurationException {
       String topic = "producerShouldSendMessagesToKafka";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
       MessageProducer<String, String> producer = kafkaBundle
@@ -252,20 +238,15 @@ public class KafkaBundleWithConfigIT {
          producer.send("test", message);
       }
 
-      int waitCount = 0;
 
-      while (receivedMessages.size() < messages.size() && waitCount < KafkaBundleConsts.N_MAX_WAIT_MS) {
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> {
          List<ConsumerRecord<String, String>> consumerRecords = KAFKA
                .getKafkaTestUtils()
                .consumeAllRecordsFromTopic(topic, StringDeserializer.class, StringDeserializer.class);
-
-         if (consumerRecords.isEmpty()) {
-            Thread.sleep(KafkaBundleConsts.N_WAIT_MS);
-            waitCount += KafkaBundleConsts.N_WAIT_MS;
-         }
-
          consumerRecords.forEach((r) -> receivedMessages.add(r.value()));
-      }
+         return receivedMessages.size() == messages.size();
+
+      });
 
       assertThat(receivedMessages.size(), equalTo(KafkaBundleConsts.N_MESSAGES));
       assertThat(receivedMessages, containsInAnyOrder(messages.toArray()));
@@ -273,7 +254,7 @@ public class KafkaBundleWithConfigIT {
 
 
    @Test
-   public void kafkaConsumerReceivesMessages() throws InterruptedException {
+   public void kafkaConsumerReceivesMessages() throws ConfigurationException {
 
       String topic = "kafkaConsumerReceivesMessages";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
@@ -300,17 +281,12 @@ public class KafkaBundleWithConfigIT {
       // pass in messages
       for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
          String message = UUID.randomUUID().toString();
-         checkMessages.add(new String(message));
+         checkMessages.add(message);
 
-         producer.send(new ProducerRecord<String, String>(topic, message));
+         producer.send(new ProducerRecord<>(topic, message));
       }
 
-      int waitCount = 0;
-      while (results.size() < checkMessages.size() && waitCount <= KafkaBundleConsts.N_MAX_WAIT_MS) {
-         Thread.sleep(KafkaBundleConsts.N_WAIT_MS);
-         waitCount += KafkaBundleConsts.N_WAIT_MS;
-      }
-
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == checkMessages.size());
       assertThat(resultsString, containsInAnyOrder(checkMessages.toArray()));
 
    }
@@ -319,7 +295,7 @@ public class KafkaBundleWithConfigIT {
    private int callbackCount = 0;
 
    @Test
-   public void kafkaConsumerReceivesMessagesAsyncCommit() throws InterruptedException {
+   public void kafkaConsumerReceivesMessagesAsyncCommit() throws ConfigurationException {
       String topic = "kafkaConsumerReceivesMessagesAsyncCommit";
       StringDeserializer deserializer = new StringDeserializer();
       KAFKA.getKafkaTestUtils().createTopic(topic,1, (short)1);
@@ -364,11 +340,7 @@ public class KafkaBundleWithConfigIT {
          producer.send(new ProducerRecord<>(topic, message));
       }
 
-      int waitCount = 0;
-      while (callbackCount == 0 && waitCount <= KafkaBundleConsts.N_MAX_WAIT_MS) {
-         Thread.sleep(KafkaBundleConsts.N_WAIT_MS);
-         waitCount += KafkaBundleConsts.N_WAIT_MS;
-      }
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> callbackCount > 0);
 
       assertThat(resultsString, containsInAnyOrder(checkMessages.toArray()));
       assertThat(callbackCount, greaterThan(0));
@@ -377,7 +349,7 @@ public class KafkaBundleWithConfigIT {
 
 
    @Test
-   public void multiTest() throws InterruptedException {
+   public void multiTest() throws ConfigurationException {
 
       String TOPIC_CREATE = "create";
       String TOPIC_DELETE = "delete";
@@ -423,11 +395,7 @@ public class KafkaBundleWithConfigIT {
       createProducer.send(1L, "test1");
       deleteProducer.send("key", "test2");
 
-      int waitCount = 0;
-      while (waitCount <= KafkaBundleConsts.N_MAX_WAIT_MS * 4 && results.size() < 2) {
-         Thread.sleep(KafkaBundleConsts.N_WAIT_MS);
-         waitCount += KafkaBundleConsts.N_WAIT_MS;
-      }
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
 
       assertThat(resultsString, containsInAnyOrder("test1", "test2"));
    }

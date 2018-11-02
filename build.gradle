@@ -65,6 +65,7 @@ subprojects {
         commonsCodecVersion       = '1.11'
         apacheHttpClientVersion   = '4.5.5'
 
+        awaitilityVersion          = '3.1.2'
         junit4Version              = '4.12'
         mockitoVersion             = '2.23.0'
         assertjVersion             = '3.11.1'

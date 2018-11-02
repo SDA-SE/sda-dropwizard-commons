@@ -17,6 +17,8 @@ dependencies {
         exclude group: 'org.apache.zookeeper', module: 'zookeeper'
     }
 
+    compile 'org.awaitility:awaitility:'+awaitilityVersion
+
     
     // just to check transitive dependency versions
     testCompile project(':sda-commons-server-dropwizard')
