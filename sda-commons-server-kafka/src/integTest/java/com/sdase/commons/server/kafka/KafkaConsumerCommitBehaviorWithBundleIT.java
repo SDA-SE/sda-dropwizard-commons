@@ -66,9 +66,11 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
 
    // Test ignored to speed up integration testing. Waiting for retention must
    // not necessarily tested, since this is default kafka behavior
+   // This test might be relevant again, if changes in the @MessageListener with respect to the commit behavior
+   // are done
    @Ignore
    @Test
-   public void messagesThrowingExceptionsMustBeRetried() throws ConfigurationException {
+   public void messagesThrowingExceptionsMustBeRetried() throws ConfigurationException { // NOSONAR
       String topic = "messagesThrowingExceptionsMustBeRetried";
       String uuid = UUID.randomUUID().toString();
       KafkaProducer<String, String> producer = KAFKA
