@@ -94,7 +94,7 @@ public class TopicComparer {
                   }
                   return res.entrySet().stream();
                })
-               .collect(toMap(i -> i.getKey(), i -> i.getValue()));
+               .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
    }
 
    private void compareTopicDescriptions(Collection<ExpectedTopicConfiguration> expectedTopicConfiguration, ComparisonResult.ComparisonResultBuilder resultBuilder, Map<String, TopicDescription> topicDescriptions) {
@@ -139,7 +139,7 @@ public class TopicComparer {
                      throw new EvaluationException("InterruptedException during adminClient.describeTopics", e);
                   }
                })
-               .collect(toMap(i -> i.name(), i -> i));
+               .collect(toMap(TopicDescription::name, i -> i));
    }
 
    private ConfigResource topicNameToResource(String topicName) {

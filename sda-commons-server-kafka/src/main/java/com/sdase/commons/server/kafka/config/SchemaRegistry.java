@@ -34,7 +34,7 @@ public class SchemaRegistry {
         }
 
     public String getUrl() {
-        StringBuffer buf = new StringBuffer("http://").append(server);
+        StringBuilder buf = new StringBuilder("http://").append(server);
         if (port != null) {
             buf.append(':').append(port).toString();
         }
