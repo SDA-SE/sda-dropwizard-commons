@@ -81,7 +81,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     *           the name of the topic
     * @return the configured topic configuration
     */
-   public ExpectedTopicConfiguration getTopicConfiguration(String name) {
+   public ExpectedTopicConfiguration getTopicConfiguration(String name) throws ConfigurationException {
       if (topics.get(name) == null) {
          throw new ConfigurationException("Topic name seems not to be part of the read configuration. Please check the name and configuration.");
       }
@@ -100,7 +100,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     *           value clazz type
     * @return message listener
     */
-   public <K, V> List<MessageListener<K, V>> registerMessageHandler(MessageHandlerRegistration<K, V> registration) {
+   public <K, V> List<MessageListener<K, V>> registerMessageHandler(MessageHandlerRegistration<K, V> registration) throws ConfigurationException {
       checkInit();
       if (registration.isCheckTopicConfiguration()) {
          ComparisonResult comparisonResult = checkTopics(registration.getTopics());
@@ -148,7 +148,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * @return message producer
     */
    @SuppressWarnings("unchecked")
-   public <K, V> MessageProducer<K, V> registerProducer(ProducerRegistration<K, V> registration) {
+   public <K, V> MessageProducer<K, V> registerProducer(ProducerRegistration<K, V> registration) throws ConfigurationException {
       checkInit();
 
       if (registration.isCheckTopicConfiguration() || registration.isCreateTopicIfMissing()) {
@@ -269,7 +269,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             .build();
    }
 
-   private <K, V> KafkaProducer<K,V> createProducer(ProducerRegistration<K, V> registration) {
+   private <K, V> KafkaProducer<K,V> createProducer(ProducerRegistration<K, V> registration) throws ConfigurationException {
       KafkaProperties producerProperties = getDefaultProducerProperties(registration);
       ProducerConfig producerConfig = registration.getProducerConfig();
 
@@ -287,7 +287,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       return new KafkaProducer<>(producerProperties, registration.getKeySerializer(), registration.getValueSerializer());
    }
 
-   private <K, V> KafkaConsumer<K,V> createConsumer(MessageHandlerRegistration<K, V> registration) {
+   private <K, V> KafkaConsumer<K,V> createConsumer(MessageHandlerRegistration<K, V> registration) throws ConfigurationException {
       KafkaProperties consumerProperties = getDefaultConsumerProperties(registration);
       ConsumerConfig consumerConfig = registration.getConsumerConfig();
 

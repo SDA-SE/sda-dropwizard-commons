@@ -1,15 +1,13 @@
 package com.sdase.commons.server.kafka;
 
-import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
-import com.github.ftrossbach.club_topicana.core.MismatchedTopicConfigException;
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
-import com.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
-import com.sdase.commons.server.kafka.consumer.MessageListener;
-import com.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
-import com.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
-import com.sdase.commons.server.kafka.exception.TopicCreationException;
-import com.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -17,14 +15,18 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
+import com.github.ftrossbach.club_topicana.core.MismatchedTopicConfigException;
+import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+import com.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
+import com.sdase.commons.server.kafka.consumer.MessageListener;
+import com.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
+import com.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
+import com.sdase.commons.server.kafka.exception.ConfigurationException;
+import com.sdase.commons.server.kafka.exception.TopicCreationException;
+import com.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
-import static com.sdase.commons.server.kafka.KafkaBundleConsts.TOPIC;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 
 public class KafkaTopicIT {
 
@@ -55,7 +57,7 @@ public class KafkaTopicIT {
    }
 
    @Test
-   public void checkTopicSuccessful() {
+   public void checkTopicSuccessful() throws ConfigurationException {
       String topicName = "checkTopicSuccessful";
       KAFKA.getKafkaTestUtils().createTopic(topicName, 1, (short) 1);
       List<MessageListener<String, String>> stringStringMessageListener = bundle
@@ -74,7 +76,7 @@ public class KafkaTopicIT {
    }
 
    @Test
-   public void checkTopicSuccessfulComplex() {
+   public void checkTopicSuccessfulComplex() throws ConfigurationException {
       String topicName = "checkTopicSuccessfulComplex";
       KAFKA.getKafkaTestUtils().createTopic(topicName, 2, (short) 1);
       List<MessageListener<String, String>> stringStringMessageListener = bundle
@@ -97,7 +99,7 @@ public class KafkaTopicIT {
    }
 
    @Test(expected = MismatchedTopicConfigException.class)
-   public void checkTopicFails() {
+   public void checkTopicFails() throws ConfigurationException {
 
       List<MessageListener<String, String>> stringStringMessageListener = bundle
             .registerMessageHandler(MessageHandlerRegistration
