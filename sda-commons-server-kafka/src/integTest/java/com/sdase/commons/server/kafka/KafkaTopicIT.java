@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.dropwizard.testing.ResourceHelpers;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -34,7 +35,7 @@ public class KafkaTopicIT {
          .withBrokerProperty("auto.create.topics.enable", "false")
          .withBrokers(2);
    protected static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
-         KafkaTestApplication.class);
+         KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));
 
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);

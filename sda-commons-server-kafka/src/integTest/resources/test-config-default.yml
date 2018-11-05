@@ -5,8 +5,3 @@ server:
   adminConnectors:
   - type: http
     port: 0
-
-kafka:
-  brokers:
-    - server: localhost
-      port: 9091
