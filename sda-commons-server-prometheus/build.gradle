@@ -1,0 +1,22 @@
+dependencies {
+
+    compile project(':sda-commons-server-dropwizard')
+    compile 'io.dropwizard:dropwizard-client:' + dropwizardVersion, {
+        exclude group: 'io.dropwizard', module: 'dropwizard-core'
+        exclude group: 'org.javassist', module: 'javassist'
+        exclude group: 'commons-codec', module: 'commons-codec'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+    compile 'commons-codec:commons-codec:' + commonsCodecVersion
+    compile 'org.apache.httpcomponents:httpclient:' + apacheHttpClientVersion, {
+        exclude group: 'commons-codec', module: 'commons-codec'
+    }
+    compile 'io.prometheus:simpleclient:' + prometheusClientVersion
+    compile 'io.prometheus:simpleclient_dropwizard:' + prometheusClientVersion, {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'io.dropwizard.metrics', module: 'metrics-core'
+    }
+    compile 'io.prometheus:simpleclient_servlet:' + prometheusClientVersion
+
+    testCompile project(':sda-commons-server-testing')
+}

@@ -65,3 +65,8 @@ databases with hibernate.
 
 The module [`sda-commons-server-weld`](./sda-commons-server-weld/README.md) is used to bootstrap Dropwizard applications 
 inside a Weld-SE container and provides CDI support for servlets, listeners and resources.
+
+#### Prometheus
+
+The module [`sda-commons-server-prometheus`](./sda-commons-server-prometheus/README.md) provides an admin endpoint to
+serve metrics in a format that Prometheus can read. 
