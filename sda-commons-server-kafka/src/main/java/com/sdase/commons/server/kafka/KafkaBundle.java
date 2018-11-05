@@ -354,7 +354,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             LOGGER.warn("KafkaBundle interrupted while trying to shutdown consumer threads!");
-            Thread.currentThread().interrupt();
          }
       });
    }
