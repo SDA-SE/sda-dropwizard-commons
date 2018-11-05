@@ -63,6 +63,8 @@ subprojects {
         auth0Version              = '3.3.0'
         commonsCodecVersion       = '1.11'
         apacheHttpClientVersion   = '4.5.5'
+        prometheusClientVersion   = '0.5.0'
+        javaxWsRsVersion          = '2.0.1'
 
         junit4Version              = '4.12'
         mockitoVersion             = '2.23.0'
