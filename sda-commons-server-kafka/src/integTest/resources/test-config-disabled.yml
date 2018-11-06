@@ -7,5 +7,4 @@ server:
     port: 0
 
 kafka:
-  brokers:
-    - localhost:9091
+  disabled: true

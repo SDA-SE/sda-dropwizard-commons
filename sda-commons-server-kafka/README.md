@@ -9,10 +9,7 @@ Add the following dependency:
 compile 'org.sdase.commons:sda-commons-server-kafka:<current-version>'
 ```
 
-**Provided Dependencies**
-
-The following dependencies need to be provided by a consuming library, application or runtime environment.
-
+**Dependencies**
 
 | Group                        | Name                    | Version     | Description |
 |------------------------------|-------------------------|-------------|-------------|
@@ -27,8 +24,8 @@ The Builders for `MessageHandlerRegistration` and `ProducerRegistration` support
  
 ```java
 public class DemoApplication {
-   private final KafkaBundle<AppConfiguration> kafkaBundle = new KafkaBundle<>(AppConfiguration::getKafka);
-   private final  MessageProducer<String, ProductBundle> producer;
+   private final KafkaBundle<AppConfiguration> kafkaBundle = KafkaBundle.builder().withConfigurationProvider(AppConfiguration::getKafka).build()
+   private final MessageProducer<String, ProductBundle> producer;
       
    public void initialize(Bootstrap<AppConfiguration> bootstrap) {
       bootstrap.addBundle(kafkaBundle);
@@ -101,10 +98,15 @@ Note: CDI is not included within the bundle.
 To configure KafkaBundle add the following `kafka` block to your Dropwizard config.yml. The following config snippet shows an example configuration with descriptive comments:
 ```YAML
 kafka:
+
+  # For testing without a kafka in integration tests, the bundle api can be disabled. No consumers and providers will be created 
+  disabled: false
+  # Timeout for request to the kafka broker used by admin clients
+  # Admin client is used for checking and creating topics 
+  adminClientrequestTimeoutMs: 2000
+  # List of brokers to bootstrap consumer and provider connection
   brokers:
-    # List of brokers to bootstrap consumer and provider connection
-    - server: localhost
-      port: 9092 
+    - localhost:9092 
   # Security information used for all consumers and providers to connect to kafka
   security :
     user: user
@@ -177,6 +179,11 @@ kafka:
 ### configuration value defaults (extending/changing the kafka defaults)
 This are only the defaults that are explicitly set within the code of the bundle. All other properties depends on the actual broker configuration or the Kafka defaults are used. 
 
+| Key | Value |
+|-----|-------|
+| disabled | false |
+| adminClientRequestTimeoutMs | 5000 |
+
 #### brokers
 No defaults
 
@@ -239,12 +246,12 @@ When using AVRO producer additionally:
 | topicMissingRetryMs | 0 |
 
 
-## Migration information (from v-0.19.0 or older)
+## Migration information (from kafka-commons)
 
 **Compatibility with older broker versions**
 
 :exclamation: 
-**Newer versions than 0.19.0 of the bundle assumes at least version 1.0.0 of the broker, since some admin client commands are not supported in earlier broker versions**
+**Newer versions than kafka-commons v0.19.0 assumes at least version 1.0.0 of the broker, since some admin client commands are not supported in earlier broker versions**
 
 If you use older versions of the broker, you MUST not use the options to check or create topics for MessageHandlers and MessageProducers.  
 
@@ -263,16 +270,7 @@ See below for example configuration. Of course, you can configure further proper
 ```
 kafka:
   brokers:
-    - server: ${KAFKA_BROKER_HOST_1}
-      port: ${KAFKA_BROKER_PORT}
-    - server: ${KAFKA_BROKER_HOST_2}
-      port: ${KAFKA_BROKER_PORT}
-    - server: ${KAFKA_BROKER_HOST_3}
-      port: ${KAFKA_BROKER_PORT}
-    - server: ${KAFKA_BROKER_HOST_4}
-      port: ${KAFKA_BROKER_PORT}
-    - server: ${KAFKA_BROKER_HOST_5}
-      port: ${KAFKA_BROKER_PORT}
+      ${KAFKA_BROKERS:-[]}
   security:
       user: ${SECRET_KAFKA_USERNAME}
       password: ${SECRET_KAFKA_PASSWORD}
@@ -287,6 +285,18 @@ kafka:
 ```
 _Note_: Do not use `;` in passwords, as this will crash your application.
 
+In this case, the `KAFKA_BROKERS` variable should contain a Json array with a list of broker 
+
+
+```json
+[
+  kafka-broker:12345,
+  kafka-broker:54321
+]
+```
+
+
+// TODO: Beispiel für Kafka Brokers 
 
 ## Testing
 [`sda-commons-server-kafka-testing`](../sda-commons-server-kafka-testing/README.md) provides support for integration testing with kafka with JUnit 4.

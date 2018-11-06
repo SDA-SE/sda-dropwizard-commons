@@ -1,7 +1,6 @@
 package com.sdase.commons.server.kafka;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sdase.commons.server.kafka.config.Broker;
 import com.sdase.commons.server.kafka.config.ConsumerConfig;
 import com.sdase.commons.server.kafka.config.ListenerConfig;
 import com.sdase.commons.server.kafka.config.ProducerConfig;
@@ -23,9 +22,14 @@ import java.util.Map;
  */
 public class KafkaConfiguration {
 
+   @JsonProperty(value = "adminClientrequestTimeoutMs")
+   private int adminClientrequestTimeoutMs = 5000;
+
+   @JsonProperty(value = "disabled")
+   private boolean disabled = false;
 
    @JsonProperty(value = "brokers")
-   private List<Broker> brokers = new ArrayList<>();
+   private List<String> brokers = new ArrayList<>();
 
    @JsonProperty(value = "schemaRegistry")
    private SchemaRegistry schemaRegistry = new SchemaRegistry();
@@ -46,11 +50,11 @@ public class KafkaConfiguration {
    private Security security = new Security();
 
 
-   public List<Broker> getBrokers() {
+   public List<String> getBrokers() {
       return brokers;
    }
 
-   public void setBrokers(List<Broker> brokers) {
+   public void setBrokers(List<String> brokers) {
       this.brokers = brokers;
    }
 
@@ -80,5 +84,14 @@ public class KafkaConfiguration {
 
    public Map<String, ListenerConfig> getListenerConfig() {
       return listenerConfig;
+   }
+
+   public boolean isDisabled() {
+      return disabled;
+   }
+
+   public int getAdminClientrequestTimeoutMs() {
+      return adminClientrequestTimeoutMs;
+
    }
 }

@@ -11,6 +11,7 @@ import java.lang.Thread.State;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -27,6 +28,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -76,7 +78,11 @@ public class MessageListenerTest {
    }
 
    private void setupListener() {
-      ListenerConfig lc = ListenerConfig.builder().useAutoCommitOnly(false).build(1);
+      setupListener(0);
+   }
+
+   private void setupListener(int topicWaitTime) {
+      ListenerConfig lc = ListenerConfig.builder().withTopicMissingRetryMs(topicWaitTime).useAutoCommitOnly(false).build(1);
 
       listener = new MessageListener<>(
             MessageHandlerRegistration.<String, String>builder()
@@ -88,6 +94,7 @@ public class MessageListenerTest {
             , consumer, lc
       );
    }
+
 
    @Test
    public void itShouldSubscribeToAllTopics()  {
@@ -219,6 +226,42 @@ public class MessageListenerTest {
       //verify and wait until poll has been invoked
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).poll(Mockito.longThat(longGtZero));
 
+      listener.stopConsumer();
+
+      Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).wakeup();
+      Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).close();
+      assertThat(t.getState(), equalTo(State.TERMINATED));
+   }
+
+
+   @Test
+   public void itShouldCorrectlyStopEvenWhenTopicDoesNotExist() {
+      int waitTime = 10000;
+      setupMocks();
+      setupListener(waitTime);
+
+      Mockito.when(consumer.partitionsFor(Mockito.anyString())).thenReturn(new LinkedList<>());
+
+
+      AtomicBoolean throwException = new AtomicBoolean(false);
+
+      Mockito.doAnswer(new Answer<Void>() {
+
+         @Override
+         public Void answer(InvocationOnMock invocation) {
+            throwException.set(true);
+            return null;
+         }
+
+      }).when(consumer).wakeup();
+
+
+      Thread t = startListenerThread();
+
+      //verify and wait until poll has been invoked
+      Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(3)).partitionsFor(Mockito.anyString());
+
+      t.interrupt();
       listener.stopConsumer();
 
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).wakeup();

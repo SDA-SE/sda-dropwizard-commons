@@ -3,11 +3,15 @@ package com.sdase.commons.server.kafka.topicana;
 import com.github.ftrossbach.club_topicana.core.ComparisonResult;
 import com.github.ftrossbach.club_topicana.core.EvaluationException;
 import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
+import com.sdase.commons.server.kafka.KafkaConfiguration;
+import com.sdase.commons.server.kafka.KafkaProperties;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,30 +30,31 @@ import static java.util.stream.Collectors.toMap;
  */
 public class TopicComparer {
 
-   private AdminClient adminClient;
 
-   public TopicComparer(AdminClient adminClient) {
-      this.adminClient = adminClient;
+   public TopicComparer() {
+      // simple constructor
    }
 
-   public ComparisonResult compare(Collection<ExpectedTopicConfiguration> expectedTopicConfiguration) {
+   public ComparisonResult compare(Collection<ExpectedTopicConfiguration> expectedTopicConfiguration, KafkaConfiguration configuration) {
+      try (final AdminClient adminClient = AdminClient.create(KafkaProperties.forAdminClient(configuration))) {
 
-      ComparisonResult.ComparisonResultBuilder resultBuilder = new ComparisonResult.ComparisonResultBuilder();
+         ComparisonResult.ComparisonResultBuilder resultBuilder = new ComparisonResult.ComparisonResultBuilder();
 
-      List<String> topicNames = expectedTopicConfiguration
-            .stream()
-            .map(ExpectedTopicConfiguration::getTopicName)
-            .collect(toList());
+         List<String> topicNames = expectedTopicConfiguration
+               .stream()
+               .map(ExpectedTopicConfiguration::getTopicName)
+               .collect(toList());
 
-      Map<String, TopicDescription> topicDescriptions = getTopicDescriptions(resultBuilder, topicNames);
+         Map<String, TopicDescription> topicDescriptions = getTopicDescriptions(resultBuilder, topicNames, adminClient);
 
-      compareTopicDescriptions(expectedTopicConfiguration, resultBuilder, topicDescriptions);
+         compareTopicDescriptions(expectedTopicConfiguration, resultBuilder, topicDescriptions);
 
-      Map<String, Config> topicConfigs = getTopicConfigs(topicNames, topicDescriptions);
+         Map<String, Config> topicConfigs = getTopicConfigs(topicNames, topicDescriptions, adminClient);
 
-      compareTopicConfigs(expectedTopicConfiguration, resultBuilder, topicNames, topicDescriptions, topicConfigs);
+         compareTopicConfigs(expectedTopicConfiguration, resultBuilder, topicNames, topicDescriptions, topicConfigs);
 
-      return resultBuilder.build();
+         return resultBuilder.build();
+      }
 
    }
 
@@ -70,7 +75,7 @@ public class TopicComparer {
       });
    }
 
-   private Map<String, Config> getTopicConfigs(List<String> topicNames, Map<String, TopicDescription> topicDescriptions) {
+   private Map<String, Config> getTopicConfigs(List<String> topicNames, Map<String, TopicDescription> topicDescriptions, AdminClient adminClient) {
       return adminClient
                .describeConfigs(topicNames
                      .stream()
@@ -121,7 +126,7 @@ public class TopicComparer {
             });
    }
 
-   private Map<String, TopicDescription> getTopicDescriptions(ComparisonResult.ComparisonResultBuilder resultBuilder, List<String> topicNames) {
+   private Map<String, TopicDescription> getTopicDescriptions(ComparisonResult.ComparisonResultBuilder resultBuilder, List<String> topicNames, AdminClient adminClient) {
       return adminClient
                .describeTopics(topicNames)
                .values()
@@ -132,8 +137,12 @@ public class TopicComparer {
                      TopicDescription topicDescription = desc.getValue().get();
                      return Collections.singletonList(topicDescription).stream();
                   } catch (ExecutionException e) {
-                     resultBuilder.addMissingTopic(desc.getKey());
-                     return Collections.<TopicDescription> emptySet().stream();
+                     if (e.getCause() instanceof UnknownTopicOrPartitionException) {
+                        resultBuilder.addMissingTopic(desc.getKey());
+                        return Collections.<TopicDescription> emptySet().stream();
+                     } else {
+                        throw (KafkaException) e.getCause();
+                     }
                   } catch (InterruptedException e) {
                      Thread.currentThread().interrupt();
                      throw new EvaluationException("InterruptedException during adminClient.describeTopics", e);

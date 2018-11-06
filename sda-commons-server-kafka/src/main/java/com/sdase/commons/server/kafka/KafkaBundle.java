@@ -12,11 +12,11 @@ import com.sdase.commons.server.kafka.config.ProducerConfig;
 import com.sdase.commons.server.kafka.config.TopicConfig;
 import com.sdase.commons.server.kafka.consumer.MessageListener;
 import com.sdase.commons.server.kafka.exception.ConfigurationException;
+import com.sdase.commons.server.kafka.exception.TopicCreationException;
 import com.sdase.commons.server.kafka.producer.KafkaMessageProducer;
 import com.sdase.commons.server.kafka.producer.MessageProducer;
 import com.sdase.commons.server.kafka.topicana.TopicComparer;
 import com.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
-import com.sdase.commons.server.kafka.exception.TopicCreationException;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.lifecycle.Managed;
@@ -76,9 +76,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    /**
     * Provides a {@link ExpectedTopicConfiguration} that is generated from the
     * values within the configuration yaml
-    * 
-    * @param name
-    *           the name of the topic
+    *
+    * @param name the name of the topic
     * @return the configured topic configuration
     */
    public ExpectedTopicConfiguration getTopicConfiguration(String name) throws ConfigurationException {
@@ -92,16 +91,18 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * creates a MessageListener based on the data in the
     * {@link MessageHandlerRegistration}
     *
-    * @param registration
-    *           the configuration object
-    * @param <K>
-    *           key clazz type
-    * @param <V>
-    *           value clazz type
+    * @param registration the configuration object
+    * @param <K>          key clazz type
+    * @param <V>          value clazz type
     * @return message listener
     */
    public <K, V> List<MessageListener<K, V>> registerMessageHandler(MessageHandlerRegistration<K, V> registration) throws ConfigurationException {
+      if (kafkaConfiguration.isDisabled()) {
+         return Collections.emptyList();
+      }
+
       checkInit();
+
       if (registration.isCheckTopicConfiguration()) {
          ComparisonResult comparisonResult = checkTopics(registration.getTopics());
          if (!comparisonResult.ok()) {
@@ -112,9 +113,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       List<MessageListener<K, V>> listener = new ArrayList<>(registration.getListenerConfig().getInstances());
       for (int i = 0; i < registration.getListenerConfig().getInstances(); i++) {
          ListenerConfig config = registration.getListenerConfig();
-         if (config == null && registration.getListenerConfigName() != null){
+         if (config == null && registration.getListenerConfigName() != null) {
             ListenerConfig listenerConfig = kafkaConfiguration.getListenerConfig().get(registration.getListenerConfigName());
-            if (listenerConfig == null)  {
+            if (listenerConfig == null) {
                throw new ConfigurationException(String.format("Listener config with name %s cannot be found within the current configuration.", registration.getListenerConfigName()));
             }
             config = kafkaConfiguration.getListenerConfig().get(registration.getListenerConfigName());
@@ -139,20 +140,33 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * creates a @{@link MessageProducer} based on the data in the
     * {@link ProducerRegistration}
     *
-    * @param registration
-    *           the configuration object
-    * @param <K>
-    *           key clazz type
-    * @param <V>
-    *           value clazz type
+    * if the kafka bundle is disabled, null is returned
+    *
+    * @param registration the configuration object
+    * @param <K>          key clazz type
+    * @param <V>          value clazz type
     * @return message producer
     */
    @SuppressWarnings("unchecked")
    public <K, V> MessageProducer<K, V> registerProducer(ProducerRegistration<K, V> registration) throws ConfigurationException {
+
+      // if kafka is disabled, we return a dummy producer only
+      if (kafkaConfiguration.isDisabled()) {
+         return null;
+      }
+
       checkInit();
 
-      if (registration.isCheckTopicConfiguration() || registration.isCreateTopicIfMissing()) {
-         checkAndCreateTopic(Collections.singletonList(registration.getTopic()), registration.isCreateTopicIfMissing());
+      if (registration.isCreateTopicIfMissing()) {
+         createNotExistingTopics(Collections.singletonList(registration.getTopic()));
+      }
+
+
+      if (registration.isCheckTopicConfiguration()) {
+         ComparisonResult comparisonResult = checkTopics(Collections.singletonList(registration.getTopic()));
+         if (!comparisonResult.ok()) {
+            throw new MismatchedTopicConfigException(comparisonResult);
+         }
       }
 
       KafkaMessageProducer<K, V> messageProducer = new KafkaMessageProducer(registration.getTopicName(),
@@ -162,52 +176,43 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       return messageProducer;
    }
 
+
+
    /**
     * Checks or creates a collection of topics with respect to its configuration
-    * 
-    * @param topics
-    *           Collection of topic configurations that should be checked
-    * @param create
-    *           defines if not existing topics should be created
-    * 
+    *
+    * @param topics Collection of topic configurations that should be checked
     */
-
-   public void checkAndCreateTopic(Collection<ExpectedTopicConfiguration> topics, boolean create) {
+   private void createNotExistingTopics(Collection<ExpectedTopicConfiguration> topics) {
+      if (kafkaConfiguration.isDisabled()) {
+         return;
+      }
       // find out what topics are missing
       ComparisonResult comparisonResult = checkTopics(topics);
-      if (!comparisonResult.getMissingTopics().isEmpty() && create) {
+      if (!comparisonResult.getMissingTopics().isEmpty()) {
          createTopics(topics
                .stream()
                .filter(t -> comparisonResult.getMissingTopics().contains(t.getTopicName()))
                .collect(Collectors.toList()));
-         // Recheck topics to remove created topics from comparision result
-         ComparisonResult comparisonResult1 = checkTopics(topics);
-         if (!comparisonResult1.ok()) {
-            throw new MismatchedTopicConfigException(comparisonResult);
-         }
-         return;
-      }
-      if (!comparisonResult.ok()) {
-         throw new MismatchedTopicConfigException(comparisonResult);
       }
    }
 
    /**
     * Checks if the defined topics are available on the broker for the provided
     * credentials
-    * 
-    * @param topics
-    *           list of topics to test
-    * 
+    *
+    * @param topics list of topics to test
     */
-   public ComparisonResult checkTopics(Collection<ExpectedTopicConfiguration> topics) {
-      try (final AdminClient adminClient = AdminClient.create(KafkaProperties.forAdminClient(kafkaConfiguration))) {
-         TopicComparer topicComparer = new TopicComparer(adminClient);
-         return topicComparer.compare(topics);
+   private ComparisonResult checkTopics(Collection<ExpectedTopicConfiguration> topics) {
+      if (kafkaConfiguration.isDisabled()) {
+         return new ComparisonResult.ComparisonResultBuilder().build();
       }
+      TopicComparer topicComparer = new TopicComparer();
+      return topicComparer.compare(topics, kafkaConfiguration);
+
    }
 
-   public void createTopics(Collection<ExpectedTopicConfiguration> topics) {
+   private void createTopics(Collection<ExpectedTopicConfiguration> topics) {
       try (final AdminClient adminClient = AdminClient.create(KafkaProperties.forAdminClient(kafkaConfiguration))) {
          List<NewTopic> topicList = topics.stream().map(t -> {
             int partitions = 1;
@@ -269,7 +274,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             .build();
    }
 
-   private <K, V> KafkaProducer<K,V> createProducer(ProducerRegistration<K, V> registration) throws ConfigurationException {
+   private <K, V> KafkaProducer<K, V> createProducer(ProducerRegistration<K, V> registration) throws ConfigurationException {
       KafkaProperties producerProperties = getDefaultProducerProperties(registration);
       ProducerConfig producerConfig = registration.getProducerConfig();
 
@@ -287,7 +292,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       return new KafkaProducer<>(producerProperties, registration.getKeySerializer(), registration.getValueSerializer());
    }
 
-   private <K, V> KafkaConsumer<K,V> createConsumer(MessageHandlerRegistration<K, V> registration) throws ConfigurationException {
+   private <K, V> KafkaConsumer<K, V> createConsumer(MessageHandlerRegistration<K, V> registration) throws ConfigurationException {
       KafkaProperties consumerProperties = getDefaultConsumerProperties(registration);
       ConsumerConfig consumerConfig = registration.getConsumerConfig();
 
@@ -305,7 +310,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
       return new KafkaConsumer<>(consumerProperties, registration.getKeyDeserializer(), registration.getValueDeserializer());
    }
-
 
 
    /**
@@ -350,6 +354,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       messageListeners.forEach(MessageListener::stopConsumer);
       consumerThreads.forEach(t -> {
          try {
+            t.interrupt();
             t.join();
          } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
@@ -368,11 +373,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
    public interface InitialBuilder {
       /**
-       * 
-       * @param configurationProvider
-       *           the method reference that provides
-       *           the @{@link KafkaConfiguration} from the applications
-       *           configurations class
+       * @param configurationProvider the method reference that provides
+       *                              the @{@link KafkaConfiguration} from the applications
+       *                              configurations class
        */
       <C extends Configuration> FinalBuilder<C> withConfigurationProvider(
             @NotNull KafkaConfigurationProvider<C> configurationProvider);

@@ -7,9 +7,9 @@ server:
     port: 0
 
 kafka:
+  adminClientrequestTimeoutMs: 2000
   brokers:
-    - server: localhost
-      port: 9091
+    - localhost:9091
   consumers:
     consumer1:
       config:

@@ -1,17 +1,16 @@
 package com.sdase.commons.server.kafka;
 
-import com.sdase.commons.server.kafka.config.Broker;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,10 @@ public class KafkaProperties extends Properties {
 
    private static KafkaProperties baseProperties(KafkaConfiguration configuration) {
       KafkaProperties props = new KafkaProperties();
-      props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, join(configuration.getBrokers()));
+      props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG,
+            configuration.getBrokers().stream()
+                  .collect(Collectors.joining(","))
+      );
       if (configuration.getSecurity().getPassword() != null && configuration.getSecurity().getUser() != null
             && configuration.getSecurity().getProtocol() != null) {
          props.put("sasl.mechanism", "PLAIN");
@@ -40,11 +42,14 @@ public class KafkaProperties extends Properties {
                      .concat("';"));
          props.put("security.protocol", configuration.getSecurity().getProtocol().name());
       }
+
       return props;
    }
 
    public static KafkaProperties forAdminClient(KafkaConfiguration configuration) {
-      return baseProperties(configuration);
+      KafkaProperties props = baseProperties(configuration);
+      props.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, configuration.getAdminClientrequestTimeoutMs());
+      return props;
    }
 
    public static KafkaProperties forConsumer(KafkaConfiguration configuration) {
@@ -91,7 +96,5 @@ public class KafkaProperties extends Properties {
       return props;
    }
 
-   private static String join(List<Broker> brokers) {
-      return brokers.stream().map(Broker::toString).collect(Collectors.joining(","));
-   }
+
 }

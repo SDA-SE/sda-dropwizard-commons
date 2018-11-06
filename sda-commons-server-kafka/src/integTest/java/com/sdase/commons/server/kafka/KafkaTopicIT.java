@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.sdase.commons.server.kafka.builder.ProducerRegistration;
+import com.sdase.commons.server.kafka.producer.MessageProducer;
 import io.dropwizard.testing.ResourceHelpers;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
@@ -118,28 +120,27 @@ public class KafkaTopicIT {
    }
 
    @Test
-   public void createSimpleTopic() {
+   public void createSimpleTopic() throws ConfigurationException {
       String topicName = "createSimpleTopic";
       ExpectedTopicConfiguration topic = TopicConfigurationBuilder
             .builder(topicName)
             .withPartitionCount(2)
             .withReplicationFactor(2)
             .build();
-      bundle.createTopics(Collections.singletonList(topic));
-      bundle.checkTopics(Collections.singletonList(topic));
+
+      MessageProducer<Object, Object> producer = bundle.registerProducer(ProducerRegistration.builder().forTopic(topic).createTopicIfMissing().withDefaultProducer().build());
+      assertThat(producer, is(notNullValue()));
    }
 
    @Test
-   public void createSimpleTopicNameOnly() {
+   public void createSimpleTopicNameOnly() throws ConfigurationException {
       String topicName = "createSimpleTopicNameOnly";
-      ExpectedTopicConfiguration topic = TopicConfigurationBuilder.builder(topicName).build();
-      ExpectedTopicConfiguration checkTopic = TopicConfigurationBuilder.builder(topicName).withReplicationFactor(1).withPartitionCount(1).build();
-      bundle.createTopics(Collections.singletonList(topic));
-      bundle.checkTopics(Collections.singletonList(checkTopic));
+      MessageProducer<Object, Object> producer = bundle.registerProducer(ProducerRegistration.builder().forTopic(topicName).createTopicIfMissing().withDefaultProducer().build());
+      assertThat(producer, is(notNullValue()));
    }
 
    @Test(expected = TopicCreationException.class)
-   public void createTopicException() {
+   public void createTopicException() throws ConfigurationException {
       String topicName = "createTopicException";
       ExpectedTopicConfiguration topic = TopicConfigurationBuilder
             .builder(topicName)
@@ -148,12 +149,11 @@ public class KafkaTopicIT {
             .withConfig("delete.retention.ms", "2000")
             .withConfig("some.bullshit", "2000")
             .build();
-      bundle.createTopics(Collections.singletonList(topic));
-      bundle.checkTopics(Collections.singletonList(topic));
+      bundle.registerProducer(ProducerRegistration.builder().forTopic(topic).createTopicIfMissing().withDefaultProducer().build());
    }
 
    @Test
-   public void createComplexTopic() {
+   public void createComplexTopic() throws ConfigurationException {
       String topicName = "createComplexTopic";
       ExpectedTopicConfiguration topic = TopicConfigurationBuilder
             .builder(topicName)
@@ -162,8 +162,8 @@ public class KafkaTopicIT {
             .withConfig("delete.retention.ms", "2000")
             .withConfig("cleanup.policy", "delete")
             .build();
-      bundle.createTopics(Collections.singletonList(topic));
-      bundle.checkTopics(Collections.singletonList(topic));
+      MessageProducer<Object, Object> producer = bundle.registerProducer(ProducerRegistration.builder().forTopic(topic).createTopicIfMissing().withDefaultProducer().build());
+      assertThat(producer, is(notNullValue()));
    }
 
 
