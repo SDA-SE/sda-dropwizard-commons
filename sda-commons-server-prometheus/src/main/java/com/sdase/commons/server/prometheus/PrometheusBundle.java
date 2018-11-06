@@ -1,6 +1,5 @@
 package com.sdase.commons.server.prometheus;
 
-import com.codahale.metrics.health.HealthCheckRegistry;
 import com.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
 import com.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import com.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
@@ -58,7 +57,7 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
    public void run(Environment environment) {
 
       registerMetricsServlet(environment.admin());
-      registerHealthCheckServlet(environment.admin(), environment.healthChecks());
+      registerHealthCheckServlet(environment.admin());
       environment.jersey().register(this);
 
       // init Histogram at startup
@@ -96,9 +95,9 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
       LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);
    }
 
-   private void registerHealthCheckServlet(AdminEnvironment environment, HealthCheckRegistry healthChecks) {
+   private void registerHealthCheckServlet(AdminEnvironment environment) {
       environment
-            .addServlet("Health Check as Prometheus Metrics", new HealthCheckAsPrometheusMetricServlet(healthChecks))
+            .addServlet("Health Check as Prometheus Metrics", new HealthCheckAsPrometheusMetricServlet())
             .addMapping(HEALTH_SERVLET_URL);
    }
 

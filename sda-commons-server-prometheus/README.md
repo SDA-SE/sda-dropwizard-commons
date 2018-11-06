@@ -9,7 +9,7 @@ The module `sda-commons-server-prometheus` provides
 
 ## Provided metrics
 
-Default metrics that are provided a `/metrics/prometheus`:
+Default metrics that are provided at `/metrics/prometheus`:
 
 | Metric name                       | Labels                | Description                                                  | Source                                    |
 |-----------------------------------|-----------------------|--------------------------------------------------------------|-------------------------------------------|
@@ -36,6 +36,10 @@ All health checks are provided at the applications admin port at `/healthcheck/p
 healthcheck_status{name="hibernate",} 1.0
 healthcheck_status{name="disk_space",} 0.0
 ```
+
+Currently health checks are evaluated when their status is requested. Slow health checks should be annotated with 
+[`com.codahale.metrics.health.annotation.Async`](https://github.com/dropwizard/metrics/blob/v4.0.2/metrics-healthchecks/src/main/java/com/codahale/metrics/health/annotation/Async.java)
+to avoid blocking collection of the results.
 
 ## Usage
 

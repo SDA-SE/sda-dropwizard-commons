@@ -1,14 +1,15 @@
 package com.sdase.commons.server.prometheus.health;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.codahale.metrics.health.HealthCheckFilter;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import io.prometheus.client.Collector;
 import io.prometheus.client.Collector.MetricFamilySamples;
 import io.prometheus.client.Collector.MetricFamilySamples.Sample;
 import io.prometheus.client.exporter.common.TextFormat;
-import org.apache.commons.lang3.Validate;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,9 +20,30 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.stream.Collectors;
 
+import static com.codahale.metrics.servlets.HealthCheckServlet.HEALTH_CHECK_REGISTRY;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 
+/**
+ * <p>
+ *    Serves all {@link HealthCheck}s in a Prometheus metric format.
+ * </p>
+ * <p>
+ *    Uses the {@link HealthCheckRegistry} provided in the servlet context as
+ *    {@link com.codahale.metrics.servlets.HealthCheckServlet#HEALTH_CHECK_REGISTRY HEALTH_CHECK_REGISTRY}. This is the
+ *    same registry that is used to provide {@link HealthCheck}s at the default health check endpoint using
+ *    {@link com.codahale.metrics.servlets.HealthCheckServlet HealthCheckServlet}.
+ * </p>
+ * <p>
+ *    Currently all {@link HealthCheck.Result}s are collected synchronously and sequentially unless a
+ *    {@link HealthCheck} is annotated as {@link com.codahale.metrics.health.annotation.Async Async} when the endpoint
+ *    is called. To change this behaviour and collect {@link HealthCheck.Result}s in parallel in the default
+ *    {@link com.codahale.metrics.servlets.HealthCheckServlet HealthCheckServlet}, an
+ *    {@link java.util.concurrent.ExecutorService ExecutorService} has to be registered in the servlet context as
+ *    {@link com.codahale.metrics.servlets.HealthCheckServlet#HEALTH_CHECK_EXECUTOR HEALTH_CHECK_EXECUTOR}.
+ *    <strong>To use the same executor here as well, additional implementation is needed in this class.</strong>
+ * </p>
+ */
 public class HealthCheckAsPrometheusMetricServlet extends HttpServlet {
 
    private static final long serialVersionUID = 1L;
@@ -29,11 +51,21 @@ public class HealthCheckAsPrometheusMetricServlet extends HttpServlet {
    private static final String HEALTH_CHECK_STATUS_METRIC = "healthcheck_status";
    private static final List<String> HEALTH_CHECK_METRIC_LABELS = unmodifiableList(singletonList("name"));
 
-   private final HealthCheckRegistry registry;
+   // Sonar requires this field to be static or final but then we are not able to do integration tests, see squid:S2226
+   private HealthCheckRegistry registry; // NOSONAR
 
-   public HealthCheckAsPrometheusMetricServlet(HealthCheckRegistry registry) {
-      Validate.notNull(registry);
-      this.registry = registry;
+   @Override
+   public void init(ServletConfig config) throws ServletException {
+      super.init(config);
+      if (registry == null) {
+         ServletContext context = config.getServletContext();
+         Object registryAttr = context.getAttribute(HEALTH_CHECK_REGISTRY);
+         if (registryAttr instanceof HealthCheckRegistry) {
+            registry = (HealthCheckRegistry) registryAttr;
+         } else {
+            throw new ServletException("Couldn't find a HealthCheckRegistry instance.");
+         }
+      }
    }
 
    @Override
@@ -64,7 +96,7 @@ public class HealthCheckAsPrometheusMetricServlet extends HttpServlet {
    }
 
    private List<Sample> collectHealthCheckSamples() {
-      SortedMap<String, HealthCheck.Result> results = registry.runHealthChecks(HealthCheckFilter.ALL);
+      SortedMap<String, HealthCheck.Result> results = registry.runHealthChecks();
 
       return results.entrySet().stream()
             .map(e -> createSample(e.getKey(), e.getValue().isHealthy()))
