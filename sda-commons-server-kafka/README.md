@@ -81,6 +81,23 @@ public class DemoApplication {
                   .createTopicIfMissing()    // creates the topic if no topic has been found
                   .withProducerConfig("producer1") // use producer config from config yaml
                   .build());
+      
+      // JSON Example
+      List<MessageListener> jsonListener = kafkaBundle.registerMessageHandler(MessageHandlerRegistration
+            .<String, SimpleEntity >builder()
+            .withDefaultListenerConfig()
+            .forTopic(topic)
+                  .withDefaultConsumer()
+                  .withValueDeserializer(new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class))
+                  .withHandler(x -> resultsString.add(x.value().getName()))
+                  .build()
+            );
+      
+      MessageProducer<String, SimpleEntity> jsonProducer = kafkaBundle.registerProducer(ProducerRegistration
+            .<String, SimpleEntity>builder()
+            .forTopic(topic)
+            .withDefaultProducer()
+            .withValueSerializer(new KafkaJsonSerializer<>(new ObjectMapper())).build());
    }
    
    // Optional: make producer available via CDI @Produces annotation
@@ -98,7 +115,6 @@ Note: CDI is not included within the bundle.
 To configure KafkaBundle add the following `kafka` block to your Dropwizard config.yml. The following config snippet shows an example configuration with descriptive comments:
 ```YAML
 kafka:
-
   # For testing without a kafka in integration tests, the bundle api can be disabled. No consumers and providers will be created 
   disabled: false
   # Timeout for request to the kafka broker used by admin clients
@@ -106,7 +122,8 @@ kafka:
   adminClientrequestTimeoutMs: 2000
   # List of brokers to bootstrap consumer and provider connection
   brokers:
-    - localhost:9092 
+    - kafka-broker-1:9092 
+    - kafka-broker-2:9092
   # Security information used for all consumers and providers to connect to kafka
   security :
     user: user
@@ -114,7 +131,7 @@ kafka:
     protocol: SASL_SSL
   # Avro Schema Registry (optional). The registry is used within all consumers and providers that are configured for accordingly. 
   schemaRegistry:
-     - server: localhost
+     - server: schema-registry
        port: 9000
   # Map with consumer configurations. The key is used as name/id to address the configuration within the code. 
   consumers:
@@ -286,7 +303,6 @@ kafka:
 _Note_: Do not use `;` in passwords, as this will crash your application.
 
 In this case, the `KAFKA_BROKERS` variable should contain a Json array with a list of broker 
-
 
 ```json
 [

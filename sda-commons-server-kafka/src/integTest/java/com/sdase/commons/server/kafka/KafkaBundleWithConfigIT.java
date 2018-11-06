@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
+import com.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
+import com.sdase.commons.server.kafka.serializers.SimpleEntity;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -57,6 +61,8 @@ public class KafkaBundleWithConfigIT {
    private List<String> resultsString = Collections.synchronizedList(new ArrayList<>());
 
    private KafkaBundle<AppConfiguration> kafkaBundle;
+
+
 
    @Before
    public void before() {
@@ -398,6 +404,41 @@ public class KafkaBundleWithConfigIT {
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
 
       assertThat(resultsString, containsInAnyOrder("test1", "test2"));
+   }
+
+   @Test
+   public void testJsonSerializer() throws ConfigurationException {
+      String topic = "testJsonSerializer";
+      KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
+
+      kafkaBundle.registerMessageHandler(MessageHandlerRegistration.<String, SimpleEntity >builder()
+      .withDefaultListenerConfig()
+      .forTopic(topic)
+            .withDefaultConsumer()
+            .withValueDeserializer(new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class))
+            .withHandler(x -> resultsString.add(x.value().getName()))
+            .build()
+      );
+
+      MessageProducer<String, SimpleEntity> prod = kafkaBundle.registerProducer(ProducerRegistration.<String, SimpleEntity>builder()
+            .forTopic(topic)
+            .withDefaultProducer()
+            .withValueSerializer(new KafkaJsonSerializer<>(new ObjectMapper())).build());
+
+      SimpleEntity a = new SimpleEntity();
+      a.setName("a");
+
+      SimpleEntity b = new SimpleEntity();
+      b.setName("b");
+
+
+      prod.send("Test", a);
+      prod.send("Test", b);
+
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
+
+      assertThat(resultsString, containsInAnyOrder("a", "b"));
+
    }
 
 }

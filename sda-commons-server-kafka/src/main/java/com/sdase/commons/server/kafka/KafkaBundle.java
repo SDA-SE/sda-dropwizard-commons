@@ -59,7 +59,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       this.configurationProvider = configurationProvider;
    }
 
-
    @Override
    public void initialize(Bootstrap<?> bootstrap) {
       //

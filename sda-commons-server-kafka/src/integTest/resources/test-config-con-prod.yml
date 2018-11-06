@@ -22,6 +22,11 @@ kafka:
         key.serializer: org.apache.kafka.common.serialization.LongSerializer
         value.serializer: org.apache.kafka.common.serialization.LongSerializer
     producer2:
+    producer3:
+      config:
+        key.serializer: org.apache.kafka.common.serialization.LongSerializer
+        value.serializer: com.sdase.commons.server.kafka.serializers.KafkaJsonSerializer
+
   listenerConfig:
     async:
       commitType: ASYNC

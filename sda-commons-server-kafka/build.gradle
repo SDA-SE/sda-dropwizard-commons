@@ -27,11 +27,13 @@ dependencies {
         exclude group: 'org.xerial.snappy', module: 'snappy-java'
         exclude group: 'org.apache.zookeeper', module: 'zookeeper'
     }
+    
     compile ('org.apache.zookeeper:zookeeper:3.4.8') {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'org.slf4j', module: 'slf4j-log4j12'
         exclude group: 'log4j', module: 'log4j'
     }
+    
     compile 'com.101tec:zkclient:0.10', {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'org.apache.zookeeper', module: 'zookeeper'
@@ -56,6 +58,7 @@ dependencies {
     // use extraLibs in compile scope
     configurations.compile.extendsFrom(configurations.extraLibs)
 }
+
 jar {
     from {
         configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }

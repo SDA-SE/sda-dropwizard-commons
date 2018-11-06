@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Subclass of Dropwizward's Configuration class to hold any values necessary to
+ * Subclass of Dropwizard Configuration class to hold any values necessary to
  * connect to Kafka
  * 
  *
@@ -48,7 +48,6 @@ public class KafkaConfiguration {
 
    @JsonProperty(value = "security")
    private Security security = new Security();
-
 
    public List<String> getBrokers() {
       return brokers;
