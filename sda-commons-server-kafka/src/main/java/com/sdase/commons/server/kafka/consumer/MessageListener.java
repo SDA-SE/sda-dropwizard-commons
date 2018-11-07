@@ -71,7 +71,7 @@ public class MessageListener<K, V> implements Runnable {
       // Consumer waits until the topic is up, since the KafkaConsumer.poll call floods log file with warnings
       // see https://issues.apache.org/jira/browse/KAFKA-4164
       if (topicMissingRetryMs > 0) {
-         while (!shouldStop.get() && topics.stream().map(consumer::partitionsFor).flatMap(x -> x.stream()).filter(Objects::nonNull).collect(Collectors.toSet()).isEmpty()) {
+         while (!shouldStop.get() && topics.stream().map(consumer::partitionsFor).flatMap(Collection::stream).filter(Objects::nonNull).collect(Collectors.toSet()).isEmpty()) {
             LOGGER.warn("Topics {} are not ready yet. Waiting {} ms for retry", joinedTopics, topicMissingRetryMs);
             try {
                Thread.sleep(topicMissingRetryMs);
