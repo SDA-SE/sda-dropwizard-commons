@@ -2,6 +2,7 @@ package com.sdase.commons.server.prometheus.test;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.sdase.commons.server.prometheus.PrometheusBundle;
+import com.sdase.commons.shared.tracing.ConsumerTracing;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
@@ -42,7 +43,7 @@ public class PrometheusTestApplication extends Application<Configuration> {
 
       // dummy implementation of the consumer token filter
       environment.jersey().register((ContainerRequestFilter) requestContext
-            -> requestContext.setProperty("Consumer-Name", requestContext.getHeaders().getFirst("Consumer-Name")));
+            -> requestContext.setProperty(ConsumerTracing.NAME_ATTRIBUTE, requestContext.getHeaders().getFirst("Consumer-Name")));
 
    }
 

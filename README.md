@@ -69,7 +69,12 @@ inside a Weld-SE container and provides CDI support for servlets, listeners and 
 #### Prometheus
 
 The module [`sda-commons-server-prometheus`](./sda-commons-server-prometheus/README.md) provides an admin endpoint to
-serve metrics in a format that Prometheus can read. 
+serve metrics in a format that Prometheus can read.
+
+#### Consumer Token
+
+The module [`sda-commons-server-consumer`](./sda-commons-server-consumer/README.md) adds support to track or require a consumer
+token identifying the calling application. 
 
 #### Kafka
 

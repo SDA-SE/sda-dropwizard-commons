@@ -1,5 +1,6 @@
 package com.sdase.commons.server.prometheus.metric.request.duration;
 
+import com.sdase.commons.shared.tracing.ConsumerTracing;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Histogram;
 import org.slf4j.Logger;
@@ -19,13 +20,6 @@ import java.util.Map;
 public class RequestDurationHistogramSpecification {
 
    private static final Logger LOG = LoggerFactory.getLogger(RequestDurationHistogramSpecification.class);
-
-   /**
-    * The consumer token filter is advised to store the name of the consumer using this key in request context
-    * attributes. The consumer token filter should derive the consumer name from the consumer token received in the
-    * request headers .
-    */
-   private static final String CONSUMER_NAME_KEY = "Consumer-Name";
 
    /**
     * The histogram name as it is published to Prometheus.
@@ -51,7 +45,7 @@ public class RequestDurationHistogramSpecification {
          "resource_path",
          // the status code of the response
          "status_code",
-         // the name of the consumer derived from the request attribute defined in #CONSUMER_NAME_KEY
+         // the name of the consumer derived from the request attribute defined in ConsumerTracing#NAME_ATTRIBUTE
          "consumer_name"
    };
 
@@ -148,7 +142,7 @@ public class RequestDurationHistogramSpecification {
    }
 
    private String getConsumerName(ContainerRequestContext requestContext) {
-      Object consumerName = requestContext.getProperty(CONSUMER_NAME_KEY);
+      Object consumerName = requestContext.getProperty(ConsumerTracing.NAME_ATTRIBUTE);
       return consumerName != null
             ? consumerName.toString()
             : "";
