@@ -27,7 +27,9 @@ import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.errors.InterruptException;
+import org.apache.kafka.common.header.Headers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -149,9 +152,20 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    @SuppressWarnings("unchecked")
    public <K, V> MessageProducer<K, V> registerProducer(ProducerRegistration<K, V> registration) throws ConfigurationException {
 
-      // if kafka is disabled, we return a dummy producer only
+      // if kafka is disabled (for testing issues), we return a dummy producer only.
+      // This dummy works as long as the future is not evaluated
       if (kafkaConfiguration.isDisabled()) {
-         return null;
+         return new MessageProducer<K, V>() {
+            @Override
+            public Future<RecordMetadata> send(K key, V value) {
+               return null;
+            }
+
+            @Override
+            public Future<RecordMetadata> send(K key, V value, Headers headers) {
+               return null;
+            }
+         };
       }
 
       checkInit();
