@@ -6,7 +6,7 @@ dependencies {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.javassist', module: 'javassist'
         exclude group: 'org.slf4j', module: 'slf4j-api'
-
+        exclude group: 'log4j', module: 'log4j'
     }
 
     compile 'org.apache.kafka:kafka_2.12:' + kafkaVersion, {
@@ -18,7 +18,7 @@ dependencies {
 
     compile 'org.awaitility:awaitility:'+awaitilityVersion
 
-    
+
     // just to check transitive dependency versions
     testCompile project(':sda-commons-server-dropwizard')
 }
