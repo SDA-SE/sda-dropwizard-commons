@@ -37,6 +37,7 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven { url "http://packages.confluent.io/maven/" } // for kafka-avro-serializer in sda-commons-server-kafka
         maven {
             url "https://nexus.dev.sda-se.com/repository/sda-se-releases/"
             credentials {
@@ -66,6 +67,7 @@ subprojects {
         prometheusClientVersion   = '0.5.0'
         javaxWsRsVersion          = '2.0.1'
 
+        awaitilityVersion          = '3.1.2'
         junit4Version              = '4.12'
         mockitoVersion             = '2.23.0'
         assertjVersion             = '3.11.1'
@@ -74,6 +76,12 @@ subprojects {
         h2Version                  = '1.4.197'
         databaseRiderVersion       = '1.2.9' // latest version that supports Parameterized tests: https://github.com/database-rider/database-rider/issues/104
         dbUnitVersion              = '2.5.4'
+
+        kafkaClientsVersion        = '1.1.1'
+        kafkaAvroVersion           = '3.2.1'
+        kafkaTopicanaCoreVersion   = '0.1.0'
+        kafkaJunitVersion          = '3.0.1' // testing module dependency
+        kafkaVersion               = '1.1.1' // dependency for testing
     }
 
     configurations.all {

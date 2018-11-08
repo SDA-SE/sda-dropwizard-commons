@@ -1,0 +1,67 @@
+configurations {
+    // configuration that holds jars to include in the jar because they do not exist in maven central
+    extraLibs
+}
+
+dependencies {
+    compile project(':sda-commons-server-dropwizard')
+
+    compile ('org.apache.kafka:kafka-clients:'+kafkaClientsVersion) {
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+
+    // Include classes from this dependency in the commons-kafka jar because the dependency is not in maven central.
+    // BUT exclude the transient dependencies and add them locally so that the sda-commons-server-kafka jar is as small
+    // as possible. The excluded dependencies have to be included using normal compile scope.
+    extraLibs('io.confluent:kafka-avro-serializer:'+kafkaAvroVersion) {
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'org.apache.avro', module: 'avro'
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+        exclude group: 'com.101tec', module: 'zkclient'
+    }
+    compile 'org.apache.avro:avro:1.7.7', {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.xerial.snappy', module: 'snappy-java'
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    }
+    
+    compile ('org.apache.zookeeper:zookeeper:3.4.8') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'log4j', module: 'log4j'
+    }
+    
+    compile 'com.101tec:zkclient:0.10', {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    }
+    // end of special definitions for kafka-avro-serializer from custom repo
+
+    compile ('com.github.ftrossbach:club-topicana-core:'+kafkaTopicanaCoreVersion) {
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+        exclude group: 'org.apache.kafka', module: 'kafka_2.12'
+        exclude group: 'org.apache.kafka', module: 'kafka_2.11'
+        exclude group: 'org.apache.kafka', module: 'kafka-clients'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'org.yaml', module: 'snakeyaml'
+    }
+
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testCompile project(':sda-commons-server-kafka-testing')
+
+    // use extraLibs in compile scope
+    configurations.compile.extendsFrom(configurations.extraLibs)
+}
+
+jar {
+    from {
+        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
