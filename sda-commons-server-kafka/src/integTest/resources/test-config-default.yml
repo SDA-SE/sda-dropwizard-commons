@@ -5,3 +5,5 @@ server:
   adminConnectors:
   - type: http
     port: 0
+kafka:
+  brokers: ${BROKER_CONNECTION_STRING}

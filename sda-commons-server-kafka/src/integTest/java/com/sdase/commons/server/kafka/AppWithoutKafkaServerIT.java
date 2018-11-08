@@ -8,6 +8,8 @@ import com.sdase.commons.server.kafka.dropwizard.AppConfiguration;
 import com.sdase.commons.server.kafka.dropwizard.KafkaApplication;
 import com.sdase.commons.server.kafka.exception.ConfigurationException;
 import com.sdase.commons.server.kafka.producer.MessageProducer;
+import com.sdase.commons.server.kafka.testing.KafkaBrokerEnvironmentRule;
+import com.sdase.commons.server.testing.EnvironmentRule;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.apache.kafka.common.errors.TimeoutException;
@@ -28,9 +30,14 @@ import static org.hamcrest.Matchers.*;
 
 public class AppWithoutKafkaServerIT {
 
-   @ClassRule
+
    public static final DropwizardAppRule<AppConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaApplication.class, ResourceHelpers.resourceFilePath("test-config-con-prod.yml"));
+
+   public static final EnvironmentRule rule = new EnvironmentRule().setEnv("BROKER_CONNECTION_STRING", "[  \"localhost:12345\" ]");
+
+   @ClassRule
+   public static final TestRule CHAIN = RuleChain.outerRule(rule).around(DROPWIZARD_APP_RULE);
 
 
    private List<String> results = Collections.synchronizedList(new ArrayList<>());

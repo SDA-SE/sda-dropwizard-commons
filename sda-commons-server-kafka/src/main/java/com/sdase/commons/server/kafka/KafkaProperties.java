@@ -12,7 +12,6 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 public class KafkaProperties extends Properties {
 
@@ -27,10 +26,12 @@ public class KafkaProperties extends Properties {
 
    private static KafkaProperties baseProperties(KafkaConfiguration configuration) {
       KafkaProperties props = new KafkaProperties();
-      props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG,
-            configuration.getBrokers().stream()
-                  .collect(Collectors.joining(","))
-      );
+
+      if (configuration.getBrokers() != null) {
+         props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG,
+               String.join(",", configuration.getBrokers())
+         );
+      }
       if (configuration.getSecurity().getPassword() != null && configuration.getSecurity().getUser() != null
             && configuration.getSecurity().getProtocol() != null) {
          props.put("sasl.mechanism", "PLAIN");

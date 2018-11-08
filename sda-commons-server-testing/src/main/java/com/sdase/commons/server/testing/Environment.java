@@ -6,13 +6,13 @@ import java.util.Map;
 /**
  * To be used with {@link EnvironmentRule}
  */
-final class Environment {
+public final class Environment {
 
    private Environment() {
       //
    }
 
-   static void setEnv(String key, String value) {
+   public  static void setEnv(String key, String value) {
       try {
          Map<String, String> writableEnv = getWriteableEnv();
          writableEnv.put(key, value);
@@ -21,7 +21,7 @@ final class Environment {
       }
    }
 
-   static void unsetEnv(String key) {
+   public  static void unsetEnv(String key) {
       try {
          Map<String, String> writableEnv = getWriteableEnv();
          writableEnv.remove(key);

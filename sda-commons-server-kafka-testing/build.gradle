@@ -10,7 +10,6 @@ dependencies {
     }
 
     compile 'org.apache.kafka:kafka_2.12:' + kafkaVersion, {
-        exclude group: 'org.apache.kafka', module: 'kafka-clients'
         exclude group: 'org.slf4j', module: 'slf4j-log4j12'
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'

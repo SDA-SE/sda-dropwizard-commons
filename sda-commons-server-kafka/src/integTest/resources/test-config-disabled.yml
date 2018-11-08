@@ -8,3 +8,4 @@ server:
 
 kafka:
   disabled: true
+

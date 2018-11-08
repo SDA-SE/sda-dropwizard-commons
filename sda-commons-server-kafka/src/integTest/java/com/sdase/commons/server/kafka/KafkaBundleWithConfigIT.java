@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import com.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import com.sdase.commons.server.kafka.serializers.SimpleEntity;
+import com.sdase.commons.server.kafka.testing.KafkaBrokerEnvironmentRule;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -48,14 +49,15 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 
 public class KafkaBundleWithConfigIT {
 
-   private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
-         .withBrokerProperty("port", "9091");
+   private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
 
    private static final DropwizardAppRule<AppConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaApplication.class, ResourceHelpers.resourceFilePath("test-config-con-prod.yml"));
 
+   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
+
    @ClassRule
-   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
+   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
 
    private List<Long> results = Collections.synchronizedList(new ArrayList<>());
    private List<String> resultsString = Collections.synchronizedList(new ArrayList<>());

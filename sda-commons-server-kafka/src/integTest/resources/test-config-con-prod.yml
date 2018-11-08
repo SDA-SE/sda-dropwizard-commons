@@ -8,8 +8,7 @@ server:
 
 kafka:
   adminClientrequestTimeoutMs: 2000
-  brokers:
-    - localhost:9091
+  brokers: ${BROKER_CONNECTION_STRING}
   consumers:
     consumer1:
       config:

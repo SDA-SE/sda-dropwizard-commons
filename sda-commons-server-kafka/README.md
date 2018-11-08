@@ -22,9 +22,9 @@ compile 'org.sdase.commons:sda-commons-server-kafka:<current-version>'
 The bundle should be added as field to the application since it provides methods for the creation of `MessageProducer` and `MessageListener`.
 The Builders for `MessageHandlerRegistration` and `ProducerRegistration` supports the user in the creation of these complex configurable objects. 
  
-```java
+```
 public class DemoApplication {
-   private final KafkaBundle<AppConfiguration> kafkaBundle = KafkaBundle.builder().withConfigurationProvider(AppConfiguration::getKafka).build()
+   private final KafkaBundle<AppConfiguration> kafkaBundle = KafkaBundle.builder().withConfigurationProvider(AppConfiguration::getKafka).build();
    private final MessageProducer<String, ProductBundle> producer;
       
    public void initialize(Bootstrap<AppConfiguration> bootstrap) {
@@ -124,6 +124,7 @@ kafka:
   brokers:
     - kafka-broker-1:9092 
     - kafka-broker-2:9092
+    
   # Security information used for all consumers and providers to connect to kafka
   security :
     user: user
@@ -310,9 +311,6 @@ In this case, the `KAFKA_BROKERS` variable should contain a Json array with a li
   kafka-broker:54321
 ]
 ```
-
-
-// TODO: Beispiel für Kafka Brokers 
 
 ## Testing
 [`sda-commons-server-kafka-testing`](../sda-commons-server-kafka-testing/README.md) provides support for integration testing with kafka with JUnit 4.

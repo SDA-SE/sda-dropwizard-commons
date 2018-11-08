@@ -66,9 +66,9 @@ public class AppDisabledKafkaServerIT {
    }
 
    @Test
-   public void checkRegisterProducer() throws ConfigurationException {
+   public void checkRegisterProducerReturnsDummy() throws ConfigurationException {
       MessageProducer<Object, Object> producer = bundle.registerProducer(ProducerRegistration.builder().forTopic("Topic").createTopicIfMissing().withDefaultProducer().build());
-      assertNull(producer);
+      assertNull(producer.send("test", "test"));
 
    }
 
