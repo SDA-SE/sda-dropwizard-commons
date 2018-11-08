@@ -1,5 +1,6 @@
 package com.sdase.commons.server.prometheus;
 
+import com.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
 import com.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import com.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
 import io.dropwizard.Bundle;
@@ -41,6 +42,8 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
 
    // sonar: this path is used as a convention in our world!
    private static final String METRICS_SERVLET_URL = "/metrics/prometheus"; // NOSONAR
+   // sonar: this path is used as a convention in our world!
+   private static final String HEALTH_SERVLET_URL = "/healthcheck/prometheus"; // NOSONAR
 
    private static final Logger LOG = LoggerFactory.getLogger(PrometheusBundle.class);
 
@@ -54,6 +57,7 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
    public void run(Environment environment) {
 
       registerMetricsServlet(environment.admin());
+      registerHealthCheckServlet(environment.admin());
       environment.jersey().register(this);
 
       // init Histogram at startup
@@ -89,6 +93,12 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
       ServletRegistration.Dynamic dynamic = environment.addServlet("metrics", MetricsServlet.class);
       dynamic.addMapping(METRICS_SERVLET_URL);
       LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);
+   }
+
+   private void registerHealthCheckServlet(AdminEnvironment environment) {
+      environment
+            .addServlet("Health Check as Prometheus Metrics", new HealthCheckAsPrometheusMetricServlet())
+            .addMapping(HEALTH_SERVLET_URL);
    }
 
    @Override

@@ -134,6 +134,29 @@ public class PrometheusBundleTest {
       assertThat(metrics).contains("io_dropwizard_");
    }
 
+   @Test
+   public void shouldProvideHealthChecksAsPrometheusMetrics() {
+      String healthChecks = readHealthChecks();
+
+      assertThat(healthChecks)
+            .contains("healthcheck_status{name=\"anUnhealthyCheck\",} 0.0")
+            .contains("healthcheck_status{name=\"aHealthyCheck\",} 1.0");
+   }
+
+   @Test
+   public void shouldNotHttpCacheHealthCheck() {
+      Response response = DW
+            .client()
+            .target(String.format("http://localhost:%d", DW.getAdminPort()) + "/healthcheck/prometheus")
+            .request()
+            .get();
+      assertThat(response.getHeaders()).containsKey("Cache-Control");
+      assertThat(response.getHeaders().getFirst("Cache-Control").toString())
+            .contains("must-revalidate")
+            .contains("no-cache")
+            .contains("no-store");
+   }
+
    private Invocation.Builder prepareResourceRequest() {
       return DW.client().target(resourceUri).path("ping").request();
    }
@@ -147,6 +170,17 @@ public class PrometheusBundleTest {
       String metrics = response.readEntity(String.class);
       LOGGER.info("Prometheus metrics: {}", metrics);
       return metrics;
+   }
+
+   private String readHealthChecks() {
+      Response response = DW
+            .client()
+            .target(String.format("http://localhost:%d", DW.getAdminPort()) + "/healthcheck/prometheus")
+            .request()
+            .get();
+      String healthChecks = response.readEntity(String.class);
+      LOGGER.info("Prometheus health checks: {}", healthChecks);
+      return healthChecks;
    }
 
 }
