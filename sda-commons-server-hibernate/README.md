@@ -15,7 +15,7 @@ compile scope.
 
 ### Initialization
 
-The [`HibernateBundle`](./src/main/java/com/sdase/commons/server/hibernate/HibernateBundle.java) should be added as 
+The [`HibernateBundle`](./src/main/java/org/sdase/commons/server/hibernate/HibernateBundle.java) should be added as 
 field in the application class instead of being anonymously added in the initialize method like other bundles of this 
 library. Implementations need to refer to the instance to get access to the `SessionFactory`. _Note that there may be 
 some differences when using Weld as CDI implementation. Extending documentation for this scenario will be added when
@@ -88,7 +88,7 @@ has an example. The required `SessionFactory` is provided by the `HibernateBundl
 ### Schema migration
 
 For database schema migration, [Flyway](https://flywaydb.org/) is used by the 
-[`DbMigrationService`](./src/main/java/com/sdase/commons/server/hibernate/DbMigrationService.java) and works with the
+[`DbMigrationService`](./src/main/java/org/sdase/commons/server/hibernate/DbMigrationService.java) and works with the
 same `DataSourceFactory` as the `HibernateBundle`. It may be used in a custom `ConfiguredCommand` in each application.
 Therefore defaults for the command name and the documentation is provided:
 
@@ -143,11 +143,11 @@ For testing database access with Hibernate we suggest to use [sda-commons-hibern
 Dependencies to be added:
 
 ```
-    testCompile 'com.sdase.commons:sda-commons-server-hibernate-testing:<VERSION>'
+    testCompile 'org.sdase.commons:sda-commons-server-hibernate-testing:<VERSION>'
 ```
 
 For creating tests without a Dropwizard application please refer to the 
-[`DbMigrationServiceTest`](./src/test/java/com/sdase/commons/server/hibernate/DbMigrationServiceTest.java) as example.
+[`DbMigrationServiceTest`](./src/test/java/org/sdase/commons/server/hibernate/DbMigrationServiceTest.java) as example.
 
 For creating full integration tests of a Dropwizard application please refer to
-[`HibernateIT`](./src/integTest/java/com/sdase/commons/server/hibernate/HibernateIT.java) as example. 
+[`HibernateIT`](./src/integTest/java/org/sdase/commons/server/hibernate/HibernateIT.java) as example. 

@@ -9,11 +9,11 @@ testCompile 'org.sdase.commons:sda-commons-server-auth-testing:<current-version>
 ```
 
 In an integration test, authentication can be configured using the 
-[`AuthRule`](./src/main/java/com/sdase/commons/server/auth/testing/AuthRule.java).
+[`AuthRule`](./src/main/java/org/sdase/commons/server/auth/testing/AuthRule.java).
 
 The `AuthRule` uses the `EnvironmentRule` to create the `AuthConfig` in an environment property called `AUTH_RULE`.
 Therefore the configuration in the test needs to use this property and the application is required to use the 
-[`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/com/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
+[`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
 from [`sda-commons-server-dropwizard`](../sda-commons-server-dropwizard/README.md):
 
 ```java
@@ -64,8 +64,8 @@ public class AuthRuleIT {
 
 Examples can be found in the [integTest source branch](./src/integTest) of this module. There is
 
-- [An example app](./src/integTest/java/com/sdase/commons/server/auth/testing/test/AuthTestApp.java)  
-- [A test with authentication](./src/integTest/java/com/sdase/commons/server/auth/testing/AuthRuleIT.java)  
-- [A test with disabled authentication](./src/integTest/java/com/sdase/commons/server/auth/testing/AuthDisabledIT.java)
+- [An example app](./src/integTest/java/org/sdase/commons/server/auth/testing/test/AuthTestApp.java)  
+- [A test with authentication](./src/integTest/java/org/sdase/commons/server/auth/testing/AuthRuleIT.java)  
+- [A test with disabled authentication](./src/integTest/java/org/sdase/commons/server/auth/testing/AuthDisabledIT.java)
   which uses the `EnvironmentRule` instead of the `AuthRule`
 - [An appropriate test config yaml](./src/integTest/resources/test-config.yaml)

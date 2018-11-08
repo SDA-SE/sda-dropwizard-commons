@@ -25,7 +25,7 @@ For testing some frameworks are included:
 
 ### EnvironmentRule
 
-The [`EnvironmentRule`](./src/main/java/com/sdase/commons/server/testing/EnvironmentRule.java) allows to override or
+The [`EnvironmentRule`](./src/main/java/org/sdase/commons/server/testing/EnvironmentRule.java) allows to override or
 unset environment variables in test cases and resets them to the state before the test after the test finished.
 
 ```

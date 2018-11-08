@@ -24,7 +24,7 @@ plugins {
 }
 
 subprojects {
-    group 'com.sdase.commons'
+    group 'org.sdase.commons'
 
     apply plugin: 'java'
     apply plugin: 'maven'

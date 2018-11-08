@@ -7,7 +7,7 @@
 
 ### Testing
 
-To start a Dropwizard application during testing the [`WeldAppRule`](./src/main/java/com/sdase/commons/server/weld/testing/WeldAppRule.java) can be used:
+To start a Dropwizard application during testing the [`WeldAppRule`](./src/main/java/org/sdase/commons/server/weld/testing/WeldAppRule.java) can be used:
 
 ```java
 @ClassRule
@@ -15,7 +15,7 @@ public static final WeldAppRule<AppConfiguration> RULE = new WeldAppRule<>(
     Application.class, ResourceHelpers.resourceFilePath("config.yml"));
 ```
  
-The `WeldAppRule` is a shortcut for creating a `DropwizardAppRule` in combination with the [`WeldTestSupport`](./src/main/java/com/sdase/commons/server/weld/testing/WeldTestSupport.java):
+The `WeldAppRule` is a shortcut for creating a `DropwizardAppRule` in combination with the [`WeldTestSupport`](./src/main/java/org/sdase/commons/server/weld/testing/WeldTestSupport.java):
  
 ```java
 @ClassRule

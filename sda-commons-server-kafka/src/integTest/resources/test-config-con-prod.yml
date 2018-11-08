@@ -24,7 +24,7 @@ kafka:
     producer3:
       config:
         key.serializer: org.apache.kafka.common.serialization.LongSerializer
-        value.serializer: com.sdase.commons.server.kafka.serializers.KafkaJsonSerializer
+        value.serializer: KafkaJsonSerializer
 
   listenerConfig:
     async:

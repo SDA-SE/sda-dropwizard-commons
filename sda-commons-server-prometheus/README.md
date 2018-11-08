@@ -43,11 +43,11 @@ to avoid blocking collection of the results.
 
 ## Usage
 
-The [`PrometheusBundle`](./src/main/java/com/sdase/commons/server/prometheus/PrometheusBundle.java) has to be added in
+The [`PrometheusBundle`](./src/main/java/org/sdase/commons/server/prometheus/PrometheusBundle.java) has to be added in
 the application:
 
 ```java
-import com.sdase.commons.server.prometheus.PrometheusBundle;
+import PrometheusBundle;
 import io.dropwizard.Application;
 
 public class MyApplication extends Application<MyConfiguration> {

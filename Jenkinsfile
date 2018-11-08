@@ -110,7 +110,7 @@ pipeline {
              branch 'master'
          }
          steps {
-             sonarScanBranch project: 'com.sdase.sda-commons', javaBaseDir: './'
+             sonarScanBranch project: 'org.sdase.commons', javaBaseDir: './'
          }
       }
       /*
@@ -124,7 +124,7 @@ pipeline {
              changeRequest()
          }
          steps {
-             sonarScanPullRequest project: 'com.sdase.sda-commons', javaBaseDir: './'
+             sonarScanPullRequest project: 'org.sdase.commons', javaBaseDir: './'
          }
       }
       /*

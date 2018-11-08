@@ -11,4 +11,4 @@ logging:
     org.eclipse.jetty: WARN
     io.dropwizard: WARN
     io.dropwizard.setup.AdminEnvironment: 'OFF'
-    com.sdase.commons.server.swagger.SwaggerBundle: WARN
+    org.sdase.commons.server.swagger.SwaggerBundle: WARN

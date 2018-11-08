@@ -4,7 +4,7 @@ The module `sda-commons-server-jackson` is used to configure the
 `ObjectMapper` with the recommended default settings of SDA SE services. It also provides support for linking resources 
 with HAL and adds the ability to filter fields on client request.
 
-The [`JacksonConfigurationBundle`](./src/main/java/com/sdase/commons/server/jackson/JacksonConfigurationBundle.java) is
+The [`JacksonConfigurationBundle`](./src/main/java/org/sdase/commons/server/jackson/JacksonConfigurationBundle.java) is
 used to configure the Json serializer.
 
 
@@ -14,7 +14,7 @@ used to configure the Json serializer.
 In the application class, the bundle is added in the `initialize` method:
 
 ```java
-import com.sdase.commons.server.jackson.JacksonConfigurationBundle;
+import JacksonConfigurationBundle;
 import io.dropwizard.Application;
 
 public class MyApplication extends Application<MyConfiguration> {

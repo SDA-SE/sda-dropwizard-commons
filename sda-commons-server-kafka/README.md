@@ -1,6 +1,8 @@
 # kafka-common
-This module provides a [`KafkaBundle`](./src/main/java/com/sdase/commons/server/kafka/KafkaBundle.java) adds convenient functionality to create Kafka consumers, producers, and topics via configuration or Java DSL. It additionally provides a default [`MessageListener`](./src/main/java/com/sdase/commons/server/kafka/consumer/MessageListener.java) that implements a polling loop for kafka consumers. 
-The user of this bundle must only implement the functional logic. 
+This module provides a [`KafkaBundle`](./src/main/java/org/sdase/commons/server/kafka/KafkaBundle.java) adds convenient 
+functionality to create Kafka consumers, producers, and topics via configuration or Java DSL. It additionally provides a 
+default [`MessageListener`](./src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java) that 
+implements a polling loop for kafka consumers. The user of this bundle must only implement the functional logic. 
 
 
 ## Usage

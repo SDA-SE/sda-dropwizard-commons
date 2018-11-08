@@ -13,5 +13,5 @@
   </root>
 
   <logger name="org.reflections.Reflections" level="WARN"/>
-  <logger name="com.sdase.commons.server.swagger.SwaggerBundle" level="WARN"/>
+  <logger name="org.sdase.commons.server.swagger.SwaggerBundle" level="WARN"/>
 </configuration>

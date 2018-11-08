@@ -15,7 +15,7 @@ configuration, the server will respond `401 Unauthorized` when the client does n
 ## Usage
 
 The consumer token is loaded within a filter that is created and registered by the 
-[`ConsumerTokenBundle`](./src/main/java/com/sdase/commons/server/consumer/ConsumerTokenBundle.java) which must be added
+[`ConsumerTokenBundle`](./src/main/java/org/sdase/commons/server/consumer/ConsumerTokenBundle.java) which must be added
 to the Dropwizard application:
 
 ```java
@@ -64,7 +64,7 @@ public class MyConfig extends Configuration {
 ```
 
 In the `config.yml` the consumer token may be configured with support for environment properties when the
-[`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/com/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
+[`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
 is used:
 
 ```yaml

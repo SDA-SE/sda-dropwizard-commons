@@ -66,4 +66,4 @@ bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
 ```
 [ "127.0.0.1:38185", "127.0.0.1:44401" ]
 ```
-An example for setup a test scenario can be found in [KafkaBundleWithConfigIT.java](./../sda-commons-server-kafka/src/integTest/java/com/sdase/commons/server/kafka/KafkaBundleWithConfigIT.java)
+An example for setup a test scenario can be found in [KafkaBundleWithConfigIT.java](./../sda-commons-server-kafka/src/integTest/java/org/sdase/commons/server/kafka/KafkaBundleWithConfigIT.java)

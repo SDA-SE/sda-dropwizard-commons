@@ -1,6 +1,6 @@
 # SDA Commons Server Auth
 
-This module provides an [`AuthBundle`](./src/main/java/com/sdase/commons/server/auth/AuthBundle.java) to authenticate
+This module provides an [`AuthBundle`](./src/main/java/org/sdase/commons/server/auth/AuthBundle.java) to authenticate
 users based on JSON Web Tokens. 
 
 To use the bundle, a dependency to this module has to be added:
@@ -9,7 +9,7 @@ To use the bundle, a dependency to this module has to be added:
 compile 'org.sdase.commons:sda-commons-server-auth:<current-version>'
 ```
 
-The authentication creates a [`JwtPrincipal`](./src/main/java/com/sdase/commons/server/auth/JwtPrincipal.java) per 
+The authentication creates a [`JwtPrincipal`](./src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java) per 
 request. The current user can be accessed from the `SecurityContext`:
 
 ```java
@@ -55,7 +55,7 @@ public class MyApplication extends Application<MyConfiguration> {
 ## Configuration
 
 The configuration relies on the `config.yaml` of the application and the custom property where the 
-[`AuthConfig`](./src/main/java/com/sdase/commons/server/auth/config/AuthConfig.java) is mapped. Usually this should be 
+[`AuthConfig`](./src/main/java/org/sdase/commons/server/auth/config/AuthConfig.java) is mapped. Usually this should be 
 `auth`.
 
 ```java
@@ -111,7 +111,7 @@ auth:
 ```
 
 The config may be filled from environment variables if the
-[`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/com/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
+[`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
 is used:
 
 ```yaml
@@ -122,7 +122,7 @@ auth:
 ```
 
 In this case, the `AUTH_KEYS` variable should contain a Json array of 
-[`KeyLocation`](./src/main/java/com/sdase/commons/server/auth/config/KeyLocation.java) objects:
+[`KeyLocation`](./src/main/java/org/sdase/commons/server/auth/config/KeyLocation.java) objects:
 
 ```json
 [
