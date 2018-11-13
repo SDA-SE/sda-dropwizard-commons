@@ -12,6 +12,7 @@ technologies that are recommended for services in the SDA SE Platform. These tec
 - [Jersey](https://jersey.github.io/)
 - [Swagger](https://swagger.io/)
 - [Hibernate](http://hibernate.org/)
+- [Kafka](https://kafka.apache.org/)
 
 ## Modules in SDA Commons
 
@@ -21,7 +22,21 @@ All modules prefixed with `sda-commons-server-` provide technology and configura
 to provide REST Endpoints.
 
 
-#### Testing
+#### Main Server Modules
+
+The main server modules help to bootstrap and test a Dropwizard application with convergent dependencies. 
+
+##### Dropwizard
+
+The module [`sda-commons-server-dropwizard`](./sda-commons-server-dropwizard/README.md) provides 
+`io.dropwizard:dropwizard-core` with convergent dependencies. All other SDA Commons Server modules use this dependency
+and are aligned to the versions provided by `sda-commons-server-dropwizard`. It also provides some common bundles that
+require no additional dependencies.
+
+Status:
+- Ready to use
+
+##### Testing
 
 The module [`sda-commons-server-testing`](./sda-commons-server-testing/README.md) is the base module to add unit and 
 integration tests for applications in the SDA SE infrastructure.
@@ -31,52 +46,110 @@ Some modules have a more specialized testing module, e.g. the
 [`sda-commons-server-hibernate-testing`](./sda-commons-server-hibernate-testing/README.md) module, providing further
 support.
 
-#### Dropwizard
+Status:
+- Ready to use
 
-The module [`sda-commons-server-dropwizard`](./sda-commons-server-dropwizard/README.md) provides 
-`io.dropwizard:dropwizard-core` with convergent dependencies. All other SDA Commons Server modules use this dependency
-and are aligned to the versions provided by `sda-commons-server-dropwizard`. It also provides some common bundles that
-require no additional dependencies.
+#### Additional Server Modules
 
-#### Jackson
+The additional server modules add helpful technologies to the Dropwizard application. 
+
+##### Auth
+
+The module [`sda-commons-server-auth`](./sda-commons-server-auth/README.md) provides support to add authentication
+using JSON Web Tokens with different sources for the public keys of the signing authorities.
+
+Status:
+- Ready to use
+
+##### Consumer Token
+
+The module [`sda-commons-server-consumer`](./sda-commons-server-consumer/README.md) adds support to track or require a 
+consumer token identifying the calling application. 
+
+Status:
+- Ready to use if the application itself does not act as client
+- If the application acts as a client as well, `ConsumerTokenClientFilter` and `ConsumerTokenContainerFilter` from
+  [rest-common](#usage-in-combination-with-rest-common) should be used
+
+##### Hibernate
+
+The module [`sda-commons-server-hibernate`](./sda-commons-server-hibernate/README.md) provides access to relational
+databases with hibernate.
+
+Status:
+- Ready to use
+
+##### Jackson
 
 The module [`sda-commons-server-jackson`](./sda-commons-server-jackson/README.md) is used to configure the 
 `ObjectMapper` with the recommended default settings of SDA SE services. It also provides support for linking resources 
 with HAL and adds the ability to filter fields on client request.
 
+Status:
+- Ready to use
+- Custom configuration is needed to support the tolerant reader pattern
+- Tolerant reader configuration like disabling "fail on unknown properties" will follow in future releases
 
-#### Swagger
+##### Kafka
+
+The module [`sda-commons-server-kafka`](./sda-commons-server-kafka/README.md) provides means to send and consume 
+messages from a kafka topic.
+
+Status:
+- Ready to use with JSON messages
+- Support for Avro messages is available as beta but can't be tested yet
+
+##### Prometheus
+
+The module [`sda-commons-server-prometheus`](./sda-commons-server-prometheus/README.md) provides an admin endpoint to
+serve metrics in a format that Prometheus can read.
+
+Status:
+- Ready to use in combination with [SDA Commons Consumer Token](#consumer-token)
+- Metrics will miss the consumer token when used with consumer token support form rest-common 
+
+##### Swagger
 
 The module [`sda-commons-server-swagger`](./sda-commons-server-swagger/README.md) is the base 
 module to add [Swagger](https://github.com/swagger-api/swagger-core) support for applications
 in the SDA SE infrastructure.
 
-#### Auth
+Status:
+- Ready to use
 
-The module [`sda-commons-server-auth`](./sda-commons-server-auth/README.md) provides support to add authentication
-using JSON Web Tokens with different sources for the public keys of the signing authorities.
-
-#### Hibernate
-
-The module [`sda-commons-server-hibernate`](./sda-commons-server-hibernate/README.md) provides access to relational
-databases with hibernate.
-
-#### Weld
+##### Weld
 
 The module [`sda-commons-server-weld`](./sda-commons-server-weld/README.md) is used to bootstrap Dropwizard applications 
 inside a Weld-SE container and provides CDI support for servlets, listeners and resources.
 
-#### Prometheus
+Status:
+- Ready to use
 
-The module [`sda-commons-server-prometheus`](./sda-commons-server-prometheus/README.md) provides an admin endpoint to
-serve metrics in a format that Prometheus can read.
+## Usage in combination with rest-common
 
-#### Consumer Token
+To keep convergent dependencies when some features of [`rest-common`](https://github.com/SDA-SE/rest-common) are needed,
+`rest-common` should be added as follows:
 
-The module [`sda-commons-server-consumer`](./sda-commons-server-consumer/README.md) adds support to track or require a consumer
-token identifying the calling application. 
+```
+    // rest-common
+    compile('com.sdase.framework:rest-common:0.56.0') {
+        exclude group: 'ma.glasnost.orika', module: 'orika-core'
+    }
 
-#### Kafka
+    // add excluded dependency from rest-common with appropriate excludes
+    compile ('ma.glasnost.orika:orika-core:1.5.2') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.javassist', module: 'javassist'
+        exclude group: 'com.thoughtworks.paranamer', module: 'paranamer'
+    }
+```
 
-The module [`sda-commons-server-kafka`](./sda-commons-server-kafka/README.md) provides means to send and consume 
-messages from a kafka topic.
+Convergent dependencies may be forced in the build.gradle:
+
+```
+    configurations.all {
+        resolutionStrategy {
+            failOnVersionConflict()
+        }
+    }
+```
