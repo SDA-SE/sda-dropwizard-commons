@@ -244,7 +244,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
                replications = t.getReplicationFactor().count();
             }
 
-            return new NewTopic(t.getTopicName(), replications, (short) partitions).configs(t.getProps());
+            return new NewTopic(t.getTopicName(),  partitions, (short) replications).configs(t.getProps());
          }).collect(Collectors.toList());
          CreateTopicsResult result = adminClient.createTopics(topicList);
          result.all().get();
