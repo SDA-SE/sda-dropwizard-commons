@@ -84,7 +84,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     */
    public ExpectedTopicConfiguration getTopicConfiguration(String name) throws ConfigurationException {
       if (topics.get(name) == null) {
-         throw new ConfigurationException("Topic name seems not to be part of the read configuration. Please check the name and configuration.");
+         throw new ConfigurationException(
+             String.format(
+                 "Topic with name '%s' seems not to be part of the read configuration. Please check the name and configuration.",
+                 name));
       }
       return topics.get(name);
    }
@@ -118,7 +121,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          if (config == null && registration.getListenerConfigName() != null) {
             ListenerConfig listenerConfig = kafkaConfiguration.getListenerConfig().get(registration.getListenerConfigName());
             if (listenerConfig == null) {
-               throw new ConfigurationException(String.format("Listener config with name %s cannot be found within the current configuration.", registration.getListenerConfigName()));
+               throw new ConfigurationException(String.format(
+                   "Listener config with name '%s' cannot be found within the current configuration.",
+                   registration.getListenerConfigName()));
             }
             config = kafkaConfiguration.getListenerConfig().get(registration.getListenerConfigName());
          }
@@ -293,7 +298,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
       if (producerConfig == null && registration.getProducerConfigName() != null) {
          if (!kafkaConfiguration.getProducers().containsKey(registration.getProducerConfigName())) {
-            throw new ConfigurationException(String.format("Producer config with name %s cannot be found within the current configuration.", registration.getProducerConfigName()));
+            throw new ConfigurationException(String.format(
+                "Producer config with name '%s' cannot be found within the current configuration.",
+                registration.getProducerConfigName()));
          }
          producerConfig = kafkaConfiguration.getProducers().get(registration.getProducerConfigName());
       }
@@ -311,7 +318,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
       if (consumerConfig == null && registration.getConsumerConfigName() != null) {
          if (!kafkaConfiguration.getConsumers().containsKey(registration.getConsumerConfigName())) {
-            throw new ConfigurationException(String.format("Consumer config with name %s cannot be found within the current configuration.", registration.getConsumerConfigName()));
+            throw new ConfigurationException(String.format(
+                "Consumer config with name '%s' cannot be found within the current configuration.",
+                registration.getConsumerConfigName()));
          }
          consumerConfig = kafkaConfiguration.getConsumers().get(registration.getConsumerConfigName());
 
