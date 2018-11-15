@@ -1,18 +1,23 @@
 package org.sdase.commons.server.consumer;
 
-import org.sdase.commons.server.consumer.filter.ConsumerTokenServerFilter;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.sdase.commons.server.consumer.filter.ConsumerTokenServerFilter;
 
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
-   private ConsumerTokenConfigProvider<C> consumerTokenConfigProvider;
+   private final Function<C, ConsumerTokenConfig> consumerTokenConfigProvider;
 
-   private ConsumerTokenBundle(ConsumerTokenConfigProvider<C> consumerTokenConfigProvider) {
+
+   private ConsumerTokenBundle(Function<C, ConsumerTokenConfig> consumerTokenConfigProvider) {
       this.consumerTokenConfigProvider = consumerTokenConfigProvider;
    }
 
@@ -25,11 +30,11 @@ public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredB
    public void run(C configuration, Environment environment) {
       ConsumerTokenConfig config = consumerTokenConfigProvider.apply(configuration);
       boolean requireIdentifiedConsumer = !config.isOptional();
-      ConsumerTokenServerFilter consumerTokenServerFilter = new ConsumerTokenServerFilter(requireIdentifiedConsumer);
+      ConsumerTokenServerFilter consumerTokenServerFilter = new ConsumerTokenServerFilter(requireIdentifiedConsumer, config.getExcludePatterns());
       environment.jersey().register(consumerTokenServerFilter);
    }
 
-   public static ConfigBuilder builder() {
+   public static OptionsBuilder builder() {
       return new Builder<>();
    }
 
@@ -41,7 +46,22 @@ public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredB
    // builder
    //
 
-   public interface ConfigBuilder {
+   public interface OptionsBuilder {
+      /**
+       * Creates the bundle with the consumer token being optional.
+       *
+       * @return a builder to create the bundle
+       */
+      FinalBuilder<Configuration> withOptionalConsumerToken();
+
+
+      /**
+       * Creates the bundle with a consumer token required for every request.
+       *
+       * @return a builder to create the bundle
+       */
+      ExcludeBuilder withRequiredConsumerToken();
+
       /**
        *
        * @param configProvider the method returning the {@link ConsumerTokenConfig} from the applications
@@ -51,36 +71,39 @@ public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredB
        */
       <C extends Configuration> FinalBuilder<C> withConfigProvider(ConsumerTokenConfigProvider<C> configProvider);
 
-      /**
-       * Creates the bundle with a consumer token required for every request.
-       *
-       * @return a builder to create the bundle
-       */
-      FinalBuilder<Configuration> withRequiredConsumerToken();
+
+   }
+   public interface ExcludeBuilder<C extends Configuration> extends FinalBuilder<C> {
 
       /**
-       * Creates the bundle with the consumer token being optional.
+       * Creates the bundle but ignores urls that matches the given exclude pattern regex
        *
-       * @return a builder to create the bundle
+       * @param regex regex that must be includeed
+       * @return a builder for further options
        */
-      FinalBuilder<Configuration> withOptionalConsumerToken();
+      FinalBuilder<C> withExcludePatterns(@NotNull String ... regex);
+
    }
+
 
    public interface FinalBuilder<C extends Configuration> {
       ConsumerTokenBundle<C> build();
    }
 
-   public static class Builder<C extends Configuration> implements ConfigBuilder, FinalBuilder<C> {
+   public static class Builder<C extends Configuration> implements FinalBuilder<C>, OptionsBuilder, ExcludeBuilder<C> {
 
-      private ConsumerTokenConfigProvider<C> configProvider;
+      private Function<C, ConsumerTokenConfig> configProvider;
 
       private Boolean requireConsumerToken;
+
+      private List<String> excludePattern = new ArrayList<>();
 
       private Builder() {
       }
 
-      private Builder(boolean requireConsumerToken) {
+      private Builder(boolean requireConsumerToken, List<String> excludePattern) {
          this.requireConsumerToken = requireConsumerToken;
+         this.excludePattern = excludePattern;
       }
 
       private Builder(ConsumerTokenConfigProvider<C> configProvider) {
@@ -93,27 +116,54 @@ public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredB
       }
 
       @Override
-      public FinalBuilder<Configuration> withRequiredConsumerToken() {
-         return new Builder<>(true);
+      public FinalBuilder<Configuration> withOptionalConsumerToken() {
+         return new Builder<>(false, this.excludePattern);
       }
 
       @Override
-      public FinalBuilder<Configuration> withOptionalConsumerToken() {
-         return new Builder<>(false);
+      public ExcludeBuilder withRequiredConsumerToken() {
+         return new Builder<>(true, excludePattern);
+      }
+
+      @Override
+      public FinalBuilder<C> withExcludePatterns(String ... pattern) {
+         return new Builder<>(this.requireConsumerToken, Arrays.asList(pattern));
       }
 
       @Override
       public ConsumerTokenBundle<C> build() {
-         if (configProvider != null) {
-            return new ConsumerTokenBundle<>(configProvider);
-         }
-         else if (requireConsumerToken != null){
+         if (configProvider == null) {
+            if (requireConsumerToken == null) {
+               throw new IllegalStateException("Missing either a config provider or an explicit config");
+            }
             ConsumerTokenConfig consumerTokenConfig = new ConsumerTokenConfig();
             consumerTokenConfig.setOptional(!requireConsumerToken);
-            return new ConsumerTokenBundle<>(c -> consumerTokenConfig);
+            consumerTokenConfig.setExcludePatterns(excludePattern);
+            configProvider = c -> consumerTokenConfig;
          }
-         else throw new IllegalStateException("Missing either a config provider or an explicit config for required" +
-                  " consumer token.");
+         if (excludeSwaggerJson()) {
+            configProvider = configProvider.andThen(this::addSwaggerConfigExclude);
+         }
+         return new ConsumerTokenBundle<>(configProvider);
+      }
+
+
+      private ConsumerTokenConfig addSwaggerConfigExclude(ConsumerTokenConfig consumerTokenConfig) {
+         ArrayList<String> patterns = new ArrayList<>(consumerTokenConfig.getExcludePatterns());
+         patterns.add("swagger\\.(json|yaml)");
+         consumerTokenConfig.setExcludePatterns(patterns);
+         return consumerTokenConfig;
+      }
+
+      private boolean excludeSwaggerJson() {
+         try {
+            if (getClass().getClassLoader().loadClass("org.sdase.commons.server.swagger.SwaggerBundle") != null) {
+               return true;
+            }
+         } catch (ClassNotFoundException e) {
+            // silently ignored
+         }
+         return false;
       }
    }
 }

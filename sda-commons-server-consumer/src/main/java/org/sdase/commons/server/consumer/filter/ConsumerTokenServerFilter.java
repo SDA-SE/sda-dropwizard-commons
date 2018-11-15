@@ -9,20 +9,29 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * A request filter that detects, verifies and provides the consumer token in incoming requests.
  */
 public class ConsumerTokenServerFilter implements ContainerRequestFilter {
 
-   private boolean requireIdentifiedConsumer;
+   private final boolean requireIdentifiedConsumer;
+   private final List<Pattern> excludePatterns;
 
    /**
     * @param requireIdentifiedConsumer if an identified customer is required to fulfill requests
     */
-   public ConsumerTokenServerFilter(boolean requireIdentifiedConsumer) {
+   public ConsumerTokenServerFilter(boolean requireIdentifiedConsumer, List<String> excludeRegex) {
       this.requireIdentifiedConsumer = requireIdentifiedConsumer;
+      this.excludePatterns = excludeRegex == null
+            ? Collections.emptyList()
+            : excludeRegex.stream().map(Pattern::compile).collect(toList());
    }
 
    @Override
@@ -41,7 +50,11 @@ public class ConsumerTokenServerFilter implements ContainerRequestFilter {
       consumerName.ifPresent(name -> this.addConsumerNameToRequest(requestContext, name));
 
       if (requireIdentifiedConsumer && !consumerName.isPresent()) {
-         throw failForMissingConsumerToken();
+         String path = requestContext.getUriInfo().getPath();
+         boolean pathExcluded = excludePatterns.stream().anyMatch(p -> p.matcher(path).matches());
+         if (!pathExcluded) {
+            throw failForMissingConsumerToken();
+         }
       }
 
    }

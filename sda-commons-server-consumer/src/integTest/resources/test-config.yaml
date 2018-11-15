@@ -5,6 +5,9 @@ server:
   adminConnectors:
   - type: http
     port: 0
+  rootPath: "/api/*"
+
 
 consumerToken:
   optional: ${CONSUMER_TOKEN_OPTIONAL:-false}
+  excludePatterns: ${CONSUMER_TOKEN_EXCLUDE:-["swagger\\.(json|yaml)"]}

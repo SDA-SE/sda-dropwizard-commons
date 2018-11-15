@@ -24,6 +24,7 @@ public class ConsumerTokenRequiredTestApp extends Application<ConsumerTokenTestC
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
       bootstrap.addBundle(ConsumerTokenBundle.builder()
             .withRequiredConsumerToken()
+            .withExcludePatterns("swagger\\.(json|yaml)")
             .build());
    }
 
@@ -43,6 +44,14 @@ public class ConsumerTokenRequiredTestApp extends Application<ConsumerTokenTestC
    public Response getConsumerName(@Context ContainerRequestContext requestContext) {
       return Response.ok(requestContext.getProperty(ConsumerTracing.NAME_ATTRIBUTE)).build();
    }
+
+   @GET
+   @Path("/swagger.json")
+   @Produces(MediaType.APPLICATION_JSON)
+   public Response getSwagger(@Context ContainerRequestContext requestContext) {
+      return Response.ok(requestContext.getProperty(ConsumerTracing.NAME_ATTRIBUTE)).build();
+   }
+
 
    @GET
    @Path("/token")

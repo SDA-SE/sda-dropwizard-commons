@@ -29,9 +29,11 @@ public class MyApplication extends Application<MyConfiguration> {
    public void initialize(Bootstrap<MyConfiguration> bootstrap) {
       // ...
       bootstrap.addBundle(ConsumerTokenBundle.builder()
-            .withConfigProvider(MyConfiguration::getConsumerToken) // required or optional is configurable in config.yml
-            // .withRequiredConsumerToken() // alternative: always require the token
-            // .withOptionalConsumerToken() // alternative: never require the token but track it if available
+            .withConfigProvider(MyConfiguration::getConsumerToken) // required with exclude or optional is configurable in config.yml
+            // alternative1: always require the token if path in not matched by exclude pattern
+            // .withRequiredConsumerToken().withExcludePattern("publicResource/\\d+.*")                                
+            // alternative2: never require the token but track it if available
+            // .withOptionalConsumerToken() 
             .build());
       // ...
    }
@@ -42,6 +44,18 @@ public class MyApplication extends Application<MyConfiguration> {
    }
 }
 ```
+
+### Exclude patterns
+When consumer token is set to required, exclude regex patterns can be defined to exclude some urls to require a consumer token. The regex must match
+the resource path to exclude it.
+ 
+E.g. in `http://localhost:8080/api/projects/1`, `http://localhost:8080/api/` is the base path
+and `projects/1` is the resource path. 
+ 
+#### swagger.json and swagger.yaml
+When the `SwaggerBundle` from [`sda-commons-server-swagger`](../sda-commons-server-swagger/README.md) is in the 
+classpath, excludes for _swagger.json_ and _swagger.yaml_ are added automatically using the regular expression 
+`swagger\.(json|yaml)` to allow clients to load the swagger definition without providing a consumer token.
 
 ## Configuration
 
@@ -70,5 +84,6 @@ is used:
 ```yaml
 consumerToken:
   optional: ${CONSUMER_TOKEN_OPTIONAL:-false}
+  excludePatterns: ${CONSUMER_TOKEN_EXCLUDE:-[]}
 ```
 

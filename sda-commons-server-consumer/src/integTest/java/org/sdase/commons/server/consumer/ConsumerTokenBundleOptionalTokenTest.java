@@ -29,7 +29,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
 
    @Test
    public void shouldReadConsumerToken() {
-      String consumerToken = DW.client().target("http://localhost:" + DW.getLocalPort()).path("/token")
+      String consumerToken = DW.client().target("http://localhost:" + DW.getLocalPort()).path("/api/token")
             .request(APPLICATION_JSON)
             .header("Consumer-Token", "test-consumer")
             .get(String.class);
@@ -38,7 +38,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
 
    @Test
    public void shouldReadConsumerName() {
-      String consumerToken = DW.client().target("http://localhost:" + DW.getLocalPort()).path("/name")
+      String consumerToken = DW.client().target("http://localhost:" + DW.getLocalPort()).path("/api/name")
             .request(APPLICATION_JSON)
             .header("Consumer-Token", "test-consumer")
             .get(String.class);
@@ -47,7 +47,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
 
    @Test
    public void shouldNotRejectRequestWithoutConsumerToken() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort()).path("/name")
+      Response response = DW.client().target("http://localhost:" + DW.getLocalPort()).path("/api/name")
             .request(APPLICATION_JSON).get();
       assertThat(response.getStatus()).isEqualTo(200);
    }
@@ -61,7 +61,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
    @Test
    public void shouldReadConsumerTokenFixedConfig() {
       String consumerToken = DW_OPTIONAL.client().target("http://localhost:" + DW_OPTIONAL.getLocalPort())
-            .path("/token")
+            .path("/api/token")
             .request(APPLICATION_JSON)
             .header("Consumer-Token", "test-consumer")
             .get(String.class);
@@ -70,7 +70,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
 
    @Test
    public void shouldReadConsumerNameFixedConfig() {
-      String consumerToken = DW_OPTIONAL.client().target("http://localhost:" + DW_OPTIONAL.getLocalPort()).path("/name")
+      String consumerToken = DW_OPTIONAL.client().target("http://localhost:" + DW_OPTIONAL.getLocalPort()).path("/api/name")
             .request(APPLICATION_JSON)
             .header("Consumer-Token", "test-consumer")
             .get(String.class);
@@ -79,7 +79,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
 
    @Test
    public void shouldNotRejectRequestWithoutConsumerTokenFixedConfig() {
-      Response response = DW_OPTIONAL.client().target("http://localhost:" + DW_OPTIONAL.getLocalPort()).path("/name")
+      Response response = DW_OPTIONAL.client().target("http://localhost:" + DW_OPTIONAL.getLocalPort()).path("/api/name")
             .request(APPLICATION_JSON).get();
       assertThat(response.getStatus()).isEqualTo(200);
    }
