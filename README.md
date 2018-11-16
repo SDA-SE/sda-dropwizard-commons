@@ -117,6 +117,15 @@ in the SDA SE infrastructure.
 Status:
 - Ready to use
 
+##### Trace Token
+
+The module [`sda-commons-server-trace`](./sda-commons-server-trace/README.md) adds support to track create a 
+trace token to correlate  a set of service invocations that belongs to the same logically cohesive call of a higher 
+level service offered by the SDA platform, e.g. interaction service. . 
+
+Status:
+- Only server part of trace token is implemented
+
 ##### Weld
 
 The module [`sda-commons-server-weld`](./sda-commons-server-weld/README.md) is used to bootstrap Dropwizard applications 
