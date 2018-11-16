@@ -15,4 +15,5 @@ include 'sda-commons-server-kafka-testing'
 include 'sda-commons-server-prometheus'
 include 'sda-commons-shared-tracing'
 include 'sda-commons-server-consumer'
+include 'sda-commons-dependency-check'
 
