@@ -5,7 +5,7 @@ server:
   adminConnectors:
   - type: http
     port: 0
-  rootPath: "/api/*"
+  rootPath: "/*"
 
 
 consumerToken:
