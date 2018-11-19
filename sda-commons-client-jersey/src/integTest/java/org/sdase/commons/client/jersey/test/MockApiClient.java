@@ -1,6 +1,7 @@
 package org.sdase.commons.client.jersey.test;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -19,6 +20,11 @@ public interface MockApiClient {
    @Path("/cars")
    @Produces(MediaType.APPLICATION_JSON)
    Response requestCars();
+
+   @GET
+   @Path("/cars")
+   @Produces(MediaType.APPLICATION_JSON)
+   Response requestCarsWithCustomConsumerToken(@HeaderParam("Consumer-Token") String consumerToken);
 
 
    class Car {

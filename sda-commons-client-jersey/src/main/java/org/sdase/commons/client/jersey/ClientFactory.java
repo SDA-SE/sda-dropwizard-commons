@@ -4,6 +4,9 @@ import io.dropwizard.client.JerseyClientBuilder;
 import org.sdase.commons.client.jersey.builder.ExternalClientBuilder;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
 
+import java.util.Optional;
+import java.util.function.Supplier;
+
 /**
  * A {@code ClientFactory} creates Http clients to access services within the SDA Platform or external services.
  */
@@ -11,8 +14,11 @@ public class ClientFactory {
 
    private JerseyClientBuilder clientBuilder;
 
-   ClientFactory(JerseyClientBuilder clientBuilder) {
+   private Supplier<Optional<String>> consumerTokenSupplier;
+
+   ClientFactory(JerseyClientBuilder clientBuilder, Supplier<Optional<String>> consumerTokenSupplier) {
       this.clientBuilder = clientBuilder;
+      this.consumerTokenSupplier = consumerTokenSupplier;
    }
 
    /**
@@ -23,7 +29,7 @@ public class ClientFactory {
     * @return a builder to configure the client
     */
    public PlatformClientBuilder platformClient() {
-      return new PlatformClientBuilder(clientBuilder);
+      return new PlatformClientBuilder(clientBuilder, consumerTokenSupplier);
    }
 
    /**

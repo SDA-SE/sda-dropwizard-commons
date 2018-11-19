@@ -6,6 +6,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
+import org.sdase.commons.server.dropwizard.bundles.ConfigurationValueSupplierBundle;
 import org.sdase.commons.server.trace.TraceTokenBundle;
 
 import javax.ws.rs.GET;
@@ -17,7 +18,10 @@ import javax.ws.rs.core.Response;
 @Path("/api")
 public class ClientTestApp extends Application<ClientTestConfig> {
 
-   private JerseyClientBundle jerseyClientBundle = new JerseyClientBundle();
+   private ConfigurationValueSupplierBundle<ClientTestConfig, String> consumerTokenBundle =
+         ConfigurationValueSupplierBundle.builder().withAccessor(ClientTestConfig::getConsumerName).build();
+   private JerseyClientBundle jerseyClientBundle = JerseyClientBundle.builder()
+         .withConsumerTokenSupplier(consumerTokenBundle.supplier()).build();
 
    private MockApiClient mockApiClient;
    private MockApiClient externalMockApiClient;
@@ -34,6 +38,7 @@ public class ClientTestApp extends Application<ClientTestConfig> {
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
       bootstrap.addBundle(TraceTokenBundle.builder().build());
       bootstrap.addBundle(jerseyClientBundle);
+      bootstrap.addBundle(consumerTokenBundle);
    }
 
    @Override

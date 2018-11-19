@@ -1,26 +1,31 @@
 package org.sdase.commons.client.jersey.builder;
 
 import io.dropwizard.client.JerseyClientBuilder;
-import org.apache.commons.lang3.NotImplementedException;
+import org.sdase.commons.client.jersey.filter.AddRequestHeaderFilter;
 import org.sdase.commons.client.jersey.filter.AuthHeaderClientFilter;
 import org.sdase.commons.client.jersey.filter.TraceTokenClientFilter;
+import org.sdase.commons.shared.tracing.ConsumerTracing;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientRequestFilter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public class PlatformClientBuilder {
 
    private JerseyClientBuilder jerseyClientBuilder;
 
-   private List<Class<? extends ClientRequestFilter>> filters;
+   private List<ClientRequestFilter> filters;
 
+   private Supplier<Optional<String>> consumerTokenSupplier;
 
-   public PlatformClientBuilder(JerseyClientBuilder jerseyClientBuilder) {
+   public PlatformClientBuilder(JerseyClientBuilder jerseyClientBuilder, Supplier<Optional<String>> consumerTokenSupplier) {
       this.jerseyClientBuilder = jerseyClientBuilder;
+      this.consumerTokenSupplier = consumerTokenSupplier;
       this.filters = new ArrayList<>();
-      this.filters.add(TraceTokenClientFilter.class);
+      this.filters.add(new TraceTokenClientFilter());
    }
 
    /**
@@ -30,7 +35,7 @@ public class PlatformClientBuilder {
     * @return this builder instance
     */
    public PlatformClientBuilder enableAuthenticationPassThrough() {
-      this.filters.add(AuthHeaderClientFilter.class);
+      this.filters.add(new AuthHeaderClientFilter());
       return this;
    }
 
@@ -41,8 +46,13 @@ public class PlatformClientBuilder {
     * @return this builder instance
     */
    public PlatformClientBuilder enableConsumerToken() {
-      // TODO implement me
-      throw new NotImplementedException("Adding a consumer token to the outgoing request is not implemented yet.");
+      if (consumerTokenSupplier == null) {
+         throw new IllegalStateException("Trying to enableConsumerToken() without a supplier for the consumer token. "
+               + "A Supplier for the consumer token has to be added in the JerseyClientBundle configuration: "
+               + "JerseyClientBundle.builder().withConsumerTokenSupplier(Supplier<String>).build()");
+      }
+      filters.add(new AddRequestHeaderFilter(ConsumerTracing.TOKEN_HEADER, consumerTokenSupplier));
+      return this;
    }
 
    /**

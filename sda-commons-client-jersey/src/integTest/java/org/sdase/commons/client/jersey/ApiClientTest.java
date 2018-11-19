@@ -29,6 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
+import static com.github.tomakehurst.wiremock.client.WireMock.notMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
@@ -98,6 +99,31 @@ public class ApiClientTest {
    }
 
    @Test
+   public void addConsumerToken() {
+      Response response = createMockApiClient().requestCars();
+
+      assertThat(response.getStatus()).isEqualTo(200);
+      WIRE.verify(
+            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
+            .withHeader("Consumer-Token", equalTo("test-consumer")) // NOSONAR
+            .withoutHeader(HttpHeaders.AUTHORIZATION)
+      );
+   }
+
+   @Test
+   public void notAddConsumerTokenIfAlreadySet() {
+      Response response = createMockApiClient().requestCarsWithCustomConsumerToken("my-custom-consumer");
+
+      assertThat(response.getStatus()).isEqualTo(200);
+      WIRE.verify(
+            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
+            .withHeader("Consumer-Token", equalTo("my-custom-consumer"))
+            .withHeader("Consumer-Token", notMatching("test-consumer"))
+            .withoutHeader(HttpHeaders.AUTHORIZATION)
+      );
+   }
+
+   @Test
    public void addReceivedTraceTokenToHeadersToPlatformCall() {
       int status = dwClient().path("api").path("cars")
             .request(MediaType.APPLICATION_JSON_TYPE)
@@ -146,6 +172,7 @@ public class ApiClientTest {
    private MockApiClient createMockApiClient() {
       return app.getJerseyClientBundle().getClientFactory()
             .platformClient()
+            .enableConsumerToken()
             .api(MockApiClient.class)
             .atTarget(WIRE.baseUrl());
    }
