@@ -9,8 +9,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
+import org.sdase.commons.server.kafka.confluent.testing.WrappedSharedKafkaRule;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
-import org.sdase.commons.server.kafka.testing.KafkaBrokerEnvironmentRule;
+import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
 import io.dropwizard.testing.ResourceHelpers;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
@@ -38,7 +39,7 @@ public class KafkaTopicIT {
          .withBrokerProperty("auto.create.topics.enable", "false")
          .withBrokers(2);
 
-   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
+   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(new WrappedSharedKafkaRule(KAFKA));
 
    protected static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));

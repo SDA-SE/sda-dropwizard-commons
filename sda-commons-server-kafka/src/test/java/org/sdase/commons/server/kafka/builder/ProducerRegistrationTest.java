@@ -1,7 +1,6 @@
 package org.sdase.commons.server.kafka.builder;
 
 import org.sdase.commons.server.kafka.config.ProducerConfig;
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -32,22 +31,7 @@ public class ProducerRegistrationTest {
       assertThat(producerRegistration.getValueSerializer(), instanceOf(StringSerializer.class));
    }
 
-   @Test
-   public void avroBuilderHasAvroSerializer() {
 
-      ProducerRegistration<String, KafkaAvroSerializer> producerRegistration =
-            ProducerRegistration.<String, KafkaAvroSerializer>builder()
-                  .forTopic("TOPIC")
-                  .withDefaultProducer()
-                  .withKeySerializer(new StringSerializer())
-                  .withAvroValueSerializer()
-                  .build();
-
-      assertThat(producerRegistration, is(notNullValue()));
-      assertThat(producerRegistration.getTopic().getTopicName(), equalTo("TOPIC"));
-      assertThat(producerRegistration.getKeySerializer(), instanceOf(StringSerializer.class));
-      assertThat(producerRegistration.getValueSerializer(), instanceOf(KafkaAvroSerializer.class));
-   }
 
    @Test
    public void serializerShouldBeSetCorrectly() {

@@ -6,7 +6,6 @@ import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
-import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 
 import org.apache.kafka.common.serialization.Deserializer;
 
@@ -21,7 +20,6 @@ public class MessageHandlerRegistration<K, V> {
    private Deserializer<V> valueDeserializer;
    private Collection<ExpectedTopicConfiguration> topics;
    private MessageHandler<K, V> handler;
-   private boolean useAvro;
 
    private boolean checkTopicConfiguration;
    private ConsumerConfig consumerConfig;
@@ -53,9 +51,6 @@ public class MessageHandlerRegistration<K, V> {
       return topics.stream().map(ExpectedTopicConfiguration::getTopicName).collect(Collectors.toList());
    }
 
-   public boolean useAvro() {
-      return useAvro;
-   }
 
    public MessageHandler<K, V> getHandler() {
       return handler;
@@ -151,12 +146,6 @@ public class MessageHandlerRegistration<K, V> {
        */
       HandlerBuilder<K, V> withValueDeserializer(Deserializer<V> valueDeserializer);
 
-      /**
-       * defines that the avro value deserializer should be used. This overwrites configuration from ConsumerConfig
-       * @return builder
-       */
-      HandlerBuilder<K, V> withAvroValueDeserializer();
-
 
       /**
        * The message handler. Either an instance of @link {@link MessageHandler} or @{@link CallbackMessageHandler}
@@ -182,7 +171,6 @@ public class MessageHandlerRegistration<K, V> {
       private Deserializer<?> valueDeserializer;
       private Collection<ExpectedTopicConfiguration> topics;
       private MessageHandler<K, V> handler;
-      private boolean useAvro = false;
       private boolean topicExistCheck = false;
       private ConsumerConfig consumerConfig;
       private ListenerConfig listenerConfig;
@@ -247,13 +235,6 @@ public class MessageHandlerRegistration<K, V> {
       }
 
       @Override
-      public HandlerBuilder<K, V> withAvroValueDeserializer() {
-         this.valueDeserializer = new KafkaAvroDeserializer();
-         this.useAvro = true;
-         return this;
-      }
-
-      @Override
       public HandlerBuilder<K, V> withConsumerConfig(@NotNull ConsumerConfig consumerConfig) {
          this.consumerConfig = consumerConfig;
          return this;
@@ -273,7 +254,6 @@ public class MessageHandlerRegistration<K, V> {
          build.keyDeserializer = (Deserializer<K>) keyDeserializer;
          build.valueDeserializer = (Deserializer<V>) valueDeserializer;
          build.topics = topics;
-         build.useAvro = useAvro;
          build.checkTopicConfiguration = topicExistCheck;
          build.consumerConfig = consumerConfig;
          build.consumerConfigName = consumerName;

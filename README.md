@@ -46,6 +46,9 @@ Some modules have a more specialized testing module, e.g. the
 [`sda-commons-server-hibernate-testing`](./sda-commons-server-hibernate-testing/README.md) module, providing further
 support.
 
+The module [`sda-commons-server-kafka-confluent-testing`](./sda-commons-server-kafka-confluent-testing/README.md),
+provides support to start a confluent schema registry needed if you use Avro with the confluent serializers. 
+
 Status:
 - Ready to use
 

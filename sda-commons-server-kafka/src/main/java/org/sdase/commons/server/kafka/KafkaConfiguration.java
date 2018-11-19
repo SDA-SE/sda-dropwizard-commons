@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
-import org.sdase.commons.server.kafka.config.SchemaRegistry;
 import org.sdase.commons.server.kafka.config.Security;
 import org.sdase.commons.server.kafka.config.TopicConfig;
 
@@ -31,9 +30,6 @@ public class KafkaConfiguration {
    @JsonProperty(value = "brokers")
    private List<String> brokers = new ArrayList<>();
 
-   @JsonProperty(value = "schemaRegistry")
-   private SchemaRegistry schemaRegistry = new SchemaRegistry();
-
    @JsonProperty(value = "producers")
    private Map<String, ProducerConfig> producers = new HashMap();
 
@@ -56,10 +52,6 @@ public class KafkaConfiguration {
    public void setBrokers(List<String> brokers) {
       this.brokers = brokers;
    }
-
-   public SchemaRegistry getSchemaRegistry() { return schemaRegistry; }
-
-   public void setSchemaRegistry(SchemaRegistry schemaRegistry) { this.schemaRegistry = schemaRegistry; }
 
    public Security getSecurity() {
       return security;

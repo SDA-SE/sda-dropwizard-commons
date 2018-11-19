@@ -4,7 +4,6 @@ import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.exception.TopicMissingException;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.common.serialization.Serializer;
 
 import javax.validation.constraints.NotNull;
@@ -15,7 +14,7 @@ public class ProducerRegistration<K, V> {
    private Serializer<K> keySerializer;
    private Serializer<V> valueSerializer;
    private ExpectedTopicConfiguration topic;
-   private boolean useAvro = false;
+
    private boolean checkTopicConfiguration;
    private ProducerConfig producerConfig;
    private String producerName;
@@ -40,10 +39,6 @@ public class ProducerRegistration<K, V> {
 
    public boolean isCreateTopicIfMissing() {
       return createTopicIfMissing;
-   }
-
-   public boolean useAvro() {
-      return useAvro;
    }
 
    public Serializer<K> getKeySerializer() {
@@ -125,12 +120,6 @@ public class ProducerRegistration<K, V> {
        */
       FinalBuilder<K, V> withValueSerializer(Serializer<V> valueSerializer);
 
-      /**
-       * defines that the avro value serializer should be used
-       * @return builder
-       */
-      FinalBuilder<K, V> withAvroValueSerializer();
-
       ProducerRegistration<K, V> build();
    }
 
@@ -148,7 +137,6 @@ public class ProducerRegistration<K, V> {
       private Serializer<?> keySerializer = null;
       private Serializer<?> valueSerializer = null;
       private ExpectedTopicConfiguration topic;
-      private boolean useAvro = false;
       private boolean checkTopicConfiguration = false;
       private boolean createTopicIfMissing = false;
       private ProducerConfig producerConfig;
@@ -179,13 +167,6 @@ public class ProducerRegistration<K, V> {
       @Override
       public FinalBuilder<K, V> withValueSerializer(@NotNull Serializer<V> valueDeserializer) {
          this.valueSerializer = valueDeserializer;
-         return this;
-      }
-
-      @Override
-      public FinalBuilder<K, V> withAvroValueSerializer() {
-         this.valueSerializer = new KafkaAvroSerializer();
-         this.useAvro = true;
          return this;
       }
 
@@ -227,7 +208,6 @@ public class ProducerRegistration<K, V> {
          build.keySerializer = (Serializer<K>) keySerializer;
          build.valueSerializer = (Serializer<V>) valueSerializer;
          build.topic = topic;
-         build.useAvro = useAvro;
          build.checkTopicConfiguration = checkTopicConfiguration;
          build.createTopicIfMissing = createTopicIfMissing;
          build.producerConfig = producerConfig;

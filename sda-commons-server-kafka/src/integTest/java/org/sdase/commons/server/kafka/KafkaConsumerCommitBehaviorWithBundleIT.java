@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import org.sdase.commons.server.kafka.testing.KafkaBrokerEnvironmentRule;
+import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
 import io.dropwizard.testing.ResourceHelpers;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -27,6 +27,7 @@ import org.junit.rules.TestRule;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
+import org.sdase.commons.server.kafka.confluent.testing.WrappedSharedKafkaRule;
 import org.sdase.commons.server.kafka.consumer.KafkaMessageHandlingException;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
@@ -44,7 +45,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
    private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));
 
-   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
+   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(new WrappedSharedKafkaRule(KAFKA));
 
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);

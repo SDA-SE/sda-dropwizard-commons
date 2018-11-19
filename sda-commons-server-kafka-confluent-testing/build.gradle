@@ -1,0 +1,33 @@
+dependencies {
+
+    compile project(':sda-commons-server-kafka-testing')
+    compile project(':sda-commons-server-testing')
+
+    compile 'io.confluent:kafka-schema-registry:'+confluentVersion, {
+        exclude group: 'org.apache.kafka'
+        exclude group: 'org.apache.zookeeper'
+        exclude group: 'org.eclipse.jetty'
+        exclude group: 'org.hibernate'
+        exclude group: 'org.slf4j'
+        exclude group: 'org.javassist', module: 'javassist'
+        exclude group: 'org.xerial.snappy', module: 'snappy-java'
+        exclude group: 'org.scala-lang', module: 'scala-library'
+        exclude group: 'org.scala-lang', module: 'scala-reflect'
+        exclude group: 'org.glassfish.jersey.ext', module: 'jersey-bean-validation'
+        exclude group: 'org.glassfish.jersey.containers', module: 'jersey-container-servlet'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
+    }
+
+    compile 'org.eclipse.jetty:jetty-server:9.4.11.v20180605'
+    compile 'org.eclipse.jetty:jetty-jmx:9.4.11.v20180605'
+    
+    testCompile 'io.confluent:kafka-avro-serializer:'+confluentVersion, {
+        exclude group: 'org.apache.zookeeper'
+        exclude group: 'org.xerial.snappy', module: 'snappy-java'
+        exclude group: 'org.apache.kafka'
+        exclude group: 'org.slf4j'
+    }
+
+    // just to check transitive dependency versions
+    testCompile project(':sda-commons-server-dropwizard')
+}

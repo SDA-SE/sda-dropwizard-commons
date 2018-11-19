@@ -16,7 +16,6 @@ compile 'org.sdase.commons:sda-commons-server-kafka:<current-version>'
 | Group                        | Name                    | Version     | Description |
 |------------------------------|-------------------------|-------------|-------------|
 | org.apache.kafka             | kafka-clients           | 1.1.1       | Client API for Apache Kafka |
-| io.confluent | kafka-avro-serializer | 3.2.1 | Additional support for AVRO |
 | com.github.ftrossbach | club-topicana-core | 0.1.0 | Helper for Topic description | 
 
 **Bootstrap**
@@ -132,10 +131,6 @@ kafka:
     user: user
     password: password
     protocol: SASL_SSL
-  # Avro Schema Registry (optional). The registry is used within all consumers and providers that are configured for accordingly. 
-  schemaRegistry:
-     - server: schema-registry
-       port: 9000
   # Map with consumer configurations. The key is used as name/id to address the configuration within the code. 
   consumers:
     # id/name of the consumer configuration
@@ -213,9 +208,6 @@ No defaults
 |-----|-------|
 | protocol | PLAINTEXT |
 
-#### schemaRegistry
-No defaults
-
 #### consumers
 | Key | Value |
 |-----|-------|
@@ -226,15 +218,6 @@ No defaults
 | config -> key.deserializer | org.apache.kafka.common.serialization.StringDeserializer |
 | config -> value.deserializer | org.apache.kafka.common.serialization.StringDeserializer |
 
-When using AVRO consumer additionally:
-
-| Key | Value |
-|-----|-------|
-| config -> specific.avro.reader | true |
-| config -> value.deserializer | io.confluent.kafka.serializers.KafkaAvroDeserializer |
-| config -> schema.registry.url | Url configured with values from schemaRegistry section |
-
-
 #### producers
 | Key | Value |
 |-----|-------|
@@ -243,13 +226,6 @@ When using AVRO consumer additionally:
 | config -> linger.ms | 0 |
 | config -> key.serializer | org.apache.kafka.common.serialization.StringSerializer |
 | config -> value.serializer | org.apache.kafka.common.serialization.StringSerializer |
-
-When using AVRO producer additionally:
-
-| Key | Value |
-|-----|-------|
-| config -> value.Serializer | io.confluent.kafka.serializers.KafkaAvroSerializer |
-| config -> schema.registry.url | Url configured with values from schemaRegistry section |
 
 #### topics
 | Key | Value |
@@ -309,8 +285,8 @@ In this case, the `KAFKA_BROKERS` variable should contain a Json array with a li
 
 ```json
 [
-  kafka-broker:12345,
-  kafka-broker:54321
+  "kafka-broker:12345",
+  "kafka-broker:54321"
 ]
 ```
 

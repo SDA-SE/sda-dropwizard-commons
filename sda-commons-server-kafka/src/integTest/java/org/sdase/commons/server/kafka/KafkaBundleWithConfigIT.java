@@ -12,10 +12,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.sdase.commons.server.kafka.confluent.testing.WrappedSharedKafkaRule;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
-import org.sdase.commons.server.kafka.testing.KafkaBrokerEnvironmentRule;
+import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -54,7 +55,7 @@ public class KafkaBundleWithConfigIT {
    private static final DropwizardAppRule<AppConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaApplication.class, ResourceHelpers.resourceFilePath("test-config-con-prod.yml"));
 
-   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
+   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(new WrappedSharedKafkaRule(KAFKA));
 
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);

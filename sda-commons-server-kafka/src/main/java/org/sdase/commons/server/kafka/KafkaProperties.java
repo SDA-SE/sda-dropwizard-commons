@@ -1,9 +1,5 @@
 package org.sdase.commons.server.kafka;
 
-import io.confluent.kafka.serializers.KafkaAvroDeserializer;
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
-import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -76,26 +72,5 @@ public class KafkaProperties extends Properties {
 
       return props;
    }
-
-   static KafkaProperties forAvroConsumer(KafkaConfiguration configuration) {
-      KafkaProperties props = forConsumer(configuration);
-
-      props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
-      props.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG,configuration.getSchemaRegistry().getUrl());
-      props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class.getName());
-
-      return props;
-   }
-
-   static KafkaProperties forAvroProducer(KafkaConfiguration configuration) {
-      KafkaProperties props = forProducer(configuration);
-
-      props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-      props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
-      props.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, configuration.getSchemaRegistry().getUrl());
-
-      return props;
-   }
-
 
 }

@@ -262,27 +262,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    }
 
 
-   private <K, V> KafkaProperties getDefaultProducerProperties(ProducerRegistration<K, V> registration) {
-      KafkaProperties kafkaProperties;
-      if (registration.useAvro()) {
-         kafkaProperties = KafkaProperties.forAvroProducer(kafkaConfiguration);
-      } else {
-         kafkaProperties = KafkaProperties.forProducer(kafkaConfiguration);
-      }
-      return kafkaProperties;
-   }
-
-   private <K, V> KafkaProperties getDefaultConsumerProperties(MessageHandlerRegistration<K, V> registration) {
-      KafkaProperties kafkaProperties;
-      if (registration.useAvro()) {
-         kafkaProperties = KafkaProperties.forAvroConsumer(kafkaConfiguration);
-      } else {
-         kafkaProperties = KafkaProperties.forConsumer(kafkaConfiguration);
-      }
-      return kafkaProperties;
-   }
-
-
    private ExpectedTopicConfiguration createTopicDescription(TopicConfig c) {
       return TopicConfigurationBuilder
             .builder(c.getName())
@@ -293,7 +272,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    }
 
    private <K, V> KafkaProducer<K, V> createProducer(ProducerRegistration<K, V> registration) throws ConfigurationException {
-      KafkaProperties producerProperties = getDefaultProducerProperties(registration);
+      KafkaProperties producerProperties = KafkaProperties.forProducer(kafkaConfiguration);
       ProducerConfig producerConfig = registration.getProducerConfig();
 
       if (producerConfig == null && registration.getProducerConfigName() != null) {
@@ -313,7 +292,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    }
 
    private <K, V> KafkaConsumer<K, V> createConsumer(MessageHandlerRegistration<K, V> registration) throws ConfigurationException {
-      KafkaProperties consumerProperties = getDefaultConsumerProperties(registration);
+      KafkaProperties consumerProperties = KafkaProperties.forConsumer(kafkaConfiguration);
       ConsumerConfig consumerConfig = registration.getConsumerConfig();
 
       if (consumerConfig == null && registration.getConsumerConfigName() != null) {

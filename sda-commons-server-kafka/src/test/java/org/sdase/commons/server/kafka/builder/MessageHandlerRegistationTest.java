@@ -5,7 +5,6 @@ import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
 import org.sdase.commons.server.kafka.consumer.KafkaMessageHandlingException;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
-import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
@@ -116,50 +115,6 @@ public class MessageHandlerRegistationTest {
 
       assertThat(registration, is(notNullValue()));
       assertThat(registration.getConsumerConfig(), is(consumer));
-   }
-
-   @Test
-   public void avroDeSerializerUsed() {
-      MessageHandler<Integer, KafkaAvroDeserializer> messageHandler = record -> {
-      };
-
-      MessageHandlerRegistration<Integer, KafkaAvroDeserializer> registration = MessageHandlerRegistration
-            .<Integer, KafkaAvroDeserializer> builder()
-            .withListenerConfig(ListenerConfig.getDefault())
-            .forTopic("Bla")
-            .withDefaultConsumer()
-            .withKeyDeserializer(new IntegerDeserializer())
-            .withAvroValueDeserializer()
-            .withHandler(messageHandler)
-            .build();
-
-      assertThat(registration, is(notNullValue()));
-      assertThat(registration.getKeyDeserializer(), instanceOf(IntegerDeserializer.class));
-      assertThat(registration.getValueDeserializer(), instanceOf(KafkaAvroDeserializer.class));
-         }
-
-   @Test
-   public void avroGivenDeserializersUsedEvenIfConsumerConfigIsDifferent() {
-      MessageHandler<Integer, KafkaAvroDeserializer> messageHandler = record -> {
-      };
-
-      ConsumerConfig consumerConfig = new ConsumerConfig();
-      consumerConfig.getConfig().put("value.deserializer", StringDeserializer.class.getName());
-      consumerConfig.getConfig().put("key.deserializer", StringDeserializer.class.getName());
-
-      MessageHandlerRegistration<Integer, KafkaAvroDeserializer> registration = MessageHandlerRegistration
-            .<Integer, KafkaAvroDeserializer> builder()
-            .withListenerConfig(ListenerConfig.getDefault())
-            .forTopic("Bla")
-            .withConsumerConfig(consumerConfig)
-            .withKeyDeserializer(new IntegerDeserializer())
-            .withAvroValueDeserializer()
-            .withHandler(messageHandler)
-            .build();
-
-      assertThat(registration, is(notNullValue()));
-      assertThat(registration.getKeyDeserializer(), instanceOf(IntegerDeserializer.class));
-      assertThat(registration.getValueDeserializer(), instanceOf(KafkaAvroDeserializer.class));
    }
 
 
