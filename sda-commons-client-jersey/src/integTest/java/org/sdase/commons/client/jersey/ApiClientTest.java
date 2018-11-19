@@ -19,6 +19,7 @@ import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 import org.sdase.commons.server.testing.EnvironmentRule;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -35,6 +36,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.groups.Tuple.tuple;
 
 public class ApiClientTest {
@@ -43,6 +45,8 @@ public class ApiClientTest {
    public static final WireMockClassRule WIRE = new WireMockClassRule(wireMockConfig().dynamicPort());
 
    private static final ObjectMapper OM = new ObjectMapper();
+   private static final Car BRIGHT_BLUE_CAR = new Car().setSign("HH XX 1234").setColor("bright blue"); // NOSONAR
+   private static final Car LIGHT_BLUE_CAR = new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
 
    private final DropwizardAppRule<ClientTestConfig> dw = new DropwizardAppRule<>(
          ClientTestApp.class, resourceFilePath("test-config.yaml"));
@@ -59,15 +63,30 @@ public class ApiClientTest {
       WIRE.start();
       WIRE.stubFor(
             get("/api/cars") // NOSONAR
+                  .withHeader("Accept", equalTo("application/json")) // NOSONAR
+                  .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-type", "application/json") // NOSONAR
+                        .withBody(OM.writeValueAsBytes(asList(BRIGHT_BLUE_CAR, LIGHT_BLUE_CAR))
+                        )
+                  )
+      );
+      WIRE.stubFor(
+            get("/api/cars/HH%20XX%201234")
                   .withHeader("Accept", equalTo("application/json"))
                   .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-type", "application/json")
-                        .withBody(OM.writeValueAsBytes(asList(
-                              new Car().setSign("HH XX 1234").setColor("bright blue"),
-                              new Car().setSign("HH XY 4321").setColor("light blue")
-                              ))
-                        )
+                        .withBody(OM.writeValueAsBytes(BRIGHT_BLUE_CAR))
+                  )
+      );
+      WIRE.stubFor(
+            get("/api/cars/HH%20XY%204321")
+                  .withHeader("Accept", equalTo("application/json"))
+                  .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-type", "application/json")
+                        .withBody(OM.writeValueAsBytes(LIGHT_BLUE_CAR))
                   )
       );
    }
@@ -167,6 +186,23 @@ public class ApiClientTest {
             .withoutHeader("Trace-Token")
             .withoutHeader(HttpHeaders.AUTHORIZATION)
       );
+   }
+
+   @Test
+   public void loadSingleCar() {
+      Car car = createMockApiClient().getCar("HH XY 4321");
+      assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 4321", "light blue");
+   }
+
+   @Test
+   public void failOnLoadingMissingCar() {
+      assertThatExceptionOfType(NotFoundException.class).isThrownBy(() -> createMockApiClient().getCar("HH AA 4444"));
+   }
+
+   @Test
+   public void return404ForMissingCar() {
+      Response response = createMockApiClient().getCarResponse("HH AA 4444");
+      assertThat(response.getStatus()).isEqualTo(404);
    }
 
    private MockApiClient createMockApiClient() {
