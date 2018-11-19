@@ -9,13 +9,15 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
 public class ConfigurationValueSupplierBundleTest {
 
 
-   @Test(expected = IllegalStateException.class)
+   @Test
    public void failIfGetCalledBeforeInitialize() {
       ConfigurationValueSupplierBundle<TestConfig, String> bundle = ConfigurationValueSupplierBundle.builder()
             .withAccessor(TestConfig::getMyConfig)
@@ -23,10 +25,10 @@ public class ConfigurationValueSupplierBundleTest {
 
       Supplier<Optional<String>> myConfigSupplier = bundle.supplier();
 
-      myConfigSupplier.get();
+      assertThatIllegalStateException().isThrownBy(myConfigSupplier::get);
    }
 
-   @Test(expected = IllegalStateException.class)
+   @Test
    public void failIfGetCalledBeforeRun() {
       ConfigurationValueSupplierBundle<TestConfig, String> bundle = ConfigurationValueSupplierBundle.builder()
             .withAccessor(TestConfig::getMyConfig)
@@ -36,11 +38,24 @@ public class ConfigurationValueSupplierBundleTest {
 
       Supplier<Optional<String>> myConfigSupplier = bundle.supplier();
 
-      myConfigSupplier.get();
+      assertThatIllegalStateException().isThrownBy(myConfigSupplier::get);
    }
 
    @Test
-   public void notPresentOptionalForNull() {
+   public void failFastWithValidation() {
+      ConfigurationValueSupplierBundle<TestConfig, String> bundle = ConfigurationValueSupplierBundle.builder()
+            .withAccessor(TestConfig::getMyConfig)
+            .requireNonNull()
+            .build();
+
+      bundle.initialize(mock(Bootstrap.class, RETURNS_DEEP_STUBS));
+      assertThatIllegalArgumentException()
+            .isThrownBy(() -> bundle.run(new TestConfig(), mock(Environment.class, RETURNS_DEEP_STUBS)));
+
+   }
+
+   @Test
+   public void optionNotPresentForNull() {
       ConfigurationValueSupplierBundle<TestConfig, String> bundle = ConfigurationValueSupplierBundle.builder()
             .withAccessor(TestConfig::getMyConfig)
             .build();
@@ -71,6 +86,7 @@ public class ConfigurationValueSupplierBundleTest {
    public void returnValue() {
       ConfigurationValueSupplierBundle<TestConfig, String> bundle = ConfigurationValueSupplierBundle.builder()
             .withAccessor(TestConfig::getMyConfig)
+            .requireNonNull()
             .build();
 
       Supplier<String> myConfigSupplier = bundle.valueSupplier();

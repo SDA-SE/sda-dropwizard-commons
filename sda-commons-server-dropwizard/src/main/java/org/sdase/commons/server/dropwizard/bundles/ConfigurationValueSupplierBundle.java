@@ -5,8 +5,12 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -31,8 +35,13 @@ public class ConfigurationValueSupplierBundle<C extends Configuration, R> implem
    private Function<C, R> configurationAccessor;
    private boolean initialized;
 
-   private ConfigurationValueSupplierBundle(Function<C, R> configurationAccessor) {
+   private List<Predicate<R>> validations = new ArrayList<>();
+
+   private ConfigurationValueSupplierBundle(Function<C, R> configurationAccessor, List<Predicate<R>> validations) {
       this.configurationAccessor = configurationAccessor;
+      if (validations != null) {
+         this.validations.addAll(validations);
+      }
    }
 
    public static InitialBuilder builder() {
@@ -70,6 +79,10 @@ public class ConfigurationValueSupplierBundle<C extends Configuration, R> implem
    @Override
    public void run(C configuration, Environment environment) {
       this.configuration = configuration;
+      R value = configurationAccessor.apply(this.configuration);
+      if (!validations.isEmpty() && validations.stream().noneMatch(v -> v.test(value))) {
+         throw new IllegalArgumentException("Validation of configuration failed.");
+      }
       initialized = true;
    }
 
@@ -90,11 +103,31 @@ public class ConfigurationValueSupplierBundle<C extends Configuration, R> implem
 
    public interface FinalBuilder<C extends Configuration, R> {
       ConfigurationValueSupplierBundle<C, R> build();
+
+      /**
+       * Validate that the configuration is not null. Validations are checked in
+       * {@link ConfiguredBundle#run(Object, Environment)}
+       *
+       * @return the current builder instance
+       */
+      default FinalBuilder<C, R> requireNonNull() {
+         return validate(Objects::nonNull);
+      }
+
+      /**
+       * Validate the configuration value with a custom predicate. Validations are checked in
+       * {@link ConfiguredBundle#run(Object, Environment)}
+       *
+       * @param validation a predicate that returns true, if the value of the configuration option is valid
+       * @return the current builder instance
+       */
+      FinalBuilder<C, R> validate(Predicate<R> validation);
    }
 
    public static class Builder<C extends Configuration, R> implements InitialBuilder, FinalBuilder<C, R> {
 
       private Function<C, R> configurationAccessor;
+      private List<Predicate<R>> validations = new ArrayList<>();
 
       private Builder() {
       }
@@ -110,7 +143,13 @@ public class ConfigurationValueSupplierBundle<C extends Configuration, R> implem
 
       @Override
       public ConfigurationValueSupplierBundle<C, R> build() {
-         return new ConfigurationValueSupplierBundle<>(configurationAccessor);
+         return new ConfigurationValueSupplierBundle<>(configurationAccessor, validations);
+      }
+
+      @Override
+      public FinalBuilder<C, R> validate(Predicate<R> validation) {
+         validations.add(validation);
+         return this;
       }
    }
 
