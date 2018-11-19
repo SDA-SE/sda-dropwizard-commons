@@ -23,4 +23,38 @@ database:
   user: ${POSTGRES_USER:-dev}
   password: ${POSTGRES_PASSWORD:-s3cr3t}
   url: ${POSTGRES_URL:-localhost:12345}
-``` 
+```
+
+### ConfigurationValueSupplierBundle
+
+The [`ConfigurationValueSupplierBundle`](./src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationValueSupplierBundle.java)
+provides a `Supplier` for a configuration value. It may be used if the type of the configuration itself should not be 
+known by the class that is configured. This may be the case if another bundle or a service should be configured either
+by a configuration property or another service.
+
+A configuration value may be supplied like this:
+
+```java
+public class MyApplication extends Application<MyConfiguration> {
+   
+    public static void main(final String[] args) {
+        new MyApplication().run(args);
+    }
+
+   @Override
+   public void initialize(Bootstrap<MyConfiguration> bootstrap) {
+      // ...
+      ConfigurationValueSupplierBundle<MyConfiguration, String> configStringBundle =
+            ConfigurationValueSupplierBundle.builder().withAccessor(MyConfiguration::getConfigString).build();
+      bootstrap.addBundle(configStringBundle);
+      Supplier<Optional<String>> configStringSupplier = configStringBundle.supplier();
+      // configStringSupplier may be added to other bundles and services, it's get() method can be access after run()
+      // ...
+   }
+
+   @Override
+   public void run(MyConfiguration configuration, Environment environment) {
+      // ...
+   }
+}
+```
