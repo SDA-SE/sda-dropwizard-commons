@@ -1,5 +1,6 @@
 package org.sdase.commons.server.kafka.confluent.testing;
 
+import com.salesforce.kafka.test.KafkaBroker;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import org.junit.rules.RuleChain;
 import org.junit.runner.Description;
@@ -28,6 +29,6 @@ public class WrappedSharedKafkaRule implements KafkaBrokerRule {
 
    @Override
    public List<String> getBrokerConnectStrings() {
-      return brokeRule.getKafkaBrokers().stream().map(b -> b.getConnectString()).collect(Collectors.toList());
+      return brokeRule.getKafkaBrokers().stream().map(KafkaBroker::getConnectString).collect(Collectors.toList());
    }
 }
