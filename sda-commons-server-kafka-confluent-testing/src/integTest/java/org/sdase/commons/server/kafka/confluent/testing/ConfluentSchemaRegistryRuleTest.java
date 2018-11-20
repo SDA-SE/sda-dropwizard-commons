@@ -1,7 +1,9 @@
 package org.sdase.commons.server.kafka.confluent.testing;
 
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+
 import io.confluent.kafka.schemaregistry.exceptions.SchemaRegistryException;
+import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
@@ -28,12 +30,11 @@ public class ConfluentSchemaRegistryRuleTest {
 
    @ClassRule
    public static final ConfluentSchemaRegistryRule SCHEMA_REGISTRY = ConfluentSchemaRegistryRule.builder()
-         .withKafkaBrokerRule(kafkaRule)
          .withProtocol("PLAINTEXT")
-         .withPort(9061)
+         .withKafkaBrokerRule(kafkaRule)
          .build();
 
-   String exampleSchema = "{\n" +
+   private String exampleSchema = "{\n" +
          "     \"type\": \"record\",\n" +
          "     \"namespace\": \"com.example\",\n" +
          "     \"name\": \"FullName\",\n" +
@@ -44,26 +45,29 @@ public class ConfluentSchemaRegistryRuleTest {
          "} \n";
 
 
+   /**
+    * Publishes a message to the Kafka topic with an @{@link io.confluent.kafka.serializers.KafkaAvroSerializer}.
+    * During this, the schema is published to the registry internally.
+    * Checks if the schema is stored successfully within the registry. Also verifies that the message
+    * is within the topic
+    */
    @Test
    public void schemaShouldBeRegistered() throws SchemaRegistryException {
-
       Properties props = new Properties();
       props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
             StringSerializer.class);
       props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
             io.confluent.kafka.serializers.KafkaAvroSerializer.class);
-      props.put("schema.registry.url", "http://localhost:9061");
+      props.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY.getConnectionString());
       props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafkaRule.getBrokerConnectStrings());
 
-      KafkaProducer producer = new KafkaProducer(props);
-
-
+      KafkaProducer<String, Object> producer = new KafkaProducer<>(props);
       Schema.Parser parser = new Schema.Parser();
       Schema avroSchema = parser.parse(exampleSchema);
       GenericRecord avroRecord = new GenericData.Record(avroSchema);
       avroRecord.put("first", "value1");
       avroRecord.put("last", "value1");
-      ProducerRecord<Object, Object> record = new ProducerRecord<>("topic1", "test1", avroRecord);
+      ProducerRecord<String, Object> record = new ProducerRecord<>("topic1", "test1", avroRecord);
       producer.send(record);
       producer.flush();
       producer.close();
@@ -74,7 +78,6 @@ public class ConfluentSchemaRegistryRuleTest {
 
       List<ConsumerRecord<byte[], byte[]>> topic1 = kafkaTestResource.getKafkaTestUtils().consumeAllRecordsFromTopic("topic1");
       Assert.assertFalse(topic1.isEmpty());
-
    }
 
 

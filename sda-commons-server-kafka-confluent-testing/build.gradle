@@ -7,19 +7,20 @@ dependencies {
         exclude group: 'org.apache.kafka'
         exclude group: 'org.apache.zookeeper'
         exclude group: 'org.eclipse.jetty'
-        exclude group: 'org.hibernate'
         exclude group: 'org.slf4j'
         exclude group: 'org.javassist', module: 'javassist'
         exclude group: 'org.xerial.snappy', module: 'snappy-java'
-        exclude group: 'org.scala-lang', module: 'scala-library'
-        exclude group: 'org.scala-lang', module: 'scala-reflect'
         exclude group: 'org.glassfish.jersey.ext', module: 'jersey-bean-validation'
+        exclude group: 'org.glassfish.jersey.core', module: 'jersey-common'
         exclude group: 'org.glassfish.jersey.containers', module: 'jersey-container-servlet'
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
     }
 
+    // When changing the jetty version, be aware of the hack within ConfluentSchemaRegistryRule to remove the logging
+    // that currently forces a NoSuchMethodException
     compile 'org.eclipse.jetty:jetty-server:9.4.11.v20180605'
     compile 'org.eclipse.jetty:jetty-jmx:9.4.11.v20180605'
+    compile 'org.slf4j:slf4j-api:'+slf4jVersion
     
     testCompile 'io.confluent:kafka-avro-serializer:'+confluentVersion, {
         exclude group: 'org.apache.zookeeper'

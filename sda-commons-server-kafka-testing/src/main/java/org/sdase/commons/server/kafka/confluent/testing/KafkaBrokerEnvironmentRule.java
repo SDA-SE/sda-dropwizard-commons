@@ -6,9 +6,10 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class KafkaBrokerEnvironmentRule implements TestRule {
+public class KafkaBrokerEnvironmentRule implements TestRule, KafkaBrokerRule {
 
    private final KafkaBrokerRule brokeRule;
    static final String CONNECTION_STRING_ENV = "BROKER_CONNECTION_STRING";
@@ -31,5 +32,15 @@ public class KafkaBrokerEnvironmentRule implements TestRule {
             }
          }
       }).apply(base, description);
+   }
+
+   @Override
+   public String getConnectString() {
+      return brokeRule.getConnectString();
+   }
+
+   @Override
+   public List<String> getBrokerConnectStrings() {
+      return brokeRule.getBrokerConnectStrings();
    }
 }
