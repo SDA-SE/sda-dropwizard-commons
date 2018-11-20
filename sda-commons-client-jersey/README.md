@@ -104,4 +104,4 @@ with a `javax.ws.rs.ClientErrorException` or server errors with a `javax.ws.rs.S
 If a `javax.ws.rs.core.Response` is defined as return type, Http errors and redirects can be read from the `Response`
 object.
 
- 
+In both variants a `java.net.ConnectException` may be thrown if the client can't connect to the server.
