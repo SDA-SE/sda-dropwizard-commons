@@ -60,7 +60,7 @@ public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredB
        *
        * @return a builder to create the bundle
        */
-      ExcludeBuilder withRequiredConsumerToken();
+      ExcludeBuilder<Configuration> withRequiredConsumerToken();
 
       /**
        *
@@ -121,7 +121,7 @@ public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredB
       }
 
       @Override
-      public ExcludeBuilder withRequiredConsumerToken() {
+      public ExcludeBuilder<Configuration> withRequiredConsumerToken() {
          return new Builder<>(true, excludePattern);
       }
 
