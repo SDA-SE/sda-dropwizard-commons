@@ -137,6 +137,22 @@ inside a Weld-SE container and provides CDI support for servlets, listeners and 
 Status:
 - Ready to use
 
+
+### Client
+
+All modules prefixed with `sda-commons-client-` provide support for applications that use a Http client to access other
+services.
+
+#### Jersey
+
+The module [`sda-commons-client-jersey`](./sda-commons-client-jersey/README.md) provides support for using Jersey 
+clients withing the dropwizard application.
+
+Status:
+- Custom SDA exception mapping is missing (compared to REST commons)
+- API may change when custom SDA exception mapping is added
+
+
 ## Usage in combination with rest-common
 
 To keep convergent dependencies when some features of [`rest-common`](https://github.com/SDA-SE/rest-common) are needed,
