@@ -184,7 +184,20 @@ public class ApiClientTest {
       WIRE.verify(
             RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
             .withoutHeader("Trace-Token")
-            .withoutHeader(HttpHeaders.AUTHORIZATION)
+      );
+   }
+
+   @Test
+   public void notAddingReceivedAuthorizationToHeadersOfExternalCall() {
+      int status = dwClient().path("api").path("carsExternal")
+            .request(MediaType.APPLICATION_JSON_TYPE)
+            .header(HttpHeaders.AUTHORIZATION, "BEARER dummy")
+            .get().getStatus();
+
+      assertThat(status).isEqualTo(200);
+      WIRE.verify(
+            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
+                  .withoutHeader(HttpHeaders.AUTHORIZATION)
       );
    }
 

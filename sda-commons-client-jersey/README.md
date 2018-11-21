@@ -1,10 +1,10 @@
 # SDA Commons Client Jersey
 
-The module `sda-commons-client-jersey` provides support for using Jersey clients withing the dropwizard application.
+The module `sda-commons-client-jersey` provides support for using Jersey clients within the dropwizard application.
 
 ## Usage
 
-The [`JerseyClientBundle`](./src/main/java/org/sdase/commons/client/jersey/JerseyClientBundle.java) is added to the 
+The [`JerseyClientBundle`](./src/main/java/org/sdase/commons/client/jersey/JerseyClientBundle.java) must be added to the 
 application. It provides a [`ClientFactory`](./src/main/java/org/sdase/commons/client/jersey/ClientFactory.java) to 
 create clients. The `ClientFactory` needs to be initialized and is available in the `run(...)` phase. Therefore the 
 bundle should be declared as field and not in the `initialize` method.
@@ -52,6 +52,7 @@ for the SDA Platform have some magic added that clients for an external service 
   SDA Platform clients always add the Trace-Token of the current incoming request context to the headers of the outgoing
   request. If no incoming request context is found, a new unique Trace-Token is generated for each request. It will be
   discarded when the outgoing request completes.
+  
 - _Authorization_
 
   SDA Platform clients can be configured to pass through the Authorization header of an incoming request context:
@@ -71,12 +72,12 @@ for the SDA Platform have some magic added that clients for an external service 
   can create such a supplier so that the `JerseyClientFactory` does not depend on the configuration:
   
   ```java
-  private ConfigurationValueSupplierBundle<MyConfiguration, String> consumerTokenBundle = 
+  private ConfigurationValueSupplierBundle<MyConfiguration, String> consumerTokenSupplier = 
         ConfigurationValueSupplierBundle.builder()
            .withAccessor(MyConfiguration::getConsumerName)
            .build();
   private JerseyClientBundle jerseyClientBundle = JerseyClientBundle.builder()
-        .withConsumerTokenSupplier(consumerTokenBundle.supplier()).build();
+        .withConsumerTokenSupplier(consumerTokenSupplier.supplier()).build();
   ```
   
   Then the clients can be configured to add a Consumer-Token header:
@@ -94,12 +95,14 @@ Client interfaces use the same annotations as the service definitions for REST e
 [`MockApiClient`](./src/integTest/java/org/sdase/commons/client/jersey/test/MockApiClient.java) in the integration tests
 of this module.
 
-There is a difference in error handling based on the return type:
- 
+Error handling is different based on the return type:
+
 If a specific return type is defined (e.g. `List<MyResource> getMyResources();`), it is only returned for successful 
 requests in any error or redirect case, an exception is thrown. The thrown exception is a subclass of 
-`javax.ws.rs.WebApplicationException` to indicate redirects with a `javax.ws.rs.RedirectionException`, client errors 
-with a `javax.ws.rs.ClientErrorException` or server errors with a `javax.ws.rs.ServerErrorException`.
+`javax.ws.rs.WebApplicationException`. 
+- `javax.ws.rs.RedirectionException` to indicate redirects 
+- `javax.ws.rs.ClientErrorException` for client errors
+- `javax.ws.rs.ServerErrorException` for server errors
 
 If a `javax.ws.rs.core.Response` is defined as return type, Http errors and redirects can be read from the `Response`
 object.

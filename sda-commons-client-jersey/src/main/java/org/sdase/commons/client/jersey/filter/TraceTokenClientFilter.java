@@ -12,6 +12,11 @@ import java.util.UUID;
 
 import static org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder.currentRequestContext;
 
+/**
+ * The  @{@link TraceTokenClientFilter} adds a trace token to client requests. If existing, the trace token
+ * is retrieved from the incoming request. If not existing, a new token is generated and added to MDC and
+ * to the request as header.
+ */
 public class TraceTokenClientFilter implements ClientRequestFilter, ClientResponseFilter {
 
    private static final String ADDED_TO_MDC_FOR_REQUEST = TraceTokenClientFilter.class.getName() + "_ADDED_TO_MDC";

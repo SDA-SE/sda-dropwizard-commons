@@ -18,10 +18,10 @@ import javax.ws.rs.core.Response;
 @Path("/api")
 public class ClientTestApp extends Application<ClientTestConfig> {
 
-   private ConfigurationValueSupplierBundle<ClientTestConfig, String> consumerTokenBundle =
+   private ConfigurationValueSupplierBundle<ClientTestConfig, String> consumerTokenSupplier =
          ConfigurationValueSupplierBundle.builder().withAccessor(ClientTestConfig::getConsumerName).build();
    private JerseyClientBundle jerseyClientBundle = JerseyClientBundle.builder()
-         .withConsumerTokenSupplier(consumerTokenBundle.supplier()).build();
+         .withConsumerTokenSupplier(consumerTokenSupplier.supplier()).build();
 
    private MockApiClient mockApiClient;
    private MockApiClient externalMockApiClient;
@@ -38,7 +38,7 @@ public class ClientTestApp extends Application<ClientTestConfig> {
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
       bootstrap.addBundle(TraceTokenBundle.builder().build());
       bootstrap.addBundle(jerseyClientBundle);
-      bootstrap.addBundle(consumerTokenBundle);
+      bootstrap.addBundle(consumerTokenSupplier);
    }
 
    @Override
