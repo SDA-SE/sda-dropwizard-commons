@@ -55,7 +55,7 @@ public class KafkaBundleWithConfigIT {
    private static final DropwizardAppRule<AppConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaApplication.class, ResourceHelpers.resourceFilePath("test-config-con-prod.yml"));
 
-   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(new WrappedSharedKafkaRule(KAFKA));
+   private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
 
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);

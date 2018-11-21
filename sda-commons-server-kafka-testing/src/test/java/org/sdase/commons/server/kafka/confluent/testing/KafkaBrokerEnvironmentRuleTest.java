@@ -10,10 +10,9 @@ import java.util.stream.Collectors;
 public class KafkaBrokerEnvironmentRuleTest {
 
    private static SharedKafkaTestResource kafkaTestResource = new SharedKafkaTestResource().withBrokers(2);
-   private static WrappedSharedKafkaRule kafkaRule = new WrappedSharedKafkaRule(kafkaTestResource);
 
    @ClassRule
-   public static KafkaBrokerEnvironmentRule ruleToTest = new KafkaBrokerEnvironmentRule(kafkaRule);
+   public static KafkaBrokerEnvironmentRule ruleToTest = new KafkaBrokerEnvironmentRule(kafkaTestResource);
 
 
    @Test

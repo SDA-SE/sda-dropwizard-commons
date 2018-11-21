@@ -24,7 +24,16 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
+/**
+ * Rule for starting a Confluent Schema Registry for integration testing issues.
+ *
+ * At least the Kafka broker must be set within the builder so that the schema registry can connect
+ * to the broker.
+ *
+ * The schema registry is published on localhost with the defined port. If no port is defined, a
+ * randomized one is used.
+ *
+ */
 public class ConfluentSchemaRegistryRule implements TestRule {
 
    private SchemaRegistryRestApplication application;
@@ -64,17 +73,11 @@ public class ConfluentSchemaRegistryRule implements TestRule {
             .map(s -> String.format("%s://%s", protocolType, s))
             .collect(Collectors.joining(","));
 
-      if (port <= 0)  {
-         // if port is not set, use a random one
-         port = InstanceSpec.getRandomPort();
-      }
-
       schemaRegistryProps.put(SchemaRegistryConfig.LISTENERS_CONFIG, "http://0.0.0.0:" + port);
       schemaRegistryProps.put(SchemaRegistryConfig.HOST_NAME_CONFIG, hostname);
       schemaRegistryProps.put(SchemaRegistryConfig.KAFKASTORE_BOOTSTRAP_SERVERS_CONFIG, bootstrapServerConfig);
       SchemaRegistryConfig config = new SchemaRegistryConfig(schemaRegistryProps);
       application = new SchemaRegistryRestApplication(config);
-
       Server server = application.createServer();
       server.start();
       started = true;
@@ -90,7 +93,7 @@ public class ConfluentSchemaRegistryRule implements TestRule {
       if (!started) {
          throw new IllegalStateException("Cannot access before application is started");
       }
-      return String.format(Locale.ROOT, "http://%s:%s", hostname, port);
+      return String.format(Locale.ROOT, "http://%s:%s", "localhost", port);
    }
 
 
@@ -131,27 +134,58 @@ public class ConfluentSchemaRegistryRule implements TestRule {
       return application.schemaRegistry().getAllVersions(subject, false);
    }
 
+   /**
+    * @returnA builder for the ConfluentSchemaRegistryRule
+    */
    public static OptionalBuilder builder() {
       return new Builder();
    }
 
+
    public interface FinalBuilder {
-      public ConfluentSchemaRegistryRule build();
+      /**
+       *
+       * @return created @{@link ConfluentSchemaRegistryRule}
+       */
+      ConfluentSchemaRegistryRule build();
    }
 
 
    public interface OptionalBuilder {
-      public OptionalBuilder withProtocol(String protocolType);
-      public OptionalBuilder withPort(int port);
-      public OptionalBuilder withHostname(String hostname);
-      public FinalBuilder withKafkaBrokerRule(KafkaBrokerRule rule);
+
+      /**
+       * set the protocol type used within the connection to the broker.
+       * @param protocolType protocol type added to the connection strings<br/>default is 'PLAINTEXT'
+       * @return builder
+       */
+      OptionalBuilder withKafkaProtocol(String protocolType);
+
+      /**
+       *
+       * @param port port used to connect to the schema registry. If not set, a random port is used.
+       * @return builder
+       */
+      OptionalBuilder withPort(int port);
+
+      /**
+       * @param hostname The host name advertised in ZooKeeper. Make sure to set this if running Schema Registry with
+       *                 multiple nodes.
+       * @return builder
+       */
+      OptionalBuilder withHostname(String hostname);
+
+      /**
+       * @param rule Rule that starts the kafka broker to retrieve connections information
+       * @return builder
+       */
+      FinalBuilder withKafkaBrokerRule(KafkaBrokerRule rule);
    }
 
 
 
    private static class Builder implements FinalBuilder, OptionalBuilder {
 
-      private int port = 0;
+      private int port = InstanceSpec.getRandomPort();
       private String hostname = "localhost";
       private String protocolType = "PLAINTEXT";
       private KafkaBrokerRule rule;
@@ -174,7 +208,7 @@ public class ConfluentSchemaRegistryRule implements TestRule {
       }
 
       @Override
-      public OptionalBuilder withProtocol(String protocolType) {
+      public OptionalBuilder withKafkaProtocol(String protocolType) {
          this.protocolType = protocolType;
          return this;
       }

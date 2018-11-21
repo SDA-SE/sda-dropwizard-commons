@@ -45,7 +45,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
    private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));
 
-   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(new WrappedSharedKafkaRule(KAFKA));
+   private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
 
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);

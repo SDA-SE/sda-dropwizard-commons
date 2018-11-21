@@ -39,7 +39,7 @@ public class KafkaTopicIT {
          .withBrokerProperty("auto.create.topics.enable", "false")
          .withBrokers(2);
 
-   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(new WrappedSharedKafkaRule(KAFKA));
+   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
 
    protected static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));

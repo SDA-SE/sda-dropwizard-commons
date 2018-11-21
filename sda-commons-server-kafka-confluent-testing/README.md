@@ -17,15 +17,12 @@ A running broker is mandatory for a Schema registry. The folloging snippet shows
 
 ```
    private static SharedKafkaTestResource kafkaTestResource = new SharedKafkaTestResource().withBrokers(2);
-
-   private static WrappedSharedKafkaRule kafkaRule = new WrappedSharedKafkaRule(kafkaTestResource);
-
+   
    @ClassRule
    public static final ConfluentSchemaRegistryRule SCHEMA_REGISTRY = ConfluentSchemaRegistryRule.builder()
-         .withKafkaBrokerRule(kafkaRule)
-         .withProtocol("PLAINTEXT")
-         .withPort(9061)
-         .build();      
+          .withKafkaBrokerRule(new WrappedSharedKafkaRule(kafkaTestResource))
+          .build();
+
 ```
 
 ## Example for Confluent AVRO Serializers Test

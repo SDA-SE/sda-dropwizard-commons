@@ -26,12 +26,9 @@ public class ConfluentSchemaRegistryRuleTest {
 
    private static SharedKafkaTestResource kafkaTestResource = new SharedKafkaTestResource().withBrokers(2);
 
-   private static WrappedSharedKafkaRule kafkaRule = new WrappedSharedKafkaRule(kafkaTestResource);
-
    @ClassRule
    public static final ConfluentSchemaRegistryRule SCHEMA_REGISTRY = ConfluentSchemaRegistryRule.builder()
-         .withProtocol("PLAINTEXT")
-         .withKafkaBrokerRule(kafkaRule)
+         .withKafkaBrokerRule(new WrappedSharedKafkaRule(kafkaTestResource))
          .build();
 
    private String exampleSchema = "{\n" +
@@ -59,7 +56,7 @@ public class ConfluentSchemaRegistryRuleTest {
       props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
             io.confluent.kafka.serializers.KafkaAvroSerializer.class);
       props.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY.getConnectionString());
-      props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafkaRule.getBrokerConnectStrings());
+      props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafkaTestResource.getKafkaConnectString());
 
       KafkaProducer<String, Object> producer = new KafkaProducer<>(props);
       Schema.Parser parser = new Schema.Parser();

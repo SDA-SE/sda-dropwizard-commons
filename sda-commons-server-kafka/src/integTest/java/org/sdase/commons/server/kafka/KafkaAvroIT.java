@@ -23,7 +23,6 @@ import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.config.ProtocolType;
 import org.sdase.commons.server.kafka.confluent.testing.ConfluentSchemaRegistryRule;
 import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
-import org.sdase.commons.server.kafka.confluent.testing.WrappedSharedKafkaRule;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
@@ -44,14 +43,14 @@ public class KafkaAvroIT {
    protected static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource().withBrokers(2);
 
    protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE =
-         new KafkaBrokerEnvironmentRule(new WrappedSharedKafkaRule(KAFKA));
+         new KafkaBrokerEnvironmentRule(KAFKA);
 
    protected static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));
 
 
    public static final ConfluentSchemaRegistryRule SCHEMA_REGISTRY = ConfluentSchemaRegistryRule.builder()
-         .withProtocol(ProtocolType.PLAINTEXT.toString())
+         .withKafkaProtocol(ProtocolType.PLAINTEXT.toString())
          .withKafkaBrokerRule(KAFKA_BROKER_ENVIRONMENT_RULE)
          .build();
 
