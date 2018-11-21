@@ -39,7 +39,7 @@ also create generic Jersey clients that can build the request definition with a 
 Client googleClient = clientFactory.externalClient()
       .buildGenericClient("google")
       .target("https://maps.google.com");
-Response response = googleClient...get();
+Response response = googleClient.path("api")/* ... */.get();
 ```
 
 ## Configuration
@@ -65,19 +65,12 @@ for the SDA Platform have some magic added that clients for an external service 
   ```
 - _Consumer-Token_
   
-  SDA Platform clients are able to send a Consumer-Token header to identify the caller. Therefore the service name has 
-  to be configured. The `JerseyClientBundle` takes a `Supplier` for the Consumer-Token to allow switching from a static 
-  service name to a real token later. The 
-  [`ConfigurationValueSupplierBundle`](../sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationValueSupplierBundle.java)
-  can create such a supplier so that the `JerseyClientFactory` does not depend on the configuration:
+  SDA Platform clients are able to send a Consumer-Token header to identify the caller. The token that is used has to be
+  configured and published to the bundle. Currently the token is only the name of the consumer.
   
   ```java
-  private ConfigurationValueSupplierBundle<MyConfiguration, String> consumerTokenSupplier = 
-        ConfigurationValueSupplierBundle.builder()
-           .withAccessor(MyConfiguration::getConsumerName)
-           .build();
   private JerseyClientBundle jerseyClientBundle = JerseyClientBundle.builder()
-        .withConsumerTokenSupplier(consumerTokenSupplier.supplier()).build();
+        .withConsumerTokenProvider(MyConfiguration::getConsumerToken).build();
   ```
   
   Then the clients can be configured to add a Consumer-Token header:

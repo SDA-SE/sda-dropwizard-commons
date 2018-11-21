@@ -1,6 +1,7 @@
 package org.sdase.commons.client.jersey.builder;
 
 import io.dropwizard.client.JerseyClientBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.sdase.commons.client.jersey.filter.AddRequestHeaderFilter;
 import org.sdase.commons.client.jersey.filter.AuthHeaderClientFilter;
 import org.sdase.commons.client.jersey.filter.TraceTokenClientFilter;
@@ -21,9 +22,9 @@ public class PlatformClientBuilder {
 
    private Supplier<Optional<String>> consumerTokenSupplier;
 
-   public PlatformClientBuilder(JerseyClientBuilder jerseyClientBuilder, Supplier<Optional<String>> consumerTokenSupplier) {
+   public PlatformClientBuilder(JerseyClientBuilder jerseyClientBuilder, String consumerToken) {
       this.jerseyClientBuilder = jerseyClientBuilder;
-      this.consumerTokenSupplier = consumerTokenSupplier;
+      this.consumerTokenSupplier = () -> Optional.ofNullable(StringUtils.trimToNull(consumerToken));
       this.filters = new ArrayList<>();
       this.filters.add(new TraceTokenClientFilter());
    }
@@ -46,11 +47,6 @@ public class PlatformClientBuilder {
     * @return this builder instance
     */
    public PlatformClientBuilder enableConsumerToken() {
-      if (consumerTokenSupplier == null) {
-         throw new IllegalStateException("Trying to enableConsumerToken() without a supplier for the consumer token. "
-               + "A Supplier for the consumer token has to be added in the JerseyClientBundle configuration: "
-               + "JerseyClientBundle.builder().withConsumerTokenSupplier(Supplier<String>).build()");
-      }
       filters.add(new AddRequestHeaderFilter(ConsumerTracing.TOKEN_HEADER, consumerTokenSupplier));
       return this;
    }

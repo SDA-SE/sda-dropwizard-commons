@@ -1,6 +1,7 @@
 package org.sdase.commons.client.jersey;
 
-import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Bootstrap;
@@ -8,26 +9,25 @@ import io.dropwizard.setup.Environment;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
 import org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder;
 
-import java.util.Optional;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
  * A bundle that provides Jersey clients with appropriate configuration for the SDA Platform.
  */
-public class JerseyClientBundle implements Bundle {
+public class JerseyClientBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
    private ClientFactory clientFactory;
 
    private boolean initialized;
 
-   private Supplier<Optional<String>> consumerTokenSupplier;
+   private Function<C, String> consumerTokenProvider;
 
-   public static InitialBuilder builder() {
-      return new Builder();
+   public static InitialBuilder<Configuration> builder() {
+      return new Builder<>();
    }
 
-   private JerseyClientBundle(Supplier<Optional<String>> consumerTokenSupplier) {
-      this.consumerTokenSupplier = consumerTokenSupplier;
+   private JerseyClientBundle(Function<C, String> consumerTokenProvider) {
+      this.consumerTokenProvider = consumerTokenProvider;
    }
 
    @Override
@@ -36,9 +36,9 @@ public class JerseyClientBundle implements Bundle {
    }
 
    @Override
-   public void run(Environment environment) {
+   public void run(C configuration, Environment environment) {
       JerseyClientBuilder clientBuilder = new JerseyClientBuilder(environment).using(new JerseyClientConfiguration());
-      this.clientFactory = new ClientFactory(clientBuilder, consumerTokenSupplier);
+      this.clientFactory = new ClientFactory(clientBuilder, consumerTokenProvider.apply(configuration));
       environment.jersey().register(ContainerRequestContextHolder.class);
       initialized = true;
    }
@@ -55,36 +55,48 @@ public class JerseyClientBundle implements Bundle {
    // Builder
    //
 
-   public interface InitialBuilder extends FinalBuilder {
+   public interface InitialBuilder<C extends Configuration> extends FinalBuilder<C> {
       /**
-       * @param consumerTokenSupplier A supplier for the header value of the Http header
+       * @param consumerTokenProvider A provider for the header value of the Http header
        *                              {@value org.sdase.commons.shared.tracing.ConsumerTracing#TOKEN_HEADER} that will
        *                              be send with each client request configured with
-       *                              {@link PlatformClientBuilder#enableConsumerToken()}. If no such supplier is
+       *                              {@link PlatformClientBuilder#enableConsumerToken()}. If no such provider is
        *                              configured, {@link PlatformClientBuilder#enableConsumerToken()} will fail.
        * @return a builder instance for further configuration
        */
-      FinalBuilder withConsumerTokenSupplier(Supplier<Optional<String>> consumerTokenSupplier);
+      <C1 extends Configuration> FinalBuilder<C1> withConsumerTokenProvider(ConsumerTokenProvider<C1> consumerTokenProvider);
    }
 
-   public interface FinalBuilder {
-      JerseyClientBundle build();
+   public interface FinalBuilder<C extends Configuration> {
+      JerseyClientBundle<C> build();
    }
 
-   public static class Builder implements InitialBuilder, FinalBuilder {
+   public static class Builder<C extends Configuration> implements InitialBuilder<C>, FinalBuilder<C> {
 
-      private Supplier<Optional<String>> consumerTokenSupplier;
+      private ConsumerTokenProvider<C> consumerTokenProvider;
 
-      @Override
-      public FinalBuilder withConsumerTokenSupplier(Supplier<Optional<String>> consumerTokenSupplier) {
-         this.consumerTokenSupplier = consumerTokenSupplier;
-         return this;
+      private Builder() {
+      }
+
+      private Builder(ConsumerTokenProvider<C> consumerTokenProvider) {
+         this.consumerTokenProvider = consumerTokenProvider;
       }
 
       @Override
-      public JerseyClientBundle build() {
-         return new JerseyClientBundle(consumerTokenSupplier);
+      public <C1 extends Configuration> FinalBuilder<C1> withConsumerTokenProvider(ConsumerTokenProvider<C1> consumerTokenProvider) {
+         return new Builder<>(consumerTokenProvider);
+      }
+
+      @Override
+      public JerseyClientBundle<C> build() {
+         return new JerseyClientBundle<>(consumerTokenProvider);
       }
    }
 
+   /**
+    * Provides the consumer token that is added to outgoing requests from the configuration.
+    *
+    * @param <C> the type of the applications {@link Configuration} class
+    */
+   public interface ConsumerTokenProvider<C extends Configuration> extends Function<C, String> {}
 }

@@ -5,16 +5,16 @@ import io.dropwizard.Configuration;
 @SuppressWarnings("WeakerAccess")
 public class ClientTestConfig extends Configuration {
 
-   private String consumerName;
+   private String consumerToken;
 
    private String mockBaseUrl;
 
-   public String getConsumerName() {
-      return consumerName;
+   public String getConsumerToken() {
+      return consumerToken;
    }
 
-   public ClientTestConfig setConsumerName(String consumerName) {
-      this.consumerName = consumerName;
+   public ClientTestConfig setConsumerToken(String consumerToken) {
+      this.consumerToken = consumerToken;
       return this;
    }
 
