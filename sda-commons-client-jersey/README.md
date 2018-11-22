@@ -2,6 +2,7 @@
 
 The module `sda-commons-client-jersey` provides support for using Jersey clients within the dropwizard application.
 
+
 ## Usage
 
 The [`JerseyClientBundle`](./src/main/java/org/sdase/commons/client/jersey/JerseyClientBundle.java) must be added to the 
@@ -41,6 +42,7 @@ Client googleClient = clientFactory.externalClient()
       .target("https://maps.google.com");
 Response response = googleClient.path("api")/* ... */.get();
 ```
+
 
 ## Configuration
 
@@ -82,6 +84,7 @@ for the SDA Platform have some magic added that clients for an external service 
         .atTarget("http://other-sda-service.sda.net/api");
   ```
 
+
 ## Writing API Clients as interfaces
 
 Client interfaces use the same annotations as the service definitions for REST endpoints. An example is the 
@@ -98,6 +101,6 @@ requests in any error or redirect case, an exception is thrown. The thrown excep
 - `javax.ws.rs.ServerErrorException` for server errors
 
 If a `javax.ws.rs.core.Response` is defined as return type, Http errors and redirects can be read from the `Response`
-object.
+object. **Remember to always close the `Response` object. It references open socket streams.**
 
 In both variants a `java.net.ConnectException` may be thrown if the client can't connect to the server.
