@@ -43,6 +43,12 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
       initialized = true;
    }
 
+   /**
+    * @return a factory to build clients that can be either used to call within the SDA platform or to call external
+    *       services
+    * @throws IllegalStateException if called before {@link io.dropwizard.Application#run(Configuration, Environment)}
+    *       because the factory has to be initialized within {@link ConfiguredBundle#run(Object, Environment)}
+    */
    public ClientFactory getClientFactory() {
       if (!initialized) {
          throw new IllegalStateException("Clients can be build in run(C, Environment), not in initialize(Bootstrap)");
