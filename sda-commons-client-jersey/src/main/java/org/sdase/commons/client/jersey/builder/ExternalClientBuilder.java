@@ -3,14 +3,33 @@ package org.sdase.commons.client.jersey.builder;
 import io.dropwizard.client.JerseyClientBuilder;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientRequestFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExternalClientBuilder {
 
    private JerseyClientBuilder jerseyClientBuilder;
 
+   private List<ClientRequestFilter> filters;
+
    public ExternalClientBuilder(JerseyClientBuilder jerseyClientBuilder) {
       this.jerseyClientBuilder = jerseyClientBuilder;
+      this.filters = new ArrayList<>();
    }
+
+   /**
+    * Adds a request filter to the client.
+    *
+    * @param clientRequestFilter the filter to add
+    *
+    * @return this builder instance
+    */
+   public ExternalClientBuilder addFilter(ClientRequestFilter clientRequestFilter) {
+      this.filters.add(clientRequestFilter);
+      return this;
+   }
+
    /**
     * Builds a generic client that can be used for Http requests.
     *
@@ -18,7 +37,9 @@ public class ExternalClientBuilder {
     * @return the client instance
     */
    public Client buildGenericClient(String name) {
-      return this.jerseyClientBuilder.build(name);
+      Client client = this.jerseyClientBuilder.build(name);
+      filters.forEach(client::register);
+      return client;
    }
 
    /**

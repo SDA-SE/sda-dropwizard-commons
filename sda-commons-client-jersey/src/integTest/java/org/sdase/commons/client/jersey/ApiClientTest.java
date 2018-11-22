@@ -218,6 +218,40 @@ public class ApiClientTest {
       assertThat(response.getStatus()).isEqualTo(404);
    }
 
+   @Test
+   public void addCustomFiltersToPlatformClient() {
+      MockApiClient mockApiClient = app.getJerseyClientBundle().getClientFactory().platformClient()
+            .addFilter(requestContext -> requestContext.getHeaders().add("Hello", "World")) // NOSONAR
+            .addFilter(requestContext -> requestContext.getHeaders().add("Foo", "Bar"))
+            .api(MockApiClient.class)
+            .atTarget(WIRE.baseUrl());
+
+      mockApiClient.getCars();
+
+      WIRE.verify(
+            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
+            .withHeader("Hello", equalTo("World"))
+            .withHeader("Foo", equalTo("Bar"))
+      );
+   }
+
+   @Test
+   public void addCustomFiltersToExternalClient() {
+      MockApiClient mockApiClient = app.getJerseyClientBundle().getClientFactory().externalClient()
+            .addFilter(requestContext -> requestContext.getHeaders().add("Hello", "World"))
+            .addFilter(requestContext -> requestContext.getHeaders().add("Foo", "Bar"))
+            .api(MockApiClient.class)
+            .atTarget(WIRE.baseUrl());
+
+      mockApiClient.getCars();
+
+      WIRE.verify(
+            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
+            .withHeader("Hello", equalTo("World"))
+            .withHeader("Foo", equalTo("Bar"))
+      );
+   }
+
    private MockApiClient createMockApiClient() {
       return app.getJerseyClientBundle().getClientFactory()
             .platformClient()

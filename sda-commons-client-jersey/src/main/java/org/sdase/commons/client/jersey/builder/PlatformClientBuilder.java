@@ -36,8 +36,7 @@ public class PlatformClientBuilder {
     * @return this builder instance
     */
    public PlatformClientBuilder enableAuthenticationPassThrough() {
-      this.filters.add(new AuthHeaderClientFilter());
-      return this;
+      return addFilter(new AuthHeaderClientFilter());
    }
 
    /**
@@ -47,7 +46,18 @@ public class PlatformClientBuilder {
     * @return this builder instance
     */
    public PlatformClientBuilder enableConsumerToken() {
-      filters.add(new AddRequestHeaderFilter(ConsumerTracing.TOKEN_HEADER, consumerTokenSupplier));
+      return addFilter(new AddRequestHeaderFilter(ConsumerTracing.TOKEN_HEADER, consumerTokenSupplier));
+   }
+
+   /**
+    * Adds a request filter to the client.
+    *
+    * @param clientRequestFilter the filter to add
+    *
+    * @return this builder instance
+    */
+   public PlatformClientBuilder addFilter(ClientRequestFilter clientRequestFilter) {
+      this.filters.add(clientRequestFilter);
       return this;
    }
 
