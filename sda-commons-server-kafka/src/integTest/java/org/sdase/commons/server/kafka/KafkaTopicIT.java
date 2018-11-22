@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
-import org.sdase.commons.server.kafka.confluent.testing.WrappedSharedKafkaRule;
+import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
 import io.dropwizard.testing.ResourceHelpers;
@@ -77,6 +77,7 @@ public class KafkaTopicIT {
                   .withDefaultConsumer()
                   .withValueDeserializer(new StringDeserializer())
                   .withHandler(record -> results.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       assertThat(stringStringMessageListener, is(notNullValue()));
@@ -100,6 +101,7 @@ public class KafkaTopicIT {
                   .withDefaultConsumer()
                   .withValueDeserializer(new StringDeserializer())
                   .withHandler(record -> results.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       assertThat(stringStringMessageListener, is(notNullValue()));
@@ -118,6 +120,7 @@ public class KafkaTopicIT {
                   .withDefaultConsumer()
                   .withValueDeserializer(new StringDeserializer())
                   .withHandler(record -> results.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       assertThat(stringStringMessageListener, is(notNullValue()));

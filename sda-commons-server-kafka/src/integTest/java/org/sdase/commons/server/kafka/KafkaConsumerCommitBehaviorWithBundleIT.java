@@ -27,8 +27,7 @@ import org.junit.rules.TestRule;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
-import org.sdase.commons.server.kafka.confluent.testing.WrappedSharedKafkaRule;
-import org.sdase.commons.server.kafka.consumer.KafkaMessageHandlingException;
+import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
@@ -96,8 +95,9 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                   .withValueDeserializer(deserializer)
                   .withHandler(r -> {
                      numberExceptionThrown++;
-                     throw new KafkaMessageHandlingException("Error");
+                     throw new RuntimeException("Error");
                   })
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> numberExceptionThrown == 1);
@@ -118,6 +118,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                   .withKeyDeserializer(deserializer)
                   .withValueDeserializer(deserializer)
                   .withHandler(r -> results.add(r.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       // wait until consumer is up an running and read data
@@ -142,6 +143,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                   .withKeyDeserializer(deserializer)
                   .withValueDeserializer(deserializer)
                   .withHandler(r -> results.add(r.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
 
@@ -166,6 +168,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                   .withKeyDeserializer(deserializer)
                   .withValueDeserializer(deserializer)
                   .withHandler(r -> results.add(r.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       // wait until consumer is up an running and read data

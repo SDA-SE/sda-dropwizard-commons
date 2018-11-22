@@ -29,9 +29,7 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 
@@ -61,9 +59,9 @@ public class MessageListenerTest {
 
    private MessageHandler<String, String> handler;
 
+   private ErrorHandler<String, String> errorHandler;
+
    private KafkaConsumer<String, String> consumer;
-
-
 
    private static final int WAIT_TIME_MS = 1000;
    private static final int BLOCKING_TIME_MS = 10000;
@@ -74,6 +72,7 @@ public class MessageListenerTest {
    public void setup() {
       consumer = Mockito.mock(KafkaConsumer.class);
       handler = Mockito.mock(MessageHandler.class);
+      errorHandler = Mockito.mock(ErrorHandler.class);
    }
 
    private void setupListener() {
@@ -89,10 +88,12 @@ public class MessageListenerTest {
                   .forTopics(Arrays.asList(TOPICS))
                   .withDefaultConsumer()
                   .withHandler(handler)
+                  .withErrorHandler(errorHandler)
                   .build()
             , consumer, lc
       );
    }
+
 
 
    @Test
@@ -125,11 +126,9 @@ public class MessageListenerTest {
       Thread t = startListenerThread();
 
 
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(2)).poll(Mockito.longThat(longGtZero));
+      Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(2)).poll(Mockito.longThat(longGtZero));
 
       listener.stopConsumer();
-
-
       await().atMost(WAIT_TIME_MS, MILLISECONDS).until(() -> t.getState().equals(State.TERMINATED));
       assertThat(t.getState(), equalTo(State.TERMINATED));
    }
@@ -147,23 +146,47 @@ public class MessageListenerTest {
    }
 
    @Test
-   public void transactionalConsumerShouldNotCallCommitWhenExceptionIsThrown()  {
+   public void errorHandlerShouldBeInvokedWhenExceptionButNotStop()  {
       ConsumerRecords<String, String> records = createConsumerRecords();
       setupMocks();
       setupListener();
+      AtomicInteger count = new AtomicInteger(0);
 
-      Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).then((Answer<ConsumerRecords<String, String>>) invocation -> {
-         listener.stopConsumer();
+      Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).thenReturn(records);
 
-         return records;
+      Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(Mockito.anyObject());
+
+      Mockito.when(errorHandler.handleError(Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject())).then(
+            (Answer<Boolean>)invocation -> {
+               count.incrementAndGet();
+               return true;
       });
 
-      Mockito.doThrow(new KafkaMessageHandlingException()).when(handler).handle(Mockito.anyObject());
+      startListenerThread();
+      await().until(() -> count.get() >= 1);
+      Mockito.verify(consumer, Mockito.never()).close();
+   }
+
+
+   @Test
+   public void shouldStopWhenErrorHandlerReturnsFalse()  {
+      ConsumerRecords<String, String> records = createConsumerRecords();
+      setupMocks();
+      setupListener();
+      AtomicInteger count = new AtomicInteger(0);
+
+      Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).thenReturn(records);
+      Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(Mockito.anyObject());
+
+      Mockito.when(errorHandler.handleError(Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject())).then(
+            (Answer<Boolean>)invocation -> {
+               count.incrementAndGet();
+               return false;
+            });
 
       startListenerThread();
-      await().atMost(WAIT_TIME_MS, MILLISECONDS);
-
-      Mockito.verify(consumer, Mockito.never()).commitSync();
+      await().until(() -> count.get() >= 1);
+      Mockito.verify(consumer, Mockito.atLeastOnce()).close();
 
    }
 
@@ -189,9 +212,7 @@ public class MessageListenerTest {
          return test.get();
       });
 
-      records.forEach(r -> {
-         Mockito.verify(handler, atLeastOnce()).handle(r);
-      });
+      records.forEach(r -> Mockito.verify(handler, atLeastOnce()).handle(r));
 
    }
 
@@ -201,23 +222,14 @@ public class MessageListenerTest {
       setupListener();
       AtomicBoolean throwException = new AtomicBoolean(false);
 
-      Mockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(InvocationOnMock invocation) {
-            throwException.set(true);
-            return null;
-         }
-
+      Mockito.doAnswer((Answer<Void>) invocation -> {
+         throwException.set(true);
+         return null;
       }).when(consumer).wakeup();
 
-      Mockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(InvocationOnMock invocation) {
-            await().atMost(BLOCKING_TIME_MS, MILLISECONDS).untilTrue(throwException);
-            throw new WakeupException();
-         }
+      Mockito.doAnswer((Answer<Void>) invocation -> {
+         await().atMost(BLOCKING_TIME_MS, MILLISECONDS).untilTrue(throwException);
+         throw new WakeupException();
       }).when(consumer).poll(Mockito.longThat(longGtZero));
 
       Thread t = startListenerThread();
@@ -244,14 +256,9 @@ public class MessageListenerTest {
 
       AtomicBoolean throwException = new AtomicBoolean(false);
 
-      Mockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(InvocationOnMock invocation) {
-            throwException.set(true);
-            return null;
-         }
-
+      Mockito.doAnswer((Answer<Void>) invocation -> {
+         throwException.set(true);
+         return null;
       }).when(consumer).wakeup();
 
 

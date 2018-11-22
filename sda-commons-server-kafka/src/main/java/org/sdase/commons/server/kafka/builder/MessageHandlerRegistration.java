@@ -4,6 +4,7 @@ import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
+import org.sdase.commons.server.kafka.consumer.ErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
@@ -20,7 +21,7 @@ public class MessageHandlerRegistration<K, V> {
    private Deserializer<V> valueDeserializer;
    private Collection<ExpectedTopicConfiguration> topics;
    private MessageHandler<K, V> handler;
-
+   private ErrorHandler<K, V> errorHandler;
    private boolean checkTopicConfiguration;
    private ConsumerConfig consumerConfig;
    private String consumerConfigName;
@@ -66,6 +67,10 @@ public class MessageHandlerRegistration<K, V> {
 
    public ListenerConfig getListenerConfig() {
       return listenerConfig;
+   }
+
+   public ErrorHandler<K,V> getErrorHandler() {
+      return errorHandler;
    }
 
    public interface ListenerBuilder<K, V> {
@@ -152,8 +157,16 @@ public class MessageHandlerRegistration<K, V> {
        * @param handler handler with business logic
        * @return builder
        */
-      FinalBuilder<K, V> withHandler(MessageHandler<K, V> handler);
+      ErrorHandlerBuilder<K, V> withHandler(MessageHandler<K, V> handler);
 
+   }
+
+   public interface ErrorHandlerBuilder<K, V> {
+      /**
+       * @param errorHandler error handler for handle errors during processing in @{@link MessageHandler}
+       * @return builder
+       */
+      FinalBuilder<K, V> withErrorHandler(ErrorHandler<K, V> errorHandler);
    }
 
    public interface FinalBuilder<K, V> {
@@ -165,7 +178,7 @@ public class MessageHandlerRegistration<K, V> {
    }
 
    private static class Builder<K, V> implements ConsumerBuilder<K, V>, TopicBuilder<K, V>,
-         HandlerBuilder<K, V>, FinalBuilder<K, V>, ListenerBuilder<K, V> {
+         HandlerBuilder<K, V>, FinalBuilder<K, V>, ListenerBuilder<K, V>, ErrorHandlerBuilder<K, V> {
 
       private Deserializer<?> keyDeserializer;
       private Deserializer<?> valueDeserializer;
@@ -175,7 +188,8 @@ public class MessageHandlerRegistration<K, V> {
       private ConsumerConfig consumerConfig;
       private ListenerConfig listenerConfig;
       private String consumerName;
-      private String listenreName;
+      private String listenerName;
+      private ErrorHandler<K, V> errorHandler;
 
 
       private Builder() {
@@ -204,7 +218,7 @@ public class MessageHandlerRegistration<K, V> {
       }
 
       @Override
-      public FinalBuilder<K, V> withHandler(@NotNull MessageHandler<K, V> handler) {
+      public ErrorHandlerBuilder<K, V> withHandler(@NotNull MessageHandler<K, V> handler) {
          this.handler = handler;
          return this;
       }
@@ -246,26 +260,9 @@ public class MessageHandlerRegistration<K, V> {
          return this;
       }
 
-      @SuppressWarnings("unchecked")
-      @Override
-      public MessageHandlerRegistration<K, V> build() {
-         MessageHandlerRegistration<K, V> build = new MessageHandlerRegistration<>();
-         build.handler = handler;
-         build.keyDeserializer = (Deserializer<K>) keyDeserializer;
-         build.valueDeserializer = (Deserializer<V>) valueDeserializer;
-         build.topics = topics;
-         build.checkTopicConfiguration = topicExistCheck;
-         build.consumerConfig = consumerConfig;
-         build.consumerConfigName = consumerName;
-         build.listenerConfig = listenerConfig;
-         build.listenerConfigName = listenreName;
-
-         return build;
-      }
-
       @Override
       public TopicBuilder<K, V> withListenerConfig(String name) {
-         this.listenreName = name;
+         this.listenerName = name;
          return this;
       }
 
@@ -279,6 +276,30 @@ public class MessageHandlerRegistration<K, V> {
       public TopicBuilder<K, V> withDefaultListenerConfig() {
          this.listenerConfig = ListenerConfig.getDefault();
          return this;
+      }
+
+      @Override
+      public FinalBuilder<K, V> withErrorHandler(ErrorHandler<K, V> errorHandler) {
+         this.errorHandler = errorHandler;
+         return this;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public MessageHandlerRegistration<K, V> build() {
+         MessageHandlerRegistration<K, V> build = new MessageHandlerRegistration<>();
+         build.handler = handler;
+         build.keyDeserializer = (Deserializer<K>) keyDeserializer;
+         build.valueDeserializer = (Deserializer<V>) valueDeserializer;
+         build.topics = topics;
+         build.checkTopicConfiguration = topicExistCheck;
+         build.consumerConfig = consumerConfig;
+         build.consumerConfigName = consumerName;
+         build.listenerConfig = listenerConfig;
+         build.listenerConfigName = listenerName;
+         build.errorHandler = errorHandler;
+
+         return build;
       }
    }
 

@@ -23,6 +23,7 @@ import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.config.ProtocolType;
 import org.sdase.commons.server.kafka.confluent.testing.ConfluentSchemaRegistryRule;
 import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
+import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
@@ -97,6 +98,7 @@ public class KafkaAvroIT {
                   .withHandler(
                         record -> results.add(record.value().getFirst())
                   )
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       assertThat(stringStringMessageListener, is(notNullValue()));

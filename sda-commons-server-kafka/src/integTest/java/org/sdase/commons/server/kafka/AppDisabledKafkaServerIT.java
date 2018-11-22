@@ -3,6 +3,7 @@ package org.sdase.commons.server.kafka;
 import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
+import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.AppConfiguration;
 import org.sdase.commons.server.kafka.dropwizard.KafkaApplication;
@@ -55,6 +56,7 @@ public class AppDisabledKafkaServerIT {
                   .withDefaultConsumer()
                   .withValueDeserializer(new StringDeserializer())
                   .withHandler(record -> results.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       assertTrue(lc1.isEmpty());

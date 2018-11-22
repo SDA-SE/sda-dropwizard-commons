@@ -3,7 +3,7 @@ package org.sdase.commons.server.kafka.builder;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
-import org.sdase.commons.server.kafka.consumer.KafkaMessageHandlingException;
+import org.sdase.commons.server.kafka.consumer.ErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -27,6 +27,7 @@ public class MessageHandlerRegistationTest {
    public void handlerIsRegisteredCorrectly() {
 
       MessageHandler<String, String> messageHandler = record -> {};
+      ErrorHandler<String, String> errorHandler = (record, e, consumer) -> true;
 
       MessageHandlerRegistration<String, String> registration = MessageHandlerRegistration
             .<String, String> builder()
@@ -36,6 +37,7 @@ public class MessageHandlerRegistationTest {
             .withKeyDeserializer(new StringDeserializer())
             .withValueDeserializer(new StringDeserializer())
             .withHandler(messageHandler)
+            .withErrorHandler(errorHandler)
             .build();
 
       assertThat(registration.getTopicsNames(), contains("TOPIC1"));
@@ -46,7 +48,7 @@ public class MessageHandlerRegistationTest {
       CallbackMessageHandler<String, String> cbHandler = new CallbackMessageHandler<String, String>() {
 
          @Override
-         public void handle(ConsumerRecord<String, String> record) throws KafkaMessageHandlingException {
+         public void handle(ConsumerRecord<String, String> record) {
          }
 
          @Override
@@ -62,6 +64,7 @@ public class MessageHandlerRegistationTest {
             .withKeyDeserializer(new StringDeserializer())
             .withValueDeserializer(new StringDeserializer())
             .withHandler(cbHandler)
+            .withErrorHandler(errorHandler)
             .build();
 
       assertThat(registration1.getTopicsNames(), containsInAnyOrder("Topic1", "Topic2"));
@@ -83,6 +86,7 @@ public class MessageHandlerRegistationTest {
             .withKeyDeserializer(new IntegerDeserializer())
             .withValueDeserializer(new LongDeserializer())
             .withHandler(messageHandler)
+            .withErrorHandler(((record, e, consumer) -> true))
             .build();
 
       assertThat(registration, is(notNullValue()));
@@ -111,6 +115,7 @@ public class MessageHandlerRegistationTest {
             .forTopic("Bla")
             .withConsumerConfig(consumer)
             .withHandler(messageHandler)
+            .withErrorHandler(((record, e, consumer1) -> true))
             .build();
 
       assertThat(registration, is(notNullValue()));

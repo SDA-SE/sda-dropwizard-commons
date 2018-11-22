@@ -43,6 +43,7 @@ public class DemoApplication {
                   .forTopic("topic") // replace topic with your topic name
                   .withDefaultConsumer()
                   .withHandler(record -> results.add(record.value())) // replace with your handler implementation
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
                          
       // register with custom consumer and listener configuration (e.g. 2 instances, poll every minute)
@@ -54,6 +55,7 @@ public class DemoApplication {
                   .forTopic("topic") // replace topic with your topic name
                   .withConsumerConfig("consumer2") // use consumer config from config yaml
                   .withHandler(x -> result.add(x)) // replace with your handler implementation
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
       
       // create own serializer       
@@ -91,6 +93,7 @@ public class DemoApplication {
                   .withDefaultConsumer()
                   .withValueDeserializer(new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class))
                   .withHandler(x -> resultsString.add(x.value().getName()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build()
             );
       
@@ -241,6 +244,13 @@ No defaults
 | useAutoCommitOnly | true |
 | topicMissingRetryMs | 0 |
 
+## The MessageListener
+The bundle provides a default [`MessageListener`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java) 
+that reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle.
+
+The user can choose between auto-commit, sync, and async commits by configuration. But, the `MessageListener` does not implement
+any extra logic in case of rebalancing. Therefore, the listener does not support an exactly once semantic. It might occur
+that messages are redelivered after rebalance activities. 
 
 ## Migration information (from kafka-commons)
 

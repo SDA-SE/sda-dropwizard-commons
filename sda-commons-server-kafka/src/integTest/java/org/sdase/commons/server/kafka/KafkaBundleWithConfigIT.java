@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.sdase.commons.server.kafka.confluent.testing.WrappedSharedKafkaRule;
+import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
@@ -38,7 +38,6 @@ import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
-import org.sdase.commons.server.kafka.consumer.KafkaMessageHandlingException;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.AppConfiguration;
 import org.sdase.commons.server.kafka.dropwizard.KafkaApplication;
@@ -110,6 +109,7 @@ public class KafkaBundleWithConfigIT {
                   .forTopic(topic)
                   .withConsumerConfig("consumer1")
                   .withHandler(record -> results.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       MessageProducer<Long, Long> producer = kafkaBundle
@@ -139,6 +139,7 @@ public class KafkaBundleWithConfigIT {
                   .forTopic(topic)
                   .withConsumerConfig("consumer2")
                   .withHandler(record -> resultsString.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       MessageProducer<String, String> producer = kafkaBundle
@@ -169,6 +170,7 @@ public class KafkaBundleWithConfigIT {
                   .forTopic(topic)
                   .withDefaultConsumer()
                   .withHandler(record -> resultsString.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       MessageProducer<String, String> producer = kafkaBundle
@@ -205,6 +207,7 @@ public class KafkaBundleWithConfigIT {
                   .withKeyDeserializer(new StringDeserializer())
                   .withValueDeserializer(new StringDeserializer())
                   .withHandler(record -> resultsString.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
 
@@ -278,6 +281,7 @@ public class KafkaBundleWithConfigIT {
                   .withKeyDeserializer(deserializer)
                   .withValueDeserializer(deserializer)
                   .withHandler(record -> resultsString.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       // empty topic before test
@@ -332,10 +336,11 @@ public class KafkaBundleWithConfigIT {
                      }
 
                      @Override
-                     public void handle(ConsumerRecord<String, String> record) throws KafkaMessageHandlingException {
+                     public void handle(ConsumerRecord<String, String> record) {
                         resultsString.add(record.value());
                      }
                   })
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
 
@@ -375,6 +380,7 @@ public class KafkaBundleWithConfigIT {
                   .withDefaultConsumer()
                   .withKeyDeserializer(new LongDeserializer())
                   .withHandler(record -> resultsString.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       kafkaBundle
@@ -384,6 +390,7 @@ public class KafkaBundleWithConfigIT {
                   .forTopic(TOPIC_DELETE)
                   .withDefaultConsumer()
                   .withHandler(record -> resultsString.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
       MessageProducer<Long, String> createProducer = kafkaBundle
@@ -420,6 +427,7 @@ public class KafkaBundleWithConfigIT {
             .withDefaultConsumer()
             .withValueDeserializer(new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class))
             .withHandler(x -> resultsString.add(x.value().getName()))
+            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
             .build()
       );
 

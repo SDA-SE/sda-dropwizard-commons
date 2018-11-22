@@ -3,12 +3,10 @@ package org.sdase.commons.server.kafka.consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 /**
- * Marks implementing classes as handlers for incoming messages of type V
- * 
- * @author Tim Braun <tim.braun@de.ibm.com>
- *
- * @param <V>
- *           Generic type of Message
+ * Handler for consumer record processing. The handler includes the business logic that should be applied on
+ * consumed messages
+ * @param <K> key class
+ * @param <V> value class
  */
 @FunctionalInterface
 public interface MessageHandler<K, V> {

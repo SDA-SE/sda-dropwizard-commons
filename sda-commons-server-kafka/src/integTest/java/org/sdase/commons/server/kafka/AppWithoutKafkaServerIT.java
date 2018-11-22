@@ -2,6 +2,7 @@ package org.sdase.commons.server.kafka;
 
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
+import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.dropwizard.AppConfiguration;
 import org.sdase.commons.server.kafka.dropwizard.KafkaApplication;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
@@ -58,6 +59,7 @@ public class AppWithoutKafkaServerIT {
                   .withDefaultConsumer()
                   .withValueDeserializer(new StringDeserializer())
                   .withHandler(record -> results.add(record.value()))
+                  .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
    }
