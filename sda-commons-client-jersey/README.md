@@ -94,8 +94,9 @@ of this module.
 Error handling is different based on the return type:
 
 If a specific return type is defined (e.g. `List<MyResource> getMyResources();`), it is only returned for successful 
-requests in any error or redirect case, an exception is thrown. The thrown exception is a subclass of 
-`javax.ws.rs.WebApplicationException`. 
+requests in any error or redirect case, an exception is thrown. The thrown exception is a 
+[`ClientRequestException`](./src/main/java/org/sdase/commons/client/jersey/error/ClientRequestException.java)
+wrapping subclassed of `javax.ws.rs.WebApplicationException`: 
 - `javax.ws.rs.RedirectionException` to indicate redirects 
 - `javax.ws.rs.ClientErrorException` for client errors
 - `javax.ws.rs.ServerErrorException` for server errors
