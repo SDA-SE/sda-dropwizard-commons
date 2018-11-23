@@ -210,7 +210,7 @@ public class ApiClientTest {
    }
 
    @Test
-   @Ignore("Default methods in API client interfaces are not supported by Jersey. A custom proxy may fix this later.")
+   @Ignore("Default methods in API client interfaces are not supported by Jersey. A custom proxy may fix this.")
    public void loadLightBlueCarThroughDefaultMethod() {
       Response response = createMockApiClient().getLightBlueCar();
       assertThat(response.getStatus()).isEqualTo(200);
