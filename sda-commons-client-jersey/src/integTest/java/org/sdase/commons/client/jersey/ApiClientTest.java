@@ -210,7 +210,7 @@ public class ApiClientTest {
    }
 
    @Test
-   @Ignore("Default methods in API client interfaces are not supported by Jersey. A custom proxy may fix this.")
+   @Ignore("Default methods in API client interfaces are not supported by Jersey. A custom proxy may fix this later.")
    public void loadLightBlueCarThroughDefaultMethod() {
       Response response = createMockApiClient().getLightBlueCar();
       assertThat(response.getStatus()).isEqualTo(200);
@@ -228,7 +228,16 @@ public class ApiClientTest {
 
    @Test
    public void return404ForMissingCar() {
-      Response response = createMockApiClient().getCarResponse("HH AA 4444");
+      Response response = createMockApiClient().getCarResponse("HH AA 5555");
+      assertThat(response.getStatus()).isEqualTo(404);
+   }
+
+   @Test
+   public void return404ForMissingCarWithGenericClient() {
+      Response response = app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("foo")
+            .target(WIRE.baseUrl()).path("api").path("cars").path("HH AA 7777")
+            .request(MediaType.APPLICATION_JSON)
+            .get();
       assertThat(response.getStatus()).isEqualTo(404);
    }
 
