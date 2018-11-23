@@ -1,4 +1,4 @@
-@Library('jenkins-library@v-0.30.0') _
+@Library('jenkins-library@v-0.32.0') _
 
 pipeline {
    agent none
@@ -21,18 +21,22 @@ pipeline {
       /*
        * Stage: Tag Release
        *
-       * Finds the current Tag and increments the version by one
+       * Finds the current Tag and the new version number based on semantic release
        *
        */
-      stage('Tag Release') {
+      stage('Prepare Release') {
          when {
             branch 'master'
          }
          agent {
-            label 'master'
+            docker {
+               image 'quay.io/sdase/semantic-release'
+            }
          }
          steps {
-            javaGradlew gradleCommand: 'createRelease'
+            script {
+               env.SEMANTIC_VERSION = getSemanticReleaseNumber()
+            }
          }
       }
       /*
@@ -79,11 +83,11 @@ pipeline {
          }
       }
       /*
-        * Stage: Java Gradle: Integration Test Service
-        *
-        * Same as Module Test but calling gradlew 'iT'
-        *
-        */
+       * Stage: Java Gradle: Integration Test Service
+       *
+       * Same as Module Test but calling gradlew 'iT'
+       *
+       */
       stage('Gradle Java: Integration Test') {
          agent {
             docker {
@@ -128,12 +132,31 @@ pipeline {
          }
       }
       /*
-       * Stage: Publish release
+       * Stage: Create Release
        *
-       * Pushes the Tag to Repository and Uploads the Archive to Nexus
+       * Finds the current Tag and increments the version based on semantic release
        *
        */
-      stage('Publish release') {
+      stage('Create Release') {
+         when {
+            branch 'master'
+         }
+         agent {
+            docker {
+               image 'node:8.12.0-jessie'
+            }
+         }
+         steps {
+            semanticRelease()
+         }
+      }
+      /*
+       * Stage: Upload release
+       *
+       * Uploads the Archive to Nexus
+       *
+       */
+      stage('Upload release') {
          when {
             branch 'master'
          }
@@ -141,9 +164,6 @@ pipeline {
             label 'master'
          }
          steps {
-            withCredentials([usernamePassword(credentialsId: 'sdabot-github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-               sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/SDA-SE/sda-commons --tags')
-            }
             javaGradlew gradleCommand: 'uploadArchives'
          }
       }

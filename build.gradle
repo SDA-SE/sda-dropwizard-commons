@@ -20,7 +20,6 @@ plugins {
     id 'jacoco'
     id 'org.owasp.dependencycheck' version '3.3.2'
     id 'nebula.integtest' version '3.4.0'
-    id 'pl.allegro.tech.build.axion-release' version '1.9.3'
 }
 
 subprojects {
@@ -107,16 +106,7 @@ subprojects {
         }
     }
 
-    // release
-    scmVersion {
-        versionIncrementer 'incrementPrerelease'
-        checks {
-            uncommittedChanges = false
-            aheadOfRemote = false
-        }
-        tag { prefix = '' }
-    }
-    version = scmVersion.version
+    version = System.getenv('SEMANTIC_VERSION')
 
     task('sourcesJar', type: Jar, dependsOn: classes) {
         classifier = 'sources'
@@ -125,9 +115,6 @@ subprojects {
     artifacts {
         archives jar
         archives sourcesJar
-    }
-    jar {
-        version = null
     }
 
     uploadArchives {
