@@ -116,6 +116,9 @@ subprojects {
         archives jar
         archives sourcesJar
     }
+    jar {
+        version = null
+    }
 
     uploadArchives {
         repositories {
