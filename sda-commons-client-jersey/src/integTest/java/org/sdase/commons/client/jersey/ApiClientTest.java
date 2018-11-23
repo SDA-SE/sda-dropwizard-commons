@@ -10,6 +10,7 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -47,7 +48,7 @@ public class ApiClientTest {
 
    private static final ObjectMapper OM = new ObjectMapper();
    private static final Car BRIGHT_BLUE_CAR = new Car().setSign("HH XX 1234").setColor("bright blue"); // NOSONAR
-   private static final Car LIGHT_BLUE_CAR = new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
+   public static final Car LIGHT_BLUE_CAR = new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
 
    private final DropwizardAppRule<ClientTestConfig> dw = new DropwizardAppRule<>(
          ClientTestApp.class, resourceFilePath("test-config.yaml"));
@@ -206,6 +207,16 @@ public class ApiClientTest {
    public void loadSingleCar() {
       Car car = createMockApiClient().getCar("HH XY 4321");
       assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 4321", "light blue");
+   }
+
+   @Test
+   @Ignore("Default methods in API client interfaces are not supported by Jersey. A custom proxy may fix this.")
+   public void loadLightBlueCarThroughDefaultMethod() {
+      Response response = createMockApiClient().getLightBlueCar();
+      assertThat(response.getStatus()).isEqualTo(200);
+      assertThat(response.readEntity(Car.class))
+            .extracting(Car::getSign, Car::getColor)
+            .containsExactly("HH XY 4321", "light blue");
    }
 
    @Test

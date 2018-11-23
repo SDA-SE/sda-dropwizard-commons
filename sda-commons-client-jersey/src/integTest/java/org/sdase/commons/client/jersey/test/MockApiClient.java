@@ -1,5 +1,7 @@
 package org.sdase.commons.client.jersey.test;
 
+import org.sdase.commons.client.jersey.ApiClientTest;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -37,6 +39,10 @@ public interface MockApiClient {
    @Produces(MediaType.APPLICATION_JSON)
    Response getCarResponse(@PathParam("id") String id);
 
+   // NOT supported yet!
+   default Response getLightBlueCar() {
+      return getCarResponse(ApiClientTest.LIGHT_BLUE_CAR.getSign());
+   }
 
    class Car {
       private String sign;
