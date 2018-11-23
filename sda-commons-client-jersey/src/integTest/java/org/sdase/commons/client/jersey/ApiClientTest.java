@@ -13,6 +13,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.sdase.commons.client.jersey.error.ClientRequestException;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
@@ -209,7 +210,9 @@ public class ApiClientTest {
 
    @Test
    public void failOnLoadingMissingCar() {
-      assertThatExceptionOfType(NotFoundException.class).isThrownBy(() -> createMockApiClient().getCar("HH AA 4444"));
+      assertThatExceptionOfType(ClientRequestException.class)
+            .isThrownBy(() -> createMockApiClient().getCar("HH AA 4444"))
+            .withCauseInstanceOf(NotFoundException.class);
    }
 
    @Test

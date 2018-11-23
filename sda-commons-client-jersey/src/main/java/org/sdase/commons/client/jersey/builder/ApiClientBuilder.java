@@ -4,6 +4,8 @@ import org.glassfish.jersey.client.proxy.WebResourceFactory;
 
 import javax.ws.rs.client.Client;
 
+import static org.sdase.commons.client.jersey.proxy.ApiClientInvocationHandler.createProxy;
+
 /**
  * Builder to create clients from JAX-RS annotated interfaces.
  *
@@ -27,6 +29,6 @@ public class ApiClientBuilder<A> {
     * @return the client proxy implementing the client interface
     */
    public A atTarget(String baseUri) {
-      return WebResourceFactory.newResource(apiClass, client.target(baseUri));
+      return createProxy(apiClass, WebResourceFactory.newResource(apiClass, client.target(baseUri)));
    }
 }
