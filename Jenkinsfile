@@ -1,4 +1,4 @@
-@Library('jenkins-library@develop') _
+@Library('jenkins-library@feature/DEVOPS-38') _
 
 pipeline {
    agent none
