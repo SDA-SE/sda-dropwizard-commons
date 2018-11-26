@@ -1,4 +1,4 @@
-@Library('jenkins-library@feature/DEVOPS-38') _
+@Library('jenkins-library@develop') _
 
 pipeline {
    agent none
@@ -140,7 +140,7 @@ pipeline {
          }
          agent {
             docker {
-               image 'quay.io/sdase/semnatic-release:develop'
+               image 'quay.io/sdase/semantic-release:develop'
             }
          }
          steps {
