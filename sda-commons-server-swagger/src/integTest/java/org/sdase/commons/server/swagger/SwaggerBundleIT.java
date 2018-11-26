@@ -5,6 +5,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
+import static org.junit.Assert.assertTrue;
 
 import org.sdase.commons.server.swagger.test.SwaggerJsonLight;
 import io.dropwizard.Configuration;
@@ -108,13 +109,31 @@ public class SwaggerBundleIT {
 
       String definition = PersonResource.class.getSimpleName();
 
-      assertThat(definitions).hasSize(1);
+      assertThat(definitions).hasSize(2);
       assertThat(definitions).containsKeys(definition);
 
       SwaggerJsonLight.SwaggerDefinition swaggerDefinition = definitions.get(definition);
 
       Map<String, Object> properties = swaggerDefinition.getProperties();
 
-      assertThat(properties.keySet()).containsExactlyInAnyOrder("firstName", "lastName");
+      assertThat(properties.keySet()).containsExactlyInAnyOrder("firstName", "lastName", "_links");
+   }
+
+   @Test
+   public void shouldIncludeHALSelfLink() {
+      SwaggerJsonLight response = getJsonRequest().get(SwaggerJsonLight.class);
+
+      Map<String, SwaggerJsonLight.SwaggerDefinition> definitions = response.getDefinitions();
+
+      String definition = PersonResource.class.getSimpleName();
+
+      SwaggerJsonLight.SwaggerDefinition swaggerDefinition = definitions.get(definition);
+
+      Map<String, Object> properties = swaggerDefinition.getProperties();
+      @SuppressWarnings("unchecked")
+      Map<String, Object> objectProperties = (Map<String, Object>) ((Map<String, Object>) properties.get("_links"))
+            .get("properties");
+
+      assertTrue(objectProperties.containsKey("self"));
    }
 }

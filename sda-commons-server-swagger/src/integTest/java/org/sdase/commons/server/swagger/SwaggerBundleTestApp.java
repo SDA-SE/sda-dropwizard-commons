@@ -6,6 +6,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.openapitools.jackson.dataformat.hal.HALLink;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,12 +20,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 @Api
 @Path("")
 public class SwaggerBundleTestApp extends Application<Configuration> {
 
    private static final String JOHN_DOE_PATH = "/jdoe";
+
+   @Context
+   private UriInfo uriInfo;
 
    public static void main(String[] args) throws Exception {
       new SwaggerBundleTestApp().run(args);
@@ -50,7 +55,8 @@ public class SwaggerBundleTestApp extends Application<Configuration> {
    @ApiOperation(value = "get", response = PersonResource.class)
    @ApiResponses(@ApiResponse(code = 200, message = "get", response = PersonResource.class))
    public PersonResource getJohnDoe() {
-      return new PersonResource("John", "Doe");
+      URI self = uriInfo.getBaseUriBuilder().path(SwaggerBundleTestApp.class, "getJohnDoe").build();
+      return new PersonResource("John", "Doe", new HALLink.Builder(self).build());
    }
 
    @POST

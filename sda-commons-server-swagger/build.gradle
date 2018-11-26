@@ -13,10 +13,17 @@ dependencies {
     }
 
     testCompile project(':sda-commons-server-testing')
+    testCompile project(':sda-commons-server-jackson')
     testCompile 'com.github.java-json-tools:json-schema-validator:' + jsonSchemaValidatorVersion, {
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
         exclude group: 'joda-time', module: 'joda-time'
+    }
+
+    compile (group: 'io.openapitools.hal', name: 'swagger-hal', version: '1.0.4') {
+        exclude group: 'io.openapitools.jackson.dataformat', module: 'jackson-dataformat-hal'
+        exclude group: 'io.swagger', module: 'swagger-jaxrs'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 }
