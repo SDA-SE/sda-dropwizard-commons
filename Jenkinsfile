@@ -1,4 +1,4 @@
-@Library('jenkins-library@v-0.32.0') _
+@Library('jenkins-library@develop') _
 
 pipeline {
    agent none
@@ -25,17 +25,14 @@ pipeline {
        *
        */
       stage('Prepare Release') {
-         when {
-            branch 'master'
-         }
          agent {
             docker {
-               image 'quay.io/sdase/semantic-release'
+               image 'quay.io/sdase/semantic-release:develop'
             }
          }
          steps {
             script {
-               env.SEMANTIC_VERSION = getSemanticReleaseNumber()
+               env.SEMANTIC_VERSION = semanticRelease dryRun: "true"
             }
          }
       }
@@ -143,7 +140,7 @@ pipeline {
          }
          agent {
             docker {
-               image 'node:8.12.0-jessie'
+               image 'quay.io/sdase/semnatic-release:develop'
             }
          }
          steps {
