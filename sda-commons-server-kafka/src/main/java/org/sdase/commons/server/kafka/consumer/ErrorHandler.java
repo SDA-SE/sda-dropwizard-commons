@@ -16,7 +16,7 @@ public interface ErrorHandler<K, V> {
     * @param record consumer record that caused the error
     * @param e error that occured
     * @param consumer consumer that read the record
-    * @return if true, the listener should stop consuming messages
+    * @return if false, the listener should stop consuming messages
     */
    boolean handleError(ConsumerRecord<K, V> record, RuntimeException e, Consumer<K, V> consumer);
 }

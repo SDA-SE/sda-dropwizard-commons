@@ -9,7 +9,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
-import org.sdase.commons.server.kafka.exception.StopListenerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +28,10 @@ import java.util.stream.Collectors;
  * </p>
  * <p>
  * The listener requires a {@link KafkaConsumer} to connect to Kafka.
- * Additionally, it requires an @{@link MessageHandler} for the business logic
+ * Additionally, it requires a {@link MessageHandler} for the business logic
  * for processing a read record and an {@link ErrorHandler} for business logic
  * in error case. The error will be logged in any case.
- * The @{@link IgnoreAndProceedErrorHandler} can be used if nothing must be done
+ * The {@link IgnoreAndProceedErrorHandler} can be used if nothing must be done
  * in error case.
  * </p>
  * <p>
@@ -110,7 +109,7 @@ public class MessageListener<K, V> implements Runnable {
          } catch (WakeupException w) {
             LOGGER.warn("Woke up before polling returned", w);
          } catch (StopListenerException e) {
-            LOGGER.error("Stopping listener for topics [{}] due to exception", joinedTopics);
+            LOGGER.error("Stopping listener for topics [{}] due to exception", joinedTopics, e);
             break;
          } catch (RuntimeException re) {
             LOGGER.error("Unauthorized or other runtime exception.", re);
@@ -175,7 +174,7 @@ public class MessageListener<K, V> implements Runnable {
             LOGGER.error("Error while handling record {} in message handler {}", record.key(), handler.getClass(), e);
             boolean shouldContinue = errorHandler.handleError(record, e, consumer);
             if (!shouldContinue) {
-               throw new StopListenerException();
+               throw new StopListenerException(e);
             }
          }
       }
