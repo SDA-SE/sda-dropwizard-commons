@@ -14,6 +14,12 @@ technologies that are recommended for services in the SDA SE Platform. These tec
 - [Hibernate](http://hibernate.org/)
 - [Kafka](https://kafka.apache.org/)
 
+## Changelog and Versioning
+
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and uses [Semantic Commits](https://gist.github.com/stephenparish/9941e89d80e2bc58a153).
+
+Our [changelog](https://github.com/SDA-SE/sda-commons/releases/) is maintained in the GitHub releases.
+
 ## Modules in SDA Commons
 
 ### Server
