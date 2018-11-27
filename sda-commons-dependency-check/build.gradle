@@ -17,4 +17,5 @@ dependencies {
     testCompile project(':sda-commons-server-weld')
     testCompile project(':sda-commons-server-weld-testing')
     testCompile project(':sda-commons-shared-tracing')
+    testCompile project(':sda-commons-shared-error')
 }
