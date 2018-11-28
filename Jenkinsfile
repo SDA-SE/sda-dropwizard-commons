@@ -1,4 +1,4 @@
-@Library('jenkins-library@develop') _
+@Library('jenkins-library@v-0.34.0') _
 
 pipeline {
    agent none
@@ -27,7 +27,7 @@ pipeline {
       stage('Prepare Release') {
          agent {
             docker {
-               image 'quay.io/sdase/semantic-release:develop'
+               image 'quay.io/sdase/semantic-release:15.12.1'
             }
          }
          steps {
@@ -141,7 +141,7 @@ pipeline {
          }
          agent {
             docker {
-               image 'quay.io/sdase/semantic-release:develop'
+               image 'quay.io/sdase/semantic-release:15.12.1'
             }
          }
          steps {
