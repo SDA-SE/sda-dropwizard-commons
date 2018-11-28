@@ -1,3 +1,2 @@
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
 }
