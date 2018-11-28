@@ -137,6 +137,7 @@ pipeline {
       stage('Create Release') {
          when {
             branch 'master'
+            not { environment name: 'SEMANTIC_VERSION', value: '' }
          }
          agent {
             docker {
@@ -156,6 +157,7 @@ pipeline {
       stage('Upload release') {
          when {
             branch 'master'
+            not { environment name: 'SEMANTIC_VERSION', value: '' }
          }
          agent {
             label 'master'
