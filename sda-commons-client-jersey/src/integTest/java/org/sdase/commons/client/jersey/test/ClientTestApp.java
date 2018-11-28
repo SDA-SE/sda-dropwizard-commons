@@ -5,11 +5,13 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
+import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.trace.TraceTokenBundle;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -62,6 +64,13 @@ public class ClientTestApp extends Application<ClientTestConfig> {
    @Produces(MediaType.APPLICATION_JSON)
    public Response delegate() {
       return mockApiClient.requestCars();
+   }
+
+   @GET
+   @Path("/cars/{sign}")
+   @Produces(MediaType.APPLICATION_JSON)
+   public Car delegateGetCar(@PathParam("sign") String sign) {
+      return mockApiClient.getCar(sign);
    }
 
    @GET

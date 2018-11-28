@@ -10,6 +10,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.client.jersey.error.ClientErrorUtil;
 import org.sdase.commons.client.jersey.error.ClientRequestException;
+import org.sdase.commons.shared.api.error.ApiError;
+import org.sdase.commons.shared.api.error.ApiInvalidParam;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.WebTarget;
@@ -31,6 +33,7 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.entry;
+import static org.assertj.core.api.Assertions.tuple;
 
 public class ClientErrorUtilTest {
 
@@ -148,6 +151,73 @@ public class ClientErrorUtilTest {
       }
       assertThat(errors).isEqualTo("Error number one\nError number two");
       assertThat(responseBody).isNull();
+   }
+
+   @Test
+   public void readDefaultErrorEntityFromException() throws JsonProcessingException {
+      ApiError givenError = new ApiError(
+            "An error for testing", // NOSONAR
+            asList(
+                  new ApiInvalidParam("name", "Must not be null", "NOT_NULL"), // NOSONAR
+                  new ApiInvalidParam("type", "Must not be empty", "NOT_EMPTY") // NOSONAR
+            )
+      );
+      WIRE.stubFor(
+            get("/").withHeader(ACCEPT, equalTo(APPLICATION_JSON))
+                  .willReturn(aResponse()
+                        .withStatus(422)
+                        .withHeader(CONTENT_TYPE, APPLICATION_JSON) // https://github.com/dropwizard/dropwizard/issues/231
+                        .withBody(OM.writeValueAsBytes(givenError))
+                  )
+      );
+
+      String responseBody = null;
+      ApiError errors = null;
+      try {
+         responseBody = ClientErrorUtil.convertExceptions(() -> webTarget.request(APPLICATION_JSON).get(String.class));
+      }
+      catch (ClientRequestException e) {
+         errors = ClientErrorUtil.readErrorBody(e);
+      }
+      assertThat(errors).isNotNull();
+      assertThat(errors.getTitle()).isEqualTo("An error for testing"); // NOSONAR
+      assertThat(errors.getInvalidParams())
+            .extracting(ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode)
+            .containsExactly(
+                  tuple("name", "Must not be null", "NOT_NULL"),
+                  tuple("type", "Must not be empty", "NOT_EMPTY")
+            );
+      assertThat(responseBody).isNull();
+   }
+
+   @Test
+   public void readDefaultErrorEntityFromResponse() throws JsonProcessingException {
+      ApiError givenError = new ApiError(
+            "An error for testing",
+            asList(
+                  new ApiInvalidParam("name", "Must not be null", "NOT_NULL"),
+                  new ApiInvalidParam("type", "Must not be empty", "NOT_EMPTY")
+            )
+      );
+      WIRE.stubFor(
+            get("/").withHeader(ACCEPT, equalTo(APPLICATION_JSON))
+                  .willReturn(aResponse()
+                        .withStatus(422)
+                        .withHeader(CONTENT_TYPE, APPLICATION_JSON) // https://github.com/dropwizard/dropwizard/issues/231
+                        .withBody(OM.writeValueAsBytes(givenError))
+                  )
+      );
+
+      Response response = webTarget.request(APPLICATION_JSON).get();
+      ApiError errors = ClientErrorUtil.readErrorBody(response);
+      assertThat(errors).isNotNull();
+      assertThat(errors.getTitle()).isEqualTo("An error for testing"); // NOSONAR
+      assertThat(errors.getInvalidParams())
+            .extracting(ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode)
+            .containsExactly(
+                  tuple("name", "Must not be null", "NOT_NULL"),
+                  tuple("type", "Must not be empty", "NOT_EMPTY")
+            );
    }
 
    @Test

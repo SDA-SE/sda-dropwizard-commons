@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -14,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.sdase.commons.client.jersey.error.ClientErrorUtil;
 import org.sdase.commons.client.jersey.error.ClientRequestException;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
@@ -23,10 +25,12 @@ import org.sdase.commons.server.testing.EnvironmentRule;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -39,6 +43,7 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.groups.Tuple.tuple;
 
 public class ApiClientTest {
@@ -239,6 +244,19 @@ public class ApiClientTest {
             .request(MediaType.APPLICATION_JSON)
             .get();
       assertThat(response.getStatus()).isEqualTo(404);
+   }
+
+   @Test
+   public void return503ForDelegatedMissingCar() {
+      Response response = dwClient().path("api").path("cars").path("HH AA 7777")
+            .request(MediaType.APPLICATION_JSON_TYPE)
+            .get();
+      assertThat(response.getStatus()).isEqualTo(503);
+      assertThat(ClientErrorUtil.readErrorBody(response, new GenericType<Map<String, Object>>() {}))
+            .containsExactly(
+                  entry("title", "Request could not be fulfilled: Received status '404' from another service."),
+                  entry("invalidParams", Lists.emptyList())
+            );
    }
 
    @Test

@@ -1,6 +1,7 @@
 dependencies {
     compile project(':sda-commons-server-dropwizard')
     compile project(':sda-commons-shared-tracing')
+    compile project(':sda-commons-shared-error')
     compile 'io.dropwizard:dropwizard-client:' + dropwizardVersion, {
         exclude group: 'io.dropwizard', module: 'dropwizard-core'
         exclude group: 'com.google.guava', module: 'guava'

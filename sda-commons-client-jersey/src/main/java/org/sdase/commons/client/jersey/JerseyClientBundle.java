@@ -7,6 +7,7 @@ import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
+import org.sdase.commons.client.jersey.error.ClientRequestExceptionMapper;
 import org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder;
 
 import java.util.function.Function;
@@ -40,6 +41,7 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
       JerseyClientBuilder clientBuilder = new JerseyClientBuilder(environment).using(new JerseyClientConfiguration());
       this.clientFactory = new ClientFactory(clientBuilder, consumerTokenProvider.apply(configuration));
       environment.jersey().register(ContainerRequestContextHolder.class);
+      environment.jersey().register(ClientRequestExceptionMapper.class);
       initialized = true;
    }
 

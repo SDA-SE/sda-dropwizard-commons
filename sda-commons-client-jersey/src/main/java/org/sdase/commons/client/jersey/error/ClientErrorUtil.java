@@ -1,7 +1,7 @@
 package org.sdase.commons.client.jersey.error;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.apache.commons.lang3.NotImplementedException;
+import org.sdase.commons.shared.api.error.ApiError;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
@@ -20,25 +20,37 @@ public class ClientErrorUtil {
    }
 
    /**
+    * Extracts the standard platform error object from the failed response.
     *
     * @param response the response that contains an error
-    * @return the error data
-    * @throws NotImplementedException until the method is implemented
+    * @return the error data or {@code null} if the response is neither a client error (4xx) nor a server error (5xx).
+    * @throws ProcessingException   if the content of the message cannot be
+    *                               mapped to an entity of the requested type. See {@link Response#readEntity(Class)}
+    * @throws IllegalStateException if the entity is not backed by an input stream,
+    *                               the response has been {@link Response#close() closed} already,
+    *                               or if the entity input stream has been fully consumed already and has
+    *                               not been buffered prior consuming. See {@link Response#readEntity(Class)}
     */
-   public static Object readErrorBody(Response response) {
-      // TODO return SDA platform error type => ApiError with InvalidParameter's
-      throw new NotImplementedException("The Problem Api from the REST Guide is not implemented yet.");
+   public static ApiError readErrorBody(Response response) {
+      return readErrorBody(response, ApiError.class);
    }
 
    /**
+    * Extracts the standard platform error object from the client exception.
     *
     * @param e the error occurred when requesting a resource.
-    * @return the error data
-    * @throws NotImplementedException until the method is implemented
+    * @return the error data  or {@code null} if the given {@link ClientRequestException} does not contain a
+    *         {@link WebApplicationException} with a {@link Response} that is a client error (4xx) or a server error
+    *         (5xx).
+    * @throws ProcessingException   if the content of the message cannot be
+    *                               mapped to an entity of the requested type. See {@link Response#readEntity(Class)}
+    * @throws IllegalStateException if the entity is not backed by an input stream,
+    *                               the response has been {@link Response#close() closed} already,
+    *                               or if the entity input stream has been fully consumed already and has
+    *                               not been buffered prior consuming. See {@link Response#readEntity(Class)}
     */
-   public static Object readErrorBody(ClientRequestException e) {
-      // TODO return SDA platform error type => ApiError with InvalidParameter's
-      throw new NotImplementedException("The Problem Api from the REST Guide is not implemented yet.");
+   public static ApiError readErrorBody(ClientRequestException e) {
+      return readErrorBody(e, ApiError.class);
    }
 
    /**

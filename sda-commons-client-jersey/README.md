@@ -105,3 +105,35 @@ If a `javax.ws.rs.core.Response` is defined as return type, Http errors and redi
 object. **Remember to always close the `Response` object. It references open socket streams.**
 
 In both variants a `java.net.ConnectException` may be thrown if the client can't connect to the server.
+
+## Using Jersey `Client`
+
+Jersey Clients can be built using the client factory for cases where the API variant with an interface is not suitable.
+
+There Jersey clients can not automatically convert `javax.ws.rs.WebApplicationException` into our 
+`ClientRequestException`. To avoid passing through the error the application received to the caller of the application,
+`javax.ws.rs.WebApplicationException`s need be handled for all usages that expect a specific type as return value.
+
+The [`ClientErrorUtil`](./src/main/java/org/sdase/commons/client/jersey/error/ClientErrorUtil.java) can be used to 
+convert the exceptions. In the following example, a 4xx or 5xx response will result in a `ClientRequestException` that
+causes a 503 response for the incoming request:
+
+```java
+Client client = clientFactory.platformClient().buildGenericClient("test")
+Invocation.Builder requestBuilder = client.target(BASE_URL).request(MediaType.APPLICATION_JSON); 
+MyResource myResource = ClientErrorUtil.convertExceptions(() -> requestBuilder.get(MyResource.class));
+```
+
+If the error should be handled in the application, the exception may be caught and the error can be read from the 
+response:
+
+```java
+Client client = clientFactory.platformClient().buildGenericClient("test")
+Invocation.Builder requestBuilder = client.target(BASE_URL).request(MediaType.APPLICATION_JSON); 
+try {
+   MyResource myResource = ClientErrorUtil.convertExceptions(() -> requestBuilder.get(MyResource.class));
+}
+catch (ClientRequestException e) {
+   ApiError error = ClientErrorUtil.readErrorBody(e);
+}
+```
