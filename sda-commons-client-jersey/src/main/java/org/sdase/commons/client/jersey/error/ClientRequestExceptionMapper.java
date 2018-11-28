@@ -1,6 +1,8 @@
 package org.sdase.commons.client.jersey.error;
 
 import org.sdase.commons.shared.api.error.ApiError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.ServerErrorException;
@@ -17,6 +19,9 @@ import static java.util.Collections.emptyList;
  * a {@code 503 Service Unavailable} response for our client.
  */
 public class ClientRequestExceptionMapper implements ExceptionMapper<ClientRequestException> {
+
+   private static final Logger LOG = LoggerFactory.getLogger(ClientRequestExceptionMapper.class);
+
    private static final String TITLE_PREFIX = "Request could not be fulfilled: ";
    private static final String UNKNOWN_SUBTITLE = "Unknown error when invoking another service.";
    private static final String STATUS_CODE_SUBTITLE = "Received status '%s' from another service.";
@@ -25,7 +30,9 @@ public class ClientRequestExceptionMapper implements ExceptionMapper<ClientReque
 
    @Override
    public Response toResponse(ClientRequestException exception) {
-      ApiError error = new ApiError(createTitle(exception), emptyList());
+      String title = createTitle(exception);
+      LOG.info("Client request error not handled in application: {}", title, exception);
+      ApiError error = new ApiError(title, emptyList());
       return Response.status(RESPONSE_STATUS_CODE)
             .type(MediaType.APPLICATION_JSON)
             .entity(error)
