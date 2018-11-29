@@ -1,5 +1,7 @@
 # SDA Commons
 
+[![Build Status](https://jenkins.intern.sda-se.com/buildStatus/icon?job=SDA%20Open%20Industry%20Solutions/sda-commons/master)](https://jenkins.intern.sda-se.com/job/SDA%20Open%20Industry%20Solutions/job/sda-commons/job/master/)
+
 SDA Commons is a set of libraries to bootstrap services easily that follow the patterns and specifications promoted by
 the SDA SE.
 
