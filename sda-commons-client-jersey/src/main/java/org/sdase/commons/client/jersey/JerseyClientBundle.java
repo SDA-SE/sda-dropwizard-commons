@@ -81,7 +81,7 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
 
    public static class Builder<C extends Configuration> implements InitialBuilder<C>, FinalBuilder<C> {
 
-      private ConsumerTokenProvider<C> consumerTokenProvider;
+      private ConsumerTokenProvider<C> consumerTokenProvider = (C c) -> null;
 
       private Builder() {
       }
