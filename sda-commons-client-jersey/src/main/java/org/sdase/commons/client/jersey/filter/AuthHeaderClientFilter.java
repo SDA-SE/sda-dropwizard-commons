@@ -2,6 +2,7 @@ package org.sdase.commons.client.jersey.filter;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
+import java.util.Optional;
 
 import static org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder.currentRequestContext;
 
@@ -10,11 +11,17 @@ import static org.sdase.commons.client.jersey.filter.ContainerRequestContextHold
  * no {@code Authorization} is set at the client request yet. Will silently not add a header if there is no incoming
  * current request context or the incoming request has no {@code Authorization} header.
  */
-public class AuthHeaderClientFilter extends AddRequestHeaderFilter {
+public class AuthHeaderClientFilter implements AddRequestHeaderFilter {
 
-   public AuthHeaderClientFilter() {
-      super(HttpHeaders.AUTHORIZATION, () -> currentRequestContext()
+   @Override
+   public String getHeaderName() {
+      return HttpHeaders.AUTHORIZATION;
+   }
+
+   @Override
+   public Optional<String> getHeaderValue() {
+      return currentRequestContext()
             .map(ContainerRequestContext::getHeaders)
-            .map(h -> h.getFirst(HttpHeaders.AUTHORIZATION)));
+            .map(h -> h.getFirst(HttpHeaders.AUTHORIZATION));
    }
 }

@@ -3,32 +3,49 @@ package org.sdase.commons.client.jersey.filter;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
- * A {@link ClientRequestFilter} that adds a Http header if that header is not set yet and the implementation
- * provides a value for the header.
+ * <p>
+ *    A {@link ClientRequestFilter} that adds a Http header if that header is not set yet and the implementation
+ *    provides a value for the header.
+ * </p>
+ * <p>
+ *    This helper is implemented as interface because it is not possible to add multiple filters of the same type.
+ *    Therefore users have to implement a dedicated filter for each header they want to add. This implementations may
+ *    be anonymous. Example:
+ * </p>
+ * <pre>
+ *    <code>ClientRequestFilter filter = new AddRequestHeaderFilter() {
+ *         {@literal @Override}
+ *          public String getHeaderName() {
+ *             return ConsumerTracing.TOKEN_HEADER;
+ *          }
+ *         {@literal @Override}
+ *          public Optional<String> getHeaderValue() {
+ *             return consumerTokenSupplier.get();
+ *          }
+ *    };</code>
+ * </pre>
  */
-public class AddRequestHeaderFilter implements ClientRequestFilter {
-
-   private String headerName;
-
-   private Supplier<Optional<String>> headerValueSupplier;
+public interface AddRequestHeaderFilter extends ClientRequestFilter {
 
    /**
-    * @param headerName the Http header to set, e.g. {@code Authorization}
-    * @param headerValueSupplier a supplier of the header value that should be set, if the header is not set yet
+    * @return the name of the header that should be added to the request, e.g. {@code Authorization}. Must not be blank
     */
-   public AddRequestHeaderFilter(String headerName, Supplier<Optional<String>> headerValueSupplier) {
-      this.headerName = headerName;
-      this.headerValueSupplier = headerValueSupplier;
-   }
+   String getHeaderName();
+
+   /**
+    * @return the value of the header that should be set if no such header is present in the request yet. May return an
+    *         empty {@link Optional} if no header should be set.
+    */
+   Optional<String> getHeaderValue();
 
    @Override
-   public void filter(ClientRequestContext requestContext) {
-      if (requestContext.getHeaderString(headerName) != null) {
+   default void filter(ClientRequestContext requestContext) {
+      if (requestContext.getHeaderString(getHeaderName()) != null) {
          return;
       }
-      headerValueSupplier.get().ifPresent(v -> requestContext.getHeaders().add(headerName, v));
+      getHeaderValue().ifPresent(v -> requestContext.getHeaders().add(getHeaderName(), v));
    }
+
 }

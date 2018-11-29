@@ -46,7 +46,16 @@ public class PlatformClientBuilder {
     * @return this builder instance
     */
    public PlatformClientBuilder enableConsumerToken() {
-      return addFilter(new AddRequestHeaderFilter(ConsumerTracing.TOKEN_HEADER, consumerTokenSupplier));
+      return addFilter(new AddRequestHeaderFilter() {
+         @Override
+         public String getHeaderName() {
+            return ConsumerTracing.TOKEN_HEADER;
+         }
+         @Override
+         public Optional<String> getHeaderValue() {
+            return consumerTokenSupplier.get();
+         }
+      });
    }
 
    /**
