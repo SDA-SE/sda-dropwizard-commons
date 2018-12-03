@@ -2,6 +2,11 @@ package org.sdase.commons.server.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.sdase.commons.server.jackson.errors.ApiExceptionMapper;
+import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
+import org.sdase.commons.server.jackson.errors.JerseyValidationExceptionMapper;
+import org.sdase.commons.server.jackson.errors.JsonParseExceptionMapper;
+import org.sdase.commons.server.jackson.errors.ValidationExceptionMapper;
 import org.sdase.commons.server.jackson.filter.JacksonFieldFilterModule;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
@@ -81,6 +86,16 @@ public class JacksonConfigurationBundle implements Bundle {
          environment.jersey().register(jacksonFieldFilterModule);
          objectMapper.registerModule(jacksonFieldFilterModule);
       }
+
+      // register Exception Mapper (seems to overwrite default exception mapper)
+      environment.jersey().register(ApiExceptionMapper.class);
+      environment.jersey().register(JerseyValidationExceptionMapper.class);
+      environment.jersey().register(ValidationExceptionMapper.class);
+      environment.jersey().register(EarlyEofExceptionMapper.class);
+      environment.jersey().register(JsonParseExceptionMapper.class);
+
+
+
    }
 
    private void configureObjectMapper(ObjectMapper objectMapper) {
