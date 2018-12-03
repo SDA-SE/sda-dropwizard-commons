@@ -1,6 +1,7 @@
 package org.sdase.commons.shared.api.error;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +17,11 @@ public class ApiError {
       // default constructor
    }
 
+   public ApiError(String title) {
+      this.title = title;
+      this.invalidParams = new ArrayList<>();
+   }
+   
    public ApiError(String title, List<ApiInvalidParam> invalidParams) {
       this.title = title;
       this.invalidParams = invalidParams;
