@@ -115,24 +115,23 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          }
       }
 
-      List<MessageListener<K, V>> listener = new ArrayList<>(registration.getListenerConfig().getInstances());
-      for (int i = 0; i < registration.getListenerConfig().getInstances(); i++) {
-         ListenerConfig config = registration.getListenerConfig();
-         if (config == null && registration.getListenerConfigName() != null) {
-            ListenerConfig listenerConfig = kafkaConfiguration.getListenerConfig().get(registration.getListenerConfigName());
-            if (listenerConfig == null) {
-               throw new ConfigurationException(String.format(
-                   "Listener config with name '%s' cannot be found within the current configuration.",
-                   registration.getListenerConfigName()));
-            }
-            config = kafkaConfiguration.getListenerConfig().get(registration.getListenerConfigName());
+      ListenerConfig listenerConfig = registration.getListenerConfig();
+      if (listenerConfig == null && registration.getListenerConfigName() != null) {
+         listenerConfig = kafkaConfiguration.getListenerConfig().get(registration.getListenerConfigName());
+         if (listenerConfig == null) {
+            throw new ConfigurationException(String.format(
+                "Listener config with name '%s' cannot be found within the current configuration.",
+                registration.getListenerConfigName()));
          }
+      }
 
-         if (config == null) {
-            throw new ConfigurationException("No valid listener config given within the MessageHandlerRegistration");
-         }
+      if (listenerConfig == null) {
+         throw new ConfigurationException("No valid listener config given within the MessageHandlerRegistration");
+      }
 
-         MessageListener<K, V> instance = new MessageListener<>(registration, createConsumer(registration), config);
+      List<MessageListener<K, V>> listener = new ArrayList<>(listenerConfig.getInstances());
+      for (int i = 0; i < listenerConfig.getInstances(); i++) {
+         MessageListener<K, V> instance = new MessageListener<>(registration, createConsumer(registration), listenerConfig);
          listener.add(instance);
          Thread t = new Thread(instance);
          t.start();

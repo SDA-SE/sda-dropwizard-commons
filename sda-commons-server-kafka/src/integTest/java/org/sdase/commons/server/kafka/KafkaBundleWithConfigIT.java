@@ -35,10 +35,8 @@ import org.junit.rules.TestRule;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
-import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
-import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.AppConfiguration;
 import org.sdase.commons.server.kafka.dropwizard.KafkaApplication;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
@@ -76,10 +74,11 @@ public class KafkaBundleWithConfigIT {
 
    @Test
    public void allTopicsDescriptionsGenerated() throws ConfigurationException {
-      assertThat(kafkaBundle.getTopicConfiguration("topicId1"), is(notNullValue()));
-      assertThat(kafkaBundle.getTopicConfiguration("topicId1").getReplicationFactor().count(), is(2));
-      assertThat(kafkaBundle.getTopicConfiguration("topicId1").getPartitions().count(), is(2));
-      assertThat(kafkaBundle.getTopicConfiguration("topicId1").getProps().size(), is(2));
+      final String testTopic1 = "topicId1";
+      assertThat(kafkaBundle.getTopicConfiguration(testTopic1), is(notNullValue()));
+      assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getReplicationFactor().count(), is(2));
+      assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getPartitions().count(), is(2));
+      assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getProps().size(), is(2));
       assertThat(kafkaBundle.getTopicConfiguration("topicId2"), is(notNullValue()));
    }
 
@@ -255,7 +254,7 @@ public class KafkaBundleWithConfigIT {
          List<ConsumerRecord<String, String>> consumerRecords = KAFKA
                .getKafkaTestUtils()
                .consumeAllRecordsFromTopic(topic, StringDeserializer.class, StringDeserializer.class);
-         consumerRecords.forEach((r) -> receivedMessages.add(r.value()));
+         consumerRecords.forEach(r -> receivedMessages.add(r.value()));
          return receivedMessages.size() == messages.size();
 
       });
@@ -320,11 +319,7 @@ public class KafkaBundleWithConfigIT {
       kafkaBundle
             .registerMessageHandler(MessageHandlerRegistration
                   .<String, String> builder()
-                  .withListenerConfig(
-                        ListenerConfig.builder()
-                              .withCommitType(MessageListener.CommitType.ASYNC)
-                              .useAutoCommitOnly(false)
-                              .build(1))
+                  .withListenerConfig("async")
                   .forTopic(topic)
                   .withDefaultConsumer()
                   .withKeyDeserializer(deserializer)
