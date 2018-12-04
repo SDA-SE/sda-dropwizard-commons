@@ -7,7 +7,6 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -25,15 +24,12 @@ import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 import org.sdase.commons.server.testing.EnvironmentRule;
 
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.SocketTimeoutException;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -46,12 +42,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.groups.Tuple.tuple;
-import static org.awaitility.Awaitility.await;
+import static org.sdase.commons.client.jersey.error.ClientErrorUtil.convertExceptions;
+import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.processingError;
 
 public class ApiClientTest {
 
@@ -254,11 +250,11 @@ public class ApiClientTest {
    }
 
    @Test
-   public void return503ForDelegatedMissingCar() {
+   public void return500ForDelegatedMissingCar() {
       Response response = dwClient().path("api").path("cars").path("HH AA 7777")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .get();
-      assertThat(response.getStatus()).isEqualTo(503);
+      assertThat(response.getStatus()).isEqualTo(500);
       assertThat(ClientErrorUtil.readErrorBody(response, new GenericType<Map<String, Object>>() {}))
             .containsExactly(
                   entry("title", "Request could not be fulfilled: Received status '404' from another service."),
@@ -300,47 +296,14 @@ public class ApiClientTest {
       );
    }
 
-   @Test(timeout = 1_000)
-   public void runIntoDefaultConnectionTimeoutOf500Millis() {
-      Client client = app.getJerseyClientBundle().getClientFactory()
-            .externalClient()
-            .buildGenericClient("test");
+   @Test
+   public void failOnReadJsonWithGenericClient() {
 
-      await().between(400, MILLISECONDS, 600, MILLISECONDS).pollDelay(20, MILLISECONDS)
-            .untilAsserted(() ->
-                  // TODO should we map this to a custom exception?
-                  assertThatExceptionOfType(ProcessingException.class).isThrownBy(() ->
-                        // try to connect to an ip address that is not routable
-                        client.target("http://192.168.123.123").path("timeout").request().get() // NOSONAR
-                  ).withCauseInstanceOf(ConnectTimeoutException.class)
-            );
-   }
-
-   @Test(timeout = 300)
-   public void runIntoConfiguredConnectionTimeout() {
-      Client client = app.getJerseyClientBundle().getClientFactory()
-            .externalClient()
-            .withConnectionTimeout(Duration.ofMillis(10))
-            .buildGenericClient("test");
-
-      await().between(5, MILLISECONDS, 80, MILLISECONDS).pollDelay(2, MILLISECONDS)
-            .untilAsserted(() ->
-                  // TODO should we map this to a custom exception?
-                  assertThatExceptionOfType(ProcessingException.class).isThrownBy(() ->
-                        // try to connect to an ip address that is not routable
-                        client.target("http://192.168.123.123").path("timeout").request().get()
-                  ).withCauseInstanceOf(ConnectTimeoutException.class)
-            );
-   }
-
-   @Test(timeout = 5000)
-   public void runIntoDefaultReadTimeoutOf2Seconds() {
-
-      WIRE.stubFor(get("/timeout")
+      WIRE.stubFor(get("/badJsonResponse")
             .willReturn(aResponse()
                   .withStatus(200)
-                  .withBody("")
-                  .withFixedDelay(3000)
+                  .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                  .withBody("{ \"sign\": \"xyz\"")
             )
       );
 
@@ -348,41 +311,34 @@ public class ApiClientTest {
             .externalClient()
             .buildGenericClient("test");
 
-      await().between(1900, MILLISECONDS, 2200, MILLISECONDS).pollDelay(20, MILLISECONDS)
-            .untilAsserted(() ->
-                  // TODO should we map this to a custom exception?
-                  assertThatExceptionOfType(ProcessingException.class).isThrownBy(() ->
-                        // try to connect to an ip address that is not routable
-                        client.target(WIRE.baseUrl()).path("timeout").request().get()
-                  ).withCauseInstanceOf(SocketTimeoutException.class)
-            );
+      assertThatExceptionOfType(ClientRequestException.class).isThrownBy(() ->
+            // receives invalid json
+            convertExceptions(() ->
+                  client.target(WIRE.baseUrl()).path("badJsonResponse").request().get(Car.class)
+            )
+      ).is(processingError());
 
    }
 
-   @Test(timeout = 5000)
-   public void runIntoConfiguredReadTimeoutOf100Millis() {
+   @Test
+   public void failOnReadJsonWithApiClient() {
 
-      WIRE.stubFor(get("/timeout")
+      WIRE.stubFor(get("/api/cars/123")
             .willReturn(aResponse()
                   .withStatus(200)
-                  .withBody("")
-                  .withFixedDelay(200)
+                  .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                  .withBody("{ \"sign\": \"xyz\"")
             )
       );
 
-      Client client = app.getJerseyClientBundle().getClientFactory()
+      MockApiClient client = app.getJerseyClientBundle().getClientFactory()
             .externalClient()
-            .withReadTimeout(Duration.ofMillis(100))
-            .buildGenericClient("test");
+            .api(MockApiClient.class)
+            .atTarget(WIRE.baseUrl());
 
-      await().between(40, MILLISECONDS, 170, MILLISECONDS).pollDelay(2, MILLISECONDS)
-            .untilAsserted(() ->
-                  // TODO should we map this to a custom exception?
-                  assertThatExceptionOfType(ProcessingException.class).isThrownBy(() ->
-                        // try to connect to an ip address that is not routable
-                        client.target(WIRE.baseUrl()).path("timeout").request().get()
-                  ).withCauseInstanceOf(SocketTimeoutException.class)
-            );
+      assertThatExceptionOfType(ClientRequestException.class)
+            .isThrownBy(() -> client.getCar("123"))
+            .is(processingError());
 
    }
 
@@ -401,4 +357,5 @@ public class ApiClientTest {
    private StringValuePattern matchingUuid() {
       return matching("[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}");
    }
+
 }

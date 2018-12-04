@@ -8,7 +8,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -139,7 +138,7 @@ public class ClientErrorUtil {
     *                               not been buffered prior consuming. See {@link Response#readEntity(Class)}
     */
    public static <E> E readErrorBody(ClientRequestException e, Class<E> errorType) {
-      return Optional.ofNullable(e.getCause())
+      return e.getWebApplicationExceptionCause()
             .map(WebApplicationException::getResponse)
             .map(r -> readErrorBody(r, errorType))
             .orElse(null);
@@ -162,7 +161,7 @@ public class ClientErrorUtil {
     *                               not been buffered prior consuming. See {@link Response#readEntity(GenericType)}
     */
    public static <E> E readErrorBody(ClientRequestException e, TypeReference<E> errorType) {
-      return Optional.ofNullable(e.getCause())
+      return e.getWebApplicationExceptionCause()
             .map(WebApplicationException::getResponse)
             .map(r -> readErrorBody(r, errorType))
             .orElse(null);
@@ -185,7 +184,7 @@ public class ClientErrorUtil {
     *                               not been buffered prior consuming. See {@link Response#readEntity(GenericType)}
     */
    public static <E> E readErrorBody(ClientRequestException e, GenericType<E> errorType) {
-      return Optional.ofNullable(e.getCause())
+      return e.getWebApplicationExceptionCause()
             .map(WebApplicationException::getResponse)
             .map(r -> readErrorBody(r, errorType))
             .orElse(null);
@@ -228,7 +227,7 @@ public class ClientErrorUtil {
       try {
          return request.get();
       }
-      catch (WebApplicationException e) {
+      catch (WebApplicationException | ProcessingException e) {
          throw new ClientRequestException(e);
       }
    }

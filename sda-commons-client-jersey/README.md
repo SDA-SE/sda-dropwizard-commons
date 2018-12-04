@@ -96,7 +96,7 @@ Error handling is different based on the return type:
 If a specific return type is defined (e.g. `List<MyResource> getMyResources();`), it is only returned for successful 
 requests. In any error or redirect case, an exception is thrown. The thrown exception is a 
 [`ClientRequestException`](./src/main/java/org/sdase/commons/client/jersey/error/ClientRequestException.java)
-wrapping subclassed of `javax.ws.rs.WebApplicationException`: 
+wrapping `javax.ws.rs.ProcessingException` or subclasses of `javax.ws.rs.WebApplicationException`: 
 - `javax.ws.rs.RedirectionException` to indicate redirects 
 - `javax.ws.rs.ClientErrorException` for client errors
 - `javax.ws.rs.ServerErrorException` for server errors
@@ -110,13 +110,13 @@ In both variants a `java.net.ConnectException` may be thrown if the client can't
 
 Jersey Clients can be built using the client factory for cases where the API variant with an interface is not suitable.
 
-There Jersey clients can not automatically convert `javax.ws.rs.WebApplicationException` into our 
+Jersey clients can not automatically convert `javax.ws.rs.WebApplicationException` into our 
 `ClientRequestException`. To avoid passing through the error the application received to the caller of the application,
-`javax.ws.rs.WebApplicationException`s need be handled for all usages that expect a specific type as return value.
+the exceptions must be handled for all usages that expect a specific type as return value.
 
 The [`ClientErrorUtil`](./src/main/java/org/sdase/commons/client/jersey/error/ClientErrorUtil.java) can be used to 
 convert the exceptions. In the following example, a 4xx or 5xx response will result in a `ClientRequestException` that
-causes a 503 response for the incoming request:
+causes a 500 response for the incoming request:
 
 ```java
 Client client = clientFactory.platformClient().buildGenericClient("test")

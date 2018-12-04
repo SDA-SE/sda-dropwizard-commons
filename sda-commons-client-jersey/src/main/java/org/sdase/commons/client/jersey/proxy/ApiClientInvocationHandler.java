@@ -2,6 +2,7 @@ package org.sdase.commons.client.jersey.proxy;
 
 import org.sdase.commons.client.jersey.error.ClientRequestException;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -43,15 +44,14 @@ public class ApiClientInvocationHandler implements InvocationHandler {
          return method.invoke(delegate, args);
       }
       catch (InvocationTargetException invocationTargetException) {
-         if (invocationTargetException.getCause() instanceof WebApplicationException) {
-            throw new ClientRequestException((WebApplicationException) invocationTargetException.getCause());
+         Throwable cause = invocationTargetException.getCause();
+         if (cause instanceof WebApplicationException) {
+            throw new ClientRequestException(cause);
+         } else if (cause instanceof ProcessingException) {
+            throw new ClientRequestException(cause);
+         } else {
+            throw cause;
          }
-         else {
-            throw invocationTargetException.getCause();
-         }
-      }
-      catch (WebApplicationException webApplicationException) {
-         throw new ClientRequestException(webApplicationException);
       }
    }
 }
