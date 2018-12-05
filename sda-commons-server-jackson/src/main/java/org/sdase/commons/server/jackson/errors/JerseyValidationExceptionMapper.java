@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 @Provider
 public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyViolationException> {
 
-   private static final String VALIDATION_EXCEPTION_MESSAGE = "Request Parameters are not valid.";
+   private static final String VALIDATION_EXCEPTION_MESSAGE = "Request parameters are not valid.";
    private ObjectMapper mapper = new ObjectMapper();
 
    @Override

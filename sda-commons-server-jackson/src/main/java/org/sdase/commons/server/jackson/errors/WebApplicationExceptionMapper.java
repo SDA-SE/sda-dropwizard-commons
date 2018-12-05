@@ -19,7 +19,7 @@ import java.util.Locale;
  */
 public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplicationException> {
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(ValidationExceptionMapper.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(WebApplicationExceptionMapper.class);
 
    @Override
    public Response toResponse(WebApplicationException exception) {
@@ -30,6 +30,5 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplica
       response.getHeaders().forEach((k, v) -> apiResponse.getHeaders().add(k, v));
 
       return apiResponse;
-
    }
 }

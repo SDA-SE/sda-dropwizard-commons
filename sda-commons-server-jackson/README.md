@@ -7,7 +7,7 @@ with HAL and adds the ability to filter fields on client request.
 The [`JacksonConfigurationBundle`](./src/main/java/org/sdase/commons/server/jackson/JacksonConfigurationBundle.java) is
 used to configure the Json serializer. It adds various error mappers to support the SDA error message standard. These
 replace the default Dropwizard error mappers but also additional new mappers are added, e.g. mapping JaxRs Exceptions, 
-such as NotFound and NotAuthorized.   
+such as NotFound and NotAuthorized. All mappers do log the errors when mapping.
 
 ## Usage
 
