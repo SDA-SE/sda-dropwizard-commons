@@ -99,7 +99,7 @@ public class JacksonConfigurationBundleIT {
 
       ApiError error = response.readEntity(ApiError.class);
       Assertions.assertThat(response.getStatus()).isEqualTo(422);
-      Assertions.assertThat(error.getTitle()).isEqualTo("Request Parameters are not valid.");
+      Assertions.assertThat(error.getTitle()).isEqualTo("Request parameters are not valid.");
 
       Assertions
             .assertThat(error.getInvalidParams().get(0))
@@ -125,7 +125,7 @@ public class JacksonConfigurationBundleIT {
 
       ApiError error = response.readEntity(ApiError.class);
       Assertions.assertThat(response.getStatus()).isEqualTo(422);
-      Assertions.assertThat(error.getTitle()).isEqualTo("Request Parameters are not valid.");
+      Assertions.assertThat(error.getTitle()).isEqualTo("Request parameters are not valid.");
       Assertions.assertThat(error.getInvalidParams()).extracting(
             ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode
       ).containsExactlyInAnyOrder(
@@ -149,7 +149,7 @@ public class JacksonConfigurationBundleIT {
 
       ApiError apiError = response.readEntity(ApiError.class);
       Assertions.assertThat(response.getStatus()).isEqualTo(422);
-      Assertions.assertThat(apiError.getTitle()).isEqualTo("Request Parameters are not valid.");
+      Assertions.assertThat(apiError.getTitle()).isEqualTo("Request parameters are not valid.");
       Assertions.assertThat(apiError.getInvalidParams().size()).isEqualTo(3);
       Assertions.assertThat(apiError.getInvalidParams()).extracting(
             ApiInvalidParam::getField, ApiInvalidParam::getErrorCode
@@ -175,7 +175,7 @@ public class JacksonConfigurationBundleIT {
 
       ApiError apiError = response.readEntity(ApiError.class);
       Assertions.assertThat(response.getStatus()).isEqualTo(422);
-      Assertions.assertThat(apiError.getTitle()).isEqualTo("Request Parameters are not valid.");
+      Assertions.assertThat(apiError.getTitle()).isEqualTo("Request parameters are not valid.");
       Assertions.assertThat(apiError.getInvalidParams().size()).isEqualTo(2);
       Assertions.assertThat(apiError.getInvalidParams()).extracting(
             ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode
