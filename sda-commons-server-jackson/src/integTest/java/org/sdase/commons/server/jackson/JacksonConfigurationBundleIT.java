@@ -1,8 +1,8 @@
 package org.sdase.commons.server.jackson;
 
-import com.fasterxml.jackson.databind.node.BooleanNode;
+
 import org.assertj.core.groups.Tuple;
-import org.junit.Assert;
+
 import org.sdase.commons.server.jackson.test.JacksonConfigurationTestApp;
 import org.sdase.commons.server.jackson.test.PersonResource;
 import io.dropwizard.Configuration;
@@ -15,7 +15,6 @@ import org.sdase.commons.server.jackson.test.ValidationResource;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.shared.api.error.ApiInvalidParam;
 
-import javax.inject.Singleton;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -26,7 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.emptyList;
+
 public class JacksonConfigurationBundleIT {
+
+   private final static String VALIDATION_ERROR_MESSAGE = "Request parameters are not valid.";
 
    @ClassRule
    public static final DropwizardAppRule<Configuration> DW = new DropwizardAppRule<>(JacksonConfigurationTestApp.class,
@@ -55,18 +58,16 @@ public class JacksonConfigurationBundleIT {
    // Validation and Error Tests
    @Test
    public void shouldGenerateApiErrorForJaxRsExceptions() {
-      testJaxRsException("NotFound", 404, Collections.EMPTY_LIST);
-      testJaxRsException("BadRequest", 400, Collections.EMPTY_LIST);
-      testJaxRsException("Forbidden", 403, Collections.EMPTY_LIST);
-      testJaxRsException("NotAcceptable", 406, Collections.EMPTY_LIST);
+      testJaxRsException("NotFound", 404, emptyList());
+      testJaxRsException("BadRequest", 400, emptyList());
+      testJaxRsException("Forbidden", 403, emptyList());
+      testJaxRsException("NotAcceptable", 406, emptyList());
       testJaxRsException("NotAllowed", 405, Collections.singletonList("Allow"));
       testJaxRsException("NotAuthorized", 401, Collections.singletonList("WWW-Authenticate"));
-      testJaxRsException("NotSupported", 415, Collections.EMPTY_LIST);
+      testJaxRsException("NotSupported", 415, emptyList());
       testJaxRsException("ServiceUnavailable", 503, Collections.singletonList("Retry-After"));
-      testJaxRsException("InternalServerError", 500, Collections.EMPTY_LIST);
+      testJaxRsException("InternalServerError", 500, emptyList());
    }
-
-
 
    private void testJaxRsException(String exceptionType, int expectedError, List<String> header) {
       Response response = DW
@@ -99,7 +100,7 @@ public class JacksonConfigurationBundleIT {
 
       ApiError error = response.readEntity(ApiError.class);
       Assertions.assertThat(response.getStatus()).isEqualTo(422);
-      Assertions.assertThat(error.getTitle()).isEqualTo("Request parameters are not valid.");
+      Assertions.assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
 
       Assertions
             .assertThat(error.getInvalidParams().get(0))
@@ -125,7 +126,7 @@ public class JacksonConfigurationBundleIT {
 
       ApiError error = response.readEntity(ApiError.class);
       Assertions.assertThat(response.getStatus()).isEqualTo(422);
-      Assertions.assertThat(error.getTitle()).isEqualTo("Request parameters are not valid.");
+      Assertions.assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
       Assertions.assertThat(error.getInvalidParams()).extracting(
             ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode
       ).containsExactlyInAnyOrder(
@@ -149,7 +150,7 @@ public class JacksonConfigurationBundleIT {
 
       ApiError apiError = response.readEntity(ApiError.class);
       Assertions.assertThat(response.getStatus()).isEqualTo(422);
-      Assertions.assertThat(apiError.getTitle()).isEqualTo("Request parameters are not valid.");
+      Assertions.assertThat(apiError.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
       Assertions.assertThat(apiError.getInvalidParams().size()).isEqualTo(3);
       Assertions.assertThat(apiError.getInvalidParams()).extracting(
             ApiInvalidParam::getField, ApiInvalidParam::getErrorCode
@@ -175,7 +176,7 @@ public class JacksonConfigurationBundleIT {
 
       ApiError apiError = response.readEntity(ApiError.class);
       Assertions.assertThat(response.getStatus()).isEqualTo(422);
-      Assertions.assertThat(apiError.getTitle()).isEqualTo("Request parameters are not valid.");
+      Assertions.assertThat(apiError.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
       Assertions.assertThat(apiError.getInvalidParams().size()).isEqualTo(2);
       Assertions.assertThat(apiError.getInvalidParams()).extracting(
             ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode
