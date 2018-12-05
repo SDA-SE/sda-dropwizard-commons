@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
-
+@CheckNameRepeated
 public class ValidationResource {
 
    @OneOf(value = {"m", "f"}, ignoreCase = true, ignoreWhitespace = true)

@@ -5,9 +5,9 @@ The module `sda-commons-server-jackson` is used to configure the
 with HAL and adds the ability to filter fields on client request.
 
 The [`JacksonConfigurationBundle`](./src/main/java/org/sdase/commons/server/jackson/JacksonConfigurationBundle.java) is
-used to configure the Json serializer.
-
-
+used to configure the Json serializer. It adds various error mappers to support the SDA error message standard. These
+replace the default Dropwizard error mappers but also additional new mappers are added, e.g. mapping JaxRs Exceptions, 
+such as NotFound and NotAuthorized.   
 
 ## Usage
 
@@ -93,8 +93,6 @@ GET /persons/123?fields=firstName,nickName
 => {"firstName":"John","nickName":"Johnny"}
 ```
 
-
-
 ## Configuration
 
 ### Disable HAL support
@@ -126,3 +124,31 @@ If the `JacksonYAMLProvider` is available in the classpath, it will be registere
 To activate Yaml support, a dependency to `com.fasterxml.jackson.jaxrs:jackson-jaxrs-yaml-provider` has to be added. It
 is shipped in an appropriate version with [sda-commons-server-swagger](../sda-commons-server-swagger/README.md).
 
+## Error Format
+Exceptions are mapped to a common error format that looks like the following example
+```
+422 Unprocessable Entity
+{
+    "title": "Request parameters are not valid",
+    "invalidParams": [
+         {
+            "field": "manufacture",
+            "reason": "Audi has no Golf GTI model (not found)"
+            "errorCode": "FIELD_CORRELATION_ERROR"
+        },
+        {
+            "field": "model",
+            "reason": "Golf GTI is unkown by Audi (not found)"
+            "errorCode": "FIELD_CORRELATION_ERROR"
+        }
+    ]
+}
+```
+
+For validation errors, the invalidParams section is filled. For other errors, just a title is given.
+
++ `"field"` defines the invalid field within the JSON structure
++ `"reason"` gives an hint why the value is not valid. This is the error message of the validation.
++ `"errorCode"` is the validation annotation given in uppercase underscore notation 
+
+The reason might be in different language due to internationalization.

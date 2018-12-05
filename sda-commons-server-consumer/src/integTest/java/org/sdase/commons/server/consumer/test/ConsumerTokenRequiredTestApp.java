@@ -2,6 +2,7 @@ package org.sdase.commons.server.consumer.test;
 
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
+import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -22,6 +23,7 @@ public class ConsumerTokenRequiredTestApp extends Application<ConsumerTokenTestC
    @Override
    public void initialize(Bootstrap<ConsumerTokenTestConfig> bootstrap) {
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
+      bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
       bootstrap.addBundle(ConsumerTokenBundle.builder()
             .withRequiredConsumerToken()
             .withExcludePatterns("swagger\\.(json|yaml)")

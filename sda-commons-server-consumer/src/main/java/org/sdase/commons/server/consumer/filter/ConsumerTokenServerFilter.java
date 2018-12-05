@@ -1,14 +1,12 @@
 package org.sdase.commons.server.consumer.filter;
 
+import org.sdase.commons.server.jackson.errors.ApiException;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.slf4j.MDC;
 
 import javax.ws.rs.HttpMethod;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +51,7 @@ public class ConsumerTokenServerFilter implements ContainerRequestFilter {
          String path = requestContext.getUriInfo().getPath();
          boolean pathExcluded = excludePatterns.stream().anyMatch(p -> p.matcher(path).matches());
          if (!pathExcluded) {
-            throw failForMissingConsumerToken();
+            throw ApiException.builder().httpCode(422).title("Consumer token is required to access this resource.").build();
          }
       }
 
@@ -86,13 +84,4 @@ public class ConsumerTokenServerFilter implements ContainerRequestFilter {
       requestContext.setProperty(ConsumerTracing.NAME_ATTRIBUTE, consumerName);
    }
 
-   private RuntimeException failForMissingConsumerToken() {
-      // TODO response should be json with errors as defined in the API guide (after that guide is implemented for 422)
-      Response response = Response
-            .status(Response.Status.UNAUTHORIZED)
-            .type(MediaType.TEXT_PLAIN_TYPE)
-            .entity("Consumer token is required to access this resource.")
-            .build();
-      return new WebApplicationException(response);
-   }
 }

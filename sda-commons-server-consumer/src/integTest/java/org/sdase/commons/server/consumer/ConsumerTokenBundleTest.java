@@ -10,6 +10,7 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.shared.api.error.ApiError;
 
 import javax.ws.rs.core.Response;
 
@@ -49,7 +50,8 @@ public class ConsumerTokenBundleTest {
    public void shouldRejectRequestWithoutConsumerToken() {
       Response response = DW.client().target("http://localhost:" + DW.getLocalPort()).path("/api/name")
             .request(APPLICATION_JSON).get();
-      assertThat(response.getStatus()).isEqualTo(401);
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(response.readEntity(ApiError.class).getTitle()).isEqualTo("Consumer token is required to access this resource.");
    }
 
    @Test
@@ -88,7 +90,8 @@ public class ConsumerTokenBundleTest {
    public void shouldRejectRequestWithoutConsumerTokenFixedConfig() {
       Response response = DW_REQUIRED.client().target("http://localhost:" + DW_REQUIRED.getLocalPort()).path("/api/name")
             .request(APPLICATION_JSON).get();
-      assertThat(response.getStatus()).isEqualTo(401);
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(response.readEntity(ApiError.class).getTitle()).isEqualTo("Consumer token is required to access this resource.");
    }
 
 

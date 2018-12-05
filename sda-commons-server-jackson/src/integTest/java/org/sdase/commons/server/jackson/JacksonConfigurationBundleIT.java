@@ -1,7 +1,8 @@
 package org.sdase.commons.server.jackson;
 
+import com.fasterxml.jackson.databind.node.BooleanNode;
 import org.assertj.core.groups.Tuple;
-import org.sdase.commons.server.jackson.errors.JerseyValidationExceptionMapper;
+import org.junit.Assert;
 import org.sdase.commons.server.jackson.test.JacksonConfigurationTestApp;
 import org.sdase.commons.server.jackson.test.PersonResource;
 import io.dropwizard.Configuration;
@@ -14,12 +15,15 @@ import org.sdase.commons.server.jackson.test.ValidationResource;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.shared.api.error.ApiInvalidParam;
 
+import javax.inject.Singleton;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class JacksonConfigurationBundleIT {
@@ -46,6 +50,37 @@ public class JacksonConfigurationBundleIT {
                      d -> d.getInvalidParams().get(0).getReason(), d -> d.getInvalidParams().get(0).getErrorCode())
                .containsExactly("Some exception", "parameter", null, "MANDATORY_FIELD_IS_MISSING");
       }
+   }
+
+   // Validation and Error Tests
+   @Test
+   public void shouldGenerateApiErrorForJaxRsExceptions() {
+      testJaxRsException("NotFound", 404, Collections.EMPTY_LIST);
+      testJaxRsException("BadRequest", 400, Collections.EMPTY_LIST);
+      testJaxRsException("Forbidden", 403, Collections.EMPTY_LIST);
+      testJaxRsException("NotAcceptable", 406, Collections.EMPTY_LIST);
+      testJaxRsException("NotAllowed", 405, Collections.singletonList("Allow"));
+      testJaxRsException("NotAuthorized", 401, Collections.singletonList("WWW-Authenticate"));
+      testJaxRsException("NotSupported", 415, Collections.EMPTY_LIST);
+      testJaxRsException("ServiceUnavailable", 503, Collections.singletonList("Retry-After"));
+      testJaxRsException("InternalServerError", 500, Collections.EMPTY_LIST);
+   }
+
+
+
+   private void testJaxRsException(String exceptionType, int expectedError, List<String> header) {
+      Response response = DW
+            .client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("/jaxrsexception")
+            .queryParam("type", exceptionType)
+            .request(MediaType.APPLICATION_JSON)
+            .get();
+
+      ApiError error = response.readEntity(ApiError.class);
+      Assertions.assertThat(header.stream().allMatch(h -> response.getHeaders().containsKey(h))).isTrue();
+      Assertions.assertThat(error.getTitle()).isNotEmpty();
+      Assertions.assertThat(response.getStatus()).isEqualTo(expectedError);
    }
 
    @Test
@@ -126,6 +161,32 @@ public class JacksonConfigurationBundleIT {
    }
 
    @Test
+   public void shouldGetCustomValidationException() {
+      ValidationResource validationResource = new ValidationResource();
+      validationResource.setFirstName("Asb");
+      validationResource.setLastName("Asb");
+
+      Response response = DW
+            .client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("/validation")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(validationResource));
+
+      ApiError apiError = response.readEntity(ApiError.class);
+      Assertions.assertThat(response.getStatus()).isEqualTo(422);
+      Assertions.assertThat(apiError.getTitle()).isEqualTo("Request Parameters are not valid.");
+      Assertions.assertThat(apiError.getInvalidParams().size()).isEqualTo(2);
+      Assertions.assertThat(apiError.getInvalidParams()).extracting(
+            ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode
+      ).containsExactlyInAnyOrder(
+            new Tuple("name", "First name and last name must be different.", "CHECK_NAME_REPEATED"),
+            new Tuple("lastName", "First name and last name must be different.", "CHECK_NAME_REPEATED")
+      );
+   }
+
+
+   @Test
    public void shouldReturnDetailsForValidationMethods() {
       ValidationResource validationResource = new ValidationResource();
       validationResource.setFirstName("noname");
@@ -163,7 +224,6 @@ public class JacksonConfigurationBundleIT {
        Assertions.assertThat(response.getStatus()).isEqualTo(500);
        Assertions.assertThat(apiError.getTitle()).isEqualTo("Failed to validate message.");
     }
-
 
 
    @Test
