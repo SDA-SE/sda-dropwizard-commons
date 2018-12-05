@@ -1,9 +1,11 @@
 package org.sdase.commons.shared.api.error;
 
+import java.io.Serializable;
+
 /**
  * Invalid parameter information within an {@link ApiError}
  */
-public class ApiInvalidParam {
+public class ApiInvalidParam implements Serializable {
 
    private String field;
    private String reason;
