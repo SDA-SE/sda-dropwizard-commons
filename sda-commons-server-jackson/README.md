@@ -148,7 +148,7 @@ Exceptions are mapped to a common error format that looks like the following exa
 For validation errors, the invalidParams section is filled. For other errors, just a title is given.
 
 + `"field"` defines the invalid field within the JSON structure
-+ `"reason"` gives an hint why the value is not valid. This is the error message of the validation.
++ `"reason"` gives a hint why the value is not valid. This is the error message of the validation.
 + `"errorCode"` is the validation annotation given in uppercase underscore notation 
 
 The reason might be in different language due to internationalization.
