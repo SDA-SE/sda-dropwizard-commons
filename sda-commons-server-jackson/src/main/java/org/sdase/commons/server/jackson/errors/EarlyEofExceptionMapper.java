@@ -11,7 +11,8 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
- * Exception mapper if client disconnects unexpectedly
+ * Exception mapper if client disconnects unexpectedly. This mapper replaces
+ * {@link io.dropwizard.jersey.errors.EarlyEofExceptionMapper} to return the custom {@link ApiError}.
  */
 @Provider
 public class EarlyEofExceptionMapper implements ExceptionMapper<EofException> {
