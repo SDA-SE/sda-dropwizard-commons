@@ -3,8 +3,7 @@ package org.sdase.commons.server.jackson;
 import org.assertj.core.api.Assertions;
 import org.eclipse.jetty.io.EofException;
 import org.junit.Test;
-import org.sdase.commons.server.jackson.errors.ApiException;
-import org.sdase.commons.server.jackson.errors.ApiExceptionMapper;
+import org.sdase.commons.shared.api.error.ApiException;
 import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
 import org.sdase.commons.shared.api.error.ApiError;
 

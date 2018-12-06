@@ -1,12 +1,8 @@
-package org.sdase.commons.server.jackson.errors;
-
-import org.sdase.commons.shared.api.error.ApiError;
-import org.sdase.commons.shared.api.error.ApiInvalidParam;
+package org.sdase.commons.shared.api.error;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
 
 /**
  * Exception that should be thrown within rest services.
@@ -15,7 +11,7 @@ public class ApiException extends RuntimeException {
 
    private final int httpCode;
    private final String title;
-   private final List<ApiInvalidParam> invalidParams;
+   private final List<ApiInvalidParam> invalidParams; // NOSONAR
 
    private ApiException(int httpCode, String title, List<ApiInvalidParam> invalidParams) {
       this.httpCode = httpCode;
@@ -67,11 +63,10 @@ public class ApiException extends RuntimeException {
 
       @Override
       public TitleBuilder httpCode(int code) {
-         this.httpCode = code;
-         if (Response.Status.Family.SERVER_ERROR != Response.Status.Family.familyOf(code) &&
-               Response.Status.Family.CLIENT_ERROR != Response.Status.Family.familyOf(code)) {
+         if (code < 400 || code > 599) {
             throw new IllegalStateException("Error code must be of range (400, 599)");
          }
+         this.httpCode = code;
          return this;
       }
 

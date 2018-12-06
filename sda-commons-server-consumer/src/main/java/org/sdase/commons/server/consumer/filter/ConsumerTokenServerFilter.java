@@ -1,6 +1,6 @@
 package org.sdase.commons.server.consumer.filter;
 
-import org.sdase.commons.server.jackson.errors.ApiException;
+import org.sdase.commons.shared.api.error.ApiException;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.slf4j.MDC;
 

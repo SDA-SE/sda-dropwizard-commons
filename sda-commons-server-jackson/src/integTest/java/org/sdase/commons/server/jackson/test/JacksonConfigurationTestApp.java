@@ -6,7 +6,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.openapitools.jackson.dataformat.hal.HALLink;
-import org.sdase.commons.server.jackson.errors.ApiException;
+import org.sdase.commons.shared.api.error.ApiException;
 
 import javax.validation.Valid;
 import javax.ws.rs.BadRequestException;

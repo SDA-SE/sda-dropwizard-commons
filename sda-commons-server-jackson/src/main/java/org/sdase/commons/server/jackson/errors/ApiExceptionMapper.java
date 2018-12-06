@@ -1,6 +1,7 @@
 package org.sdase.commons.server.jackson.errors;
 
 
+import org.sdase.commons.shared.api.error.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
