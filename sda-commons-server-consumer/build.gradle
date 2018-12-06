@@ -3,5 +3,6 @@ dependencies {
     compile project(':sda-commons-shared-tracing')
     compile project(':sda-commons-shared-error')
 
+    testCompile project(':sda-commons-server-jackson')
     testCompile project(':sda-commons-server-testing')
 }

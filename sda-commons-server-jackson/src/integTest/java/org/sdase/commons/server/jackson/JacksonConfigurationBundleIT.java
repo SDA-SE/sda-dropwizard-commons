@@ -51,7 +51,7 @@ public class JacksonConfigurationBundleIT {
                .assertThat(details)
                .extracting(ApiError::getTitle, d -> d.getInvalidParams().get(0).getField(),
                      d -> d.getInvalidParams().get(0).getReason(), d -> d.getInvalidParams().get(0).getErrorCode())
-               .containsExactly("Some exception", "parameter", null, "MANDATORY_FIELD_IS_MISSING");
+               .containsExactly("Some exception", "parameter", null, "SOME_ERROR_CODE");
       }
    }
 

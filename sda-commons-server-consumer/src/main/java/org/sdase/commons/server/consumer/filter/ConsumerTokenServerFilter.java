@@ -42,7 +42,6 @@ public class ConsumerTokenServerFilter implements ContainerRequestFilter {
 
       Optional<String> consumerToken = extractConsumerTokenFromRequest(requestContext);
       Optional<String> consumerName = consumerToken.map(this::extractConsumerName);
-
       consumerToken.ifPresent(token -> this.addConsumerTokenToRequest(requestContext, token));
       consumerName.ifPresent(this::addConsumerNameToMdc);
       consumerName.ifPresent(name -> this.addConsumerNameToRequest(requestContext, name));
@@ -51,7 +50,7 @@ public class ConsumerTokenServerFilter implements ContainerRequestFilter {
          String path = requestContext.getUriInfo().getPath();
          boolean pathExcluded = excludePatterns.stream().anyMatch(p -> p.matcher(path).matches());
          if (!pathExcluded) {
-            throw ApiException.builder().httpCode(422).title("Consumer token is required to access this resource.").build();
+            throw ApiException.builder().httpCode(401).title("Consumer token is required to access this resource.").build();
          }
       }
 

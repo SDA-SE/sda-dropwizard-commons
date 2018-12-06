@@ -69,9 +69,9 @@ public class JacksonConfigurationTestApp extends Application<Configuration> {
    @Produces(MediaType.APPLICATION_JSON)
    public PersonResource getException() {
       throw ApiException.builder()
-            .httpCode(500)
+            .httpCode(400)
             .title("Some exception")
-            .detail("parameter", null, "MANDATORY_FIELD_IS_MISSING" )
+            .detail("parameter", null, "SOME_ERROR_CODE" )
             .build();
    }
 
