@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.BeanSerializer;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
-import org.sdase.commons.server.jackson.EnableFieldFilter;
 import io.openapitools.jackson.dataformat.hal.annotation.EmbeddedResource;
 import io.openapitools.jackson.dataformat.hal.annotation.Link;
+import org.sdase.commons.server.jackson.EnableFieldFilter;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -45,6 +45,8 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
 
       private static class SkipFieldBeanPropertyWriter extends BeanPropertyWriter {
 
+         private static final ThreadLocal<Boolean> NESTED = ThreadLocal.withInitial(() -> false);
+
          private final transient UriInfo uriInfo;
 
          SkipFieldBeanPropertyWriter(BeanPropertyWriter prop, UriInfo uriInfo) {
@@ -54,8 +56,16 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
 
          @Override
          public void serializeAsField(Object bean, JsonGenerator gen, SerializerProvider prov) throws Exception {
-            if (!hasAnyFieldFilter() || isHalAnnotated() || isIncludedField()) {
+            if (NESTED.get()) {
                super.serializeAsField(bean, gen, prov);
+            }
+            else if (!hasAnyFieldFilter() || isHalAnnotated() || isIncludedField()) {
+               try {
+                  NESTED.set(true);
+                  super.serializeAsField(bean, gen, prov);
+               } finally {
+                  NESTED.set(false);
+               }
             }
          }
 

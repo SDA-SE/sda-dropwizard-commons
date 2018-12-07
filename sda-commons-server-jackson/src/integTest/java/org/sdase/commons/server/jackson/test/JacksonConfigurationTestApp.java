@@ -31,6 +31,8 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Date;
 
+import static java.util.Collections.singletonList;
+
 @Path("")
 public class JacksonConfigurationTestApp extends Application<Configuration> {
 
@@ -65,6 +67,25 @@ public class JacksonConfigurationTestApp extends Application<Configuration> {
    }
 
    @GET
+   @Path("/jdoe-and-children")
+   @Produces(MediaType.APPLICATION_JSON)
+   public PersonWithChildrenResource getJohnDoeWithChildren() {
+      URI self = uriInfo.getBaseUriBuilder().path(JacksonConfigurationTestApp.class, "getJohnDoe").build();
+      PersonWithChildrenResource john = new PersonWithChildrenResource()
+            .setFirstName("John")
+            .setLastName("Doe")
+            .setNickName("Johnny")
+            .setSelf(new HALLink.Builder(self).build());
+      john.setChildren(singletonList(new PersonResource()
+            .setFirstName("Yasmine")
+            .setLastName("Doe")
+            .setNickName("Yassie")
+            .setSelf(new HALLink.Builder(uriInfo.getBaseUriBuilder().path("ydoe").build()).build())));
+      return john;
+   }
+
+
+   @GET
    @Path("/exception")
    @Produces(MediaType.APPLICATION_JSON)
    public PersonResource getException() {
@@ -74,7 +95,6 @@ public class JacksonConfigurationTestApp extends Application<Configuration> {
             .detail("parameter", null, "SOME_ERROR_CODE" )
             .build();
    }
-
 
    @GET
    @Path("/jaxrsexception")
@@ -101,7 +121,6 @@ public class JacksonConfigurationTestApp extends Application<Configuration> {
       }
       return null;
    }
-
 
    @POST
    @Valid
