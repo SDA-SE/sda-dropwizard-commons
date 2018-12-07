@@ -352,15 +352,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
    private void shutdownConsumerThreads() {
       messageListeners.forEach(MessageListener::stopConsumer);
-      consumerThreads.forEach(t -> {
-         try {
-            t.interrupt();
-            t.join();
-         } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-            LOGGER.warn("KafkaBundle interrupted while trying to shutdown consumer threads!");
-         }
-      });
    }
 
    //
