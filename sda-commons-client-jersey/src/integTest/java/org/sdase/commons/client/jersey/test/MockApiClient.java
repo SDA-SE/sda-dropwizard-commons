@@ -7,6 +7,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -33,6 +34,11 @@ public interface MockApiClient {
    @Path("/cars/{id}")
    @Produces(MediaType.APPLICATION_JSON)
    Car getCar(@PathParam("id") String id);
+
+   @GET
+   @Path("/cars/{id}")
+   @Produces(MediaType.APPLICATION_JSON)
+   Car getCarWithFilteredFields(@PathParam("id") String id, @QueryParam("fields") List<String> selectedFields);
 
    @GET
    @Path("/cars/{id}")

@@ -39,9 +39,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.notMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.entry;
@@ -82,7 +85,7 @@ public class ApiClientTest {
                   )
       );
       WIRE.stubFor(
-            get("/api/cars/HH%20XX%201234")
+            get(urlMatching("/api/cars/HH%20XX%201234(\\?.*)?"))
                   .withHeader("Accept", equalTo("application/json"))
                   .willReturn(aResponse()
                         .withStatus(200)
@@ -91,7 +94,7 @@ public class ApiClientTest {
                   )
       );
       WIRE.stubFor(
-            get("/api/cars/HH%20XY%204321")
+            get(urlMatching("/api/cars/HH%20XY%204321(\\?.*)?"))
                   .withHeader("Accept", equalTo("application/json"))
                   .willReturn(aResponse()
                         .withStatus(200)
@@ -215,6 +218,24 @@ public class ApiClientTest {
    public void loadSingleCar() {
       Car car = createMockApiClient().getCar("HH XY 4321");
       assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 4321", "light blue");
+   }
+
+   @Test
+   public void loadSingleCarWithFieldFilterAllFields() {
+      createMockApiClient().getCarWithFilteredFields("HH XY 4321", asList("sign", "color"));
+      verify(RequestPatternBuilder.newRequestPattern(
+            RequestMethod.GET,
+            urlEqualTo("/api/cars/HH%20XY%204321?fields=sign&fields=color")
+      ));
+   }
+
+   @Test
+   public void loadSingleCarWithFieldFilterOneField() {
+      createMockApiClient().getCarWithFilteredFields("HH XY 4321", singletonList("color"));
+      verify(RequestPatternBuilder.newRequestPattern(
+            RequestMethod.GET,
+            urlEqualTo("/api/cars/HH%20XY%204321?fields=color")
+      ));
    }
 
    @Test
