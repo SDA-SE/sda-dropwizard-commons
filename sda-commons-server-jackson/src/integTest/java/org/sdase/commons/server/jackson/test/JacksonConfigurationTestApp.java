@@ -1,11 +1,11 @@
 package org.sdase.commons.server.jackson.test;
 
-import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.openapitools.jackson.dataformat.hal.HALLink;
+import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.shared.api.error.ApiException;
 
 import javax.validation.Valid;
@@ -58,15 +58,8 @@ public class JacksonConfigurationTestApp extends Application<Configuration> {
    @GET
    @Path("people")
    @Produces(MediaType.APPLICATION_JSON)
-   public List<PersonResource> getPeople() {
-      URI self = uriInfo.getBaseUriBuilder().path(JacksonConfigurationTestApp.class, "getJohnDoe").build();
-      return singletonList(
-            new PersonResource()
-                  .setFirstName("John")
-                  .setLastName("Doe")
-                  .setNickName("Johnny")
-                  .setSelf(new HALLink.Builder(self).build())
-      );
+   public List<PersonWithChildrenResource> getPeople() {
+      return singletonList(getJohnDoeWithChildren());
    }
 
    @GET

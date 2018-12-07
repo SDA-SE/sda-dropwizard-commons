@@ -1,19 +1,18 @@
 package org.sdase.commons.server.jackson;
 
 
-import org.assertj.core.groups.Tuple;
-
-import org.sdase.commons.server.jackson.test.JacksonConfigurationTestApp;
-import org.sdase.commons.server.jackson.test.PersonResource;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.assertj.core.groups.Tuple;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.sdase.commons.server.jackson.test.JacksonConfigurationTestApp;
+import org.sdase.commons.server.jackson.test.PersonResource;
+import org.sdase.commons.server.jackson.test.PersonWithChildrenResource;
 import org.sdase.commons.server.jackson.test.ValidationResource;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.shared.api.error.ApiInvalidParam;
-import org.sdase.commons.server.jackson.test.PersonWithChildrenResource;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
@@ -343,6 +342,69 @@ public class JacksonConfigurationBundleIT {
                   "Johnny",
                   null
             );
+   }
+
+   @Test
+   public void shouldFilterNickNameInList() {
+      List<PersonWithChildrenResource> people = DW.client()
+            .target("http://localhost:" + DW.getLocalPort()).path("people")
+            .queryParam("fields", "nickName")
+            .request(MediaType.APPLICATION_JSON)
+            .get(new GenericType<List<PersonWithChildrenResource>>() {});
+
+      assertThat(people)
+            .extracting(
+                  p -> p.getSelf().getHref(),
+                  PersonWithChildrenResource::getFirstName,
+                  PersonWithChildrenResource::getLastName,
+                  PersonWithChildrenResource::getNickName,
+                  PersonWithChildrenResource::getChildren
+            )
+            .containsExactly(
+                  tuple(
+                        "http://localhost:" + DW.getLocalPort() + "/people/jdoe",
+                        null,
+                        null,
+                        "Johnny",
+                        null
+                  )
+            );
+   }
+
+   @Test
+   public void shouldFilterNotInNestedList() {
+      List<PersonWithChildrenResource> people = DW.client()
+            .target("http://localhost:" + DW.getLocalPort()).path("people")
+            .queryParam("fields", "nickName,children")
+            .request(MediaType.APPLICATION_JSON)
+            .get(new GenericType<List<PersonWithChildrenResource>>() {});
+
+      assertThat(people)
+            .extracting(
+                  p -> p.getSelf().getHref(),
+                  PersonWithChildrenResource::getFirstName,
+                  PersonWithChildrenResource::getLastName,
+                  PersonWithChildrenResource::getNickName
+            )
+            .containsExactly(
+                  tuple(
+                        "http://localhost:" + DW.getLocalPort() + "/people/jdoe",
+                        null,
+                        null,
+                        "Johnny"
+                  )
+            );
+      assertThat(people.get(0).getChildren())
+            .extracting(
+                  p -> p.getSelf().getHref(),
+                  PersonResource::getFirstName,
+                  PersonResource::getLastName,
+                  PersonResource::getNickName
+            )
+            .containsExactly(
+                  tuple("http://localhost:" + DW.getLocalPort() + "/ydoe", "Yasmine", "Doe", "Yassie")
+            );
+
    }
 
    @Test
