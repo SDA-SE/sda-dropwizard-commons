@@ -36,7 +36,7 @@ public class JacksonConfigurationNoFieldFilterTestApp extends Application<Config
    }
 
    @GET
-   @Path("/jdoe")
+   @Path("/people/jdoe")
    @Produces(MediaType.APPLICATION_JSON)
    public PersonResource getJohnDoe() {
       URI self = uriInfo.getBaseUriBuilder().path(JacksonConfigurationNoFieldFilterTestApp.class, "getJohnDoe").build();

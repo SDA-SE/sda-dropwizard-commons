@@ -22,7 +22,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
    @Test
    public void shouldGetJohnDoe() {
       PersonResource johnny = DW.client()
-            .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
+            .target("http://localhost:" + DW.getLocalPort()).path("people").path("jdoe")
             .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
@@ -34,7 +34,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
                   PersonResource::getNickName
             )
             .containsExactly(
-                  "http://localhost:" + DW.getLocalPort() + "/jdoe",
+                  "http://localhost:" + DW.getLocalPort() + "/people/jdoe",
                   "John",
                   "Doe",
                   "Johnny"
@@ -44,7 +44,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
    @Test
    public void shouldIgnoreFieldSelection() {
       Map<String, Object> johnny = DW.client()
-            .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
+            .target("http://localhost:" + DW.getLocalPort()).path("people").path("jdoe")
             .queryParam("fields", "nickName")
             .request(MediaType.APPLICATION_JSON)
             .get(new GenericType<Map<String, Object>>() {});
@@ -56,7 +56,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
    @Test
    public void shouldNotFilterField() {
       PersonResource johnny = DW.client()
-            .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
+            .target("http://localhost:" + DW.getLocalPort()).path("people").path("jdoe")
             .queryParam("fields", "nickName")
             .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
@@ -69,7 +69,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
                   PersonResource::getNickName
             )
             .containsExactly(
-                  "http://localhost:" + DW.getLocalPort() + "/jdoe",
+                  "http://localhost:" + DW.getLocalPort() + "/people/jdoe",
                   "John",
                   "Doe",
                   "Johnny"
@@ -79,7 +79,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
    @Test
    public void shouldNotFilterFieldsByMultipleParams() {
       PersonResource johnny = DW.client()
-            .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
+            .target("http://localhost:" + DW.getLocalPort()).path("people").path("jdoe")
             .queryParam("fields", "firstName")
             .queryParam("fields", "lastName")
             .request(MediaType.APPLICATION_JSON)
@@ -93,7 +93,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
                   PersonResource::getNickName
             )
             .containsExactly(
-                  "http://localhost:" + DW.getLocalPort() + "/jdoe",
+                  "http://localhost:" + DW.getLocalPort() + "/people/jdoe",
                   "John",
                   "Doe",
                   "Johnny"
@@ -103,7 +103,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
    @Test
    public void shouldNotFilterFieldsBySingleParams() {
       PersonResource johnny = DW.client()
-            .target("http://localhost:" + DW.getLocalPort()).path("/jdoe")
+            .target("http://localhost:" + DW.getLocalPort()).path("people").path("jdoe")
             .queryParam("fields", "firstName, lastName")
             .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
@@ -116,7 +116,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
                   PersonResource::getNickName
             )
             .containsExactly(
-                  "http://localhost:" + DW.getLocalPort() + "/jdoe",
+                  "http://localhost:" + DW.getLocalPort() + "/people/jdoe",
                   "John",
                   "Doe",
                   "Johnny"

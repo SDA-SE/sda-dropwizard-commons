@@ -247,14 +247,14 @@ public class JacksonConfigurationBundleIT {
       PersonResource johnny = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/jdoe")
+            .path("people").path("jdoe")
             .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
       assertThat(johnny)
             .extracting(p -> p.getSelf().getHref(), PersonResource::getFirstName, PersonResource::getLastName,
                   PersonResource::getNickName)
-            .containsExactly("http://localhost:" + DW.getLocalPort() + "/jdoe", "John", "Doe", "Johnny");
+            .containsExactly("http://localhost:" + DW.getLocalPort() + "/people/jdoe", "John", "Doe", "Johnny");
    }
 
    @Test
@@ -262,7 +262,7 @@ public class JacksonConfigurationBundleIT {
       Map<String, Object> johnny = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/jdoe")
+            .path("people").path("jdoe")
             .queryParam("fields", "nickName")
             .request(MediaType.APPLICATION_JSON)
             .get(new GenericType<Map<String, Object>>() {
@@ -276,7 +276,7 @@ public class JacksonConfigurationBundleIT {
       PersonResource johnny = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/jdoe")
+            .path("people").path("jdoe")
             .queryParam("fields", "nickName")
             .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
@@ -284,7 +284,7 @@ public class JacksonConfigurationBundleIT {
       assertThat(johnny)
             .extracting(p -> p.getSelf().getHref(), PersonResource::getFirstName, PersonResource::getLastName,
                   PersonResource::getNickName)
-            .containsExactly("http://localhost:" + DW.getLocalPort() + "/jdoe", null, null, "Johnny");
+            .containsExactly("http://localhost:" + DW.getLocalPort() + "/people/jdoe", null, null, "Johnny");
    }
 
    @Test
@@ -292,7 +292,7 @@ public class JacksonConfigurationBundleIT {
       PersonResource johnny = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/jdoe")
+            .path("people").path("jdoe")
             .queryParam("fields", "firstName")
             .queryParam("fields", "lastName")
             .request(MediaType.APPLICATION_JSON)
@@ -301,7 +301,7 @@ public class JacksonConfigurationBundleIT {
       assertThat(johnny)
             .extracting(p -> p.getSelf().getHref(), PersonResource::getFirstName, PersonResource::getLastName,
                   PersonResource::getNickName)
-            .containsExactly("http://localhost:" + DW.getLocalPort() + "/jdoe", "John", "Doe", null);
+            .containsExactly("http://localhost:" + DW.getLocalPort() + "/people/jdoe", "John", "Doe", null);
    }
 
    @Test
@@ -309,7 +309,7 @@ public class JacksonConfigurationBundleIT {
       PersonResource johnny = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/jdoe")
+            .path("people").path("jdoe")
             .queryParam("fields", "firstName, lastName")
             .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
@@ -317,13 +317,13 @@ public class JacksonConfigurationBundleIT {
       assertThat(johnny)
             .extracting(p -> p.getSelf().getHref(), PersonResource::getFirstName, PersonResource::getLastName,
                   PersonResource::getNickName)
-            .containsExactly("http://localhost:" + DW.getLocalPort() + "/jdoe", "John", "Doe", null);
+            .containsExactly("http://localhost:" + DW.getLocalPort() + "/people/jdoe", "John", "Doe", null);
    }
 
    @Test
    public void shouldFilterNickName() {
       PersonWithChildrenResource johnny = DW.client()
-            .target("http://localhost:" + DW.getLocalPort()).path("jdoe-and-children")
+            .target("http://localhost:" + DW.getLocalPort()).path("people").path("jdoe-and-children")
             .queryParam("fields", "nickName")
             .request(MediaType.APPLICATION_JSON)
             .get(PersonWithChildrenResource.class);
@@ -337,7 +337,7 @@ public class JacksonConfigurationBundleIT {
                   PersonWithChildrenResource::getChildren
             )
             .containsExactly(
-                  "http://localhost:" + DW.getLocalPort() + "/jdoe",
+                  "http://localhost:" + DW.getLocalPort() + "/people/jdoe",
                   null,
                   null,
                   "Johnny",
@@ -348,7 +348,7 @@ public class JacksonConfigurationBundleIT {
    @Test
    public void shouldFilterNickNameButNotInNestedList() {
       PersonWithChildrenResource johnny = DW.client()
-            .target("http://localhost:" + DW.getLocalPort()).path("jdoe-and-children")
+            .target("http://localhost:" + DW.getLocalPort()).path("people").path("jdoe-and-children")
             .queryParam("fields", "nickName,children")
             .request(MediaType.APPLICATION_JSON)
             .get(PersonWithChildrenResource.class);
@@ -361,7 +361,7 @@ public class JacksonConfigurationBundleIT {
                   PersonWithChildrenResource::getNickName
             )
             .containsExactly(
-                  "http://localhost:" + DW.getLocalPort() + "/jdoe",
+                  "http://localhost:" + DW.getLocalPort() + "/people/jdoe",
                   null,
                   null,
                   "Johnny"

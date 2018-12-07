@@ -30,6 +30,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Date;
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 
@@ -55,7 +56,21 @@ public class JacksonConfigurationTestApp extends Application<Configuration> {
    }
 
    @GET
-   @Path("/jdoe")
+   @Path("people")
+   @Produces(MediaType.APPLICATION_JSON)
+   public List<PersonResource> getPeople() {
+      URI self = uriInfo.getBaseUriBuilder().path(JacksonConfigurationTestApp.class, "getJohnDoe").build();
+      return singletonList(
+            new PersonResource()
+                  .setFirstName("John")
+                  .setLastName("Doe")
+                  .setNickName("Johnny")
+                  .setSelf(new HALLink.Builder(self).build())
+      );
+   }
+
+   @GET
+   @Path("people/jdoe")
    @Produces(MediaType.APPLICATION_JSON)
    public PersonResource getJohnDoe() {
       URI self = uriInfo.getBaseUriBuilder().path(JacksonConfigurationTestApp.class, "getJohnDoe").build();
@@ -67,7 +82,7 @@ public class JacksonConfigurationTestApp extends Application<Configuration> {
    }
 
    @GET
-   @Path("/jdoe-and-children")
+   @Path("people/jdoe-and-children")
    @Produces(MediaType.APPLICATION_JSON)
    public PersonWithChildrenResource getJohnDoeWithChildren() {
       URI self = uriInfo.getBaseUriBuilder().path(JacksonConfigurationTestApp.class, "getJohnDoe").build();
