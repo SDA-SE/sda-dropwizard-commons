@@ -7,6 +7,8 @@ import io.openapitools.jackson.dataformat.hal.annotation.Link;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Resource
 @ApiModel(description = "Person")
@@ -15,19 +17,24 @@ public class PersonResource {
    @ApiModelProperty("Link relation 'self': The HAL link referencing this file.")
    private HALLink self;
 
-   @ApiModelProperty("firstName")
+   @ApiModelProperty(value = "firstName", example = "John")
    private final String firstName;
 
-   @ApiModelProperty("lastName")
+   @ApiModelProperty(value = "lastName", example = "Doe")
    private final String lastName;
+
+   @ApiModelProperty(value = "traits", example = "[\"hipster\", \"generous\"]")
+   private final List<String> traits = new ArrayList<>();
 
    @JsonCreator
    public PersonResource(
          @JsonProperty("firstName") String firstName,
-         @JsonProperty("lastName") String lastName, HALLink self) {
+         @JsonProperty("lastName") String lastName,
+         @JsonProperty("traits") List<String> traits, HALLink self) {
 
       this.firstName = firstName;
       this.lastName = lastName;
+      this.traits.addAll(traits);
    }
 
    public HALLink getSelf() {
@@ -40,5 +47,9 @@ public class PersonResource {
 
    public String getLastName() {
       return lastName;
+   }
+
+   public List<String> getTraits() {
+      return traits;
    }
 }

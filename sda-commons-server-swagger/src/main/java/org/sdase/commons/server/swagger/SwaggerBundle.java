@@ -1,10 +1,5 @@
 package org.sdase.commons.server.swagger;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
-import static java.lang.String.join;
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.Validate.notBlank;
-
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
@@ -12,17 +7,26 @@ import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiResponse;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
+import org.sdase.commons.optional.server.swagger.json.example.JsonExampleModifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.invoke.MethodHandles;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static java.lang.String.join;
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.Validate.notBlank;
 
 /**
  * Configures the Swagger support.
@@ -183,6 +187,15 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
    public interface FinalBuilder extends InterimBuilder {
 
       /**
+       * Disables automatic rendering of Json examples in Swagger {@link ApiModelProperty#example() property examples}
+       * and {@link ApiResponse#examples() response examples}. If disabled, only {@code String} and {@link Integer} are
+       * recognized as special types.
+       *
+       * @return the builder
+       */
+      FinalBuilder disableJsonExamples();
+
+      /**
        * Sets the version of the API.
        * <p>
        * Note: If no version is given (i.e. this method is not used) {@code 1.0} is used.
@@ -294,6 +307,13 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
 
       Builder() {
          resourcePackages = new LinkedHashSet<>();
+         addResourcePackageClass(JsonExampleModifier.class);
+      }
+
+      @Override
+      public FinalBuilder disableJsonExamples() {
+         this.resourcePackages.remove(getResourcePackage(JsonExampleModifier.class));
+         return this;
       }
 
       @Override

@@ -33,8 +33,8 @@ will scan resources in the package of the application class.
  
 The Swagger documentation base path is dependant on DropWizard's [server.rootPath](https://www.dropwizard.io/0.9.1/docs/manual/configuration.html#man-configuration-all):
 
-- as JSON: _<server.rootPath>_/swagger.json
-- as YAML: _<server.rootPath>_/swagger.yaml
+- as JSON: ```<server.rootPath>/swagger.json``` 
+- as YAML: ```<server.rootPath>/swagger.yaml```
 
 ### Customizaton Options
 
@@ -192,10 +192,6 @@ _PersonResource.java_ -
 [@ApiModelProperty](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X#apimodelproperty)
 
 ```java
-package package org.example.person.api;
-
-//...
-
 @Resource
 @ApiModel(description = "Person")
 public class PersonResource {
@@ -205,14 +201,19 @@ public class PersonResource {
 
    @ApiModelProperty("The person's last name.")
    private final String lastName;
+   
+   @ApiModelProperty(value = "traits", example = "[\"hipster\", \"generous\"]")
+   private final List<String> traits = new ArrayList<>();
 
    @JsonCreator
    public PersonResource(
          @JsonProperty("firstName") String firstName,
-         @JsonProperty("lastName") String lastName) {
+         @JsonProperty("lastName") String lastName,
+         @JsonProperty("traits") List<String> traits) {
 
       this.firstName = firstName;
       this.lastName = lastName;
+      this.traits.addAll(traits);
    }
 
    public String getFirstName() {
@@ -222,10 +223,23 @@ public class PersonResource {
    public String getLastName() {
       return lastName;
    }
+   
+   public List<String> getTraits() {
+      return traits;
+   }
 }
 ```
 
 The generated documentation would be at:
 
-- as JSON: /api/swagger.json
-- as YAML: /api/swagger.yaml
+- as JSON: ```/api/swagger.json```
+- as YAML: ```/api/swagger.yaml```
+
+### Handling example values
+
+The ```SwaggerBundle``` reads example annotations containing complex JSON instead of interpreting
+them as String. If this behaviour is undesired, it may be disabled at creation time using the 
+builder. If the bundle encounters a value that could be interpreted as JSON, the value is parsed. 
+If the value isn't JSON the value is interpreted as a string.
+If the example is supplied like ```example = "{\"key\": false}"``` the swagger definition will 
+contain the example as ```example: {"key": false}```.

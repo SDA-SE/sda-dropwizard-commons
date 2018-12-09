@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.swagger.test.SwaggerAssertions;
+import org.sdase.commons.server.swagger.test.SwaggerJsonLight.SwaggerProperty;
 
 public class SwaggerBundleIT {
 
@@ -114,9 +115,26 @@ public class SwaggerBundleIT {
 
       SwaggerJsonLight.SwaggerDefinition swaggerDefinition = definitions.get(definition);
 
-      Map<String, Object> properties = swaggerDefinition.getProperties();
+      Map<String, SwaggerProperty> properties = swaggerDefinition.getProperties();
 
-      assertThat(properties.keySet()).containsExactlyInAnyOrder("firstName", "lastName", "_links");
+      assertThat(properties.keySet()).containsExactlyInAnyOrder("firstName", "lastName", "traits", "_links");
+   }
+
+   @Test
+   public void shouldIncludePropertyExampleAsJson() {
+      SwaggerJsonLight response = getJsonRequest().get(SwaggerJsonLight.class);
+
+      Map<String, SwaggerJsonLight.SwaggerDefinition> definitions = response.getDefinitions();
+
+      String definition = PersonResource.class.getSimpleName();
+      SwaggerJsonLight.SwaggerDefinition swaggerDefinition = definitions.get(definition);
+
+      Map<String, SwaggerProperty> properties = swaggerDefinition.getProperties();
+      SwaggerProperty traitsProperty = properties.get("traits");
+      SwaggerProperty firstNameProperty = properties.get("firstName");
+
+      assertThat(firstNameProperty.getExample()).isEqualTo("John");
+      assertThat(traitsProperty.getExample()).asList().containsExactly("hipster", "generous");
    }
 
    @Test
@@ -129,10 +147,8 @@ public class SwaggerBundleIT {
 
       SwaggerJsonLight.SwaggerDefinition swaggerDefinition = definitions.get(definition);
 
-      Map<String, Object> properties = swaggerDefinition.getProperties();
-      @SuppressWarnings("unchecked")
-      Map<String, Object> objectProperties = (Map<String, Object>) ((Map<String, Object>) properties.get("_links"))
-            .get("properties");
+      Map<String, SwaggerProperty> properties = swaggerDefinition.getProperties();
+      Map<String, SwaggerProperty> objectProperties = properties.get("_links").getProperties();
 
       assertTrue(objectProperties.containsKey("self"));
    }

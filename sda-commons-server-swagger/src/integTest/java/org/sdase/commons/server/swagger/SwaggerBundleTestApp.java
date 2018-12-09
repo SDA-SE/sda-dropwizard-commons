@@ -1,7 +1,5 @@
 package org.sdase.commons.server.swagger;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
@@ -12,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -21,6 +20,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+
+import static java.util.Collections.emptyList;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api
 @Path("")
@@ -56,7 +58,7 @@ public class SwaggerBundleTestApp extends Application<Configuration> {
    @ApiResponses(@ApiResponse(code = 200, message = "get", response = PersonResource.class))
    public PersonResource getJohnDoe() {
       URI self = uriInfo.getBaseUriBuilder().path(SwaggerBundleTestApp.class, "getJohnDoe").build();
-      return new PersonResource("John", "Doe", new HALLink.Builder(self).build());
+      return new PersonResource("John", "Doe", emptyList(), new HALLink.Builder(self).build());
    }
 
    @POST

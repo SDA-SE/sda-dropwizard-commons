@@ -173,16 +173,16 @@ public final class SwaggerJsonLight {
    @JsonIgnoreProperties(ignoreUnknown = true)
    public static class SwaggerDefinition {
 
-      private final Map<String, Object> properties;
+      private final Map<String, SwaggerProperty> properties;
 
       @JsonCreator
       public SwaggerDefinition(
-            @JsonProperty("properties") Map<String, Object> properties) {
+            @JsonProperty("properties") Map<String, SwaggerProperty> properties) {
 
          this.properties = properties;
       }
 
-      public Map<String, Object> getProperties() {
+      public Map<String, SwaggerProperty> getProperties() {
          return properties;
       }
 
@@ -205,6 +205,56 @@ public final class SwaggerJsonLight {
       @Override
       public String toString() {
          return toStringHelper(this).add("properties", properties).toString();
+      }
+   }
+
+
+   @JsonIgnoreProperties(ignoreUnknown = true)
+   public static class SwaggerProperty {
+
+      private final Object example;
+      private final Map<String, SwaggerProperty> properties;
+
+      @JsonCreator
+      public SwaggerProperty(
+          @JsonProperty("example") Object example,
+            @JsonProperty("properties") Map<String, SwaggerProperty> properties) {
+
+         this.example = example;
+         this.properties = properties;
+      }
+
+      public Object getExample() {
+         return example;
+      }
+
+      public Map<String, SwaggerProperty> getProperties() {
+         return properties;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if (this == o) {
+            return true;
+         }
+         if (o == null || getClass() != o.getClass()) {
+            return false;
+         }
+         return Objects.equals(example, ((SwaggerProperty) o).example)
+             && Objects.equals(properties, ((SwaggerProperty) o).properties);
+      }
+
+      @Override
+      public int hashCode() {
+         return Objects.hash(example, properties);
+      }
+
+      @Override
+      public String toString() {
+         return toStringHelper(this)
+             .add("example", example)
+             .add("properties", properties)
+             .toString();
       }
    }
 }

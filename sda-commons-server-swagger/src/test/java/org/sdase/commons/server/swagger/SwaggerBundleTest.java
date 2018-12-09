@@ -362,8 +362,25 @@ public class SwaggerBundleTest {
             .addResourcePackage(aPackage)
             .build();
 
-      assertThat(bundle.getResourcePackages())
-            .isEqualTo(aPackage);
+      assertThat(bundle.getResourcePackages()).isEqualTo(
+            join(",",
+                  "org.sdase.commons.optional.server.swagger.json.example",
+                  aPackage
+            )
+      );
+   }
+
+   @Test
+   public void shouldReturnBundleWithoutJsonExamplesSupport() {
+      String aPackage = "com.google";
+
+      SwaggerBundle bundle = SwaggerBundle.builder()
+            .withTitle(VALID_TITLE)
+            .addResourcePackage(aPackage)
+            .disableJsonExamples()
+            .build();
+
+      assertThat(bundle.getResourcePackages()).isEqualTo(aPackage);
    }
 
    @Test
@@ -375,8 +392,12 @@ public class SwaggerBundleTest {
             .addResourcePackageClass(resourcePackageClass)
             .build();
 
-      assertThat(bundle.getResourcePackages())
-            .isEqualTo(resourcePackageClass.getPackage().getName());
+      assertThat(bundle.getResourcePackages()).isEqualTo(
+            join(",",
+                  "org.sdase.commons.optional.server.swagger.json.example",
+                  resourcePackageClass.getPackage().getName()
+            )
+      );
    }
 
    @Test
@@ -395,6 +416,7 @@ public class SwaggerBundleTest {
 
       assertThat(bundle.getResourcePackages()).isEqualTo(
             join(",",
+                  "org.sdase.commons.optional.server.swagger.json.example",
                   resourcePackageClass1.getPackage().getName(),
                   aPackage,
                   resourcePackageClass2.getPackage().getName()));
@@ -472,8 +494,12 @@ public class SwaggerBundleTest {
 
       assertThat(beanConfig.getScan()).isTrue();
       assertThat(beanConfig.getBasePath()).isEqualTo("/api");
-      assertThat(beanConfig.getResourcePackage())
-            .isEqualTo(resourcePackageClass.getPackage().getName());
+      assertThat(beanConfig.getResourcePackage()).isEqualTo(
+            join(",",
+               "org.sdase.commons.optional.server.swagger.json.example",
+               resourcePackageClass.getPackage().getName()
+            )
+      );
 
       Info info = beanConfig.getSwagger().getInfo();
 
