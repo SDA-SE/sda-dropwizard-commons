@@ -53,7 +53,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    private KafkaConfiguration kafkaConfiguration;
 
    private List<MessageListener<?, ?>> messageListeners = new ArrayList<>();
-   private List<Thread> consumerThreads = new ArrayList<>();
    private List<KafkaMessageProducer<?, ?>> messageProducers = new ArrayList<>();
 
    private Map<String, ExpectedTopicConfiguration> topics = new HashMap<>();
@@ -135,8 +134,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          listener.add(instance);
          Thread t = new Thread(instance);
          t.start();
-         consumerThreads.add(t);
-
       }
       messageListeners.addAll(listener);
       return listener;
