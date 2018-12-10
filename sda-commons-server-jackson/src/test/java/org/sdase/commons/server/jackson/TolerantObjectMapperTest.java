@@ -10,23 +10,15 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.junit.Before;
 import org.junit.Test;
+import org.sdase.commons.server.jackson.test.ObjectMapperFactory;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class TolerantObjectMapperTest {
 
@@ -34,30 +26,7 @@ public class TolerantObjectMapperTest {
 
    @Before
    public void setUp() {
-      AtomicReference<ObjectMapper> omRef = new AtomicReference<>();
-
-      // ensure that the ObjectMapper to test is created as it would in a real App
-      JacksonConfigurationBundle bundle = JacksonConfigurationBundle.builder().build();
-      Bootstrap bootstrap = mock(Bootstrap.class, RETURNS_DEEP_STUBS);
-      doAnswer(invocation -> {
-         omRef.set(invocation.getArgument(0));
-         return null;
-      }).when(bootstrap).setObjectMapper(any(ObjectMapper.class));
-      when(bootstrap.getObjectMapper()).thenAnswer(invocation -> omRef.get());
-      Environment environment = mock(Environment.class, RETURNS_DEEP_STUBS);
-      when(environment.getObjectMapper()).thenAnswer(invocation -> omRef.get());
-
-      bundle.initialize(bootstrap);
-      bundle.run(environment);
-
-      // we must overwrite Dropwizard's ObjectMapper as early as possible
-      verify(bootstrap, times(1)).setObjectMapper(omRef.get());
-      // we should not use Dropwizard's ObjectMapper as unwanted Modules can't be removed
-      verify(bootstrap, never()).getObjectMapper();
-      // we should get the "default" ObjectMapper for customization in run()
-      verify(environment, times(1)).getObjectMapper();
-
-      this.om = omRef.get();
+      this.om = ObjectMapperFactory.objectMapperFromBundle();
    }
 
    @Test
@@ -199,6 +168,7 @@ public class TolerantObjectMapperTest {
 
    }
 
+   @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
    private static class Person {
 
       private String name;
@@ -275,10 +245,12 @@ public class TolerantObjectMapperTest {
       }
    }
 
+   @SuppressWarnings("unused")
    private enum Title {
       PROFESSOR, DOCTOR
    }
 
+   @SuppressWarnings("unused")
    private enum Profession {
       IT, FINANCE, LEGAL, @JsonEnumDefaultValue OTHER
    }
