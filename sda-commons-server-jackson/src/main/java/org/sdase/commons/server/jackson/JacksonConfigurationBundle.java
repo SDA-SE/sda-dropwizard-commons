@@ -1,7 +1,22 @@
 package org.sdase.commons.server.jackson;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.jackson.AnnotationSensitivePropertyNamingStrategy;
+import io.dropwizard.jackson.GuavaExtrasModule;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+import io.openapitools.jackson.dataformat.hal.JacksonHALModule;
 import org.sdase.commons.server.jackson.errors.ApiExceptionMapper;
 import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
 import org.sdase.commons.server.jackson.errors.JerseyValidationExceptionMapper;
@@ -9,11 +24,6 @@ import org.sdase.commons.server.jackson.errors.JsonParseExceptionMapper;
 import org.sdase.commons.server.jackson.errors.ValidationExceptionMapper;
 import org.sdase.commons.server.jackson.errors.WebApplicationExceptionMapper;
 import org.sdase.commons.server.jackson.filter.JacksonFieldFilterModule;
-import io.dropwizard.Bundle;
-import io.dropwizard.Configuration;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-import io.openapitools.jackson.dataformat.hal.JacksonHALModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +77,34 @@ public class JacksonConfigurationBundle implements Bundle {
       this.objectMapperCustomizer = objectMapperCustomizer;
    }
 
+   /**
+    * Initializes the {@link ObjectMapper} as in the default {@link Bootstrap} but does not add the
+    * {@code FuzzyEnumModule} as it breaks enum features of Jackson.
+    *
+    * {@inheritDoc}
+    */
    @Override
    public void initialize(Bootstrap<?> bootstrap) {
-      // no initialization needed
+      // Overwrite the full featured default from Jackson.newObjectMapper() as some
+      // registered modules break Jackson functionality. Add all features from
+      // io.dropwizard.jackson.Jackson.newObjectMapper() but the FuzzyEnumModule
+      // and modules registered in Jackson.newMinimalObjectMapper()
+      ObjectMapper objectMapper = Jackson.newMinimalObjectMapper()
+            // .registerModule(new GuavaModule()) in newMinimalObjectMapper
+            .registerModule(new GuavaExtrasModule())
+            .registerModule(new JodaModule())
+            .registerModule(new AfterburnerModule())
+            // .registerModule(new FuzzyEnumModule()) breaks READ_UNKNOWN_ENUM_VALUES_AS_NULL
+            .registerModule(new ParameterNamesModule())
+            .registerModule(new Jdk8Module())
+            .registerModule(new JavaTimeModule())
+            .setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy())
+            // .setSubtypeResolver(new DiscoverableSubtypeResolver()) in newMinimalObjectMapper
+      ;
+
+      // Overwrite with custom defaults
+      bootstrap.setObjectMapper(objectMapper);
+
    }
 
    @Override
@@ -100,7 +135,22 @@ public class JacksonConfigurationBundle implements Bundle {
    }
 
    private void configureObjectMapper(ObjectMapper objectMapper) {
-      objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+      // Platform configurations that exceed the Dropwizard defaults
+      objectMapper
+            // serialization
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            // deserialization
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
+            .disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)
+            .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL)
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+      ;
+      // Application specific configuration
       if (this.objectMapperCustomizer != null) {
          this.objectMapperCustomizer.accept(objectMapper);
       }
