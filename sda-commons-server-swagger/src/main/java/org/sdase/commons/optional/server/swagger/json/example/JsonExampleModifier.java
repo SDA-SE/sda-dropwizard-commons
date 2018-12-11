@@ -8,9 +8,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.ReaderListener;
+import io.swagger.models.ComposedModel;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
+import io.swagger.models.properties.Property;
 import java.io.IOException;
 import java.util.Map.Entry;
 
@@ -45,9 +47,21 @@ public class JsonExampleModifier implements ReaderListener {
    }
 
    private void updateModelExample(Model model) {
-      model.getProperties().forEach((name, property) -> property.setExample(asJson(property.getExample())));
+      if (model.getProperties() != null) {
+         model.getProperties().forEach((name, property) -> updatePropertyExample(property));
+      }
+
+      if (model instanceof ComposedModel) {
+         // Composed models (using inheritance) behave a bit different, the properties can be null
+         // and the real properties are located in the child.
+         updateModelExample(((ComposedModel)model).getChild());
+      }
 
       model.setExample(asJson(model.getExample()));
+   }
+
+   private void updatePropertyExample(Property property) {
+      property.setExample(asJson(property.getExample()));
    }
 
    private Object asJson(Object possibleJson) {
