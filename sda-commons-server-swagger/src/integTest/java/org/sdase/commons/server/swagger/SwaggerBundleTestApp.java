@@ -54,11 +54,11 @@ public class SwaggerBundleTestApp extends Application<Configuration> {
    @GET
    @Path(JOHN_DOE_PATH)
    @Produces(APPLICATION_JSON)
-   @ApiOperation(value = "get", response = PersonResource.class)
-   @ApiResponses(@ApiResponse(code = 200, message = "get", response = PersonResource.class))
-   public PersonResource getJohnDoe() {
+   @ApiOperation(value = "get", response = PartnerResource.class)
+   @ApiResponses(@ApiResponse(code = 200, message = "get", response = PartnerResource.class))
+   public PartnerResource getJohnDoe() {
       URI self = uriInfo.getBaseUriBuilder().path(SwaggerBundleTestApp.class, "getJohnDoe").build();
-      return new PersonResource("John", "Doe", emptyList(), new HALLink.Builder(self).build());
+      return new NaturalPersonResource("John", "Doe", emptyList(), new HALLink.Builder(self).build());
    }
 
    @POST

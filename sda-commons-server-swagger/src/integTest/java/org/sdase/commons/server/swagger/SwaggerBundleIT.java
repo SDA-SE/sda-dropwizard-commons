@@ -3,24 +3,23 @@ package org.sdase.commons.server.swagger;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
-import static org.junit.Assert.assertTrue;
 
-import org.sdase.commons.server.swagger.test.SwaggerJsonLight;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import io.swagger.models.Info;
-import java.util.Map;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.swagger.test.SwaggerAssertions;
-import org.sdase.commons.server.swagger.test.SwaggerJsonLight.SwaggerProperty;
 
 public class SwaggerBundleIT {
+
+   private static final String NATURAL_PERSON_DEFINITION = "NaturalPerson";
+   private static final String PARTNER_DEFINITION = "Partner";
 
    @ClassRule
    public static final DropwizardAppRule<Configuration> DW = new DropwizardAppRule<>(
@@ -66,90 +65,84 @@ public class SwaggerBundleIT {
 
    @Test
    public void shouldIncludeInfo() {
-      SwaggerJsonLight response = getJsonRequest().get(SwaggerJsonLight.class);
+      String response = getJsonRequest().get(String.class);
 
-      Info info = response.getInfo();
-
-      assertThat(info.getTitle()).isEqualTo(SwaggerBundleTestApp.class.getSimpleName());
-      assertThat(info.getVersion()).isEqualTo("1.0");
+      assertThatJson(response)
+          .inPath("$.info.title")
+          .isEqualTo(SwaggerBundleTestApp.class.getSimpleName());
+      assertThatJson(response)
+          .inPath("$.info.version")
+          .asString()
+          .isEqualTo("1.0");
    }
 
    @Test
    public void shouldIncludeBasePath() {
-      SwaggerJsonLight response = getJsonRequest().get(SwaggerJsonLight.class);
+      String response = getJsonRequest().get(String.class);
 
-      assertThat(response.getBasePath()).isEqualTo("/");
+      assertThatJson(response)
+          .inPath("$.basePath")
+          .asString()
+          .isEqualTo("/");
    }
 
    @Test
    public void shouldIncludePaths() {
-      SwaggerJsonLight response = getJsonRequest().get(SwaggerJsonLight.class);
+      String response = getJsonRequest().get(String.class);
 
-      Map<String, SwaggerJsonLight.SwaggerPath> paths = response.getPaths();
+      assertThatJson(response)
+          .inPath("$.paths")
+          .isObject()
+          .containsOnlyKeys("/jdoe");
 
-      String path = "/jdoe";
-
-      assertThat(paths).hasSize(1);
-      assertThat(paths).containsKeys(path);
-
-      SwaggerJsonLight.SwaggerPath swaggerPath = paths.get(path);
-
-      assertThat(swaggerPath.getGet()).isNotNull().extracting(SwaggerJsonLight.SwaggerOperation::getSummary)
-            .isEqualTo("get");
-      assertThat(swaggerPath.getPost()).isNotNull().extracting(SwaggerJsonLight.SwaggerOperation::getSummary)
-            .isEqualTo("post");
-      assertThat(swaggerPath.getDelete()).isNotNull().extracting(SwaggerJsonLight.SwaggerOperation::getSummary)
-            .isEqualTo("delete");
+      assertThatJson(response)
+          .inPath("$.paths./jdoe")
+          .isObject()
+          .containsOnlyKeys("get", "post", "delete");
    }
 
    @Test
    public void shouldIncludeDefinitions() {
-      SwaggerJsonLight response = getJsonRequest().get(SwaggerJsonLight.class);
+      String response = getJsonRequest().get(String.class);
 
-      Map<String, SwaggerJsonLight.SwaggerDefinition> definitions = response.getDefinitions();
+      assertThatJson(response)
+          .inPath("$.definitions")
+          .isObject()
+          .containsKeys(NATURAL_PERSON_DEFINITION, PARTNER_DEFINITION);
 
-      String definition = PersonResource.class.getSimpleName();
+      assertThatJson(response)
+          .inPath("$.definitions." + PARTNER_DEFINITION + ".properties")
+          .isObject()
+          .containsKeys("type");
 
-      assertThat(definitions).hasSize(2);
-      assertThat(definitions).containsKeys(definition);
-
-      SwaggerJsonLight.SwaggerDefinition swaggerDefinition = definitions.get(definition);
-
-      Map<String, SwaggerProperty> properties = swaggerDefinition.getProperties();
-
-      assertThat(properties.keySet()).containsExactlyInAnyOrder("firstName", "lastName", "traits", "_links");
+      assertThatJson(response)
+          .inPath("$.definitions." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties")
+          .isObject()
+          .containsKeys("firstName", "lastName", "traits", "_links");
    }
 
    @Test
    public void shouldIncludePropertyExampleAsJson() {
-      SwaggerJsonLight response = getJsonRequest().get(SwaggerJsonLight.class);
+      String response = getJsonRequest().get(String.class);
 
-      Map<String, SwaggerJsonLight.SwaggerDefinition> definitions = response.getDefinitions();
+      assertThatJson(response)
+          .inPath("$.definitions." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties.traits.example")
+          .isArray()
+          .containsExactlyInAnyOrder("hipster", "generous");
 
-      String definition = PersonResource.class.getSimpleName();
-      SwaggerJsonLight.SwaggerDefinition swaggerDefinition = definitions.get(definition);
-
-      Map<String, SwaggerProperty> properties = swaggerDefinition.getProperties();
-      SwaggerProperty traitsProperty = properties.get("traits");
-      SwaggerProperty firstNameProperty = properties.get("firstName");
-
-      assertThat(firstNameProperty.getExample()).isEqualTo("John");
-      assertThat(traitsProperty.getExample()).asList().containsExactly("hipster", "generous");
+      assertThatJson(response)
+          .inPath("$.definitions." + PARTNER_DEFINITION + ".properties.type.example")
+          .isString()
+          .isEqualTo("naturalPerson");
    }
 
    @Test
    public void shouldIncludeHALSelfLink() {
-      SwaggerJsonLight response = getJsonRequest().get(SwaggerJsonLight.class);
+      String response = getJsonRequest().get(String.class);
 
-      Map<String, SwaggerJsonLight.SwaggerDefinition> definitions = response.getDefinitions();
-
-      String definition = PersonResource.class.getSimpleName();
-
-      SwaggerJsonLight.SwaggerDefinition swaggerDefinition = definitions.get(definition);
-
-      Map<String, SwaggerProperty> properties = swaggerDefinition.getProperties();
-      Map<String, SwaggerProperty> objectProperties = properties.get("_links").getProperties();
-
-      assertTrue(objectProperties.containsKey("self"));
+      assertThatJson(response)
+          .inPath("$.definitions." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties._links.properties")
+          .isObject()
+          .containsKeys("self");
    }
 }

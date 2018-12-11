@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Resource
-@ApiModel(description = "Person")
-public class PersonResource {
+@ApiModel("NaturalPerson")
+public class NaturalPersonResource extends PartnerResource {
    @Link
    @ApiModelProperty("Link relation 'self': The HAL link referencing this file.")
    private HALLink self;
@@ -27,7 +27,7 @@ public class PersonResource {
    private final List<String> traits = new ArrayList<>();
 
    @JsonCreator
-   public PersonResource(
+   public NaturalPersonResource(
          @JsonProperty("firstName") String firstName,
          @JsonProperty("lastName") String lastName,
          @JsonProperty("traits") List<String> traits, HALLink self) {
