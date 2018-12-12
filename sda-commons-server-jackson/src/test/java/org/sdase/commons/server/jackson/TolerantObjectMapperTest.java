@@ -2,6 +2,8 @@ package org.sdase.commons.server.jackson;
 
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Application;
@@ -174,6 +176,24 @@ public class TolerantObjectMapperTest {
 
    }
 
+   @Test
+   public void shouldReadSubType() throws Exception {
+      String given = "{\"type\":\"my\", \"value\":\"foo\"}";
+
+      Filter actual = om.readValue(given, Filter.class);
+
+      assertThat(actual).isInstanceOf(MyFilter.class).extracting("value").contains("foo");
+   }
+
+   @Test
+   public void shouldNotFailForUnknownSubtype() throws Exception {
+      String given = "{\"type\":\"notMy\", \"value\":\"foo\"}";
+
+      Filter actual = om.readValue(given, Filter.class);
+
+      assertThat(actual).isNull();
+   }
+
    @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
    private static class Person {
 
@@ -259,5 +279,25 @@ public class TolerantObjectMapperTest {
    @SuppressWarnings("unused")
    private enum Profession {
       IT, FINANCE, LEGAL, @JsonEnumDefaultValue OTHER
+   }
+
+   @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
+   @JsonSubTypes({
+         @JsonSubTypes.Type(value = MyFilter.class, name = "my")
+   })
+   private interface Filter {}
+
+   @SuppressWarnings("unused")
+   private static class MyFilter implements Filter {
+      private String value;
+
+      public MyFilter setValue(String value) {
+         this.value = value;
+         return this;
+      }
+
+      public String getValue() {
+         return value;
+      }
    }
 }
