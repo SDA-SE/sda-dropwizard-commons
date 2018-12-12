@@ -1,19 +1,27 @@
 # SDA Commons Server Jackson
 
-The module `sda-commons-server-jackson` is used to configure the 
-`ObjectMapper` with the recommended default settings of SDA SE services. It also provides support for linking resources 
-with HAL and adds the ability to filter fields on client request.
+The module `sda-commons-server-jackson` is used to configure the `ObjectMapper` with the recommended default settings 
+of SDA SE services. It also provides support for linking resources with HAL and adds the ability to filter fields on 
+client request.
 
 The [`JacksonConfigurationBundle`](./src/main/java/org/sdase/commons/server/jackson/JacksonConfigurationBundle.java) is
 used to configure the Json serializer. It adds various error mappers to support the SDA error message standard. These
 replace the default Dropwizard error mappers but also additional new mappers are added, e.g. mapping JaxRs Exceptions, 
 such as NotFound and NotAuthorized. All mappers do log the errors when mapping.
 
-The default `ObjectMapper` is configured fault tolerant to avoid failures in deserialization. JSR-303 validations
-should be used to validate input data. For serialization the bundle disables `FAIL_ON_EMPTY_BEANS`, 
-`WRITE_DATES_AS_TIMESTAMPS`, `WRITE_DURATIONS_AS_TIMESTAMPS` and does not include `null` values. For deserialization
-the bundle disables `FAIL_ON_UNKNOWN_PROPERTIES`, `FAIL_ON_IGNORED_PROPERTIES`, `FAIL_ON_INVALID_SUBTYPE` and enables
-`ACCEPT_SINGLE_VALUE_AS_ARRAY`, `READ_UNKNOWN_ENUM_VALUES_AS_NULL`, `READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE`.
+The default `ObjectMapper` is configured to be fault tolerant to avoid failures in deserialization. JSR-303 validations
+should be used to validate input data. For serialization the bundle disables 
+[`FAIL_ON_EMPTY_BEANS`](https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/SerializationFeature.html#FAIL_ON_EMPTY_BEANS),
+[`WRITE_DATES_AS_TIMESTAMPS`](https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/SerializationFeature.html#WRITE_DATES_AS_TIMESTAMPS),
+[`WRITE_DURATIONS_AS_TIMESTAMPS`](https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/SerializationFeature.html#WRITE_DURATIONS_AS_TIMESTAMPS).
+For deserialization the bundle disables 
+[`FAIL_ON_UNKNOWN_PROPERTIES`](https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#FAIL_ON_UNKNOWN_PROPERTIES),
+[`FAIL_ON_IGNORED_PROPERTIES`](https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#FAIL_ON_IGNORED_PROPERTIES),
+[`FAIL_ON_INVALID_SUBTYPE`](https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#FAIL_ON_INVALID_SUBTYPE) 
+and enables
+[`ACCEPT_SINGLE_VALUE_AS_ARRAY`](https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#ACCEPT_SINGLE_VALUE_AS_ARRAY),
+[`READ_UNKNOWN_ENUM_VALUES_AS_NULL`](https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#READ_UNKNOWN_ENUM_VALUES_AS_NULL), 
+[`READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE`](https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE).
 The `FuzzyEnumModule` from Dropwizard is removed as it lacks support of newer Jackson features for enums.
 
 
