@@ -134,13 +134,19 @@ public class TolerantObjectMapperTest {
    }
 
    @Test
-   public void writeOnlyNonNullFields() throws Exception {
+   public void writeNullFields() throws Exception {
 
       Person given = new Person();
 
       String actual = om.writeValueAsString(given);
 
-      assertThat(actual).isEqualTo("{}");
+      assertThat(actual)
+            .contains("\"name\":null")
+            .contains("\"title\":null")
+            .contains("\"dob\":null")
+            .contains("\"addresses\":null")
+            .contains("\"partner\":null")
+            .contains("\"profession\":null");
    }
 
    @Test
