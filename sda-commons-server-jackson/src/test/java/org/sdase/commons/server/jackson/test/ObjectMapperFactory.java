@@ -16,9 +16,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public enum ObjectMapperFactory {
+public class ObjectMapperFactory {
 
-   ;
+   private ObjectMapperFactory() {
+      // Utility class
+   }
 
    /**
     * @return the {@link ObjectMapper} as it would be created in a Dropwizard App using the default
