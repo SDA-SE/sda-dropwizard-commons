@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -27,6 +29,10 @@ import org.sdase.commons.server.jackson.filter.JacksonFieldFilterModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DateFormat;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 
 /**
@@ -149,10 +155,27 @@ public class JacksonConfigurationBundle implements Bundle {
             .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
             .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL)
             .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+            // time zone handling
+            .setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
       ;
+      configureRenderingOfColonInTimeZone(objectMapper);
+
       // Application specific configuration
       if (this.objectMapperCustomizer != null) {
          this.objectMapperCustomizer.accept(objectMapper);
+      }
+   }
+
+   private void configureRenderingOfColonInTimeZone(ObjectMapper objectMapper) {
+      // render colon in time zone
+      DateFormat original = objectMapper.getDateFormat();
+      if (original instanceof StdDateFormat) {
+         StdDateFormat stdDateFormat = (StdDateFormat) original;
+         StdDateFormat withColonInTimeZone = stdDateFormat.withColonInTimeZone(true);
+         objectMapper.setDateFormat(withColonInTimeZone);
+      }
+      else {
+         LOG.warn("Could not customize date format. Expecting StdDateFormat, but found {}", original.getClass());
       }
    }
 
@@ -171,6 +194,8 @@ public class JacksonConfigurationBundle implements Bundle {
       private boolean disableHalSupport = false;
 
       private boolean disableFieldFilter = false;
+
+      private Iso8601Serializer defaultSerializer;
 
       private Consumer<ObjectMapper> customizer = om -> {};
 
@@ -211,8 +236,50 @@ public class JacksonConfigurationBundle implements Bundle {
          return this;
       }
 
+      /**
+       * <p>
+       *    Registers a default serializer for {@link ZonedDateTime} that renders 3 digits of milliseconds. The same
+       *    serializer may be configured per field as documented in {@link Iso8601Serializer.WithMillis}.
+       * </p>
+       * <p>
+       *    This setting overwrites the default behaviour of Jackson which omits milliseconds if they are zero or adds
+       *    nanoseconds if they are set.
+       * </p>
+       *
+       * @return the builder
+       */
+      public Builder alwaysWriteZonedDateTimeWithMillis() {
+         this.defaultSerializer = new Iso8601Serializer.WithMillis();
+         return this;
+      }
+
+      /**
+       * <p>
+       *    Registers a default serializer for {@link ZonedDateTime} that renders no milliseconds. The same serializer
+       *    may be configured per field as documented in {@link Iso8601Serializer}.
+       * </p>
+       * <p>
+       *    This setting overwrites the default behaviour of Jackson which omits milliseconds if they are zero or adds
+       *    nanoseconds if they are set.
+       * </p>
+       *
+       * @return the builder
+       */
+      public Builder alwaysWriteZonedDateTimeWithoutMillis() {
+         this.defaultSerializer = new Iso8601Serializer();
+         return this;
+      }
+
       public JacksonConfigurationBundle build() {
+         if (this.defaultSerializer != null) {
+            this.withCustomization(objectMapper -> {
+               SimpleModule module = new SimpleModule();
+               module.addSerializer(ZonedDateTime.class, this.defaultSerializer);
+               objectMapper.registerModule(module);
+            });
+         }
          return new JacksonConfigurationBundle(disableHalSupport, disableFieldFilter, customizer);
       }
    }
+
 }
