@@ -42,8 +42,15 @@ public class JsonExampleModifier implements ReaderListener {
    }
 
    private void updateOperations(Operation operation) {
-      operation.getResponses().forEach((key, response) -> response.setExamples(
-            response.getExamples().entrySet().stream().collect(toMap(Entry::getKey, v -> asJson(v.getValue())))));
+      operation.getResponses().forEach((key, response) -> {
+         // Examples can be null if there are no schemas to reference in the whole application
+         // (which makes it hard to test in this package...)
+         if (response.getExamples() != null) {
+            response.setExamples(
+               response.getExamples().entrySet().stream()
+                  .collect(toMap(Entry::getKey, v -> asJson(v.getValue()))));
+         }
+      });
    }
 
    private void updateModelExample(Model model) {
