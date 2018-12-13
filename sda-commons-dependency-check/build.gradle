@@ -3,6 +3,7 @@ dependencies {
     testCompile project(':sda-commons-server-auth')
     testCompile project(':sda-commons-server-auth-testing')
     testCompile project(':sda-commons-server-consumer')
+    testCompile project(':sda-commons-server-cors')
     testCompile project(':sda-commons-server-dropwizard')
     testCompile project(':sda-commons-server-hibernate')
     testCompile project(':sda-commons-server-hibernate-testing')
