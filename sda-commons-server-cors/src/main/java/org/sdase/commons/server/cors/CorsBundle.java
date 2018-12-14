@@ -1,9 +1,12 @@
 package org.sdase.commons.server.cors;
 
+import com.google.common.collect.Lists;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import java.util.Arrays;
+import java.util.Collections;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.sdase.commons.shared.tracing.RequestTracing;
@@ -34,17 +37,16 @@ public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> 
       filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, String.join(",", config.getAllowedOrigins()));
       filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH");
 
-      List<String> allowedHeaders = config.getAllowedHeaders();
-      allowedHeaders.add("Content-Type");
-      allowedHeaders.add("Authorization");
-      allowedHeaders.add("X-Requested-With");
-      allowedHeaders.add("Accept");
-      allowedHeaders.add(ConsumerTracing.TOKEN_HEADER);
-      allowedHeaders.add(RequestTracing.TOKEN_HEADER);
+      List<String> allowedHeaders = Lists.newArrayList("Content-Type", "Authorization", "X-Requested-With", "Accept",
+            ConsumerTracing.TOKEN_HEADER, RequestTracing.TOKEN_HEADER);
+      allowedHeaders.addAll(config.getAllowedHeaders());
       filter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, String.join(",", allowedHeaders));
 
+      List<String> exposedHeaders = Lists.newArrayList("Location");
+      exposedHeaders.addAll(config.getExposedHeaders());
+      filter.setInitParameter(CrossOriginFilter.EXPOSED_HEADERS_PARAM, String.join(",", exposedHeaders));
+
       filter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, "true");
-      filter.setInitParameter(CrossOriginFilter.EXPOSED_HEADERS_PARAM, "Location");
       filter.setInitParameter(CrossOriginFilter.CHAIN_PREFLIGHT_PARAM, Boolean.FALSE.toString());
    }
 

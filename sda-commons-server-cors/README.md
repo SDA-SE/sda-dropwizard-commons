@@ -1,6 +1,6 @@
 # SDA Commons Server CORS
 
-The CORS bundle adds a CORS filter to the servlet to allow cross-origin resource sharing for this service.
+The CORS bundle adds a [CORS](https://www.w3.org/TR/cors/) filter to the servlet to allow cross-origin resource sharing for this service.
 By doing so, UIs from other origins are allowed to access the service.  
 
 ## Initialization
@@ -16,7 +16,7 @@ public class MyApplication extends Application<MyConfiguration> {
    @Override
    public void initialize(Bootstrap<MyConfiguration> bootstrap) {
       // ...
-      bootstrap.addBundle(CorsBundle.builder().withAuthConfigProvider(MyConfiguration::getCors).build());
+      bootstrap.addBundle(CorsBundle.builder().withCorsConfigProvider(MyConfiguration::getCors).build());
       // ...
    }
 
@@ -29,7 +29,7 @@ public class MyApplication extends Application<MyConfiguration> {
 
 
 ## Configuration
-The CORS bundle requires a configuration in your yaml. Otherwise no cors headers will be added to the response
+The CORS bundle requires a configuration in your yaml. Otherwise no CORS headers will be added to the response
 and therefore cross origin resource sharing will fail.
 
 ```yaml
@@ -37,6 +37,12 @@ cors:
   # List of headers to be added to the allowed headers list
   # Trace and consumer token header as well as the headers "Content-Type, Authorization, X-Requested-With, Accept" are 
   # included within the list by default.
+  allowedHeaders: 
+    - header1
+    - header2
+    
+  # List of headers to be exposed to the client
+  # Location header is included within the list by default.
   allowedHeaders: 
     - header1
     - header2

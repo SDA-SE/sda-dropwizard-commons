@@ -9,6 +9,8 @@ public class CorsConfiguration {
 
    private List<String> allowedHeaders = new ArrayList<>();
 
+   private List<String> exposedHeaders = new ArrayList<>();
+
    public List<String> getAllowedOrigins() {
       if (allowedOrigins == null) {
          return new ArrayList<>();
@@ -29,5 +31,16 @@ public class CorsConfiguration {
 
    public void setAllowedHeaders(List<String> allowedHeaders) {
       this.allowedHeaders = allowedHeaders;
+   }
+
+   public List<String> getExposedHeaders() {
+      if (exposedHeaders == null) {
+         return new ArrayList<>();
+      }
+      return exposedHeaders;
+   }
+
+   public void setExposedHeaders(List<String> exposedHeaders) {
+      this.exposedHeaders = exposedHeaders;
    }
 }

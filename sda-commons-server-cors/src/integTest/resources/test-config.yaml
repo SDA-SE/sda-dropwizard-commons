@@ -9,6 +9,7 @@ server:
 cors:
   allowedHeaders:
     - some
+  exposedHeaders:
+    - exposed
   allowedOrigins:
     - "*"
-

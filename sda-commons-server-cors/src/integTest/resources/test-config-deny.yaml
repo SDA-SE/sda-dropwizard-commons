@@ -8,5 +8,6 @@ server:
 
 cors:
   allowedHeaders:
+  exposedHeaders:
   allowedOrigins:
 

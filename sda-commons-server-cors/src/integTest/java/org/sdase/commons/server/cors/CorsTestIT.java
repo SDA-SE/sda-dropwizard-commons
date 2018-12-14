@@ -57,6 +57,7 @@ public class CorsTestIT {
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER)).isNullOrEmpty();
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER)).isNullOrEmpty();
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER)).isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER)).isNullOrEmpty();
    }
 
    @Test
@@ -71,7 +72,7 @@ public class CorsTestIT {
 
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER)).isEqualTo(origin);
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-            .isEqualTo("Location");
+            .isEqualTo("Location,exposed");
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
             .isEqualTo(Boolean.TRUE.toString());
    }
@@ -88,7 +89,7 @@ public class CorsTestIT {
 
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER)).isEqualTo(origin);
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-            .isEqualTo("Location");
+            .isEqualTo("Location,exposed");
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
             .isEqualTo(Boolean.TRUE.toString());
    }
@@ -105,11 +106,12 @@ public class CorsTestIT {
 
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER)).isNullOrEmpty();
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER)).isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER)).isNullOrEmpty();
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER)).isNullOrEmpty();
    }
 
    @Test
-   public void shouldNotSetHeaderWhenAllowedPreflight() {
+   public void shouldNotSetHeaderWhenDenyedPreflight() {
       String origin = "server-a.com";
       Response response = DW_DENY
             .client()
@@ -121,6 +123,7 @@ public class CorsTestIT {
 
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER)).isNullOrEmpty();
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER)).isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER)).isNullOrEmpty();
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER)).isNullOrEmpty();
    }
 
@@ -142,6 +145,7 @@ public class CorsTestIT {
             .isEqualTo(Boolean.TRUE.toString());
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER).split(","))
             .containsExactlyInAnyOrder(getAllowedHeaderList("some"));
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER)).isNullOrEmpty();
    }
 
    @Test
@@ -162,6 +166,7 @@ public class CorsTestIT {
             .isEqualTo(Boolean.TRUE.toString());
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER).split(","))
             .containsExactlyInAnyOrder(getAllowedHeaderList("some"));
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER)).isNullOrEmpty();
    }
 
    @Test
@@ -177,6 +182,7 @@ public class CorsTestIT {
 
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER)).isNullOrEmpty();
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER)).isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER)).isNullOrEmpty();
       assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER)).isNullOrEmpty();
    }
 
