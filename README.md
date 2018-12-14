@@ -82,6 +82,14 @@ Status:
 - If the application acts as a client as well, `ConsumerTokenClientFilter` and `ConsumerTokenContainerFilter` from
   [rest-common](#usage-in-combination-with-rest-common) should be used
 
+##### Cross-Origin Resource Sharing
+
+The module [`sda-commons-server-cors`](./sda-commons-server-cors/README.md) adds support for CORS. This allows
+Cross-origin resource sharing for the service.
+
+Status:
+- Ready to use
+
 ##### Hibernate
 
 The module [`sda-commons-server-hibernate`](./sda-commons-server-hibernate/README.md) provides access to relational

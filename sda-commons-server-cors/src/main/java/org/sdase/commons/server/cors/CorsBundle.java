@@ -5,34 +5,44 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.sdase.commons.shared.tracing.ConsumerTracing;
+import org.sdase.commons.shared.tracing.RequestTracing;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import java.util.EnumSet;
+import java.util.List;
 
-public class CorsBundle<T extends Configuration> implements ConfiguredBundle<T> {
+public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
-   private CorsConfigProvider<T> configProvider;
+   private CorsConfigProvider<C> configProvider;
 
-   private CorsBundle(CorsConfigProvider<T> configProvider) {
+   private CorsBundle(CorsConfigProvider<C> configProvider) {
       this.configProvider = configProvider;
    }
 
    @Override
-   public void run(T configuration, Environment environment) {
+   public void run(C configuration, Environment environment) {
       CorsConfiguration config = configProvider.apply(configuration);
 
       FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
 
+      // UrlPatterns where to apply the filter
+      filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
+
       // Add URL mapping
-      filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "*");
-      filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,DELETE,OPTIONS");
-      filter
-            .setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM,
-                  "http://localhost:*," + String.join(",", config.getAllowedOrigins()));
-      filter
-            .setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM,
-                  "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
+      filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, String.join(",", config.getAllowedOrigins()));
+      filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH");
+
+      List<String> allowedHeaders = config.getAllowedHeaders();
+      allowedHeaders.add("Content-Type");
+      allowedHeaders.add("Authorization");
+      allowedHeaders.add("X-Requested-With");
+      allowedHeaders.add("Accept");
+      allowedHeaders.add(ConsumerTracing.TOKEN_HEADER);
+      allowedHeaders.add(RequestTracing.TOKEN_HEADER);
+      filter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, String.join(",", allowedHeaders));
+
       filter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, "true");
       filter.setInitParameter(CrossOriginFilter.EXPOSED_HEADERS_PARAM, "Location");
       filter.setInitParameter(CrossOriginFilter.CHAIN_PREFLIGHT_PARAM, Boolean.FALSE.toString());
@@ -48,7 +58,7 @@ public class CorsBundle<T extends Configuration> implements ConfiguredBundle<T> 
    }
 
    public interface InitialBuilder {
-      <C extends Configuration> FinalBuilder withCorsConfigProvider(CorsConfigProvider<C> configProvider);
+      <C1 extends Configuration> FinalBuilder<C1> withCorsConfigProvider(CorsConfigProvider<C1> configProvider);
    }
 
    public interface FinalBuilder<C extends Configuration> {
@@ -57,7 +67,7 @@ public class CorsBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
    public static class Builder<C extends Configuration> implements InitialBuilder, FinalBuilder<C> {
 
-      private CorsConfigProvider<C> configProvider;
+      private CorsConfigProvider<C> configProvider = (c -> new CorsConfiguration());
 
       private Builder() {
       }
@@ -67,13 +77,13 @@ public class CorsBundle<T extends Configuration> implements ConfiguredBundle<T> 
       }
 
       @Override
-      public <T extends Configuration> FinalBuilder<T> withCorsConfigProvider(CorsConfigProvider<T> configProvider) {
-         return new Builder<>(configProvider);
+      public CorsBundle<C> build() {
+         return new CorsBundle<>(configProvider);
       }
 
       @Override
-      public CorsBundle<C> build() {
-         return new CorsBundle<>(configProvider);
+      public <C1 extends Configuration> FinalBuilder<C1> withCorsConfigProvider(CorsConfigProvider<C1> configProvider) {
+         return new Builder<>(configProvider);
       }
    }
 
