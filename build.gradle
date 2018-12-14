@@ -2,7 +2,7 @@ buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
         maven {
-            url "https://nexus.dev.sda-se.com/repository/sda-se-releases/"
+            url "https://nexus.intern.sda-se.online/repository/sda-se-public/"
             credentials {
                 username sdaNexusUser
                 password sdaNexusPassword
@@ -38,7 +38,7 @@ subprojects {
         mavenCentral()
         maven { url "http://packages.confluent.io/maven/" } // for sda-commons-server-kafka-confluent-testing only
         maven {
-            url "https://nexus.dev.sda-se.com/repository/sda-se-releases/"
+            url "https://nexus.intern.sda-se.online/repository/sda-se-public/"
             credentials {
                 username sdaNexusUser
                 password sdaNexusPassword
@@ -124,7 +124,7 @@ subprojects {
     uploadArchives {
         repositories {
             mavenDeployer {
-                repository(url: "https://nexus.dev.sda-se.com/repository/sda-se-releases/") {
+                repository(url: "https://nexus.intern.sda-se.online/repository/sda-se-releases/") {
                     authentication(userName: sdaNexusUser, password: sdaNexusPassword)
                 }
             }
