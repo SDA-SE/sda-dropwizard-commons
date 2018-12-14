@@ -5,8 +5,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import java.util.Arrays;
-import java.util.Collections;
+
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.sdase.commons.shared.tracing.RequestTracing;
@@ -37,8 +36,9 @@ public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> 
       filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, String.join(",", config.getAllowedOrigins()));
       filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH");
 
-      List<String> allowedHeaders = Lists.newArrayList("Content-Type", "Authorization", "X-Requested-With", "Accept",
-            ConsumerTracing.TOKEN_HEADER, RequestTracing.TOKEN_HEADER);
+      List<String> allowedHeaders = Lists
+            .newArrayList("Content-Type", "Authorization", "X-Requested-With", "Accept", ConsumerTracing.TOKEN_HEADER,
+                  RequestTracing.TOKEN_HEADER);
       allowedHeaders.addAll(config.getAllowedHeaders());
       filter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, String.join(",", allowedHeaders));
 
