@@ -43,7 +43,7 @@ cors:
     
   # List of headers to be exposed to the client
   # Location header is included within the list by default.
-  allowedHeaders: 
+  exposedHeaders: 
     - header1
     - header2
   
