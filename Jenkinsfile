@@ -1,7 +1,10 @@
-@Library('jenkins-library@v-0.37.0') _
+@Library('jenkins-library') _
 
 pipeline {
    agent none
+   options {
+        disableConcurrentBuilds()
+   }
    stages {
       /*
        * Stage: Prepare Workspace

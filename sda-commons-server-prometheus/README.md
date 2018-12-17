@@ -19,6 +19,15 @@ Default metrics that are provided at `/metrics/prometheus`:
 |                                   | _resource_path_       | The mapped path of the request with path param placeholders. | Request Context                           |
 |                                   | _status_code_         | The Http status code sent with the response.                 | Response Context                          |
 |                                   | _consumer_name_       | Name of the consumer that started the request.               | Request Context Property `Consumer-Name`* |
+| **kafka_consumer_records_lag**    |                       | See https://kafka.apache.org/documentation/#consumer_fetch_monitoring | Bridged from Kafka               | 
+|                                   | _consumer_name_       | Name of the consumer that processed the message              | Bridged from Kafka                        |
+|                                   | _topic_name_          | Name of the topic where messages where consumed from         | Bridged from Kafka                        |
+| **kafka_consumer_topic_message_duration**                 | Tracks the time needed to handle consumed Kafka message      | `MessageListener`                         |
+|                                   | _consumer_name_       | Name of the consumer that processed the message              | Bridged from Kafka                        |
+|                                   | _topic_name_          | Name of the topic where messages where consumed from         | Bridged from Kafka                        |
+| **kafka_producer_topic_message_total**                    | Tracks the number of messaged published to a Kafka topic     | `KafkaMessageProducer`                    |
+|                                   | _consumer_name_       | Name of the consumer that processed the message              | Bridged from Kafka                        |
+|                                   | _topic_name_          | Name of the topic where messages where consumed from         | Bridged from Kafka                        |
 | **jvm_***                         |                       | Multiple metrics about the JVM                               | Bridged from Dropwizard                   |
 | **io_dropwizard_jetty_***         |                       | Multiple metrics from the embedded Jetty server              | Bridged from Dropwizard                   |
 | **io_dropwizard_db_***            |                       | Multiple metrics from the database if a database is used     | Bridged from Dropwizard                   |

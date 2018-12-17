@@ -1,9 +1,31 @@
 package org.sdase.commons.server.kafka;
 
-import com.github.ftrossbach.club_topicana.core.ComparisonResult;
-import com.github.ftrossbach.club_topicana.core.EvaluationException;
-import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
-import com.github.ftrossbach.club_topicana.core.MismatchedTopicConfigException;
+import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotNull;
+
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.CreateTopicsResult;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.Metric;
+import org.apache.kafka.common.MetricName;
+import org.apache.kafka.common.errors.InterruptException;
+import org.apache.kafka.common.header.Headers;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
@@ -16,36 +38,23 @@ import org.sdase.commons.server.kafka.exception.TopicCreationException;
 import org.sdase.commons.server.kafka.health.KafkaHealthCheck;
 import org.sdase.commons.server.kafka.producer.KafkaMessageProducer;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
+import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
+import org.sdase.commons.server.kafka.prometheus.KafkaConsumerMetrics;
+import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
 import org.sdase.commons.server.kafka.topicana.TopicComparer;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.ftrossbach.club_topicana.core.ComparisonResult;
+import com.github.ftrossbach.club_topicana.core.EvaluationException;
+import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
+import com.github.ftrossbach.club_topicana.core.MismatchedTopicConfigException;
+
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.CreateTopicsResult;
-import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.errors.InterruptException;
-import org.apache.kafka.common.header.Headers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
 public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
@@ -53,6 +62,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
    private final Function<C, KafkaConfiguration> configurationProvider;
    private KafkaConfiguration kafkaConfiguration;
+
+   private ProducerTopicMessageCounter topicProducerCounterSpec;
+   private ConsumerTopicMessageHistogram topicConsumerHistogram;
 
    private List<MessageListener<?, ?>> messageListeners = new ArrayList<>();
    private List<KafkaMessageProducer<?, ?>> messageProducers = new ArrayList<>();
@@ -68,6 +80,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       //
    }
 
+   @SuppressWarnings("unused")
    @Override
    public void run(C configuration, Environment environment) {
       kafkaConfiguration = configurationProvider.apply(configuration);
@@ -75,25 +88,28 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       if (!kafkaConfiguration.isDisabled()) {
          environment.healthChecks().register("kafkaConnection", new KafkaHealthCheck(kafkaConfiguration));
       }
+      topicProducerCounterSpec = new ProducerTopicMessageCounter();
+      topicConsumerHistogram = new ConsumerTopicMessageHistogram();
+      new KafkaConsumerMetrics(messageListeners);
       setupManagedThreadManager(environment);
    }
-
 
    /**
     * Provides a {@link ExpectedTopicConfiguration} that is generated from the
     * values within the configuration yaml
     *
-    * @param name the name of the topic
+    * @param name
+    *           the name of the topic
     * @return the configured topic configuration
-    * @throws ConfigurationException if no such topic exists in the configuration
+    * @throws ConfigurationException
+    *            if no such topic exists in the configuration
     */
    @SuppressWarnings("WeakerAccess")
    public ExpectedTopicConfiguration getTopicConfiguration(String name) throws ConfigurationException { // NOSONAR
       if (topics.get(name) == null) {
-         throw new ConfigurationException(
-             String.format(
-                 "Topic with name '%s' seems not to be part of the read configuration. Please check the name and configuration.",
-                 name));
+         throw new ConfigurationException(String.format(
+               "Topic with name '%s' seems not to be part of the read configuration. Please check the name and configuration.",
+               name));
       }
       return topics.get(name);
    }
@@ -102,13 +118,19 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * creates a MessageListener based on the data in the
     * {@link MessageHandlerRegistration}
     *
-    * @param registration the configuration object
-    * @param <K>          key clazz type
-    * @param <V>          value clazz type
+    * @param registration
+    *           the configuration object
+    * @param <K>
+    *           key clazz type
+    * @param <V>
+    *           value clazz type
     * @return message listener
-    * @throws ConfigurationException if the {@code registration} has no
-    *       {@link MessageHandlerRegistration#getListenerConfig()} and there is no configuration available with the same
-    *       name as defined in {@link MessageHandlerRegistration#getListenerConfigName()}
+    * @throws ConfigurationException
+    *            if the {@code registration} has no
+    *            {@link MessageHandlerRegistration#getListenerConfig()} and
+    *            there is no configuration available with the same name as
+    *            defined in
+    *            {@link MessageHandlerRegistration#getListenerConfigName()}
     */
    @SuppressWarnings("WeakerAccess")
    public <K, V> List<MessageListener<K, V>> registerMessageHandler(MessageHandlerRegistration<K, V> registration)
@@ -130,9 +152,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       if (listenerConfig == null && registration.getListenerConfigName() != null) {
          listenerConfig = kafkaConfiguration.getListenerConfig().get(registration.getListenerConfigName());
          if (listenerConfig == null) {
-            throw new ConfigurationException(String.format(
-                "Listener config with name '%s' cannot be found within the current configuration.",
-                registration.getListenerConfigName()));
+            throw new ConfigurationException(
+                  String.format("Listener config with name '%s' cannot be found within the current configuration.",
+                        registration.getListenerConfigName()));
          }
       }
 
@@ -142,7 +164,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
       List<MessageListener<K, V>> listener = new ArrayList<>(listenerConfig.getInstances());
       for (int i = 0; i < listenerConfig.getInstances(); i++) {
-         MessageListener<K, V> instance = new MessageListener<>(registration, createConsumer(registration), listenerConfig);
+         MessageListener<K, V> instance = new MessageListener<>(registration, createConsumer(registration),
+               listenerConfig, topicConsumerHistogram);
          listener.add(instance);
          Thread t = new Thread(instance);
          t.start();
@@ -154,22 +177,28 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    /**
     * creates a @{@link MessageProducer} based on the data in the
     * {@link ProducerRegistration}
-    *
+    * <p>
     * if the kafka bundle is disabled, null is returned
     *
-    * @param registration the configuration object
-    * @param <K>          key clazz type
-    * @param <V>          value clazz type
+    * @param registration
+    *           the configuration object
+    * @param <K>
+    *           key clazz type
+    * @param <V>
+    *           value clazz type
     * @return message producer
-    * @throws ConfigurationException if the {@code registration} has no
-    *       {@link ProducerRegistration#getProducerConfig()} and there is no configuration available with the same name
-    *       as defined in {@link ProducerRegistration#getProducerConfigName()}
+    * @throws ConfigurationException
+    *            if the {@code registration} has no
+    *            {@link ProducerRegistration#getProducerConfig()} and there is
+    *            no configuration available with the same name as defined in
+    *            {@link ProducerRegistration#getProducerConfigName()}
     */
-   @SuppressWarnings({"unchecked", "WeakerAccess"})
+   @SuppressWarnings({ "unchecked", "WeakerAccess" })
    public <K, V> MessageProducer<K, V> registerProducer(ProducerRegistration<K, V> registration)
          throws ConfigurationException { // NOSONAR
 
-      // if kafka is disabled (for testing issues), we return a dummy producer only.
+      // if Kafka is disabled (for testing issues), we return a dummy producer
+      // only.
       // This dummy works as long as the future is not evaluated
       if (kafkaConfiguration.isDisabled()) {
          return new MessageProducer<K, V>() {
@@ -191,26 +220,28 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          createNotExistingTopics(Collections.singletonList(registration.getTopic()));
       }
 
-
       if (registration.isCheckTopicConfiguration()) {
          ComparisonResult comparisonResult = checkTopics(Collections.singletonList(registration.getTopic()));
          if (!comparisonResult.ok()) {
             throw new MismatchedTopicConfigException(comparisonResult);
          }
       }
+      KafkaProducer<K, V> producer = createProducer(registration);
+      Entry<MetricName, ? extends Metric> entry = producer.metrics().entrySet().stream().findFirst().orElse(null);
+      String clientId = entry != null ? entry.getKey().tags().get("client-id") : "";
 
-      KafkaMessageProducer<K, V> messageProducer = new KafkaMessageProducer(registration.getTopicName(),
-            createProducer(registration));
+      KafkaMessageProducer<K, V> messageProducer = new KafkaMessageProducer(registration.getTopicName(), producer,
+            topicProducerCounterSpec, clientId);
+
       messageProducers.add(messageProducer);
       return messageProducer;
    }
 
-
-
    /**
     * Checks or creates a collection of topics with respect to its configuration
     *
-    * @param topics Collection of topic configurations that should be checked
+    * @param topics
+    *           Collection of topic configurations that should be checked
     */
    private void createNotExistingTopics(Collection<ExpectedTopicConfiguration> topics) {
       if (kafkaConfiguration.isDisabled()) {
@@ -219,10 +250,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       // find out what topics are missing
       ComparisonResult comparisonResult = checkTopics(topics);
       if (!comparisonResult.getMissingTopics().isEmpty()) {
-         createTopics(topics
-               .stream()
-               .filter(t -> comparisonResult.getMissingTopics().contains(t.getTopicName()))
-               .collect(Collectors.toList()));
+         createTopics(
+               topics.stream().filter(t -> comparisonResult.getMissingTopics().contains(t.getTopicName())).collect(
+                     Collectors.toList()));
       }
    }
 
@@ -230,7 +260,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * Checks if the defined topics are available on the broker for the provided
     * credentials
     *
-    * @param topics list of topics to test
+    * @param topics
+    *           list of topics to test
     */
    private ComparisonResult checkTopics(Collection<ExpectedTopicConfiguration> topics) {
       if (kafkaConfiguration.isDisabled()) {
@@ -253,14 +284,13 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             }
 
             if (!t.getReplicationFactor().isSpecified()) {
-               LOGGER
-                     .warn("Replication factor for topic '{}' is not specified. Using default value 1",
-                           t.getTopicName());
+               LOGGER.warn("Replication factor for topic '{}' is not specified. Using default value 1",
+                     t.getTopicName());
             } else {
                replications = t.getReplicationFactor().count();
             }
 
-            return new NewTopic(t.getTopicName(),  partitions, (short) replications).configs(t.getProps());
+            return new NewTopic(t.getTopicName(), partitions, (short) replications).configs(t.getProps());
          }).collect(Collectors.toList());
          CreateTopicsResult result = adminClient.createTopics(topicList);
          result.all().get();
@@ -272,7 +302,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       }
    }
 
-
+   @SuppressWarnings("static-method")
    private ExpectedTopicConfiguration createTopicDescription(TopicConfig c) {
       return TopicConfigurationBuilder
             .builder(c.getName())
@@ -289,9 +319,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
       if (producerConfig == null && registration.getProducerConfigName() != null) {
          if (!kafkaConfiguration.getProducers().containsKey(registration.getProducerConfigName())) {
-            throw new ConfigurationException(String.format(
-                "Producer config with name '%s' cannot be found within the current configuration.",
-                registration.getProducerConfigName()));
+            throw new ConfigurationException(
+                  String.format("Producer config with name '%s' cannot be found within the current configuration.",
+                        registration.getProducerConfigName()));
          }
          producerConfig = kafkaConfiguration.getProducers().get(registration.getProducerConfigName());
       }
@@ -300,31 +330,32 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          producerConfig.getConfig().forEach(producerProperties::put);
       }
 
-      return new KafkaProducer<>(producerProperties, registration.getKeySerializer(), registration.getValueSerializer());
+      return new KafkaProducer<>(producerProperties, registration.getKeySerializer(),
+            registration.getValueSerializer());
    }
 
    private <K, V> KafkaConsumer<K, V> createConsumer(MessageHandlerRegistration<K, V> registration)
          throws ConfigurationException { // NOSONAR
       KafkaProperties consumerProperties = KafkaProperties.forConsumer(kafkaConfiguration);
+
       ConsumerConfig consumerConfig = registration.getConsumerConfig();
 
       if (consumerConfig == null && registration.getConsumerConfigName() != null) {
          if (!kafkaConfiguration.getConsumers().containsKey(registration.getConsumerConfigName())) {
-            throw new ConfigurationException(String.format(
-                "Consumer config with name '%s' cannot be found within the current configuration.",
-                registration.getConsumerConfigName()));
+            throw new ConfigurationException(
+                  String.format("Consumer config with name '%s' cannot be found within the current configuration.",
+                        registration.getConsumerConfigName()));
          }
          consumerConfig = kafkaConfiguration.getConsumers().get(registration.getConsumerConfigName());
-
       }
 
       if (consumerConfig != null) {
          consumerProperties.putAll(consumerConfig.getConfig());
       }
 
-      return new KafkaConsumer<>(consumerProperties, registration.getKeyDeserializer(), registration.getValueDeserializer());
+      return new KafkaConsumer<>(consumerProperties, registration.getKeyDeserializer(),
+            registration.getValueDeserializer());
    }
-
 
    /**
     * Initial checks. Configuration mus be initialized
@@ -351,10 +382,12 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             Thread.currentThread().interrupt();
          }
       });
+      topicProducerCounterSpec.unregister();
    }
 
    private void shutdownConsumerThreads() {
       messageListeners.forEach(MessageListener::stopConsumer);
+      topicConsumerHistogram.unregister();
    }
 
    //
@@ -367,9 +400,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
    public interface InitialBuilder {
       /**
-       * @param configurationProvider the method reference that provides
-       *                              the @{@link KafkaConfiguration} from the applications
-       *                              configurations class
+       * @param configurationProvider
+       *           the method reference that provides
+       *           the @{@link KafkaConfiguration} from the applications
+       *           configurations class
        */
       <C extends Configuration> FinalBuilder<C> withConfigurationProvider(
             @NotNull KafkaConfigurationProvider<C> configurationProvider);

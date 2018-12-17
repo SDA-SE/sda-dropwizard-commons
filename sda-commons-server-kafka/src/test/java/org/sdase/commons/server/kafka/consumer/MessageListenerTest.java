@@ -32,6 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
+import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
 public class MessageListenerTest {
 
@@ -62,6 +63,8 @@ public class MessageListenerTest {
    private ErrorHandler<String, String> errorHandler;
 
    private KafkaConsumer<String, String> consumer;
+   
+   private ConsumerTopicMessageHistogram histogram;
 
    private static final int WAIT_TIME_MS = 1000;
    private static final int BLOCKING_TIME_MS = 10000;
@@ -73,6 +76,7 @@ public class MessageListenerTest {
       consumer = Mockito.mock(KafkaConsumer.class);
       handler = Mockito.mock(MessageHandler.class);
       errorHandler = Mockito.mock(ErrorHandler.class);
+      histogram = Mockito.mock(ConsumerTopicMessageHistogram.class);
    }
 
    private void setupListener() {
@@ -90,7 +94,7 @@ public class MessageListenerTest {
                   .withHandler(handler)
                   .withErrorHandler(errorHandler)
                   .build()
-            , consumer, lc
+            , consumer, lc, histogram
       );
    }
 

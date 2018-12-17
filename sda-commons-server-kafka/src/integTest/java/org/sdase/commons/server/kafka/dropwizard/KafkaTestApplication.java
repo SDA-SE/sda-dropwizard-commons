@@ -27,7 +27,7 @@ public class KafkaTestApplication extends Application<KafkaTestConfiguration> {
       healthCheckRegistry = environment.healthChecks();
    }
 
-   public KafkaBundle kafkaBundle() {
+   public KafkaBundle<KafkaTestConfiguration> kafkaBundle() {
       return bundle;
    }
 
