@@ -29,8 +29,8 @@ public class MyApplication extends Application<MyConfiguration> {
 
 
 ## Configuration
-The CORS bundle requires a configuration in your yaml. Otherwise no CORS headers will be added to the response
-and therefore cross origin resource sharing will fail.
+The CORS bundle requires an environment specific configuration in your yaml. Otherwise no CORS headers will be 
+added to the response and therefore cross origin resource sharing will fail.
 
 ```yaml
 cors:
@@ -44,3 +44,5 @@ cors:
   # To use configurable patterns per environment the Json in Yaml syntax may be used with an environment placeholder:
   # allowedOrigins: ${CORS_ALLOWED_ORIGINS:-["*"]}
 ```
+
+Application specific allowed headers, exposed headers and HTTP methods can be configured in the builder.
