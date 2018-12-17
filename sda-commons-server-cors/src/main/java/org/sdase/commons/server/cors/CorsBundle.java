@@ -90,7 +90,7 @@ public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> 
       filter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, String.join(",", allowedHeaders));
       filter.setInitParameter(CrossOriginFilter.EXPOSED_HEADERS_PARAM, String.join(",", exposedHeaders));
 
-      // TODO to be discussed with Timo Pagel
+      // TODO to be discussed with Timo Pagel: we do not use cookies or basic auth, so why do we allow a credentials param?
       filter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, Boolean.TRUE.toString());
 
       // affects only pre flight requests, regular options mapping is still possible
