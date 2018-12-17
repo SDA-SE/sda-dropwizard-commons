@@ -1,7 +1,7 @@
 # SDA Commons Server CORS
 
-The CORS bundle adds a [CORS](https://www.w3.org/TR/cors/) filter to the servlet to allow cross-origin resource sharing for this service.
-By doing so, UIs from other origins are allowed to access the service.  
+The CORS bundle adds a [CORS](https://www.w3.org/TR/cors/) filter to the servlet to allow cross-origin resource sharing 
+for this service. By doing so, UIs from other origins are allowed to access the service.  
 
 ## Initialization
 To include the CORS filter in an application, the bundle has to be added to the application:
@@ -34,19 +34,6 @@ and therefore cross origin resource sharing will fail.
 
 ```yaml
 cors:
-  # List of headers to be added to the allowed headers list
-  # Trace and consumer token header as well as the headers "Content-Type, Authorization, X-Requested-With, Accept" are 
-  # included within the list by default.
-  allowedHeaders: 
-    - header1
-    - header2
-    
-  # List of headers to be exposed to the client
-  # Location header is included within the list by default.
-  exposedHeaders: 
-    - header1
-    - header2
-  
   # List of origins that are allowed to use the service. "*" allows all origins
   allowedOrigins:
     - "*"
@@ -54,4 +41,6 @@ cors:
   # allowedOrigins:
   #    - https://*.sdase.com
   #    - https://*test.sdase.com
+  # To use configurable patterns per environment the Json in Yaml syntax may be used with an environment placeholder:
+  # allowedOrigins: ${CORS_ALLOWED_ORIGINS:-["*"]}
 ```

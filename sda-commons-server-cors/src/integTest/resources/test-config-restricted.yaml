@@ -7,10 +7,4 @@ server:
     port: 0
 
 cors:
-  allowedHeaders:
-    - some
-  exposedHeaders:
-    - exposed
-  allowedOrigins:
-    - server-a.com
-
+  allowedOrigins: ["server-a.com", "server-c.com"]
