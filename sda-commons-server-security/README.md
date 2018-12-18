@@ -10,8 +10,7 @@ Currently the [`SecurityBundle`](./src/main/java/org/sdase/commons/server/securi
 - [Risiko: Ausnutzung von HTTP-Methoden](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:AusnutzungvonHTTP-Methoden)
 - [Risiko: Root-Start](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:Root-Start)
 - [Risiko: Verlust der Quell-IP-Adresse](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:VerlustderQuell-IP-Adresse)
-- [Entfernen von Applikations-bezogenen Headern](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-EntfernenvonApplikations-bezogenenHeadern)
-  from "Risiko: Erkennung von vertraulichen Komponenten"
+- [Risiko: Erkennung von vertraulichen Komponenten](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:ErkennungvonvertraulichenKomponenten)
 
 ## Usage
 
@@ -24,6 +23,7 @@ public class MyApp extends Application<MyConfiguration> {
    public void initialize(Bootstrap<MyConfiguration> bootstrap) {
       // ...
       bootstrap.addBundle(SecurityBundle.builder().build());
+      bootstrap.addBundle(JacksonConfigurationBundle.builder().build()); // enables required custom error handlers
       // ...
    }
 

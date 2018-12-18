@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Set;
@@ -107,6 +108,17 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
       Response response = getAppClient().path("path").path("does").path("not").path("exist").request().get();
       assertThat(response.getStatus()).isEqualTo(404);
       assertThat(response.getHeaderString("Date")).isBlank();
+   }
+
+   @Test
+   public void doNotShowDefaultErrorPageInApp() {
+      Response response = getAppClient().path("path").path("does").path("not").path("exist")
+            .request(MediaType.APPLICATION_JSON).get();
+      assertThat(response.getStatus()).isEqualTo(404);
+      String content = response.readEntity(String.class);
+      // should not render the default error object of jetty which writes a json with a property code that contains only
+      // the http status
+      assertThat(content).doesNotMatch(".*\"code\"\\s*:\\s*404.*");
    }
 
    /**

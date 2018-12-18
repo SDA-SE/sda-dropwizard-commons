@@ -3,6 +3,7 @@
 server:
   allowedMethods: ${ALLOWED_METHODS:-["GET", "POST"]}
   startsAsRoot: ${START_AS_ROOT:-null}
+  registerDefaultExceptionMappers: ${REGISTER_DEFAULT_EXCEPTION_MAPPERS:-false}
   applicationConnectors:
   - type: http
     port: 0

@@ -5,6 +5,7 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.sdase.commons.server.security.validation.CustomErrorHandlerSecurityAdvise;
 import org.sdase.commons.server.security.validation.HttpConnectorSecurityAdvise;
 import org.sdase.commons.server.security.validation.ServerFactorySecurityAdvise;
 
@@ -20,6 +21,7 @@ import org.sdase.commons.server.security.validation.ServerFactorySecurityAdvise;
  * <ul>
  *    <li>{@link ServerFactorySecurityAdvise}</li>
  *    <li>{@link HttpConnectorSecurityAdvise}</li>
+ *    <li>{@link CustomErrorHandlerSecurityAdvise}</li>
  * </ul>
  */
 public class SecurityBundle<T extends Configuration> implements ConfiguredBundle<T> {
@@ -45,6 +47,7 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
       ServerFactory serverFactory = configuration.getServerFactory();
       new ServerFactorySecurityAdvise(serverFactory).applySecureConfiguration();
       new HttpConnectorSecurityAdvise(serverFactory).applySecureConfiguration();
+      new CustomErrorHandlerSecurityAdvise(serverFactory, environment).applySecureConfiguration();
    }
 
    public static class Builder {

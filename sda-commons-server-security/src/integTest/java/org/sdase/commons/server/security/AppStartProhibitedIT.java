@@ -35,20 +35,25 @@ public class AppStartProhibitedIT {
    }
 
 
-   @Parameters(name = "{0}: {1}")
+   @Parameters(name = "{0}: {2}")
    public static Collection<Object[]> data() {
       return Arrays.asList(
+            // verify good default not modified
             new Object[] {"ALLOWED_METHODS", "[\"GET\", \"TRACE\"]", InsecureConfigurationException.class},
             new Object[] {"START_AS_ROOT", "true", InsecureConfigurationException.class},
             new Object[] {"USE_FORWARDED_HEADERS", "false", InsecureConfigurationException.class},
             new Object[] {"USE_SERVER_HEADER", "true", InsecureConfigurationException.class},
-            new Object[] {"USE_DATE_HEADER", "true", null}, // auto reconfigured because true is the default
+            new Object[] {"DISABLE_JACKSON_CONFIGURATION", "true", InsecureConfigurationException.class},
+            // auto reconfigured because true is the default
+            new Object[] {"USE_DATE_HEADER", "true", null},
+            new Object[] {"REGISTER_DEFAULT_EXCEPTION_MAPPERS", "true", null},
+            // counter check startup with secure config
             new Object[] {"default", "config", null} // NOSONAR
       );
    }
 
    @Test
-   public void shouldStartIfExpectedExceptionIsNull() throws Throwable {
+   public void shouldStartOnlyIfExpectedExceptionIsNull() throws Throwable {
       Statement appStarter = createAppStarter();
       if (expectedException == null) {
          appStarter.evaluate(); // throws exception if app can not start

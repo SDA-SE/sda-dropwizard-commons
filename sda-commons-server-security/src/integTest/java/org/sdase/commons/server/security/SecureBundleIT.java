@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.sdase.commons.server.security.test.SecurityTestApp;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,4 +56,11 @@ public class SecureBundleIT extends AbstractSecurityTest<Configuration> {
       assertThat(caller).contains("https://from.external.example.com");
    }
 
+   @Test
+   public void useCustomErrorHandlersForRuntimeException() {
+      Response response = getAppClient().path("throw").request().get();
+      assertThat(response.getStatus()).isEqualTo(500);
+      String content = response.readEntity(String.class);
+      assertThat(content).doesNotMatch(".*\"code\"\\s*:\\s*500.*");
+   }
 }
