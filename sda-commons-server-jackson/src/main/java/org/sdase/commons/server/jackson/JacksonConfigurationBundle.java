@@ -22,6 +22,7 @@ import org.sdase.commons.server.jackson.errors.ApiExceptionMapper;
 import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
 import org.sdase.commons.server.jackson.errors.JerseyValidationExceptionMapper;
 import org.sdase.commons.server.jackson.errors.JsonParseExceptionMapper;
+import org.sdase.commons.server.jackson.errors.RuntimeExceptionMapper;
 import org.sdase.commons.server.jackson.errors.ValidationExceptionMapper;
 import org.sdase.commons.server.jackson.errors.WebApplicationExceptionMapper;
 import org.sdase.commons.server.jackson.filter.JacksonFieldFilterModule;
@@ -135,6 +136,7 @@ public class JacksonConfigurationBundle implements Bundle {
       environment.jersey().register(EarlyEofExceptionMapper.class);
       environment.jersey().register(JsonParseExceptionMapper.class);
       environment.jersey().register(WebApplicationExceptionMapper.class);
+      environment.jersey().register(RuntimeExceptionMapper.class);
 
 
    }

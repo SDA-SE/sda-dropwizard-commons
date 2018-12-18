@@ -100,8 +100,15 @@ public class JacksonConfigurationTestApp extends Application<Configuration> {
       throw ApiException.builder()
             .httpCode(400)
             .title("Some exception")
-            .detail("parameter", null, "SOME_ERROR_CODE" )
+            .detail("parameter", null, "SOME_ERROR_CODE")
             .build();
+   }
+
+   @GET
+   @Path("/runtimeException")
+   @Produces(MediaType.APPLICATION_JSON)
+   public PersonResource getRuntimeException() {
+      throw new RuntimeException("Not to be rendered by default mapper.");
    }
 
    @GET

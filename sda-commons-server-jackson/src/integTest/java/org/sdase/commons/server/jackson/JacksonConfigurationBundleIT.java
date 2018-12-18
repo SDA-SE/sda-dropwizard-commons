@@ -439,4 +439,21 @@ public class JacksonConfigurationBundleIT {
                   tuple("http://localhost:" + DW.getLocalPort() + "/ydoe", "Yasmine", "Doe", "Yassie")
             );
    }
+
+   @Test
+   public void shouldGetErrorForRuntimeException() {
+      try {
+         DW.client()
+               .target("http://localhost:" + DW.getLocalPort())
+               .path("/runtimeException")
+               .request(MediaType.APPLICATION_JSON)
+               .get(PersonResource.class);
+      } catch (WebApplicationException e) {
+         Response response = e.getResponse();
+         assertThat(response.getStatus()).isEqualTo(500);
+         ApiError details = response.readEntity(ApiError.class);
+         assertThat(details.getTitle()).isNotBlank().doesNotContain("RuntimeException");
+      }
+   }
+
 }
