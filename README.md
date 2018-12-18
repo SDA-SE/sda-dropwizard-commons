@@ -127,6 +127,16 @@ Status:
 - Ready to use in combination with [SDA Commons Consumer Token](#consumer-token)
 - Metrics will miss the consumer token when used with consumer token support form rest-common 
 
+##### Security
+
+The module [`sda-commons-server-security`](./sda-commons-server-security/README.md) helps to configure a secure 
+Dropwizard application.
+
+Status
+- Ready to use, but providing only a subset of the 
+  "[Härtungsmaßnahmen Dropwizard](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard)" 
+  by Timo Pagel
+
 ##### Swagger
 
 The module [`sda-commons-server-swagger`](./sda-commons-server-swagger/README.md) is the base 

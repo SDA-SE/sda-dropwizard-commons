@@ -1,0 +1,17 @@
+# a server starting with this config without the SecurityBundle should fail on all security checks
+# a server with this config using the SecurityBundle should not start
+server:
+  allowedMethods: ${ALLOWED_METHODS:-["GET", "POST"]}
+  startsAsRoot: ${START_AS_ROOT:-null}
+  applicationConnectors:
+  - type: http
+    port: 0
+    useForwardedHeaders: ${USE_FORWARDED_HEADERS:-true}
+    useServerHeader: ${USE_SERVER_HEADER:-false}
+    useDateHeader: ${USE_DATE_HEADER:-false}
+  adminConnectors:
+  - type: http
+    port: 0
+    useForwardedHeaders: ${USE_FORWARDED_HEADERS:-true}
+    useServerHeader: ${USE_SERVER_HEADER:-false}
+    useDateHeader: ${USE_DATE_HEADER:-false}

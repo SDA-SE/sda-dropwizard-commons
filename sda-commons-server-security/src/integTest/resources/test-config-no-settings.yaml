@@ -1,0 +1,8 @@
+# a server starting with this config and the SecurityBundle must pass the security test
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
