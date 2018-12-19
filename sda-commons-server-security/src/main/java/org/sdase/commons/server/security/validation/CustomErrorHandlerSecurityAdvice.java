@@ -30,16 +30,7 @@ public class CustomErrorHandlerSecurityAdvice {
 
    public CustomErrorHandlerSecurityAdvice(ServerFactory serverFactory, Environment environment) {
       this.environment = environment;
-      if (serverFactory instanceof AbstractServerFactory) {
-         abstractServerFactory = (AbstractServerFactory) serverFactory;
-      }
-      else if (serverFactory == null) {
-         LOG.error("Unable to apply secure server config. Expecting an AbstractServerFactory but found null");
-      }
-      else {
-         LOG.error("Unable to apply secure server config. Expecting an AbstractServerFactory but found a {}",
-               serverFactory.getClass());
-      }
+      abstractServerFactory = ServerFactoryUtil.verifyAbstractServerFactory(serverFactory).orElse(null);
    }
 
    public void applySecureConfiguration() {

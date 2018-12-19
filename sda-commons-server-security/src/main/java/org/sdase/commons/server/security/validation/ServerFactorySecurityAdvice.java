@@ -3,8 +3,6 @@ package org.sdase.commons.server.security.validation;
 import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.server.ServerFactory;
 import org.sdase.commons.server.security.exception.InsecureConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.HttpMethod;
 import java.util.Arrays;
@@ -27,8 +25,6 @@ import static java.lang.Boolean.TRUE;
  */
 public class ServerFactorySecurityAdvice {
 
-   private static final Logger LOG = LoggerFactory.getLogger(ServerFactorySecurityAdvice.class);
-
    private static final Set<String> SECURE_HTTP_METHODS = new HashSet<>(Arrays.asList(
          HttpMethod.OPTIONS,
          HttpMethod.HEAD,
@@ -42,16 +38,7 @@ public class ServerFactorySecurityAdvice {
    private AbstractServerFactory abstractServerFactory;
 
    public ServerFactorySecurityAdvice(ServerFactory serverFactory) {
-      if (serverFactory instanceof AbstractServerFactory) {
-         abstractServerFactory = (AbstractServerFactory) serverFactory;
-      }
-      else if (serverFactory == null) {
-         LOG.error("Unable to apply secure server config. Expecting an AbstractServerFactory but found null");
-      }
-      else {
-         LOG.error("Unable to apply secure server config. Expecting an AbstractServerFactory but found a {}",
-               serverFactory.getClass());
-      }
+      abstractServerFactory = ServerFactoryUtil.verifyAbstractServerFactory(serverFactory).orElse(null);
    }
 
    public void applySecureConfiguration() {

@@ -2,14 +2,11 @@ package org.sdase.commons.server.security.validation;
 
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.server.ServerFactory;
-import io.dropwizard.server.SimpleServerFactory;
 import org.sdase.commons.server.security.exception.InsecureConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,18 +27,7 @@ public class HttpConnectorSecurityAdvice {
    private List<ConnectorFactory> connectorFactories;
 
    public HttpConnectorSecurityAdvice(ServerFactory serverFactory) {
-      connectorFactories = new ArrayList<>();
-      if (serverFactory instanceof DefaultServerFactory) {
-         DefaultServerFactory defaultServerFactory = (DefaultServerFactory) serverFactory;
-         connectorFactories.addAll(defaultServerFactory.getApplicationConnectors());
-         connectorFactories.addAll(defaultServerFactory.getAdminConnectors());
-      } else if (serverFactory instanceof SimpleServerFactory) {
-         SimpleServerFactory simpleServerFactory = (SimpleServerFactory) serverFactory;
-         connectorFactories.add(simpleServerFactory.getConnector());
-      } else {
-         LOG.error("Unable to apply secure connector config. Expecting a DefaultServerFactory or a SimpleServerFactory" +
-                     " but found a {}", serverFactory.getClass());
-      }
+      this.connectorFactories = ServerFactoryUtil.extractConnectorFactories(serverFactory);
    }
 
    public void applySecureConfiguration() {
