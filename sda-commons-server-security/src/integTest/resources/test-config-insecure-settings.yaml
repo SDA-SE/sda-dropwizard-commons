@@ -7,12 +7,12 @@ server:
   applicationConnectors:
   - type: http
     port: 0
-    useForwardedHeaders: ${USE_FORWARDED_HEADERS:-true}
-    useServerHeader: ${USE_SERVER_HEADER:-false}
-    useDateHeader: ${USE_DATE_HEADER:-false}
+    useForwardedHeaders: ${USE_FORWARDED_HEADERS_APP:-true}
+    useServerHeader: ${USE_SERVER_HEADER_APP:-false}
+    useDateHeader: ${USE_DATE_HEADER_APP:-false}
   adminConnectors:
   - type: http
     port: 0
-    useForwardedHeaders: ${USE_FORWARDED_HEADERS:-true}
-    useServerHeader: ${USE_SERVER_HEADER:-false}
-    useDateHeader: ${USE_DATE_HEADER:-false}
+    useForwardedHeaders: ${USE_FORWARDED_HEADERS_ADMIN:-true}
+    useServerHeader: ${USE_SERVER_HEADER_ADMIN:-false}
+    useDateHeader: ${USE_DATE_HEADER_ADMIN:-false}

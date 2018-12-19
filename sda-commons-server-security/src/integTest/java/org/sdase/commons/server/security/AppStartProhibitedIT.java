@@ -41,11 +41,14 @@ public class AppStartProhibitedIT {
             // verify good default not modified
             new Object[] {"ALLOWED_METHODS", "[\"GET\", \"TRACE\"]", InsecureConfigurationException.class},
             new Object[] {"START_AS_ROOT", "true", InsecureConfigurationException.class},
-            new Object[] {"USE_FORWARDED_HEADERS", "false", InsecureConfigurationException.class},
-            new Object[] {"USE_SERVER_HEADER", "true", InsecureConfigurationException.class},
+            new Object[] {"USE_FORWARDED_HEADERS_APP", "false", InsecureConfigurationException.class},
+            new Object[] {"USE_FORWARDED_HEADERS_ADMIN", "false", InsecureConfigurationException.class},
+            new Object[] {"USE_SERVER_HEADER_APP", "true", InsecureConfigurationException.class},
+            new Object[] {"USE_SERVER_HEADER_ADMIN", "true", InsecureConfigurationException.class},
             new Object[] {"DISABLE_JACKSON_CONFIGURATION", "true", InsecureConfigurationException.class},
             // auto reconfigured because true is the default
-            new Object[] {"USE_DATE_HEADER", "true", null},
+            new Object[] {"USE_DATE_HEADER_APP", "true", null},
+            new Object[] {"USE_DATE_HEADER_ADMIN", "true", null},
             new Object[] {"REGISTER_DEFAULT_EXCEPTION_MAPPERS", "true", null},
             // counter check startup with secure config
             new Object[] {"default", "config", null} // NOSONAR
