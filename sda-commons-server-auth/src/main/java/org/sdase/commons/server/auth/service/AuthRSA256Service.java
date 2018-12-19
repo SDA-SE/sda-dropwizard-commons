@@ -60,7 +60,6 @@ public class AuthRSA256Service implements AuthService {
             return jwt.getClaims();
          }
       } catch (JWTVerificationException e) {
-         log.error("authorization token verify exception: ", e);
          throw new NotAuthorizedException(e);
       }
    }

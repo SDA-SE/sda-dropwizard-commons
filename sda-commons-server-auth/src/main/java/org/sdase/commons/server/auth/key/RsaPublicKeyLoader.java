@@ -57,19 +57,22 @@ public class RsaPublicKeyLoader {
       new Thread(this::loadAllNewKeys).start();
    }
 
+   @SuppressWarnings("WeakerAccess")
    public int getTotalNumberOfKeySources() {
       return keySources.size();
    }
 
+   @SuppressWarnings("WeakerAccess")
    public int getTotalNumberOfKeys() {
       return keysWithoutKeyId.size() + keysByKid.size();
    }
 
    private void reloadKeys() {
       synchronized (loadingSemaphore) {
-         keySources.keySet().stream()
-               .peek(ks -> keySources.put(ks, true))
-               .forEach(this::reloadFromKeySource);
+         keySources.keySet().forEach(ks -> {
+            keySources.put(ks, true);
+            reloadFromKeySource(ks);
+         });
       }
    }
 
@@ -99,8 +102,10 @@ public class RsaPublicKeyLoader {
       synchronized (loadingSemaphore) {
          keySources.keySet().stream()
                .filter(ks -> !keySources.get(ks))
-               .peek(ks -> keySources.put(ks, true))
-               .map(KeySource::loadKeysFromSource)
+               .map(ks -> {
+                  keySources.put(ks, true);
+                  return ks.loadKeysFromSource();
+               })
                .flatMap(List::stream)
                .forEach(this::addKey);
       }
