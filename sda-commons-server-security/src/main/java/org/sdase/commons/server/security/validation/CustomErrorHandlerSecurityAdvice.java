@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
  *    <li>"Risiko: Erkennung von vertraulichen Komponenten ... Zentrales Abfangen aller Exceptions"</li>
  * </ul>
  */
-public class CustomErrorHandlerSecurityAdvise {
+public class CustomErrorHandlerSecurityAdvice {
 
-   private static final Logger LOG = LoggerFactory.getLogger(CustomErrorHandlerSecurityAdvise.class);
+   private static final Logger LOG = LoggerFactory.getLogger(CustomErrorHandlerSecurityAdvice.class);
 
    private static final String JACKSON_CONFIGURATION_BUNDLE_CLASS = "JacksonConfigurationBundle";
    private static final String JACKSON_CONFIGURATION_BUNDLE_FQN =
@@ -28,7 +28,7 @@ public class CustomErrorHandlerSecurityAdvise {
    private Environment environment;
    private AbstractServerFactory abstractServerFactory;
 
-   public CustomErrorHandlerSecurityAdvise(ServerFactory serverFactory, Environment environment) {
+   public CustomErrorHandlerSecurityAdvice(ServerFactory serverFactory, Environment environment) {
       this.environment = environment;
       if (serverFactory instanceof AbstractServerFactory) {
          abstractServerFactory = (AbstractServerFactory) serverFactory;

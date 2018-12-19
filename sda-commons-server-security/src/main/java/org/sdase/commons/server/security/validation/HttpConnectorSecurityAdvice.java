@@ -23,13 +23,13 @@ import java.util.Objects;
  *    <li>"Risiko: Erkennung von vertraulichen Komponenten ... Entfernen von applikations-bezogenen Headern"</li>
  * </ul>
  */
-public class HttpConnectorSecurityAdvise {
+public class HttpConnectorSecurityAdvice {
 
-   private static final Logger LOG = LoggerFactory.getLogger(HttpConnectorSecurityAdvise.class);
+   private static final Logger LOG = LoggerFactory.getLogger(HttpConnectorSecurityAdvice.class);
 
    private List<ConnectorFactory> connectorFactories;
 
-   public HttpConnectorSecurityAdvise(ServerFactory serverFactory) {
+   public HttpConnectorSecurityAdvice(ServerFactory serverFactory) {
       connectorFactories = new ArrayList<>();
       if (serverFactory instanceof DefaultServerFactory) {
          DefaultServerFactory defaultServerFactory = (DefaultServerFactory) serverFactory;

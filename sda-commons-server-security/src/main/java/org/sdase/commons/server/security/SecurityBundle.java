@@ -5,9 +5,9 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.sdase.commons.server.security.validation.CustomErrorHandlerSecurityAdvise;
-import org.sdase.commons.server.security.validation.HttpConnectorSecurityAdvise;
-import org.sdase.commons.server.security.validation.ServerFactorySecurityAdvise;
+import org.sdase.commons.server.security.validation.CustomErrorHandlerSecurityAdvice;
+import org.sdase.commons.server.security.validation.HttpConnectorSecurityAdvice;
+import org.sdase.commons.server.security.validation.ServerFactorySecurityAdvice;
 
 /**
  * <p>
@@ -19,9 +19,9 @@ import org.sdase.commons.server.security.validation.ServerFactorySecurityAdvise;
  *    bundle:
  * </p>
  * <ul>
- *    <li>{@link ServerFactorySecurityAdvise}</li>
- *    <li>{@link HttpConnectorSecurityAdvise}</li>
- *    <li>{@link CustomErrorHandlerSecurityAdvise}</li>
+ *    <li>{@link ServerFactorySecurityAdvice}</li>
+ *    <li>{@link HttpConnectorSecurityAdvice}</li>
+ *    <li>{@link CustomErrorHandlerSecurityAdvice}</li>
  * </ul>
  */
 public class SecurityBundle<T extends Configuration> implements ConfiguredBundle<T> {
@@ -45,9 +45,9 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
    @Override
    public void run(T configuration, Environment environment) {
       ServerFactory serverFactory = configuration.getServerFactory();
-      new ServerFactorySecurityAdvise(serverFactory).applySecureConfiguration();
-      new HttpConnectorSecurityAdvise(serverFactory).applySecureConfiguration();
-      new CustomErrorHandlerSecurityAdvise(serverFactory, environment).applySecureConfiguration();
+      new ServerFactorySecurityAdvice(serverFactory).applySecureConfiguration();
+      new HttpConnectorSecurityAdvice(serverFactory).applySecureConfiguration();
+      new CustomErrorHandlerSecurityAdvice(serverFactory, environment).applySecureConfiguration();
    }
 
    public static class Builder {

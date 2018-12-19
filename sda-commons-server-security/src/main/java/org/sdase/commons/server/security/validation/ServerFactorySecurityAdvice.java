@@ -25,9 +25,9 @@ import static java.lang.Boolean.TRUE;
  *    <li>"Risiko: Ausnutzung von HTTP-Methoden"</li>
  * </ul>
  */
-public class ServerFactorySecurityAdvise {
+public class ServerFactorySecurityAdvice {
 
-   private static final Logger LOG = LoggerFactory.getLogger(ServerFactorySecurityAdvise.class);
+   private static final Logger LOG = LoggerFactory.getLogger(ServerFactorySecurityAdvice.class);
 
    private static final Set<String> SECURE_HTTP_METHODS = new HashSet<>(Arrays.asList(
          HttpMethod.OPTIONS,
@@ -41,7 +41,7 @@ public class ServerFactorySecurityAdvise {
 
    private AbstractServerFactory abstractServerFactory;
 
-   public ServerFactorySecurityAdvise(ServerFactory serverFactory) {
+   public ServerFactorySecurityAdvice(ServerFactory serverFactory) {
       if (serverFactory instanceof AbstractServerFactory) {
          abstractServerFactory = (AbstractServerFactory) serverFactory;
       }
