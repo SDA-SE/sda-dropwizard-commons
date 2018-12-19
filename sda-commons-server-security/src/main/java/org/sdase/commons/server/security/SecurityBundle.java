@@ -5,6 +5,7 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.sdase.commons.server.security.filter.WebSecurityHeaderFilter;
 import org.sdase.commons.server.security.handler.ObscuringErrorHandler;
 import org.sdase.commons.server.security.validation.BufferLimitsAdvice;
 import org.sdase.commons.server.security.validation.CustomErrorHandlerSecurityAdvice;
@@ -58,6 +59,7 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
 
       environment.getApplicationContext().setErrorHandler(createNewErrorHandler(environment));
       environment.getAdminContext().setErrorHandler(createNewErrorHandler(environment));
+      environment.jersey().register(WebSecurityHeaderFilter.class);
    }
 
    private ObscuringErrorHandler createNewErrorHandler(Environment environment) {

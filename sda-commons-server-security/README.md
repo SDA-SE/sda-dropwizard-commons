@@ -12,6 +12,11 @@ Currently the [`SecurityBundle`](./src/main/java/org/sdase/commons/server/securi
 - [Risiko: Verlust der Quell-IP-Adresse](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:VerlustderQuell-IP-Adresse)
 - [Risiko: Erkennung von vertraulichen Komponenten](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:ErkennungvonvertraulichenKomponenten)
 - [Risiko: Buffer Overflow](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:BufferOverflow)
+- [Risiko: Clickjacking](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:Clickjacking)
+- [Risiko: Interpretation von Inhalten durch den Browser](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:InterpretationvonInhaltendurchdenBrowser)
+- [Risiko: Cross Site Scripting (XSS)](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:Cross-SiteScripting)
+- [Risiko: Weitergabe von besuchten URLs an Dritte](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:WeitergabevonbesuchtenURLsanDritte)
+- [Risiko: Nachladen von Inhalten in Flash und PDFs](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:WeitergabevonbesuchtenURLsanDritte)
 
 ## Usage
 

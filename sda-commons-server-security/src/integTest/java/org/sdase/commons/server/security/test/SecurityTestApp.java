@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -68,5 +69,14 @@ public class SecurityTestApp extends Application<Configuration> {
    @Path("404")
    public Response createNotFoundResponse() {
       return Response.status(404).build();
+   }
+
+   @GET
+   @Path("header")
+   public Response addHeaderToResponse(@QueryParam("name") String name, @QueryParam("value") String value) {
+      if (name != null && !name.trim().isEmpty() && value != null && !value.trim().isEmpty()) {
+         return Response.ok().header(name, value).build();
+      }
+      return Response.ok().build();
    }
 }
