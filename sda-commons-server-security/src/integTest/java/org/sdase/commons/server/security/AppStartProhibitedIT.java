@@ -15,7 +15,9 @@ import org.sdase.commons.server.testing.EnvironmentRule;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.runner.Description.createTestDescription;
@@ -29,29 +31,68 @@ public class AppStartProhibitedIT {
    private EnvironmentRule env;
    private Class<? extends Throwable> expectedException;
 
-   public AppStartProhibitedIT(String givenEnvKey, String givenEnvValue, Class<? extends Throwable> expectedException) {
+   public AppStartProhibitedIT(String givenEnvKey, String givenEnvValue, Class<? extends Throwable> expectedException, Map<String, String> additionalEnvironmentProperties) {
       this.env = new EnvironmentRule().setEnv(givenEnvKey, givenEnvValue);
+      if (additionalEnvironmentProperties != null) {
+         additionalEnvironmentProperties.forEach(env::setEnv);
+      }
       this.expectedException = expectedException;
    }
 
 
    @Parameters(name = "{0}: {2}")
    public static Collection<Object[]> data() {
+      String disableBufferCheckKey = "DISABLE_BUFFER_CHECK";
       return Arrays.asList(
             // verify good default not modified
-            new Object[] {"ALLOWED_METHODS", "[\"GET\", \"TRACE\"]", InsecureConfigurationException.class},
-            new Object[] {"START_AS_ROOT", "true", InsecureConfigurationException.class},
-            new Object[] {"USE_FORWARDED_HEADERS_APP", "false", InsecureConfigurationException.class},
-            new Object[] {"USE_FORWARDED_HEADERS_ADMIN", "false", InsecureConfigurationException.class},
-            new Object[] {"USE_SERVER_HEADER_APP", "true", InsecureConfigurationException.class},
-            new Object[] {"USE_SERVER_HEADER_ADMIN", "true", InsecureConfigurationException.class},
-            new Object[] {"DISABLE_JACKSON_CONFIGURATION", "true", InsecureConfigurationException.class},
+            new Object[] {"ALLOWED_METHODS", "[\"GET\", \"TRACE\"]", InsecureConfigurationException.class, null},
+            new Object[] {"START_AS_ROOT", "true", InsecureConfigurationException.class, null},
+            new Object[] {"USE_FORWARDED_HEADERS_APP", "false", InsecureConfigurationException.class, null},
+            new Object[] {"USE_FORWARDED_HEADERS_ADMIN", "false", InsecureConfigurationException.class, null},
+            new Object[] {"USE_SERVER_HEADER_APP", "true", InsecureConfigurationException.class, null},
+            new Object[] {"USE_SERVER_HEADER_ADMIN", "true", InsecureConfigurationException.class, null},
+            new Object[] {"DISABLE_JACKSON_CONFIGURATION", "true", InsecureConfigurationException.class, null},
+
+            new Object[] {"HEADER_CACHE_SIZE_APP", "513 bytes", InsecureConfigurationException.class, null}, // NOSONAR
+            new Object[] {"HEADER_CACHE_SIZE_ADMIN", "513 bytes", InsecureConfigurationException.class, null},
+            new Object[] {"OUTPUT_BUFFER_SIZE_APP", "33KiB", InsecureConfigurationException.class, null}, // NOSONAR
+            new Object[] {"OUTPUT_BUFFER_SIZE_ADMIN", "33KiB", InsecureConfigurationException.class, null},
+            new Object[] {"MAX_REQUEST_HEADER_SIZE_APP", "9KiB", InsecureConfigurationException.class, null},
+            new Object[] {"MAX_REQUEST_HEADER_SIZE_ADMIN", "9KiB", InsecureConfigurationException.class, null},
+            new Object[] {"MAX_RESPONSE_HEADER_SIZE_APP", "9KiB", InsecureConfigurationException.class, null},
+            new Object[] {"MAX_RESPONSE_HEADER_SIZE_ADMIN", "9KiB", InsecureConfigurationException.class, null},
+            new Object[] {"INPUT_BUFFER_SIZE_APP", "9KiB", InsecureConfigurationException.class, null},
+            new Object[] {"INPUT_BUFFER_SIZE_ADMIN", "9KiB", InsecureConfigurationException.class, null},
+            new Object[] {"MIN_BUFFER_POOL_SIZE_APP", "65 bytes", InsecureConfigurationException.class, null}, // NOSONAR
+            new Object[] {"MIN_BUFFER_POOL_SIZE_ADMIN", "65 bytes", InsecureConfigurationException.class, null},
+            new Object[] {"BUFFER_POOL_INCREMENT_APP", "2KiB", InsecureConfigurationException.class, null},
+            new Object[] {"BUFFER_POOL_INCREMENT_ADMIN", "2KiB", InsecureConfigurationException.class, null},
+            new Object[] {"MAX_BUFFER_POOL_SIZE_APP", "65KiB", InsecureConfigurationException.class, null}, // NOSONAR
+            new Object[] {"MAX_BUFFER_POOL_SIZE_ADMIN", "65KiB", InsecureConfigurationException.class, null},
+
+            new Object[] {"HEADER_CACHE_SIZE_APP", "513 bytes", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"HEADER_CACHE_SIZE_ADMIN", "513 bytes", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"OUTPUT_BUFFER_SIZE_APP", "33KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"OUTPUT_BUFFER_SIZE_ADMIN", "33KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"MAX_REQUEST_HEADER_SIZE_APP", "9KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"MAX_REQUEST_HEADER_SIZE_ADMIN", "9KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"MAX_RESPONSE_HEADER_SIZE_APP", "9KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"MAX_RESPONSE_HEADER_SIZE_ADMIN", "9KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"INPUT_BUFFER_SIZE_APP", "9KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"INPUT_BUFFER_SIZE_ADMIN", "9KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"MIN_BUFFER_POOL_SIZE_APP", "65 bytes", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"MIN_BUFFER_POOL_SIZE_ADMIN", "65 bytes", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"BUFFER_POOL_INCREMENT_APP", "2KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"BUFFER_POOL_INCREMENT_ADMIN", "2KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"MAX_BUFFER_POOL_SIZE_APP", "65KiB", null, singletonMap(disableBufferCheckKey, "true")},
+            new Object[] {"MAX_BUFFER_POOL_SIZE_ADMIN", "65KiB", null, singletonMap(disableBufferCheckKey, "true")},
+
             // auto reconfigured because true is the default
-            new Object[] {"USE_DATE_HEADER_APP", "true", null},
-            new Object[] {"USE_DATE_HEADER_ADMIN", "true", null},
-            new Object[] {"REGISTER_DEFAULT_EXCEPTION_MAPPERS", "true", null},
+            new Object[] {"USE_DATE_HEADER_APP", "true", null, null},
+            new Object[] {"USE_DATE_HEADER_ADMIN", "true", null, null},
+            new Object[] {"REGISTER_DEFAULT_EXCEPTION_MAPPERS", "true", null, null},
             // counter check startup with secure config
-            new Object[] {"default", "config", null} // NOSONAR
+            new Object[] {"default", "config", null, null} // NOSONAR
       );
    }
 

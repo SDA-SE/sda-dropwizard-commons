@@ -10,9 +10,25 @@ server:
     useForwardedHeaders: ${USE_FORWARDED_HEADERS_APP:-true}
     useServerHeader: ${USE_SERVER_HEADER_APP:-false}
     useDateHeader: ${USE_DATE_HEADER_APP:-false}
+    headerCacheSize: ${HEADER_CACHE_SIZE_APP:-512 bytes}
+    outputBufferSize: ${OUTPUT_BUFFER_SIZE_APP:-32KiB}
+    maxRequestHeaderSize: ${MAX_REQUEST_HEADER_SIZE_APP:-8KiB}
+    maxResponseHeaderSize: ${MAX_RESPONSE_HEADER_SIZE_APP:-8KiB}
+    inputBufferSize: ${INPUT_BUFFER_SIZE_APP:-8KiB}
+    minBufferPoolSize: ${MIN_BUFFER_POOL_SIZE_APP:-64 bytes}
+    bufferPoolIncrement: ${BUFFER_POOL_INCREMENT_APP:-1KiB}
+    maxBufferPoolSize: ${MAX_BUFFER_POOL_SIZE_APP:-64KiB}
   adminConnectors:
   - type: http
     port: 0
     useForwardedHeaders: ${USE_FORWARDED_HEADERS_ADMIN:-true}
     useServerHeader: ${USE_SERVER_HEADER_ADMIN:-false}
     useDateHeader: ${USE_DATE_HEADER_ADMIN:-false}
+    headerCacheSize: ${HEADER_CACHE_SIZE_ADMIN:-512 bytes}
+    outputBufferSize: ${OUTPUT_BUFFER_SIZE_ADMIN:-32KiB}
+    maxRequestHeaderSize: ${MAX_REQUEST_HEADER_SIZE_ADMIN:-8KiB}
+    maxResponseHeaderSize: ${MAX_RESPONSE_HEADER_SIZE_ADMIN:-8KiB}
+    inputBufferSize: ${INPUT_BUFFER_SIZE_ADMIN:-8KiB}
+    minBufferPoolSize: ${MIN_BUFFER_POOL_SIZE_ADMIN:-64 bytes}
+    bufferPoolIncrement: ${BUFFER_POOL_INCREMENT_ADMIN:-1KiB}
+    maxBufferPoolSize: ${MAX_BUFFER_POOL_SIZE_ADMIN:-64KiB}

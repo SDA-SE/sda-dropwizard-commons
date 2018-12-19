@@ -9,6 +9,7 @@ import io.dropwizard.server.ServerFactory;
 import io.dropwizard.server.SimpleServerFactory;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.WebTarget;
@@ -22,8 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * <p>
- *    Test that checks the application with a given config for vulnerabilities. This test may be extended in each
- *    application to ensure that the app complies with the security advises. Usage:
+ *    Test that checks the application with a given config for vulnerabilities. This test may be Used as a template to
+ *    check other applications for security risks. Usage:
  * </p>
  * <pre><code>   public class MyAppIsSecureIT extends AbstractSecurityTest<Configuration> {
  *
@@ -120,6 +121,55 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
       // the http status
       assertThat(content).doesNotMatch(".*\"code\"\\s*:\\s*404.*");
    }
+
+   // represents the use of the BufferLimitsAdvice as the input headers are the only thing that can be checked from http
+   @Test
+   public void rejectInputHeadersOverEightKib() {
+      String chars = "0987654321abcdefghijklmnopqrstuvwxyz";
+      StringBuilder valueMoreThanOneKib = new StringBuilder();
+      while (valueMoreThanOneKib.length() < 1024) {
+         valueMoreThanOneKib.append(chars);
+      }
+      Response response = getAppClient().request(MediaType.APPLICATION_JSON)
+            .header("X-Header-One", valueMoreThanOneKib.toString())
+            .header("X-Header-Two", valueMoreThanOneKib.toString())
+            .header("X-Header-Three", valueMoreThanOneKib.toString())
+            .header("X-Header-Four", valueMoreThanOneKib.toString())
+            .header("X-Header-Five", valueMoreThanOneKib.toString())
+            .header("X-Header-Six", valueMoreThanOneKib.toString())
+            .header("X-Header-Seven", valueMoreThanOneKib.toString())
+            .header("X-Header-Eight", valueMoreThanOneKib.toString())
+            .get();
+      assertThat(response.getStatus()).isEqualTo(431); // Request Header Fields Too Large
+      response.close();
+   }
+
+   @Test
+   @Ignore("Setting a custom error handler does not affect the deep internals of Jetty.\n" +
+         "There has been an issue https://github.com/dropwizard/dropwizard/issues/647 but the resolution only affects" +
+         "regular error responses from the application.\n" +
+         "In AbstractServerFactory#568 a default ErrorHandler is registered.")
+   public void rejectInputHeadersOverEightKibNotReturningDefaultErrorPage() {
+      String chars = "0987654321abcdefghijklmnopqrstuvwxyz";
+      StringBuilder valueMoreThanOneKib = new StringBuilder();
+      while (valueMoreThanOneKib.length() < 1024) {
+         valueMoreThanOneKib.append(chars);
+      }
+      Response response = getAppClient().request(MediaType.APPLICATION_JSON)
+            .header("X-Header-One", valueMoreThanOneKib.toString())
+            .header("X-Header-Two", valueMoreThanOneKib.toString())
+            .header("X-Header-Three", valueMoreThanOneKib.toString())
+            .header("X-Header-Four", valueMoreThanOneKib.toString())
+            .header("X-Header-Five", valueMoreThanOneKib.toString())
+            .header("X-Header-Six", valueMoreThanOneKib.toString())
+            .header("X-Header-Seven", valueMoreThanOneKib.toString())
+            .header("X-Header-Eight", valueMoreThanOneKib.toString())
+            .get();
+      String responseBodyRaw = response.readEntity(String.class);
+      assertThat(responseBodyRaw).doesNotMatch(".*<[^>]+>.*"); // no HTML
+   }
+
+
 
    /**
     * @return the only {@link HttpConnectorFactory} for the application port

@@ -63,4 +63,17 @@ public class SecureBundleIT extends AbstractSecurityTest<Configuration> {
       String content = response.readEntity(String.class);
       assertThat(content).doesNotMatch(".*\"code\"\\s*:\\s*500.*");
    }
+
+   @Test
+   public void useCustomErrorPageHandlerForErrorPages() {
+      Response response = getAppClient().path("404").request().get();
+      assertThat(response.getStatus()).isEqualTo(404);
+      String content = response.readEntity(String.class);
+      assertThat(content)
+            .doesNotMatch(".*\"code\"\\s*:\\s*500.*") // no default exception mapper
+            .doesNotContain("<html") // no html page
+            .doesNotContain("<h1>") // no html page
+            .doesNotContain("<h2>") // no html page
+      ;
+   }
 }

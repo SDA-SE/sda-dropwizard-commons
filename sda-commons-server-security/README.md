@@ -11,6 +11,7 @@ Currently the [`SecurityBundle`](./src/main/java/org/sdase/commons/server/securi
 - [Risiko: Root-Start](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:Root-Start)
 - [Risiko: Verlust der Quell-IP-Adresse](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:VerlustderQuell-IP-Adresse)
 - [Risiko: Erkennung von vertraulichen Komponenten](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:ErkennungvonvertraulichenKomponenten)
+- [Risiko: Buffer Overflow](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard#H%C3%A4rtungsma%C3%9FnahmenDropwizard-Risiko:BufferOverflow)
 
 ## Usage
 

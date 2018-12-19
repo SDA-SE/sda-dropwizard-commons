@@ -13,6 +13,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 @Path("")
@@ -25,7 +26,12 @@ public class SecurityTestApp extends Application<Configuration> {
    @Override
    public void initialize(Bootstrap<Configuration> bootstrap) {
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build()); // needed to update the config in tests
-      bootstrap.addBundle(SecurityBundle.builder().build());
+      if (!"true".equals(System.getenv("DISABLE_BUFFER_CHECK"))) {
+         bootstrap.addBundle(SecurityBundle.builder().build());
+      }
+      else {
+         bootstrap.addBundle(SecurityBundle.builder().disableBufferLimitValidation().build());
+      }
       if (!"true".equals(System.getenv("DISABLE_JACKSON_CONFIGURATION"))) {
          bootstrap.addBundle(JacksonConfigurationBundle.builder().build()); // enables custom error handlers
       }
@@ -58,4 +64,9 @@ public class SecurityTestApp extends Application<Configuration> {
       throw new RuntimeException("An always thrown exception"); // NOSONAR
    }
 
+   @GET
+   @Path("404")
+   public Response createNotFoundResponse() {
+      return Response.status(404).build();
+   }
 }
