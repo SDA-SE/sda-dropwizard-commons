@@ -13,7 +13,8 @@ public class ApiException extends RuntimeException {
    private final String title;
    private final List<ApiInvalidParam> invalidParams; // NOSONAR
 
-   private ApiException(int httpCode, String title, List<ApiInvalidParam> invalidParams) {
+   private ApiException(int httpCode, String title, List<ApiInvalidParam> invalidParams, Throwable cause) {
+      super(title, cause);
       this.httpCode = httpCode;
       this.title = title;
       this.invalidParams = invalidParams;
@@ -33,6 +34,7 @@ public class ApiException extends RuntimeException {
 
    public interface FinalBuilder {
       FinalBuilder detail(String field, String reason, String errorCode);
+      FinalBuilder cause(Throwable cause);
       ApiException build();
    }
 
@@ -48,6 +50,7 @@ public class ApiException extends RuntimeException {
       private int httpCode;
       private String title;
       private List<ApiInvalidParam> apiInvalidParams = new ArrayList<>();
+      private Throwable cause = null;
 
 
       @Override
@@ -57,8 +60,14 @@ public class ApiException extends RuntimeException {
       }
 
       @Override
+      public FinalBuilder cause(Throwable cause) {
+         this.cause = cause;
+         return this;
+      }
+
+      @Override
       public ApiException build() {
-         return new ApiException(httpCode, title, apiInvalidParams);
+         return new ApiException(httpCode, title, apiInvalidParams, cause);
       }
 
       @Override
