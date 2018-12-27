@@ -22,6 +22,11 @@ plugins {
     id 'nebula.integtest' version '3.4.0'
 }
 
+allprojects {
+    apply plugin: 'idea'
+    idea.module.inheritOutputDirs = true
+}
+
 subprojects {
     group 'org.sdase.commons'
 
