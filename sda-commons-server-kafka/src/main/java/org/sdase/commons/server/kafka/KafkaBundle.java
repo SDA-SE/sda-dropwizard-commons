@@ -80,8 +80,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     *
     * @param name the name of the topic
     * @return the configured topic configuration
+    * @throws ConfigurationException if no such topic exists in the configuration
     */
-   public ExpectedTopicConfiguration getTopicConfiguration(String name) throws ConfigurationException {
+   @SuppressWarnings("WeakerAccess")
+   public ExpectedTopicConfiguration getTopicConfiguration(String name) throws ConfigurationException { // NOSONAR
       if (topics.get(name) == null) {
          throw new ConfigurationException(
              String.format(
@@ -99,8 +101,13 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * @param <K>          key clazz type
     * @param <V>          value clazz type
     * @return message listener
+    * @throws ConfigurationException if the {@code registration} has no
+    *       {@link MessageHandlerRegistration#getListenerConfig()} and there is no configuration available with the same
+    *       name as defined in {@link MessageHandlerRegistration#getListenerConfigName()}
     */
-   public <K, V> List<MessageListener<K, V>> registerMessageHandler(MessageHandlerRegistration<K, V> registration) throws ConfigurationException {
+   @SuppressWarnings("WeakerAccess")
+   public <K, V> List<MessageListener<K, V>> registerMessageHandler(MessageHandlerRegistration<K, V> registration)
+         throws ConfigurationException { // NOSONAR
       if (kafkaConfiguration.isDisabled()) {
          return Collections.emptyList();
       }
@@ -149,9 +156,13 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * @param <K>          key clazz type
     * @param <V>          value clazz type
     * @return message producer
+    * @throws ConfigurationException if the {@code registration} has no
+    *       {@link ProducerRegistration#getProducerConfig()} and there is no configuration available with the same name
+    *       as defined in {@link ProducerRegistration#getProducerConfigName()}
     */
-   @SuppressWarnings("unchecked")
-   public <K, V> MessageProducer<K, V> registerProducer(ProducerRegistration<K, V> registration) throws ConfigurationException {
+   @SuppressWarnings({"unchecked", "WeakerAccess"})
+   public <K, V> MessageProducer<K, V> registerProducer(ProducerRegistration<K, V> registration)
+         throws ConfigurationException { // NOSONAR
 
       // if kafka is disabled (for testing issues), we return a dummy producer only.
       // This dummy works as long as the future is not evaluated
@@ -267,7 +278,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             .build();
    }
 
-   private <K, V> KafkaProducer<K, V> createProducer(ProducerRegistration<K, V> registration) throws ConfigurationException {
+   private <K, V> KafkaProducer<K, V> createProducer(ProducerRegistration<K, V> registration)
+         throws ConfigurationException { // NOSONAR
       KafkaProperties producerProperties = KafkaProperties.forProducer(kafkaConfiguration);
       ProducerConfig producerConfig = registration.getProducerConfig();
 
@@ -287,7 +299,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       return new KafkaProducer<>(producerProperties, registration.getKeySerializer(), registration.getValueSerializer());
    }
 
-   private <K, V> KafkaConsumer<K, V> createConsumer(MessageHandlerRegistration<K, V> registration) throws ConfigurationException {
+   private <K, V> KafkaConsumer<K, V> createConsumer(MessageHandlerRegistration<K, V> registration)
+         throws ConfigurationException { // NOSONAR
       KafkaProperties consumerProperties = KafkaProperties.forConsumer(kafkaConfiguration);
       ConsumerConfig consumerConfig = registration.getConsumerConfig();
 
