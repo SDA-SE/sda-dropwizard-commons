@@ -17,9 +17,7 @@ compile scope.
 
 The [`HibernateBundle`](./src/main/java/org/sdase/commons/server/hibernate/HibernateBundle.java) should be added as 
 field in the application class instead of being anonymously added in the initialize method like other bundles of this 
-library. Implementations need to refer to the instance to get access to the `SessionFactory`. _Note that there may be 
-some differences when using Weld as CDI implementation. Extending documentation for this scenario will be added when
-Weld joins this library. This task is addressed in [SEBP-490](https://sda-se.atlassian.net/browse/SEBP-490)._
+library. Implementations need to refer to the instance to get access to the `SessionFactory`.
 
 The Dropwizard applications config class needs to provide a `DataSourceFactory`.
 
@@ -40,6 +38,44 @@ public class MyApplication extends Application<MyConfiguration> {
    
    // ...
    
+}
+```
+
+In the context of a CDI application, the `SessionFactory` instance that is created in the `HibernateBundle` should be
+provided as CDI bean so it can be injected into managers, repositories or however the data access objects are named in 
+the application:
+
+```java
+@ApplicationScoped
+public class MyCdiApplication extends Application<MyConfiguration> {
+   
+   private final HibernateBundle<HibernateITestConfiguration> hibernateBundle = HibernateBundle.builder()
+                          .withConfigurationProvider(MyConfiguration::getDatabase)
+                          .withEntityScanPackageClass(MyEntity.class)
+                          .build();
+   
+   public static void main(final String[] args) throws Exception {
+      // from sda-commons-server-weld
+      DropwizardWeldHelper.run(SolutionServiceApplication.class, args);
+   }
+
+   // ...
+   
+   @javax.enterprise.inject.Produces
+   public SessionFactory sessionFactory() {
+      return hibernateBundle.sessionFactory();
+   }
+
+}
+
+public class MyEntityManager extends io.dropwizard.hibernate.AbstractDAO<MyEntity> {
+
+   @Inject
+   public MyEntityManager(SessionFactory sessionFactory) {
+      super(sessionFactory);
+   }
+   
+   // ....
 }
 ```
 
