@@ -67,7 +67,9 @@ public class MyCdiApplication extends Application<MyConfiguration> {
    }
 
 }
+```
 
+```java
 public class MyEntityManager extends io.dropwizard.hibernate.AbstractDAO<MyEntity> {
 
    @Inject
