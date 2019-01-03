@@ -18,7 +18,7 @@ plugins {
     id 'java'
     id 'maven'
     id 'jacoco'
-    id 'org.owasp.dependencycheck' version '3.3.2'
+    id 'org.owasp.dependencycheck' version '4.0.2'
     id 'nebula.integtest' version '3.4.0'
 }
 

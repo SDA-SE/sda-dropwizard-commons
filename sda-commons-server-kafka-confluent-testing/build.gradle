@@ -1,3 +1,8 @@
+dependencyCheck {
+    skip=true
+}
+
+
 dependencies {
 
     compile project(':sda-commons-server-kafka-testing')

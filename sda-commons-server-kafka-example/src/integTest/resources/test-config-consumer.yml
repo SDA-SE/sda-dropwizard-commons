@@ -1,0 +1,20 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+
+kafka:
+  brokers: ${BROKER_CONNECTION_STRING:-[]}
+  topics:
+    example:
+      name: exampleTopicConfiguration
+      partitions: 2
+      replicationFactor: 2
+      config:
+        max.message.bytes: 1024
+  consumers:
+    consumerConfigExample:
+      group: myExampleGroup
