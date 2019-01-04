@@ -37,7 +37,7 @@ public class PemKeySource implements KeySource {
          RSAPublicKey publicKey = extractRsaPublicKey(cer);
          LOG.info("Loaded public key for token signature verification from PEM {}", pemKeyLocation);
          return Collections.singletonList(new LoadedPublicKey(kid, publicKey, this));
-      } catch (IOException | CertificateException | NullPointerException | ClassCastException e) {
+      } catch (IOException | CertificateException | NullPointerException | ClassCastException e) { // NOSONAR
          // log and throw:
          // only here we have all information for appropriate logging and can ensure, that the error reaches the log
          LOG.error("Failed to load public key for token signature verification from PEM {}", pemKeyLocation, e); // NOSONAR
