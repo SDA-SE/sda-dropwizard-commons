@@ -38,4 +38,44 @@ public class CustomIT {
 
     // ..
 }
-``` 
+```
+
+## Provided helpers
+
+### DropwizardRuleHelper
+
+The `DropwizardRuleHelper` allows to bootstrap a programmatically configured Dropwizard application in tests without the
+need for `test-config.yaml`:
+
+```java
+public class CustomIT {
+
+   @ClassRule
+   public static DropwizardAppRule<TestConfig> DW = DropwizardRuleHelper.dropwizardTestAppFrom(TestApp.class)
+         .withConfigFrom(TestConfig::new)
+         .withRandomPorts()
+         .withConfigurationModifier(c -> c.setMyConfigProperty("Foo"))
+         .withConfigurationModifier(c -> c.setMyOtherConfigProperty("Bar"))
+         .build();
+
+    // ...
+}
+```
+
+### DropwizardConfigurationHelper
+
+The `DropwizardConfigurationHelper` allows to create a Dropwizard configuration programmatically in tests without the
+need for `test-config.yaml`. This can be useful when not using the default DropwizardAppRule, e.g. in combination with
+[`sda-commons-server-weld-testing`](../sda-commons-server-weld-testing/README.md):
+
+```java
+public class CustomIT {
+
+   @ClassRule
+   public static final DropwizardAppRule<AppConfiguration> RULE = new WeldAppRule<>(
+         WeldExampleApplication.class,
+         configFrom(AppConfiguration::new).withPorts(4567, 0).withRootPath("/api/*").build());
+
+    // ...
+}
+```

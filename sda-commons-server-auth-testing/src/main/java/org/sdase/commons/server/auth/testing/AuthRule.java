@@ -2,14 +2,15 @@ package org.sdase.commons.server.auth.testing;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.sdase.commons.server.auth.config.AuthConfig;
-import org.sdase.commons.server.auth.config.KeyLocation;
-import org.sdase.commons.server.auth.config.KeyUriType;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import io.dropwizard.Configuration;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.sdase.commons.server.auth.config.AuthConfig;
+import org.sdase.commons.server.auth.config.KeyLocation;
+import org.sdase.commons.server.auth.config.KeyUriType;
+import org.sdase.commons.server.testing.EnvironmentRule;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,6 +21,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.fail;
@@ -32,6 +35,7 @@ import static org.junit.Assert.fail;
  */
 public class AuthRule implements TestRule {
 
+   @SuppressWarnings("WeakerAccess")
    public static final String AUTH_RULE_ENV_KEY = "AUTH_RULE";
 
    private static final String DEFAULT_KEY_ID = AuthRule.class.getSimpleName();
@@ -59,9 +63,12 @@ public class AuthRule implements TestRule {
 
    private final String certificateLocation;
 
+   private AuthConfig authConfig;
+
    /**
     * @return a builder that guides along required fields to fluently create a new {@link AuthRule}
     */
+   @SuppressWarnings("WeakerAccess")
    public static AuthRuleBuilder builder() {
       return new Builder();
    }
@@ -97,6 +104,22 @@ public class AuthRule implements TestRule {
       return delegate.apply(base, description);
    }
 
+   /**
+    * Provides a consumer that applies the {@link AuthConfig} matching this {@code AuthRule} to an application
+    * configuration in tests that do not use a configuration yaml file.
+    *
+    * @param authConfigSetter a reference to the setter of the {@link AuthConfig} in the {@link Configuration} the
+    *                         application uses, e.g. {@code MyAppConfig::setAuth}
+    * @param <C> the type of {@link Configuration} the application uses
+    * @return a consumer to be used with
+    *         {@link org.sdase.commons.server.testing.DropwizardRuleHelper#withConfigurationModifier(Consumer)} or
+    *         {@link org.sdase.commons.server.testing.DropwizardConfigurationHelper#withConfigurationModifier(Consumer)}
+    */
+   @SuppressWarnings("WeakerAccess")
+   public <C extends Configuration> Consumer<C> applyConfig(BiConsumer<C, AuthConfig> authConfigSetter) {
+      return c -> authConfigSetter.accept(c, this.authConfig);
+   }
+
    private void init() {
       if (disableAuth) {
          initDisabledTestAuth();
@@ -107,6 +130,7 @@ public class AuthRule implements TestRule {
    }
 
    private void initDisabledTestAuth() {
+      this.authConfig = new AuthConfig().setDisableAuth(true);
       delegate = RuleChain.outerRule(new EnvironmentRule().setEnv(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}"));
    }
 
@@ -116,8 +140,7 @@ public class AuthRule implements TestRule {
       keyLocation.setPemKeyId(keyId);
       keyLocation.setLocation(URI.create(certificateLocation));
       keyLocation.setType(KeyUriType.PEM);
-      AuthConfig authConfig = new AuthConfig();
-      authConfig.setKeys(singletonList(keyLocation));
+      this.authConfig = new AuthConfig().setKeys(singletonList(keyLocation));
 
       try {
          String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);

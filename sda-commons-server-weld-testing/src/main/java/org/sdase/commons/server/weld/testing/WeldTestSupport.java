@@ -34,6 +34,10 @@ public class WeldTestSupport<C extends Configuration> extends DropwizardTestSupp
       super(applicationClass, configPath, configOverrides);
    }
 
+   public WeldTestSupport(Class<? extends Application<C>> applicationClass, C configuration) {
+      super(applicationClass, configuration);
+   }
+
    @Override
    public Application<C> newApplication() {
       // DI container setup

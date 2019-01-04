@@ -1,4 +1,5 @@
 dependencies {
+    compile project(':sda-commons-server-dropwizard')
     compile 'junit:junit:' + junit4Version
     compile 'org.mockito:mockito-core:' + mockitoVersion
     compile 'org.assertj:assertj-core:' + assertjVersion
@@ -13,7 +14,4 @@ dependencies {
         exclude group: 'org.javassist', module: 'javassist'
         exclude group: 'org.assertj', module: 'assertj-core'
     }
-
-    // just to check transitive dependency versions
-    testCompile project(':sda-commons-server-dropwizard')
 }

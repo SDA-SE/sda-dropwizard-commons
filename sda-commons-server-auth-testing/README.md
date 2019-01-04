@@ -62,6 +62,24 @@ public class AuthRuleIT {
 }
 ```
 
+The `AuthRule` may also be used with programmatic configuration omitting a `test-config.yaml`:
+
+```java
+public class AuthRuleProgrammaticIT {
+
+   private static AuthRule AUTH = AuthRule.builder().build();
+
+   @ClassRule
+   public static DropwizardAppRule<AuthTestConfig> DW = DropwizardRuleHelper.dropwizardTestAppFrom(AuthTestApp.class)
+         .withConfigFrom(AuthTestConfig::new)
+         .withRandomPorts()
+         .withConfigurationModifier(AUTH.applyConfig(AuthTestConfig::setAuth))
+         .build();
+
+   // @Test
+}
+```
+
 Examples can be found in the [integTest source branch](./src/integTest) of this module. There is
 
 - [An example app](./src/integTest/java/org/sdase/commons/server/auth/testing/test/AuthTestApp.java)  

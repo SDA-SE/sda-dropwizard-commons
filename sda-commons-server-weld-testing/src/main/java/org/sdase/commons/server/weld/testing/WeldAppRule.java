@@ -29,4 +29,8 @@ public class WeldAppRule<C extends Configuration> extends DropwizardAppRule<C> {
          ConfigOverride... configOverrides) {
       super(new WeldTestSupport<>(applicationClass, configPath, configOverrides));
    }
+
+   public WeldAppRule(Class<? extends Application<C>> applicationClass, C configuration) {
+      super(new WeldTestSupport<>(applicationClass, configuration));
+   }
 }
