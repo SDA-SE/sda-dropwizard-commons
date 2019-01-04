@@ -1,0 +1,22 @@
+dependencies {
+
+    compile 'com.github.tomakehurst:wiremock:2.19.0', {
+        exclude group: 'commons-codec', module: 'commons-codec'
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.apache.commons', module: 'commons-lang3'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'net.sf.jopt-simple', module: 'jopt-simple'
+        exclude group: 'org.eclipse.jetty'
+    }
+    compile 'org.eclipse.jetty:jetty-util:9.4.11.v20180605'
+    compile 'org.eclipse.jetty:jetty-server:9.4.11.v20180605'
+    compile 'org.eclipse.jetty:jetty-webapp:9.4.11.v20180605'
+    compile 'org.eclipse.jetty:jetty-continuation:9.4.11.v20180605'
+    compile 'org.eclipse.jetty:jetty-servlet:9.4.11.v20180605'
+    compile 'org.eclipse.jetty:jetty-servlets:9.4.11.v20180605'
+}

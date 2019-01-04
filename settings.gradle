@@ -1,6 +1,8 @@
 rootProject.name = 'sda-commons'
 
 include 'sda-commons-client-jersey'
+include 'sda-commons-client-jersey-example'
+include 'sda-commons-client-jersey-wiremock-testing'
 include 'sda-commons-dependency-check'
 include 'sda-commons-server-auth-testing'
 include 'sda-commons-server-auth'

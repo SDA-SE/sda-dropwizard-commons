@@ -1,0 +1,8 @@
+dependencies {
+    compile project(':sda-commons-server-dropwizard')
+    compile project(':sda-commons-client-jersey')
+
+    testCompile project(':sda-commons-server-testing')
+    testCompile project(':sda-commons-client-jersey-wiremock-testing')
+
+}

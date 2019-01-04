@@ -1,5 +1,6 @@
 dependencies {
     testCompile project(':sda-commons-client-jersey')
+    testCompile project(':sda-commons-client-jersey-wiremock-testing')
     testCompile project(':sda-commons-server-auth-testing')
     testCompile project(':sda-commons-server-auth')
     testCompile project(':sda-commons-server-consumer')

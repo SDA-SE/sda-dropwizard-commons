@@ -180,9 +180,14 @@ services.
 The module [`sda-commons-client-jersey`](./sda-commons-client-jersey/README.md) provides support for using Jersey 
 clients withing the dropwizard application.
 
+The module [`sda-commons-client-jersey-wiremock-testing`](./sda-commons-client-jersey-wiremock-testing/README.md) 
+bundles the [WireMock]('https://wiremock.org') dependencies to mock services in integration tests consistently to sda-commons library versions.
+
+The module [`sda-commons-client-jersey-example`](./sda-commons-client-jersey-example/README.md)
+presents an example application that shows how to invoke services.
+
 Status:
-- Custom SDA exception mapping is missing (compared to REST commons)
-- API may change when custom SDA exception mapping is added
+- Ready to use
 
 
 ## Usage in combination with rest-common
