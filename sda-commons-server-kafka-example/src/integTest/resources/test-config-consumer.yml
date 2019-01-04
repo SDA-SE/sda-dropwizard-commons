@@ -9,7 +9,9 @@ server:
 kafka:
   brokers: ${BROKER_CONNECTION_STRING:-[]}
   topics:
-    example:
+    example0:
+      name: exampleTopic
+    example1:
       name: exampleTopicConfiguration
       partitions: 2
       replicationFactor: 2
@@ -18,3 +20,8 @@ kafka:
   consumers:
     consumerConfigExample:
       group: myExampleGroup
+  listenerConfig:
+    example1:
+      pollInterval: 1000
+      instances: 2
+

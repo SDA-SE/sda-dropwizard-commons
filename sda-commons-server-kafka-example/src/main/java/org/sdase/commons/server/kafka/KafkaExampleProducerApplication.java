@@ -17,9 +17,12 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
 
    private final KafkaBundle<KafkaExampleConfiguration> kafka = KafkaBundle.builder().withConfigurationProvider(KafkaExampleConfiguration::getKafka).build();
 
+   /*
+   * The message producer can be used within the application
+   */
    private MessageProducer<Key, Value> messageProducer;
    private MessageProducer<Long, Long> messageProducerWithConfig;
-   public static final String TOPIC_NAME = "exampleTopic";
+
 
    @Override
    public void initialize(Bootstrap<KafkaExampleConfiguration> bootstrap) {
@@ -44,7 +47,7 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
    private MessageProducer<Key, Value> createProducer(ObjectMapper configuredObjectMapper) {
       return kafka.registerProducer(
             ProducerRegistration.<Key, Value>builder()
-                  .forTopic(TOPIC_NAME)
+                  .forTopic(kafka.getTopicConfiguration("example0"))
                   .createTopicIfMissing()
                   .withDefaultProducer()
                   .withKeySerializer(new KafkaJsonSerializer<>(configuredObjectMapper))
@@ -60,7 +63,7 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
    private MessageProducer<Long, Long> createProducerWithConfig() {
       return kafka.registerProducer(
             ProducerRegistration.<Long, Long>builder()
-                  .forTopic(kafka.getTopicConfiguration("example"))
+                  .forTopic(kafka.getTopicConfiguration("example1"))
                   .createTopicIfMissing()
                   .withDefaultProducer()
                   .withKeySerializer(new LongSerializer())
@@ -71,6 +74,7 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
 
    /**
     * Method just for testing and should not be implemented in real applications.
+    * It shows how a producer can be used
     */
    void sendExample(String key, String value1, String value2) {
       messageProducer.send(new Key(key), new Value(value1, value2));
@@ -78,6 +82,7 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
 
    /**
     * Method just for testing and should not be implemented in real applications.
+    * It shows how a producer can be used
     */
    void sendExampleWithConfiguration(Long key, Long value) {
       messageProducerWithConfig.send(key, value);

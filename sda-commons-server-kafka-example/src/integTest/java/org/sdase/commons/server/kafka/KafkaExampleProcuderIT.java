@@ -35,6 +35,8 @@ public class KafkaExampleProcuderIT {
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
 
+   private static final String TOPIC_NAME = "exampleTopic";
+
    @Test
    public void testUseProducer() throws JsonProcessingException {
       // given
@@ -51,14 +53,14 @@ public class KafkaExampleProcuderIT {
             .atMost(10, TimeUnit.SECONDS)
             .until(() -> !KAFKA
                   .getKafkaTestUtils()
-                  .consumeAllRecordsFromTopic(KafkaExampleProducerApplication.TOPIC_NAME)
+                  .consumeAllRecordsFromTopic(TOPIC_NAME)
                   .isEmpty());
 
-      assertThat(KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(KafkaExampleProducerApplication.TOPIC_NAME))
+      assertThat(KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC_NAME))
             .extracting(ConsumerRecord::key)
             .containsExactly(new ObjectMapper().writeValueAsBytes(new Key(key)));
 
-      assertThat(KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(KafkaExampleProducerApplication.TOPIC_NAME))
+      assertThat(KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC_NAME))
             .extracting(ConsumerRecord::value)
             .containsExactly(new ObjectMapper().writeValueAsBytes(new Value(v1, v2)));
 

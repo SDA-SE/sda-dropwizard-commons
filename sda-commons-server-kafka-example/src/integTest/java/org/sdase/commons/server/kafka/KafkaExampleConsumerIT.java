@@ -35,6 +35,9 @@ public class KafkaExampleConsumerIT {
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
 
+   private static final String TOPIC_NAME = "exampleTopic";
+
+
    @Test
    public void testUseConsumer() throws JsonProcessingException {
       // given
@@ -46,7 +49,7 @@ public class KafkaExampleConsumerIT {
       Map<byte[], byte []> records = new HashMap<>();
       ObjectMapper objectMapper = new ObjectMapper();
       records.put(objectMapper.writeValueAsBytes(new Key(key)), objectMapper.writeValueAsBytes(new Value(v1, v2)));
-      KAFKA.getKafkaTestUtils().produceRecords(records, KafkaExampleConsumerApplication.TOPIC_NAME, 0);
+      KAFKA.getKafkaTestUtils().produceRecords(records, TOPIC_NAME, 0);
 
       // then
       await()

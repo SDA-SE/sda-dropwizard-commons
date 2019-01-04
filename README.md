@@ -114,6 +114,9 @@ Status:
 The module [`sda-commons-server-kafka`](./sda-commons-server-kafka/README.md) provides means to send and consume 
 messages from a kafka topic.
 
+The module [`sda-commons-server-kafka-example`](./sda-commons-server-kafka-example/README.md) includes 
+applications, one with consumer and one with producer examples.   
+
 Status:
 - Ready to use with JSON messages
 - Support for Avro messages is available as beta but can't be tested yet
