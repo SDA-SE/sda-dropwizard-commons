@@ -9,4 +9,8 @@ class JerseyClientExampleConfiguration extends Configuration {
    String getServicea() {
       return servicea;
    }
+
+   public void setServicea(String servicea) {
+      this.servicea = servicea;
+   }
 }
