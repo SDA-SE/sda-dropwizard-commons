@@ -9,18 +9,18 @@ import java.util.Map;
 public class TopicConfig {
 
    @NotNull
-   @JsonProperty("name")
+   @JsonProperty
    private String name;
 
    @NotNull
-   @JsonProperty(value = "replicationFactor", defaultValue = "1")
-   private Integer replicationFactor;
+   @JsonProperty
+   private Integer replicationFactor = 1;
 
    @NotNull
-   @JsonProperty(value = "partitions", defaultValue = "1")
-   private Integer partitions;
+   @JsonProperty
+   private Integer partitions = 1;
 
-   @JsonProperty("config")
+   @JsonProperty
    private Map<String, String> config = new HashMap<>();
 
    public String getName() {
@@ -41,13 +41,13 @@ public class TopicConfig {
 
 
    public interface TopicConfigBuilder {
-      public void setName(String name);
+      void setName(String name);
 
-      public void setReplicationFactor(Integer replicationFactor);
+      void setReplicationFactor(Integer replicationFactor);
 
-      public void setPartitions(Integer partitions);
+      void setPartitions(Integer partitions);
 
-      public void setConfig(Map<String, String> config);
+      void setConfig(Map<String, String> config);
 
    }
 
