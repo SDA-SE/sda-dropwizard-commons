@@ -34,12 +34,10 @@ to provide REST Endpoints.
 
 The main server modules help to bootstrap and test a Dropwizard application with convergent dependencies. 
 
-##### Dropwizard
+##### Starter
 
-The module [`sda-commons-server-dropwizard`](./sda-commons-server-dropwizard/README.md) provides 
-`io.dropwizard:dropwizard-core` with convergent dependencies. All other SDA Commons Server modules use this dependency
-and are aligned to the versions provided by `sda-commons-server-dropwizard`. It also provides some common bundles that
-require no additional dependencies.
+The module [`sda-commons-server-starter`](./sda-commons-server-starter/README.md) provides all basics required to build 
+a service for the SDA Platform with Dropwizard.
 
 Status:
 - Ready to use
@@ -86,6 +84,16 @@ Status:
 
 The module [`sda-commons-server-cors`](./sda-commons-server-cors/README.md) adds support for CORS. This allows
 Cross-origin resource sharing for the service.
+
+Status:
+- Ready to use
+
+##### Dropwizard
+
+The module [`sda-commons-server-dropwizard`](./sda-commons-server-dropwizard/README.md) provides 
+`io.dropwizard:dropwizard-core` with convergent dependencies. All other SDA Commons Server modules use this dependency
+and are aligned to the versions provided by `sda-commons-server-dropwizard`. It also provides some common bundles that
+require no additional dependencies.
 
 Status:
 - Ready to use

@@ -1,0 +1,13 @@
+dependencies {
+    compile project(':sda-commons-server-auth')
+    compile project(':sda-commons-server-consumer')
+    compile project(':sda-commons-server-cors')
+    compile project(':sda-commons-server-dropwizard')
+    compile project(':sda-commons-server-jackson')
+    compile project(':sda-commons-server-prometheus')
+    compile project(':sda-commons-server-security')
+    compile project(':sda-commons-server-swagger')
+    compile project(':sda-commons-server-trace')
+
+    testCompile project(':sda-commons-server-testing')
+}
