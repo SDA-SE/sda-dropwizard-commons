@@ -163,6 +163,9 @@ Status:
 The module [`sda-commons-server-weld`](./sda-commons-server-weld/README.md) is used to bootstrap Dropwizard applications 
 inside a Weld-SE container and provides CDI support for servlets, listeners and resources.
 
+The module [`sda-commons-server-weld-example`](./sda-commons-server-weld-example/README.md) gives a small example on
+starting an application within an Weld container.
+
 Status:
 - Ready to use
 
