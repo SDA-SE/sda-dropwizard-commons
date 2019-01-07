@@ -156,7 +156,8 @@ level service offered by the SDA platform, e.g. interaction service. .
 
 Status:
 - Ready to use
-- When using new threads for clients to invoke another service, the trace token is not transferred out-of-the-box.
+- When using new threads for clients to invoke another service, the trace token is not transferred out-of-the-box. 
+The same holds for mentioning the trace token in log entries of new threads.
 
 ##### Weld
 
