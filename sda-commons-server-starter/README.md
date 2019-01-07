@@ -6,6 +6,7 @@ Dropwizard.
 Apps built with the [`SdaPlatformBundle`](./src/main/java/org/sdase/commons/server/starter/SdaPlatformBundle.java)
 automatically contain
 
+- [Support for environment variables in config files](../sda-commons-server-dropwizard/README.md)
 - [Trace Token support](../sda-commons-server-trace/README.md)
 - [a tolerant `ObjectMapper`, HAL support and a field filter](../sda-commons-server-jackson/README.md)
 - [Security checks on startup](../sda-commons-server-security/README.md)
@@ -57,6 +58,38 @@ public class MyFirstApp extends Application<SdaPlatformConfiguration> {
    }
 
 }
-
-
 ```
+
+The [`SdaPlatformConfiguration`](./src/main/java/org/sdase/commons/server/starter/SdaPlatformConfiguration.java) may be
+extended to add application specific configuration properties.
+
+The `config.yaml` of the 
+[`SdaPlatformConfiguration`](./src/main/java/org/sdase/commons/server/starter/SdaPlatformConfiguration.java) supports
+configuration of [authentication](../sda-commons-server-auth/README.md) and [CORS](../sda-commons-server-cors/README.md)
+additionally to the defaults of Dropwizards `Configuration`:
+
+```yaml
+
+# See sda-commons-server-auth
+auth:
+  disableAuth: ${DISABLE_AUTH:-false}
+  leeway: ${AUTH_LEEWAY:-0}
+  keys: ${AUTH_KEYS:-[]}
+
+# See sda-commons-server-cors
+cors:
+  # List of origins that are allowed to use the service. "*" allows all origins
+  allowedOrigins:
+    - "*"
+  # Alternative: If the origins should be restricted, you should add the pattern
+  # allowedOrigins:
+  #    - https://*.sdase.com
+  #    - https://*test.sdase.com
+  # To use configurable patterns per environment the Json in Yaml syntax may be used with an environment placeholder:
+  # allowedOrigins: ${CORS_ALLOWED_ORIGINS:-["*"]}
+```
+
+Instead of `.usingSdaPlatformConfiguration()`, the configuration may be fully customized using 
+`.usingCustomConfig(MyCustomConfiguration.class)` to support configurations that do not extend 
+[`SdaPlatformConfiguration`](./src/main/java/org/sdase/commons/server/starter/SdaPlatformConfiguration.java). This may 
+also be needed to disable some features of the starter module. 
