@@ -57,7 +57,8 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
          JacksonConfigurationBundle.Builder jacksonConfigurationBundleBuilder,
          AuthBundle.AuthBuilder<C> authBundleBuilder,
          CorsBundle.FinalBuilder<C> corsBundleBuilder,
-         ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder, SwaggerBundle.FinalBuilder swaggerBundleBuilder) {
+         ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder,
+         SwaggerBundle.FinalBuilder swaggerBundleBuilder) {
       this.securityBundleBuilder = securityBundleBuilder;
       this.jacksonConfigurationBundleBuilder = jacksonConfigurationBundleBuilder;
       this.authBundleBuilder = authBundleBuilder;
@@ -89,16 +90,14 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
       if (consumerTokenBundleBuilder != null) {
          this.configuredBundles.add(consumerTokenBundleBuilder.build());
       }
-      bundles.forEach(b -> b.initialize(bootstrap));
-      configuredBundles.forEach(b -> b.initialize(bootstrap));
+      bundles.forEach(bootstrap::addBundle);
+      //noinspection unchecked
+      configuredBundles.stream().map(b -> (ConfiguredBundle) b).forEach(bootstrap::addBundle);
    }
 
    @Override
-   public void run(C configuration, Environment environment) throws Exception {
-      bundles.forEach(b -> b.run(environment));
-      for (ConfiguredBundle<? super C> configuredBundle : configuredBundles) {
-         configuredBundle.run(configuration, environment);
-      }
+   public void run(C configuration, Environment environment) {
+      // not needed for the platform bundle, created bundles are added in initialize
    }
 
    public static class Builder<C extends Configuration> implements

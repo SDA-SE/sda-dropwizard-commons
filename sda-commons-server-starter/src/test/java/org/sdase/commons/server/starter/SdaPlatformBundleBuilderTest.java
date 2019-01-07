@@ -1,68 +1,52 @@
 package org.sdase.commons.server.starter;
 
-import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-import io.prometheus.client.CollectorRegistry;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.Before;
 import org.junit.Test;
-import org.sdase.commons.server.auth.config.AuthConfig;
+import org.sdase.commons.server.auth.AuthBundle;
+import org.sdase.commons.server.consumer.ConsumerTokenBundle;
+import org.sdase.commons.server.cors.CorsBundle;
+import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
-
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.sdase.commons.server.prometheus.PrometheusBundle;
+import org.sdase.commons.server.security.SecurityBundle;
+import org.sdase.commons.server.starter.test.BundleAssertion;
+import org.sdase.commons.server.swagger.SwaggerBundle;
+import org.sdase.commons.server.trace.TraceTokenBundle;
 
 public class SdaPlatformBundleBuilderTest {
 
-   private Bootstrap bootstrapMock;
-   private Environment environmentMock;
+   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
    @Before
-   public void setUpMocks() {
-      bootstrapMock = mock(Bootstrap.class, RETURNS_DEEP_STUBS);
-      environmentMock = mock(Environment.class, RETURNS_DEEP_STUBS);
-      DropwizardResourceConfig config = new DropwizardResourceConfig();
-      config.register(JacksonConfigurationBundle.builder().build());
-      when(environmentMock.jersey().getResourceConfig()).thenReturn(config);
-      CollectorRegistry.defaultRegistry.clear();
+   public void setUp() {
+      bundleAssertion = new BundleAssertion<>();
    }
 
    @Test
-   public void buildDefaultPlatformBundleWithoutException() throws Exception { // NOSONAR
+   public void allBundlesRegistered() {
+
       SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withRequiredConsumerToken()
-            .withSwaggerInfoTitle("Only a Test")
+            .withOptionalConsumerToken()
+            .withSwaggerInfoTitle("Starter")
             .addSwaggerResourcePackageClass(this.getClass())
             .build();
-      bundle.initialize(bootstrapMock);
-      bundle.run(new SdaPlatformConfiguration(), environmentMock);
+
+      SoftAssertions.assertSoftly(softly -> {
+         softly.assertThat(bundleAssertion.getBundleOfType(bundle, ConfigurationSubstitutionBundle.class)).isNotNull();
+         softly.assertThat(bundleAssertion.getBundleOfType(bundle, JacksonConfigurationBundle.class)).isNotNull();
+         softly.assertThat(bundleAssertion.getBundleOfType(bundle, PrometheusBundle.class)).isNotNull();
+         softly.assertThat(bundleAssertion.getBundleOfType(bundle, TraceTokenBundle.class)).isNotNull();
+         softly.assertThat(bundleAssertion.getBundleOfType(bundle, SecurityBundle.class)).isNotNull();
+         softly.assertThat(bundleAssertion.getBundleOfType(bundle, SwaggerBundle.class)).isNotNull();
+         softly.assertThat(bundleAssertion.getBundleOfType(bundle, AuthBundle.class)).isNotNull();
+         softly.assertThat(bundleAssertion.getBundleOfType(bundle, CorsBundle.class)).isNotNull();
+         softly.assertThat(bundleAssertion.getBundleOfType(bundle, ConsumerTokenBundle.class)).isNotNull();
+         softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(9);
+      });
+
+
    }
 
-   @Test
-   public void buildCustomPlatformBundleWithoutException() throws Exception { // NOSONAR
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
-            .usingCustomConfig(SdaPlatformConfiguration.class)
-            .withAuthConfigProvider(c -> new AuthConfig())
-            .withoutCorsSupport()
-            .withoutConsumerTokenSupport()
-            .withSwaggerInfoTitle("The test title")
-            .addSwaggerResourcePackageClass(this.getClass())
-            .build();
-      bundle.initialize(bootstrapMock);
-      bundle.run(new SdaPlatformConfiguration(), environmentMock);
-   }
-
-   @Test(expected = IllegalStateException.class)
-   public void noCorsConfigurationIfCorsDisabled() {
-      SdaPlatformBundle.builder()
-            .usingCustomConfig(SdaPlatformConfiguration.class)
-            .withAuthConfigProvider(c -> new AuthConfig())
-            .withoutCorsSupport()
-            .withoutConsumerTokenSupport()
-            .withSwaggerInfoTitle("The test title")
-            .addSwaggerResourcePackageClass(this.getClass())
-            .withCorsAdditionalExposedHeaders("x-foo");
-   }
 }
