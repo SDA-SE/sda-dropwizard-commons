@@ -82,7 +82,7 @@ formatting variants. If output should be customized, use `@JsonSerializer`.
 SDA-Commons provides two default serializers for `ZonedDateTime` to use a fixed resolution in the output.
 [Iso8601Serializer](./src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java) is used to omit 
 milliseconds and 
-[Iso8601Serializer.WithMillis](./src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java#L83) is used to
+[Iso8601Serializer.WithMillis](./src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java#L90) is used to
 render the time with 3 digits for milliseconds.
 
 Usage:
@@ -214,3 +214,6 @@ For validation errors, the invalidParams section is filled. For other errors, ju
 + `"errorCode"` is the validation annotation given in uppercase underscore notation 
 
 The reason might be in different language due to internationalization.
+
+Examples how exceptions and the error structure should be used, can be found within the example project 
+[sda-commons-server-errorhandling-example](../sda-commons-server-errorhandling-example/README.md)

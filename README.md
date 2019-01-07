@@ -100,14 +100,14 @@ Status:
 
 ##### Jackson
 
-The module [`sda-commons-server-jackson`](./sda-commons-server-jackson/README.md) is used to configure the 
-`ObjectMapper` with the recommended default settings of SDA SE services. It also provides support for linking resources 
-with HAL and adds the ability to filter fields on client request.
+The module [`sda-commons-server-jackson`](./sda-commons-server-jackson/README.md) is used for several purposes
+* configure the `ObjectMapper` with the recommended default settings of SDA SE services. 
+* provides support for linking resources with HAL 
+* adds the ability to filter fields on client request
+* registers exception mapper to support the common error structure as defined within the rest guide
 
 Status:
 - Ready to use
-- Custom configuration is needed to support the tolerant reader pattern
-- Tolerant reader configuration like disabling "fail on unknown properties" will follow in future releases
 
 ##### Kafka
 
@@ -119,7 +119,6 @@ applications, one with consumer and one with producer examples.
 
 Status:
 - Ready to use with JSON messages
-- Support for Avro messages is available as beta but can't be tested yet
 
 ##### Prometheus
 
@@ -156,7 +155,8 @@ trace token to correlate  a set of service invocations that belongs to the same 
 level service offered by the SDA platform, e.g. interaction service. . 
 
 Status:
-- Only server part of trace token is implemented
+- Ready to use
+- When using new threads for clients to invoke another service, the trace token is not transferred out-of-the-box.
 
 ##### Weld
 
@@ -188,6 +188,7 @@ presents an example application that shows how to invoke services.
 
 Status:
 - Ready to use
+- When using new threads for clients to invoke another service, the trace token is not transferred out-of-the-box.
 
 
 ## Usage in combination with rest-common
