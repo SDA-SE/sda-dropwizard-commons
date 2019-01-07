@@ -18,11 +18,13 @@ public class ErrorHandlingExampleApplication extends Application<Configuration> 
    @Override
    public void initialize(Bootstrap bootstrap) {
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
+      // Jackson Bundle includes error mappers to provide errors in common error structure
       bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
    }
 
    @Override
    public void run(Configuration configuration, Environment environment)  {
+      // register dummy endpoint to show behavior in tests
       environment.jersey().register(ErrorHandlingExampleEndpoint.class);
    }
 

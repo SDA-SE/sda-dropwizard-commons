@@ -8,6 +8,9 @@ import org.sdase.commons.shared.api.error.ApiException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
+/**
+ * Implementation of endpoint to provide exceptions
+ */
 public class ErrorHandlingExampleEndpoint implements ErrorHandlingExampleService {
 
    @Override
