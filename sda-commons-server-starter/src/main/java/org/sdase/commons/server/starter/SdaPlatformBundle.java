@@ -1,7 +1,6 @@
 package org.sdase.commons.server.starter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -42,9 +41,6 @@ import java.util.function.Consumer;
  */
 public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
-   private List<Bundle> bundles = new ArrayList<>();
-   private List<ConfiguredBundle<? super C>> configuredBundles = new ArrayList<>();
-
    private SecurityBundle.Builder securityBundleBuilder;
    private JacksonConfigurationBundle.Builder jacksonConfigurationBundleBuilder;
    private AuthBundle.AuthBuilder<C> authBundleBuilder;
@@ -73,10 +69,15 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
    @Override
    public void initialize(Bootstrap<?> bootstrap) {
-      bundles.add(ConfigurationSubstitutionBundle.builder().build());
-      bundles.add(jacksonConfigurationBundleBuilder.build());
-      bundles.add(PrometheusBundle.builder().build());
-      bundles.add(TraceTokenBundle.builder().build());
+
+      // add normal bundles
+      bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
+      bootstrap.addBundle(jacksonConfigurationBundleBuilder.build());
+      bootstrap.addBundle(PrometheusBundle.builder().build());
+      bootstrap.addBundle(TraceTokenBundle.builder().build());
+
+      // add configured bundles
+      List<ConfiguredBundle<? super C>> configuredBundles = new ArrayList<>();
       configuredBundles.add(securityBundleBuilder.build());
       configuredBundles.add(swaggerBundleBuilder.build());
       if (authBundleBuilder != null) {
@@ -88,9 +89,8 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
          configuredBundles.add(corsBundleBuilder.build());
       }
       if (consumerTokenBundleBuilder != null) {
-         this.configuredBundles.add(consumerTokenBundleBuilder.build());
+         configuredBundles.add(consumerTokenBundleBuilder.build());
       }
-      bundles.forEach(bootstrap::addBundle);
       //noinspection unchecked
       configuredBundles.stream().map(b -> (ConfiguredBundle) b).forEach(bootstrap::addBundle);
    }
