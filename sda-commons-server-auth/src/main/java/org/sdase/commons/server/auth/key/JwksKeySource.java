@@ -69,6 +69,13 @@ public class JwksKeySource implements KeySource {
       return Objects.hash(jwksUri, client);
    }
 
+   @Override
+   public String toString() {
+      return "JwksKeySource{" +
+            "jwksUri='" + jwksUri + '\'' +
+            '}';
+   }
+
    private boolean isForSigning(Key key) {
       return StringUtils.isBlank(key.getUse()) || "sig".equals(key.getUse());
    }

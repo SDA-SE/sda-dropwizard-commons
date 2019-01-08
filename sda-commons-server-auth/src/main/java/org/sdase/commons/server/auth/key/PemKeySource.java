@@ -56,6 +56,14 @@ public class PemKeySource implements KeySource {
       return Objects.hash(kid, pemKeyLocation);
    }
 
+   @Override
+   public String toString() {
+      return "PemKeySource{" +
+            "kid='" + kid + '\'' +
+            ", pemKeyLocation=" + pemKeyLocation +
+            '}';
+   }
+
    private X509Certificate loadCertificate(URI location) throws CertificateException, IOException {
       try (InputStream is = location.toURL().openStream()) {
          CertificateFactory fact = CertificateFactory.getInstance("X.509");

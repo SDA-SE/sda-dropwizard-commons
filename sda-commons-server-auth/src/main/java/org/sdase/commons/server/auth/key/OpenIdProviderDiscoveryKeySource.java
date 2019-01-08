@@ -68,6 +68,13 @@ public class OpenIdProviderDiscoveryKeySource implements KeySource {
       return Objects.hash(issuerUrl, client);
    }
 
+   @Override
+   public String toString() {
+      return "OpenIdProviderDiscoveryKeySource{" +
+            "issuerUrl='" + issuerUrl + '\'' +
+            '}';
+   }
+
    @JsonIgnoreProperties(ignoreUnknown = true)
    private static class Discovery {
 
