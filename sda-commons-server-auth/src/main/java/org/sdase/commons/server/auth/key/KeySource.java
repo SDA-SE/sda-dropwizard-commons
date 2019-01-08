@@ -35,7 +35,7 @@ public interface KeySource {
       try {
          return Optional.of(loadKeysFromSource());
       } catch (KeyLoadFailedException e) {
-         LogHolder.LOGGER.error("An error occured while loading the public keys", e);
+         LogHolder.LOGGER.error("An error occurred while loading the public keys from {}", this, e);
          return Optional.empty();
       }
    }
