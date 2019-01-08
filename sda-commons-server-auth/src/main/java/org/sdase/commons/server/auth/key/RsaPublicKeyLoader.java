@@ -9,11 +9,15 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads public keys from various locations, converts them to Java Keys and caches them.
  */
 public class RsaPublicKeyLoader {
+
+   private static final Logger LOGGER = LoggerFactory.getLogger(RsaPublicKeyLoader.class);
 
    private Map<String, LoadedPublicKey> keysByKid = new ConcurrentHashMap<>();
 
@@ -99,15 +103,19 @@ public class RsaPublicKeyLoader {
    }
 
    private void loadAllNewKeys() {
-      synchronized (loadingSemaphore) {
-         keySources.keySet().stream()
-               .filter(ks -> !keySources.get(ks))
-               .map(ks -> {
-                  keySources.put(ks, true);
-                  return ks.loadKeysFromSource();
-               })
-               .flatMap(List::stream)
-               .forEach(this::addKey);
+      try {
+         synchronized (loadingSemaphore) {
+            keySources.keySet().stream()
+                .filter(ks -> !keySources.get(ks))
+                .map(ks -> {
+                   keySources.put(ks, true);
+                   return ks.loadKeysFromSource();
+                })
+                .flatMap(List::stream)
+                .forEach(this::addKey);
+         }
+      } catch(Throwable t) {
+         LOGGER.error("An error occured while loading all new keys", t);
       }
    }
 
