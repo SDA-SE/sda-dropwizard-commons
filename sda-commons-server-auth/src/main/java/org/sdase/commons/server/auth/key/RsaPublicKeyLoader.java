@@ -1,6 +1,7 @@
 package org.sdase.commons.server.auth.key;
 
 import java.security.interfaces.RSAPublicKey;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -103,19 +104,24 @@ public class RsaPublicKeyLoader {
    }
 
    private void loadAllNewKeys() {
-      try {
          synchronized (loadingSemaphore) {
             keySources.keySet().stream()
-                .filter(ks -> !keySources.get(ks))
-                .map(ks -> {
-                   keySources.put(ks, true);
-                   return ks.loadKeysFromSource();
-                })
-                .flatMap(List::stream)
-                .forEach(this::addKey);
+                  .filter(ks -> !keySources.get(ks))
+                  .map(ks -> {
+                     keySources.put(ks, true);
+                     return silentlyLoadKeysFromSource(ks);
+                  })
+                  .flatMap(List::stream)
+                  .forEach(this::addKey);
          }
-      } catch(Throwable t) {
-         LOGGER.error("An error occured while loading all new keys", t);
+   }
+
+   private List<LoadedPublicKey> silentlyLoadKeysFromSource(KeySource keySource) {
+      try {
+         return keySource.loadKeysFromSource();
+      } catch (KeyLoadFailedException e) {
+         LOGGER.error("An error occurred while loading new keys from {}", keySource, e);
+         return Collections.emptyList();
       }
    }
 
