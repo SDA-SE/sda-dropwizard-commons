@@ -104,6 +104,7 @@ public class RsaPublicKeyLoader {
    }
 
    private void loadAllNewKeys() {
+      try {
          synchronized (loadingSemaphore) {
             keySources.keySet().stream()
                   .filter(ks -> !keySources.get(ks))
@@ -114,6 +115,12 @@ public class RsaPublicKeyLoader {
                   .flatMap(List::stream)
                   .forEach(this::addKey);
          }
+      }
+      catch (Throwable t) { // NOSONAR
+         // Catch information about any error that occurs in this method.
+         // This method is called in a dedicated Thread which error information might get lost.
+         LOGGER.error("Failed to initially load keys in a dedicated Thread", t);
+      }
    }
 
    private List<LoadedPublicKey> silentlyLoadKeysFromSource(KeySource keySource) {
