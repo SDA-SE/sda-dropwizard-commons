@@ -39,6 +39,9 @@ The main server modules help to bootstrap and test a Dropwizard application with
 The module [`sda-commons-server-starter`](./sda-commons-server-starter/README.md) provides all basics required to build 
 a service for the SDA Platform with Dropwizard.
 
+The module [`sda-commons-server-starter-example`](./sda-commons-server-starter-example/README.md) gives a small example 
+on starting an application using defaults for the SDA Platform.
+
 Status:
 - Ready to use
 
