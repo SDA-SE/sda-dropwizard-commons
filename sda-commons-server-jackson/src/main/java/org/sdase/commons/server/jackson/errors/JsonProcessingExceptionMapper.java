@@ -10,7 +10,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -32,14 +31,12 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
                exception.getLocation().getLineNr(),
                exception.getLocation().getColumnNr(),
                ((JsonMappingException)exception).getPath().stream()
-                     .map(p -> p.getFieldName())
-                     .collect(Collectors.joining(".")),
-               Locale.ROOT);
+                     .map(JsonMappingException.Reference::getFieldName)
+                     .collect(Collectors.joining(".")));
       } else {
          message = String.format(ERROR_MESSAGE, exception.getClass(),
                exception.getLocation().getLineNr(),
-               exception.getLocation().getColumnNr(),
-               Locale.ROOT);
+               exception.getLocation().getColumnNr());
       }
 
       LOGGER.error(message);

@@ -1,0 +1,5 @@
+dependencies {
+    compile project(':sda-commons-server-hibernate')
+    
+    testCompile project(':sda-commons-server-hibernate-testing')
+}
