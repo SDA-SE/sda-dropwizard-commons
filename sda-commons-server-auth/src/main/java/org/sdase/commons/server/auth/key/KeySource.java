@@ -2,11 +2,15 @@ package org.sdase.commons.server.auth.key;
 
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The source for loading keys.
  */
 public interface KeySource {
+
+   static final Logger LOGGER = LoggerFactory.getLogger(KeySource.class);
 
    /**
     * Loads the keys provided by this source.
@@ -32,7 +36,8 @@ public interface KeySource {
    default Optional<List<LoadedPublicKey>> reloadKeysFromSource() {
       try {
          return Optional.of(loadKeysFromSource());
-      } catch (KeyLoadFailedException ignored) {
+      } catch (KeyLoadFailedException e) {
+         LOGGER.error("An error occured while loading the public keys", e);
          return Optional.empty();
       }
    }
