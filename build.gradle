@@ -126,6 +126,8 @@ subprojects {
     }
 
     uploadArchives {
+        // We do not upload the example modules to Nexus because they should not be deployed.
+        enabled = !project.name.endsWith("-example")
         repositories {
             mavenDeployer {
                 repository(url: "https://nexus.intern.sda-se.online/repository/sda-se-releases/") {
