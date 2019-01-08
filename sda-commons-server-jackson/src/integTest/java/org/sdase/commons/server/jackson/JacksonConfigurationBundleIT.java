@@ -73,7 +73,7 @@ public class JacksonConfigurationBundleIT {
       Response response = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/jaxrsexception")
+            .path("jaxrsexception")
             .queryParam("type", exceptionType)
             .request(MediaType.APPLICATION_JSON)
             .get();
@@ -94,7 +94,7 @@ public class JacksonConfigurationBundleIT {
       Response response = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/validation")
+            .path("validation")
             .request(MediaType.APPLICATION_JSON)
             .post(Entity.json(message));
 
@@ -119,7 +119,7 @@ public class JacksonConfigurationBundleIT {
       Response response = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/validation")
+            .path("validation")
             .request(MediaType.APPLICATION_JSON)
             .post(Entity.json(validationResource));
 
@@ -143,7 +143,7 @@ public class JacksonConfigurationBundleIT {
       Response response = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/validation")
+            .path("validation")
             .request(MediaType.APPLICATION_JSON)
             .post(Entity.json(validationResource));
 
@@ -169,7 +169,7 @@ public class JacksonConfigurationBundleIT {
       Response response = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/validation")
+            .path("validation")
             .request(MediaType.APPLICATION_JSON)
             .post(Entity.json(validationResource));
 
@@ -196,7 +196,7 @@ public class JacksonConfigurationBundleIT {
       Response response = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/validation")
+            .path("validation")
             .request(MediaType.APPLICATION_JSON)
             .post(Entity.json(validationResource));
 
@@ -216,7 +216,7 @@ public class JacksonConfigurationBundleIT {
        Response response = DW
              .client()
              .target("http://localhost:" + DW.getLocalPort())
-             .path("/validation")
+             .path("validation")
              .request(MediaType.APPLICATION_JSON)
              .post(Entity.json(validationResource));
 
@@ -231,13 +231,31 @@ public class JacksonConfigurationBundleIT {
       Response response = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/validation")
+            .path("validation")
             .request(MediaType.APPLICATION_JSON)
             .post(Entity.json("Nothing"));
 
       assertThat(response.getStatus()).isEqualTo(400);
       ApiError apiError = response.readEntity(ApiError.class);
-      assertThat(apiError.getTitle()).startsWith("Failed to parse json.");
+      assertThat(apiError.getTitle()).startsWith("Failed to process json.");
+   }
+
+
+   @Test
+   public void shouldReturnApiErrorWhenJsonNotProcessable() {
+      Response response = DW
+            .client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("/validation")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.json("{\"gender\": \"m\", \"firstName\": \"Hans\", \n" +
+                  "\"myNestedResource\": { \"myNestedField\": \"test\", \"someNumber\": \"twenty\" } }"));
+
+      assertThat(response.getStatus()).isEqualTo(400);
+      ApiError apiError = response.readEntity(ApiError.class);
+      assertThat(apiError.getTitle()).isEqualTo("Failed to process json. " +
+            "Exception 'class com.fasterxml.jackson.databind.exc.InvalidFormatException'; " +
+            "Location 'line: 2, column: 62'; FieldName 'myNestedResource.someNumber'");
    }
 
    // Jackson tests

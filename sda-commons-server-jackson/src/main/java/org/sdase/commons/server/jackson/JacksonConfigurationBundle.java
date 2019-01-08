@@ -22,7 +22,7 @@ import io.openapitools.jackson.dataformat.hal.JacksonHALModule;
 import org.sdase.commons.server.jackson.errors.ApiExceptionMapper;
 import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
 import org.sdase.commons.server.jackson.errors.JerseyValidationExceptionMapper;
-import org.sdase.commons.server.jackson.errors.JsonParseExceptionMapper;
+import org.sdase.commons.server.jackson.errors.JsonProcessingExceptionMapper;
 import org.sdase.commons.server.jackson.errors.RuntimeExceptionMapper;
 import org.sdase.commons.server.jackson.errors.ValidationExceptionMapper;
 import org.sdase.commons.server.jackson.errors.WebApplicationExceptionMapper;
@@ -137,7 +137,7 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
       environment.jersey().register(JerseyValidationExceptionMapper.class);
       environment.jersey().register(ValidationExceptionMapper.class);
       environment.jersey().register(EarlyEofExceptionMapper.class);
-      environment.jersey().register(JsonParseExceptionMapper.class);
+      environment.jersey().register(JsonProcessingExceptionMapper.class);
       environment.jersey().register(WebApplicationExceptionMapper.class);
       environment.jersey().register(RuntimeExceptionMapper.class);
 
