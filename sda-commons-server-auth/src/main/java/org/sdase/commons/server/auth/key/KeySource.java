@@ -43,5 +43,10 @@ public interface KeySource {
 }
 
 final class LogHolder {
-  static final Logger LOGGER = LoggerFactory.getLogger(KeySource.class);
+
+   private LogHolder() {
+      // utility class to hold Logger for KeySource interface
+   }
+
+   static final Logger LOGGER = LoggerFactory.getLogger(KeySource.class);
 }
