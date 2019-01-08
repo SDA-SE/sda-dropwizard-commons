@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
  */
 public interface KeySource {
 
-   static final Logger LOGGER = LoggerFactory.getLogger(KeySource.class);
-
    /**
     * Loads the keys provided by this source.
     * @return All keys that this source provides.
@@ -37,9 +35,13 @@ public interface KeySource {
       try {
          return Optional.of(loadKeysFromSource());
       } catch (KeyLoadFailedException e) {
-         LOGGER.error("An error occured while loading the public keys", e);
+         LogHolder.LOGGER.error("An error occured while loading the public keys", e);
          return Optional.empty();
       }
    }
 
+}
+
+final class LogHolder {
+  static final Logger LOGGER = LoggerFactory.getLogger(KeySource.class);
 }
