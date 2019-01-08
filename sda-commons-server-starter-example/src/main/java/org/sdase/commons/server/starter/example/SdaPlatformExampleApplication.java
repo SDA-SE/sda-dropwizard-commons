@@ -31,7 +31,7 @@ public class SdaPlatformExampleApplication extends Application<SdaPlatformConfig
       bootstrap.addBundle(SdaPlatformBundle.builder()
             // Use all defaults provided by the Server Starter module
             .usingSdaPlatformConfiguration()
-            // Require a consumer token from the client (Swagger documentation is automatically excluded)
+            // Require a consumer token from the client. Only swagger.json/yaml is always accessible.
             .withRequiredConsumerToken()
             // Set the name of the service as title of the Swagger documentation
             .withSwaggerInfoTitle("SDA Platform Example Application")
