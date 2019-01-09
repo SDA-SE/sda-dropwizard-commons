@@ -60,12 +60,12 @@ public class JacksonConfigurationBundleTest {
 
       String json = objectMapper.writeValueAsString(resource);
 
-      assertThat(json).isEqualTo("{\n" +
-            "  \"_links\" : {\n" +
-            "    \"self\" : {\n" +
-            "      \"href\" : \"http://test/1\"\n" +
-            "    }\n" +
-            "  }\n" +
+      assertThat(json).isEqualTo("{" +System.lineSeparator()+
+            "  \"_links\" : {"+System.lineSeparator()+
+            "    \"self\" : {"+System.lineSeparator()+
+            "      \"href\" : \"http://test/1\""+System.lineSeparator()+
+            "    }"+System.lineSeparator()+
+            "  }"+System.lineSeparator()+
             "}");
 
    }

@@ -7,6 +7,7 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
@@ -38,10 +39,7 @@ public class PemKeySourceTest {
 
    @Test
    public void shouldLoadPemKeyFromFile() {
-
-      String path = "file://" + ResourceHelpers.resourceFilePath("example.pem");
-
-      PemKeySource pemKeySource = new PemKeySource(null, URI.create(path));
+      PemKeySource pemKeySource = new PemKeySource(null, new File(ResourceHelpers.resourceFilePath("example.pem")).toURI());
 
       List<LoadedPublicKey> loadedPublicKeys = pemKeySource.loadKeysFromSource();
 

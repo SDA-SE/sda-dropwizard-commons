@@ -3,6 +3,7 @@ package org.sdase.commons.server.auth.key;
 import io.dropwizard.testing.ResourceHelpers;
 import org.junit.Test;
 
+import java.io.File;
 import java.net.URI;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class LoadedPublicKeyTest {
    @Test
    public void shouldBeEqualWithDifferentKeyInstances() {
 
-      URI pemKeyLocation = URI.create("file://" + ResourceHelpers.resourceFilePath("example.pem"));
+      URI pemKeyLocation =new File(ResourceHelpers.resourceFilePath("example.pem")).toURI();
       PemKeySource pemKeySource = new PemKeySource(null, pemKeyLocation);
 
       List<LoadedPublicKey> loadedPublicKeys1 = pemKeySource.loadKeysFromSource();
