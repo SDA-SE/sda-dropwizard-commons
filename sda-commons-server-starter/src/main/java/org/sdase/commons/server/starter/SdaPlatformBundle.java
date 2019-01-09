@@ -72,12 +72,12 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
       // add normal bundles
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
-      bootstrap.addBundle(jacksonConfigurationBundleBuilder.build());
       bootstrap.addBundle(PrometheusBundle.builder().build());
       bootstrap.addBundle(TraceTokenBundle.builder().build());
 
       // add configured bundles
       List<ConfiguredBundle<? super C>> configuredBundles = new ArrayList<>();
+      configuredBundles.add(jacksonConfigurationBundleBuilder.build());
       configuredBundles.add(securityBundleBuilder.build());
       configuredBundles.add(swaggerBundleBuilder.build());
       if (authBundleBuilder != null) {

@@ -10,11 +10,12 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.jackson.AnnotationSensitivePropertyNamingStrategy;
 import io.dropwizard.jackson.GuavaExtrasModule;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.openapitools.jackson.dataformat.hal.JacksonHALModule;
@@ -66,7 +67,7 @@ import java.util.function.Consumer;
  *    dynamically to avoid a forced runtime dependency.
  * </p>
  */
-public class JacksonConfigurationBundle implements Bundle, DynamicFeature {
+public class JacksonConfigurationBundle implements ConfiguredBundle<Configuration>, DynamicFeature {
 
    private static final Logger LOG = LoggerFactory.getLogger(JacksonConfigurationBundle.class);
 
@@ -117,7 +118,10 @@ public class JacksonConfigurationBundle implements Bundle, DynamicFeature {
    }
 
    @Override
-   public void run(Environment environment) {
+   public void run(Configuration configuration, Environment environment) {
+
+      disableDefaultErrorMappers(configuration);
+
       ObjectMapper objectMapper = environment.getObjectMapper();
       registerYamlProviderIfAvailable(environment);
       configureObjectMapper(objectMapper);
@@ -132,7 +136,7 @@ public class JacksonConfigurationBundle implements Bundle, DynamicFeature {
          objectMapper.registerModule(jacksonFieldFilterModule);
       }
 
-      // register Exception Mapper (seems to overwrite default exception mapper)
+      // register Exception Mapper
       environment.jersey().register(ApiExceptionMapper.class);
       environment.jersey().register(JerseyValidationExceptionMapper.class);
       environment.jersey().register(ValidationExceptionMapper.class);
@@ -148,6 +152,22 @@ public class JacksonConfigurationBundle implements Bundle, DynamicFeature {
    public void configure(ResourceInfo resourceInfo, FeatureContext context) {
       // Nothing to configure, just add a valid provider to the Jersey context, so that the SecurityBundle is able to
       // verify that the application is configured securely with the mappers from the JacksonBundle.
+   }
+
+   /**
+    * Disables the default exception mappers. Usually they are overwritten by the custom mappers registered in this
+    * bundle. But in some situations when CDI is used, the default mappers would still be preferred by Dropwizard.
+    *
+    * @param configuration the configuration that is modified
+    */
+   private void disableDefaultErrorMappers(Configuration configuration) {
+      if (configuration.getServerFactory() instanceof AbstractServerFactory) {
+         ((AbstractServerFactory) configuration.getServerFactory()).setRegisterDefaultExceptionMappers(Boolean.FALSE);
+      }
+      else {
+         throw new IllegalStateException("Could not disable default exception mappers. " +
+               "Expecting an AbstractServerFactory but got " + configuration.getServerFactory().getClass());
+      }
    }
 
    private void configureObjectMapper(ObjectMapper objectMapper) {
