@@ -106,6 +106,9 @@ Status:
 The module [`sda-commons-server-hibernate`](./sda-commons-server-hibernate/README.md) provides access to relational
 databases with hibernate.
 
+The module [`sda-commons-server-hibernate-exmaple`](./sda-commons-server-hibernate-example/README.md) shows how
+to use the bundle within an application.
+
 Status:
 - Ready to use
 
