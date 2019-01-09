@@ -1,16 +1,9 @@
 package org.sdase.commons.server.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.sdase.commons.server.jackson.test.ObjectMapperFactory;
-import org.sdase.commons.server.jackson.test.ResourceWithLink;
-import io.dropwizard.jackson.Jackson;
-import io.dropwizard.jersey.setup.JerseyEnvironment;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
 import io.openapitools.jackson.dataformat.hal.HALLink;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.sdase.commons.server.jackson.test.ResourceWithLink;
 
 import java.net.URI;
 
