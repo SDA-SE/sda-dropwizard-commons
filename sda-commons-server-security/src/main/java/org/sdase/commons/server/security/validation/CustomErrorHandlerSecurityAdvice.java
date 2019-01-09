@@ -2,10 +2,16 @@ package org.sdase.commons.server.security.validation;
 
 import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.server.ServerFactory;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.Bootstrap;
 import org.sdase.commons.server.security.exception.InsecureConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -25,11 +31,11 @@ public class CustomErrorHandlerSecurityAdvice {
    private static final String JACKSON_CONFIGURATION_BUNDLE_CLASS = "JacksonConfigurationBundle";
    private static final String JACKSON_CONFIGURATION_BUNDLE_FQN =
          "org.sdase.commons.server.jackson." + JACKSON_CONFIGURATION_BUNDLE_CLASS;
-   private Environment environment;
+   private Bootstrap<?> bootstrap;
    private AbstractServerFactory abstractServerFactory;
 
-   public CustomErrorHandlerSecurityAdvice(ServerFactory serverFactory, Environment environment) {
-      this.environment = environment;
+   public CustomErrorHandlerSecurityAdvice(ServerFactory serverFactory, Bootstrap<?> bootstrap) {
+      this.bootstrap = bootstrap;
       abstractServerFactory = ServerFactoryUtil.verifyAbstractServerFactory(serverFactory).orElse(null);
    }
 
@@ -47,10 +53,8 @@ public class CustomErrorHandlerSecurityAdvice {
    }
 
    private void verifyJacksonConfigurationBundleEnabled() {
-      if (environment.jersey().getResourceConfig().getSingletons().stream()
-            .map(Object::getClass)
-            .map(Class::getName)
-            .noneMatch(JACKSON_CONFIGURATION_BUNDLE_FQN::equals)) {
+      List<Class<?>> bundleTypes = extractRegisteredBundleTypes(bootstrap.getClass());
+      if (bundleTypes.stream().map(Class::getName).noneMatch(JACKSON_CONFIGURATION_BUNDLE_FQN::equals)) {
          throw new InsecureConfigurationException(
                "Missing "
                      + JACKSON_CONFIGURATION_BUNDLE_FQN
@@ -59,5 +63,27 @@ public class CustomErrorHandlerSecurityAdvice {
                      + " registers custom error mappers that do not expose server specific error "
                      + "messages/pages.");
       }
+   }
+
+   private List<Class<?>> extractRegisteredBundleTypes(Class<?> classOrSuperClass) {
+      List<Class<?>> registeredBundles = new ArrayList<>();
+      try {
+         List<Field> bundleFields = Stream.of(classOrSuperClass.getDeclaredFields())
+               .filter(f -> "bundles".equals(f.getName()) || "configuredBundles".equals(f.getName()))
+               .collect(Collectors.toList());
+         for (Field bundleField : bundleFields) {
+            bundleField.setAccessible(true);
+            //noinspection unchecked
+            List<Object> bundles = (List<Object>) bundleField.get(bootstrap);
+            registeredBundles.addAll(bundles.stream().map(Object::getClass).collect(Collectors.toList()));
+         }
+         if (!Object.class.equals(classOrSuperClass)) {
+            registeredBundles.addAll(extractRegisteredBundleTypes(classOrSuperClass.getSuperclass()));
+         }
+      } catch (Exception e) {
+         throw new IllegalStateException(
+               "Could not verify registered bundles. Added bundles are checked using reflection.", e);
+      }
+      return registeredBundles;
    }
 }

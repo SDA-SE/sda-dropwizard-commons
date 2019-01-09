@@ -33,6 +33,8 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
       return new Builder();
    }
 
+   private Bootstrap<?> bootstrap;
+
    private boolean disableBufferLimitValidation;
 
    /**
@@ -46,7 +48,7 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
 
    @Override
    public void initialize(Bootstrap<?> bootstrap) {
-      // nothing to initialize yet
+      this.bootstrap = bootstrap;
    }
 
    @Override
@@ -54,7 +56,7 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
       ServerFactory serverFactory = configuration.getServerFactory();
       new ServerFactorySecurityAdvice(serverFactory).applySecureConfiguration();
       new HttpConnectorSecurityAdvice(serverFactory).applySecureConfiguration();
-      new CustomErrorHandlerSecurityAdvice(serverFactory, environment).applySecureConfiguration();
+      new CustomErrorHandlerSecurityAdvice(serverFactory, this.bootstrap).applySecureConfiguration();
       new BufferLimitsAdvice(serverFactory, disableBufferLimitValidation).applySecureConfiguration();
 
       environment.getApplicationContext().setErrorHandler(createNewErrorHandler(environment));

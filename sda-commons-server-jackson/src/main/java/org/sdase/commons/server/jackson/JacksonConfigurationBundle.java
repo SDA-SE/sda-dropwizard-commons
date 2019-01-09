@@ -30,9 +30,6 @@ import org.sdase.commons.server.jackson.filter.JacksonFieldFilterModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
 import java.text.DateFormat;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -67,7 +64,7 @@ import java.util.function.Consumer;
  *    dynamically to avoid a forced runtime dependency.
  * </p>
  */
-public class JacksonConfigurationBundle implements ConfiguredBundle<Configuration>, DynamicFeature {
+public class JacksonConfigurationBundle implements ConfiguredBundle<Configuration> {
 
    private static final Logger LOG = LoggerFactory.getLogger(JacksonConfigurationBundle.class);
 
@@ -131,7 +128,6 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
       }
       if (!disableFieldFilter) {
          JacksonFieldFilterModule jacksonFieldFilterModule = new JacksonFieldFilterModule();
-         environment.jersey().register(this);
          environment.jersey().register(jacksonFieldFilterModule);
          objectMapper.registerModule(jacksonFieldFilterModule);
       }
@@ -146,12 +142,6 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
       environment.jersey().register(RuntimeExceptionMapper.class);
 
 
-   }
-
-   @Override
-   public void configure(ResourceInfo resourceInfo, FeatureContext context) {
-      // Nothing to configure, just add a valid provider to the Jersey context, so that the SecurityBundle is able to
-      // verify that the application is configured securely with the mappers from the JacksonBundle.
    }
 
    /**
