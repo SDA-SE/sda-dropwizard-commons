@@ -149,9 +149,7 @@ The module [`sda-commons-server-security`](./sda-commons-server-security/README.
 Dropwizard application.
 
 Status
-- Ready to use, but providing only a subset of the 
-  "[Härtungsmaßnahmen Dropwizard](https://sda-se.atlassian.net/wiki/spaces/platform/pages/686718998/H+rtungsma+nahmen+Dropwizard)" 
-  by Timo Pagel
+- Ready to use, but providing only a subset of the "Härtungsmaßnahmen Dropwizard" available at the internal wiki entry written by Timo Pagel
 
 ##### Swagger
 
