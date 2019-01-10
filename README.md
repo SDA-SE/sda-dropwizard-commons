@@ -101,6 +101,13 @@ require no additional dependencies.
 Status:
 - Ready to use
 
+##### Healthcheck
+The module [`sda-commons-server-healthcheck`](./sda-commons-server-healthcheck/README.md) introduces the possibility
+to distinguish internal and external health checks.
+
+Status:
+- Ready to use
+
 ##### Hibernate
 
 The module [`sda-commons-server-hibernate`](./sda-commons-server-hibernate/README.md) provides access to relational
