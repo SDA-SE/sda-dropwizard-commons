@@ -8,6 +8,7 @@ dependencies {
     compile project(':sda-commons-server-security')
     compile project(':sda-commons-server-swagger')
     compile project(':sda-commons-server-trace')
+    compile project(':sda-commons-server-healthcheck')
 
     testCompile project(':sda-commons-server-testing')
 }

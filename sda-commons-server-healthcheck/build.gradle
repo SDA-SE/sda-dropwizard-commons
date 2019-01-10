@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':sda-commons-server-dropwizard')
+    testCompile project(':sda-commons-server-testing')
+}
