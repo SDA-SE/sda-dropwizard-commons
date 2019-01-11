@@ -105,6 +105,9 @@ Status:
 The module [`sda-commons-server-healthcheck`](./sda-commons-server-healthcheck/README.md) introduces the possibility
 to distinguish internal and external health checks.
 
+The module [`sda-commons-server-healthcheck-example`](./sda-commons-server-healthcheck-example/README.md) 
+presents a simple application that shows the usage of the bundle and implementation of new health checks. 
+
 Status:
 - Ready to use
 
