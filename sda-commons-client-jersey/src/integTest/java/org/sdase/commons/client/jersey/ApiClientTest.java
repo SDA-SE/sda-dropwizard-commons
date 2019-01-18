@@ -30,14 +30,17 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.notMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -82,6 +85,15 @@ public class ApiClientTest {
                         .withHeader("Content-type", "application/json") // NOSONAR
                         .withBody(OM.writeValueAsBytes(asList(BRIGHT_BLUE_CAR, LIGHT_BLUE_CAR))
                         )
+                  )
+      );
+      WIRE.stubFor(
+            post("/api/cars") // NOSONAR
+                  .withHeader("Content-type", equalTo("application/json")) // NOSONAR
+                  .withRequestBody(equalToJson("{\"sign\":\"HH AB 1234\", \"color\":\"white\"}"))
+                  .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Location", "/api/cars/dummyId") // NOSONAR
                   )
       );
       WIRE.stubFor(
@@ -139,6 +151,18 @@ public class ApiClientTest {
             RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
             .withHeader("Consumer-Token", equalTo("test-consumer")) // NOSONAR
             .withoutHeader(HttpHeaders.AUTHORIZATION)
+      );
+   }
+
+   @Test
+   public void postNewCar() {
+      Response response = createMockApiClient().createCar(new Car().setSign("HH AB 1234").setColor("white"));
+
+      assertThat(response.getStatus()).isEqualTo(201);
+      assertThat(response.getLocation()).isEqualTo(URI.create("/api/cars/dummyId"));
+      WIRE.verify(
+            RequestPatternBuilder.newRequestPattern(RequestMethod.POST, urlEqualTo("/api/cars"))
+                  .withHeader("Content-type", equalTo("application/json")) // NOSONAR
       );
    }
 
