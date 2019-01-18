@@ -13,7 +13,8 @@ import java.net.URL;
  * Default health check for checking if an external URL returns status code 200
  * when invoking a simple HTTP GET
  */
-public class ExternalServiceHealthCheck extends HealthCheck implements ExternalHealthCheck {
+@ExternalHealthCheck
+public class ExternalServiceHealthCheck extends HealthCheck {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalServiceHealthCheck.class);
 

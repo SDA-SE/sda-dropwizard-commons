@@ -12,7 +12,21 @@ public class OnlyInternalHealthCheckFilter implements HealthCheckFilter {
 
    @Override
    public boolean matches(String name, HealthCheck healthCheckFilter) {
-      return !(healthCheckFilter instanceof ExternalHealthCheck);
+      if (healthCheckFilter == null) {
+         return false;
+      }
+
+      return checkForAnnotation(healthCheckFilter.getClass());
    }
 
+   private <T extends HealthCheck> boolean checkForAnnotation(Class<T> clazz) {
+      if (HealthCheck.class.equals(clazz)) {
+         return true;
+      }
+      if (clazz.isAnnotationPresent(ExternalHealthCheck.class)) {
+         return false;
+      }
+      //noinspection unchecked
+      return checkForAnnotation((Class<HealthCheck>) clazz.getSuperclass());
+   }
 }

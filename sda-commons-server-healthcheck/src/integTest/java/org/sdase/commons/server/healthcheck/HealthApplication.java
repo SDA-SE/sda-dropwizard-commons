@@ -35,7 +35,8 @@ public class HealthApplication extends Application<Configuration> {
       environment.healthChecks().register(DUMMY_EXTERNAL, new ExternalHealthCheckDummy());
    }
 
-   protected class ExternalHealthCheckDummy extends HealthCheck implements ExternalHealthCheck {
+   @ExternalHealthCheck
+   protected class ExternalHealthCheckDummy extends HealthCheck {
       @Override
       protected Result check() {
          return Result.healthy(DUMMY_EXTERNAL);
