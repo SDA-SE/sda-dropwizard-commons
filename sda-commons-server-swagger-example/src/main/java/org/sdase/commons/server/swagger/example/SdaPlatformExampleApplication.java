@@ -7,8 +7,6 @@ import org.sdase.commons.server.starter.SdaPlatformBundle;
 import org.sdase.commons.server.starter.SdaPlatformConfiguration;
 import org.sdase.commons.server.swagger.example.people.rest.PersonEndpoint;
 
-// TODO: one with inheritance
-
 /**
  * Example application to show how to document a REST api using swagger for the SDA platform.
  */
