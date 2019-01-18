@@ -1,9 +1,15 @@
-package org.sdase.commons.server.healthcheck.bundle;
+package org.sdase.commons.server.healthcheck;
 
 import io.dropwizard.Bundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.sdase.commons.server.healthcheck.bundle.OnlyInternalHealthCheckServlet;
 
+/**
+ * This bundle registers a new servlet to provide all registered health checks that are not
+ * {@linkplain ExternalHealthCheck external}. The health checks are provided at {@code /healthcheck/internal} at the
+ * admin port.
+ */
 public class InternalHealthCheckEndpointBundle implements Bundle {
 
    private InternalHealthCheckEndpointBundle() {
@@ -12,7 +18,7 @@ public class InternalHealthCheckEndpointBundle implements Bundle {
 
    @Override
    public void run(Environment environment) {
-      // Register a new endpoints that provides only the internal helth checks
+      // Register a new endpoints that provides only the internal health checks
       // The default healthcheck endpoint '/healthcheck' provides both, internal and external helthchecks
       environment
             .admin()

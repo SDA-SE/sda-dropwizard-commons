@@ -15,7 +15,7 @@ import org.sdase.commons.server.consumer.ConsumerTokenConfig;
 import org.sdase.commons.server.cors.CorsBundle;
 import org.sdase.commons.server.cors.CorsConfigProvider;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
-import org.sdase.commons.server.healthcheck.bundle.InternalHealthCheckEndpointBundle;
+import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.server.security.SecurityBundle;

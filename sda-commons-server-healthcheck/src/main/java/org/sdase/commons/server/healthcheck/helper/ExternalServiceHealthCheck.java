@@ -1,7 +1,7 @@
 package org.sdase.commons.server.healthcheck.helper;
 
 import com.codahale.metrics.health.HealthCheck;
-import org.sdase.commons.server.healthcheck.bundle.ExternalHealthCheck;
+import org.sdase.commons.server.healthcheck.ExternalHealthCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

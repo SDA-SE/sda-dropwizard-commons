@@ -6,10 +6,6 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.sdase.commons.server.healthcheck.bundle.InternalHealthCheckEndpointBundle;
-import org.sdase.commons.server.healthcheck.bundle.ExternalHealthCheck;
-
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 
 public class HealthApplication extends Application<Configuration> {
 

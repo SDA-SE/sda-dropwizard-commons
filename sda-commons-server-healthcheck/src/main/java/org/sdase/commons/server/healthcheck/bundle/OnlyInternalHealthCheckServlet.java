@@ -32,7 +32,7 @@ public class OnlyInternalHealthCheckServlet extends HttpServlet {
    private transient HealthCheckFilter healthCheckFilter;
    private final transient ObjectMapper mapper;
 
-   OnlyInternalHealthCheckServlet(HealthCheckRegistry healthCheckRegistry) {
+   public OnlyInternalHealthCheckServlet(HealthCheckRegistry healthCheckRegistry) {
       this.healthCheckRegistry = healthCheckRegistry;
       this.mapper = new ObjectMapper().registerModule(new HealthCheckModule());
    }
