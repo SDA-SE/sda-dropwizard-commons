@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
            // class, not the service interface!
 public class PersonEndpoint implements PersonService {
 
-   private Map<Integer, PersonResource> people = new LinkedHashMap<>();
+   private final Map<Integer, PersonResource> people = Collections.synchronizedMap(new LinkedHashMap<>());
 
    /**
     * Information about the requested URI. Jersey will inject a Proxy of
@@ -48,11 +48,13 @@ public class PersonEndpoint implements PersonService {
    }
 
    public List<PersonResource> findAllPeople() {
-      return people
-          .entrySet()
-          .stream()
-          .map(e -> toResourceWithSelfLink(e.getKey(), e.getValue()))
-          .collect(Collectors.toList());
+      synchronized (people) {
+         return people
+               .entrySet()
+               .stream()
+               .map(e -> toResourceWithSelfLink(e.getKey(), e.getValue()))
+               .collect(Collectors.toList());
+      }
    }
 
    public Response createPeople(PersonResource person) {
