@@ -1,4 +1,4 @@
-package org.sdase.commons.server.dropwizard.test;
+package org.sdase.commons.server.testing.test;
 
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import io.dropwizard.Application;

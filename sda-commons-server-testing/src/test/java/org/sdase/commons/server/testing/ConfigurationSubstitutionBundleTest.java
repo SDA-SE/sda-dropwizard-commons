@@ -1,8 +1,7 @@
-package org.sdase.commons.server.dropwizard.bundles;
+package org.sdase.commons.server.testing;
 
-import org.sdase.commons.server.dropwizard.test.DropwizardApp;
-import org.sdase.commons.server.dropwizard.test.DropwizardConfig;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.test.DropwizardApp;
+import org.sdase.commons.server.testing.test.DropwizardConfig;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.assertj.core.api.Assertions;

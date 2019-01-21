@@ -12,7 +12,7 @@ public final class Environment {
       //
    }
 
-   public  static void setEnv(String key, String value) {
+   public static void setEnv(String key, String value) {
       try {
          Map<String, String> writableEnv = getWriteableEnv();
          writableEnv.put(key, value);
@@ -21,7 +21,7 @@ public final class Environment {
       }
    }
 
-   public  static void unsetEnv(String key) {
+   public static void unsetEnv(String key) {
       try {
          Map<String, String> writableEnv = getWriteableEnv();
          writableEnv.remove(key);
