@@ -73,7 +73,7 @@ public class SwaggerBundleIT {
       assertThatJson(response)
           .inPath("$.info.version")
           .asString()
-          .isEqualTo("1.0");
+          .isEqualTo("1");
    }
 
    @Test
@@ -111,7 +111,7 @@ public class SwaggerBundleIT {
           .containsKeys(NATURAL_PERSON_DEFINITION, PARTNER_DEFINITION);
 
       assertThatJson(response)
-          .inPath("$.definitions." + PARTNER_DEFINITION + ".properties")
+          .inPath("$.definitions." + PARTNER_DEFINITION + ".properties") // NOSONAR
           .isObject()
           .containsKeys("type");
 
