@@ -35,8 +35,8 @@ public class SdaPlatformExampleApplication extends Application<SdaPlatformConfig
             // may use markdown here to apply custom formatting.
             .withSwaggerInfoDescription("This is the API documentation for the **People API**.\n\n"
                 + "The API provides operations for managing and searching people.")
-            // Set the version of the API, which is a string. By default version 1.0 is used.
-            .withSwaggerInfoVersion("3.14")
+            // Set the version of the API, which is a string. By default version 1 is used.
+            .withSwaggerInfoVersion("3")
             // Set the contact information of the API author.
             .withSwaggerInfoContact("SDA SE", "info@example.com", "https://myfuture.sda-se.com")
             // Set the name of the license of the API as well as an url to the full license information.

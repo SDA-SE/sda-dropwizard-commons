@@ -294,7 +294,7 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
 
    public static final class Builder implements InitialBuilder, FinalBuilder {
 
-      private static final String DEFAULT_VERSION = "1.0";
+      private static final String DEFAULT_VERSION = "1";
 
       private final Set<String> resourcePackages;
 
