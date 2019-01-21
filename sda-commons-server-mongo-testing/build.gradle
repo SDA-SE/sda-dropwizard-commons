@@ -1,8 +1,9 @@
 dependencies {
     compile project(':sda-commons-server-testing')
-    compile group: 'com.github.fakemongo', name: 'fongo', version: '2.1.1', {
-        exclude group: 'com.fasterxml.jackson.core'
+
+    compile 'org.mongodb:mongo-java-driver:' + mongoJavaDriverVersion
+    compile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: '2.1.1', {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.apache.commons', module: 'commons-lang3'
     }
-
-
 }

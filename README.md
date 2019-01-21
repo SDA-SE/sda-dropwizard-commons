@@ -1,4 +1,3 @@
-# SDA Commons
 
 [![Build Status](https://jenkins.intern.sda-se.com/buildStatus/icon?job=SDA%20Open%20Industry%20Solutions/sda-commons/master)](https://jenkins.intern.sda-se.com/job/SDA%20Open%20Industry%20Solutions/job/sda-commons/job/master/)
 
@@ -15,6 +14,7 @@ technologies that are recommended for services in the SDA SE Platform. These tec
 - [Swagger](https://swagger.io/)
 - [Hibernate](http://hibernate.org/)
 - [Kafka](https://kafka.apache.org/)
+- [MongoDB](https://www.mongodb.com)
 
 ## Changelog and Versioning
 
@@ -144,6 +144,18 @@ applications, one with consumer and one with producer examples.
 
 Status:
 - Ready to use with JSON messages
+
+##### MongoDB
+
+The module [`sda-commons-server-morphia`](./sda-commons-server-morphia/README.md) is used to work
+with MongoDB using [Morphia](https://github.com/MorphiaOrg).
+
+
+The module [`sda-commons-server-mongo-testing`](./sda-commons-server-mongo-testing/README.md) 
+provides a MongoDB instance for integration testing.
+
+Status:
+- Ready to use
 
 ##### Prometheus
 

@@ -18,7 +18,7 @@ public class MongoConfiguration  {
 
    private boolean isSSL;
 
-   // In the original implementation the certifcate must be placed in an environment variable
+   // In the original implementation the certificate must be placed in an environment variable
    // this can be done by using placeholders in the config now
    private String certificate;
 
@@ -66,8 +66,8 @@ public class MongoConfiguration  {
       return isSSL;
    }
 
-   public void setSSL(boolean SSL) {
-      isSSL = SSL;
+   public void setSSL(boolean ssl) {
+      isSSL = ssl;
    }
 
    public String getCertificate() {
