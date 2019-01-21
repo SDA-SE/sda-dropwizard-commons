@@ -1,4 +1,4 @@
-package org.sdase.commons.server.mongo;
+package org.sdase.commons.server.morphia;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -18,8 +18,6 @@ public class MongoConfiguration  {
 
    private boolean isSSL;
 
-   // In the original implementation the certificate must be placed in an environment variable
-   // this can be done by using placeholders in the config now
    private String certificate;
 
    public String getDatabase() {

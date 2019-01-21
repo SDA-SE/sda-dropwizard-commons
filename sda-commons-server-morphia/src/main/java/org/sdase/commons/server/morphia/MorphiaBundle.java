@@ -1,4 +1,4 @@
-package org.sdase.commons.server.mongo;
+package org.sdase.commons.server.morphia;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -12,7 +12,7 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.converters.LocalDateConverter;
 import org.mongodb.morphia.converters.LocalDateTimeConverter;
-import org.sdase.commons.server.mongo.converter.ZonedDateTimeConverter;
+import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -20,11 +20,11 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class MongoBundle<C extends Configuration> implements ConfiguredBundle<C> {
+public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
    private final Function<C, MongoConfiguration> configurationProvider;
-   private final Consumer<MongoClientOptions.Builder> clientOptions = c -> {//NOSONAR
-   };
+   private final Consumer<MongoClientOptions.Builder> clientOptions = c -> {}; //NOSONAR
+
    private final Set<String> packagesToScan;
 
    private MongoConfiguration mongoConfiguration;
@@ -35,7 +35,7 @@ public class MongoBundle<C extends Configuration> implements ConfiguredBundle<C>
    private MongoDatabase database;
    private Datastore morphiaDatastore;
 
-   private MongoBundle(MongoConfigurationProvider<C> configProvider, Consumer<MongoClientOptions.Builder> cob, Set<String> packagesToScan) {
+   private MorphiaBundle(MongoConfigurationProvider<C> configProvider, Consumer<MongoClientOptions.Builder> cob, Set<String> packagesToScan) {
       this.configurationProvider = configProvider;
       this.clientOptions.andThen(cob);
       this.packagesToScan = packagesToScan;
@@ -129,7 +129,7 @@ public class MongoBundle<C extends Configuration> implements ConfiguredBundle<C>
        * Builds the mongo bundle
        * @return mongo bundle
        */
-      MongoBundle build();
+      MorphiaBundle build();
    }
 
    public static class Builder<T extends Configuration> implements InitialBuilder, ScanPackageBuilder<T>, FinalBuilder<T> {
@@ -170,8 +170,8 @@ public class MongoBundle<C extends Configuration> implements ConfiguredBundle<C>
       }
 
       @Override
-      public MongoBundle build() {
-         return new MongoBundle<>(configProvider, cob, packagesToScan);
+      public MorphiaBundle build() {
+         return new MorphiaBundle<>(configProvider, cob, packagesToScan);
       }
    }
 }

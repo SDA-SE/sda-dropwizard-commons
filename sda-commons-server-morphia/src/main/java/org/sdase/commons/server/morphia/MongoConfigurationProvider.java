@@ -1,4 +1,4 @@
-package org.sdase.commons.server.mongo;
+package org.sdase.commons.server.morphia;
 
 import io.dropwizard.Configuration;
 

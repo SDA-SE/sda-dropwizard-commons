@@ -1,4 +1,4 @@
-package org.sdase.commons.server.mongo;
+package org.sdase.commons.server.morphia;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -83,8 +83,6 @@ public class MongoClientBuilder {
       } catch (Exception e) {
          throw new MongoException("Could not configure MongoDB client.", e);
       }
-
-
    }
 
    private MongoClient createMongoClient()
@@ -147,6 +145,4 @@ public class MongoClientBuilder {
       }
       return new JcaX509CertificateConverter().getCertificate(certHolder);
    }
-
-
 }

@@ -1,4 +1,4 @@
-package org.sdase.commons.server.mongo.converter;
+package org.sdase.commons.server.morphia.converter;
 
 import org.mongodb.morphia.converters.SimpleValueConverter;
 import org.mongodb.morphia.converters.TypeConverter;
