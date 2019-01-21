@@ -36,7 +36,29 @@ public class CustomIT {
             .setEnv("DISABLE_AUTH", Boolean.TRUE.toString())
             .unsetEnv("USER_NAME");
 
-    // ..
+    // ...
+}
+```
+
+### LazyRule
+
+The [`LazyRule`](./src/main/java/org/sdase/commons/server/testing/LazyRule.java) allows to wrap another 
+rule to defer the initialization of the rule till the rule is started the first time. 
+This allows to initialize a rule with parameters that are only available once another rule is 
+completely initialized. This is often required if one rule opens a random port that the other rule 
+want to connect to.
+
+```
+public class CustomIT {
+
+    private static final ServerRule SERVER = new ServerRule();
+    private static final LazyRule<ClientRule> CLIENT = new LazyRule<>(() -> new ClientRule(SERVER.getPort()));
+
+    @ClassRule
+    public static final RuleChain RULE_CHAIN = RuleChain.outerRule(SERVER).around(CLIENT);
+
+
+    // ...
 }
 ```
 
