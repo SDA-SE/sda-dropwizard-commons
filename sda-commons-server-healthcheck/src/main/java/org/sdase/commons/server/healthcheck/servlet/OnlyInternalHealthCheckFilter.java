@@ -1,4 +1,4 @@
-package org.sdase.commons.server.healthcheck.bundle;
+package org.sdase.commons.server.healthcheck.servlet;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckFilter;

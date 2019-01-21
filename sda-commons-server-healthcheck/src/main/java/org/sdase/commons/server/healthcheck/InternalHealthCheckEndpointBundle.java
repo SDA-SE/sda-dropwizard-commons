@@ -3,7 +3,7 @@ package org.sdase.commons.server.healthcheck;
 import io.dropwizard.Bundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.sdase.commons.server.healthcheck.bundle.OnlyInternalHealthCheckServlet;
+import org.sdase.commons.server.healthcheck.servlet.OnlyInternalHealthCheckServlet;
 
 /**
  * This bundle registers a new servlet to provide all registered health checks that are not
