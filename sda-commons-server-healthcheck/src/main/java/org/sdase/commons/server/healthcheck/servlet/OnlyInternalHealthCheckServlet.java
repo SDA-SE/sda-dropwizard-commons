@@ -20,6 +20,9 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.concurrent.ExecutorService;
 
+import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+
 /**
  * Servlet that provides only the <b>internal</b> health check data of the application as JSON response
  */
@@ -69,9 +72,9 @@ public class OnlyInternalHealthCheckServlet extends HttpServlet {
 
       } else {
          if (isAllHealthy(results)) {
-            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setStatus(SC_OK);
          } else {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.setStatus(SC_INTERNAL_SERVER_ERROR);
          }
 
          try {

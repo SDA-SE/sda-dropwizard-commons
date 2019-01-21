@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+
 /**
  * Default health check for checking if an external URL returns status code 200
  * when invoking a simple HTTP GET
@@ -51,7 +53,7 @@ public class ExternalServiceHealthCheck extends HealthCheck {
             connection.setReadTimeout(timeout);
             connection.setRequestMethod("GET");
             statusCode = connection.getResponseCode();
-            if (200 == statusCode) {
+            if (SC_OK == statusCode) {
                LOGGER.info("Endpoint is available (URL: {})", this.url);
                return Result.healthy();
             }
