@@ -1,0 +1,8 @@
+dependencies {
+    compile project(':sda-commons-server-testing')
+    compile group: 'com.github.fakemongo', name: 'fongo', version: '2.1.1', {
+        exclude group: 'com.fasterxml.jackson.core'
+    }
+
+
+}
