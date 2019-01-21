@@ -6,8 +6,8 @@ The SDA platform distinguishes two kinds of health checks
 * _external_: a health check that monitors components the application relies on, e.g. a failed database connection or 
   dependent service  
 
-Dropwizard, by default, does not support this distinction. It provides all health checks on the endpoint `/healthcheck`. 
-This is also the case for SDA applications. 
+Dropwizard, by default, does not support this distinction. It provides all health checks on the endpoint `/healthcheck`
+at the admin port. This is also the case for SDA applications. 
 
 This module extends the Dropwizard default by provides means to introduce _internal_ and _external_ health checks: 
 * the [`InternalHealthCheckEndpointBundle`](src/main/java/org/sdase/commons/server/healthcheck/bundle/InternalHealthCheckEndpointBundle.java) 
