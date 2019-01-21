@@ -13,8 +13,7 @@ import io.swagger.annotations.Tag;
 // This part is optional, but you might have to define more than possible using the bundle.
 @SwaggerDefinition(
       // Set the consumed and produced media types, should be JSON when creating
-      // a service running on
-      // the SDA platform.
+      // a service running on the SDA platform.
       consumes = APPLICATION_JSON, produces = APPLICATION_JSON,
       // Set the descriptions for tags referenced elsewhere.
       tags = {

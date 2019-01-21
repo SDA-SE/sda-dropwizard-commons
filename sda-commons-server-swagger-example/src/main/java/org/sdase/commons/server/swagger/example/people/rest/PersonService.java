@@ -38,7 +38,7 @@ public interface PersonService {
    @GET
    @ApiOperation(value = "Returns all people stored in this service.") // Set a description for the operation
    @ApiResponses({
-         // Define all possible responses, with there status code and documentation text
+         // Define all possible responses, with their status code and documentation text
          @ApiResponse(code = HTTP_OK, message = "Returns the requested document.")})
    List<PersonResource> findAllPeople();
 
@@ -49,7 +49,7 @@ public interface PersonService {
              + "| Firstname | Lastname   |\n"
              + "|-----------|------------|\n"
              + "| Max       | Mustermann |\n"
-             + "| John      | Doe        |\n"
+             + "| John      | Doe        |\n\n"
              + "You have **full** markdown support here!")
    @ApiResponses(value = {
          @ApiResponse(
