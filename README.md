@@ -149,9 +149,13 @@ Status:
 The module [`sda-commons-server-prometheus`](./sda-commons-server-prometheus/README.md) provides an admin endpoint to
 serve metrics in a format that Prometheus can read.
 
+The module [`sda-commons-server-prometheus-example`](./sda-commons-server-prometheus-example/README.md) 
+presents a simple application that shows the three main types of metrics to use in a service. 
+
 Status:
-- Ready to use in combination with [SDA Commons Consumer Token](#consumer-token)
-- Metrics will miss the consumer token when used with consumer token support form rest-common 
+- Ready to use for custom metrics
+- Ready to use in combination with [SDA Commons Consumer Token](#consumer-token) or when provided by 
+  [SDA Commons Server Starter](#starter) for built in request duration metrics
 
 ##### Security
 
