@@ -23,7 +23,14 @@ public class MetricExampleApp extends Application<SdaPlatformConfiguration> {
    }
 
    @Override
-   public void run(SdaPlatformConfiguration configuration, Environment environment) throws Exception {
+   public void run(SdaPlatformConfiguration configuration, Environment environment) {
+      MyServiceWithMetrics myService = new MyServiceWithMetrics();
 
+      // just do some operations in my service to generate test data
+      for (int i = 0; i < 10; i++) {
+         myService.doSomeOperationWithCounting();
+         myService.doSomeOperationWithGauge();
+         myService.doSomeOperationWithTrackedDuration();
+      }
    }
 }
