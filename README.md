@@ -18,7 +18,8 @@ technologies that are recommended for services in the SDA SE Platform. These tec
 
 ## Changelog and Versioning
 
-This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and uses [Semantic Commits](https://gist.github.com/stephenparish/9941e89d80e2bc58a153).
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and uses 
+[Semantic Commits](https://gist.github.com/stephenparish/9941e89d80e2bc58a153).
 
 Our [changelog](https://github.com/SDA-SE/sda-commons/releases/) is maintained in the GitHub releases.
 
@@ -163,7 +164,8 @@ The module [`sda-commons-server-security`](./sda-commons-server-security/README.
 Dropwizard application.
 
 Status
-- Ready to use, but providing only a subset of the "Härtungsmaßnahmen Dropwizard" available at the internal wiki entry written by Timo Pagel
+- Ready to use, but providing only a subset of the "Härtungsmaßnahmen Dropwizard" available at the internal wiki entry 
+  written by Timo Pagel
 
 ##### Swagger
 
@@ -183,7 +185,7 @@ level service offered by the SDA platform, e.g. interaction service. .
 Status:
 - Ready to use
 - When using new threads for clients to invoke another service, the trace token is not transferred out-of-the-box. 
-The same holds for mentioning the trace token in log entries of new threads.
+  The same holds for mentioning the trace token in log entries of new threads.
 
 ##### Weld
 
@@ -208,7 +210,8 @@ The module [`sda-commons-client-jersey`](./sda-commons-client-jersey/README.md) 
 clients withing the dropwizard application.
 
 The module [`sda-commons-client-jersey-wiremock-testing`](./sda-commons-client-jersey-wiremock-testing/README.md) 
-bundles the [WireMock]('https://wiremock.org') dependencies to mock services in integration tests consistently to sda-commons library versions.
+bundles the [WireMock]('https://wiremock.org') dependencies to mock services in integration tests consistently to 
+sda-commons library versions.
 
 The module [`sda-commons-client-jersey-example`](./sda-commons-client-jersey-example/README.md)
 presents an example application that shows how to invoke services.
