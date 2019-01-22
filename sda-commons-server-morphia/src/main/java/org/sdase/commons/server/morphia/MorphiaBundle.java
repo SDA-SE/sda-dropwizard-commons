@@ -15,6 +15,7 @@ import org.mongodb.morphia.converters.LocalDateTimeConverter;
 import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
 
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -26,6 +27,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
    private final Consumer<MongoClientOptions.Builder> clientOptions = c -> {}; //NOSONAR
 
    private final Set<String> packagesToScan;
+   private final Set<Class> entityClasses;
 
    private MongoConfiguration mongoConfiguration;
 
@@ -35,8 +37,13 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
    private MongoDatabase database;
    private Datastore morphiaDatastore;
 
-   private MorphiaBundle(MongoConfigurationProvider<C> configProvider, Consumer<MongoClientOptions.Builder> cob, Set<String> packagesToScan) {
+   private MorphiaBundle(
+         MongoConfigurationProvider<C> configProvider,
+         Consumer<MongoClientOptions.Builder> cob,
+         Set<String> packagesToScan,
+         Set<Class> entityClasses) {
       this.configurationProvider = configProvider;
+      this.entityClasses = entityClasses;
       this.clientOptions.andThen(cob);
       this.packagesToScan = packagesToScan;
    }
@@ -57,6 +64,9 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       configuredMorphia.getMapper().getConverters().addConverter(new LocalDateTimeConverter());
       configuredMorphia.getMapper().getConverters().addConverter(new LocalDateConverter());
       configuredMorphia.getMapper().getConverters().addConverter(new ZonedDateTimeConverter());
+      if (!entityClasses.isEmpty()) {
+         configuredMorphia.map(entityClasses);
+      }
       this.packagesToScan.forEach(configuredMorphia::mapPackage);
       this.morphiaDatastore = configuredMorphia.createDatastore(createClient(), mongoConfiguration.getDatabase());
       this.morphiaDatastore.ensureIndexes();
@@ -105,6 +115,29 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
    }
 
    public interface ScanPackageBuilder<C extends Configuration> {
+
+      /**
+       * @param entityClass A model class that represents an entity. Using explicit classes instead of scanning boosts
+       *                    startup.
+       */
+      default FinalBuilder<C> withEntity(Class<?> entityClass) {
+         return withEntities(entityClass);
+      }
+
+      /**
+       * @param entityClasses Model classes that represent entities. Using explicit classes instead of scanning boosts
+       *                      startup.
+       */
+      default FinalBuilder<C> withEntities(Class<?>... entityClasses) {
+         return withEntities(Arrays.asList(entityClasses));
+      }
+
+      /**
+       * @param entityClasses Model classes that represent entities. Using explicit classes instead of scanning boosts
+       *                      startup.
+       */
+      FinalBuilder<C> withEntities(@NotNull Iterable<Class<?>> entityClasses);
+
       /**
        * @param packageToScanForEntities The package that should be scanned for entities recursively.
        */
@@ -114,10 +147,14 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
        * @param markerClass A class or interface that defines the base package for recursive entity scanning. The class
        *                    may be a marker interface or a specific entity class.
        */
-      FinalBuilder<C> withEntityScanPackageClass(@NotNull Class<?> markerClass);
+      default FinalBuilder<C> withEntityScanPackageClass(Class markerClass) {
+         return withEntityScanPackage(markerClass.getPackage().getName());
+      }
+
    }
 
-   public interface FinalBuilder<C> {
+   public interface FinalBuilder<C extends Configuration> extends ScanPackageBuilder<C> {
+
       /**
        * Adds a client option to the builder with that the client is initialized
        * @param cob client option builder consumer
@@ -138,6 +175,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       private Consumer<MongoClientOptions.Builder> cob = c -> {
       };
       private Set<String> packagesToScan = new HashSet<>();
+      private Set<Class> entityClasses = new HashSet<>();
 
       private Builder() {
       }
@@ -159,8 +197,9 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       }
 
       @Override
-      public FinalBuilder<T> withEntityScanPackageClass(Class markerClass) {
-         return withEntityScanPackage(markerClass.getPackage().getName());
+      public FinalBuilder<T> withEntities(Iterable<Class<?>> entityClasses) {
+         entityClasses.forEach(this.entityClasses::add);
+         return this;
       }
 
       @Override
@@ -171,7 +210,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
       @Override
       public MorphiaBundle build() {
-         return new MorphiaBundle<>(configProvider, cob, packagesToScan);
+         return new MorphiaBundle<>(configProvider, cob, packagesToScan, entityClasses);
       }
    }
 }
