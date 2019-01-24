@@ -4,7 +4,6 @@ import org.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricS
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
 import io.dropwizard.Bundle;
-import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.AdminEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -18,6 +17,8 @@ import javax.servlet.ServletRegistration;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
+
+import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
 /**
  * <p>
@@ -67,18 +68,11 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
       DropwizardExports dropwizardExports = new DropwizardExports(environment.metrics());
       CollectorRegistry.defaultRegistry.register(dropwizardExports);
 
-      environment.lifecycle().manage(new Managed() {
-         @Override
-         public void start() {
-            // nothing here
-         }
-
-         @Override
-         public void stop() {
+      environment.lifecycle().manage(onShutdown(() -> {
             requestDurationHistogramSpecification.unregister();
             CollectorRegistry.defaultRegistry.unregister(dropwizardExports);
-         }
-      });
+         })
+      );
 
    }
 

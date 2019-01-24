@@ -19,7 +19,6 @@ import org.sdase.commons.server.kafka.topicana.TopicComparer;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -44,6 +43,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
 public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
@@ -332,21 +333,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    }
 
    private void setupManagedThreadManager(Environment environment) {
-      Managed threadManager = new Managed() {
-
-         @Override
-         public void stop() {
-            shutdownConsumerThreads();
-            stopProducers();
-         }
-
-         @Override
-         public void start() {
-            //
-         }
-      };
-
-      environment.lifecycle().manage(threadManager);
+      environment.lifecycle().manage(onShutdown(() -> {
+         shutdownConsumerThreads();
+         stopProducers();
+      }));
    }
 
    private void stopProducers() {
