@@ -69,4 +69,24 @@ public class ZonedDateTimeConverterTest {
       // then
       assertThat(result).isEqualTo("2019-02-21T17:22:53.000");
    }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldFailOnEncodeWrongType() {
+      // given
+      ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
+
+      // when
+      converter.encode(new Object(), null);
+
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldFailOnDecodeWrongType() {
+      // given
+      ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
+
+      // when
+      converter.decode(ZonedDateTime.class, new Object(), null);
+
+   }
 }

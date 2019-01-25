@@ -1,8 +1,6 @@
 package org.sdase.commons.server.morphia;
 
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.client.MongoDatabase;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -12,40 +10,51 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.converters.LocalDateConverter;
 import org.mongodb.morphia.converters.LocalDateTimeConverter;
+import org.mongodb.morphia.converters.TypeConverter;
 import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
+import org.sdase.commons.server.morphia.internal.MongoClientBuilder;
 
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+
+/**
+ * A bundle used to create a connection to a MongoDB that is accessed through a
+ * <a href="http://morphiaorg.github.io/morphia/">Morphia</a> {@link Datastore}.
+ *
+ * @param <C> The subtype of {@link Configuration}, the {@link io.dropwizard.Application} uses.
+ */
 public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
+   private static final Set<TypeConverter> DEFAULT_CONVERTERS = new LinkedHashSet<>(asList(
+         new LocalDateTimeConverter(),
+         new LocalDateConverter(),
+         new ZonedDateTimeConverter())
+   );
+
    private final Function<C, MongoConfiguration> configurationProvider;
-   private final Consumer<MongoClientOptions.Builder> clientOptions = c -> {}; //NOSONAR
 
-   private final Set<String> packagesToScan;
-   private final Set<Class> entityClasses;
+   private final Set<TypeConverter> customConverters = new LinkedHashSet<>();
+   private final Set<String> packagesToScan = new HashSet<>();
+   private final Set<Class> entityClasses = new HashSet<>();
 
-   private MongoConfiguration mongoConfiguration;
-
-   private Environment environment;
-
-   // created database after initialization
-   private MongoDatabase database;
+   private MongoClient mongoClient;
    private Datastore morphiaDatastore;
 
    private MorphiaBundle(
          MongoConfigurationProvider<C> configProvider,
-         Consumer<MongoClientOptions.Builder> cob,
          Set<String> packagesToScan,
-         Set<Class> entityClasses) {
+         Set<Class> entityClasses,
+         Set<TypeConverter> customConverters) {
       this.configurationProvider = configProvider;
-      this.entityClasses = entityClasses;
-      this.clientOptions.andThen(cob);
-      this.packagesToScan = packagesToScan;
+      this.packagesToScan.addAll(packagesToScan);
+      this.entityClasses.addAll(entityClasses);
+      this.customConverters.addAll(customConverters);
    }
 
    @Override
@@ -55,45 +64,49 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
    @Override
    public void run(C configuration, Environment environment) {
-      this.environment = environment;
-      this.mongoConfiguration = configurationProvider.apply(configuration);
-
-      this.database = createClient().getDatabase(mongoConfiguration.getDatabase());
+      MongoConfiguration mongoConfiguration = configurationProvider.apply(configuration);
 
       Morphia configuredMorphia = new Morphia();
-      configuredMorphia.getMapper().getConverters().addConverter(new LocalDateTimeConverter());
-      configuredMorphia.getMapper().getConverters().addConverter(new LocalDateConverter());
-      configuredMorphia.getMapper().getConverters().addConverter(new ZonedDateTimeConverter());
+      customConverters.forEach(cc -> configuredMorphia.getMapper().getConverters().addConverter(cc));
       if (!entityClasses.isEmpty()) {
          configuredMorphia.map(entityClasses);
       }
       this.packagesToScan.forEach(configuredMorphia::mapPackage);
-      this.morphiaDatastore = configuredMorphia.createDatastore(createClient(), mongoConfiguration.getDatabase());
+      this.mongoClient = createClient(environment, mongoConfiguration);
+      this.morphiaDatastore = configuredMorphia.createDatastore(mongoClient, mongoConfiguration.getDatabase());
       this.morphiaDatastore.ensureIndexes();
 
    }
 
-   private MongoClient createClient() {
-      return new MongoClientBuilder()
-            .withConfiguration(mongoConfiguration)
-            .addMongoClientOption(clientOptions)
-            .build(environment);
+   /**
+    * @return the {@link MongoClient} that is connected to the MongoDB cluster. The client may be used for raw MongoDB
+    *         operations. Usually the Morphia {@linkplain #getDatastore() Datastore} should be preferred for database
+    *         operations.
+    * @throws IllegalStateException if the method is called before the mongoClient is initialized in
+    *                               {@link #run(Configuration, Environment)}
+    */
+   public MongoClient getMongoClient() {
+      if (mongoClient == null) {
+         throw new IllegalStateException("Could not access mongoClient before Application#run(Configuration, Environment).");
+      }
+      return mongoClient;
    }
 
-   public MongoClient getClient() {
-      return createClient();
+   /**
+    * @return the configured {@link Datastore} that is ready to access the MongoDB defined in
+    *         {@link MongoConfiguration#database}.
+    * @throws IllegalStateException if the method is called before the datastore is initialized in
+    *                               {@link #run(Configuration, Environment)}
+    */
+   public Datastore getDatastore() {
+      if (morphiaDatastore == null) {
+         throw new IllegalStateException("Could not access datastore before Application#run(Configuration, Environment).");
+      }
+      return morphiaDatastore;
    }
 
-   public MongoDatabase getDatabase() {
-      return database;
-   }
-
-   public MongoConfiguration getMongoConfiguration() {
-      return mongoConfiguration;
-   }
-
-   public Datastore getMorphiaDatastore() {
-     return morphiaDatastore;
+   private MongoClient createClient(Environment environment, MongoConfiguration mongoConfiguration) {
+      return new MongoClientBuilder(mongoConfiguration).build(environment);
    }
 
    //
@@ -117,50 +130,77 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
    public interface ScanPackageBuilder<C extends Configuration> {
 
       /**
-       * @param entityClass A model class that represents an entity. Using explicit classes instead of scanning boosts
-       *                    startup.
+       * @param entityClass A model class that represents an entity. Using explicit classes instead of scanning packages
+       *                    boosts application startup.
        */
-      default FinalBuilder<C> withEntity(Class<?> entityClass) {
+      default CustomConverterBuilder<C> withEntity(Class<?> entityClass) {
          return withEntities(entityClass);
       }
 
       /**
-       * @param entityClasses Model classes that represent entities. Using explicit classes instead of scanning boosts
-       *                      startup.
+       * @param entityClasses Model classes that represent entities. Using explicit classes instead of scanning packages
+       *                     boosts application startup.
        */
-      default FinalBuilder<C> withEntities(Class<?>... entityClasses) {
-         return withEntities(Arrays.asList(entityClasses));
+      default CustomConverterBuilder<C> withEntities(Class<?>... entityClasses) {
+         return withEntities(asList(entityClasses));
       }
 
       /**
-       * @param entityClasses Model classes that represent entities. Using explicit classes instead of scanning boosts
-       *                      startup.
+       * @param entityClasses Model classes that represent entities. Using explicit classes instead of scanning packages
+       *                      boosts application startup.
        */
-      FinalBuilder<C> withEntities(@NotNull Iterable<Class<?>> entityClasses);
+      CustomConverterBuilder<C> withEntities(@NotNull Iterable<Class<?>> entityClasses);
 
       /**
        * @param packageToScanForEntities The package that should be scanned for entities recursively.
        */
-      FinalBuilder<C> withEntityScanPackage(@NotNull String packageToScanForEntities);
+      CustomConverterBuilder<C> withEntityScanPackage(@NotNull String packageToScanForEntities);
 
       /**
        * @param markerClass A class or interface that defines the base package for recursive entity scanning. The class
        *                    may be a marker interface or a specific entity class.
        */
-      default FinalBuilder<C> withEntityScanPackageClass(Class markerClass) {
+      default CustomConverterBuilder<C> withEntityScanPackageClass(Class markerClass) {
          return withEntityScanPackage(markerClass.getPackage().getName());
       }
 
    }
 
-   public interface FinalBuilder<C extends Configuration> extends ScanPackageBuilder<C> {
+   public interface CustomConverterBuilder<C extends Configuration> extends FinalBuilder<C> {
 
       /**
-       * Adds a client option to the builder with that the client is initialized
-       * @param cob client option builder consumer
-       * @return final builder
+       * Disables the default {@link TypeConverter}s defined in {@link MorphiaBundle#DEFAULT_CONVERTERS}.
        */
-      FinalBuilder<C> withClientOption(Consumer<MongoClientOptions.Builder> cob);
+      FinalBuilder<C> disableDefaultTypeConverters();
+
+      /**
+       * Adds a custom {@link TypeConverter}s, see
+       * {@link org.mongodb.morphia.converters.Converters#addConverter(TypeConverter)}
+       * @param typeConverters the converters to add
+       */
+      FinalBuilder<C> addCustomTypeConverters(Iterable<TypeConverter> typeConverters);
+
+      /**
+       * Adds a custom {@link TypeConverter}s, see
+       * {@link org.mongodb.morphia.converters.Converters#addConverter(TypeConverter)}
+       * @param typeConverters the converters to add
+       */
+      default FinalBuilder<C> addCustomTypeConverters(TypeConverter... typeConverters) {
+         return addCustomTypeConverters(asList(typeConverters));
+      }
+
+      /**
+       * Adds a custom {@link TypeConverter}, see
+       * {@link org.mongodb.morphia.converters.Converters#addConverter(TypeConverter)}
+       * @param typeConverter the converter to add
+       */
+      default FinalBuilder<C> addCustomTypeConverter(TypeConverter typeConverter) {
+         return addCustomTypeConverters(singletonList(typeConverter));
+      }
+   }
+
+   public interface FinalBuilder<C extends Configuration> extends ScanPackageBuilder<C> {
+
 
       /**
        * Builds the mongo bundle
@@ -169,15 +209,16 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       MorphiaBundle build();
    }
 
-   public static class Builder<T extends Configuration> implements InitialBuilder, ScanPackageBuilder<T>, FinalBuilder<T> {
+   public static class Builder<T extends Configuration>
+         implements InitialBuilder, ScanPackageBuilder<T>, CustomConverterBuilder<T>, FinalBuilder<T> {
 
-      private MongoConfigurationProvider<T> configProvider;
-      private Consumer<MongoClientOptions.Builder> cob = c -> {
-      };
-      private Set<String> packagesToScan = new HashSet<>();
-      private Set<Class> entityClasses = new HashSet<>();
+      private final MongoConfigurationProvider<T> configProvider;
+      private final Set<TypeConverter> customConverters = new LinkedHashSet<>(DEFAULT_CONVERTERS);
+      private final Set<String> packagesToScan = new HashSet<>();
+      private final Set<Class> entityClasses = new HashSet<>();
 
       private Builder() {
+         configProvider = null;
       }
 
       private Builder(MongoConfigurationProvider<T> configProvider) {
@@ -191,26 +232,32 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       }
 
       @Override
-      public FinalBuilder<T> withClientOption(Consumer<MongoClientOptions.Builder> cob) {
-         this.cob.andThen(cob);
-         return this;
-      }
-
-      @Override
-      public FinalBuilder<T> withEntities(Iterable<Class<?>> entityClasses) {
+      public CustomConverterBuilder<T> withEntities(Iterable<Class<?>> entityClasses) {
          entityClasses.forEach(this.entityClasses::add);
          return this;
       }
 
       @Override
-      public FinalBuilder<T> withEntityScanPackage(String packageToScanForEntities) {
+      public CustomConverterBuilder<T> withEntityScanPackage(String packageToScanForEntities) {
          packagesToScan.add(Validate.notBlank(packageToScanForEntities));
          return this;
       }
 
       @Override
+      public FinalBuilder<T> disableDefaultTypeConverters() {
+         this.customConverters.clear();
+         return this;
+      }
+
+      @Override
+      public FinalBuilder<T> addCustomTypeConverters(Iterable<TypeConverter> typeConverter) {
+         typeConverter.forEach(customConverters::add);
+         return this;
+      }
+
+      @Override
       public MorphiaBundle build() {
-         return new MorphiaBundle<>(configProvider, cob, packagesToScan, entityClasses);
+         return new MorphiaBundle<>(configProvider, packagesToScan, entityClasses, customConverters);
       }
    }
 }

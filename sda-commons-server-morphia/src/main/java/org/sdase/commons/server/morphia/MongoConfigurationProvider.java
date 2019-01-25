@@ -5,7 +5,7 @@ import io.dropwizard.Configuration;
 import java.util.function.Function;
 
 /**
- * Provides the configuration for the mongo bundle {@link MongoConfiguration}, e.g. {@code MyAppConfig::getMongo}
+ * Provides the {@link MongoConfiguration} for the {@link MorphiaBundle}, e.g. {@code MyAppConfig::getMongo}
  *
  * @param <C> the type of the applications configuration class
  */
