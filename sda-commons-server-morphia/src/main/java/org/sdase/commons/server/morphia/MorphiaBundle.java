@@ -133,7 +133,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
        * @param entityClass A model class that represents an entity. Using explicit classes instead of scanning packages
        *                    boosts application startup.
        */
-      default CustomConverterBuilder<C> withEntity(Class<?> entityClass) {
+      default DisableConverterBuilder<C> withEntity(Class<?> entityClass) {
          return withEntities(entityClass);
       }
 
@@ -141,7 +141,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
        * @param entityClasses Model classes that represent entities. Using explicit classes instead of scanning packages
        *                     boosts application startup.
        */
-      default CustomConverterBuilder<C> withEntities(Class<?>... entityClasses) {
+      default DisableConverterBuilder<C> withEntities(Class<?>... entityClasses) {
          return withEntities(asList(entityClasses));
       }
 
@@ -149,43 +149,47 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
        * @param entityClasses Model classes that represent entities. Using explicit classes instead of scanning packages
        *                      boosts application startup.
        */
-      CustomConverterBuilder<C> withEntities(@NotNull Iterable<Class<?>> entityClasses);
+      DisableConverterBuilder<C> withEntities(@NotNull Iterable<Class<?>> entityClasses);
 
       /**
        * @param packageToScanForEntities The package that should be scanned for entities recursively.
        */
-      CustomConverterBuilder<C> withEntityScanPackage(@NotNull String packageToScanForEntities);
+      DisableConverterBuilder<C> withEntityScanPackage(@NotNull String packageToScanForEntities);
 
       /**
        * @param markerClass A class or interface that defines the base package for recursive entity scanning. The class
        *                    may be a marker interface or a specific entity class.
        */
-      default CustomConverterBuilder<C> withEntityScanPackageClass(Class markerClass) {
+      default DisableConverterBuilder<C> withEntityScanPackageClass(Class markerClass) {
          return withEntityScanPackage(markerClass.getPackage().getName());
       }
+
+   }
+
+   public interface DisableConverterBuilder<C extends Configuration> extends CustomConverterBuilder<C> {
+
+      /**
+       * Disables the default {@link TypeConverter}s defined in {@link MorphiaBundle#DEFAULT_CONVERTERS}.
+       */
+      CustomConverterBuilder<C> disableDefaultTypeConverters();
 
    }
 
    public interface CustomConverterBuilder<C extends Configuration> extends FinalBuilder<C> {
 
       /**
-       * Disables the default {@link TypeConverter}s defined in {@link MorphiaBundle#DEFAULT_CONVERTERS}.
+       * Adds a custom {@link TypeConverter}s, see
+       * {@link org.mongodb.morphia.converters.Converters#addConverter(TypeConverter)}
+       * @param typeConverters the converters to add
        */
-      FinalBuilder<C> disableDefaultTypeConverters();
+      CustomConverterBuilder<C> addCustomTypeConverters(Iterable<TypeConverter> typeConverters);
 
       /**
        * Adds a custom {@link TypeConverter}s, see
        * {@link org.mongodb.morphia.converters.Converters#addConverter(TypeConverter)}
        * @param typeConverters the converters to add
        */
-      FinalBuilder<C> addCustomTypeConverters(Iterable<TypeConverter> typeConverters);
-
-      /**
-       * Adds a custom {@link TypeConverter}s, see
-       * {@link org.mongodb.morphia.converters.Converters#addConverter(TypeConverter)}
-       * @param typeConverters the converters to add
-       */
-      default FinalBuilder<C> addCustomTypeConverters(TypeConverter... typeConverters) {
+      default CustomConverterBuilder<C> addCustomTypeConverters(TypeConverter... typeConverters) {
          return addCustomTypeConverters(asList(typeConverters));
       }
 
@@ -194,9 +198,10 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
        * {@link org.mongodb.morphia.converters.Converters#addConverter(TypeConverter)}
        * @param typeConverter the converter to add
        */
-      default FinalBuilder<C> addCustomTypeConverter(TypeConverter typeConverter) {
+      default CustomConverterBuilder<C> addCustomTypeConverter(TypeConverter typeConverter) {
          return addCustomTypeConverters(singletonList(typeConverter));
       }
+
    }
 
    public interface FinalBuilder<C extends Configuration> extends ScanPackageBuilder<C> {
@@ -206,11 +211,11 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
        * Builds the mongo bundle
        * @return mongo bundle
        */
-      MorphiaBundle build();
+      MorphiaBundle<C> build();
    }
 
    public static class Builder<T extends Configuration>
-         implements InitialBuilder, ScanPackageBuilder<T>, CustomConverterBuilder<T>, FinalBuilder<T> {
+         implements InitialBuilder, ScanPackageBuilder<T>, DisableConverterBuilder<T>, CustomConverterBuilder<T>, FinalBuilder<T> {
 
       private final MongoConfigurationProvider<T> configProvider;
       private final Set<TypeConverter> customConverters = new LinkedHashSet<>(DEFAULT_CONVERTERS);
@@ -232,31 +237,31 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       }
 
       @Override
-      public CustomConverterBuilder<T> withEntities(Iterable<Class<?>> entityClasses) {
+      public DisableConverterBuilder<T> withEntities(Iterable<Class<?>> entityClasses) {
          entityClasses.forEach(this.entityClasses::add);
          return this;
       }
 
       @Override
-      public CustomConverterBuilder<T> withEntityScanPackage(String packageToScanForEntities) {
+      public DisableConverterBuilder<T> withEntityScanPackage(String packageToScanForEntities) {
          packagesToScan.add(Validate.notBlank(packageToScanForEntities));
          return this;
       }
 
       @Override
-      public FinalBuilder<T> disableDefaultTypeConverters() {
+      public CustomConverterBuilder<T> disableDefaultTypeConverters() {
          this.customConverters.clear();
          return this;
       }
 
       @Override
-      public FinalBuilder<T> addCustomTypeConverters(Iterable<TypeConverter> typeConverter) {
+      public CustomConverterBuilder<T> addCustomTypeConverters(Iterable<TypeConverter> typeConverter) {
          typeConverter.forEach(customConverters::add);
          return this;
       }
 
       @Override
-      public MorphiaBundle build() {
+      public MorphiaBundle<T> build() {
          return new MorphiaBundle<>(configProvider, packagesToScan, entityClasses, customConverters);
       }
    }
