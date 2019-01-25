@@ -155,8 +155,10 @@ public class MongoDbRule extends ExternalResource {
             // Create the database user for the test context
             createDatabaseUser(mongoClient);
          }
-      } catch (final IOException | InterruptedException e) {
+      } catch (IOException e) {
          throw new IllegalStateException(e);
+      } catch (InterruptedException e) {
+         Thread.currentThread().interrupt();
       }
 
       started = true;
