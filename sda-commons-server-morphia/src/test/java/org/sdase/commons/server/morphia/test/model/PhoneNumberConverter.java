@@ -21,7 +21,7 @@ public class PhoneNumberConverter extends TypeConverter implements SimpleValueCo
          return new PhoneNumber().setCountryCode(split[0]).setAreaCode(split[1]).setNumber(split[2]);
       }
 
-      throw new IllegalArgumentException("Can't convert to ZonedDateTime from " + val);
+      throw new IllegalArgumentException("Can't convert to PhoneNumber from " + val);
    }
 
    @Override
@@ -42,6 +42,6 @@ public class PhoneNumberConverter extends TypeConverter implements SimpleValueCo
          return countryCode + " " + areaCode + " " + number;
       }
 
-      throw new IllegalArgumentException("Can't convert to PhoneNumber from " + value);
+      throw new IllegalArgumentException("Can't convert as PhoneNumber from " + value);
    }
 }
