@@ -1,9 +1,9 @@
 package org.sdase.commons.server.morphia.test.model;
 
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.Indexed;
+import xyz.morphia.annotations.Entity;
+import xyz.morphia.annotations.Id;
+import xyz.morphia.annotations.Indexed;
 
 @Entity("people") // required when entities are added by classpath scanning to ensure indexes
 public class Person {

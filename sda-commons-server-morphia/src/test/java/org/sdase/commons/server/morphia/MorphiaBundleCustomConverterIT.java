@@ -13,8 +13,6 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Key;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.morphia.test.Config;
 import org.sdase.commons.server.morphia.test.model.Person;
@@ -22,6 +20,8 @@ import org.sdase.commons.server.morphia.test.model.PhoneNumber;
 import org.sdase.commons.server.morphia.test.model.PhoneNumberConverter;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
+import xyz.morphia.Datastore;
+import xyz.morphia.Key;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +65,7 @@ public class MorphiaBundleCustomConverterIT {
             .setAreaCode("0172")
             .setNumber("123 456 789");
       Key<Person> johnDoe = datastore.save(new Person().setName("John Doe").setAge(42).setPhoneNumber(phoneNumber));
-      MongoClient mongoClient = ((MorphiaTestApp) DW.getRule().getApplication()).getMorphiaBundle().getMongoClient();
+      MongoClient mongoClient = ((MorphiaTestApp) DW.getRule().getApplication()).getMorphiaBundle().mongoClient();
       MongoDatabase database = mongoClient.getDatabase(DW.getRule().getConfiguration().getMongo().getDatabase());
       MongoCollection<Document> peopleCollection = database.getCollection("people");
       List<String> phoneNumbers = new ArrayList<>();
@@ -79,7 +79,7 @@ public class MorphiaBundleCustomConverterIT {
    }
 
    private Datastore getDatastore() {
-      return ((MorphiaTestApp) DW.getRule().getApplication()).getMorphiaBundle().getDatastore();
+      return ((MorphiaTestApp) DW.getRule().getApplication()).getMorphiaBundle().datastore();
    }
 
    public static class MorphiaTestApp extends Application<Config> {

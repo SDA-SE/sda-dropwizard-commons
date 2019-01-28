@@ -6,11 +6,11 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.apache.commons.lang3.Validate;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
-import org.mongodb.morphia.converters.LocalDateConverter;
-import org.mongodb.morphia.converters.LocalDateTimeConverter;
-import org.mongodb.morphia.converters.TypeConverter;
+import xyz.morphia.Datastore;
+import xyz.morphia.Morphia;
+import xyz.morphia.converters.LocalDateConverter;
+import xyz.morphia.converters.LocalDateTimeConverter;
+import xyz.morphia.converters.TypeConverter;
 import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
 import org.sdase.commons.server.morphia.internal.MongoClientBuilder;
 
@@ -80,12 +80,12 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
    /**
     * @return the {@link MongoClient} that is connected to the MongoDB cluster. The client may be used for raw MongoDB
-    *         operations. Usually the Morphia {@linkplain #getDatastore() Datastore} should be preferred for database
+    *         operations. Usually the Morphia {@linkplain #datastore() Datastore} should be preferred for database
     *         operations.
     * @throws IllegalStateException if the method is called before the mongoClient is initialized in
     *                               {@link #run(Configuration, Environment)}
     */
-   public MongoClient getMongoClient() {
+   public MongoClient mongoClient() {
       if (mongoClient == null) {
          throw new IllegalStateException("Could not access mongoClient before Application#run(Configuration, Environment).");
       }
@@ -98,7 +98,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     * @throws IllegalStateException if the method is called before the datastore is initialized in
     *                               {@link #run(Configuration, Environment)}
     */
-   public Datastore getDatastore() {
+   public Datastore datastore() {
       if (morphiaDatastore == null) {
          throw new IllegalStateException("Could not access datastore before Application#run(Configuration, Environment).");
       }
@@ -179,14 +179,14 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
       /**
        * Adds a custom {@link TypeConverter}s, see
-       * {@link org.mongodb.morphia.converters.Converters#addConverter(TypeConverter)}
+       * {@link xyz.morphia.converters.Converters#addConverter(TypeConverter)}
        * @param typeConverters the converters to add
        */
       CustomConverterBuilder<C> addCustomTypeConverters(Iterable<TypeConverter> typeConverters);
 
       /**
        * Adds a custom {@link TypeConverter}s, see
-       * {@link org.mongodb.morphia.converters.Converters#addConverter(TypeConverter)}
+       * {@link xyz.morphia.converters.Converters#addConverter(TypeConverter)}
        * @param typeConverters the converters to add
        */
       default CustomConverterBuilder<C> addCustomTypeConverters(TypeConverter... typeConverters) {
@@ -195,7 +195,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
       /**
        * Adds a custom {@link TypeConverter}, see
-       * {@link org.mongodb.morphia.converters.Converters#addConverter(TypeConverter)}
+       * {@link xyz.morphia.converters.Converters#addConverter(TypeConverter)}
        * @param typeConverter the converter to add
        */
       default CustomConverterBuilder<C> addCustomTypeConverter(TypeConverter typeConverter) {

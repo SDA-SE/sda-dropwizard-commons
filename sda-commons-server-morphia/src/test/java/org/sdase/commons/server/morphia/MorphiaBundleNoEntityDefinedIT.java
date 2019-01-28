@@ -5,12 +5,11 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
-import org.mongodb.morphia.Datastore;
+import xyz.morphia.Datastore;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.morphia.test.Config;
 import org.sdase.commons.server.morphia.test.model.Person;
@@ -65,7 +64,7 @@ public class MorphiaBundleNoEntityDefinedIT {
    }
 
    private Datastore getDatastore() {
-      return ((MorphiaTestApp) DW.getRule().getApplication()).getMorphiaBundle().getDatastore();
+      return ((MorphiaTestApp) DW.getRule().getApplication()).getMorphiaBundle().datastore();
    }
 
    public static class MorphiaTestApp extends Application<Config> {
