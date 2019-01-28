@@ -71,3 +71,38 @@ public class MyCdiApplication extends Application<MyConfiguration> {
 
 ## Configuration
 
+The database connection is configured in the `config.yaml` of the application.
+
+Example config for **production** to be used with environment variables of the cluster configuration:
+```yaml
+mongo:
+  hosts: ${MONGODB_HOSTS}
+  database: ${MONGODB_DATABASE:-}
+  options: ${MONGODB_OPTIONS:-}
+  user: ${MONGODB_USERNAME:-}
+  password: ${MONGODB_PASSWORD:-}
+  useSsl: ${MONGODB_USE_SSL:-true}
+  caCertificateBase64: ${MONGODB_CA_CERTIFICATE_BASE64}
+```
+
+Example config for **developer** machines using [local-infra](https://github.com/SDA-SE/local-infra):
+```yaml
+database:
+  hosts: mongo-1:27118,mongo-2:27119,mongo-3:27120
+  options: replicaSet=sda-replica-set-1
+  database: myAppName
+```
+
+In tests the config is derived from the `MongoDbRule`. See 
+[sda-commons-server-mongo-testing](../sda-commons-server-mongo-testing/README.md) for details.
+
+
+## Health check
+
+TODO a health check for the connection to the MongoDB will be added in this bundle soon
+
+
+## Testing
+
+For testing database access with Morphia we suggest to use 
+[sda-commons-mongo-testing](../sda-commons-server-mongo-testing) module.
