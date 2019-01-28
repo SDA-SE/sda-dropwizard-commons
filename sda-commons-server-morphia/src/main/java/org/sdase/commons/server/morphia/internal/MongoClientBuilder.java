@@ -82,7 +82,7 @@ public class MongoClientBuilder {
          throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
       String caCertificate = configuration.getCaCertificate();
       KeyStore truststoreFromPemKey = createKeyStoreFromCaCertificate(caCertificate);
-      String caCertificateBas64 = configuration.getCaCertificateBas64();
+      String caCertificateBas64 = configuration.getCaCertificateBase64();
       KeyStore truststoreFromBase64EncodedPemKey = createKeyStoreFromBase64EncodedPemKey(caCertificateBas64);
       if (truststoreFromPemKey != null || truststoreFromBase64EncodedPemKey != null) {
          KeyStore keyStore = joinKeyStores(truststoreFromPemKey, truststoreFromBase64EncodedPemKey);
