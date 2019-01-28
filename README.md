@@ -150,12 +150,15 @@ Status:
 The module [`sda-commons-server-morphia`](./sda-commons-server-morphia/README.md) is used to work
 with MongoDB using [Morphia](https://github.com/MorphiaOrg).
 
-
 The module [`sda-commons-server-mongo-testing`](./sda-commons-server-mongo-testing/README.md) 
 provides a MongoDB instance for integration testing.
 
+The module [`sda-commons-server-morphia-exmaple`](./sda-commons-server-morphia-example/README.md) shows how
+to use the bundle within an application.
+
 Status:
 - Ready to use
+
 
 ##### Prometheus
 
