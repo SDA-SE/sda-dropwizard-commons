@@ -122,7 +122,7 @@ public class MongoDbRule extends ExternalResource {
       }
 
       try {
-         mongodConfig = new MongodConfigBuilder().version(version).build();
+         mongodConfig = new MongodConfigBuilder().version(version).withLaunchArgument("--bind_ip", "127.0.0.1").build();
 
          mongodExecutable = ensureMongodStarter().prepare(mongodConfig);
          mongodExecutable.start();
