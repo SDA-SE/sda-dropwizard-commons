@@ -67,7 +67,7 @@ pipeline {
       stage('Gradle Java: Module Test') {
          agent {
             docker {
-               image 'openjdk:8-jdk-alpine'
+               image 'openjdk:8-jdk-stretch'
             }
          }
          steps {
@@ -88,7 +88,7 @@ pipeline {
       stage('Gradle Java: Integration Test') {
          agent {
             docker {
-               image 'openjdk:8-jdk-alpine'
+               image 'openjdk:8-jdk-stretch'
             }
          }
          steps {

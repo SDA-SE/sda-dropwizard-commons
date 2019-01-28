@@ -1,12 +1,29 @@
 package org.sdase.commons.server.morphia.converter;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
-import org.junit.Test;
+import java.util.TimeZone;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ZonedDateTimeConverterTest {
+
+   private TimeZone defaultTimeZone;
+
+   @Before
+   public void setUp() {
+      defaultTimeZone = TimeZone.getDefault();
+      TimeZone.setDefault(TimeZone.getTimeZone("ECT"));
+   }
+
+   @After
+   public void tearDown() {
+      TimeZone.setDefault(defaultTimeZone);
+   }
 
    @Test
    public void shouldDecodeNull() {
