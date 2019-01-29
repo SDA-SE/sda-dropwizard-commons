@@ -23,3 +23,7 @@ dependencies {
     testCompile project(':sda-commons-shared-error')
     testCompile project(':sda-commons-shared-tracing')
 }
+uploadArchives {
+    // We do not upload this test module to Nexus because they should not be deployed.
+    enabled = false
+}
