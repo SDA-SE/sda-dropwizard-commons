@@ -1,4 +1,4 @@
-package org.sdase.commons.server.testing;
+package org.sdase.commons.server.dropwizard.bundles;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.util.Optional;
 import java.util.function.Supplier;
-import org.sdase.commons.server.dropwizard.bundles.ConfigurationValueSupplierBundle;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

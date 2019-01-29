@@ -1,4 +1,4 @@
-package org.sdase.commons.server.testing.test;
+package org.sdase.commons.server.dropwizard.test;
 
 import io.dropwizard.Configuration;
 
