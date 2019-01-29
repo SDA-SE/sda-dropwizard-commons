@@ -43,7 +43,7 @@ public class ZonedDateTimeConverterTest {
    public void shouldDecodeDate() {
       // given
       ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
-      Calendar cal = new GregorianCalendar(2019, Calendar.MARCH, 21, 17, 22, 53);
+      Calendar cal = new GregorianCalendar(2019, Calendar.APRIL, 21, 17, 22, 53);
 
       // when
       ZonedDateTime result = (ZonedDateTime) converter.decode(ZonedDateTime.class, cal.getTime(), null);
