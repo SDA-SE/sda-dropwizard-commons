@@ -3,6 +3,8 @@ package org.sdase.commons.server.morphia.example.mongo.model;
 import org.bson.types.ObjectId;
 import xyz.morphia.annotations.Entity;
 import xyz.morphia.annotations.Id;
+import xyz.morphia.annotations.IndexOptions;
+import xyz.morphia.annotations.Indexed;
 
 @Entity("cars")
 public class Car {
@@ -11,8 +13,10 @@ public class Car {
    private ObjectId id;
 
    private String model;
-   private String sign;
    private String color;
+
+   @Indexed(options = @IndexOptions(sparse = true)) // create an sparse index on 'sign' field
+   private String sign;
 
    public String getModel() {
       return model;

@@ -5,7 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,10 +43,10 @@ public class ZonedDateTimeConverterTest {
    public void shouldDecodeDate() {
       // given
       ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
-      Date d = new Date(119, 3, 21, 17, 22, 53); // NOSONAR
+      Calendar cal = new GregorianCalendar(2019, Calendar.MARCH, 21, 17, 22, 53);
 
       // when
-      ZonedDateTime result = (ZonedDateTime) converter.decode(ZonedDateTime.class, d, null);
+      ZonedDateTime result = (ZonedDateTime) converter.decode(ZonedDateTime.class, cal.getTime(), null);
 
       // then
       assertThat(result).isEqualTo("2019-04-21T17:22:53+01:00[Europe/Paris]");

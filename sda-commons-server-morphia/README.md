@@ -1,15 +1,15 @@
 # SDA Commons Server Morphia
 
-The module [`sda-commons-server-morphia`](./sda-commons-server-morphia/README.md) is used to work
+The module [`sda-commons-server-morphia`](./README.md) is used to work
 with MongoDB using [Morphia](https://github.com/MorphiaOrg).
 
 ## Usage
 
 ### Initialization
 
-The [`MorphiaBundle`](./src/main/java/org/sdase/commons/server/morphia/MorphiaBundle.java) should be added as 
+The [`MorphiaBundle`](./src/main/java/org/sdase/commons/server/morphia/MorphiaBundle.java) should be added as a
 field in the application class instead of being anonymously added in the initialize method like other bundles of this 
-library. Implementations need to refer to the instance to get access to the `Datastore`.
+library. Implementations need to refer to the instance to access the `Datastore`.
 
 The Dropwizard applications config class needs to provide a 
 [`MongoConfiguration`](./src/main/java/org/sdase/commons/server/morphia/MongoConfiguration.java).
@@ -49,10 +49,10 @@ the application:
 @ApplicationScoped
 public class MyCdiApplication extends Application<MyConfiguration> {
    
-      private MorphiaBundle<Config> morphiaBundle = MorphiaBundle.builder()
-         .withConfigurationProvider(MyConfiguration::getMongo)
-         .withEntity(MyEntity.class)
-         .build();
+   private MorphiaBundle<Config> morphiaBundle = MorphiaBundle.builder()
+     .withConfigurationProvider(MyConfiguration::getMongo)
+     .withEntity(MyEntity.class)
+     .build();
    
    @Override
    public void initialize(Bootstrap<Config> bootstrap) {
@@ -82,7 +82,7 @@ mongo:
   user: ${MONGODB_USERNAME:-}
   password: ${MONGODB_PASSWORD:-}
   useSsl: ${MONGODB_USE_SSL:-true}
-  caCertificateBase64: ${MONGODB_CA_CERTIFICATE_BASE64}
+  caCertificate: ${MONGODB_CA_CERTIFICATE}
 ```
 
 Example config for **developer** machines using [local-infra](https://github.com/SDA-SE/local-infra):

@@ -21,9 +21,7 @@ import java.security.cert.CertificateException;
 
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 import static org.sdase.commons.server.morphia.internal.ConnectionStringUtil.createConnectionString;
-import static org.sdase.commons.server.morphia.internal.SslUtil.createTruststoreFromBase64EncodedPemKey;
 import static org.sdase.commons.server.morphia.internal.SslUtil.createTruststoreFromPemKey;
-import static org.sdase.commons.server.morphia.internal.SslUtil.joinKeyStores;
 
 public class MongoClientBuilder {
 
@@ -81,12 +79,9 @@ public class MongoClientBuilder {
    private SSLContext createSslContextIfAnyCertificatesAreConfigured()
          throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
       String caCertificate = configuration.getCaCertificate();
-      KeyStore truststoreFromPemKey = createKeyStoreFromCaCertificate(caCertificate);
-      String caCertificateBas64 = configuration.getCaCertificateBase64();
-      KeyStore truststoreFromBase64EncodedPemKey = createKeyStoreFromBase64EncodedPemKey(caCertificateBas64);
-      if (truststoreFromPemKey != null || truststoreFromBase64EncodedPemKey != null) {
-         KeyStore keyStore = joinKeyStores(truststoreFromPemKey, truststoreFromBase64EncodedPemKey);
-         return SslUtil.createSslContext(keyStore);
+      if (StringUtils.isNotBlank(caCertificate)){
+         KeyStore truststoreFromPemKey = createKeyStoreFromCaCertificate(caCertificate);
+         return SslUtil.createSslContext(truststoreFromPemKey);
       }
       return null;
    }
@@ -98,15 +93,6 @@ public class MongoClientBuilder {
          truststoreFromPemKey = createTruststoreFromPemKey(caCertificate);
       }
       return truststoreFromPemKey;
-   }
-
-   private KeyStore createKeyStoreFromBase64EncodedPemKey(String caCertificateBas64)
-         throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
-      KeyStore truststoreFromBase64EncodedPemKey = null;
-      if (StringUtils.isNotBlank(caCertificateBas64)) {
-         truststoreFromBase64EncodedPemKey = createTruststoreFromBase64EncodedPemKey(caCertificateBas64);
-      }
-      return truststoreFromBase64EncodedPemKey;
    }
 
 }

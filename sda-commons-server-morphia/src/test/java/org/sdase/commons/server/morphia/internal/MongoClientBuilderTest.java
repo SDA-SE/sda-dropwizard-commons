@@ -35,8 +35,7 @@ public class MongoClientBuilderTest {
       MongoClientOptions.Builder clientOptionsBuilderMock = spy(MongoClientOptions.Builder.class);
       MongoConfiguration mongoConfiguration = createValidConfiguration()
             .setUseSsl(true)
-            .setCaCertificate("DUMMY")
-            .setCaCertificateBase64("VEVTVC5DRVJUSUZJQ0FURQo="); // "TEST.CERTIFICATE"
+            .setCaCertificate("DUMMY");
       MongoClientBuilder mongoClientBuilder = new MongoClientBuilder(mongoConfiguration, clientOptionsBuilderMock);
 
       mongoClientBuilder.build(environmentMock);

@@ -4,7 +4,7 @@ import io.dropwizard.Configuration;
 import org.sdase.commons.server.morphia.MongoConfiguration;
 
 /**
- * Example configuration for an application that uses mongo/morpha.
+ * Example configuration for an application that uses mongo/morphia.
  */
 public class MorphiaApplicationConfiguration extends Configuration {
 

@@ -25,7 +25,6 @@ import xyz.morphia.Key;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,7 +43,7 @@ public class MorphiaBundleCustomConverterIT {
                      .withRandomPorts()
                      .withConfigurationModifier(c -> c.getMongo()
                            .setHosts(MONGODB.getHost())
-                           .setDatabase("testPeople_" + new Random().nextInt(Integer.MAX_VALUE)))
+                           .setDatabase("testPeople"))
                      .build());
 
    @ClassRule

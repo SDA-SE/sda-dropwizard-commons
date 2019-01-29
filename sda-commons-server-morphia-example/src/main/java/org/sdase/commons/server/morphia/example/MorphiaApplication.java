@@ -21,7 +21,7 @@ public class MorphiaApplication extends Application<MorphiaApplicationConfigurat
 
    private MorphiaBundle<MorphiaApplicationConfiguration> morphiaBundle = MorphiaBundle.builder()
          .withConfigurationProvider(MorphiaApplicationConfiguration::getMongo) // configuration provider of mongo connection details
-         .withEntity(Car.class) // Entity that is registered in morphia as mappable
+         .withEntity(Car.class) // Entity that is registered in morphia. Morphia will configure the database as defined within the entity e.g. with indexes.
          .build();
 
    public static void main(String[] args) throws Exception {

@@ -18,7 +18,6 @@ import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
 
 import java.util.List;
-import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -37,7 +36,7 @@ public class MorphiaBundleScanPackageByMarkerClassIT {
                      .withRandomPorts()
                      .withConfigurationModifier(c -> c.getMongo()
                            .setHosts(MONGODB.getHost())
-                           .setDatabase("testPeople_" + new Random().nextInt(Integer.MAX_VALUE)))
+                           .setDatabase("testPeople"))
                      .build());
 
    @ClassRule

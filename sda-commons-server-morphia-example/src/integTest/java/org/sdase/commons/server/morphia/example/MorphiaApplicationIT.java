@@ -1,5 +1,6 @@
 package org.sdase.commons.server.morphia.example;
 
+import com.mongodb.DBObject;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -11,6 +12,8 @@ import org.sdase.commons.server.testing.DropwizardConfigurationHelper;
 import org.sdase.commons.server.testing.LazyRule;
 import org.sdase.commons.server.weld.testing.WeldAppRule;
 import xyz.morphia.Datastore;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,7 +45,7 @@ public class MorphiaApplicationIT {
       MorphiaApplication app = (MorphiaApplication) LAZY_RULE.getRule().getApplication();
       carManager = app.carManager();
       datastore = app.morphiaDatastore();
-      datastore.getCollection(Car.class).drop();
+      datastore.delete(datastore.createQuery(Car.class));
    }
 
    @Test
@@ -56,6 +59,13 @@ public class MorphiaApplicationIT {
    public void shouldReadHHEntitiesOnly() {
       addData();
       assertThat(carManager.hamburgCars()).usingFieldByFieldElementComparator().containsExactly(HH);
+   }
+
+   @Test
+   public void shouldHaveIndexOnSign() {
+      List<DBObject> indexInfo = datastore.getCollection(Car.class).getIndexInfo();
+      assertThat(indexInfo).extracting(dbo -> dbo.get("name")).containsExactlyInAnyOrder("_id_", "sign_1");
+
    }
 
    private void addData() {

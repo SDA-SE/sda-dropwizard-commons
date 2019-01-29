@@ -9,7 +9,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -17,8 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
-import java.util.Enumeration;
+
 
 /**
  * Utility to help with SSL related stuff according to the {@code MorphiaBundle}
@@ -40,23 +38,7 @@ class SslUtil {
       return sslContext;
    }
 
-   static KeyStore joinKeyStores(KeyStore... keyStores)
-         throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
-      KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-      keyStore.load(null, null);
-      int i = 0;
-      for (KeyStore store : keyStores) {
-         if (store == null) {
-            continue;
-         }
-         Enumeration<String> aliases = store.aliases();
-         while (aliases.hasMoreElements()) {
-            keyStore.setCertificateEntry("cert_" + i, store.getCertificate(aliases.nextElement()));
-            i++;
-         }
-      }
-      return keyStore;
-   }
+
 
    static KeyStore createTruststoreFromPemKey(String certificateAsString)
          throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
@@ -71,14 +53,6 @@ class SslUtil {
          }
          return keyStore;
       }
-   }
-
-   static KeyStore createTruststoreFromBase64EncodedPemKey(String base64EncodedCertificateAsString)
-         throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
-      byte[] base64EncodedCertificateBytes = base64EncodedCertificateAsString.getBytes();
-      byte[] certificateBytes = Base64.getDecoder().decode(base64EncodedCertificateBytes);
-      String certificateAsString = new String(certificateBytes, StandardCharsets.UTF_8);
-      return createTruststoreFromPemKey(certificateAsString);
    }
 
    private static X509Certificate parseCert(PEMParser parser) throws IOException, CertificateException {
