@@ -2,8 +2,6 @@ package org.sdase.commons.client.jersey;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
@@ -38,8 +36,7 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
 
    @Override
    public void run(C configuration, Environment environment) {
-      JerseyClientBuilder clientBuilder = new JerseyClientBuilder(environment).using(new JerseyClientConfiguration());
-      this.clientFactory = new ClientFactory(clientBuilder, consumerTokenProvider.apply(configuration));
+      this.clientFactory = new ClientFactory(environment, consumerTokenProvider.apply(configuration));
       environment.jersey().register(ContainerRequestContextHolder.class);
       environment.jersey().register(ClientRequestExceptionMapper.class);
       initialized = true;
