@@ -33,7 +33,7 @@ class SslUtil {
       trustManagerFactory.init(keyStore);
 
       SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-      sslContext.init(null, trustManagerFactory.getTrustManagers(), SecureRandom.getInstanceStrong());
+      sslContext.init(null, trustManagerFactory.getTrustManagers(), SecureRandom.getInstance("NativePRNG"));
 
       return sslContext;
    }
