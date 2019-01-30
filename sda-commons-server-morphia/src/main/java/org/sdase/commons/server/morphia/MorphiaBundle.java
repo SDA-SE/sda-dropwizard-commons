@@ -1,11 +1,13 @@
 package org.sdase.commons.server.morphia;
 
+import com.codahale.metrics.health.HealthCheckRegistry;
 import com.mongodb.MongoClient;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.apache.commons.lang3.Validate;
+import org.sdase.commons.server.morphia.health.MongoHealthCheck;
 import xyz.morphia.Datastore;
 import xyz.morphia.Morphia;
 import xyz.morphia.converters.LocalDateConverter;
@@ -76,6 +78,17 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       this.morphiaDatastore = configuredMorphia.createDatastore(mongoClient, mongoConfiguration.getDatabase());
       this.morphiaDatastore.ensureIndexes();
 
+      registerHealthCheck(environment.healthChecks(), mongoConfiguration.getDatabase());
+   }
+
+   /**
+    * registers an health check for the mongo database
+    * @param healthCheckRegistry registry where to register health checks
+    * @param database database name that is used within health check
+    */
+   private void registerHealthCheck(HealthCheckRegistry healthCheckRegistry, String database) {
+      healthCheckRegistry
+            .register("mongo", new MongoHealthCheck(mongoClient().getDatabase((database))));
    }
 
    /**

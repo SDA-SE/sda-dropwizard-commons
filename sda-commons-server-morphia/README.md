@@ -97,9 +97,10 @@ In tests the config is derived from the `MongoDbRule`. See
 [sda-commons-server-mongo-testing](../sda-commons-server-mongo-testing/README.md) for details.
 
 
-## Health check
+### Health check
 
-TODO a health check for the connection to the MongoDB will be added in this bundle soon
+An external health check with the name _mongo_ is automatically registered to test the connect to the database. 
+A simple _ping_ command to the database is used.
 
 
 ## Testing
