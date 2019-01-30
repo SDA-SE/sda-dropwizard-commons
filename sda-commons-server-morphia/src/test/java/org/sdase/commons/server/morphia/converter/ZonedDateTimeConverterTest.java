@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,7 +44,9 @@ public class ZonedDateTimeConverterTest {
    public void shouldDecodeDate() {
       // given
       ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
-      Calendar cal = new GregorianCalendar(2019, Calendar.APRIL, 21, 17, 22, 53);
+      Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
+      cal.clear();
+      cal.set(2019, Calendar.APRIL, 21, 17, 22, 53);
 
       // when
       ZonedDateTime result = (ZonedDateTime) converter.decode(ZonedDateTime.class, cal.getTime(), null);
