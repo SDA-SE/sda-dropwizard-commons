@@ -99,7 +99,7 @@ In tests the config is derived from the `MongoDbRule`. See
 
 ### Health check
 
-An external health check with the name _mongo_ is automatically registered to test the connect to the database. 
+A health check with the name _mongo_ is automatically registered to test the mongo connection. 
 A simple _ping_ command to the database is used.
 
 

@@ -1,6 +1,6 @@
 dependencies {
     compile project(':sda-commons-server-dropwizard')
-    compile project(':sda-commons-server-healthcheck')
+    
     compile 'org.mongodb:mongo-java-driver:' + mongoJavaDriverVersion
     compile 'xyz.morphia.morphia:core:1.4.0', {
         exclude group: 'org.mongodb', module: 'mongo-java-driver'

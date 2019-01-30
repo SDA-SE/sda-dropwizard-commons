@@ -3,11 +3,9 @@ package org.sdase.commons.server.morphia.health;
 import com.codahale.metrics.health.HealthCheck;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import org.sdase.commons.server.healthcheck.ExternalHealthCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ExternalHealthCheck
 public class MongoHealthCheck  extends HealthCheck {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(MongoHealthCheck.class);

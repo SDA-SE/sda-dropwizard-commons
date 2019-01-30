@@ -7,7 +7,6 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
-import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.morphia.test.Config;
 
@@ -41,14 +40,8 @@ public class MorphiaBundleHealthCheckIT {
    public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
 
    @Test
-   public void shouldRegisterExternalHealthCheck() {
+   public void shouldRegisterHealthCheck() {
       String healthcheckName = "mongo";
-      Map<String, HealthCheckResult> healthCheckInternal = DW.getRule().client().target("http://localhost:" + DW.getRule().getAdminPort())
-            .path("/healthcheck/internal")
-            .request(APPLICATION_JSON)
-            .get(new GenericType<Map<String, HealthCheckResult>>() {});
-      assertThat(healthCheckInternal).doesNotContainKey(healthcheckName);
-
       Map<String, HealthCheckResult> healthCheck = DW.getRule().client().target("http://localhost:" + DW.getRule().getAdminPort())
             .path("/healthcheck")
             .request(APPLICATION_JSON)
@@ -68,7 +61,6 @@ public class MorphiaBundleHealthCheckIT {
       @Override
       public void initialize(Bootstrap<Config> bootstrap) {
          bootstrap.addBundle(morphiaBundle);
-         bootstrap.addBundle(InternalHealthCheckEndpointBundle.builder().build());
       }
 
       @Override
