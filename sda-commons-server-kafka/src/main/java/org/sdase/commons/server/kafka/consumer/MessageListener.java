@@ -121,6 +121,10 @@ public class MessageListener<K, V> implements Runnable {
       }
       LOGGER.info("MessageListener closing Consumer for [{}]", joinedTopics);
 
+      commitAndClose();
+   }
+
+   private void commitAndClose() {
       try {
          if (autoCommitOnly) {
             // try to commit explicitly since waiting for auto commit may be
