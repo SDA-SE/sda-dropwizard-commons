@@ -107,7 +107,11 @@ public class MessageListener<K, V> implements Runnable {
             }
 
          } catch (WakeupException w) {
-            LOGGER.warn("Woke up before polling returned", w);
+            if (shouldStop.get()) {
+               LOGGER.info("Woke up to stop consuming.");
+            } else {
+               LOGGER.warn("Woke up before polling returned but shouldStop is {}.", shouldStop.get(), w);
+            }
          } catch (StopListenerException e) {
             LOGGER.error("Stopping listener for topics [{}] due to exception", joinedTopics, e);
             break;
