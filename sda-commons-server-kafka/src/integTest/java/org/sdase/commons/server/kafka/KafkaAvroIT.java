@@ -27,7 +27,6 @@ import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
-import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
@@ -59,12 +58,12 @@ public class KafkaAvroIT {
    public static final TestRule CHAIN = RuleChain.outerRule(SCHEMA_REGISTRY).around(DROPWIZARD_APP_RULE);
 
 
-   protected KafkaBundle<KafkaTestConfiguration> bundle = KafkaBundle
+   private KafkaBundle<KafkaTestConfiguration> bundle = KafkaBundle
          .builder()
          .withConfigurationProvider(KafkaTestConfiguration::getKafka)
          .build();
 
-   KafkaTestConfiguration kafkaTestConfiguration = new KafkaTestConfiguration()
+   private KafkaTestConfiguration kafkaTestConfiguration = new KafkaTestConfiguration()
          .withBrokers(KAFKA.getKafkaBrokers());
 
 
@@ -78,7 +77,7 @@ public class KafkaAvroIT {
    }
 
    @Test
-   public void shouldWriteAndReadAvro() throws ConfigurationException {
+   public void shouldWriteAndReadAvro()  {
       String topicName = "shouldWriteAndReadAvro";
       KAFKA.getKafkaTestUtils().createTopic(topicName, 1, (short) 1);
 

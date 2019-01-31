@@ -39,7 +39,6 @@ import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
 import org.sdase.commons.server.kafka.dropwizard.AppConfiguration;
 import org.sdase.commons.server.kafka.dropwizard.KafkaApplication;
-import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 
 import io.dropwizard.testing.ResourceHelpers;
@@ -73,7 +72,7 @@ public class KafkaBundleWithConfigIT {
    }
 
    @Test
-   public void allTopicsDescriptionsGenerated() throws ConfigurationException {
+   public void allTopicsDescriptionsGenerated()  {
       final String testTopic1 = "topicId1";
       assertThat(kafkaBundle.getTopicConfiguration(testTopic1), is(notNullValue()));
       assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getReplicationFactor().count(), is(2));
@@ -83,7 +82,7 @@ public class KafkaBundleWithConfigIT {
    }
 
    @Test
-   public void createProducerWithTopic() throws ConfigurationException {
+   public void createProducerWithTopic()  {
       MessageProducer<String, String> topicName2 = kafkaBundle
             .registerProducer(ProducerRegistration
                   .<String, String>builder()
@@ -97,7 +96,7 @@ public class KafkaBundleWithConfigIT {
 
 
    @Test
-   public void testConsumerCanReadMessages() throws ConfigurationException {
+   public void testConsumerCanReadMessages()  {
       String topic = "testConsumerCanReadMessages";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -127,7 +126,7 @@ public class KafkaBundleWithConfigIT {
    }
 
    @Test
-   public void testConsumerCanReadMessagesNamed() throws ConfigurationException {
+   public void testConsumerCanReadMessagesNamed()  {
       String topic  = "testConsumerCanReadMessagesNamed";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -158,7 +157,7 @@ public class KafkaBundleWithConfigIT {
    }
 
    @Test
-   public void defaultConProdShouldHaveStringSerializer() throws ConfigurationException {
+   public void defaultConProdShouldHaveStringSerializer()  {
       String topic = "defaultConProdShouldHaveStringSerializer";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -190,7 +189,7 @@ public class KafkaBundleWithConfigIT {
    }
 
    @Test
-   public void testKafkaMessages() throws ConfigurationException {
+   public void testKafkaMessages()  {
       String topic = "testKafkaMessages";
 
       List<String> checkMessages = new ArrayList<>();
@@ -227,7 +226,7 @@ public class KafkaBundleWithConfigIT {
 
 
    @Test
-   public void producerShouldSendMessagesToKafka() throws ConfigurationException {
+   public void producerShouldSendMessagesToKafka() {
       String topic = "producerShouldSendMessagesToKafka";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
       MessageProducer<String, String> producer = kafkaBundle
@@ -265,7 +264,7 @@ public class KafkaBundleWithConfigIT {
 
 
    @Test
-   public void kafkaConsumerReceivesMessages() throws ConfigurationException {
+   public void kafkaConsumerReceivesMessages() {
 
       String topic = "kafkaConsumerReceivesMessages";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
@@ -307,7 +306,7 @@ public class KafkaBundleWithConfigIT {
    private int callbackCount = 0;
 
    @Test
-   public void kafkaConsumerReceivesMessagesAsyncCommit() throws ConfigurationException {
+   public void kafkaConsumerReceivesMessagesAsyncCommit()  {
       String topic = "kafkaConsumerReceivesMessagesAsyncCommit";
       StringDeserializer deserializer = new StringDeserializer();
       KAFKA.getKafkaTestUtils().createTopic(topic,1, (short)1);
@@ -358,10 +357,10 @@ public class KafkaBundleWithConfigIT {
 
 
    @Test
-   public void multiTest() throws ConfigurationException {
+   public void multiTest() {
 
-      String TOPIC_CREATE = "create";
-      String TOPIC_DELETE = "delete";
+      final String TOPIC_CREATE = "create";
+      final String TOPIC_DELETE = "delete";
 
       KAFKA.getKafkaTestUtils().createTopic(TOPIC_CREATE, 1, (short) 1);
       KAFKA.getKafkaTestUtils().createTopic(TOPIC_DELETE, 1, (short) 1);
@@ -412,7 +411,7 @@ public class KafkaBundleWithConfigIT {
    }
 
    @Test
-   public void testJsonSerializer() throws ConfigurationException {
+   public void testJsonSerializer() {
       String topic = "testJsonSerializer";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -446,5 +445,4 @@ public class KafkaBundleWithConfigIT {
       assertThat(resultsString, containsInAnyOrder("a", "b"));
 
    }
-
 }

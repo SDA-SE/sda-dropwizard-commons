@@ -31,7 +31,6 @@ import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
-import org.sdase.commons.server.kafka.exception.ConfigurationException;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
 
@@ -74,7 +73,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
    // are done
    @Ignore
    @Test
-   public void messagesThrowingExceptionsMustBeRetried() throws ConfigurationException { // NOSONAR
+   public void messagesThrowingExceptionsMustBeRetried()  { // NOSONAR
       String topic = "messagesThrowingExceptionsMustBeRetried";
       String uuid = UUID.randomUUID().toString();
       KafkaProducer<String, String> producer = KAFKA
@@ -95,7 +94,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                   .withValueDeserializer(deserializer)
                   .withHandler(r -> {
                      numberExceptionThrown++;
-                     throw new RuntimeException("Error");
+                     throw new RuntimeException("Error"); // NOSONAR
                   })
                   .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
@@ -131,7 +130,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
    }
 
    @Test
-   public void committedMessagesMustNotBeRetried() throws ConfigurationException {
+   public void committedMessagesMustNotBeRetried() {
       String topic = "committedMessagesMustNotBeRetried";
 
       List<MessageListener<String, String>> firstListener = bundle

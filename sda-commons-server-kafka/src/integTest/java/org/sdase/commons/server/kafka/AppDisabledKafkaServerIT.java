@@ -1,6 +1,5 @@
 package org.sdase.commons.server.kafka;
 
-import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
@@ -20,9 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
 
 /**
@@ -46,7 +43,7 @@ public class AppDisabledKafkaServerIT {
    }
 
    @Test
-   public void checkRegisterMessageHandler() throws ConfigurationException {
+   public void checkRegisterMessageHandler()  {
       List<MessageListener<String, String>> lc1 = bundle
             .registerMessageHandler(MessageHandlerRegistration
                   .<String, String>builder()
@@ -63,15 +60,15 @@ public class AppDisabledKafkaServerIT {
    }
 
    @Test
-   public void checkRegisterProducerReturnsDummy() throws ConfigurationException {
+   public void checkRegisterProducerReturnsDummy() {
       MessageProducer<Object, Object> producer = bundle.registerProducer(ProducerRegistration.builder().forTopic("Topic").createTopicIfMissing().withDefaultProducer().build());
       assertNull(producer.send("test", "test"));
 
    }
 
    @Test(expected = ConfigurationException.class)
-   public void checkGetTopicConfiguration() throws ConfigurationException {
-      ExpectedTopicConfiguration test = bundle.getTopicConfiguration("test");
+   public void checkGetTopicConfiguration()  {
+      bundle.getTopicConfiguration("test");
    }
 
 

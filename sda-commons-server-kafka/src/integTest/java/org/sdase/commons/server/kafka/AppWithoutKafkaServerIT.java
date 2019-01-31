@@ -5,7 +5,6 @@ import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.dropwizard.AppConfiguration;
 import org.sdase.commons.server.kafka.dropwizard.KafkaApplication;
-import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.testing.EnvironmentRule;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -21,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class AppWithoutKafkaServerIT {
 
@@ -48,7 +45,7 @@ public class AppWithoutKafkaServerIT {
    }
 
    @Test(expected = TimeoutException.class)
-   public void checkMessageListenerCreationThrowsException() throws ConfigurationException {
+   public void checkMessageListenerCreationThrowsException() {
       String topicName = "checkMessageListenerCreationSuccessful";
       bundle
             .registerMessageHandler(MessageHandlerRegistration
@@ -65,13 +62,13 @@ public class AppWithoutKafkaServerIT {
    }
 
    @Test(expected = TimeoutException.class)
-   public void checkProducerWithCreationThrowsException() throws ConfigurationException {
+   public void checkProducerWithCreationThrowsException()  {
       String topicName = "checkProducerWithCreationThrowsException";
       bundle.registerProducer(ProducerRegistration.builder().forTopic(topicName).createTopicIfMissing().withDefaultProducer().build());
    }
 
    @Test(expected = TimeoutException.class)
-   public void checkProducerWithCheckThrowsException() throws ConfigurationException {
+   public void checkProducerWithCheckThrowsException()  {
       String topicName = "checkProducerWithCreationThrowsException";
       bundle.registerProducer(ProducerRegistration.builder().forTopic(topicName).checkTopicConfiguration().withDefaultProducer().build());
    }

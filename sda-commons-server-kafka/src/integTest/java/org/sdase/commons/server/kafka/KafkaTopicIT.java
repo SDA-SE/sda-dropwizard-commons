@@ -27,7 +27,6 @@ import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
-import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.exception.TopicCreationException;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
@@ -47,12 +46,12 @@ public class KafkaTopicIT {
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
 
-   protected KafkaBundle<KafkaTestConfiguration> bundle = KafkaBundle
+   private  KafkaBundle<KafkaTestConfiguration> bundle = KafkaBundle
          .builder()
          .withConfigurationProvider(KafkaTestConfiguration::getKafka)
          .build();
 
-   KafkaTestConfiguration kafkaTestConfiguration = new KafkaTestConfiguration()
+   private KafkaTestConfiguration kafkaTestConfiguration = new KafkaTestConfiguration()
          .withBrokers(KAFKA.getKafkaBrokers());
 
 
@@ -65,7 +64,7 @@ public class KafkaTopicIT {
    }
 
    @Test
-   public void checkTopicSuccessful() throws ConfigurationException {
+   public void checkTopicSuccessful()  {
       String topicName = "checkTopicSuccessful";
       KAFKA.getKafkaTestUtils().createTopic(topicName, 1, (short) 1);
       List<MessageListener<String, String>> stringStringMessageListener = bundle
@@ -85,7 +84,7 @@ public class KafkaTopicIT {
    }
 
    @Test
-   public void checkTopicSuccessfulComplex() throws ConfigurationException {
+   public void checkTopicSuccessfulComplex()  {
       String topicName = "checkTopicSuccessfulComplex";
       KAFKA.getKafkaTestUtils().createTopic(topicName, 2, (short) 1);
       List<MessageListener<String, String>> stringStringMessageListener = bundle
@@ -109,7 +108,7 @@ public class KafkaTopicIT {
    }
 
    @Test(expected = MismatchedTopicConfigException.class)
-   public void checkTopicFails() throws ConfigurationException {
+   public void checkTopicFails()  {
 
       List<MessageListener<String, String>> stringStringMessageListener = bundle
             .registerMessageHandler(MessageHandlerRegistration
@@ -128,7 +127,7 @@ public class KafkaTopicIT {
    }
 
    @Test
-   public void createSimpleTopic() throws ConfigurationException {
+   public void createSimpleTopic() {
       String topicName = "createSimpleTopic";
       ExpectedTopicConfiguration topic = TopicConfigurationBuilder
             .builder(topicName)
@@ -141,14 +140,14 @@ public class KafkaTopicIT {
    }
 
    @Test
-   public void createSimpleTopicNameOnly() throws ConfigurationException {
+   public void createSimpleTopicNameOnly()  {
       String topicName = "createSimpleTopicNameOnly";
       MessageProducer<Object, Object> producer = bundle.registerProducer(ProducerRegistration.builder().forTopic(topicName).createTopicIfMissing().withDefaultProducer().build());
       assertThat(producer, is(notNullValue()));
    }
 
    @Test(expected = TopicCreationException.class)
-   public void createTopicException() throws ConfigurationException {
+   public void createTopicException()  {
       String topicName = "createTopicException";
       ExpectedTopicConfiguration topic = TopicConfigurationBuilder
             .builder(topicName)
@@ -161,7 +160,7 @@ public class KafkaTopicIT {
    }
 
    @Test
-   public void createComplexTopic() throws ConfigurationException {
+   public void createComplexTopic()  {
       String topicName = "createComplexTopic";
       ExpectedTopicConfiguration topic = TopicConfigurationBuilder
             .builder(topicName)
