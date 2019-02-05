@@ -13,6 +13,8 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
+import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
+import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
@@ -37,8 +39,6 @@ import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
-import org.sdase.commons.server.kafka.dropwizard.AppConfiguration;
-import org.sdase.commons.server.kafka.dropwizard.KafkaApplication;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 
 import io.dropwizard.testing.ResourceHelpers;
@@ -48,8 +48,8 @@ public class KafkaBundleWithConfigIT {
 
    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
 
-   private static final DropwizardAppRule<AppConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
-         KafkaApplication.class, ResourceHelpers.resourceFilePath("test-config-con-prod.yml"));
+   private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
+         KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-con-prod.yml"));
 
    private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
 
@@ -59,16 +59,22 @@ public class KafkaBundleWithConfigIT {
    private List<Long> results = Collections.synchronizedList(new ArrayList<>());
    private List<String> resultsString = Collections.synchronizedList(new ArrayList<>());
 
-   private KafkaBundle<AppConfiguration> kafkaBundle;
-
+   private KafkaBundle<KafkaTestConfiguration> kafkaBundle;
 
 
    @Before
    public void before() {
-      KafkaApplication app = DROPWIZARD_APP_RULE.getApplication();
-      kafkaBundle = app.getKafkaBundle();
+      KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
+      //noinspection unchecked
+      kafkaBundle = app.kafkaBundle();
       results.clear();
       resultsString.clear();
+   }
+
+   @Test
+   public void healthCheckShouldBeAdded() {
+      KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
+      assertThat(app.healthCheckRegistry().getHealthCheck("kafkaConnection"), is(notNullValue()));
    }
 
    @Test
@@ -121,7 +127,7 @@ public class KafkaBundleWithConfigIT {
       producer.send(1L, 1L);
       producer.send(2L, 2L);
 
-      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> results.size() == 2);
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS*100, MILLISECONDS).until(() -> results.size() == 2);
       assertThat(results, containsInAnyOrder(1L, 2L));
    }
 
@@ -193,10 +199,10 @@ public class KafkaBundleWithConfigIT {
       String topic = "testKafkaMessages";
 
       List<String> checkMessages = new ArrayList<>();
-      KafkaApplication app = DROPWIZARD_APP_RULE.getApplication();
+
       KAFKA.getKafkaTestUtils().createTopic(topic,1, (short)1);
 
-      app.getKafkaBundle()
+      kafkaBundle
             .registerMessageHandler(MessageHandlerRegistration
                   .<String, String> builder()
                   .withDefaultListenerConfig()

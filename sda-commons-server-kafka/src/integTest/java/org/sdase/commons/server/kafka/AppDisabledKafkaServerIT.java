@@ -1,19 +1,20 @@
 package org.sdase.commons.server.kafka;
 
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
-import org.sdase.commons.server.kafka.dropwizard.AppConfiguration;
-import org.sdase.commons.server.kafka.dropwizard.KafkaApplication;
+import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
+import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.sdase.commons.server.testing.DropwizardRuleHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,22 +29,27 @@ import static org.junit.Assert.assertNull;
 public class AppDisabledKafkaServerIT {
 
    @ClassRule
-   public static final DropwizardAppRule<AppConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
-         KafkaApplication.class, ResourceHelpers.resourceFilePath("test-config-disabled.yml"));
+   public static final DropwizardAppRule<KafkaTestConfiguration> DW = DropwizardRuleHelper
+         .dropwizardTestAppFrom(KafkaTestApplication.class)
+         .withConfigFrom(KafkaTestConfiguration::new)
+         .withRandomPorts()
+         .withConfigurationModifier(c -> c.getKafka().setDisabled(true))
+         .build();
 
    private List<String> results = Collections.synchronizedList(new ArrayList<>());
 
-   private KafkaBundle<AppConfiguration> bundle;
+   private KafkaBundle bundle;
 
    @Before
    public void before() {
-      KafkaApplication app = DROPWIZARD_APP_RULE.getApplication();
-      bundle = app.getKafkaBundle();
+      KafkaTestApplication app = DW.getApplication();
+      bundle = app.kafkaBundle();
       results.clear();
    }
 
    @Test
    public void checkRegisterMessageHandler()  {
+      @SuppressWarnings("unchecked")
       List<MessageListener<String, String>> lc1 = bundle
             .registerMessageHandler(MessageHandlerRegistration
                   .<String, String>builder()
@@ -61,9 +67,12 @@ public class AppDisabledKafkaServerIT {
 
    @Test
    public void checkRegisterProducerReturnsDummy() {
-      MessageProducer<Object, Object> producer = bundle.registerProducer(ProducerRegistration.builder().forTopic("Topic").createTopicIfMissing().withDefaultProducer().build());
+      @SuppressWarnings("unchecked")
+      MessageProducer<Object, Object> producer = bundle
+            .registerProducer(
+                  ProducerRegistration.builder().forTopic("Topic").createTopicIfMissing().withDefaultProducer().build()
+            );
       assertNull(producer.send("test", "test"));
-
    }
 
    @Test(expected = ConfigurationException.class)

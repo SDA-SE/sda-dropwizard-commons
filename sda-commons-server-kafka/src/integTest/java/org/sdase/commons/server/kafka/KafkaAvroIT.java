@@ -40,16 +40,16 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 
 public class KafkaAvroIT {
 
-   protected static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource().withBrokers(2);
+   private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource().withBrokers(2);
 
-   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE =
+   private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE =
          new KafkaBrokerEnvironmentRule(KAFKA);
 
-   protected static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
+   private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
          KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));
 
 
-   public static final ConfluentSchemaRegistryRule SCHEMA_REGISTRY = ConfluentSchemaRegistryRule.builder()
+   private static final ConfluentSchemaRegistryRule SCHEMA_REGISTRY = ConfluentSchemaRegistryRule.builder()
          .withKafkaProtocol(ProtocolType.PLAINTEXT.toString())
          .withKafkaBrokerRule(KAFKA_BROKER_ENVIRONMENT_RULE)
          .build();
@@ -58,22 +58,17 @@ public class KafkaAvroIT {
    public static final TestRule CHAIN = RuleChain.outerRule(SCHEMA_REGISTRY).around(DROPWIZARD_APP_RULE);
 
 
-   private KafkaBundle<KafkaTestConfiguration> bundle = KafkaBundle
-         .builder()
-         .withConfigurationProvider(KafkaTestConfiguration::getKafka)
-         .build();
-
-   private KafkaTestConfiguration kafkaTestConfiguration = new KafkaTestConfiguration()
-         .withBrokers(KAFKA.getKafkaBrokers());
-
-
    private List<String> results = Collections.synchronizedList(new ArrayList<>());
 
 
+   private KafkaBundle<KafkaTestConfiguration> bundle;
+
    @Before
    public void setup() {
+      KafkaTestApplication application = DROPWIZARD_APP_RULE.getApplication();
+      //noinspection unchecked
+      bundle = application.kafkaBundle();
       results.clear();
-      bundle.run(kafkaTestConfiguration, DROPWIZARD_APP_RULE.getEnvironment());
    }
 
    @Test
@@ -115,12 +110,6 @@ public class KafkaAvroIT {
       producer.send("test", new FullName("first", "last"));
 
       await().atMost(5, TimeUnit.SECONDS).until(() -> results.size() == 1);
-
-
-
-
-
-
    }
 
 

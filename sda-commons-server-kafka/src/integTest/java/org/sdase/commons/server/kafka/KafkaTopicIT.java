@@ -7,12 +7,12 @@ import static org.hamcrest.Matchers.notNullValue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.salesforce.kafka.test.KafkaBroker;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
-import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
-import io.dropwizard.testing.ResourceHelpers;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -31,36 +31,37 @@ import org.sdase.commons.server.kafka.exception.TopicCreationException;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.sdase.commons.server.testing.DropwizardRuleHelper;
+import org.sdase.commons.server.testing.LazyRule;
+
 
 public class KafkaTopicIT {
 
-   protected static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
+   private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
          .withBrokerProperty("auto.create.topics.enable", "false")
          .withBrokers(2);
 
-   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
-
-   protected static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
-         KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));
+   private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE =new LazyRule<>( () -> DropwizardRuleHelper
+         .dropwizardTestAppFrom(KafkaTestApplication.class)
+         .withConfigFrom(KafkaTestConfiguration::new)
+         .withRandomPorts()
+         .withConfigurationModifier(c -> c.getKafka()
+               .setBrokers(KAFKA.getKafkaBrokers().stream().map(KafkaBroker::getConnectString).collect(Collectors.toList())))
+         .build() );
 
    @ClassRule
-   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
-
-   private  KafkaBundle<KafkaTestConfiguration> bundle = KafkaBundle
-         .builder()
-         .withConfigurationProvider(KafkaTestConfiguration::getKafka)
-         .build();
-
-   private KafkaTestConfiguration kafkaTestConfiguration = new KafkaTestConfiguration()
-         .withBrokers(KAFKA.getKafkaBrokers());
+   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
 
 
+   private KafkaBundle<KafkaTestConfiguration> bundle;
    private List<String> results = Collections.synchronizedList(new ArrayList<>());
 
    @Before
    public void setup() {
       results.clear();
-      bundle.run(kafkaTestConfiguration, DROPWIZARD_APP_RULE.getEnvironment());
+      KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
+      //noinspection unchecked
+      bundle = (KafkaBundle<KafkaTestConfiguration>)app.kafkaBundle();
    }
 
    @Test

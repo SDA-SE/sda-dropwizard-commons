@@ -13,6 +13,7 @@ import org.sdase.commons.server.kafka.config.TopicConfig;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.exception.TopicCreationException;
+import org.sdase.commons.server.kafka.health.KafkaHealthCheck;
 import org.sdase.commons.server.kafka.producer.KafkaMessageProducer;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.topicana.TopicComparer;
@@ -71,6 +72,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    public void run(C configuration, Environment environment) {
       kafkaConfiguration = configurationProvider.apply(configuration);
       kafkaConfiguration.getTopics().forEach((k, v) -> topics.put(k, createTopicDescription(v)));
+      if (!kafkaConfiguration.isDisabled()) {
+         environment.healthChecks().register("kafkaConnection", new KafkaHealthCheck(kafkaConfiguration));
+      }
       setupManagedThreadManager(environment);
    }
 
@@ -197,7 +201,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
       KafkaMessageProducer<K, V> messageProducer = new KafkaMessageProducer(registration.getTopicName(),
             createProducer(registration));
-
       messageProducers.add(messageProducer);
       return messageProducer;
    }

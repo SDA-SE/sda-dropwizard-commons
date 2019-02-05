@@ -31,16 +31,16 @@ public class KafkaConfiguration {
    private List<String> brokers = new ArrayList<>();
 
    @JsonProperty(value = "producers")
-   private Map<String, ProducerConfig> producers = new HashMap();
+   private Map<String, ProducerConfig> producers = new HashMap<>();
 
    @JsonProperty(value = "consumers")
-   private Map<String, ConsumerConfig> consumers = new HashMap();
+   private Map<String, ConsumerConfig> consumers = new HashMap<>();
 
    @JsonProperty(value = "topics")
-   private Map<String, TopicConfig> topics = new HashMap();
+   private Map<String, TopicConfig> topics = new HashMap<>();
 
    @JsonProperty(value = "listenerConfig")
-   private Map<String, ListenerConfig> listenerConfig = new HashMap();
+   private Map<String, ListenerConfig> listenerConfig = new HashMap<>();
 
    @JsonProperty(value = "security")
    private Security security = new Security();
@@ -79,6 +79,30 @@ public class KafkaConfiguration {
 
    public boolean isDisabled() {
       return disabled;
+   }
+
+   public void setAdminClientrequestTimeoutMs(int adminClientrequestTimeoutMs) {
+      this.adminClientrequestTimeoutMs = adminClientrequestTimeoutMs;
+   }
+
+   public void setDisabled(boolean disabled) {
+      this.disabled = disabled;
+   }
+
+   public void setProducers(Map<String, ProducerConfig> producers) {
+      this.producers = producers;
+   }
+
+   public void setConsumers(Map<String, ConsumerConfig> consumers) {
+      this.consumers = consumers;
+   }
+
+   public void setTopics(Map<String, TopicConfig> topics) {
+      this.topics = topics;
+   }
+
+   public void setListenerConfig(Map<String, ListenerConfig> listenerConfig) {
+      this.listenerConfig = listenerConfig;
    }
 
    public int getAdminClientrequestTimeoutMs() {

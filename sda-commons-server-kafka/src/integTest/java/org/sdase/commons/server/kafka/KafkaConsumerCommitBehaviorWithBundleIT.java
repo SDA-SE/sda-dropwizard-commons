@@ -48,22 +48,17 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
 
-   private KafkaBundle<KafkaTestConfiguration> bundle;
-
    private StringDeserializer deserializer = new StringDeserializer();
 
    private int numberExceptionThrown = 0;
    private List<String> results = Collections.synchronizedList(new ArrayList<>());
 
 
+   @SuppressWarnings("unchecked")
+   private KafkaBundle<KafkaTestConfiguration> bundle = ((KafkaTestApplication) DROPWIZARD_APP_RULE.getApplication()).kafkaBundle();
+
    @Before
    public void setup() {
-      KafkaTestConfiguration kafkaTestConfiguration = new KafkaTestConfiguration().withBrokers(KAFKA.getKafkaBrokers());
-
-      // register adhoc implementations
-      bundle = KafkaBundle.builder().withConfigurationProvider(KafkaTestConfiguration::getKafka).build();
-
-      bundle.run(kafkaTestConfiguration, DROPWIZARD_APP_RULE.getEnvironment());
       results.clear();
    }
 
