@@ -6,8 +6,9 @@ import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
+import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.process.runtime.Network;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 
@@ -28,8 +29,6 @@ import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version.Main;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -54,7 +53,6 @@ import org.slf4j.LoggerFactory;
  * </pre>
  */
 public class MongoDbRule extends ExternalResource {
-   private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbRule.class);
 
    // Initialization-on-demand holder idiom
    private static class LazyHolder {
@@ -96,14 +94,7 @@ public class MongoDbRule extends ExternalResource {
     * @return Hostname with port.
     */
    public String getHost() {
-      String hostname = "localhost";
-      try {
-         hostname = mongodConfig.net().getServerAddress().getHostAddress();
-      } catch (UnknownHostException e) {
-         LOGGER.error("Unknown host name", e);
-      }
-
-      return hostname + ":" + mongodConfig.net().getPort();
+      return mongodConfig.net().getBindIp() + ":" + mongodConfig.net().getPort();
    }
 
    @Override
@@ -122,7 +113,10 @@ public class MongoDbRule extends ExternalResource {
       }
 
       try {
-         mongodConfig = new MongodConfigBuilder().version(version).withLaunchArgument("--bind_ip", "127.0.0.1").build();
+         mongodConfig = new MongodConfigBuilder()
+             .version(version)
+             .net(new Net(Network.getLocalHost().getHostName(), Network.getFreeServerPort(), false))
+             .build();
 
          mongodExecutable = ensureMongodStarter().prepare(mongodConfig);
          mongodExecutable.start();
