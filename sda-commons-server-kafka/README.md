@@ -300,5 +300,10 @@ In this case, the `KAFKA_BROKERS` variable should contain a Json array with a li
 ]
 ```
 
+## Health check
+
+A health check with the name kafkaConnection is automatically registered to test the Kafka connection. The health check tries to list the topics available at the broker.
+
 ## Testing
 [`sda-commons-server-kafka-testing`](../sda-commons-server-kafka-testing/README.md) provides support for integration testing with kafka with JUnit 4.
+
