@@ -4,8 +4,8 @@ import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
 
 import javax.annotation.Priority;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
@@ -38,7 +38,7 @@ public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<Stri
       final String jwt = extractAuthorizationToken(headers);
 
       if (!authenticate(requestContext, Optional.ofNullable(jwt), SecurityContext.BASIC_AUTH)) {
-         throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
+         throw new NotAuthorizedException("Credentials are required to access this resource.");
       }
    }
 

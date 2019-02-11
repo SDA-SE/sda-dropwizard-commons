@@ -1,37 +1,40 @@
 package org.sdase.commons.server.auth.testing;
 
-import org.sdase.commons.server.auth.testing.test.AuthTestApp;
-import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.service.JwtAuthorizer;
+import org.sdase.commons.server.auth.testing.test.AuthTestApp;
+import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 
 import static java.util.Collections.singletonMap;
+import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 public class AuthRuleIT {
 
-   private static DropwizardAppRule<AuthTestConfig> DW = new DropwizardAppRule<>(
+   private static final DropwizardAppRule<AuthTestConfig> DW = new DropwizardAppRule<>(
          AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-   private static AuthRule AUTH = AuthRule.builder().build();
+   private static final AuthRule AUTH = AuthRule.builder().build();
 
    @ClassRule
-   public static RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
+   public static final RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
 
    @Test
    public void shouldAccessOpenEndPointWithoutToken() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
+      Response response = createWebTarget()
             .path("/open")
             .request(APPLICATION_JSON)
             .get();
@@ -42,17 +45,34 @@ public class AuthRuleIT {
 
    @Test
    public void shouldNotAccessSecureEndPointWithoutToken() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
-            .path("/secure")
+      Response response = createWebTarget()
+            .path("/secure") // NOSONAR
             .request(APPLICATION_JSON)
             .get();
 
       assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
+      assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
+            .containsKeys("title", "invalidParams"); // NOSONAR
+   }
+
+   @Test
+   public void shouldNotAccessSecureEndPointWithInvalidToken() {
+      Response response = createWebTarget()
+            .path("/secure") // NOSONAR
+            .request(APPLICATION_JSON)
+            .header(AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
+            .get();
+
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
+      assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
+            .containsKeys("title", "invalidParams");
    }
 
    @Test
    public void shouldAccessSecureEndPointWithToken() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
+      Response response = createWebTarget()
             .path("/secure")
             .request(APPLICATION_JSON)
             .headers(AUTH.auth().buildAuthHeader())
@@ -66,7 +86,7 @@ public class AuthRuleIT {
 
    @Test
    public void shouldGetClaimsFromSecureEndPointWithToken() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
+      Response response = createWebTarget()
             .path("/secure")
             .request(APPLICATION_JSON)
             .headers(AUTH.auth()
@@ -91,24 +111,33 @@ public class AuthRuleIT {
     */
    @Test
    public void shouldNotAllowRoleBasedAccessWithToken() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
+      Response response = createWebTarget()
             .path("/admin")
             .request(APPLICATION_JSON)
             .headers(AUTH.auth().buildAuthHeader())
             .get();
 
       assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_FORBIDDEN);
+      assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
+      assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
+            .containsKeys("title", "invalidParams");
    }
 
 
    @Test
    public void shouldNotAllowRoleBasedAccessWithoutToken() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
+      Response response = createWebTarget()
             .path("/admin")
             .request(APPLICATION_JSON)
             .get();
 
       assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
+      assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
+            .containsKeys("title", "invalidParams");
    }
 
+   private WebTarget createWebTarget() {
+      return DW.client().target("http://localhost:" + DW.getLocalPort());
+   }
 }
