@@ -79,7 +79,7 @@ mongo:
   hosts: ${MONGODB_HOSTS}
   database: ${MONGODB_DATABASE:-}
   options: ${MONGODB_OPTIONS:-}
-  user: ${MONGODB_USERNAME:-}
+  username: ${MONGODB_USERNAME:-}
   password: ${MONGODB_PASSWORD:-}
   useSsl: ${MONGODB_USE_SSL:-true}
   caCertificate: ${MONGODB_CA_CERTIFICATE}
@@ -91,6 +91,7 @@ database:
   hosts: mongo-1:27118,mongo-2:27119,mongo-3:27120
   options: replicaSet=sda-replica-set-1
   database: myAppName
+  useSsl: false
 ```
 
 In tests the config is derived from the `MongoDbRule`. See 
