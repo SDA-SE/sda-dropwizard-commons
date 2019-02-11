@@ -80,9 +80,7 @@ The module [`sda-commons-server-consumer`](./sda-commons-server-consumer/README.
 consumer token identifying the calling application. 
 
 Status:
-- Ready to use if the application itself does not act as client
-- If the application acts as a client as well, `ConsumerTokenClientFilter` and `ConsumerTokenContainerFilter` from
-  [rest-common](#usage-in-combination-with-rest-common) should be used
+- Ready to use
 
 ##### Cross-Origin Resource Sharing
 
