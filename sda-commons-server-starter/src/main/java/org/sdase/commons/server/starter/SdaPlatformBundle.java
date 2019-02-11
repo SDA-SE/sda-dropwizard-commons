@@ -11,6 +11,7 @@ import io.swagger.models.License;
 import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
+import org.sdase.commons.server.consumer.ConsumerTokenBundle.ConsumerTokenConfigProvider;
 import org.sdase.commons.server.consumer.ConsumerTokenConfig;
 import org.sdase.commons.server.cors.CorsBundle;
 import org.sdase.commons.server.cors.CorsConfigProvider;
@@ -115,6 +116,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
       private AuthBundle.AuthBuilder<C> authBundleBuilder;
       private ConsumerTokenConfig consumerTokenConfig;
+      private ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder;
       private SecurityBundle.Builder securityBundleBuilder = SecurityBundle.builder();
       private JacksonConfigurationBundle.Builder jacksonBundleBuilder = JacksonConfigurationBundle.builder();
       private CorsBundle.FinalBuilder<C> corsBundleBuilder;
@@ -131,10 +133,6 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
       @Override
       public SdaPlatformBundle<C> build() {
-         ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder = null;
-         if (consumerTokenConfig != null) {
-            consumerTokenBundleBuilder = ConsumerTokenBundle.builder().withConfigProvider(c -> consumerTokenConfig);
-         }
          return new SdaPlatformBundle<>(
                securityBundleBuilder,
                jacksonBundleBuilder,
@@ -191,15 +189,26 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
       @Override
       public SwaggerTitleBuilder<C> withOptionalConsumerToken() {
-         this.consumerTokenConfig = new ConsumerTokenConfig();
-         this.consumerTokenConfig.setOptional(true);
+         consumerTokenConfig = new ConsumerTokenConfig();
+         consumerTokenConfig.setOptional(true);
+         this.consumerTokenBundleBuilder =
+               ConsumerTokenBundle.builder().withConfigProvider(c -> consumerTokenConfig);
          return this;
       }
 
       @Override
       public ConsumerTokenRequiredConfigBuilder<C> withRequiredConsumerToken() {
-         this.consumerTokenConfig = new ConsumerTokenConfig();
-         this.consumerTokenConfig.setOptional(false);
+         consumerTokenConfig = new ConsumerTokenConfig();
+         consumerTokenConfig.setOptional(false);
+         this.consumerTokenBundleBuilder =
+               ConsumerTokenBundle.builder().withConfigProvider(c -> consumerTokenConfig);
+         return this;
+      }
+
+      @Override
+      public SwaggerTitleBuilder<C> withConsumerTokenConfigProvider(ConsumerTokenConfigProvider<C> consumerTokenConfigProvider) {
+         this.consumerTokenBundleBuilder = ConsumerTokenBundle.builder()
+               .withConfigProvider(consumerTokenConfigProvider);
          return this;
       }
 

@@ -11,6 +11,7 @@ import org.sdase.commons.server.starter.test.BundleAssertion;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -88,20 +89,45 @@ public class ConsumerTokenBuilderTest {
             .build());
    }
 
+   @Test
+   public void withConfigurableConsumerToken() {
+      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+            .usingSdaPlatformConfiguration()
+            .withConsumerTokenConfigProvider(SdaPlatformConfiguration::getConsumerToken)
+            .withSwaggerInfoTitle("Starter")
+            .addSwaggerResourcePackageClass(this.getClass())
+            .build();
+
+      verifyRegisteredConsumerTokenFiltersEqual(bundle, ConsumerTokenBundle.builder()
+            .withConfigProvider(SdaPlatformConfiguration::getConsumerToken)
+            .build(), SdaPlatformConfiguration.class);
+   }
+
    private void verifyRegisteredConsumerTokenFiltersEqual(
          SdaPlatformBundle<SdaPlatformConfiguration> actualSdaPlatformBundle,
          ConsumerTokenBundle<Configuration> expectedBundle) {
+      verifyRegisteredConsumerTokenFiltersEqual(actualSdaPlatformBundle, expectedBundle, Configuration.class);
+   }
 
+   private <C extends Configuration> void verifyRegisteredConsumerTokenFiltersEqual(
+         SdaPlatformBundle<SdaPlatformConfiguration> actualSdaPlatformBundle,
+         ConsumerTokenBundle<C> expectedBundle,
+         Class<C> configurationClass) {
+      try {
       //noinspection unchecked
       ConsumerTokenBundle<SdaPlatformConfiguration> actualConsumerTokenBundle = bundleAssertion.getBundleOfType(
             actualSdaPlatformBundle, ConsumerTokenBundle.class);
 
-      actualConsumerTokenBundle.run(mock(SdaPlatformConfiguration.class), environmentMock);
-      expectedBundle.run(mock(Configuration.class), environmentMock);
+      actualConsumerTokenBundle.run(new SdaPlatformConfiguration(), environmentMock);
+      expectedBundle.run(configurationClass.newInstance(), environmentMock);
 
       verify(environmentMock.jersey(), times(2)).register(jerseyRegistrationCaptor.capture());
 
       List<Object> registeredFilters = jerseyRegistrationCaptor.getAllValues();
       assertThat(registeredFilters.get(0)).isEqualToComparingFieldByFieldRecursively(registeredFilters.get(1));
+      } catch (InstantiationException | IllegalAccessException e) {
+         fail("Fail to instantiate config class.", e);
+      }
+
    }
 }

@@ -4,6 +4,7 @@ import io.dropwizard.Configuration;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiResponse;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
+import org.sdase.commons.server.consumer.ConsumerTokenBundle.ConsumerTokenConfigProvider;
 import org.sdase.commons.server.cors.CorsConfigProvider;
 
 /**
@@ -72,6 +73,14 @@ public interface CustomConfigurationProviders {
        * @return the builder instance
        */
       ConsumerTokenRequiredConfigBuilder<C> withRequiredConsumerToken();
+
+      /**
+       * Configure consumer token support based on provided configuration per instance.
+       *
+       * @param consumerTokenConfigProvider the provider of the configuration, e.g. {@code MyConfig::getConsumerToken}
+       * @return the builder instance
+       */
+      SwaggerTitleBuilder<C> withConsumerTokenConfigProvider(ConsumerTokenConfigProvider<C> consumerTokenConfigProvider);
 
    }
 

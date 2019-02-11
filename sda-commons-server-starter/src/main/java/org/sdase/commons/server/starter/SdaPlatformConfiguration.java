@@ -2,6 +2,8 @@ package org.sdase.commons.server.starter;
 
 import io.dropwizard.Configuration;
 import org.sdase.commons.server.auth.config.AuthConfig;
+import org.sdase.commons.server.consumer.ConsumerTokenBundle;
+import org.sdase.commons.server.consumer.ConsumerTokenConfig;
 import org.sdase.commons.server.cors.CorsConfiguration;
 
 /**
@@ -18,6 +20,19 @@ public class SdaPlatformConfiguration extends Configuration {
     * Configuration of the CORS filter.
     */
    private CorsConfiguration cors = new CorsConfiguration();
+
+   /**
+    * Configuration of the consumer token. This configuration only affects the consumer token bundle, if it is
+    * explicitly added using
+    * {@link org.sdase.commons.server.starter.builder.CustomConfigurationProviders.ConsumerTokenConfigBuilder#withConsumerTokenConfigProvider(ConsumerTokenBundle.ConsumerTokenConfigProvider)}:
+    * <pre>
+    *    <code>      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+    *             .usingSdaPlatformConfiguration()
+    *             .withConsumerTokenConfigProvider(SdaPlatformConfiguration::getConsumerToken)
+    *             // ...</code>
+    * </pre>
+    */
+   private ConsumerTokenConfig consumerToken = new ConsumerTokenConfig();
 
    public AuthConfig getAuth() {
       return auth;
@@ -37,4 +52,12 @@ public class SdaPlatformConfiguration extends Configuration {
       return this;
    }
 
+   public ConsumerTokenConfig getConsumerToken() {
+      return consumerToken;
+   }
+
+   public SdaPlatformConfiguration setConsumerToken(ConsumerTokenConfig consumerToken) {
+      this.consumerToken = consumerToken;
+      return this;
+   }
 }
