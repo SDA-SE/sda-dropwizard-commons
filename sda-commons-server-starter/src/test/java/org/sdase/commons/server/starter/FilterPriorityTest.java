@@ -42,4 +42,17 @@ public class FilterPriorityTest {
       assertThat(response.getHeaderString("Trace-Token")).isEqualTo("MyTraceToken");
    }
 
+   @Test
+   public void consumerTokenValidationHappensBeforeAuthentication() {
+      // Make sure that the consumer token filter fails before the authentication filter
+      Response response = DW
+          .client()
+          .target("http://localhost:" + DW.getLocalPort())
+          .path("api")
+          .path("ping")
+          .request(APPLICATION_JSON)
+          .get();
+
+      assertThat(response.readEntity(String.class)).contains("Consumer token is required");
+   }
 }

@@ -1,5 +1,7 @@
 package org.sdase.commons.server.consumer.filter;
 
+import javax.annotation.Priority;
+import javax.ws.rs.Priorities;
 import org.sdase.commons.shared.api.error.ApiException;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.slf4j.MDC;
@@ -17,6 +19,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * A request filter that detects, verifies and provides the consumer token in incoming requests.
  */
+@Priority(Priorities.AUTHENTICATION - 2) // Before Prometheus and Access-Token authentication
 public class ConsumerTokenServerFilter implements ContainerRequestFilter {
 
    private final boolean requireIdentifiedConsumer;
