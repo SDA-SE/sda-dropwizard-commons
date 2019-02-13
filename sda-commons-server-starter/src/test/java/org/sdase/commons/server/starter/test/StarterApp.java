@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Example;
 import io.swagger.annotations.ExampleProperty;
+import javax.annotation.security.PermitAll;
 import org.sdase.commons.server.starter.SdaPlatformBundle;
 import org.sdase.commons.server.starter.SdaPlatformConfiguration;
 
@@ -45,6 +46,7 @@ public class StarterApp extends Application<SdaPlatformConfiguration> {
    }
 
    @GET
+   @PermitAll
    @Path("ping")
    @ApiOperation(
          value = "Answers the ping request with a pong.",

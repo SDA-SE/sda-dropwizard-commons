@@ -1,5 +1,6 @@
 package org.sdase.commons.server.trace.filter;
 
+import javax.ws.rs.container.PreMatching;
 import org.sdase.commons.shared.tracing.RequestTracing;
 import org.slf4j.MDC;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
  * A request filter land response filter that detects, optionally generates if not existing
  * and provides the trace token in requests.
  */
+@PreMatching // No matching is required, should happen as early as possible
 public class TraceTokenServerFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
    @Override
