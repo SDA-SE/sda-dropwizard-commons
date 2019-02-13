@@ -48,3 +48,15 @@ private static final LazyRule<DropwizardAppRule<AppConfiguration>> DW =
 @ClassRule
 public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
 ```
+
+### Configuration in a special CI-environment
+
+Normally the mongod executable is downloaded directly from the mongodb web page.
+However in some CI-environments this behavior might be undesired, because of proxy servers, missing 
+internet access, or to avoid downloading executables from untrusted sources.
+ 
+Therefor it is possible to change the download location of the embedded mongod using the optional 
+environment variable `EMBEDDED_MONGO_DOWNLOAD_PATH`.
+If `EMBEDDED_MONGO_DOWNLOAD_PATH` is set to `http://example.com/download/`, the rule for example 
+tries to download `http://example.com/download/osx/mongodb-osx-ssl-x86_64-3.6.5.tgz`.
+

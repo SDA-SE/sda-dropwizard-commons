@@ -6,7 +6,11 @@ import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
+import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.config.DownloadConfigBuilder;
+import de.flapdoodle.embed.mongo.config.ExtractedArtifactStoreBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.process.runtime.Network;
 import java.io.IOException;
 import java.util.Collections;
@@ -32,9 +36,9 @@ import de.flapdoodle.embed.mongo.distribution.Version.Main;
 
 /**
  * <p>
- * JUnit Test rule for running a MongoDB instance alongside the (integration) tests.
- * Can be configured with custom user credentials and database name.
- * Use {@link #getHost()} to retrieve the host to connect to.
+ * JUnit Test rule for running a MongoDB instance alongside the (integration)
+ * tests. Can be configured with custom user credentials and database name. Use
+ * {@link #getHost()} to retrieve the host to connect to.
  * </p>
  * <p>
  * Example usage:
@@ -56,7 +60,32 @@ public class MongoDbRule extends ExternalResource {
 
    // Initialization-on-demand holder idiom
    private static class LazyHolder {
-      static final MongodStarter INSTANCE = MongodStarter.getDefaultInstance();
+      static final MongodStarter INSTANCE = getMongoStarter();
+
+      private static MongodStarter getMongoStarter() {
+         // Normally the mongod executable is downloaded directly from the mongodb web page, however
+         // sometimes this behavior is undesired. Some cases are proxy servers, missing internet
+         // access, or not wanting to download executables from untrusted sources.
+         //
+         // Optional it is possible to download it from a source configured in the environment
+         // variable:
+         String embeddedMongoDownloadPath = System.getenv("EMBEDDED_MONGO_DOWNLOAD_PATH");
+
+         if (embeddedMongoDownloadPath != null) {
+            return MongodStarter
+                  .getInstance(new RuntimeConfigBuilder()
+                        .defaults(Command.MongoD)
+                        .artifactStore(new ExtractedArtifactStoreBuilder()
+                              .defaults(Command.MongoD)
+                              .download(new DownloadConfigBuilder()
+                                    .defaultsForCommand(Command.MongoD)
+                                    .downloadPath(embeddedMongoDownloadPath)
+                                    .build()))
+                        .build());
+         }
+
+         return MongodStarter.getDefaultInstance();
+      }
    }
 
    private static MongodStarter ensureMongodStarter() {
@@ -114,9 +143,9 @@ public class MongoDbRule extends ExternalResource {
 
       try {
          mongodConfig = new MongodConfigBuilder()
-             .version(version)
-             .net(new Net(Network.getLocalHost().getHostName(), Network.getFreeServerPort(), false))
-             .build();
+               .version(version)
+               .net(new Net(Network.getLocalHost().getHostName(), Network.getFreeServerPort(), false))
+               .build();
 
          mongodExecutable = ensureMongodStarter().prepare(mongodConfig);
          mongodExecutable.start();
