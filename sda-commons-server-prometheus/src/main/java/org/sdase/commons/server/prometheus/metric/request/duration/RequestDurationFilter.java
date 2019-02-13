@@ -12,7 +12,9 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.ResourceInfo;
 
-@Priority(Priorities.HEADER_DECORATOR)
+@Priority(Priorities.AUTHENTICATION - 50) // Before authentication to track unauthenticated request
+// and before consumer-token filter to track requests without consumer tokens. We can still log the
+// consumer because we access it while responding.
 public class RequestDurationFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
    private static final Logger LOG = LoggerFactory.getLogger(RequestDurationFilter.class);

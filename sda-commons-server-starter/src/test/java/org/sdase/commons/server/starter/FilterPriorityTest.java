@@ -55,4 +55,52 @@ public class FilterPriorityTest {
 
       assertThat(response.readEntity(String.class)).contains("Consumer token is required");
    }
+
+   @Test
+   public void errorsInConsumerTokenFilterTrackedByPrometheus() {
+      Response response = DW
+          .client()
+          .target("http://localhost:" + DW.getLocalPort())
+          .path("api")
+          .path("ping")
+          .request(APPLICATION_JSON)
+          .get();
+
+      assertThat(response.getStatus()).isEqualTo(401);
+
+      String metrics = DW
+          .client()
+          .target("http://localhost:" + DW.getAdminPort())
+          .path("metrics")
+          .path("prometheus")
+          .request(APPLICATION_JSON)
+          .get(String.class);
+
+      assertThat(metrics).contains("consumer_name=\"\"");
+   }
+
+   @Test
+   public void errorsInAuthenticationFilterAreTrackedByPrometheus() {
+      Response response = DW
+          .client()
+          .target("http://localhost:" + DW.getLocalPort())
+          .path("api")
+          .path("ping")
+          .request(APPLICATION_JSON)
+          .header("Consumer-Token", "MyConsumer")
+          .get();
+
+      assertThat(response.getStatus()).isEqualTo(401);
+
+      String metrics = DW
+          .client()
+          .target("http://localhost:" + DW.getAdminPort())
+          .path("metrics")
+          .path("prometheus")
+          .request(APPLICATION_JSON)
+          .get(String.class);
+
+      assertThat(metrics).contains("consumer_name=\"MyConsumer\"");
+   }
+
 }

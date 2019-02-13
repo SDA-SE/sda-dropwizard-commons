@@ -1,5 +1,7 @@
 package org.sdase.commons.client.jersey.filter;
 
+import javax.annotation.Priority;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -10,6 +12,7 @@ import java.util.Optional;
  * A filter that provides the current request from a {@link ThreadLocal}. Currently it is only implemented for the
  * client filters in this package.
  */
+@Priority(Priorities.USER)
 public class ContainerRequestContextHolder implements ContainerRequestFilter, ContainerResponseFilter {
 
    private static final ThreadLocal<ContainerRequestContext> REQUEST_CONTEXT_HOLDER = new ThreadLocal<>();
