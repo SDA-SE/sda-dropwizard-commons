@@ -49,6 +49,11 @@ private static final LazyRule<DropwizardAppRule<AppConfiguration>> DW =
 public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
 ```
 
+### Http Proxy
+
+If the `http_proxy` environment variable is present, the configured proxy is used to download the 
+mongod executable.
+
 ### Configuration in a special CI-environment
 
 Normally the mongod executable is downloaded directly from the mongodb web page.

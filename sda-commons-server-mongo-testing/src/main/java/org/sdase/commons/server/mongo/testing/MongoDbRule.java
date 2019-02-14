@@ -7,12 +7,21 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.config.DownloadConfigBuilder;
 import de.flapdoodle.embed.mongo.config.ExtractedArtifactStoreBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
+import de.flapdoodle.embed.process.config.store.DownloadConfigBuilder;
+import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
+import de.flapdoodle.embed.process.config.store.IDownloadConfig;
+import de.flapdoodle.embed.process.config.store.IProxyFactory;
+import de.flapdoodle.embed.process.config.store.NoProxyFactory;
 import de.flapdoodle.embed.process.runtime.Network;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.net.Authenticator;
+import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.URL;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 
@@ -33,6 +42,8 @@ import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -57,35 +68,91 @@ import de.flapdoodle.embed.mongo.distribution.Version.Main;
  * </pre>
  */
 public class MongoDbRule extends ExternalResource {
+   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
    // Initialization-on-demand holder idiom
    private static class LazyHolder {
       static final MongodStarter INSTANCE = getMongoStarter();
 
       private static MongodStarter getMongoStarter() {
-         // Normally the mongod executable is downloaded directly from the mongodb web page, however
-         // sometimes this behavior is undesired. Some cases are proxy servers, missing internet
-         // access, or not wanting to download executables from untrusted sources.
+         return MongodStarter
+               .getInstance(new RuntimeConfigBuilder()
+                     .defaults(Command.MongoD)
+                     .artifactStore(new ExtractedArtifactStoreBuilder()
+                           .defaults(Command.MongoD)
+                           .download(createDownloadConfig()))
+                     .build());
+      }
+
+      private static IProxyFactory createProxyFactory() {
+         String httpProxy = System.getenv("http_proxy");
+         if (httpProxy != null) {
+            try {
+               URL url = new URL(httpProxy);
+
+               if (url.getUserInfo() != null) {
+                  configureAuthentication(url);
+               }
+
+               return new HttpProxyFactory(url.getHost(), url.getPort());
+            } catch (MalformedURLException exception) {
+               LOG.error("http_proxy could not be parsed.");
+            }
+         }
+         return new NoProxyFactory();
+      }
+
+      private static void configureAuthentication(URL url) {
+         String userInfo = url.getUserInfo();
+         int pos = userInfo.indexOf(':');
+         if (pos >= 0) {
+            String username = userInfo.substring(0, pos);
+            String password = userInfo.substring(pos + 1);
+
+            Authenticator.setDefault(new Authenticator() {
+               @Override
+               protected PasswordAuthentication getPasswordAuthentication() {
+                  // Only provide the credentials to the specified
+                  // origin
+                  if (getRequestorType() == RequestorType.PROXY && getRequestingHost().equalsIgnoreCase(url.getHost())
+                        && url.getPort() == getRequestingPort()) {
+                     return new PasswordAuthentication(username, password.toCharArray());
+                  }
+                  return null;
+               }
+            });
+
+            // Starting with Java 8u111, basic auth is not supported
+            // for https by default.
+            // jdk.http.auth.tunneling.disabledSchemes can be used to
+            // enable it again.
+            System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+         } else {
+            LOG.error("http_proxy user info could not be parsed.");
+         }
+      }
+
+      private static IDownloadConfig createDownloadConfig() {
+         DownloadConfigBuilder downloadConfigBuilder = new de.flapdoodle.embed.mongo.config.DownloadConfigBuilder()
+               .defaultsForCommand(Command.MongoD)
+               .proxyFactory(createProxyFactory());
+
+         // Normally the mongod executable is downloaded directly from the
+         // mongodb web page, however sometimes this behavior is undesired. Some
+         // cases are proxy servers, missing internet access, or not wanting to
+         // download executables from untrusted sources.
          //
-         // Optional it is possible to download it from a source configured in the environment
-         // variable:
+         // Optional it is possible to download it from a source configured in
+         // the environment variable:
          String embeddedMongoDownloadPath = System.getenv("EMBEDDED_MONGO_DOWNLOAD_PATH");
 
          if (embeddedMongoDownloadPath != null) {
-            return MongodStarter
-                  .getInstance(new RuntimeConfigBuilder()
-                        .defaults(Command.MongoD)
-                        .artifactStore(new ExtractedArtifactStoreBuilder()
-                              .defaults(Command.MongoD)
-                              .download(new DownloadConfigBuilder()
-                                    .defaultsForCommand(Command.MongoD)
-                                    .downloadPath(embeddedMongoDownloadPath)
-                                    .build()))
-                        .build());
+            downloadConfigBuilder.downloadPath(embeddedMongoDownloadPath);
          }
 
-         return MongodStarter.getDefaultInstance();
+         return downloadConfigBuilder.build();
       }
+
    }
 
    private static MongodStarter ensureMongodStarter() {
