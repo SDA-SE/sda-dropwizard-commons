@@ -2,6 +2,7 @@ package org.sdase.commons.client.jersey.test;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import io.dropwizard.Application;
+import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
@@ -25,6 +26,7 @@ public class ClientTestApp extends Application<ClientTestConfig> {
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
       bootstrap.addBundle(TraceTokenBundle.builder().build());
       bootstrap.addBundle(jerseyClientBundle);
+      bootstrap.addBundle(new MultiPartBundle());
    }
 
    @Override

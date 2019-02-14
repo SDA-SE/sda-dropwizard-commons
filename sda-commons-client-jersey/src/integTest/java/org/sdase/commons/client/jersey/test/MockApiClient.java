@@ -1,5 +1,6 @@
 package org.sdase.commons.client.jersey.test;
 
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.sdase.commons.client.jersey.ApiClientTest;
 
 import javax.ws.rs.Consumes;
@@ -51,6 +52,12 @@ public interface MockApiClient {
    @Path("/cars")
    @Consumes(MediaType.APPLICATION_JSON)
    Response createCar(Car newCar);
+
+   @POST
+   @Path("/multi-part")
+   @Consumes(MediaType.MULTIPART_FORM_DATA)
+   @Produces(MediaType.APPLICATION_JSON)
+   Response sendMultiPart(FormDataMultiPart multiPart);
 
    // NOT supported yet!
    default Response getLightBlueCar() {

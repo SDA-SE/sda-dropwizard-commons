@@ -2,6 +2,8 @@ package org.sdase.commons.client.jersey.builder;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.ClientProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientRequestFilter;
@@ -15,6 +17,8 @@ import java.util.List;
  * @param <T> the type of the subclass
  */
 abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
+
+   private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseClientBuilder.class);
 
    /**
     * The default timeout to wait for data in an established connection. 2 seconds is used as a trade between "fail
@@ -112,6 +116,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
       filters.forEach(client::register);
       client.property(ClientProperties.CONNECT_TIMEOUT, connectionTimeoutMillis);
       client.property(ClientProperties.READ_TIMEOUT, readTimeoutMillis);
+      registerMultiPartIfAvailable(client);
       return client;
    }
 
@@ -124,6 +129,21 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
     */
    public <A> ApiClientBuilder<A> api(Class<A> apiInterface) {
       return new ApiClientBuilder<>(apiInterface, buildGenericClient(apiInterface.getSimpleName()));
+   }
+
+   private void registerMultiPartIfAvailable(Client client) {
+      try {
+         ClassLoader classLoader = getClass().getClassLoader();
+         Class<?> multiPartFeature = classLoader.loadClass("org.glassfish.jersey.media.multipart.MultiPartFeature");
+         if (multiPartFeature != null) {
+            LOG.info("Registering MultiPartFeature for client.");
+            client.register(multiPartFeature);
+         }
+      } catch (ClassNotFoundException e) {
+         LOG.info("Not registering MultiPartFeature for client: Class is not available.");
+      } catch (Exception e) {
+         LOG.warn("Failed to register MultiPartFeature for client.");
+      }
    }
 
 }

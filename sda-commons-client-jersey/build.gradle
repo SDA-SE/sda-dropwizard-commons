@@ -25,6 +25,11 @@ dependencies {
     testCompile project(':sda-commons-server-testing')
     testCompile project(':sda-commons-client-jersey-wiremock-testing')
     testCompile project(':sda-commons-server-trace')
+    testCompile 'io.dropwizard:dropwizard-forms:' + dropwizardVersion, {
+        exclude group: 'io.dropwizard', module: 'dropwizard-core'
+        exclude group: 'org.glassfish.jersey.core', module: 'jersey-common'
+        exclude group: 'org.glassfish.jersey.core', module: 'jersey-server'
+    }
 
     testCompile 'org.awaitility:awaitility:' + awaitilityVersion
 
