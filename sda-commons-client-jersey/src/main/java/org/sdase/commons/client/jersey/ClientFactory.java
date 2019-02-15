@@ -23,7 +23,7 @@ public class ClientFactory {
       this.clientBuilderWithGzipCompression = new JerseyClientBuilder(environment).using(configurationWithGzip);
       JerseyClientConfiguration configurationWithoutGzip = new JerseyClientConfiguration();
       // Chunked encoding in combination with the underlying Apache Http Client breaks support for multipart/form-data
-      configurationWithGzip.setChunkedEncodingEnabled(false);
+      configurationWithoutGzip.setChunkedEncodingEnabled(false);
       configurationWithoutGzip.setGzipEnabled(false);
       configurationWithoutGzip.setGzipEnabledForRequests(false);
       this.clientBuilderWithoutGzipCompression = new JerseyClientBuilder(environment).using(configurationWithoutGzip);
