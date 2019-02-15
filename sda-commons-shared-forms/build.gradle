@@ -1,0 +1,15 @@
+dependencies {
+    compile project(':sda-commons-server-dropwizard')
+    compile 'io.dropwizard:dropwizard-forms:' + dropwizardVersion, {
+        exclude group: 'io.dropwizard', module: 'dropwizard-core'
+        exclude group: 'org.glassfish.jersey.core', module: 'jersey-common'
+        exclude group: 'org.glassfish.jersey.core', module: 'jersey-server'
+    }
+    compile 'org.glassfish.jersey.core:jersey-common:' + jerseyVersion, {
+        exclude group: 'org.javassist', module: 'javassist'
+    }
+    compile 'org.glassfish.jersey.core:jersey-server:' + jerseyVersion, {
+        exclude group: 'org.javassist', module: 'javassist'
+    }
+    compile 'org.javassist:javassist:' + javaassistVersion
+}

@@ -140,13 +140,6 @@ catch (ClientRequestException e) {
 
 ## Multipart Support
 
-To support sending multipart requests like file uploads, `dropwizard-forms` has to be added to the project in the same 
-version as Dropwizard in SDA Comnmons. Some excludes are needed to keep convergent dependencies:
+To support sending multipart requests like file uploads, `sda-commons-shared-forms` has to be added to the project. 
 
-```
-    compile 'io.dropwizard:dropwizard-forms:' + dropwizardVersionAsInSdaCommons, {
-        exclude group: 'io.dropwizard', module: 'dropwizard-core'
-        exclude group: 'org.glassfish.jersey.core', module: 'jersey-common'
-        exclude group: 'org.glassfish.jersey.core', module: 'jersey-server'
-    }
-```
+The client is the configured automatically to support multipart.

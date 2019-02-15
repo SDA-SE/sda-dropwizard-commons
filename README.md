@@ -132,6 +132,11 @@ The module [`sda-commons-server-jackson`](./sda-commons-server-jackson/README.md
 Status:
 - Ready to use
 
+##### Forms
+
+The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) adds all required dependencies to support 
+`multipart/*` in Dropwizard applications.
+
 ##### Kafka
 
 The module [`sda-commons-server-kafka`](./sda-commons-server-kafka/README.md) provides means to send and consume 
@@ -232,3 +237,8 @@ presents an example application that shows how to invoke services.
 Status:
 - Ready to use
 - When using new threads for clients to invoke another service, the trace token is not transferred out-of-the-box.
+
+#### Forms
+
+The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) adds all required dependencies to support 
+`multipart/*` in Dropwizard applications.

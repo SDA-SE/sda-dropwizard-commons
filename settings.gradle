@@ -37,4 +37,5 @@ include 'sda-commons-server-weld'
 include 'sda-commons-server-weld-example'
 include 'sda-commons-shared-error'
 include 'sda-commons-shared-tracing'
+include 'sda-commons-shared-forms'
 
