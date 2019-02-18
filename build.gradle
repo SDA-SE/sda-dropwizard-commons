@@ -70,7 +70,6 @@ subprojects {
         commonsCodecVersion       = '1.11'
         apacheHttpClientVersion   = '4.5.5'
         prometheusClientVersion   = '0.5.0'
-        javaxWsRsVersion          = '2.0.1'
         mongoJavaDriverVersion    = '3.9.1'
         bouncyCastleVersion       = '1.60'
 
@@ -99,6 +98,8 @@ subprojects {
             // Using 'force' in this resolutionStrategy can't be used because it is only applied to a specific module
             // but not to the modules and applications that use the module as dependency.
             failOnVersionConflict()
+            // Required to align dependencies in dependency-check module
+            preferProjectModules()
         }
     }
 

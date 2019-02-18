@@ -7,6 +7,7 @@ dependencies {
         exclude group: 'org.javassist', module: 'javassist'
         exclude group: 'commons-codec', module: 'commons-codec'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
     compile 'commons-codec:commons-codec:' + commonsCodecVersion
     compile 'org.apache.httpcomponents:httpclient:' + apacheHttpClientVersion, {

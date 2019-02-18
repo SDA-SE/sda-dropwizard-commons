@@ -15,4 +15,5 @@ dependencies {
         exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
     compile 'org.javassist:javassist:' + javaassistVersion
+    compile 'javax.ws.rs:javax.ws.rs-api:' + javaxWsRsVersion
 }
