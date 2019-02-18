@@ -29,9 +29,12 @@ dependencies {
     compile 'commons-codec:commons-codec:' + commonsCodecVersion
     compile 'org.glassfish.jersey.core:jersey-client:' + jerseyVersion, {
         exclude group: 'org.javassist', module: 'javassist'
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
     compile 'org.glassfish.jersey.ext:jersey-proxy-client:' + jerseyVersion, {
         exclude group: 'org.javassist', module: 'javassist'
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
+    compile 'javax.ws.rs:javax.ws.rs-api:' + javaxWsRsVersion
 
 }

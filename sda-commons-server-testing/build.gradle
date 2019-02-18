@@ -13,5 +13,6 @@ dependencies {
         exclude group: 'io.dropwizard', module: 'dropwizard-core'
         exclude group: 'org.javassist', module: 'javassist'
         exclude group: 'org.assertj', module: 'assertj-core'
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
 }

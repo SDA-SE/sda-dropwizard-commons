@@ -4,12 +4,15 @@ dependencies {
         exclude group: 'io.dropwizard', module: 'dropwizard-core'
         exclude group: 'org.glassfish.jersey.core', module: 'jersey-common'
         exclude group: 'org.glassfish.jersey.core', module: 'jersey-server'
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
     compile 'org.glassfish.jersey.core:jersey-common:' + jerseyVersion, {
         exclude group: 'org.javassist', module: 'javassist'
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
     compile 'org.glassfish.jersey.core:jersey-server:' + jerseyVersion, {
         exclude group: 'org.javassist', module: 'javassist'
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
     compile 'org.javassist:javassist:' + javaassistVersion
 }

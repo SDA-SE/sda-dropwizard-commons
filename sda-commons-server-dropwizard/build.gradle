@@ -5,7 +5,10 @@ dependencies {
         exclude group: 'joda-time', module: 'joda-time'
         exclude group: 'org.javassist', module: 'javassist'
         exclude group: 'org.hibernate', module: 'hibernate-validator'
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
+    // use latest WS RS API as Response implements AutoClosable now
+    compile 'javax.ws.rs:javax.ws.rs-api:' + javaxWsRsVersion
     compile 'com.google.guava:guava:' + guavaVersion, {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
     }

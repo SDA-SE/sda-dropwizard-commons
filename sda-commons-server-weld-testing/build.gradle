@@ -6,6 +6,5 @@ dependencies {
         exclude group: 'io.dropwizard', module: 'dropwizard-core'
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
-    testCompile 'javax:javaee-api:8.0'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
 }

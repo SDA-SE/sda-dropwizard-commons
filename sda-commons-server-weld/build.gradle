@@ -9,5 +9,7 @@ dependencies {
     }
     compile 'javax.enterprise:cdi-api:2.0'
     compile 'org.jboss.logging:jboss-logging:' + jbossLoggingVersion
-    compile 'org.glassfish.jersey.ext.cdi:jersey-cdi1x:' + jerseyVersion
+    compile 'org.glassfish.jersey.ext.cdi:jersey-cdi1x:' + jerseyVersion, {
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
+    }
 }
