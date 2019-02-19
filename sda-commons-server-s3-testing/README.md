@@ -45,3 +45,17 @@ private static final LazyRule<DropwizardAppRule<AppConfiguration>> DW =
 @ClassRule
 public static final RuleChain CHAIN = RuleChain.outerRule(S3_MOCK).around(DW);
 ```
+
+In case you need a pre-populated bucket in your tests, you might add files while building the rule.
+You can call `S3_MOCK.resetAll()` to restore this state at any time. If you need to perform additional 
+operations on the object storage `S3_MOCK.getClient()` provides a full S3 storage client.
+
+```
+@ClassRule
+public static final S3MockRule S3_MOCK = S3MockRule
+     .builder()
+     .createBucket("bucket-of-water")
+     .putObject("bucket", "file.txt", new File(ResourceHelpers.resourceFilePath("test-file.txt")))
+     .putObject("bucket", "content.txt", "RUN SDA")
+     .build();
+```
