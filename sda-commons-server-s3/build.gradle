@@ -1,0 +1,13 @@
+dependencies {
+    compile project(':sda-commons-server-dropwizard')
+    compile 'com.amazonaws:aws-java-sdk-s3:' + awsJavaSdkS3Version, {
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'joda-time', module: 'joda-time'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+
+    testCompile project(':sda-commons-server-s3-testing')
+}

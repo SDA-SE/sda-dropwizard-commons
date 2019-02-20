@@ -19,11 +19,12 @@ import org.junit.Test;
 
 public class S3MockRuleTest {
    private static final String PRE_FILLED_BUCKET = "pre-filled-bucket";
+   private static final String WATER_BUCKET = "bucket-of-water";
 
    @ClassRule
    public static final S3MockRule S3_MOCK = S3MockRule
          .builder()
-         .createBucket("bucket-of-water")
+         .createBucket(WATER_BUCKET)
          .putObject(PRE_FILLED_BUCKET, "file.txt", new File(ResourceHelpers.resourceFilePath("test-file.txt")))
          .putObject(PRE_FILLED_BUCKET, "content.txt", "RUN SDA")
          .build();
@@ -62,7 +63,7 @@ public class S3MockRuleTest {
 
    @Test()
    public void shouldExistBucket() {
-      boolean exists = s3Client.doesBucketExistV2("bucket-of-water");
+      boolean exists = s3Client.doesBucketExistV2(WATER_BUCKET);
       assertThat(exists).isTrue();
    }
 
@@ -87,7 +88,7 @@ public class S3MockRuleTest {
 
       boolean objectExists = s3Client.doesObjectExist("new", "data");
       assertThat(objectExists).isFalse();
-      boolean bucketExists = s3Client.doesBucketExistV2("bucket-of-water");
+      boolean bucketExists = s3Client.doesBucketExistV2(WATER_BUCKET);
       assertThat(bucketExists).isTrue();
    }
 }

@@ -178,6 +178,9 @@ Status:
 
 ##### S3 Object Storage
 
+The module [`sda-commons-server-s3`](./sda-commons-server-s3/README.md) provides a client for an 
+AWS S3-compatible object storage.
+
 The module [`sda-commons-server-s3-testing`](./sda-commons-server-s3-testing/README.md) is used to 
 provide an [AWS S3-compatible Object Storage](https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html) during integrations tests.
 
