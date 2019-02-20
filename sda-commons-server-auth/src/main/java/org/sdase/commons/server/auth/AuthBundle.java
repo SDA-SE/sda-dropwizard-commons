@@ -3,6 +3,8 @@ package org.sdase.commons.server.auth;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
 import org.sdase.commons.server.auth.config.KeyLocation;
+import org.sdase.commons.server.auth.error.ForbiddenExceptionMapper;
+import org.sdase.commons.server.auth.error.JwtAuthExceptionMapper;
 import org.sdase.commons.server.auth.filter.JwtAuthFilter;
 import org.sdase.commons.server.auth.key.JwksKeySource;
 import org.sdase.commons.server.auth.key.KeySource;
@@ -68,6 +70,8 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
       environment.jersey().register(new AuthDynamicFeature(authFilter));
 
       environment.jersey().register(RolesAllowedDynamicFeature.class);
+      environment.jersey().register(JwtAuthExceptionMapper.class);
+      environment.jersey().register(ForbiddenExceptionMapper.class);
 
    }
 

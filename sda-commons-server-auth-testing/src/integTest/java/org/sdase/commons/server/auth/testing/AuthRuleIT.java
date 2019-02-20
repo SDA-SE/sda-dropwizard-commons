@@ -18,6 +18,7 @@ import java.util.Map;
 import static java.util.Collections.singletonMap;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.HttpHeaders.WWW_AUTHENTICATE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -51,6 +52,7 @@ public class AuthRuleIT {
             .get();
 
       assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer"); // NOSONAR
       assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
       assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
             .containsKeys("title", "invalidParams"); // NOSONAR
@@ -65,6 +67,7 @@ public class AuthRuleIT {
             .get();
 
       assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer");
       assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
       assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
             .containsKeys("title", "invalidParams");
@@ -133,6 +136,7 @@ public class AuthRuleIT {
 
       assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
       assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
+      assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer");
       assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
             .containsKeys("title", "invalidParams");
    }

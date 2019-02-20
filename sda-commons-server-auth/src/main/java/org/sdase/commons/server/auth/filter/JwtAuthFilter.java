@@ -2,9 +2,9 @@ package org.sdase.commons.server.auth.filter;
 
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
+import org.sdase.commons.server.auth.error.JwtAuthException;
 
 import javax.annotation.Priority;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
@@ -38,10 +38,9 @@ public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<Stri
       final String jwt = extractAuthorizationToken(headers);
 
       if (!authenticate(requestContext, Optional.ofNullable(jwt), SecurityContext.BASIC_AUTH)) {
-         throw new NotAuthorizedException("Credentials are required to access this resource.");
+         throw new JwtAuthException("Credentials are required to access this resource.");
       }
    }
-
 
    // builder
 

@@ -1,5 +1,6 @@
 dependencies {
     compile project(':sda-commons-server-dropwizard')
+    compile project(':sda-commons-shared-error')
     compile 'io.dropwizard:dropwizard-auth:' + dropwizardVersion, {
         exclude group: 'io.dropwizard', module: 'dropwizard-core'
     }

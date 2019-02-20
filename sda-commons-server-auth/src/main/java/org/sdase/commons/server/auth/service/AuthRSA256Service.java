@@ -6,12 +6,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.sdase.commons.server.auth.error.JwtAuthException;
 import org.sdase.commons.server.auth.key.RsaPublicKeyLoader;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.NotAuthorizedException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +49,7 @@ public class AuthRSA256Service implements AuthService {
                   .filter(Optional::isPresent)
                   .map(Optional::get)
                   .findFirst()
-                  .orElseThrow(() -> new NotAuthorizedException("Could not verify JWT without kid."))
+                  .orElseThrow(() -> new JwtAuthException("Could not verify JWT without kid."))
                   .getClaims();
          }
          else {
@@ -60,7 +60,7 @@ public class AuthRSA256Service implements AuthService {
             return jwt.getClaims();
          }
       } catch (JWTVerificationException e) {
-         throw new NotAuthorizedException(e);
+         throw new JwtAuthException(e);
       }
    }
 
