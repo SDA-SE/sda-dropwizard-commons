@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.tuple;
 
 public class JacksonConfigurationBundleIT {
 
-   private final static String VALIDATION_ERROR_MESSAGE = "Request parameters are not valid.";
+   private static final String VALIDATION_ERROR_MESSAGE = "Request parameters are not valid.";
 
    @ClassRule
    public static final DropwizardAppRule<Configuration> DW = new DropwizardAppRule<>(JacksonConfigurationTestApp.class,
@@ -57,15 +57,39 @@ public class JacksonConfigurationBundleIT {
 
    // Validation and Error Tests
    @Test
-   public void shouldGenerateApiErrorForJaxRsExceptions() {
+   public void shouldGenerateApiErrorForJaxRsNotFoundException() {
       testJaxRsException("NotFound", 404, emptyList());
+   }
+   @Test
+   public void shouldGenerateApiErrorForJaxRsBadRequestException() {
       testJaxRsException("BadRequest", 400, emptyList());
+   }
+   @Test
+   public void shouldGenerateApiErrorForJaxRsForbiddenException() {
       testJaxRsException("Forbidden", 403, emptyList());
+   }
+   @Test
+   public void shouldGenerateApiErrorForJaxRsNotAcceptableException() {
       testJaxRsException("NotAcceptable", 406, emptyList());
+   }
+   @Test
+   public void shouldGenerateApiErrorForJaxRsNotAllowedException() {
       testJaxRsException("NotAllowed", 405, Collections.singletonList("Allow"));
+   }
+   @Test
+   public void shouldGenerateApiErrorForJaxRsNotAuthorizedException() {
       testJaxRsException("NotAuthorized", 401, Collections.singletonList("WWW-Authenticate"));
+   }
+   @Test
+   public void shouldGenerateApiErrorForJaxRsNotSupportedException() {
       testJaxRsException("NotSupported", 415, emptyList());
+   }
+   @Test
+   public void shouldGenerateApiErrorForJaxRsServiceUnavailableException() {
       testJaxRsException("ServiceUnavailable", 503, Collections.singletonList("Retry-After"));
+   }
+   @Test
+   public void shouldGenerateApiErrorForJaxRsInternalServerErrorException() {
       testJaxRsException("InternalServerError", 500, emptyList());
    }
 
