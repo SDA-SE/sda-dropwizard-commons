@@ -58,3 +58,22 @@ public class MyApplication extends Application<MyConfiguration> {
    }
 }
 ```
+
+### DefaultLoggingConfigurationBundle
+The [`DefaultLoggingConfigurationBundle`](./src/main/java/org/sdase/commons/server/dropwizard/bundles/DefaultLoggingConfigurationBundle.java), 
+is used to configure the console logger with the settings desired by the SDA.
+
+The bundle sets the log threshold for the console appender to `INFO` and uses the following log format:
+
+```
+[%d] [%-5level] [%X{Trace-Token}] %logger{36} - %msg%n
+```
+
+Make sure to add the bundle **after the `ConfigurationSubstitutionBundle`** if it's present.
+Logging related configuration is not required by this bundle. 
+
+```
+public void initialize(Bootstrap<Configuration> bootstrap) {
+    bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
+}
+```

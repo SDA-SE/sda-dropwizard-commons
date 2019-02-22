@@ -27,6 +27,7 @@ public class ConfigurationSubstitutionBundle implements Bundle {
    public static Builder builder() {
       return new Builder();
    }
+
    @Override
    public void initialize(Bootstrap<?> bootstrap) {
       bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
