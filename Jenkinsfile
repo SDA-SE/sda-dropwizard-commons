@@ -1,173 +1,144 @@
 @Library('jenkins-library') _
 
 pipeline {
-   agent none
-   options {
-        disableConcurrentBuilds()
-   }
-   stages {
-      /*
-       * Stage: Prepare Workspace
-       *
-       * Checks out scm, sets up gradle.properties and replaces placehodlers within
-       * feature branch files
-       *
-       */
-      stage('Prepare Workspace') {
-         agent {
-            label 'master'
+  agent {
+    node {
+      label 'master'
+    }
+  }
+  options {
+    disableConcurrentBuilds()
+  }
+  stages {
+    stage('Generate Semantic Release') {
+      agent {
+        docker {
+          image 'quay.io/sdase/semantic-release:15.13.3'
+        }
+      }
+      steps {
+        script {
+           env.SEMANTIC_VERSION = semanticRelease dryRun: "true"
+        }
+      }
+    }
+
+    stage('Build jar') {
+      agent {
+        docker {
+          image 'quay.io/sdase/openjdk:8u191-alpine-3.8'
+        }
+      }
+      steps {
+        prepareGradleWorkspace secretId: 'sdabot-github-token'
+        javaGradlew gradleCommand: 'assemble', clean: true
+        stash includes: '**/build/libs/*', name: 'build'
+      }
+    }
+
+    stage('Run Tests') {
+      parallel {
+        stage('Module test jar') {
+          agent {
+            docker {
+              image 'quay.io/sdase/openjdk:8u191-bionic'
+            }
           }
-         steps {
-            prepareGradleWorkspace secretId: 'sdabot-github-token', pathToFile: 'gradle.properties'
-         }
-      }
-      /*
-       * Stage: Tag Release
-       *
-       * Finds the current Tag and the new version number based on semantic release
-       *
-       */
-      stage('Prepare Release') {
-         agent {
-            docker {
-               image 'quay.io/sdase/semantic-release:15.12.1'
-            }
-         }
-         steps {
-            script {
-               env.SEMANTIC_VERSION = semanticRelease dryRun: "true"
-            }
-         }
-      }
-      /*
-       * Stage: Gradle Java: Jar
-       *
-       * Calls the Gradle Wrapper and builds the Jar.
-       *
-       * Runs in its own Docker container
-       */
-      stage('Gradle Java: Jar') {
-         agent {
-            docker {
-               image 'openjdk:8-jdk-alpine'
-            }
-         }
-         steps {
-            javaGradlew gradleCommand: 'assemble', clean: true
-         }
-      }
-      /*
-       * Stage: Java Gradle: Module Test Service
-       *
-       * Calls the Gradle wrapper with the "test" task in order
-       * to module test the software.
-       *
-       * Publishes an HTML Report if tests are failing
-       *
-       * Runs in its own Docker container
-       *
-       */
-      stage('Gradle Java: Module Test') {
-         agent {
-            docker {
-               image 'openjdk:8-jdk-stretch'
-            }
-         }
-         steps {
+          steps {
+            prepareGradleWorkspace secretId: 'sdabot-github-token'
             javaGradlew gradleCommand: 'test'
-         }
-         post {
+            script {
+              def testResults = findFiles(glob: '**/build/test-results/test/*.xml')
+              for(xml in testResults) {
+                touch xml.getPath()
+              }
+            }
+            stash includes: '**/build/**/*', name: 'moduletest'
+          }
+          post {
             always {
-               junit '**/build/test-results/test/*.xml'
+              junit '**/build/test-results/test/*.xml'
             }
-         }
-      }
-      /*
-       * Stage: Java Gradle: Integration Test Service
-       *
-       * Same as Module Test but calling gradlew 'iT'
-       *
-       */
-      stage('Gradle Java: Integration Test') {
-         agent {
+          }
+        }
+        stage('Integration test service') {
+          agent {
             docker {
-               image 'openjdk:8-jdk-stretch'
+              image 'quay.io/sdase/openjdk:8u191-bionic'
             }
-         }
-         steps {
+          }
+          steps {
+            prepareGradleWorkspace secretId: 'sdabot-github-token'
             javaGradlew gradleCommand: 'integrationTest'
-         }
-         post {
+            script {
+              def testResults = findFiles(glob: '**/build/integTest-results/*.xml')
+              for(xml in testResults) {
+                touch xml.getPath()
+              }
+            }
+            stash includes: '**/build/**/*', name: 'integrationtest'
+          }
+          post {
             always {
-               junit '**/build/integTest-results/*.xml'
+              junit '**/build/integTest-results/*.xml'
             }
-         }
+          }
+        }
       }
-      /*
-       * Run Sonar Scan on all sources for the default branch and publish the results to SonarQube
-       */
-      stage('Sonar Scan Sources (Publish to SonarQube)') {
-         agent {
-             label 'master'
-         }
-         when {
-             branch 'master'
-         }
-         steps {
-             sonarScanBranch project: 'org.sdase.commons', javaBaseDir: './'
-         }
+    }
+
+    stage('Sonar Scan Sources (Publish to SonarQube)') {
+      when {
+        branch 'master'
       }
-      /*
-       * Run Sonar Scan on all sources for a pull request and annotate the Pull Request on GitHub
-       */
-      stage('Sonar Scan Sources (Annotate Pull Request)') {
-         agent {
-             label 'master'
-         }
-         when {
-             changeRequest()
-         }
-         steps {
-             sonarScanPullRequest project: 'org.sdase.commons', javaBaseDir: './'
-         }
+      steps {
+        unstash 'moduletest'
+        unstash 'integrationtest'
+        sonarScanBranch project: 'com.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']
       }
-      /*
-       * Stage: Create Release
-       *
-       * Finds the current Tag and increments the version based on semantic release
-       *
-       */
-      stage('Create Release') {
-         when {
-            branch 'master'
-            not { environment name: 'SEMANTIC_VERSION', value: '' }
-         }
-         agent {
-            docker {
-               image 'quay.io/sdase/semantic-release:15.12.1'
-            }
-         }
-         steps {
-            semanticRelease()
-         }
+    }
+
+    stage('Sonar Scan Sources (Annotate Pull Request)') {
+      when {
+        changeRequest()
       }
-      /*
-       * Stage: Upload release
-       *
-       * Uploads the Archive to Nexus
-       *
-       */
-      stage('Upload release') {
-         when {
-            branch 'master'
-            not { environment name: 'SEMANTIC_VERSION', value: '' }
-         }
-         agent {
-            label 'master'
-         }
-         steps {
-            javaGradlew gradleCommand: 'uploadArchives'
-         }
+      steps {
+        unstash 'moduletest'
+        unstash 'integrationtest'
+        sonarScanPullRequest project: 'com.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']
       }
-   }
+    }
+
+    stage('Create Release') {
+      when {
+        branch 'master'
+        not { environment name: 'SEMANTIC_VERSION', value: '' }
+      }
+      agent {
+        docker {
+          image 'quay.io/sdase/semantic-release:15.13.3'
+        }
+      }
+      steps {
+        semanticRelease()
+      }
+    }
+
+    stage('Upload release') {
+      when {
+        branch 'master'
+        not { environment name: 'SEMANTIC_VERSION', value: '' }
+      }
+      agent {
+        docker {
+          image 'quay.io/sdase/openjdk:8u191-alpine-3.8'
+        }
+      }
+      steps {
+        unstash 'build'
+        prepareGradleWorkspace secretId: 'sdabot-github-token'
+        javaGradlew gradleCommand: 'uploadArchives'
+      }
+    }
+  }
 }
