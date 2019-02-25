@@ -9,6 +9,7 @@ import org.sdase.commons.server.cors.CorsBundle;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
+import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.server.security.SecurityBundle;
 import org.sdase.commons.server.starter.test.BundleAssertion;
@@ -36,6 +37,7 @@ public class SdaPlatformBundleBuilderTest {
 
       SoftAssertions.assertSoftly(softly -> {
          softly.assertThat(bundleAssertion.getBundleOfType(bundle, ConfigurationSubstitutionBundle.class)).isNotNull();
+         softly.assertThat(bundleAssertion.getBundleOfType(bundle, DefaultLoggingConfigurationBundle.class)).isNotNull();
          softly.assertThat(bundleAssertion.getBundleOfType(bundle, JacksonConfigurationBundle.class)).isNotNull();
          softly.assertThat(bundleAssertion.getBundleOfType(bundle, InternalHealthCheckEndpointBundle.class)).isNotNull();
          softly.assertThat(bundleAssertion.getBundleOfType(bundle, PrometheusBundle.class)).isNotNull();
@@ -45,7 +47,7 @@ public class SdaPlatformBundleBuilderTest {
          softly.assertThat(bundleAssertion.getBundleOfType(bundle, AuthBundle.class)).isNotNull();
          softly.assertThat(bundleAssertion.getBundleOfType(bundle, CorsBundle.class)).isNotNull();
          softly.assertThat(bundleAssertion.getBundleOfType(bundle, ConsumerTokenBundle.class)).isNotNull();
-         softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(10);
+         softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(11);
       });
 
    }

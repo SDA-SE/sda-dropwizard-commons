@@ -18,6 +18,7 @@ import org.sdase.commons.server.cors.CorsConfigProvider;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
+import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.server.security.SecurityBundle;
 import org.sdase.commons.server.starter.builder.CustomConfigurationProviders.AuthConfigProviderBuilder;
@@ -74,6 +75,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
       // add normal bundles
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
+      bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
       bootstrap.addBundle(InternalHealthCheckEndpointBundle.builder().build());
       bootstrap.addBundle(PrometheusBundle.builder().build());
       bootstrap.addBundle(TraceTokenBundle.builder().build());
