@@ -61,7 +61,7 @@ public class HttpConnectorSecurityAdvice {
 
    private void forceNoDateHeader(HttpConnectorFactory httpConnectorFactory) {
       if (httpConnectorFactory.isUseDateHeader()) {
-         LOG.info("Disabling useDateHeader to avoid giving information to possible attackers.");
+         LOG.debug("Disabling useDateHeader to avoid giving information to possible attackers.");
          httpConnectorFactory.setUseDateHeader(false);
       }
    }
