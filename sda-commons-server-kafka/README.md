@@ -96,7 +96,7 @@ public class DemoApplication {
                   .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build()
             );
-      
+
       MessageProducer<String, SimpleEntity> jsonProducer = kafkaBundle.registerProducer(ProducerRegistration
             .<String, SimpleEntity>builder()
             .forTopic(topic)
@@ -114,6 +114,48 @@ public class DemoApplication {
 
 Note: CDI is not included within the bundle.
 
+### Known Kafka Problems
+
+There exists a known Kafka issue in the new consumer API [KAFAK-4740](https://issues.apache.org/jira/browse/KAFKA-4740) 
+that throws potentially a `org.apache.kafka.commons.errors.SerializationException` when a record key/value can't be deserialized depending on 
+deserializer implementation. This can result in an infinite loop because the poll is not committed and the next poll will throw this exception 
+again. The wrapped deserialization approach offers a workaround where this exception is prevented and the processing can continue. 
+But be aware that the `key` or `value` can be `null` in this case in both `MessageHandler.handle()` and `ErrorHandler.handleError()` methods. 
+Another alternative is to implement your own Deserializer to have even more control and where you can potentially apply any fallback deserialization
+strategy. 
+
+```
+public class DemoApplication {
+   private final KafkaBundle<AppConfiguration> kafkaBundle = KafkaBundle.builder().withConfigurationProvider(AppConfiguration::getKafka).build();
+   private final MessageProducer<String, ProductBundle> producer;
+      
+   public void initialize(Bootstrap<AppConfiguration> bootstrap) {
+      bootstrap.addBundle(kafkaBundle);
+   }
+         
+   public void run(AppConfiguration configuration, Environment environment) throws Exception {
+      // register with default consumer and listener config
+      // The handler implements the actual logic for the message processing
+      
+      // JSON Example with wrapped Deserializer to avoid DeseriliazationException, see Note below
+      List<MessageListener> jsonListener = kafkaBundle.registerMessageHandler(MessageHandlerRegistration
+            .<String, SimpleEntity >builder()
+            .withDefaultListenerConfig()
+            .forTopic(topic)
+            .withDefaultConsumer()
+            .withValueDeserializer(
+                new WrappedNoSerializationErrorDeserializer<>(
+                    new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
+            .withHandler(x -> {
+               if (x.value() != null) {
+                  resultsString.add(x.value().getName())
+               }
+            })  
+            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .build()
+      );
+   }
+```
 
 ## Configuration
 To configure KafkaBundle add the following `kafka` block to your Dropwizard config.yml. The following config snippet shows an example configuration with descriptive comments:

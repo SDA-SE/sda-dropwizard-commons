@@ -5,6 +5,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 /**
  * Interface for handling errors that might occur during the processing of Kafka records.
+ * Be aware that the key or value can be null if the WrappedNoSerializationErrorDeserializer
+ * is used.
  * @param <K> key class of the record
  * @param <V> value class of the record
  */

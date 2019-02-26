@@ -45,6 +45,7 @@ import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
+import org.sdase.commons.server.kafka.serializers.WrappedNoSerializationErrorDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -436,5 +437,91 @@ public class KafkaBundleWithConfigIT {
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
 
       assertThat(resultsString, containsInAnyOrder("a", "b"));
+   }
+
+   @Test
+   public void testValueWrappedNoSerializationErrorDeserializer() {
+      String topic = "testWrappedNoSerializationErrorDeserializer";
+      KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
+
+      kafkaBundle.registerMessageHandler(MessageHandlerRegistration.<String, SimpleEntity>builder()
+          .withDefaultListenerConfig()
+          .forTopic(topic)
+          .withDefaultConsumer()
+          .withValueDeserializer(
+              new WrappedNoSerializationErrorDeserializer<>(
+                  new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
+          .withHandler(x -> {
+             if (x.value() != null) {
+                resultsString.add(x.value().getName());
+             }
+          })
+          .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+          .build()
+      );
+
+      KafkaProducer<String, String> producer =
+          KAFKA.getKafkaTestUtils()
+              .getKafkaProducer(StringSerializer.class, StringSerializer.class);
+      producer.send(
+          new ProducerRecord<>(topic, "Test",
+              "{ \"name\":\"Heinz\", \"lastname\":\"Mustermann\"}"));
+      producer.send(
+          new ProducerRecord<>(topic, "Test",
+              "invalid json value"));
+      producer.send(
+          new ProducerRecord<>(topic, "Test",
+              "{ \"name\":\"Heidi\", \"lastname\":\"Musterfrau\"}"));
+
+
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
+
+      assertThat(resultsString, containsInAnyOrder("Heinz", "Heidi"));
+   }
+
+   @Test
+   public void testKeyWrappedNoSerializationErrorDeserializer() {
+      String topic = "testKeyWrappedNoSerializationErrorDeserializer";
+      KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
+
+      kafkaBundle.registerMessageHandler(MessageHandlerRegistration.<SimpleEntity, String>builder()
+          .withDefaultListenerConfig()
+          .forTopic(topic)
+          .withDefaultConsumer()
+          .withKeyDeserializer(
+              new WrappedNoSerializationErrorDeserializer<>(
+                  new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
+          .withHandler(x -> {
+             if (x.key() != null && x.value() != null) {
+                resultsString.add(x.value());
+             }
+          })
+          .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+          .build()
+      );
+
+      KafkaProducer<String, String> producer =
+          KAFKA.getKafkaTestUtils()
+              .getKafkaProducer(StringSerializer.class, StringSerializer.class);
+      producer.send(
+          new ProducerRecord<>(topic,
+              "{ \"name\":\"Heinz\", \"lastname\":\"Mustermann\"}",
+              "a"
+          ));
+      producer.send(
+          new ProducerRecord<>(topic,
+              "invalid json key",
+              "b"
+          ));
+      producer.send(
+          new ProducerRecord<>(topic,
+              "{ \"name\":\"Heidi\", \"lastname\":\"Musterfrau\"}",
+              "c"
+          ));
+
+
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
+
+      assertThat(resultsString, containsInAnyOrder("a", "c"));
    }
 }
