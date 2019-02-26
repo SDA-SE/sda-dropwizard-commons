@@ -22,6 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import org.sdase.commons.shared.api.error.ApiError;
 
 // Identify this interface for Swagger documentation.
 //
@@ -70,8 +71,14 @@ public interface PersonService {
    @ApiOperation(value = "Returns a single person by id.")
    @ApiResponses({
          // It is also possible to define multiple responses that might occur:
-         @ApiResponse(code = HTTP_OK, message = "Returns the requested person."),
-         @ApiResponse(code = HTTP_NOT_FOUND, message = "The requested person was not found.") })
+         @ApiResponse(
+             code = HTTP_OK,
+             message = "Returns the requested person.",
+             response = PersonResource.class),
+         @ApiResponse(
+             code = HTTP_NOT_FOUND,
+             message = "The requested person was not found.",
+             response = ApiError.class) })
    PersonResource findPersonById(
          @ApiParam(value = "The id of the person to request.", required = true) // Document path params
          @PathParam("personId") int personId);
