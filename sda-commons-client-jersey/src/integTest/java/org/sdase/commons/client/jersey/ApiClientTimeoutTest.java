@@ -13,8 +13,6 @@ import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.server.testing.EnvironmentRule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
@@ -25,6 +23,7 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.awaitility.Awaitility.await;
+import static org.sdase.commons.client.jersey.RetryUtil.tryNTimes;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.connectTimeoutError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.readTimeoutError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.timeoutError;
@@ -33,8 +32,6 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
  * Test that timeouts are correctly mapped.
  */
 public class ApiClientTimeoutTest {
-
-   private static final Logger LOG = LoggerFactory.getLogger(ApiClientTimeoutTest.class);
 
    @ClassRule
    public static final WireMockClassRule WIRE = new WireMockClassRule(wireMockConfig().dynamicPort());
@@ -153,20 +150,5 @@ public class ApiClientTimeoutTest {
 
    }
 
-   private void tryNTimes(int n, Runnable r) {
-      int retries = n + 1;
-      for (int i = 0; i < retries + 1; i++) {
-         try {
-            r.run();
-            break;
-         } catch (Throwable t) { // NOSONAR
-            if (i < retries) {
-               LOG.warn("Attempt {} failed.", i + 1, t);
-            } else {
-               LOG.error("Finally failed after {} attempts.", i + 1);
-               throw t;
-            }
-         }
-      }
-   }
+
 }
