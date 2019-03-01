@@ -11,14 +11,19 @@ dependencies {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.javassist', module: 'javassist'
     }
+    
     compile 'io.openapitools.hal:swagger-hal:' + openApiToolVersion, {
         exclude group: 'io.openapitools.jackson.dataformat', module: 'jackson-dataformat-hal'
         exclude group: 'io.swagger', module: 'swagger-jaxrs'
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
+    compile 'io.openapitools.jackson.dataformat:jackson-dataformat-hal:' + openApiToolVersion, {
+        exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+
     testCompile project(':sda-commons-server-testing')
-    testCompile project(':sda-commons-server-jackson')
     testCompile 'net.javacrumbs.json-unit:json-unit-assertj:2.2.0', {
         exclude group: 'org.assertj', module: 'assertj-core'
     }
