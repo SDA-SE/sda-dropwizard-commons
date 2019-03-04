@@ -86,17 +86,14 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
       configuredBundles.add(securityBundleBuilder.build());
       configuredBundles.add(swaggerBundleBuilder.build());
       if (authBundleBuilder != null) {
-         //noinspection unchecked
          configuredBundles.add(authBundleBuilder.build());
       }
       if (corsBundleBuilder != null) {
-         //noinspection unchecked
          configuredBundles.add(corsBundleBuilder.build());
       }
       if (consumerTokenBundleBuilder != null) {
          configuredBundles.add(consumerTokenBundleBuilder.build());
       }
-      //noinspection unchecked
       configuredBundles.stream().map(b -> (ConfiguredBundle) b).forEach(bootstrap::addBundle);
    }
 

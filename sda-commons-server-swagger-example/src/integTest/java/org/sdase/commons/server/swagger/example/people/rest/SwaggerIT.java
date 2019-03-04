@@ -11,7 +11,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.auth.testing.AuthRule;
 import org.sdase.commons.server.starter.SdaPlatformConfiguration;
-import org.sdase.commons.server.swagger.example.SdaPlatformExampleApplication;
+import org.sdase.commons.server.swagger.example.SwaggerExampleApplication;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 
 // This is a simple integration test that checks whether the swagger documentation is produced at
@@ -26,7 +26,7 @@ public class SwaggerIT {
    public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
          // Setup a test instance of the application
          DropwizardRuleHelper
-               .dropwizardTestAppFrom(SdaPlatformExampleApplication.class)
+               .dropwizardTestAppFrom(SwaggerExampleApplication.class)
                .withConfigFrom(SdaPlatformConfiguration::new)
                // use random ports so that tests can run in parallel
                // and do not affect each other when one is not shutting down

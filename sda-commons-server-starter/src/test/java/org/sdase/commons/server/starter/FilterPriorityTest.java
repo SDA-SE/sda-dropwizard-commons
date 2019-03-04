@@ -2,18 +2,13 @@ package org.sdase.commons.server.starter;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
+import static org.eclipse.jetty.http.HttpStatus.OK_200;
 import static org.sdase.commons.server.testing.DropwizardRuleHelper.dropwizardTestAppFrom;
 
-import java.util.Map;
-
-import javax.ws.rs.core.GenericType;
-
 import javax.ws.rs.core.Response;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.sdase.commons.server.auth.config.AuthConfig;
-import org.sdase.commons.server.cors.CorsConfiguration;
 import org.sdase.commons.server.starter.test.StarterApp;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -26,6 +21,26 @@ public class FilterPriorityTest {
          .withRandomPorts()
          .withRootPath("/api/*")
          .build();
+
+   @BeforeClass
+   public static void setup() {
+      // allow to set headers in jersey client
+      System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+   }
+
+   @Test
+   public void corsFromSwaggerHasHigherPriority() {
+      Response response = DW
+            .client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("/api/swagger.yaml")
+            .request("application/yaml")
+            .header("Origin", "example.com")
+            .get();
+
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
+   }
 
    @Test
    public void traceTokenFilterHasHighestPriority() {

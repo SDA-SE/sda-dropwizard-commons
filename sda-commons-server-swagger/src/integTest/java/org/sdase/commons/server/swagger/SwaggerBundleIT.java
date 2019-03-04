@@ -87,6 +87,18 @@ public class SwaggerBundleIT {
    }
 
    @Test
+   public void shouldNotHaveCORSWildcardOnOtherPath() {
+      Response response = DW.client()
+          .target(getTarget())
+          .path("jdoe")
+          .request()
+          .header("Origin", "example.com").get();
+
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isNull();
+   }
+
+   @Test
    public void shouldIncludeInfo() {
       String response = getJsonRequest().get(String.class);
 
@@ -107,6 +119,16 @@ public class SwaggerBundleIT {
           .inPath("$.basePath")
           .asString()
           .isEqualTo("/");
+   }
+
+   @Test
+   public void shouldDeduceHost() {
+      String response = getJsonRequest().get(String.class);
+
+      assertThatJson(response)
+          .inPath("$.host")
+          .asString()
+          .contains("localhost:" + DW.getLocalPort());
    }
 
    @Test

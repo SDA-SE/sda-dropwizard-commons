@@ -19,7 +19,7 @@ The provided [`local-config.yaml`](local-config.yaml) allows to start the
 need for authentication locally using a run configuration of the favourite IDE that defines the program arguments 
 `server sda-commons-server-swagger-example/local-config.yaml`.
 Swagger documentation is available at at `GET /swagger.json` or `GET /swagger.yaml`, 
-you may use the [Swagger Editor](https://editor.swagger.io) to view the documentation. 
+you may use the [Swagger Editor](https://editor.swagger.io) or [Swagger UI](http://petstore.swagger.io/) to view the documentation. 
 
 The [`config.yaml`](config.yaml) is an example how the application can be started in production. Such file should be 
 copied in the Docker container so that the variables can be populated using the environment configured by the 

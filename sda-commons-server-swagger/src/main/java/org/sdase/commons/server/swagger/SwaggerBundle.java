@@ -10,7 +10,6 @@ import io.dropwizard.setup.Environment;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.jaxrs.config.BeanConfig;
-import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
@@ -106,10 +105,11 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
 
    @Override
    public void run(Configuration configuration, Environment environment) {
-      beanConfig = new BeanConfig();
+      String basePath = determineBasePath(configuration);
 
+      beanConfig = new BeanConfig();
       beanConfig.setResourcePackage(resourcePackages);
-      beanConfig.setBasePath(determineBasePath(configuration));
+      beanConfig.setBasePath(basePath);
       beanConfig.setPrettyPrint(true);
 
       // order important
@@ -117,12 +117,16 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
       beanConfig.getSwagger().getInfo().mergeWith(info);
       //
 
-      environment.jersey().register(new ApiListingResource());
+      environment.jersey().register(new ApiListingResourceWithDeducedHost());
       environment.jersey().register(new SwaggerSerializers());
 
       // Allow CORS to access (via wildcard) from Swagger UI/editor
+      String filterBasePath = basePath.endsWith("/") ? basePath : basePath + "/"; //NOSONAR
       FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS Swagger", CrossOriginFilter.class);
-      filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/swagger.yaml", "/swagger.json");
+      filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class),
+          true,
+          filterBasePath + "swagger.yaml",
+          filterBasePath + "swagger.json");
       filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
       filter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, Boolean.TRUE.toString());
       filter.setInitParameter(CrossOriginFilter.CHAIN_PREFLIGHT_PARAM, Boolean.FALSE.toString());

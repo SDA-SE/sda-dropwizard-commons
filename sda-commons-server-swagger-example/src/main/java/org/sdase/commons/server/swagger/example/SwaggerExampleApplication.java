@@ -10,10 +10,10 @@ import org.sdase.commons.server.swagger.example.people.rest.PersonEndpoint;
 /**
  * Example application to show how to document a REST api using swagger for the SDA platform.
  */
-public class SdaPlatformExampleApplication extends Application<SdaPlatformConfiguration> {
+public class SwaggerExampleApplication extends Application<SdaPlatformConfiguration> {
 
    public static void main(String[] args) throws Exception {
-      new SdaPlatformExampleApplication().run(args);
+      new SwaggerExampleApplication().run(args);
    }
 
    @Override
@@ -30,7 +30,7 @@ public class SdaPlatformExampleApplication extends Application<SdaPlatformConfig
             // while generating the documentation.
             //
             // Set the name of the service as title of the Swagger documentation.
-            .withSwaggerInfoTitle("SDA Platform Example Application")
+            .withSwaggerInfoTitle("Swagger Example Application")
             // Set the description of the API, like an introduction. Like in most of the fields you
             // may use markdown here to apply custom formatting.
             .withSwaggerInfoDescription("This is the API documentation for the **People API**.\n\n"

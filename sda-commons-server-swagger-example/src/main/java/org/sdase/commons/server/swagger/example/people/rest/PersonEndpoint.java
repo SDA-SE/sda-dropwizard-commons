@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
            // class, not the service interface!
 public class PersonEndpoint implements PersonService {
 
-   private final Map<Integer, PersonResource> people = Collections.synchronizedMap(new LinkedHashMap<>());
+   private final Map<Integer, CreatePersonResource> people = Collections.synchronizedMap(new LinkedHashMap<>());
 
    /**
     * Information about the requested URI. Jersey will inject a Proxy of
@@ -31,14 +31,14 @@ public class PersonEndpoint implements PersonService {
    private UriInfo uriInfo;
 
    public PersonEndpoint() {
-      people.put(0, new PersonResource()
+      people.put(0, new CreatePersonResource()
             .setFirstName("Max")
             .setLastName("Mustermann")
             .setAddresses(
                   Collections.singletonList(new AddressResource()
                         .setStreet("Reeperbahn 1")
                         .setCity("Hamburg"))));
-      people.put(1, new PersonResource()
+      people.put(1, new CreatePersonResource()
             .setFirstName("John")
             .setLastName("Doe")
             .setAddresses(Collections
@@ -57,7 +57,7 @@ public class PersonEndpoint implements PersonService {
       }
    }
 
-   public Response createPeople(PersonResource person) {
+   public Response createPerson(CreatePersonResource person) {
       int id = people.size();
       people.put(id, person);
 
@@ -72,7 +72,7 @@ public class PersonEndpoint implements PersonService {
       return toResourceWithSelfLink(personId, people.get(personId));
    }
 
-   private PersonResource toResourceWithSelfLink(int id, PersonResource source) {
+   private PersonResource toResourceWithSelfLink(int id, CreatePersonResource source) {
       return new PersonResource()
             .setSelfLink(new HALLink.Builder(getPersonUri(id)).build())
             .setFirstName(source.getFirstName())
@@ -87,7 +87,8 @@ public class PersonEndpoint implements PersonService {
    private URI getPersonUri(int id) {
       return uriInfo
           .getBaseUriBuilder()
-          .path(PersonResource.class)
+          .path(PersonService.class)
+          .path(PersonService.class, "findPersonById")
           .resolveTemplate("personId", id)
           .build();
    }

@@ -64,7 +64,7 @@ public interface PersonService {
                            description = "The location of the new person",
                            response = String.class)
          })})
-   Response createPeople(PersonResource person);
+   Response createPerson(CreatePersonResource person);
 
    @GET
    @Path("{personId}")
