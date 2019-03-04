@@ -2,16 +2,20 @@ package org.sdase.commons.server.swagger;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Info;
+import javax.servlet.FilterRegistration;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
+import org.mockito.internal.matchers.Any;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
@@ -20,6 +24,7 @@ import java.util.Optional;
 
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.quality.Strictness.STRICT_STUBS;
@@ -48,6 +53,12 @@ public class SwaggerBundleTest {
 
    @Mock
    private JerseyEnvironment jerseyEnvironment;
+
+   @Mock
+   private ServletEnvironment servletEnvironment;
+
+   @Mock
+   private FilterRegistration.Dynamic crossOriginFilter;
 
    @Mock
    private AbstractServerFactory serverFactory;
@@ -435,6 +446,8 @@ public class SwaggerBundleTest {
    @Test
    public void shouldUseDefaultBasePathIfJerseyIsNotUsed() {
       when(environment.jersey()).thenReturn(jerseyEnvironment);
+      when(servletEnvironment.addFilter(any(String.class), any(Class.class))).thenReturn(crossOriginFilter);
+      when(environment.servlets()).thenReturn(servletEnvironment);
       when(configuration.getServerFactory()).thenReturn(mock(ServerFactory.class));
 
       assertBeanConfigBasePath("/api");
@@ -443,6 +456,8 @@ public class SwaggerBundleTest {
    @Test
    public void shouldHandleJerseyRootPathNotSet() {
       when(environment.jersey()).thenReturn(jerseyEnvironment);
+      when(servletEnvironment.addFilter(any(String.class), any(Class.class))).thenReturn(crossOriginFilter);
+      when(environment.servlets()).thenReturn(servletEnvironment);
       when(configuration.getServerFactory()).thenReturn(serverFactory);
       when(serverFactory.getJerseyRootPath()).thenReturn(Optional.empty());
 
@@ -452,6 +467,8 @@ public class SwaggerBundleTest {
    @Test
    public void shouldHandleJerseyRootPathSetToRoot() {
       when(environment.jersey()).thenReturn(jerseyEnvironment);
+      when(servletEnvironment.addFilter(any(String.class), any(Class.class))).thenReturn(crossOriginFilter);
+      when(environment.servlets()).thenReturn(servletEnvironment);
       when(configuration.getServerFactory()).thenReturn(serverFactory);
       when(serverFactory.getJerseyRootPath()).thenReturn(Optional.of("/*"));
 
@@ -461,6 +478,8 @@ public class SwaggerBundleTest {
    @Test
    public void shouldUseJerseyRootPath() {
       when(environment.jersey()).thenReturn(jerseyEnvironment);
+      when(servletEnvironment.addFilter(any(String.class), any(Class.class))).thenReturn(crossOriginFilter);
+      when(environment.servlets()).thenReturn(servletEnvironment);
       when(configuration.getServerFactory()).thenReturn(serverFactory);
       when(serverFactory.getJerseyRootPath()).thenReturn(Optional.of("/root/path/*"));
 
@@ -470,6 +489,8 @@ public class SwaggerBundleTest {
    @Test
    public void shouldBuildSwaggerDocumentation() {
       when(environment.jersey()).thenReturn(jerseyEnvironment);
+      when(servletEnvironment.addFilter(any(String.class), any(Class.class))).thenReturn(crossOriginFilter);
+      when(environment.servlets()).thenReturn(servletEnvironment);
 
       String title = "example-title";
       String version = "2.0";

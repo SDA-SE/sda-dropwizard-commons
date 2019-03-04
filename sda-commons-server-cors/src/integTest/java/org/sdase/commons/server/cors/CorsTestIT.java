@@ -42,7 +42,7 @@ public class CorsTestIT {
 
    @BeforeClass
    public static void setup() {
-      // allow to set headers in jersy client
+      // allow to set headers in jersey client
       System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
    }
 

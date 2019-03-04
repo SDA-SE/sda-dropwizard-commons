@@ -12,6 +12,7 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.swagger.test.SwaggerAssertions;
@@ -43,6 +44,12 @@ public class SwaggerBundleIT {
       return "http://localhost:" + DW.getLocalPort();
    }
 
+   @BeforeClass
+   public static void setup() {
+      // allow to set headers in jersey client
+      System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+   }
+
    @Test
    public void shouldProvideSchemaCompliantJson() {
       Response response = getJsonRequest().get();
@@ -61,6 +68,22 @@ public class SwaggerBundleIT {
       assertThat(response.getMediaType()).isEqualTo(MediaType.valueOf("application/yaml"));
 
       SwaggerAssertions.assertValidSwagger2Yaml(response);
+   }
+
+   @Test
+   public void shouldHaveCORSWildcardJson() {
+      Response response = getJsonRequest().header("Origin", "example.com").get();
+
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
+   }
+
+   @Test
+   public void shouldHaveCORSWildcardYaml() {
+      Response response = getYamlRequest().header("Origin", "example.com").get();
+
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
    }
 
    @Test

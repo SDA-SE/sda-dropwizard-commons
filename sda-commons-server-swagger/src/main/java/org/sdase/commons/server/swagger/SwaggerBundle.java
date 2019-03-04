@@ -15,6 +15,10 @@ import io.swagger.jaxrs.listing.SwaggerSerializers;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
+import java.util.EnumSet;
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.sdase.commons.optional.server.swagger.json.example.JsonExampleModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +119,13 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
 
       environment.jersey().register(new ApiListingResource());
       environment.jersey().register(new SwaggerSerializers());
+
+      // Allow CORS to access (via wildcard) from Swagger UI/editor
+      FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS Swagger", CrossOriginFilter.class);
+      filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/swagger.yaml", "/swagger.json");
+      filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
+      filter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, Boolean.TRUE.toString());
+      filter.setInitParameter(CrossOriginFilter.CHAIN_PREFLIGHT_PARAM, Boolean.FALSE.toString());
 
       LOG.info("Initialized Swagger with base path '{}' and resource packages: '{}'",
             beanConfig.getBasePath(), beanConfig.getResourcePackage());
