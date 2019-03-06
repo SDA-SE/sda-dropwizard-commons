@@ -24,6 +24,7 @@ dependencies {
     testCompile project(':sda-commons-shared-error')
     testCompile project(':sda-commons-shared-forms')
     testCompile project(':sda-commons-shared-tracing')
+    testCompile project(':sda-commons-shared-yaml')
 }
 uploadArchives {
     // We do not upload this test module to Nexus because it should not be deployed.

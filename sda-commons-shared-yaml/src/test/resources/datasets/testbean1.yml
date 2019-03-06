@@ -1,0 +1,3 @@
+bean:
+  message:  "Hello"
+  attribute: "attribute1"

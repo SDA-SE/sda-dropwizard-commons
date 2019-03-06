@@ -228,6 +228,10 @@ starting an application within an Weld container.
 Status:
 - Ready to use
 
+##### YAML
+
+The module [`sda-commons-shared-yaml`](./sda-commons-shared-yaml/README.md) adds support for YAML-file handling.
+
 
 ### Client
 
