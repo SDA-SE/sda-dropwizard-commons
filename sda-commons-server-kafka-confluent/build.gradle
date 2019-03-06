@@ -1,0 +1,35 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url 'https://nexus.intern.sda-se.online/repository/sda-se-public/'
+            credentials {
+                username sdaNexusUser
+                password sdaNexusPassword
+            }
+        }
+    }
+    dependencies {
+        classpath 'com.commercehub.gradle.plugin:gradle-avro-plugin:0.10.0'
+    }
+}
+
+apply plugin: 'com.commercehub.gradle.plugin.avro'
+
+dependencies {
+
+    compile project(':sda-commons-server-kafka')
+
+    compile 'io.confluent:kafka-avro-serializer:'+confluentVersion,  {
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.apache.kafka', module: 'kafka-clients'
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+        exclude group: 'org.xerial.snappy', module: 'snappy-java'
+    }
+
+    testCompile project(':sda-commons-server-kafka-confluent-testing')
+
+    // just to check transitive dependency versions
+    testCompile project(':sda-commons-server-dropwizard')
+}

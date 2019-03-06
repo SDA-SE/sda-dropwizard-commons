@@ -12,6 +12,7 @@ dependencies {
     testCompile project(':sda-commons-server-kafka-confluent-testing')
     testCompile project(':sda-commons-server-kafka-testing')
     testCompile project(':sda-commons-server-kafka')
+    testCompile project(':sda-commons-server-kafka-confluent')
     testCompile project(':sda-commons-server-prometheus')
     testCompile project(':sda-commons-server-security')
     testCompile project(':sda-commons-server-starter')
