@@ -2,6 +2,7 @@ package org.sdase.commons.shared.yaml;
 
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
@@ -30,6 +31,14 @@ public class YamlUtil {
       }
    }
 
+   public static <T> T load(final URL resource, final TypeReference<T> typeReference) {
+      try {
+         return mapper.readValue(resource, typeReference);
+      } catch(IOException ioe) {
+         throw new YamlLoadException(ioe);
+      }
+   }
+
    public static <T> T load(final InputStream resource, final Class<T> clazz) {
       try {
          return mapper.readValue(resource, clazz);
@@ -38,9 +47,25 @@ public class YamlUtil {
       }
    }
 
-   public static <T> T load(final String resource, final Class<T> clazz) {
+   public static <T> T load(final InputStream resource, final TypeReference<T> typeReference) {
       try {
-         return mapper.readValue(resource, clazz);
+         return mapper.readValue(resource, typeReference);
+      } catch(IOException ioe) {
+         throw new YamlLoadException(ioe);
+      }
+   }
+
+   public static <T> T load(final String content, final Class<T> clazz) {
+      try {
+         return mapper.readValue(content, clazz);
+      } catch(IOException ioe) {
+         throw new YamlLoadException(ioe);
+      }
+   }
+
+   public static <T> T load(final String content, final TypeReference<T> typeReference) {
+      try {
+         return mapper.readValue(content, typeReference);
       } catch(IOException ioe) {
          throw new YamlLoadException(ioe);
       }

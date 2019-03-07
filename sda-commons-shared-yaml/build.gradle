@@ -3,4 +3,5 @@ dependencies {
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
 
     testCompile project(':sda-commons-server-testing')
+    testCompile 'commons-io:commons-io:2.6'
 }
