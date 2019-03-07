@@ -49,6 +49,10 @@ private static final LazyRule<DropwizardAppRule<AppConfiguration>> DW =
 public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
 ```
 
+The rule also provides a `RULE.clearDatabase()` method to remove data from the database between 
+tests without restarting the rule. To verify and modify the database during tests, 
+`RULE.createClient()` provides a way to access the database using the `MongoClient`.
+
 ### Http Proxy
 
 If the `http_proxy` environment variable is present, the configured proxy is used to download the 

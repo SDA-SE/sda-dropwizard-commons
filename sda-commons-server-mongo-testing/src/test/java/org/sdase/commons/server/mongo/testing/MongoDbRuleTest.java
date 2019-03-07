@@ -4,8 +4,10 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.MongoSecurityException;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.internal.connection.ServerAddressHelper;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import org.bson.Document;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -26,7 +28,7 @@ public class MongoDbRuleTest {
          .withVersion(Version.V3_6_5)
          .build();
 
-   @Test()
+   @Test
    public void shouldStartMongoDbWithSpecifiedSettings() {
       try (MongoClient mongoClient = new MongoClient(ServerAddressHelper.createServerAddress(RULE.getHost()),
             MongoCredential.createCredential(DATABASE_USERNAME, DATABASE_NAME, DATABASE_PASSWORD.toCharArray()),
@@ -53,6 +55,28 @@ public class MongoDbRuleTest {
             MongoClientOptions.builder().build())) {
          long documentCount = mongoClient.getDatabase("my_db").getCollection("test").countDocuments();
          assertThat(documentCount).isEqualTo(0);
+      }
+   }
+
+   @Test
+   public void shouldProvideClientForTesting() {
+      try (MongoClient mongoClient = RULE.createClient()) {
+         long documentCount = mongoClient.getDatabase("my_db").getCollection("test").countDocuments();
+         assertThat(documentCount).isEqualTo(0);
+      }
+   }
+
+   @Test
+   public void shouldClearDatabase() {
+      try (MongoClient mongoClient = new MongoClient(ServerAddressHelper.createServerAddress(RULE.getHost()),
+            MongoCredential.createCredential(DATABASE_USERNAME, DATABASE_NAME, DATABASE_PASSWORD.toCharArray()),
+            MongoClientOptions.builder().build())) {
+         MongoDatabase db = mongoClient.getDatabase("my_db");
+         db.getCollection("clearTest").insertOne(new Document().append("Hallo", "Welt"));
+
+         RULE.clearDatabase();
+
+         assertThat(mongoClient.getDatabase("my_db").listCollectionNames()).doesNotContain("clearTest");
       }
    }
 }

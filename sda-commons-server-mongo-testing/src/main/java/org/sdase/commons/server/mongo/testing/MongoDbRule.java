@@ -6,6 +6,8 @@ import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
+import com.mongodb.MongoCredential;
+import com.mongodb.internal.connection.ServerAddressHelper;
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.config.ExtractedArtifactStoreBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
@@ -191,6 +193,28 @@ public class MongoDbRule extends ExternalResource {
     */
    public String getHost() {
       return mongodConfig.net().getBindIp() + ":" + mongodConfig.net().getPort();
+   }
+
+   /**
+    * Creates a MongoClient that is connected to the database. The caller is
+    * responsible for closing the connection.
+    * 
+    * @return A MongoClient
+    */
+   public MongoClient createClient() {
+      return new MongoClient(ServerAddressHelper.createServerAddress(getHost()),
+            MongoCredential.createCredential(username, database, password.toCharArray()),
+            MongoClientOptions.builder().build());
+   }
+
+   /**
+    * Clears all collections and documents from the database passed during
+    * construction.
+    */
+   public void clearDatabase() {
+      try (MongoClient client = createClient()) {
+         client.dropDatabase(database);
+      }
    }
 
    @Override
