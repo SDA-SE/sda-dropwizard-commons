@@ -145,6 +145,9 @@ messages from a kafka topic.
 The module [`sda-commons-server-kafka-example`](./sda-commons-server-kafka-example/README.md) includes 
 applications, one with consumer and one with producer examples.   
 
+The module [`sda-commons-server-kafka-confluent`](./sda-commons-server-kafka-confluent/README.md) is 
+the base module to add Avro specific support to Kafka.
+
 Status:
 - Ready to use with JSON messages
 
