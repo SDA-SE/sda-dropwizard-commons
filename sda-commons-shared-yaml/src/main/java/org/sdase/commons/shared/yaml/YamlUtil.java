@@ -6,6 +6,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -99,7 +103,12 @@ public class YamlUtil {
           // YAML specific
           .enable(Feature.ALLOW_COMMENTS)
           .enable(Feature.ALLOW_SINGLE_QUOTES)
-          .enable(Feature.ALLOW_YAML_COMMENTS);
+          .enable(Feature.ALLOW_YAML_COMMENTS)
+          // modules
+          .registerModule(new ParameterNamesModule())
+          .registerModule(new Jdk8Module())
+          .registerModule(new JavaTimeModule())
+      ;
 
       return mapper;
    }

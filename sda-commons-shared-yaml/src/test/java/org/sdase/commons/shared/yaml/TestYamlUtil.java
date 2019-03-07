@@ -137,4 +137,18 @@ public class TestYamlUtil {
                   tuple("456", "Hello Universe!", "Bar")
             );
    }
+
+   @Test
+   public void testLoadZonedDateTimeUtc() {
+      TimeAwareBean actual = YamlUtil.load("time: 2019-02-18T11:06:11.634310066Z", TimeAwareBean.class);
+
+      assertThat(actual.getTime()).isEqualTo("2019-02-18T11:06:11.634310066Z");
+   }
+
+   @Test
+   public void testLoadZonedDateTimeBerlin() {
+      TimeAwareBean actual = YamlUtil.load("time: 2019-02-18T11:06:11.634310066+01:00", TimeAwareBean.class);
+
+      assertThat(actual.getTime()).isEqualTo("2019-02-18T10:06:11.634310066Z");
+   }
 }
