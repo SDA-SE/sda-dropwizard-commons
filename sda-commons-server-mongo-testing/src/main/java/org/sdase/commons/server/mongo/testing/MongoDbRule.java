@@ -1,23 +1,36 @@
 package org.sdase.commons.server.mongo.testing;
 
-import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
-import static java.lang.Runtime.getRuntime;
-import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.MINUTES;
-
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.event.ServerClosedEvent;
+import com.mongodb.event.ServerDescriptionChangedEvent;
+import com.mongodb.event.ServerListener;
+import com.mongodb.event.ServerOpeningEvent;
 import com.mongodb.internal.connection.ServerAddressHelper;
 import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.MongodExecutable;
+import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.config.ExtractedArtifactStoreBuilder;
+import de.flapdoodle.embed.mongo.config.IMongodConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
+import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import de.flapdoodle.embed.mongo.distribution.Version.Main;
 import de.flapdoodle.embed.process.config.store.DownloadConfigBuilder;
 import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
 import de.flapdoodle.embed.process.config.store.IDownloadConfig;
 import de.flapdoodle.embed.process.config.store.IProxyFactory;
 import de.flapdoodle.embed.process.config.store.NoProxyFactory;
 import de.flapdoodle.embed.process.runtime.Network;
+import org.bson.Document;
+import org.junit.rules.ExternalResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.Authenticator;
@@ -27,25 +40,11 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 
-import org.junit.rules.ExternalResource;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.event.ServerClosedEvent;
-import com.mongodb.event.ServerDescriptionChangedEvent;
-import com.mongodb.event.ServerListener;
-import com.mongodb.event.ServerOpeningEvent;
-
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
-import de.flapdoodle.embed.mongo.distribution.Version.Main;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
+import static java.lang.Runtime.getRuntime;
+import static java.util.Objects.requireNonNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
  * <p>
@@ -208,8 +207,21 @@ public class MongoDbRule extends ExternalResource {
    }
 
    /**
-    * Clears all collections and documents from the database passed during
-    * construction.
+    * Removes all documents from the database passed during construction. Keeps
+    * the collections and indices on the collections.
+    */
+   public void clearCollections() {
+      try (MongoClient client = createClient()) {
+         MongoDatabase db = client.getDatabase(database);
+
+         Iterable<String> collectionNames = db.listCollectionNames();
+         collectionNames.forEach(n -> db.getCollection(n).deleteMany(new Document()));
+      }
+   }
+
+   /**
+    * Removes all collections and documents from the database passed during
+    * construction. Take care that this also removes all indices from collections.
     */
    public void clearDatabase() {
       try (MongoClient client = createClient()) {

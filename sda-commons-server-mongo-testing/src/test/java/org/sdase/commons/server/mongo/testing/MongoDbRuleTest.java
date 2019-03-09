@@ -4,7 +4,9 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.MongoSecurityException;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.internal.connection.ServerAddressHelper;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import org.bson.Document;
@@ -67,16 +69,34 @@ public class MongoDbRuleTest {
    }
 
    @Test
+   public void shouldClearCollections() {
+      try (MongoClient mongoClient = new MongoClient(ServerAddressHelper.createServerAddress(RULE.getHost()),
+            MongoCredential.createCredential(DATABASE_USERNAME, DATABASE_NAME, DATABASE_PASSWORD.toCharArray()),
+            MongoClientOptions.builder().build())) {
+         MongoDatabase db = mongoClient.getDatabase("my_db");
+         MongoCollection<Document> collection = db.getCollection("clearCollectionsTest");
+         collection.createIndex(Indexes.ascending("field"));
+         collection.insertOne(new Document().append("field", "value"));
+
+         RULE.clearCollections();
+
+         assertThat(db.listCollectionNames()).contains("clearCollectionsTest");
+         assertThat(collection.listIndexes()).isNotEmpty();
+         assertThat(collection.countDocuments()).isEqualTo(0);
+      }
+   }
+
+   @Test
    public void shouldClearDatabase() {
       try (MongoClient mongoClient = new MongoClient(ServerAddressHelper.createServerAddress(RULE.getHost()),
             MongoCredential.createCredential(DATABASE_USERNAME, DATABASE_NAME, DATABASE_PASSWORD.toCharArray()),
             MongoClientOptions.builder().build())) {
          MongoDatabase db = mongoClient.getDatabase("my_db");
-         db.getCollection("clearTest").insertOne(new Document().append("Hallo", "Welt"));
+         db.getCollection("clearDatabaseTest").insertOne(new Document().append("Hallo", "Welt"));
 
          RULE.clearDatabase();
 
-         assertThat(mongoClient.getDatabase("my_db").listCollectionNames()).doesNotContain("clearTest");
+         assertThat(db.listCollectionNames()).doesNotContain("clearDatabaseTest");
       }
    }
 }
