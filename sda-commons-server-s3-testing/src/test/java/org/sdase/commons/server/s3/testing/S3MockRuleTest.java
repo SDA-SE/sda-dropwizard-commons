@@ -1,5 +1,6 @@
 package org.sdase.commons.server.s3.testing;
 
+import static io.dropwizard.testing.ResourceHelpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.amazonaws.ClientConfiguration;
@@ -11,7 +12,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
-import io.dropwizard.testing.ResourceHelpers;
 import java.io.File;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -25,7 +25,8 @@ public class S3MockRuleTest {
    public static final S3MockRule S3_MOCK = S3MockRule
          .builder()
          .createBucket(WATER_BUCKET)
-         .putObject(PRE_FILLED_BUCKET, "file.txt", new File(ResourceHelpers.resourceFilePath("test-file.txt")))
+         .putObject(PRE_FILLED_BUCKET, "file.txt", new File(resourceFilePath("test-file.txt")))
+         .putObject(PRE_FILLED_BUCKET, "stream.txt", S3MockRuleTest.class.getResourceAsStream("/test-file.txt"))
          .putObject(PRE_FILLED_BUCKET, "content.txt", "RUN SDA")
          .build();
 
@@ -71,6 +72,12 @@ public class S3MockRuleTest {
    public void shouldExistPreCreatedFromFile() {
       boolean exists = s3Client.doesObjectExist(PRE_FILLED_BUCKET, "file.txt");
       assertThat(exists).isTrue();
+   }
+
+   @Test()
+   public void shouldExistPreCreatedFromInputStream() {
+      S3Object object = s3Client.getObject(PRE_FILLED_BUCKET, "content.txt");
+      assertThat(object.getObjectContent()).hasContent("RUN SDA");
    }
 
    @Test()

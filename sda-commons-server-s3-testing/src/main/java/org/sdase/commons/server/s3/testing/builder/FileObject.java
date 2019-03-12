@@ -3,7 +3,7 @@ package org.sdase.commons.server.s3.testing.builder;
 import com.amazonaws.services.s3.AmazonS3;
 import java.io.File;
 
-public class FileObject {
+public class FileObject implements MockObject {
    String bucketName;
    String key;
    File file;

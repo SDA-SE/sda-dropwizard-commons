@@ -7,12 +7,15 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import io.findify.s3mock.S3Mock;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.rules.ExternalResource;
 import org.sdase.commons.server.s3.testing.builder.ContentObject;
 import org.sdase.commons.server.s3.testing.builder.FileObject;
+import org.sdase.commons.server.s3.testing.builder.MockObject;
+import org.sdase.commons.server.s3.testing.builder.StreamObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,16 +39,14 @@ import org.slf4j.LoggerFactory;
 public class S3MockRule extends ExternalResource {
    private static final Logger LOGGER = LoggerFactory.getLogger(S3MockRule.class);
    private final List<String> buckets;
-   private final List<FileObject> fileObjects;
-   private final List<ContentObject> contentObjects;
+   private final List<MockObject> mockObjects;
 
    private S3Mock s3Mock;
    private Integer port;
 
-   public S3MockRule(List<String> buckets, List<FileObject> fileObjects, List<ContentObject> contentObjects) {
+   public S3MockRule(List<String> buckets, List<MockObject> mockObjects) {
       this.buckets = buckets;
-      this.fileObjects = fileObjects;
-      this.contentObjects = contentObjects;
+      this.mockObjects = mockObjects;
    }
 
    @Override
@@ -125,8 +126,7 @@ public class S3MockRule extends ExternalResource {
             s3Client.createBucket(bucketName);
          }
       });
-      fileObjects.forEach(o -> o.putObject(s3Client));
-      contentObjects.forEach(o -> o.putObject(s3Client));
+      mockObjects.forEach(o -> o.putObject(s3Client));
    }
 
    private int getFreePort() {
@@ -148,8 +148,7 @@ public class S3MockRule extends ExternalResource {
 
    public static final class Builder {
       private final List<String> buckets = new ArrayList<>();
-      private final List<FileObject> fileObjects = new ArrayList<>();
-      private final List<ContentObject> contentObjects = new ArrayList<>();
+      private final List<MockObject> mockObjects = new ArrayList<>();
 
       private Builder() {
          // prevent instantiation
@@ -177,7 +176,7 @@ public class S3MockRule extends ExternalResource {
        */
       public S3MockRule.Builder putObject(String bucketName, String key, File file) {
          createBucket(bucketName);
-         fileObjects.add(new FileObject(bucketName, key, file));
+         mockObjects.add(new FileObject(bucketName, key, file));
          return this;
       }
 
@@ -192,12 +191,27 @@ public class S3MockRule extends ExternalResource {
        */
       public S3MockRule.Builder putObject(String bucketName, String key, String content) {
          createBucket(bucketName);
-         contentObjects.add(new ContentObject(bucketName, key, content));
+         mockObjects.add(new ContentObject(bucketName, key, content));
+         return this;
+      }
+
+      /**
+       * Put an input stream as an object in the S3 service for use during
+       * testing. Automatically creates a bucket.
+       *
+       * @param bucketName
+       * @param key
+       * @param stream
+       * @return The builder
+       */
+      public S3MockRule.Builder putObject(String bucketName, String key, InputStream stream) {
+         createBucket(bucketName);
+         mockObjects.add(new StreamObject(bucketName, key, stream));
          return this;
       }
 
       public S3MockRule build() {
-         return new S3MockRule(buckets, fileObjects, contentObjects);
+         return new S3MockRule(buckets, mockObjects);
       }
    }
 

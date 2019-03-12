@@ -2,7 +2,7 @@ package org.sdase.commons.server.s3.testing.builder;
 
 import com.amazonaws.services.s3.AmazonS3;
 
-public class ContentObject {
+public class ContentObject implements MockObject {
    String bucketName;
    String key;
    String content;

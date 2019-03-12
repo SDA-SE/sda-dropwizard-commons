@@ -56,6 +56,7 @@ public static final S3MockRule S3_MOCK = S3MockRule
      .builder()
      .createBucket("bucket-of-water")
      .putObject("bucket", "file.txt", new File(ResourceHelpers.resourceFilePath("test-file.txt")))
+     .putObject("bucket", "stream.txt", MyClass.class.getResourceAsStream("/test-file.txt"))
      .putObject("bucket", "content.txt", "RUN SDA")
      .build();
 ```
