@@ -13,15 +13,15 @@ dependencies {
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
         exclude group: 'net.sf.jopt-simple', module: 'jopt-simple'
-        exclude group: 'org.eclipse.jetty'
+        exclude group: 'org.eclipse.jetty', module: '*'
         exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
-    compile 'org.eclipse.jetty:jetty-util:9.4.11.v20180605'
-    compile 'org.eclipse.jetty:jetty-server:9.4.11.v20180605'
-    compile 'org.eclipse.jetty:jetty-webapp:9.4.11.v20180605'
-    compile 'org.eclipse.jetty:jetty-continuation:9.4.11.v20180605'
-    compile 'org.eclipse.jetty:jetty-servlet:9.4.11.v20180605'
-    compile 'org.eclipse.jetty:jetty-servlets:9.4.11.v20180605'
+    compile 'org.eclipse.jetty:jetty-util:' + jettyVersion
+    compile 'org.eclipse.jetty:jetty-server:' + jettyVersion
+    compile 'org.eclipse.jetty:jetty-webapp:' + jettyVersion
+    compile 'org.eclipse.jetty:jetty-continuation:' + jettyVersion
+    compile 'org.eclipse.jetty:jetty-servlet:' + jettyVersion
+    compile 'org.eclipse.jetty:jetty-servlets:' + jettyVersion
 
     compile 'org.ow2.asm:asm:5.0.4'
     compile 'org.apache.httpcomponents:httpclient:' + apacheHttpClientVersion, {

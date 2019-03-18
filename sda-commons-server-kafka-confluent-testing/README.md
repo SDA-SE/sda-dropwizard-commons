@@ -39,7 +39,9 @@ compile group: 'io.confluent', name: 'kafka-avro-serializer', version: '4.1.2', 
   exclude group: 'org.apache.kafka', module: 'kafka-clients'
   exclude group: 'org.apache.zookeeper', module: 'zookeeper'
   exclude group: 'org.xerial.snappy', module: 'snappy-java'
+  exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
 }
+compile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonVersion
 ```
 
 If you use the AVRO plugin to generate Java classes, you must include the following snippet.

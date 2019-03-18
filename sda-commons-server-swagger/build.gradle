@@ -26,7 +26,9 @@ dependencies {
     testCompile project(':sda-commons-server-testing')
     testCompile 'net.javacrumbs.json-unit:json-unit-assertj:2.2.0', {
         exclude group: 'org.assertj', module: 'assertj-core'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
     }
+    compile 'org.slf4j:slf4j-api:' + slf4jVersion
     testCompile 'com.github.java-json-tools:json-schema-validator:' + jsonSchemaValidatorVersion, {
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
         exclude group: 'com.google.guava', module: 'guava'

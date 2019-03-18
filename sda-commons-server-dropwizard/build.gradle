@@ -6,12 +6,49 @@ dependencies {
         exclude group: 'org.javassist', module: 'javassist'
         exclude group: 'org.hibernate', module: 'hibernate-validator'
         exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'io.dropwizard', module: 'dropwizard-jersey'
+        exclude group: 'io.dropwizard', module: 'dropwizard-servlets'
+        exclude group: 'io.dropwizard.metrics', module: 'metrics-jersey2'
+        exclude group: 'io.dropwizard.metrics', module: 'metrics-annotation'
+        exclude group: 'io.dropwizard', module: 'dropwizard-util'
+    }
+    compile 'io.dropwizard:dropwizard-util:' + dropwizardVersion, {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    compile 'io.dropwizard:dropwizard-servlets:' + dropwizardVersion, {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'io.dropwizard.metrics', module: 'metrics-annotation'
+    }
+    compile 'io.dropwizard:dropwizard-jersey:' + dropwizardVersion, {
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'joda-time', module: 'joda-time'
+        exclude group: 'org.javassist', module: 'javassist'
+        exclude group: 'org.hibernate', module: 'hibernate-validator'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
+        exclude group: 'org.glassfish.jersey.containers', module: 'jersey-container-servlet'
+    }
+    compile 'io.dropwizard.metrics:metrics-jersey2:' + dropwizardMetricsVersion, {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.javassist', module: 'javassist'
+    }
+    compile 'io.dropwizard.metrics:metrics-annotation:' + dropwizardMetricsVersion, {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet:' + jerseyVersion, {
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
+        exclude group: 'org.javassist', module: 'javassist'
     }
     // use latest WS RS API as Response implements AutoClosable now
     compile 'javax.ws.rs:javax.ws.rs-api:' + javaxWsRsVersion
     compile 'com.google.guava:guava:' + guavaVersion, {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
     }
+    compile 'org.slf4j:slf4j-api:' + slf4jVersion
     compile 'com.google.code.findbugs:jsr305:' + findbugsVersion
     compile 'joda-time:joda-time:' + jodaTimeVersion
     compile 'org.javassist:javassist:' + javaassistVersion

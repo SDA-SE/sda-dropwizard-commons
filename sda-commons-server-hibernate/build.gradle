@@ -7,7 +7,9 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-validator'
         exclude group: 'org.javassist', module :'javassist'
         exclude group: 'com.fasterxml', module: 'classmate'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
     }
+    compile 'org.slf4j:slf4j-api:' + slf4jVersion
     compile 'org.postgresql:postgresql:42.1.1'
     compile 'org.flywaydb:flyway-core:4.2.0'
 

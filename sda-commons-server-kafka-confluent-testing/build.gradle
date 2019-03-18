@@ -9,29 +9,36 @@ dependencies {
     compile project(':sda-commons-server-testing')
 
     compile 'io.confluent:kafka-schema-registry:'+confluentVersion, {
-        exclude group: 'org.apache.kafka'
-        exclude group: 'org.apache.zookeeper'
-        exclude group: 'org.eclipse.jetty'
-        exclude group: 'org.slf4j'
+        exclude group: 'org.apache.kafka', module: '*'
+        exclude group: 'org.apache.zookeeper', module: '*'
+        exclude group: 'org.eclipse.jetty', module: '*'
+        exclude group: 'org.slf4j', module: '*'
         exclude group: 'org.javassist', module: 'javassist'
         exclude group: 'org.xerial.snappy', module: 'snappy-java'
         exclude group: 'org.glassfish.jersey.ext', module: 'jersey-bean-validation'
         exclude group: 'org.glassfish.jersey.core', module: 'jersey-common'
         exclude group: 'org.glassfish.jersey.containers', module: 'jersey-container-servlet'
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
+        exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-base'
     }
 
     // When changing the jetty version, be aware of the hack within ConfluentSchemaRegistryRule to remove the logging
     // that currently forces a NoSuchMethodException
-    compile 'org.eclipse.jetty:jetty-server:9.4.11.v20180605'
-    compile 'org.eclipse.jetty:jetty-jmx:9.4.11.v20180605'
+    compile 'org.eclipse.jetty:jetty-server:' + jettyVersion
+    compile 'org.eclipse.jetty:jetty-jmx:' + jettyVersion
     compile 'org.slf4j:slf4j-api:'+slf4jVersion
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:' + jacksonVersion
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:' + jacksonVersion
+    compile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonVersion
     
     testCompile 'io.confluent:kafka-avro-serializer:'+confluentVersion, {
-        exclude group: 'org.apache.zookeeper'
+        exclude group: 'org.apache.zookeeper', module: '*'
         exclude group: 'org.xerial.snappy', module: 'snappy-java'
-        exclude group: 'org.apache.kafka'
-        exclude group: 'org.slf4j'
+        exclude group: 'org.apache.kafka', module: '*'
+        exclude group: 'org.slf4j', module: '*'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
     }
 
     // just to check transitive dependency versions

@@ -9,7 +9,9 @@ dependencies {
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
         exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
     }
+    compile 'org.slf4j:slf4j-api:' + slf4jVersion 
     compile 'org.scala-lang:scala-library:2.12.4'
     compile 'com.typesafe:config:1.3.2'
 }

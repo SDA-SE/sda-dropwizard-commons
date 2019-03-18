@@ -26,7 +26,9 @@ dependencies {
         exclude group: 'org.apache.kafka', module: 'kafka-clients'
         exclude group: 'org.apache.zookeeper', module: 'zookeeper'
         exclude group: 'org.xerial.snappy', module: 'snappy-java'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
     }
+    compile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonVersion
 
     testCompile project(':sda-commons-server-kafka-confluent-testing')
 

@@ -48,7 +48,9 @@ dependencies {
         exclude group: 'org.apache.kafka', module: 'kafka-clients'
         exclude group: 'org.apache.zookeeper', module: 'zookeeper'
         exclude group: 'org.xerial.snappy', module: 'snappy-java'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
     }
+    testCompile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonVersion
 
     // for AVRO Plugin 
     testCompile ('org.apache.avro:avro:1.8.1') {

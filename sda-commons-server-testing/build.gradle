@@ -14,6 +14,7 @@ dependencies {
         exclude group: 'org.javassist', module: 'javassist'
         exclude group: 'org.assertj', module: 'assertj-core'
         exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
+        exclude group: 'io.dropwizard', module: 'dropwizard-jersey'
     }
     compile 'javax.ws.rs:javax.ws.rs-api:' + javaxWsRsVersion
 }
