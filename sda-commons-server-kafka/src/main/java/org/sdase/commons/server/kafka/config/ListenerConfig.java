@@ -1,11 +1,69 @@
 package org.sdase.commons.server.kafka.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 
 import javax.validation.constraints.NotNull;
+import org.sdase.commons.server.kafka.consumer.MessageListener.CommitType;
 
 public class ListenerConfig {
+
+   public static ListenerConfig getDefault() {
+      return new ListenerConfig();
+   }
+
+   private int instances = 1;
+   private MessageListener.CommitType commitType = MessageListener.CommitType.SYNC;
+   private boolean useAutoCommitOnly = true;
+   private long topicMissingRetryMs = 0;
+   private long pollInterval = 100;
+
+   private ListenerConfig() {
+      // empty constructor for jackson
+   }
+
+   public void setInstances(int instances) {
+      this.instances = instances;
+   }
+
+   public void setCommitType(CommitType commitType) {
+      this.commitType = commitType;
+   }
+
+   public void setUseAutoCommitOnly(boolean useAutoCommitOnly) {
+      this.useAutoCommitOnly = useAutoCommitOnly;
+   }
+
+   public void setTopicMissingRetryMs(long topicMissingRetryMs) {
+      this.topicMissingRetryMs = topicMissingRetryMs;
+   }
+
+   public void setPollInterval(long pollInterval) {
+      this.pollInterval = pollInterval;
+   }
+
+   public int getInstances() {
+      return instances;
+   }
+
+   public MessageListener.CommitType getCommitType() {
+      return commitType;
+   }
+
+   public boolean isUseAutoCommitOnly() {
+      return useAutoCommitOnly;
+   }
+
+   public long getTopicMissingRetryMs() {
+      return topicMissingRetryMs;
+   }
+
+   public long getPollInterval() {
+      return pollInterval;
+   }
+
+   public static ListenerConfigBuilder builder() {
+      return new ListenerConfigBuilder();
+   }
 
    public static class ListenerConfigBuilder {
 
@@ -44,53 +102,5 @@ public class ListenerConfig {
          build.instances = numberInstances;
          return build;
       }
-   }
-
-   public static ListenerConfig getDefault() {
-      return new ListenerConfig();
-   }
-
-   public static ListenerConfigBuilder builder() {
-      return new ListenerConfigBuilder();
-   }
-
-
-   @JsonProperty(value = "instances", defaultValue = "1")
-   private int instances = 1;
-
-   @JsonProperty(value = "commitType", defaultValue = "SYNC")
-   private MessageListener.CommitType commitType = MessageListener.CommitType.SYNC;
-
-   @JsonProperty(value = "useAutoCommitOnly", defaultValue = "true")
-   private boolean useAutoCommitOnly = true;
-
-   @JsonProperty(value = "topicMissingRetryMs", defaultValue = "0")
-   private long topicMissingRetryMs = 0;
-
-   @JsonProperty(value = "pollInterval", defaultValue = "100")
-   private long pollInterval = 100;
-
-
-   private ListenerConfig() {
-   }
-
-   public int getInstances() {
-      return instances;
-   }
-
-   public MessageListener.CommitType getCommitType() {
-      return commitType;
-   }
-
-   public boolean isUseAutoCommitOnly() {
-      return useAutoCommitOnly;
-   }
-
-   public long getTopicMissingRetryMs() {
-      return topicMissingRetryMs;
-   }
-
-   public long getPollInterval() {
-      return pollInterval;
    }
 }

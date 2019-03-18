@@ -1,18 +1,11 @@
 package org.sdase.commons.server.kafka.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Security {
 
-   @JsonProperty(value = "user")
    private String user;
 
-   @JsonProperty(value = "password")
    private String password;
 
-   @JsonProperty(value = "protocol", defaultValue = "PLAINTEXT")
    private ProtocolType protocol;
 
    public String getUser() {

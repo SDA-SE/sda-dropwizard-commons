@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
-import io.dropwizard.testing.ResourceHelpers;
+import com.salesforce.kafka.test.KafkaBroker;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -33,6 +33,8 @@ import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.sdase.commons.server.testing.DropwizardRuleHelper;
+import org.sdase.commons.server.testing.LazyRule;
 
 public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
 
@@ -40,13 +42,25 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
          .withBrokerProperty("offsets.retention.minutes", "1")
          .withBrokerProperty("offsets.retention.check.interval.ms", "10000");
 
-   private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
-         KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));
+   private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE = new LazyRule<>(
+         () -> DropwizardRuleHelper
+               .dropwizardTestAppFrom(KafkaTestApplication.class)
+               .withConfigFrom(KafkaTestConfiguration::new)
+               .withRandomPorts()
+               .withConfigurationModifier(c -> {
+                  KafkaConfiguration kafka = c.getKafka();
+                  kafka
+                        .setBrokers(KAFKA
+                              .getKafkaBrokers()
+                              .stream()
+                              .map(KafkaBroker::getConnectString)
+                              .collect(Collectors.toList()));
+               })
+               .build());
 
-   private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
 
    @ClassRule
-   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
+   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
 
    private StringDeserializer deserializer = new StringDeserializer();
 
@@ -54,8 +68,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
    private List<String> results = Collections.synchronizedList(new ArrayList<>());
 
 
-   @SuppressWarnings("unchecked")
-   private KafkaBundle<KafkaTestConfiguration> bundle = ((KafkaTestApplication) DROPWIZARD_APP_RULE.getApplication()).kafkaBundle();
+   private KafkaBundle<KafkaTestConfiguration> bundle = ((KafkaTestApplication) DROPWIZARD_APP_RULE.getRule().getApplication()).kafkaBundle();
 
    @Before
    public void setup() {

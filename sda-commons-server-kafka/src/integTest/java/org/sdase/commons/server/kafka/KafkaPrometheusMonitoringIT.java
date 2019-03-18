@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.sdase.commons.server.kafka;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -10,7 +7,9 @@ import static org.awaitility.Awaitility.await;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.salesforce.kafka.test.KafkaBroker;
 import org.assertj.core.api.iterable.Extractor;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -19,35 +18,63 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
-import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
+import org.sdase.commons.server.kafka.config.ConsumerConfig;
+import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.sdase.commons.server.testing.DropwizardRuleHelper;
+import org.sdase.commons.server.testing.LazyRule;
 
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.prometheus.client.Collector.MetricFamilySamples;
 import io.prometheus.client.CollectorRegistry;
 
 public class KafkaPrometheusMonitoringIT {
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaPrometheusMonitoringIT.class);
-
    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
 
-   private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
-         KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-con-prod.yml"));
+   private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE = new LazyRule<>(
+         () -> DropwizardRuleHelper
+               .dropwizardTestAppFrom(KafkaTestApplication.class)
+               .withConfigFrom(KafkaTestConfiguration::new)
+         .withRandomPorts()
+               .withConfigurationModifier(c -> {
+                  KafkaConfiguration kafka = c.getKafka();
+                  kafka
+                        .setBrokers(KAFKA
+                              .getKafkaBrokers()
+                              .stream()
+                              .map(KafkaBroker::getConnectString)
+                              .collect(Collectors.toList()));
 
-   private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(
-         KAFKA);
+                  kafka
+                        .getConsumers()
+                        .put("consumer1", ConsumerConfig
+                              .builder()
+                              .withGroup("default")
+                              .addConfig("key.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
+                              .addConfig("value.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
+                              .build());
+
+                  kafka
+                        .getProducers()
+                        .put("producer1",
+                              ProducerConfig
+                                    .builder()
+                                    .addConfig("key.serializer", "org.apache.kafka.common.serialization.LongSerializer")
+                                    .addConfig("value.serializer", "org.apache.kafka.common.serialization.LongSerializer")
+                                    .build());
+                  kafka.getProducers().put("producer2", ProducerConfig.builder().build());
+               })
+         .build()
+   );
 
    @ClassRule
-   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
+   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
 
    private List<String> resultsString = Collections.synchronizedList(new ArrayList<>());
 
@@ -55,8 +82,7 @@ public class KafkaPrometheusMonitoringIT {
 
    @Before
    public void before() {
-      KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
-      // noinspection unchecked
+      KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
       kafkaBundle = app.kafkaBundle();
       resultsString.clear();
    }
@@ -109,7 +135,7 @@ public class KafkaPrometheusMonitoringIT {
       private MetricExtractor() {
       }
 
-      public static Extractor<MetricFamilySamples, String> name() {
+      static Extractor<MetricFamilySamples, String> name() {
          return new MetricExtractor();
       }
 

@@ -1,15 +1,9 @@
 package org.sdase.commons.server.kafka.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class SchemaRegistry {
 
-    @JsonProperty("server")
     private String server;
 
-    @JsonProperty("port")
     private Integer port;
 
     @Override
@@ -36,7 +30,7 @@ public class SchemaRegistry {
     public String getUrl() {
         StringBuilder buf = new StringBuilder("http://").append(server);
         if (port != null) {
-            buf.append(':').append(port).toString();
+            buf.append(':').append(port);
         }
         return buf.toString();
     }

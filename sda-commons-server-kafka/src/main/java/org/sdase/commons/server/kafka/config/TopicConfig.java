@@ -1,26 +1,23 @@
 package org.sdase.commons.server.kafka.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class TopicConfig {
 
    @NotNull
-   @JsonProperty
    private String name;
 
    @NotNull
-   @JsonProperty
    private Integer replicationFactor = 1;
 
    @NotNull
-   @JsonProperty
    private Integer partitions = 1;
 
-   @JsonProperty
+
    private Map<String, String> config = new HashMap<>();
 
    public String getName() {
@@ -39,16 +36,84 @@ public class TopicConfig {
       return config;
    }
 
+   public TopicConfig setName(String name) {
+      this.name = name;
+      return this;
+   }
+
+   public void setReplicationFactor(Integer replicationFactor) {
+      this.replicationFactor = replicationFactor;
+   }
+
+   public void setPartitions(Integer partitions) {
+      this.partitions = partitions;
+   }
+
+   public void setConfig(Map<String, String> config) {
+      this.config = config;
+   }
+
+   public interface TopicNameBuilder {
+      TopicConfigBuilder name(String name);
+   }
 
    public interface TopicConfigBuilder {
-      void setName(String name);
 
-      void setReplicationFactor(Integer replicationFactor);
+      TopicConfigBuilder withReplicationFactor(Integer replicationFactor);
 
-      void setPartitions(Integer partitions);
+      TopicConfigBuilder withPartitions(Integer partitions);
 
-      void setConfig(Map<String, String> config);
+      TopicConfigBuilder addConfig(String key, String value);
 
+      TopicConfig build();
    }
+
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder implements TopicConfigBuilder, TopicNameBuilder {
+
+      private String name;
+      private Integer partitions = 1;
+      private Integer replicationFactor = 1;
+      private Map<String, String> config = new HashMap<>();
+
+      @Override
+      public TopicConfigBuilder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      @Override
+      public TopicConfigBuilder withReplicationFactor(Integer replicationFactor) {
+         this.replicationFactor = replicationFactor;
+         return this;
+      }
+
+      @Override
+      public TopicConfigBuilder withPartitions(Integer partitions) {
+         this.partitions = partitions;
+         return this;
+      }
+
+      @Override
+      public TopicConfigBuilder addConfig(String key, String value) {
+         config.put(key, value);
+         return this;
+      }
+
+      @Override
+      public TopicConfig build() {
+         TopicConfig topicConfig = new TopicConfig();
+         topicConfig.setName(name);
+         topicConfig.setConfig(config);
+         topicConfig.setPartitions(partitions);
+         topicConfig.setReplicationFactor(replicationFactor);
+         return topicConfig;
+      }
+   }
+
+
 
 }

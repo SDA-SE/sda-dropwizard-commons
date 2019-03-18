@@ -167,7 +167,7 @@ kafka:
   # Admin client is used for checking and creating topics as well as for Health Checks
   adminConfig:
     # Timeout for request to the kafka admin url used by admin clients
-    adminClientrequestTimeoutMs: 2000
+    adminClientRequestTimeoutMs: 2000
   
     # Admin Rest Api for accessing the accessing admin functionality
     adminRestApi:

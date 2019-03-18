@@ -1,7 +1,6 @@
 package org.sdase.commons.server.kafka;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -16,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import com.salesforce.kafka.test.KafkaBroker;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -27,7 +26,6 @@ import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.assertj.core.api.iterable.Extractor;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -35,10 +33,14 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
+import org.sdase.commons.server.kafka.config.AdminConfig;
+import org.sdase.commons.server.kafka.config.ConsumerConfig;
+import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
-import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
+import org.sdase.commons.server.kafka.config.TopicConfig;
 import org.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
+import org.sdase.commons.server.kafka.consumer.MessageListener.CommitType;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
@@ -46,30 +48,90 @@ import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
 import org.sdase.commons.server.kafka.serializers.WrappedNoSerializationErrorDeserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.sdase.commons.server.testing.DropwizardRuleHelper;
+import org.sdase.commons.server.testing.LazyRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import io.prometheus.client.Collector.MetricFamilySamples;
-import io.prometheus.client.CollectorRegistry;
 
 public class KafkaBundleWithConfigIT {
-   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaBundleWithConfigIT.class);
 
    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
 
-   private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
-         KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-con-prod.yml"));
+   private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE = new LazyRule<>(
+         () -> DropwizardRuleHelper
+               .dropwizardTestAppFrom(KafkaTestApplication.class)
+               .withConfigFrom(KafkaTestConfiguration::new)
+               .withRandomPorts()
+               .withConfigurationModifier(c -> {
+                  KafkaConfiguration kafka = c.getKafka();
 
-   private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(
-         KAFKA);
+                  kafka
+                        .setBrokers(KAFKA
+                              .getKafkaBrokers()
+                              .stream()
+                              .map(KafkaBroker::getConnectString)
+                              .collect(Collectors.toList()));
+
+                  AdminConfig adminConfig = new AdminConfig();
+                  adminConfig.setAdminClientRequestTimeoutMs(2000);
+                  kafka.setAdminConfig(adminConfig);
+
+                  kafka
+                        .getConsumers()
+                        .put("consumer1", ConsumerConfig
+                              .builder()
+                              .withGroup("default")
+                              .addConfig("key.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
+                              .addConfig("value.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
+                              .build());
+                  kafka.getConsumers().put("consumer2", ConsumerConfig.builder().build());
+
+                  kafka
+                        .getProducers()
+                        .put("producer1",
+                              ProducerConfig
+                                    .builder()
+                                    .addConfig("key.serializer", "org.apache.kafka.common.serialization.LongSerializer")
+                                    .addConfig("value.serializer",
+                                          "org.apache.kafka.common.serialization.LongSerializer")
+                                    .build());
+                  kafka.getProducers().put("producer2", ProducerConfig.builder().build());
+
+                  kafka
+                        .getListenerConfig()
+                        .put("async",
+                              ListenerConfig
+                                    .builder()
+                                    .withCommitType(CommitType.ASYNC)
+                                    .useAutoCommitOnly(false)
+                                    .withTopicMissingRetryMs(60000)
+                                    .build(1));
+
+                  kafka
+                        .getTopics()
+                        .put("topicId1",
+                              TopicConfig
+                                    .builder()
+                                    .name("topic1")
+                                    .withPartitions(2)
+                                    .withReplicationFactor(2)
+                                    .addConfig("max.message.bytes", "1024")
+                                    .addConfig("retention.ms", "60480000")
+                                    .build());
+                  kafka
+                        .getTopics()
+                        .put("topicId2", // NOSONAR
+                              TopicConfig.builder().name("topic2").withPartitions(1).withReplicationFactor(1).build()); // NOSONAR
+               })
+               .build());
+
+
 
    @ClassRule
-   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
+   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
 
    private List<Long> results = Collections.synchronizedList(new ArrayList<>());
    private List<String> resultsString = Collections.synchronizedList(new ArrayList<>());
@@ -78,8 +140,7 @@ public class KafkaBundleWithConfigIT {
 
    @Before
    public void before() {
-      KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
-      // noinspection unchecked
+      KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
       kafkaBundle = app.kafkaBundle();
       results.clear();
       resultsString.clear();
@@ -87,7 +148,7 @@ public class KafkaBundleWithConfigIT {
 
    @Test
    public void healthCheckShouldBeAdded() {
-      KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
+      KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
       assertThat(app.healthCheckRegistry().getHealthCheck("kafkaConnection"), is(notNullValue()));
    }
 
@@ -445,33 +506,33 @@ public class KafkaBundleWithConfigIT {
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
       kafkaBundle.registerMessageHandler(MessageHandlerRegistration.<String, SimpleEntity>builder()
-          .withDefaultListenerConfig()
-          .forTopic(topic)
-          .withDefaultConsumer()
-          .withValueDeserializer(
-              new WrappedNoSerializationErrorDeserializer<>(
-                  new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
-          .withHandler(x -> {
-             if (x.value() != null) {
-                resultsString.add(x.value().getName());
-             }
-          })
-          .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
-          .build()
+            .withDefaultListenerConfig()
+            .forTopic(topic)
+            .withDefaultConsumer()
+            .withValueDeserializer(
+                  new WrappedNoSerializationErrorDeserializer<>(
+                        new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
+            .withHandler(x -> {
+               if (x.value() != null) {
+                  resultsString.add(x.value().getName());
+               }
+            })
+            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .build()
       );
 
       KafkaProducer<String, String> producer =
-          KAFKA.getKafkaTestUtils()
-              .getKafkaProducer(StringSerializer.class, StringSerializer.class);
+            KAFKA.getKafkaTestUtils()
+                  .getKafkaProducer(StringSerializer.class, StringSerializer.class);
       producer.send(
-          new ProducerRecord<>(topic, "Test",
-              "{ \"name\":\"Heinz\", \"lastname\":\"Mustermann\"}"));
+            new ProducerRecord<>(topic, "Test",
+                  "{ \"name\":\"Heinz\", \"lastname\":\"Mustermann\"}"));
       producer.send(
-          new ProducerRecord<>(topic, "Test",
-              "invalid json value"));
+            new ProducerRecord<>(topic, "Test",
+                  "invalid json value"));
       producer.send(
-          new ProducerRecord<>(topic, "Test",
-              "{ \"name\":\"Heidi\", \"lastname\":\"Musterfrau\"}"));
+            new ProducerRecord<>(topic, "Test",
+                  "{ \"name\":\"Heidi\", \"lastname\":\"Musterfrau\"}"));
 
 
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
@@ -485,39 +546,39 @@ public class KafkaBundleWithConfigIT {
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
       kafkaBundle.registerMessageHandler(MessageHandlerRegistration.<SimpleEntity, String>builder()
-          .withDefaultListenerConfig()
-          .forTopic(topic)
-          .withDefaultConsumer()
-          .withKeyDeserializer(
-              new WrappedNoSerializationErrorDeserializer<>(
-                  new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
-          .withHandler(x -> {
-             if (x.key() != null && x.value() != null) {
-                resultsString.add(x.value());
-             }
-          })
-          .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
-          .build()
+            .withDefaultListenerConfig()
+            .forTopic(topic)
+            .withDefaultConsumer()
+            .withKeyDeserializer(
+                  new WrappedNoSerializationErrorDeserializer<>(
+                        new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
+            .withHandler(x -> {
+               if (x.key() != null && x.value() != null) {
+                  resultsString.add(x.value());
+               }
+            })
+            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .build()
       );
 
       KafkaProducer<String, String> producer =
-          KAFKA.getKafkaTestUtils()
-              .getKafkaProducer(StringSerializer.class, StringSerializer.class);
+            KAFKA.getKafkaTestUtils()
+                  .getKafkaProducer(StringSerializer.class, StringSerializer.class);
       producer.send(
-          new ProducerRecord<>(topic,
-              "{ \"name\":\"Heinz\", \"lastname\":\"Mustermann\"}",
-              "a"
-          ));
+            new ProducerRecord<>(topic,
+                  "{ \"name\":\"Heinz\", \"lastname\":\"Mustermann\"}",
+                  "a"
+            ));
       producer.send(
-          new ProducerRecord<>(topic,
-              "invalid json key",
-              "b"
-          ));
+            new ProducerRecord<>(topic,
+                  "invalid json key",
+                  "b"
+            ));
       producer.send(
-          new ProducerRecord<>(topic,
-              "{ \"name\":\"Heidi\", \"lastname\":\"Musterfrau\"}",
-              "c"
-          ));
+            new ProducerRecord<>(topic,
+                  "{ \"name\":\"Heidi\", \"lastname\":\"Musterfrau\"}",
+                  "c"
+            ));
 
 
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
