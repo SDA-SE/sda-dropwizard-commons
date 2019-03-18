@@ -15,6 +15,7 @@ dependencies {
         exclude group: 'org.assertj', module: 'assertj-core'
         exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
         exclude group: 'io.dropwizard', module: 'dropwizard-jersey'
+        exclude group: 'org.glassfish.jersey.containers', module: 'jersey-container-servlet'
     }
     compile 'javax.ws.rs:javax.ws.rs-api:' + javaxWsRsVersion
 }

@@ -17,6 +17,7 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
         exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
     compile 'io.dropwizard:dropwizard-servlets:' + dropwizardVersion, {
         exclude group: 'org.slf4j', module: 'slf4j-api'
@@ -33,10 +34,12 @@ dependencies {
         exclude group: 'org.glassfish.jersey.containers', module: 'jersey-container-servlet'
     }
     compile 'io.dropwizard.metrics:metrics-jersey2:' + dropwizardMetricsVersion, {
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'org.javassist', module: 'javassist'
     }
     compile 'io.dropwizard.metrics:metrics-annotation:' + dropwizardMetricsVersion, {
+        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
     compile 'org.glassfish.jersey.containers:jersey-container-servlet:' + jerseyVersion, {

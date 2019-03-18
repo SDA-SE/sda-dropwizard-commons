@@ -24,6 +24,7 @@ dependencies {
         exclude group: 'org.javassist', module: 'javassist'
         exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
     }
+    compile 'javax.ws.rs:javax.ws.rs-api:' + javaxWsRsVersion
 
     testCompile project(':sda-commons-server-testing')
     testCompile project(':sda-commons-client-jersey-wiremock-testing')

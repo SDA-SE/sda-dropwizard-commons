@@ -52,50 +52,52 @@ public class SwaggerBundleIT {
 
    @Test
    public void shouldProvideSchemaCompliantJson() {
-      Response response = getJsonRequest().get();
+      try (Response response = getJsonRequest().get()) {
 
-      assertThat(response.getStatus()).isEqualTo(OK_200);
-      assertThat(response.getMediaType()).isEqualTo(APPLICATION_JSON_TYPE);
+         assertThat(response.getStatus()).isEqualTo(OK_200);
+         assertThat(response.getMediaType()).isEqualTo(APPLICATION_JSON_TYPE);
 
-      SwaggerAssertions.assertValidSwagger2Json(response);
+         SwaggerAssertions.assertValidSwagger2Json(response);
+      }
    }
 
    @Test
    public void shouldProvideValidYaml() {
-      Response response = getYamlRequest().get();
+      try (Response response = getYamlRequest().get()) {
 
-      assertThat(response.getStatus()).isEqualTo(OK_200);
-      assertThat(response.getMediaType()).isEqualTo(MediaType.valueOf("application/yaml"));
+         assertThat(response.getStatus()).isEqualTo(OK_200);
+         assertThat(response.getMediaType()).isEqualTo(MediaType.valueOf("application/yaml"));
 
-      SwaggerAssertions.assertValidSwagger2Yaml(response);
+         SwaggerAssertions.assertValidSwagger2Yaml(response);
+      }
    }
 
    @Test
    public void shouldHaveCORSWildcardJson() {
-      Response response = getJsonRequest().header("Origin", "example.com").get();
-
-      assertThat(response.getStatus()).isEqualTo(OK_200);
-      assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
+      try (Response response = getJsonRequest().header("Origin", "example.com").get()) {
+         assertThat(response.getStatus()).isEqualTo(OK_200);
+         assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
+      }
    }
 
    @Test
    public void shouldHaveCORSWildcardYaml() {
-      Response response = getYamlRequest().header("Origin", "example.com").get();
+      try (Response response = getYamlRequest().header("Origin", "example.com").get()) {
 
-      assertThat(response.getStatus()).isEqualTo(OK_200);
-      assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
+         assertThat(response.getStatus()).isEqualTo(OK_200);
+         assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
+
+      }
    }
 
    @Test
    public void shouldNotHaveCORSWildcardOnOtherPath() {
-      Response response = DW.client()
-          .target(getTarget())
-          .path("jdoe")
-          .request()
-          .header("Origin", "example.com").get();
+      try (Response response = DW.client().target(getTarget())
+            .path("jdoe").request().header("Origin", "example.com").get()) {
 
-      assertThat(response.getStatus()).isEqualTo(OK_200);
-      assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isNull();
+         assertThat(response.getStatus()).isEqualTo(OK_200);
+         assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isNull();
+      }
    }
 
    @Test

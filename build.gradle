@@ -59,7 +59,7 @@ subprojects {
         findbugsVersion            = '3.0.2'
         jodaTimeVersion            = '2.10.1'
         javaassistVersion          = '3.24.1-GA'
-        javaxWsRsVersion           = '2.0.1'
+        javaxWsRsVersion           = '2.1.1'
         hibernateValidatorVersion  = '5.4.3.Final'
         openApiToolVersion         = '1.0.4'
         swaggerVersion             = '1.5.21'
