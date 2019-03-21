@@ -1,9 +1,12 @@
 package org.sdase.commons.server.jackson.test;
 
+import io.openapitools.jackson.dataformat.hal.annotation.EmbeddedResource;
 import org.sdase.commons.server.jackson.EnableFieldFilter;
 import io.openapitools.jackson.dataformat.hal.HALLink;
 import io.openapitools.jackson.dataformat.hal.annotation.Link;
 import io.openapitools.jackson.dataformat.hal.annotation.Resource;
+
+import java.util.List;
 
 @Resource
 @EnableFieldFilter
@@ -18,6 +21,12 @@ public class PersonResource {
    private String lastName;
 
    private String nickName;
+
+   @Link(value = "address")
+   private List<HALLink> addressLink;
+
+   @EmbeddedResource
+   private List<Address> address;
 
    public HALLink getSelf() {
       return self;
@@ -52,6 +61,24 @@ public class PersonResource {
 
    public PersonResource setNickName(String nickName) {
       this.nickName = nickName;
+      return this;
+   }
+
+   public List<HALLink> getAddressLink() {
+      return addressLink;
+   }
+
+   public PersonResource setAddressLink(List<HALLink> addressLink) {
+      this.addressLink = addressLink;
+      return this;
+   }
+
+   public List<Address> getAddress() {
+      return address;
+   }
+
+   public PersonResource setAddress(List<Address> address) {
+      this.address = address;
       return this;
    }
 }

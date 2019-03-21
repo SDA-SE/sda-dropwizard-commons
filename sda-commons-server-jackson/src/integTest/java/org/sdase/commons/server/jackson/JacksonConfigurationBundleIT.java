@@ -27,6 +27,7 @@ import java.util.Map;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.util.Lists.newArrayList;
 
 public class JacksonConfigurationBundleIT {
 
@@ -288,14 +289,31 @@ public class JacksonConfigurationBundleIT {
       PersonResource johnny = DW
             .client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("people").path("jdoe")
+            .path("people").path("jdoe") //NOSONAR
             .request(MediaType.APPLICATION_JSON)
             .get(PersonResource.class);
 
       assertThat(johnny)
             .extracting(p -> p.getSelf().getHref(), PersonResource::getFirstName, PersonResource::getLastName,
                   PersonResource::getNickName)
-            .containsExactly("http://localhost:" + DW.getLocalPort() + "/people/jdoe", "John", "Doe", "Johnny");
+            .containsExactly("http://localhost:" + DW.getLocalPort() + "/people/jdoe", "John", "Doe", "Johnny"); //NOSONAR
+   }
+
+   @Test
+   public void shouldRenderEmbeddedResource() {
+      Map<String, Object> johnny = DW
+            .client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people").path("jdoe")
+            .queryParam("fields", "nickName")//NOSONAR
+            .queryParam("embed", "address")
+            .request(MediaType.APPLICATION_JSON)
+            .get(new GenericType<Map<String, Object>>() {
+            });
+
+      assertThat(johnny).containsKeys("_links", "nickName").doesNotContainKeys("firstName", "lastName"); //NOSONAR
+      assertThat(johnny).extracting("_embedded").flatExtracting("address")
+            .extracting("city").contains("Hamburg");
    }
 
    @Test

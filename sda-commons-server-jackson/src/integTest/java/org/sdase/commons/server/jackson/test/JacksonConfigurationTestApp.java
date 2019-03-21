@@ -5,6 +5,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.openapitools.jackson.dataformat.hal.HALLink;
+import org.assertj.core.util.Lists;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.shared.api.error.ApiException;
 
@@ -67,11 +68,15 @@ public class JacksonConfigurationTestApp extends Application<Configuration> {
    @Produces(MediaType.APPLICATION_JSON)
    public PersonResource getJohnDoe() {
       URI self = uriInfo.getBaseUriBuilder().path(JacksonConfigurationTestApp.class, "getJohnDoe").build();
+      URI address = uriInfo.getBaseUriBuilder().path(JacksonConfigurationTestApp.class, "getJohnDoe").path("address").path("Hamburg").build();
+
       return new PersonResource()
             .setFirstName("John")
             .setLastName("Doe")
             .setNickName("Johnny")
-            .setSelf(new HALLink.Builder(self).build());
+            .setSelf(new HALLink.Builder(self).build())
+            .setAddress(Lists.newArrayList(new Address().setCity("Hamburg").setId("Hamburg")))
+            .setAddressLink(Lists.newArrayList(new HALLink.Builder(address).build()));
    }
 
    @GET
