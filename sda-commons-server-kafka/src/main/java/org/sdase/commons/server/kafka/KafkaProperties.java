@@ -21,6 +21,7 @@ public class KafkaProperties extends Properties {
    }
 
    private static KafkaProperties baseProperties(KafkaConfiguration configuration) {
+	   
       KafkaProperties props = new KafkaProperties();
 
       if (configuration.getBrokers() != null) {
@@ -42,10 +43,37 @@ public class KafkaProperties extends Properties {
 
       return props;
    }
+   
+   private static KafkaProperties adminProperties(KafkaConfiguration configuration) {
+      
+      KafkaProperties props = new KafkaProperties();
+      
+      // If AdminRestUrl is not set, the base configuration is used because no add
+      if (configuration.getAdminConfig() == null || configuration.getAdminConfig().getAdminRestApi() == null || configuration.getAdminConfig().getAdminRestApi().isEmpty()) {
+          props = baseProperties(configuration);
+          return props;
+      }
+      
+      props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, String.join(",", configuration.getAdminConfig().getAdminRestApi()));
+      
+      if (configuration.getAdminConfig().getAdminSecurity().getPassword() != null && configuration.getAdminConfig().getAdminSecurity().getUser() != null
+            && configuration.getAdminConfig().getAdminSecurity().getProtocol() != null) {
+         props.put("sasl.mechanism", "PLAIN");
+         props.put("sasl.jaas.config",
+               "org.apache.kafka.common.security.plain.PlainLoginModule required username='"
+                     .concat(configuration.getAdminConfig().getAdminSecurity().getUser())
+                     .concat("' password='")
+                     .concat(configuration.getAdminConfig().getAdminSecurity().getPassword())
+                     .concat("';"));
+         props.put("security.protocol", configuration.getAdminConfig().getAdminSecurity().getProtocol().name());
+      }
+
+      return props;
+   }
 
    public static KafkaProperties forAdminClient(KafkaConfiguration configuration) {
-      KafkaProperties props = baseProperties(configuration);
-      props.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, configuration.getAdminClientrequestTimeoutMs());
+      KafkaProperties props = adminProperties(configuration);
+      props.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, configuration.getAdminConfig().getAdminClientrequestTimeoutMs());
       return props;
    }
 

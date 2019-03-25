@@ -163,9 +163,23 @@ To configure KafkaBundle add the following `kafka` block to your Dropwizard conf
 kafka:
   # For testing without a kafka in integration tests, the bundle api can be disabled. No consumers and providers will be created 
   disabled: false
-  # Timeout for request to the kafka broker used by admin clients
-  # Admin client is used for checking and creating topics 
-  adminClientrequestTimeoutMs: 2000
+  
+  # Admin client is used for checking and creating topics as well as for Health Checks
+  adminConfig:
+    # Timeout for request to the kafka admin url used by admin clients
+    adminClientrequestTimeoutMs: 2000
+  
+    # Admin Rest Api for accessing the accessing admin functionality
+    adminRestApi:
+      - kafka-admin-api-1:9092 
+      - kafka-admin-api-2:9092 
+  
+    # Admin Security information used for all calls against the Admin Rest API
+    adminSecurity :
+      user: user
+      password: password
+      protocol: SASL_SSL
+    
   # List of brokers to bootstrap consumer and provider connection
   brokers:
     - kafka-broker-1:9092 

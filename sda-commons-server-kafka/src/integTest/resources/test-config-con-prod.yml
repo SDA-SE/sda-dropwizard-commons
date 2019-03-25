@@ -7,7 +7,8 @@ server:
     port: 0
 
 kafka:
-  adminClientrequestTimeoutMs: 2000
+  adminConfig:
+    adminClientrequestTimeoutMs: 2000
   brokers: ${BROKER_CONNECTION_STRING}
   consumers:
     consumer1:

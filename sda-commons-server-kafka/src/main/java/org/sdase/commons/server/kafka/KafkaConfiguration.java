@@ -1,6 +1,8 @@
 package org.sdase.commons.server.kafka;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.sdase.commons.server.kafka.config.AdminConfig;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
@@ -15,14 +17,8 @@ import java.util.Map;
 /**
  * Subclass of Dropwizard Configuration class to hold any values necessary to
  * connect to Kafka
- * 
- *
- *
  */
 public class KafkaConfiguration {
-
-   @JsonProperty(value = "adminClientrequestTimeoutMs")
-   private int adminClientrequestTimeoutMs = 5000;
 
    @JsonProperty(value = "disabled")
    private boolean disabled = false;
@@ -44,6 +40,9 @@ public class KafkaConfiguration {
 
    @JsonProperty(value = "security")
    private Security security = new Security();
+   
+   @JsonProperty(value = "adminConfig")
+   private AdminConfig adminConfig = new AdminConfig();
 
    public List<String> getBrokers() {
       return brokers;
@@ -81,10 +80,6 @@ public class KafkaConfiguration {
       return disabled;
    }
 
-   public void setAdminClientrequestTimeoutMs(int adminClientrequestTimeoutMs) {
-      this.adminClientrequestTimeoutMs = adminClientrequestTimeoutMs;
-   }
-
    public void setDisabled(boolean disabled) {
       this.disabled = disabled;
    }
@@ -105,8 +100,11 @@ public class KafkaConfiguration {
       this.listenerConfig = listenerConfig;
    }
 
-   public int getAdminClientrequestTimeoutMs() {
-      return adminClientrequestTimeoutMs;
+   public AdminConfig getAdminConfig() {
+      return adminConfig;
+   }
 
+   public void setAdminConfig(AdminConfig adminConfig) {
+      this.adminConfig = adminConfig;
    }
 }
