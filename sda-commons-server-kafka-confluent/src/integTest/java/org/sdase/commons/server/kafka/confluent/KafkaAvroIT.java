@@ -1,42 +1,40 @@
-package org.sdase.commons.server.kafka;
+package org.sdase.commons.server.kafka.confluent;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-import org.sdase.commons.server.kafka.avro.example.FullName;
-import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
-import org.sdase.commons.server.kafka.builder.ProducerRegistration;
-import org.sdase.commons.server.kafka.config.ConsumerConfig;
-import org.sdase.commons.server.kafka.config.ProducerConfig;
-import org.sdase.commons.server.kafka.config.ProtocolType;
-import org.sdase.commons.server.kafka.confluent.testing.ConfluentSchemaRegistryRule;
-import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
-import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
-import org.sdase.commons.server.kafka.consumer.MessageListener;
-import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
-import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
-import org.sdase.commons.server.kafka.producer.MessageProducer;
-
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
-
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
+import org.sdase.commons.server.kafka.KafkaBundle;
+import org.sdase.commons.server.kafka.avro.example.FullName;
+import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
+import org.sdase.commons.server.kafka.builder.ProducerRegistration;
+import org.sdase.commons.server.kafka.config.ConsumerConfig;
+import org.sdase.commons.server.kafka.config.ProducerConfig;
+import org.sdase.commons.server.kafka.config.ProtocolType;
+import org.sdase.commons.server.kafka.confluent.dropwizard.KafkaTestApplication;
+import org.sdase.commons.server.kafka.confluent.dropwizard.KafkaTestConfiguration;
+import org.sdase.commons.server.kafka.confluent.testing.ConfluentSchemaRegistryRule;
+import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
+import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
+import org.sdase.commons.server.kafka.consumer.MessageListener;
+import org.sdase.commons.server.kafka.producer.MessageProducer;
 
 public class KafkaAvroIT {
 
@@ -111,7 +109,4 @@ public class KafkaAvroIT {
 
       await().atMost(5, TimeUnit.SECONDS).until(() -> results.size() == 1);
    }
-
-
-
 }
