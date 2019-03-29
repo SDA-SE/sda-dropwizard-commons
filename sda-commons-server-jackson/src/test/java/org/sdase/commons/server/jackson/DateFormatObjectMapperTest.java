@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sdase.commons.server.jackson.test.ObjectMapperFactory;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -31,13 +30,15 @@ public class DateFormatObjectMapperTest {
 
    @Before
    public void setUp() {
-      this.om = ObjectMapperFactory.objectMapperFromBundle();
-      this.alwaysMillisOm = ObjectMapperFactory.objectMapperFromBundle(
-            JacksonConfigurationBundle.builder().alwaysWriteZonedDateTimeWithMillis().build()
-      );
-      this.onlySecondsOm = ObjectMapperFactory.objectMapperFromBundle(
-            JacksonConfigurationBundle.builder().alwaysWriteZonedDateTimeWithoutMillis().build()
-      );
+      this.om = ObjectMapperConfigurationUtil.configureMapper().build();
+      this.alwaysMillisOm = ObjectMapperConfigurationUtil
+            .configureMapper()
+            .alwaysWriteZonedDateTimeWithMillis()
+            .build();
+      this.onlySecondsOm = ObjectMapperConfigurationUtil
+            .configureMapper()
+            .alwaysWriteZonedDateTimeWithoutMillis()
+            .build();
    }
 
    @Test

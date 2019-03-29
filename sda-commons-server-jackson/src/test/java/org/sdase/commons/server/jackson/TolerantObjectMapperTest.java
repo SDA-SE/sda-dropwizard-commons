@@ -12,7 +12,6 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.junit.Before;
 import org.junit.Test;
-import org.sdase.commons.server.jackson.test.ObjectMapperFactory;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -28,7 +27,7 @@ public class TolerantObjectMapperTest {
 
    @Before
    public void setUp() {
-      this.om = ObjectMapperFactory.objectMapperFromBundle();
+      this.om = ObjectMapperConfigurationUtil.configureMapper().build();
    }
 
    @Test

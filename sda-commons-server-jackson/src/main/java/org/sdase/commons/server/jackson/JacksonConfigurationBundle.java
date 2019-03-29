@@ -1,24 +1,11 @@
 package org.sdase.commons.server.jackson;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.util.StdDateFormat;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.jackson.AnnotationSensitivePropertyNamingStrategy;
-import io.dropwizard.jackson.GuavaExtrasModule;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.openapitools.jackson.dataformat.hal.JacksonHALModule;
 import org.sdase.commons.server.jackson.errors.ApiExceptionMapper;
 import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
 import org.sdase.commons.server.jackson.errors.JerseyValidationExceptionMapper;
@@ -30,10 +17,7 @@ import org.sdase.commons.server.jackson.filter.JacksonFieldFilterModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.DateFormat;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.TimeZone;
 import java.util.function.Consumer;
 
 /**
@@ -68,20 +52,17 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
 
    private static final Logger LOG = LoggerFactory.getLogger(JacksonConfigurationBundle.class);
 
-   private final boolean disableHalSupport;
-
    private final boolean disableFieldFilter;
 
-   private final Consumer<ObjectMapper> objectMapperCustomizer;
+   private ObjectMapperConfigurationUtil.Builder objectMapperBuilder;
 
    public static Builder builder() {
       return new Builder();
    }
 
-   private JacksonConfigurationBundle(boolean disableHalSupport, boolean disableFieldFilter, Consumer<ObjectMapper> objectMapperCustomizer) {
-      this.disableHalSupport = disableHalSupport;
+   private JacksonConfigurationBundle(ObjectMapperConfigurationUtil.Builder objectMapperBuilder, boolean disableFieldFilter) {
+      this.objectMapperBuilder = objectMapperBuilder;
       this.disableFieldFilter = disableFieldFilter;
-      this.objectMapperCustomizer = objectMapperCustomizer;
    }
 
    /**
@@ -92,44 +73,21 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
     */
    @Override
    public void initialize(Bootstrap<?> bootstrap) {
-      // Overwrite the full featured default from Jackson.newObjectMapper() as some
-      // registered modules break Jackson functionality. Add all features from
-      // io.dropwizard.jackson.Jackson.newObjectMapper() but the FuzzyEnumModule
-      // and modules registered in Jackson.newMinimalObjectMapper()
-      ObjectMapper objectMapper = Jackson.newMinimalObjectMapper()
-            // .registerModule(new GuavaModule()) in newMinimalObjectMapper
-            .registerModule(new GuavaExtrasModule())
-            .registerModule(new JodaModule())
-            .registerModule(new AfterburnerModule())
-            // .registerModule(new FuzzyEnumModule()) breaks READ_UNKNOWN_ENUM_VALUES_AS_NULL
-            .registerModule(new ParameterNamesModule())
-            .registerModule(new Jdk8Module())
-            .registerModule(new JavaTimeModule())
-            .setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy())
-            // .setSubtypeResolver(new DiscoverableSubtypeResolver()) in newMinimalObjectMapper
-      ;
-
       // Overwrite with custom defaults
-      bootstrap.setObjectMapper(objectMapper);
-
+      bootstrap.setObjectMapper(objectMapperBuilder.build());
    }
 
    @Override
    public void run(Configuration configuration, Environment environment) {
-
       disableDefaultErrorMappers(configuration);
 
       ObjectMapper objectMapper = environment.getObjectMapper();
       registerYamlProviderIfAvailable(environment);
-      configureObjectMapper(objectMapper);
 
-      if (!disableHalSupport) {
-         objectMapper.registerModule(new JacksonHALModule());
-      }
       if (!disableFieldFilter) {
          JacksonFieldFilterModule jacksonFieldFilterModule = new JacksonFieldFilterModule();
-         environment.jersey().register(jacksonFieldFilterModule);
          objectMapper.registerModule(jacksonFieldFilterModule);
+         environment.jersey().register(jacksonFieldFilterModule);
       }
 
       // register Exception Mapper
@@ -140,8 +98,6 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
       environment.jersey().register(JsonProcessingExceptionMapper.class);
       environment.jersey().register(WebApplicationExceptionMapper.class);
       environment.jersey().register(RuntimeExceptionMapper.class);
-
-
    }
 
    /**
@@ -160,44 +116,6 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
       }
    }
 
-   private void configureObjectMapper(ObjectMapper objectMapper) {
-      // Platform configurations that exceed the Dropwizard defaults
-      objectMapper
-            // serialization
-            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
-            // deserialization
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            .disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
-            .disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)
-            .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL)
-            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-            // time zone handling
-            .setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
-      ;
-      configureRenderingOfColonInTimeZone(objectMapper);
-
-      // Application specific configuration
-      if (this.objectMapperCustomizer != null) {
-         this.objectMapperCustomizer.accept(objectMapper);
-      }
-   }
-
-   private void configureRenderingOfColonInTimeZone(ObjectMapper objectMapper) {
-      // render colon in time zone
-      DateFormat original = objectMapper.getDateFormat();
-      if (original instanceof StdDateFormat) {
-         StdDateFormat stdDateFormat = (StdDateFormat) original;
-         StdDateFormat withColonInTimeZone = stdDateFormat.withColonInTimeZone(true);
-         objectMapper.setDateFormat(withColonInTimeZone);
-      }
-      else {
-         LOG.warn("Could not customize date format. Expecting StdDateFormat, but found {}", original.getClass());
-      }
-   }
-
    private void registerYamlProviderIfAvailable(Environment environment) {
       String className = "com.fasterxml.jackson.jaxrs.yaml.JacksonYAMLProvider";
       try {
@@ -210,13 +128,10 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
 
    public static class Builder {
 
-      private boolean disableHalSupport = false;
-
       private boolean disableFieldFilter = false;
 
-      private Iso8601Serializer defaultSerializer;
-
-      private Consumer<ObjectMapper> customizer = om -> {};
+      private ObjectMapperConfigurationUtil.Builder objectMapperBuilder = ObjectMapperConfigurationUtil
+            .configureMapper();
 
       private Builder() {
       }
@@ -228,7 +143,7 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
        * @return the builder
        */
       public Builder withoutHalSupport() {
-         this.disableHalSupport = true;
+         objectMapperBuilder.withoutHalSupport();
          return this;
       }
 
@@ -251,7 +166,7 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
        * @return the builder
        */
       public Builder withCustomization(Consumer<ObjectMapper> customizer) {
-         this.customizer = this.customizer.andThen(customizer);
+         objectMapperBuilder.withCustomization(customizer);
          return this;
       }
 
@@ -268,7 +183,7 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
        * @return the builder
        */
       public Builder alwaysWriteZonedDateTimeWithMillis() {
-         this.defaultSerializer = new Iso8601Serializer.WithMillis();
+         objectMapperBuilder.alwaysWriteZonedDateTimeWithMillis();
          return this;
       }
 
@@ -285,20 +200,12 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
        * @return the builder
        */
       public Builder alwaysWriteZonedDateTimeWithoutMillis() {
-         this.defaultSerializer = new Iso8601Serializer();
+         objectMapperBuilder.alwaysWriteZonedDateTimeWithoutMillis();
          return this;
       }
 
       public JacksonConfigurationBundle build() {
-         if (this.defaultSerializer != null) {
-            this.withCustomization(objectMapper -> {
-               SimpleModule module = new SimpleModule();
-               module.addSerializer(ZonedDateTime.class, this.defaultSerializer);
-               objectMapper.registerModule(module);
-            });
-         }
-         return new JacksonConfigurationBundle(disableHalSupport, disableFieldFilter, customizer);
+         return new JacksonConfigurationBundle(objectMapperBuilder, disableFieldFilter);
       }
    }
-
 }

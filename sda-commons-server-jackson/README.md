@@ -9,6 +9,9 @@ used to configure the Json serializer. It adds various error mappers to support 
 replace the default Dropwizard error mappers but also additional new mappers are added, e.g. mapping JaxRs Exceptions, 
 such as NotFound and NotAuthorized. All mappers do log the errors when mapping.
 
+The [`ObjectMapperConfigurationUtil`](./src/main/java/org/sdase/commons/server/jackson/ObjectMapperConfigurationUtil.java)
+can be used to receive an `ObjectMapper` with the recommended settings for usage outside of a Dropwizard application.  
+
 The default `ObjectMapper` is configured to be fault tolerant to avoid failures in deserialization. JSR-303 validations
 should be used to validate input data. For serialization the bundle disables 
 [`FAIL_ON_EMPTY_BEANS`](https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/SerializationFeature.html#FAIL_ON_EMPTY_BEANS),
