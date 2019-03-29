@@ -19,7 +19,7 @@ public class ApiClientInvocationHandler implements InvocationHandler {
     *
     * @param apiInterface the client interface
     * @param jerseyClientProxy the proxy instance build by
-    *       {@code WebResourceFactory.newResource(Class<C> resourceInterface, ...)
+    *       {@code WebResourceFactory.newResource(Class<C> resourceInterface, ...)}
     * @param <T> the client interface
     * @return a proxy around the {@code jerseyClientProxy}
     */
