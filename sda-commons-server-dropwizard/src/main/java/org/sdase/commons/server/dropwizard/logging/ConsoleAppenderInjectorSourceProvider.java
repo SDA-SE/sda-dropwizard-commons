@@ -44,9 +44,13 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
       try (final InputStream in = delegate.open(path)) {
          Yaml yaml = new Yaml();
          @SuppressWarnings("unchecked")
-         Map<String, Object> root = (Map<String, Object>) yaml.load(in);
+         Map<String, Object> root = yaml.load(in);
 
          try {
+            if (root == null) {
+               root = new HashMap<>();
+            }
+
             applyLogging(root);
          } catch (ClassCastException ex) {
             LOG.error("Unable to inject console appender config, invalid config format");
