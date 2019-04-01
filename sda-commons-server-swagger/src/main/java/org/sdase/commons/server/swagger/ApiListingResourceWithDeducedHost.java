@@ -21,7 +21,14 @@ public class ApiListingResourceWithDeducedHost extends ApiListingResource {
       // Make sure to copy the swagger object to be thread safe (the object is cached internally)
       swagger = copySwagger(swagger);
       swagger.setSchemes(Collections.singletonList(Scheme.forValue(uriInfo.getBaseUri().getScheme())));
-      swagger.setHost(uriInfo.getBaseUri().getHost() + ":" + uriInfo.getBaseUri().getPort());
+
+      // If the api is located at the default port (80 for http, 433 for https) getPort() == -1
+      if (uriInfo.getBaseUri().getPort() == -1) {
+         swagger.setHost(uriInfo.getBaseUri().getHost());
+      } else {
+         swagger.setHost(uriInfo.getBaseUri().getHost() + ":" + uriInfo.getBaseUri().getPort());
+      }
+
       return swagger;
    }
 
