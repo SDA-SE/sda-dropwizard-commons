@@ -94,7 +94,7 @@ pipeline {
       steps {
         unstash 'moduletest'
         unstash 'integrationtest'
-        sonarScanBranch project: 'com.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']
+        sonarScanBranch project: 'org.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']
       }
     }
 
@@ -105,7 +105,7 @@ pipeline {
       steps {
         unstash 'moduletest'
         unstash 'integrationtest'
-        sonarScanPullRequest project: 'com.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']
+        sonarScanPullRequest project: 'org.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']
       }
     }
 
