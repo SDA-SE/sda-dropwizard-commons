@@ -95,6 +95,15 @@ SwaggerBundle.builder()
     .addResourcePackageClass(Api.class)
     .addResourcePackage("my.package.containing.resources")
 ```
+
+The `embed` functionality is automatically documented to operations that return embeddable resources. This can be disabled if needed:
+
+```java
+SwaggerBundle.builder()
+//...
+    .disableEmbedParameter()
+```
+
 ### Note
 
 The customizations above take precedence over the corresponding ones from
@@ -242,4 +251,4 @@ them as String. If this behaviour is undesired, it may be disabled at creation t
 builder. If the bundle encounters a value that could be interpreted as JSON, the value is parsed. 
 If the value isn't JSON the value is interpreted as a string.
 If the example is supplied like ```example = "{\"key\": false}"``` the swagger definition will 
-contain the example as ```example: {"key": false}```.
+contain the example as ```example: {"key": false}```. 

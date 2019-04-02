@@ -140,12 +140,17 @@ public class SwaggerBundleIT {
       assertThatJson(response)
           .inPath("$.paths")
           .isObject()
-          .containsOnlyKeys("/jdoe");
+          .containsOnlyKeys("/jdoe", "/house");
 
       assertThatJson(response)
           .inPath("$.paths./jdoe")
           .isObject()
           .containsOnlyKeys("get", "post", "delete");
+
+      assertThatJson(response)
+          .inPath("$.paths./house")
+          .isObject()
+          .containsOnlyKeys("get");
    }
 
    @Test
@@ -191,5 +196,20 @@ public class SwaggerBundleIT {
           .inPath("$.definitions." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties._links.properties")
           .isObject()
           .containsKeys("self");
+   }
+
+   @Test
+   public void shouldIncludeEmbedParameter() {
+      String response = getJsonRequest().get(String.class);
+
+      assertThatJson(response)
+          .inPath("$.paths./house.get.parameters")
+          .isArray()
+          .isNotEmpty();
+
+     assertThatJson(response)
+         .inPath("$.paths./house.get.parameters[0].items.enum")
+         .isArray()
+         .containsOnly("animals", "partners");
    }
 }

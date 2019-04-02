@@ -113,6 +113,13 @@ public interface CustomConfigurationProviders {
 
    interface SwaggerDetailsBuilder<C extends Configuration> extends SwaggerScanningBuilder<C> {
       /**
+       * Disables automatic addition of the embed query parameter if embeddable resources are discovered.
+       *
+       * @return the builder.
+       */
+      SwaggerDetailsBuilder<C> disableSwaggerEmbedParameter();
+
+      /**
        * Disables automatic rendering of Json examples in Swagger {@link ApiModelProperty#example() property examples}
        * and {@link ApiResponse#examples() response examples}. If disabled, only {@code String} and {@link Integer} are
        * recognized as special types.

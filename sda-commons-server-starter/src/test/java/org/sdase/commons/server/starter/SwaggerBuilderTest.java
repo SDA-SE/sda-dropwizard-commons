@@ -121,6 +121,28 @@ public class SwaggerBuilderTest {
    }
 
    @Test
+   public void noEmbedParameter() {
+
+      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+          .usingSdaPlatformConfiguration()
+          .withRequiredConsumerToken()
+          .withSwaggerInfoTitle("Starter")
+          .disableSwaggerEmbedParameter()
+          .addSwaggerResourcePackageClass(this.getClass())
+          .build();
+
+      bundleAssertion.assertBundleConfiguredByPlatformBundle(
+          bundle,
+          SwaggerBundle.builder()
+              .withTitle("Starter")
+              .addResourcePackageClass(this.getClass())
+              .disableEmbedParameter()
+              .build()
+      );
+
+   }
+
+   @Test
    public void noJsonExamples() {
 
       SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()

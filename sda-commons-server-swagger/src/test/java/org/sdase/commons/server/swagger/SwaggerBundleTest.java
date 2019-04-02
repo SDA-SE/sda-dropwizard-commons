@@ -10,12 +10,10 @@ import io.dropwizard.setup.Environment;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Info;
 import javax.servlet.FilterRegistration;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
-import org.mockito.internal.matchers.Any;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
@@ -375,10 +373,24 @@ public class SwaggerBundleTest {
 
       assertThat(bundle.getResourcePackages()).isEqualTo(
             join(",",
+                  "org.sdase.commons.optional.server.swagger.parameter.embed",
                   "org.sdase.commons.optional.server.swagger.json.example",
                   aPackage
             )
       );
+   }
+
+   @Test
+   public void shouldReturnBundleWithoutEmbedParameterSupport() {
+      String aPackage = "com.google";
+
+      SwaggerBundle bundle = SwaggerBundle.builder()
+          .withTitle(VALID_TITLE)
+          .addResourcePackage(aPackage)
+          .disableEmbedParameter()
+          .build();
+
+      assertThat(bundle.getResourcePackages()).doesNotContain("org.sdase.commons.optional.server.swagger.parameter.embed");
    }
 
    @Test
@@ -391,7 +403,7 @@ public class SwaggerBundleTest {
             .disableJsonExamples()
             .build();
 
-      assertThat(bundle.getResourcePackages()).isEqualTo(aPackage);
+      assertThat(bundle.getResourcePackages()).doesNotContain("org.sdase.commons.optional.server.swagger.json.example");
    }
 
    @Test
@@ -405,6 +417,7 @@ public class SwaggerBundleTest {
 
       assertThat(bundle.getResourcePackages()).isEqualTo(
             join(",",
+                  "org.sdase.commons.optional.server.swagger.parameter.embed",
                   "org.sdase.commons.optional.server.swagger.json.example",
                   resourcePackageClass.getPackage().getName()
             )
@@ -427,7 +440,8 @@ public class SwaggerBundleTest {
 
       assertThat(bundle.getResourcePackages()).isEqualTo(
             join(",",
-                  "org.sdase.commons.optional.server.swagger.json.example",
+                "org.sdase.commons.optional.server.swagger.parameter.embed",
+                "org.sdase.commons.optional.server.swagger.json.example",
                   resourcePackageClass1.getPackage().getName(),
                   aPackage,
                   resourcePackageClass2.getPackage().getName()));
@@ -517,6 +531,7 @@ public class SwaggerBundleTest {
       assertThat(beanConfig.getBasePath()).isEqualTo("/api");
       assertThat(beanConfig.getResourcePackage()).isEqualTo(
             join(",",
+               "org.sdase.commons.optional.server.swagger.parameter.embed",
                "org.sdase.commons.optional.server.swagger.json.example",
                resourcePackageClass.getPackage().getName()
             )

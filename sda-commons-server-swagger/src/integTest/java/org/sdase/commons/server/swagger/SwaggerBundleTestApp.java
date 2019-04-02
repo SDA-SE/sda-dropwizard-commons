@@ -20,6 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Collections;
 
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -29,6 +30,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 public class SwaggerBundleTestApp extends Application<Configuration> {
 
    private static final String JOHN_DOE_PATH = "/jdoe";
+   private static final String HOUSE_PATH = "/house";
 
    @Context
    private UriInfo uriInfo;
@@ -75,5 +77,15 @@ public class SwaggerBundleTestApp extends Application<Configuration> {
    @ApiResponses(@ApiResponse(code = 204, message = "deleted"))
    public void deleteJohnDoe() {
       // do nothing
+   }
+
+   @GET
+   @Path(HOUSE_PATH)
+   @Produces(APPLICATION_JSON)
+   @ApiOperation(value = "get", response = HouseResource.class)
+   @ApiResponses(@ApiResponse(code = 200, message = "get", response = HouseResource.class))
+   public HouseResource getHouse() {
+      URI self = uriInfo.getBaseUriBuilder().path(SwaggerBundleTestApp.class, "getHouse").build();
+      return new HouseResource(Collections.emptyList(), Collections.emptyList(), new HALLink.Builder(self).build());
    }
 }

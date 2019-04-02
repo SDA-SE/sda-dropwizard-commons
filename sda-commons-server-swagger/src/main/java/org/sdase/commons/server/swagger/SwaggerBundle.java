@@ -14,15 +14,16 @@ import io.swagger.jaxrs.listing.SwaggerSerializers;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
-import java.util.EnumSet;
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.sdase.commons.optional.server.swagger.parameter.embed.EmbedParameterModifier;
 import org.sdase.commons.optional.server.swagger.json.example.JsonExampleModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
 import java.lang.invoke.MethodHandles;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -202,6 +203,13 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
    public interface FinalBuilder extends InterimBuilder {
 
       /**
+       * Disables automatic addition of the embed query parameter if embeddable resources are discovered.
+       *
+       * @return the builder.
+       */
+      FinalBuilder disableEmbedParameter();
+
+      /**
        * Disables automatic rendering of Json examples in Swagger {@link ApiModelProperty#example() property examples}
        * and {@link ApiResponse#examples() response examples}. If disabled, only {@code String} and {@link Integer} are
        * recognized as special types.
@@ -322,7 +330,14 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
 
       Builder() {
          resourcePackages = new LinkedHashSet<>();
+         addResourcePackageClass(EmbedParameterModifier.class);
          addResourcePackageClass(JsonExampleModifier.class);
+      }
+
+      @Override
+      public FinalBuilder disableEmbedParameter() {
+         this.resourcePackages.remove(getResourcePackage(EmbedParameterModifier.class));
+         return this;
       }
 
       @Override

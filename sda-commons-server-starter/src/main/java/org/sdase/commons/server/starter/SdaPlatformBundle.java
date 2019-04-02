@@ -121,6 +121,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
       private CorsBundle.FinalBuilder<C> corsBundleBuilder;
 
       private Info swaggerInfo = new Info();
+      private boolean swaggerDisableEmbedParameter = false;
       private boolean swaggerDisableJsonExamples = false;
       private List<String> swaggerResourcePackages = new ArrayList<>();
 
@@ -223,6 +224,12 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
       @Override
       public SwaggerDetailsBuilder<C> withSwaggerInfoTitle(String title) {
          this.swaggerInfo.title(title);
+         return this;
+      }
+
+      @Override
+      public SwaggerDetailsBuilder<C> disableSwaggerEmbedParameter() {
+         this.swaggerDisableEmbedParameter = true;
          return this;
       }
 
@@ -341,6 +348,9 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
             }
          }
          finalBuilder = applySwaggerInfo(finalBuilder);
+         if (swaggerDisableEmbedParameter) {
+            finalBuilder = finalBuilder.disableEmbedParameter();
+         }
          if (swaggerDisableJsonExamples) {
             finalBuilder = finalBuilder.disableJsonExamples();
          }
