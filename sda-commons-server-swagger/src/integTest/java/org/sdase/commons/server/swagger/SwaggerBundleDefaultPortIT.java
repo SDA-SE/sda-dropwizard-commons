@@ -18,8 +18,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
 
-// This test can not be run on the build server since it binds to port 80 which is not permitted (Permission denied)
-@Ignore
+@Ignore("This test can not be run on the build server since it binds to port 80 which is not permitted (Permission denied)")
 public class SwaggerBundleDefaultPortIT {
    @ClassRule
    public static final DropwizardAppRule<Configuration> DW = new DropwizardAppRule<>(
