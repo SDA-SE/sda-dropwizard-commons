@@ -151,4 +151,91 @@ public class TestYamlUtil {
 
       assertThat(actual.getTime()).isEqualTo("2019-02-18T10:06:11.634310066Z");
    }
+
+   @Test
+   public void testLoadYamlWithMultipleFilesURLClass() {
+      List<TestBean2> actual = YamlUtil.loadList(
+          getClass().getResource("/datasets/test-multiple-files.yml"),
+          TestBean2.class);
+
+      assertThat(actual)
+          .extracting(TestBean2::getId, TestBean2::getMessage, TestBean2::getAttribute)
+          .containsExactly(
+              tuple("123", "Hello World!", "Foo"),
+              tuple("456", "Hello Universe!", "Bar")
+          );
+   }
+
+   @Test
+   public void testLoadYamlWithMultipleFilesURLTypeReference() {
+      List<TestBean2> actual = YamlUtil.loadList(
+          getClass().getResource("/datasets/test-multiple-files.yml"),
+          new TypeReference<TestBean2>() {
+          });
+
+      assertThat(actual)
+          .extracting(TestBean2::getId, TestBean2::getMessage, TestBean2::getAttribute)
+          .containsExactly(
+              tuple("123", "Hello World!", "Foo"),
+              tuple("456", "Hello Universe!", "Bar")
+          );
+   }
+
+   @Test
+   public void testLoadYamlWithMultipleFilesInputStreamClass() throws IOException {
+      try (InputStream resourceAsStream = getClass().getResourceAsStream("/datasets/test-multiple-files.yml")) { // NOSONAR
+         List<TestBean2> actual = YamlUtil.loadList(resourceAsStream, TestBean2.class);
+
+         assertThat(actual)
+             .extracting(TestBean2::getId, TestBean2::getMessage, TestBean2::getAttribute)
+             .containsExactly(
+                 tuple("123", "Hello World!", "Foo"),
+                 tuple("456", "Hello Universe!", "Bar")
+             );
+      }
+   }
+
+   @Test
+   public void testLoadYamlWithMultipleFilesInputStreamTypeReference() throws IOException {
+      try (InputStream resourceAsStream = getClass().getResourceAsStream("/datasets/test-multiple-files.yml")) { // NOSONAR
+         List<TestBean2> actual = YamlUtil.loadList(resourceAsStream, new TypeReference<TestBean2>() {});
+
+         assertThat(actual)
+             .extracting(TestBean2::getId, TestBean2::getMessage, TestBean2::getAttribute)
+             .containsExactly(
+                 tuple("123", "Hello World!", "Foo"),
+                 tuple("456", "Hello Universe!", "Bar")
+             );
+      }
+   }
+
+   @Test
+   public void testLoadYamlWithMultipleFilesStringClass() throws IOException {
+      try (InputStream resourceAsStream = getClass().getResourceAsStream("/datasets/test-multiple-files.yml")) { // NOSONAR
+         String content = IOUtils.toString(resourceAsStream, UTF_8);
+         List<TestBean2> actual = YamlUtil.loadList(content, TestBean2.class);
+
+         assertThat(actual)
+             .extracting(TestBean2::getId, TestBean2::getMessage, TestBean2::getAttribute)
+             .containsExactly(
+                 tuple("123", "Hello World!", "Foo"),
+                 tuple("456", "Hello Universe!", "Bar")
+             );
+      }
+   }
+
+   @Test
+   public void testLoadYamlWithMultipleFilesStringTypeReference() throws IOException {
+      try (InputStream resourceAsStream = getClass().getResourceAsStream("/datasets/test-multiple-files.yml")) { // NOSONAR
+         String content = IOUtils.toString(resourceAsStream, UTF_8);
+         List<TestBean2> actual = YamlUtil.loadList(content, new TypeReference<TestBean2>() {});
+
+         assertThat(actual)
+             .extracting(TestBean2::getId, TestBean2::getMessage, TestBean2::getAttribute)
+             .containsExactly(
+                 tuple("123", "Hello World!", "Foo"),
+                 tuple("456", "Hello Universe!", "Bar")
+             );
+      }
+   }
 }

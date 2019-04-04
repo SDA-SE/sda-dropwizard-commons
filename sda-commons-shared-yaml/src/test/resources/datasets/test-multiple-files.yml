@@ -1,0 +1,7 @@
+message: Hello World!
+attribute: Foo
+id: 123
+---
+message: Hello Universe!
+attribute: Bar
+id: 456
