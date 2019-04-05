@@ -38,7 +38,7 @@ pipeline {
 
     stage('Run Tests') {
       parallel {
-        stage('Module test jar') {
+        stage('Module test jar (Java 8)') {
           agent {
             docker {
               image 'quay.io/sdase/openjdk:8u191-bionic'
@@ -61,7 +61,7 @@ pipeline {
             }
           }
         }
-        stage('Integration test service') {
+        stage('Integration test service (Java 8)') {
           agent {
             docker {
               image 'quay.io/sdase/openjdk:8u191-bionic'
@@ -77,6 +77,52 @@ pipeline {
               }
             }
             stash includes: '**/build/**/*', name: 'integrationtest'
+          }
+          post {
+            always {
+              junit '**/build/integTest-results/*.xml'
+            }
+          }
+        }
+        stage('Module test jar (Java 11)') {
+          agent {
+            docker {
+              image 'openjdk:11-jdk-slim'
+            }
+          }
+          steps {
+            prepareGradleWorkspace secretId: 'sdabot-github-token'
+            javaGradlew gradleCommand: 'test'
+            script {
+              def testResults = findFiles(glob: '**/build/test-results/test/*.xml')
+              for(xml in testResults) {
+                touch xml.getPath()
+              }
+            }
+            //stash includes: '**/build/**/*', name: 'moduletest'
+          }
+          post {
+            always {
+              junit '**/build/test-results/test/*.xml'
+            }
+          }
+        }
+        stage('Integration test service (Java 11)') {
+          agent {
+            docker {
+              image 'openjdk:11-jdk-slim'
+            }
+          }
+          steps {
+            prepareGradleWorkspace secretId: 'sdabot-github-token'
+            javaGradlew gradleCommand: 'integrationTest'
+            script {
+              def testResults = findFiles(glob: '**/build/integTest-results/*.xml')
+              for(xml in testResults) {
+                touch xml.getPath()
+              }
+            }
+            //stash includes: '**/build/**/*', name: 'integrationtest'
           }
           post {
             always {
