@@ -14,14 +14,12 @@ import org.sdase.commons.server.auth.key.RsaPublicKeyLoader;
 import org.sdase.commons.server.auth.service.AuthRSA256Service;
 import org.sdase.commons.server.auth.service.AuthService;
 import org.sdase.commons.server.auth.service.JwtAuthenticator;
-import org.sdase.commons.server.auth.service.JwtAuthorizer;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,15 +59,13 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
       AuthService authRSA256Service = new AuthRSA256Service(keyLoader, config.getLeeway());
       JwtAuthenticator authenticator = new JwtAuthenticator(authRSA256Service, config.isDisableAuth());
-      JwtAuthorizer authorizer = new JwtAuthorizer(config.isDisableAuth());
 
       JwtAuthFilter<JwtPrincipal> authFilter = new JwtAuthFilter.Builder<JwtPrincipal>()
             .setAuthenticator(authenticator)
-            .setAuthorizer(authorizer)
             .buildAuthFilter();
+
       environment.jersey().register(new AuthDynamicFeature(authFilter));
 
-      environment.jersey().register(RolesAllowedDynamicFeature.class);
       environment.jersey().register(JwtAuthExceptionMapper.class);
       environment.jersey().register(ForbiddenExceptionMapper.class);
 

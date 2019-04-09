@@ -3,7 +3,6 @@ package org.sdase.commons.server.auth.testing;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.sdase.commons.server.auth.service.JwtAuthorizer;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
@@ -83,32 +82,6 @@ public class AuthRuleProgrammaticIT {
                   entry("test", "testClaim"),
                   entry("mapKey", "testClaimFromMap")
             );
-   }
-
-   /**
-    * Role based authentication is not implemented yet (see {@link JwtAuthorizer})
-    * We expect "403 Forbidden" until someone implements a useful role based system.
-    */
-   @Test
-   public void shouldNotAllowRoleBasedAccessWithToken() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
-            .path("/admin")
-            .request(APPLICATION_JSON)
-            .headers(AUTH.auth().buildAuthHeader())
-            .get();
-
-      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_FORBIDDEN);
-   }
-
-
-   @Test
-   public void shouldNotAllowRoleBasedAccessWithoutToken() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
-            .path("/admin")
-            .request(APPLICATION_JSON)
-            .get();
-
-      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
    }
 
 }

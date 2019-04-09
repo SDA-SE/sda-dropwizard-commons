@@ -45,16 +45,6 @@ public class AuthDisabledIT {
       assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
    }
 
-   @Test
-   public void shouldAllowAdminAccessIfAuthIsDisabled() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
-            .path("/admin")
-            .request(APPLICATION_JSON)
-            .get();
-
-      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-   }
-
    @Test(expected = IllegalStateException.class)
    public void shouldThrowExceptionIfRequestingTokenWhileAuthIsDisabled() {
       AUTH.auth().buildToken();

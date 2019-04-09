@@ -5,7 +5,6 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
-import org.sdase.commons.server.auth.service.JwtAuthorizer;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 
@@ -108,38 +107,6 @@ public class AuthRuleIT {
             );
    }
 
-   /**
-    * Role based authentication is not implemented yet (see {@link JwtAuthorizer})
-    * We expect "403 Forbidden" until someone implements a useful role based system.
-    */
-   @Test
-   public void shouldNotAllowRoleBasedAccessWithToken() {
-      Response response = createWebTarget()
-            .path("/admin")
-            .request(APPLICATION_JSON)
-            .headers(AUTH.auth().buildAuthHeader())
-            .get();
-
-      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_FORBIDDEN);
-      assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
-      assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
-            .containsKeys("title", "invalidParams");
-   }
-
-
-   @Test
-   public void shouldNotAllowRoleBasedAccessWithoutToken() {
-      Response response = createWebTarget()
-            .path("/admin")
-            .request(APPLICATION_JSON)
-            .get();
-
-      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
-      assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
-      assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer");
-      assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
-            .containsKeys("title", "invalidParams");
-   }
 
    private WebTarget createWebTarget() {
       return DW.client().target("http://localhost:" + DW.getLocalPort());

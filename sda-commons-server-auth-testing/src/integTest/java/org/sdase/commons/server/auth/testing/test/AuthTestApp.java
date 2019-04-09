@@ -18,6 +18,5 @@ public class AuthTestApp extends Application<AuthTestConfig> {
    public void run(AuthTestConfig configuration, Environment environment) {
       environment.jersey().register(SecureEndPoint.class);
       environment.jersey().register(OpenEndPoint.class);
-      environment.jersey().register(RolesAwareEndpoint.class);
    }
 }
