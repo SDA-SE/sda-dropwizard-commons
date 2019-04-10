@@ -375,6 +375,7 @@ public class SwaggerBundleTest {
             join(",",
                   "org.sdase.commons.optional.server.swagger.parameter.embed",
                   "org.sdase.commons.optional.server.swagger.json.example",
+                  "org.sdase.commons.optional.server.swagger.sort",
                   aPackage
             )
       );
@@ -419,6 +420,7 @@ public class SwaggerBundleTest {
             join(",",
                   "org.sdase.commons.optional.server.swagger.parameter.embed",
                   "org.sdase.commons.optional.server.swagger.json.example",
+                  "org.sdase.commons.optional.server.swagger.sort",
                   resourcePackageClass.getPackage().getName()
             )
       );
@@ -442,6 +444,7 @@ public class SwaggerBundleTest {
             join(",",
                 "org.sdase.commons.optional.server.swagger.parameter.embed",
                 "org.sdase.commons.optional.server.swagger.json.example",
+                "org.sdase.commons.optional.server.swagger.sort",
                   resourcePackageClass1.getPackage().getName(),
                   aPackage,
                   resourcePackageClass2.getPackage().getName()));
@@ -533,6 +536,7 @@ public class SwaggerBundleTest {
             join(",",
                "org.sdase.commons.optional.server.swagger.parameter.embed",
                "org.sdase.commons.optional.server.swagger.json.example",
+               "org.sdase.commons.optional.server.swagger.sort",
                resourcePackageClass.getPackage().getName()
             )
       );

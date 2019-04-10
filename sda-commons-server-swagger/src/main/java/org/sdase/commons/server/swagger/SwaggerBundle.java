@@ -17,6 +17,7 @@ import io.swagger.models.License;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.sdase.commons.optional.server.swagger.parameter.embed.EmbedParameterModifier;
 import org.sdase.commons.optional.server.swagger.json.example.JsonExampleModifier;
+import org.sdase.commons.optional.server.swagger.sort.SortingModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -332,6 +333,7 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
          resourcePackages = new LinkedHashSet<>();
          addResourcePackageClass(EmbedParameterModifier.class);
          addResourcePackageClass(JsonExampleModifier.class);
+         addResourcePackageClass(SortingModifier.class);
       }
 
       @Override
