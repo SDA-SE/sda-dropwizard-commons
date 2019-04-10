@@ -11,22 +11,11 @@ import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
  */
 public class ClientFactory {
 
-   private JerseyClientBuilder clientBuilderWithGzipCompression;
-   private JerseyClientBuilder clientBuilderWithoutGzipCompression;
-
-   private String consumerToken;
+   private final Environment environment;
+   private final String consumerToken;
 
    ClientFactory(Environment environment, String consumerToken) {
-      JerseyClientConfiguration configurationWithGzip = new JerseyClientConfiguration();
-      // Chunked encoding in combination with the underlying Apache Http Client breaks support for multipart/form-data
-      configurationWithGzip.setChunkedEncodingEnabled(false);
-      this.clientBuilderWithGzipCompression = new JerseyClientBuilder(environment).using(configurationWithGzip);
-      JerseyClientConfiguration configurationWithoutGzip = new JerseyClientConfiguration();
-      // Chunked encoding in combination with the underlying Apache Http Client breaks support for multipart/form-data
-      configurationWithoutGzip.setChunkedEncodingEnabled(false);
-      configurationWithoutGzip.setGzipEnabled(false);
-      configurationWithoutGzip.setGzipEnabledForRequests(false);
-      this.clientBuilderWithoutGzipCompression = new JerseyClientBuilder(environment).using(configurationWithoutGzip);
+      this.environment = environment;
       this.consumerToken = consumerToken;
    }
 
@@ -44,20 +33,40 @@ public class ClientFactory {
     * @return a builder to configure the client
     */
    public PlatformClientBuilder platformClient() {
-      return platformClient(false);
+      return platformClient(new HttpClientConfiguration());
    }
 
    /**
-    * Starts creation of a client that calls APIs within the SDA SE Platform. This clients automatically send a
-    * {@code Trace-Token} from the incoming request or a new {@code Trace-Token} to the API resources and can optionally
-    * send a {@code Consumer-Token} or pass through the {@code Authorization} header from the incoming request.
+    * Starts creation of a client that calls APIs within the SDA SE Platform.
+    * This clients automatically send a {@code Trace-Token} from the incoming
+    * request or a new {@code Trace-Token} to the API resources and can
+    * optionally send a {@code Consumer-Token} or pass through the
+    * {@code Authorization} header from the incoming request.
     *
-    * @param disableGzipCompression if gzip compression of requests should be disabled. This may be needed if the server
-    *                               can not communicate with gzip enabled
+    * @param httpClientConfiguration
+    *           Allows to pass additional configuration for the http client.
     * @return a builder to configure the client
     */
+   public PlatformClientBuilder platformClient(HttpClientConfiguration httpClientConfiguration) {
+      return new PlatformClientBuilder(createClientBuilder(httpClientConfiguration), consumerToken);
+   }
+
+   /**
+    * Starts creation of a client that calls APIs within the SDA SE Platform.
+    * This clients automatically send a {@code Trace-Token} from the incoming
+    * request or a new {@code Trace-Token} to the API resources and can
+    * optionally send a {@code Consumer-Token} or pass through the
+    * {@code Authorization} header from the incoming request.
+    *
+    * @param disableGzipCompression
+    *           if gzip compression of requests should be disabled. This may be
+    *           needed if the server can not communicate with gzip enabled
+    * @return a builder to configure the client
+    * @deprecated Use {@link #externalClient(HttpClientConfiguration)} instead.
+    */
+   @Deprecated
    public PlatformClientBuilder platformClient(boolean disableGzipCompression) {
-      return new PlatformClientBuilder(findJerseyClientBuilder(disableGzipCompression), consumerToken);
+      return platformClient(new HttpClientConfiguration().setGzipEnabled(!disableGzipCompression));
    }
 
    /**
@@ -71,22 +80,42 @@ public class ClientFactory {
     * @return a builder to configure the client
     */
    public ExternalClientBuilder externalClient() {
-      return externalClient(false);
+      return externalClient(new HttpClientConfiguration());
    }
 
    /**
-    * Starts creation of a client that calls APIs outside of the SDA SE Platform. This clients does no header magic.
+    * Starts creation of a client that calls APIs outside of the SDA SE
+    * Platform. This clients does no header magic.
     *
-    * @param disableGzipCompression if gzip compression of requests should be disabled. This may be needed if the server
-    *                               can not communicate with gzip enabled
+    * @param httpClientConfiguration
+    *           Allows to pass additional configuration for the http client.
     * @return a builder to configure the client
     */
-   public ExternalClientBuilder externalClient(boolean disableGzipCompression) {
-      return new ExternalClientBuilder(findJerseyClientBuilder(disableGzipCompression));
+   public ExternalClientBuilder externalClient(HttpClientConfiguration httpClientConfiguration) {
+      return new ExternalClientBuilder(createClientBuilder(httpClientConfiguration));
    }
 
-   private JerseyClientBuilder findJerseyClientBuilder(boolean disableGzipCompression) {
-      return disableGzipCompression ? clientBuilderWithoutGzipCompression : clientBuilderWithGzipCompression;
+   /**
+    * Starts creation of a client that calls APIs outside of the SDA SE
+    * Platform. This clients does no header magic.
+    *
+    * @param disableGzipCompression
+    *           if gzip compression of requests should be disabled. This may be
+    *           needed if the server can not communicate with gzip enabled
+    * @return a builder to configure the client
+    * @deprecated Use {@link #externalClient(HttpClientConfiguration)} instead.
+    */
+   @Deprecated
+   public ExternalClientBuilder externalClient(boolean disableGzipCompression) {
+      return externalClient(new HttpClientConfiguration().setGzipEnabled(!disableGzipCompression));
+   }
+
+   private JerseyClientBuilder createClientBuilder(HttpClientConfiguration httpClientConfiguration) {
+      JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+      configuration.setChunkedEncodingEnabled(httpClientConfiguration.isChunkedEncodingEnabled());
+      configuration.setGzipEnabled(httpClientConfiguration.isGzipEnabled());
+      configuration.setGzipEnabledForRequests(httpClientConfiguration.isGzipEnabledForRequests());
+      return new JerseyClientBuilder(environment).using(configuration);
    }
 
 }

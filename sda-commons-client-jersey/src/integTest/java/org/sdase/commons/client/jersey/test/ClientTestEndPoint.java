@@ -16,13 +16,19 @@ public class ClientTestEndPoint {
    private MockApiClient authMockApiClient;
 
    ClientTestEndPoint(ClientFactory clientFactory, String baseUrl) {
-      mockApiClient = clientFactory.platformClient().api(MockApiClient.class).atTarget(baseUrl);
+      mockApiClient = clientFactory
+            .platformClient()
+            .api(MockApiClient.class, "MockApiClientWithoutAuth")
+            .atTarget(baseUrl);
       authMockApiClient = clientFactory
             .platformClient()
             .enableAuthenticationPassThrough()
-            .api(MockApiClient.class)
+            .api(MockApiClient.class, "MockApiClientWithAuth")
             .atTarget(baseUrl);
-      externalMockApiClient = clientFactory.externalClient().api(MockApiClient.class).atTarget(baseUrl);
+      externalMockApiClient = clientFactory
+            .externalClient()
+            .api(MockApiClient.class, "MockApiClientExternal")
+            .atTarget(baseUrl);
    }
 
    @GET

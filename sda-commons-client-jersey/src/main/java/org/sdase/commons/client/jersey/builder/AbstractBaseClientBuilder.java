@@ -128,7 +128,26 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
     * @return a builder to define the root path of the API for the proxy that is build
     */
    public <A> ApiClientBuilder<A> api(Class<A> apiInterface) {
-      return new ApiClientBuilder<>(apiInterface, buildGenericClient(apiInterface.getSimpleName()));
+      return api(apiInterface, apiInterface.getSimpleName());
+   }
+
+   /**
+    * Creates a client proxy implementation for accessing another service.
+    * Allows to set a custom name if required, e.g. if you have multiple clients
+    * generated from the same interface.
+    *
+    * @param apiInterface
+    *           the interface that declares the API using JAX-RS annotations.
+    * @param customName
+    *           the custom name to use for the client. The name is used for the
+    *           executor service and metrics. Names have to be unique.
+    * @param <A>
+    *           the type of the api
+    * @return a builder to define the root path of the API for the proxy that is
+    *         build
+    */
+   public <A> ApiClientBuilder<A> api(Class<A> apiInterface, String customName) {
+      return new ApiClientBuilder<>(apiInterface, buildGenericClient(customName));
    }
 
    private void registerMultiPartIfAvailable(Client client) {

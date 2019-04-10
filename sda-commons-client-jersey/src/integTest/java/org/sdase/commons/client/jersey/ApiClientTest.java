@@ -46,6 +46,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.notMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.seeOther;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -54,6 +55,7 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.entry;
@@ -470,6 +472,32 @@ public class ApiClientTest {
             .isThrownBy(() -> client.getCar("123"))
             .is(processingError());
 
+   }
+
+   @Test
+   public void seeOtherAfterPost() {
+      WIRE
+            .stubFor(post("/api/cars")
+                  .withRequestBody(equalToJson("{ \"sign\": \"HH XY 1234\", \"color\": \"yellow\" }"))
+                  .willReturn(seeOther(WIRE.url("/api/cars/HH%20XY%201234"))));
+      WIRE
+            .stubFor(get("/api/cars/HH%20XY%201234")
+                  .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody("{ \"sign\": \"HH XY 1234\", \"color\": \"yellow\" }")));
+
+      // This test requires that gzip for request bodies is disabled, otherwise
+      // the automatic GET request after the see others fails as the
+      // content-encoding from the post request is also used for the GET
+      // request. However neither Dropwizard nor Wiremock does handle this well
+      // for GET requests.
+      MockApiClient client = createMockApiClient();
+
+      Response r = client.createCar(new Car().setSign("HH XY 1234").setColor("yellow"));
+      assertThat(r.getStatus()).isEqualTo(SC_OK);
+      Car car = r.readEntity(Car.class);
+      assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 1234", "yellow");
    }
 
    private MockApiClient createMockApiClient() {
