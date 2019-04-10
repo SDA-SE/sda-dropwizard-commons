@@ -62,7 +62,7 @@ subprojects {
         javaxWsRsVersion           = '2.1.1'
         hibernateValidatorVersion  = '5.4.3.Final'
         openApiToolVersion         = '1.0.4'
-        swaggerVersion             = '1.5.21'
+        swaggerVersion             = '1.5.22'
         slf4jVersion               = '1.7.26'
         weldVersion                = '3.0.4.Final'
         jerseyVersion              = '2.25.1'
