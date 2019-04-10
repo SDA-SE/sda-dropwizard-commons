@@ -24,7 +24,7 @@ public class TraceTokenClientFilter implements ClientRequestFilter, ClientRespon
    @Override
    public void filter(ClientRequestContext requestContext) {
       String traceToken = takeTraceTokenFromIncomingRequest()
-            .orElseGet(() -> createTraceTokenForOutgoingRequest(requestContext));
+               .orElseGet(() -> createTraceTokenForOutgoingRequest(requestContext));
       requestContext.getHeaders().add(RequestTracing.TOKEN_HEADER, traceToken);
    }
 

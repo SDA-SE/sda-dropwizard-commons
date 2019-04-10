@@ -9,8 +9,9 @@ testCompile 'org.sdase.commons:sda-commons-server-auth-testing:<current-version>
 ```
 
 In an integration test, authentication can be configured using the 
-[`AuthRule`](./src/main/java/org/sdase/commons/server/auth/testing/AuthRule.java).
+[`AuthRule`](./src/main/java/org/sdase/commons/server/auth/testing/AuthRule.java) and/or the [`OpaRule`](./src/main/java/org/sdase/commons/server/opa/testing/OpaRule.java).
 
+## Auth Rule
 The `AuthRule` uses the `EnvironmentRule` to create the `AuthConfig` in an environment property called `AUTH_RULE`.
 Therefore the configuration in the test needs to use this property and the application is required to use the 
 [`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
@@ -80,6 +81,18 @@ public class AuthRuleProgrammaticIT {
 }
 ```
 
+The `AuthRule` provides functions to generate a valid token that matches to the auth configuration in tests.
+```java
+   Response response = createWebTarget()
+            .path("/secure")
+            .request(APPLICATION_JSON)
+            .headers(AUTH.auth()   
+                  .addClaim("test", "testClaim")
+                  .addClaims(singletonMap("mapKey", "testClaimFromMap"))
+                  .buildAuthHeader())  // creates a valid Authorization header with a valid JWT 
+            .get();
+```
+
 Examples can be found in the [integTest source branch](./src/integTest) of this module. There is
 
 - [An example app](./src/integTest/java/org/sdase/commons/server/auth/testing/test/AuthTestApp.java)  
@@ -87,3 +100,77 @@ Examples can be found in the [integTest source branch](./src/integTest) of this 
 - [A test with disabled authentication](./src/integTest/java/org/sdase/commons/server/auth/testing/AuthDisabledIT.java)
   which uses the `EnvironmentRule` instead of the `AuthRule`
 - [An appropriate test config yaml](./src/integTest/resources/test-config.yaml)
+
+## OPA Rule
+
+The OPA Rule is build around Wiremock. The mock can be configured via the rule.
+
+To implement a test with an OPA Mock, the `OpaRule` has to be applied around the `DropwizardAppRule` with a RuleChain. Lazy Rule must be used since the OPA Mock starts on a random port. 
+
+```java
+public class OpaIT {
+
+   private static final OpaRule OPA_RULE = new OpaRule();
+
+   private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW = new LazyRule<>(
+         () -> new DropwizardAppRule<>(OpaBundleTestApp.class, ResourceHelpers.resourceFilePath("test-opa-config.yaml"),
+               config("opa.baseUrl", OPA_RULE.getUrl())));
+
+
+   @ClassRule
+   public static RuleChain CHAIN = RuleChain.outerRule(OPA_RULE).around(DW);
+
+   // @Test
+}
+```
+
+The `OpaRule` may also be used with programmatic configuration omitting a `test-config.yaml`:
+
+```java
+public class OpaRuleProgrammaticIT {
+
+  private static final OpaRule OPA_RULE = new OpaRule();
+
+  private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW = new LazyRule<>( () ->
+       DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
+           .withConfigFrom(OpaBundeTestAppConfiguration::new)
+      .withRandomPorts()
+      .withConfigurationModifier(c -> c.getOpa().setBaseUrl(OPA_RULE.getUrl())).build());
+  @ClassRule
+  public static final RuleChain chain = RuleChain.outerRule(OPA_RULE).around(DW);
+         
+
+   // @Test
+}
+```
+
+To control the OPA mock behavior, the following API is provided
+```java
+ // allow access to a given httpMethod/path combination
+ OPA_RULE.mock(onRequest(httpMethod, path).allow());
+ // deny access to a given httpMethod/path combination
+ OPA_RULE.mock(onRequest(httpMethod, path).deny());
+ // allow access to a given httpMethod/path combination with constraint
+ OPA_RULE.mock(onRequest(httpMethod, path).allow().withConstraint(new ConstraintModel(...)));
+ // the response is returned for all requests, if no more specific mock is configured
+ OPA_RULE.mock(onAnyRequest().answer(new OpaResponse(...)));
+ 
+ // the same options are available for any requests if no more specific mock is configured
+ OPA_RULE.mock(onAnyRequest().allow());
+ OPA_RULE.mock(onAnyRequest().answer(new OpaResponse(...)));
+ 
+ // It is possible to verify of the OPA has been invoked with parameters for the resource 
+ // defined by the path and the httpMethod
+ verify(int count, String httpMethod, String path) {
+```
+
+Examples can be found in the [integTest source branch](./src/integTest) of this module. There is
+
+- [An example app](./src/integTest/java/org/sdase/commons/server/opa/testing/test/OpaBundleTestApp.java)  
+- [A test with opa](./src/integTest/java/org/sdase/commons/server/opa/testing/OpaIT.java)  
+- [A test with disabled opa support](./src/integTest/java/org/sdase/commons/server/opa/testing/OpaDisabledIT.java). In this case, only empty constraints are within the principal
+- [An appropriate test config yaml](./src/integTest/resources/test-opa-config.yaml)
+
+Example with activated AUTH and OPA bundle can be found here:
+- [Example app](./src/integTest/java/org/sdase/commons/server/opa/testing/test/AuthAndOpaBundleTestApp.java)
+- [Test](./src/integTest/java/org/sdase/commons/server/opa/testing/AuthAndOpaIT.java)

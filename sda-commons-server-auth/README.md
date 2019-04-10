@@ -1,16 +1,18 @@
 # SDA Commons Server Auth
 
 This module provides an [`AuthBundle`](./src/main/java/org/sdase/commons/server/auth/AuthBundle.java) to authenticate
-users based on JSON Web Tokens. 
+users based on JSON Web Tokens and an [`OpaBundle`](./src/main/java/org/sdase/commons/server/opa/OpaBundle.java) to
+authorize the request with help of the [`Open Poliy Agent`](http://www.openpolicyagent.org).
 
 To use the bundle, a dependency to this module has to be added:
 
 ```
 compile 'org.sdase.commons:sda-commons-server-auth:<current-version>'
 ```
+## Auth Bundle
 
 The authentication creates a [`JwtPrincipal`](./src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java) per 
-request. The current user can be accessed from the `SecurityContext`:
+request. This can be accessed from the `SecurityContext`:
 
 ```java
 @PermitAll
@@ -135,6 +137,125 @@ In this case, the `AUTH_KEYS` variable should contain a Json array of
     "location": "https://keycloak.example.com/auth/realms/my-other-realm"
   }
 ]
+```
+
+## OPA Bundle
+Details about the authorization with Open Policy Agent are documented within the authorization concept (see Confluence). 
+In short, Open Policy Agent acts as policy decision point and is started as sidecar to the actual service. The OPA bundle
+requests the policy decision providing the HTTP path and HTTP method and the JWT (if available) as input.
+
+![Overview](./docs/Overview.svg)
+
+The response consists of two parts, the overall `allow` decision and optional object that represents `constraints` to limit data access
+within the service. The constraints are fully service dependent and MUST be applied when querying the database or
+filtering received data. 
+
+The following listing presents an sample OPA result with a positive allow decision and two constraints, the first with boolean value and second
+with a list of string values.
+```
+ {
+     "result": {
+        "allow": true,
+        "constraints": { "constraint1": true, "constraint2": [ "v2.1", "v2.2" ] }
+     }
+  }
+```
+
+The bundle creates a [`OpaJwtPrincipal`](./src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) for each 
+request. Data from an [`JwtPrincipal`](./src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java) is copied to the new principal if existing.
+Beside the JWT, the constraints are included in this principal. The `OpaJwtPrincipal` includes a method to parse the constraints JSON string to
+a Java object.
+
+The following listing shows a corresponding model class to the example above.
+```java
+public class ConstraintModel {
+  
+  private boolean constraint1;
+  private List<String> constraint2;
+  
+}
+```
+
+The principal can be accessed from the `SecurityContext`.
+
+```java
+@PermitAll
+@Path("/secure")
+public class SecureEndPoint {
+
+   @Context
+   private SecurityContext securityContext;
+
+   @GET
+   public Response getSomethingSecure() {
+      OpaJwtPrincipal opaJwtPrincipal = (OpaJwtPrincipal) securityContext.getUserPrincipal();
+      // ...
+   }
+}
+```
+
+To activate the OPA integration in an application, the bundle has to be added to the application. The kubernetes file of the 
+service must also be adjusted to start OPA as sidecar.
+
+```java
+public class MyApplication extends Application<MyConfiguration> {
+   
+    public static void main(final String[] args) {
+        new MyApplication().run(args);
+    }
+
+   @Override
+   public void initialize(Bootstrap<MyConfiguration> bootstrap) {
+      // ...
+      bootstrap.addBundle(OpaBundle.builder().withOpaConfigProvider(OpaBundeTestAppConfiguration::getOpaConfig).build());
+      // ...
+   }
+
+   @Override
+   public void run(MyConfiguration configuration, Environment environment) {
+      // ...
+   }
+}
+```
+
+## Configuration
+The configuration relies on the `config.yaml` of the application and the custom property where the 
+[`OpaConfig`](./src/main/java/org/sdase/commons/server/opa/config/OpaConfig.java) is mapped. Usually this should be 
+`opa`.
+
+```java
+public class MyConfig extends Configuration {
+   private OpaConfig opa;
+   
+   // getters and setters
+}
+```
+
+The config includes the connection data to the opa sidecar and the path to the used policy endpoint.
+
+Example config:
+```yaml
+opa:
+  # Disable authorization. An empty prinicpal is created with an empty set of constraints
+  disableOpa: false
+  # Url to the OPA sidecar
+  baseUrl: http://localhost:8181
+  # Package name of the policy file that should be evaluated for authorization decision
+  # The package name is used to resolve the full path
+  policyPackage: http.authz
+  # readTimeout for OPA requests in millis, default 500
+  readTimeout: 500
+```
+
+The config may be filled from environment variables if the
+[`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
+is used:
+
+```yaml
+opa:
+  disableOpa: ${DISABLE_OPA:-false}
+  baseUrl: ${OPA_URL:-http://localhost:8181}
+  policyPackage: ${OPA_POLICY_PACKAGE}
 ```
 
 ## Testing

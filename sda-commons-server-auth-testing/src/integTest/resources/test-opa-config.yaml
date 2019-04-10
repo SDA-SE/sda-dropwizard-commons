@@ -1,0 +1,10 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+
+opa:
+  baseUrl: ${OPA_URL:-http://localhost:8181}
