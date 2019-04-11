@@ -1,6 +1,7 @@
 package org.sdase.commons.server.jackson.filter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
@@ -9,15 +10,29 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.BeanSerializer;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
-import io.openapitools.jackson.dataformat.hal.annotation.EmbeddedResource;
-import io.openapitools.jackson.dataformat.hal.annotation.Link;
 import org.sdase.commons.server.jackson.EnableFieldFilter;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * <p>
+ *   Applies the field filter when a bean is serialized. This class is called for each property, for each serialized object.
+ * </p>
+ * <p>
+ *   It removes the fields by the following rules:
+ *
+ *   <ol>
+ *     <li>The property is returned if no field filter is set</li>
+ *     <li>The property is <b>not</b> returned if the field (at the top level) is <b>not</b> part of the set of filtered fields (&fields= parameter)</li>
+ *     <li>The property is returned if it is part of a nested or embedded object</li>
+ *   </ol>
+ * </p>
+ */
 public class FieldFilterSerializerModifier extends BeanSerializerModifier {
 
    private static final String FIELD_FILTER_QUERY_PARAM = "fields";
@@ -45,8 +60,6 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
 
       private static class SkipFieldBeanPropertyWriter extends BeanPropertyWriter {
 
-         private static final ThreadLocal<Boolean> NESTED = ThreadLocal.withInitial(() -> false);
-
          private final transient UriInfo uriInfo;
 
          SkipFieldBeanPropertyWriter(BeanPropertyWriter prop, UriInfo uriInfo) {
@@ -56,16 +69,10 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
 
          @Override
          public void serializeAsField(Object bean, JsonGenerator gen, SerializerProvider prov) throws Exception {
-            if (NESTED.get()) {
+            Set<String> pathSet = getPath(gen.getOutputContext(), getName(), new LinkedHashSet<>());
+
+            if (isEmbedded(pathSet) || isNested(pathSet) || !hasAnyFieldFilter() || isIncludedField()) {
                super.serializeAsField(bean, gen, prov);
-            }
-            else if (!hasAnyFieldFilter() || isHalAnnotated() || isIncludedField()) {
-               try {
-                  NESTED.set(true);
-                  super.serializeAsField(bean, gen, prov);
-               } finally {
-                  NESTED.set(false);
-               }
             }
          }
 
@@ -88,11 +95,50 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
             return requestedFields.anyMatch(fieldName -> fieldName.equals(getName()));
          }
 
-         private boolean isHalAnnotated() {
-            return getAnnotation(Link.class) != null || getAnnotation(EmbeddedResource.class) != null;
+         /**
+          * Checks if the property is part of a nested object
+          *
+          * @param set the full path of the object
+          * @return true if the property is part of a nested object
+          */
+         private boolean isNested(Set<String> set) {
+            return set.size() > 1;
+         }
+
+         /**
+          * Checks if the object is part to an embedded object
+          *
+          * @param set the full path of the object
+          * @return true if the object is part to an embedded object
+          */
+         private boolean isEmbedded(Set<String> set) {
+            return set.contains("_embedded");
+         }
+
+         /**
+          * Get all nested path segments of the property. Works recursively.
+          *
+          * @param context the current context of the serializer
+          * @param name a custom name that should be added as last element. If null, the default name is used. This might
+          * @return the path segments from root -> [parent_node] -> ... -> your property
+          */
+         private Set<String> getPath(JsonStreamContext context, String name, Set<String> set) {
+            JsonStreamContext parentContext = context.getParent();
+
+            // Add all parent paths
+            if (parentContext != null) {
+               getPath(parentContext, null, set);
+            }
+
+            // add the provided name or read from the properties
+            if (name != null) {
+               set.add(name);
+            } else if (context.getCurrentName() != null) {
+               set.add(context.getCurrentName());
+            }
+
+            return set;
          }
       }
    }
-
-
 }
