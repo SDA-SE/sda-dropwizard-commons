@@ -7,41 +7,106 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 
+import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 public class ExternalServiceHealthCheckTest {
 
-   private HttpURLConnection connectionMock;
-   private ExternalServiceHealthCheck healthCheck;
+   private HttpURLConnection getConnectionMock;
+   private ExternalServiceHealthCheck getHealthCheck;
+
+   private HttpURLConnection headConnectionMock;
+   private ExternalServiceHealthCheck headHealthCheck;
 
    @Before
-   public void setup() {
-      connectionMock = Mockito.mock(HttpURLConnection.class);
-      healthCheck = new ExternalServiceHealthCheck("http://www.testurl.com", 1000, url -> connectionMock);
+   public void setup() throws ProtocolException {
+      getConnectionMock = Mockito.mock(HttpURLConnection.class);
+      doThrow(new IllegalArgumentException()).when(getConnectionMock).setRequestMethod(anyString());
+      doNothing().when(getConnectionMock).setRequestMethod("GET");
+      getHealthCheck = new ExternalServiceHealthCheck("http://www.testurl.com", 1000, url -> getConnectionMock);
+
+      headConnectionMock = Mockito.mock(HttpURLConnection.class);
+      doThrow(new IllegalArgumentException()).when(headConnectionMock).setRequestMethod(anyString());
+      doNothing().when(headConnectionMock).setRequestMethod("HEAD");
+      headHealthCheck = new ExternalServiceHealthCheck("HEAD", "http://www.testurl.com", 1000, url -> headConnectionMock);
    }
 
    @Test
-   public void testExternalServiceURLOk() throws Exception {
-      Mockito.when(connectionMock.getResponseCode()).thenReturn(SC_OK);
-      Result result = healthCheck.check();
+   public void testGetExternalServiceURLOk() throws Exception {
+      Mockito.when(getConnectionMock.getResponseCode()).thenReturn(SC_OK);
+      Result result = getHealthCheck.check();
       assertTrue(result.isHealthy());
    }
 
    @Test
-   public void testExternalServiceURLError() throws Exception {
-      Mockito.when(connectionMock.getResponseCode()).thenReturn(SC_NOT_FOUND);
-      Result result = healthCheck.check();
+   public void testGetExternalServiceURLNoContent() throws Exception {
+      Mockito.when(getConnectionMock.getResponseCode()).thenReturn(SC_NO_CONTENT);
+      Result result = getHealthCheck.check();
+      assertTrue(result.isHealthy());
+   }
+
+   @Test
+   public void testGetExternalServiceURLClientError() throws Exception {
+      Mockito.when(getConnectionMock.getResponseCode()).thenReturn(SC_NOT_FOUND);
+      Result result = getHealthCheck.check();
       assertFalse(result.isHealthy());
    }
 
    @Test
-   public void testExternalServiceURLException() throws Exception {
-      Mockito.when(connectionMock.getResponseCode()).thenThrow(new IOException());
-      Result result = healthCheck.check();
+   public void testGetExternalServiceURLServerError() throws Exception {
+      Mockito.when(getConnectionMock.getResponseCode()).thenReturn(SC_INTERNAL_SERVER_ERROR);
+      Result result = getHealthCheck.check();
+      assertFalse(result.isHealthy());
+   }
+
+   @Test
+   public void testGetExternalServiceURLException() throws Exception {
+      Mockito.when(getConnectionMock.getResponseCode()).thenThrow(new IOException());
+      Result result = getHealthCheck.check();
+      assertFalse(result.isHealthy());
+   }
+
+   @Test
+   public void testHeadExternalServiceURLOk() throws Exception {
+      Mockito.when(headConnectionMock.getResponseCode()).thenReturn(SC_OK);
+      Result result = headHealthCheck.check();
+      assertTrue(result.isHealthy());
+   }
+
+   @Test
+   public void testHeadExternalServiceURLNoContent() throws Exception {
+      Mockito.when(headConnectionMock.getResponseCode()).thenReturn(SC_NO_CONTENT);
+      Result result = headHealthCheck.check();
+      assertTrue(result.isHealthy());
+   }
+
+   @Test
+   public void testHeadExternalServiceURLClientError() throws Exception {
+      Mockito.when(headConnectionMock.getResponseCode()).thenReturn(SC_NOT_FOUND);
+      Result result = headHealthCheck.check();
+      assertFalse(result.isHealthy());
+   }
+
+   @Test
+   public void testHeadExternalServiceURLServerError() throws Exception {
+      Mockito.when(headConnectionMock.getResponseCode()).thenReturn(SC_INTERNAL_SERVER_ERROR);
+      Result result = headHealthCheck.check();
+      assertFalse(result.isHealthy());
+   }
+
+   @Test
+   public void testHeadExternalServiceURLException() throws Exception {
+      Mockito.when(headConnectionMock.getResponseCode()).thenThrow(new IOException());
+      Result result = headHealthCheck.check();
       assertFalse(result.isHealthy());
    }
 }
