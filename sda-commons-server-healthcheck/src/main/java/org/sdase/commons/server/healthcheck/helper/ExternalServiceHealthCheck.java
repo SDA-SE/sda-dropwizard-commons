@@ -1,6 +1,7 @@
 package org.sdase.commons.server.healthcheck.helper;
 
 import com.codahale.metrics.health.HealthCheck;
+import org.eclipse.jetty.http.HttpStatus;
 import org.sdase.commons.server.healthcheck.ExternalHealthCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +90,7 @@ public class ExternalServiceHealthCheck extends HealthCheck {
             connection.setReadTimeout(timeout);
             connection.setRequestMethod(requestMethod);
             statusCode = connection.getResponseCode();
-            if (statusCode > 199 && statusCode < 300) {
+            if (HttpStatus.isSuccess(statusCode)) {
                LOGGER.debug("Endpoint is available (URL: {})", this.url);
                return Result.healthy();
             }
