@@ -69,11 +69,14 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
 
          @Override
          public void serializeAsField(Object bean, JsonGenerator gen, SerializerProvider prov) throws Exception {
-            Set<String> pathSet = getPath(gen.getOutputContext(), getName(), new LinkedHashSet<>());
-
-            if (isEmbedded(pathSet) || isNested(pathSet) || !hasAnyFieldFilter() || isIncludedField()) {
+            if (!hasAnyFieldFilter() || isIncludedField() || isEmbeddedOrNested(gen)) {
                super.serializeAsField(bean, gen, prov);
             }
+         }
+
+         private boolean isEmbeddedOrNested(JsonGenerator generator) {
+            Set<String> pathSet = getPath(generator.getOutputContext(), getName(), new LinkedHashSet<>());
+            return isEmbedded(pathSet) || isNested(pathSet);
          }
 
          private boolean hasAnyFieldFilter() {
