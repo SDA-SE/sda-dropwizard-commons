@@ -46,13 +46,13 @@ public class ZonedDateTimeConverterTest {
       ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
       Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
       cal.clear();
-      cal.set(2019, Calendar.APRIL, 21, 17, 22, 53);
+      cal.set(2019, Calendar.MARCH, 21, 17, 22, 53);
 
       // when
       ZonedDateTime result = (ZonedDateTime) converter.decode(ZonedDateTime.class, cal.getTime(), null);
 
       // then
-      assertThat(result).isEqualTo("2019-04-21T17:22:53+01:00[Europe/Paris]");
+      assertThat(result).isEqualTo("2019-03-21T17:22:53+01:00[Europe/Paris]");
    }
 
    @Test
