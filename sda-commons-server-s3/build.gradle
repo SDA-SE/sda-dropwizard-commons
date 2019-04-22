@@ -1,5 +1,6 @@
 dependencies {
     compile project(':sda-commons-server-dropwizard')
+    compile 'javax.xml.bind:jaxb-api:' + jaxbVersion
     compile 'com.amazonaws:aws-java-sdk-s3:' + awsJavaSdkS3Version, {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'joda-time', module: 'joda-time'

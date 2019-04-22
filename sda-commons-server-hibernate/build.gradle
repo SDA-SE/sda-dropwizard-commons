@@ -13,6 +13,7 @@ dependencies {
     compile 'org.slf4j:slf4j-api:' + slf4jVersion
     compile 'org.postgresql:postgresql:42.1.1'
     compile 'org.flywaydb:flyway-core:4.2.0'
+    compile 'javax.xml.bind:jaxb-api:' + jaxbVersion
 
     testCompile project(':sda-commons-server-hibernate-testing')
 }

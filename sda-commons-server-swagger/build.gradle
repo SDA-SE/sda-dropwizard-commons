@@ -23,6 +23,8 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
+    compile 'javax.xml.bind:jaxb-api:' + jaxbVersion
+
     testCompile project(':sda-commons-server-testing')
     testCompile 'net.javacrumbs.json-unit:json-unit-assertj:2.2.0', {
         exclude group: 'org.assertj', module: 'assertj-core'
@@ -34,5 +36,6 @@ dependencies {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
         exclude group: 'joda-time', module: 'joda-time'
+        exclude group: 'javax.activation', module: 'activation'
     }
 }

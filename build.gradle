@@ -75,6 +75,8 @@ subprojects {
         bouncyCastleVersion        = '1.60'
         awsJavaSdkS3Version        = '1.11.294'
         jettyVersion               = '9.4.14.v20181114'
+        jaxbVersion                = '2.3.0'
+        activationVersion          = '1.2.0'
 
         awaitilityVersion          = '3.1.2'
         junit4Version              = '4.12'

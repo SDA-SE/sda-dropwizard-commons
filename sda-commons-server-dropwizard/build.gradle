@@ -57,6 +57,9 @@ dependencies {
     compile 'org.javassist:javassist:' + javaassistVersion
     compile 'org.hibernate:hibernate-validator:' + hibernateValidatorVersion
 
+    // should not be needed in Dropwizard 2 (https://github.com/dropwizard/dropwizard/issues/2318#issuecomment-485385183)
+    compile 'javax.activation:javax.activation-api:' + activationVersion
+
     testCompile 'junit:junit:' + junit4Version
     testCompile 'org.assertj:assertj-core:' + assertjVersion
     testCompile 'io.dropwizard:dropwizard-testing:' + dropwizardVersion, {
