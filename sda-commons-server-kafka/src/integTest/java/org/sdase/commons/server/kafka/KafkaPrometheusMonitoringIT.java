@@ -76,7 +76,7 @@ public class KafkaPrometheusMonitoringIT {
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
 
-   private List<String> resultsString = Collections.synchronizedList(new ArrayList<>());
+   private List<Long> resultsLong = Collections.synchronizedList(new ArrayList<>());
 
    private KafkaBundle<KafkaTestConfiguration> kafkaBundle;
 
@@ -84,7 +84,7 @@ public class KafkaPrometheusMonitoringIT {
    public void before() {
       KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
       kafkaBundle = app.kafkaBundle();
-      resultsString.clear();
+      resultsLong.clear();
    }
 
    @Test
@@ -93,11 +93,11 @@ public class KafkaPrometheusMonitoringIT {
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
       kafkaBundle.registerMessageHandler(MessageHandlerRegistration
-            .<String, String> builder()
+            .<Long, Long> builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withConsumerConfig("consumer1")
-            .withHandler(record -> resultsString.add(record.value()))
+            .withHandler(record -> resultsLong.add(record.value()))
             .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
             .build());
 
@@ -108,7 +108,7 @@ public class KafkaPrometheusMonitoringIT {
       producer.send(1L, 1L);
       producer.send(2L, 2L);
 
-      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsLong.size() == 2);
 
       List<MetricFamilySamples> list = Collections.list(CollectorRegistry.defaultRegistry.metricFamilySamples());
 
