@@ -1,5 +1,7 @@
 package org.sdase.commons.server.auth.testing;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 import io.dropwizard.testing.ResourceHelpers;
@@ -20,13 +22,13 @@ import static org.assertj.core.api.Assertions.entry;
 
 public class AuthRuleCustomizationIT {
 
-   private static DropwizardAppRule<AuthTestConfig> DW = new DropwizardAppRule<>(
+   private static final DropwizardAppRule<AuthTestConfig> DW = new DropwizardAppRule<>(
          AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-   private static AuthRule AUTH = AuthRule.builder()
+   private static final AuthRule AUTH = AuthRule.builder()
          .withKeyId(null)
-         .withIssuer("customIssuer")
-         .withSubject("customSubject")
+         .withIssuer("customIssuer")  // NOSONAR
+         .withSubject("customSubject") // NOSONAR
          .withCustomKeyPair(
                AuthRuleCustomizationIT.class.getResource("/test.pem").toString(),
                AuthRuleCustomizationIT.class.getResource("/test.key").toString()
@@ -34,11 +36,11 @@ public class AuthRuleCustomizationIT {
          .build();
 
    @ClassRule
-   public static RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
+   public static final RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
 
    @Test
    public void shouldAccessOpenEndPointWithoutToken() {
-      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
+      Response response = DW.client().target("http://localhost:" + DW.getLocalPort()) // NOSONAR
             .path("/open")
             .request(APPLICATION_JSON)
             .get();
@@ -50,7 +52,7 @@ public class AuthRuleCustomizationIT {
    @Test
    public void shouldNotAccessSecureEndPointWithoutToken() {
       Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
-            .path("/secure")
+            .path("/secure") // NOSONAR
             .request(APPLICATION_JSON)
             .get();
 
@@ -69,6 +71,18 @@ public class AuthRuleCustomizationIT {
       assertThat(response.readEntity(new GenericType<Map<String, String>>(){})).contains(
             entry("iss", "customIssuer"), entry("sub", "customSubject")
       );
+   }
+
+   @Test
+   public void shouldDenyAccessWhenTokenExpires() {
+      Response response = DW.client().target("http://localhost:" + DW.getLocalPort())
+          .path("/secure")
+          .request(APPLICATION_JSON)
+          .headers(AUTH.auth().addClaim("exp", new GregorianCalendar(1956, Calendar.MARCH,17).getTime()).buildAuthHeader())
+          .get();
+
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getHeaderString("WWW-Authenticate")).contains("Bearer");
    }
 
    @Test

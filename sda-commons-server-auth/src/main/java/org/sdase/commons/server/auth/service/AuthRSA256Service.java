@@ -72,6 +72,7 @@ public class AuthRSA256Service implements AuthService {
                .verify(authorizationToken);
          return Optional.of(jwt);
       } catch (JWTVerificationException e) {
+         log.error("Verifying token failed.", e);
          return Optional.empty();
       }
    }
