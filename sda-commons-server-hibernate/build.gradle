@@ -9,6 +9,7 @@ dependencies {
         exclude group: 'com.fasterxml', module: 'classmate'
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
+        exclude group: 'io.dropwizard', module: 'dropwizard-core'
     }
     compile 'org.slf4j:slf4j-api:' + slf4jVersion
     compile 'org.postgresql:postgresql:42.1.1'

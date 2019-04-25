@@ -53,7 +53,7 @@ subprojects {
 
     project.ext {
 
-        dropwizardVersion          = '1.3.9'
+        dropwizardVersion          = '1.3.10'
         dropwizardMetricsVersion   = '4.0.5'
         guavaVersion               = '24.1.1-jre'
         findbugsVersion            = '3.0.2'
@@ -68,6 +68,7 @@ subprojects {
         jerseyVersion              = '2.25.1'
         jbossLoggingVersion        = '3.3.0.Final'
         auth0Version               = '3.3.0'
+        commonsLang3Version        = '3.8.1'
         commonsCodecVersion        = '1.11'
         commonsCompressVersion     = '1.10'
         apacheHttpClientVersion    = '4.5.5'
@@ -75,7 +76,7 @@ subprojects {
         mongoJavaDriverVersion     = '3.9.1'
         bouncyCastleVersion        = '1.60'
         awsJavaSdkS3Version        = '1.11.294'
-        jettyVersion               = '9.4.14.v20181114'
+        jettyVersion               = '9.4.17.v20190418'
         jaxbVersion                = '2.3.0'
         activationVersion          = '1.2.0'
 

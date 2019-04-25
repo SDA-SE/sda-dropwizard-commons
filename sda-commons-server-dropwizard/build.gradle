@@ -12,6 +12,7 @@ dependencies {
         exclude group: 'io.dropwizard.metrics', module: 'metrics-jersey2'
         exclude group: 'io.dropwizard.metrics', module: 'metrics-annotation'
         exclude group: 'io.dropwizard', module: 'dropwizard-util'
+        exclude group: 'org.apache.commons', module: 'commons-lang3'
     }
     compile 'io.dropwizard:dropwizard-util:' + dropwizardVersion, {
         exclude group: 'org.slf4j', module: 'slf4j-api'
@@ -56,6 +57,7 @@ dependencies {
     compile 'joda-time:joda-time:' + jodaTimeVersion
     compile 'org.javassist:javassist:' + javaassistVersion
     compile 'org.hibernate:hibernate-validator:' + hibernateValidatorVersion
+    compile 'org.apache.commons:commons-lang3:' + commonsLang3Version
 
     // should not be needed in Dropwizard 2 (https://github.com/dropwizard/dropwizard/issues/2318#issuecomment-485385183)
     compile 'javax.activation:javax.activation-api:' + activationVersion
