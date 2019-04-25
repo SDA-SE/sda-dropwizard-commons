@@ -7,14 +7,14 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.apache.commons.lang3.Validate;
+import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
 import org.sdase.commons.server.morphia.health.MongoHealthCheck;
+import org.sdase.commons.server.morphia.internal.MongoClientBuilder;
 import xyz.morphia.Datastore;
 import xyz.morphia.Morphia;
 import xyz.morphia.converters.LocalDateConverter;
 import xyz.morphia.converters.LocalDateTimeConverter;
 import xyz.morphia.converters.TypeConverter;
-import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
-import org.sdase.commons.server.morphia.internal.MongoClientBuilder;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -44,6 +44,8 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
    private final Set<TypeConverter> customConverters = new LinkedHashSet<>();
    private final Set<String> packagesToScan = new HashSet<>();
    private final Set<Class> entityClasses = new HashSet<>();
+   private final boolean ensureIndexes;
+   private final boolean forceEnsureIndexes;
 
    private MongoClient mongoClient;
    private Datastore morphiaDatastore;
@@ -52,11 +54,15 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
          MongoConfigurationProvider<C> configProvider,
          Set<String> packagesToScan,
          Set<Class> entityClasses,
-         Set<TypeConverter> customConverters) {
+         Set<TypeConverter> customConverters,
+         boolean ensureIndexes,
+         boolean forceEnsureIndexes) {
       this.configurationProvider = configProvider;
       this.packagesToScan.addAll(packagesToScan);
       this.entityClasses.addAll(entityClasses);
       this.customConverters.addAll(customConverters);
+      this.ensureIndexes = ensureIndexes;
+      this.forceEnsureIndexes = forceEnsureIndexes;
    }
 
    @Override
@@ -76,7 +82,9 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       this.packagesToScan.forEach(configuredMorphia::mapPackage);
       this.mongoClient = createClient(environment, mongoConfiguration);
       this.morphiaDatastore = configuredMorphia.createDatastore(mongoClient, mongoConfiguration.getDatabase());
-      this.morphiaDatastore.ensureIndexes();
+      if (ensureIndexes) {
+         new IndexEnsurer(this.datastore(), forceEnsureIndexes).ensureIndexes();
+      }
 
       registerHealthCheck(environment.healthChecks(), mongoConfiguration.getDatabase());
    }
@@ -107,7 +115,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
    /**
     * @return the configured {@link Datastore} that is ready to access the MongoDB defined in
-    *         {@link MongoConfiguration#database}.
+    *         {@link MongoConfiguration}.
     * @throws IllegalStateException if the method is called before the datastore is initialized in
     *                               {@link #run(Configuration, Environment)}
     */
@@ -188,7 +196,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
    }
 
-   public interface CustomConverterBuilder<C extends Configuration> extends FinalBuilder<C> {
+   public interface CustomConverterBuilder<C extends Configuration> extends EnsureIndexesConfigBuilder<C> {
 
       /**
        * Adds a custom {@link TypeConverter}s, see
@@ -217,6 +225,33 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
    }
 
+   public interface EnsureIndexesConfigBuilder<C extends Configuration> extends FinalBuilder<C> {
+
+      /**
+       * Executes {@link Datastore#ensureIndexes()} after connecting to let Morphia create all annotated indexes. This
+       * operation may fail and stop the application if existing indexes are modified.
+       *
+       * <p>
+       *    <strong>This is the default option.</strong>
+       * </p>
+       */
+      FinalBuilder<C> ensureIndexes();
+
+      /**
+       * Disables the default behaviour that indexes for entity classes are created on startup. One has to call
+       * {@link Datastore#ensureIndexes()} manually to create indexes for the entity collections. This may be necessary
+       * if existing indexes are modified and need to be dropped before recreating them.
+       */
+      FinalBuilder<C> skipEnsureIndexes();
+
+      /**
+       * Executes {@link Datastore#ensureIndexes()} after connecting to let Morphia create all annotated indexes. If
+       * existing indexes are modified all indexes are dropped and recreated.
+       */
+      FinalBuilder<C> forceEnsureIndexes();
+
+   }
+
    public interface FinalBuilder<C extends Configuration> extends ScanPackageBuilder<C> {
 
 
@@ -228,12 +263,14 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
    }
 
    public static class Builder<T extends Configuration>
-         implements InitialBuilder, ScanPackageBuilder<T>, DisableConverterBuilder<T>, CustomConverterBuilder<T>, FinalBuilder<T> {
+         implements InitialBuilder, ScanPackageBuilder<T>, DisableConverterBuilder<T>, CustomConverterBuilder<T>, EnsureIndexesConfigBuilder<T>, FinalBuilder<T> {
 
       private final MongoConfigurationProvider<T> configProvider;
       private final Set<TypeConverter> customConverters = new LinkedHashSet<>(DEFAULT_CONVERTERS);
       private final Set<String> packagesToScan = new HashSet<>();
       private final Set<Class> entityClasses = new HashSet<>();
+      private boolean ensureIndexes = true;
+      private boolean forceEnsureIndexes = false;
 
       private Builder() {
          configProvider = null;
@@ -274,8 +311,29 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       }
 
       @Override
+      public FinalBuilder<T> ensureIndexes() {
+         this.ensureIndexes = true;
+         this.forceEnsureIndexes = false;
+         return this;
+      }
+
+      @Override
+      public FinalBuilder<T> skipEnsureIndexes() {
+         this.ensureIndexes = false;
+         this.forceEnsureIndexes = false;
+         return this;
+      }
+
+      @Override
+      public FinalBuilder<T> forceEnsureIndexes() {
+         this.ensureIndexes = true;
+         this.forceEnsureIndexes = true;
+         return this;
+      }
+
+      @Override
       public MorphiaBundle<T> build() {
-         return new MorphiaBundle<>(configProvider, packagesToScan, entityClasses, customConverters);
+         return new MorphiaBundle<>(configProvider, packagesToScan, entityClasses, customConverters, ensureIndexes, forceEnsureIndexes);
       }
    }
 }
