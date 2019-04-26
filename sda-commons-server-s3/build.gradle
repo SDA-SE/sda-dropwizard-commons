@@ -8,7 +8,9 @@ dependencies {
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
         exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'commons-codec', module: 'commons-codec'
     }
+    compile 'commons-codec:commons-codec:' + commonsCodecVersion
 
     testCompile project(':sda-commons-server-s3-testing')
 }
