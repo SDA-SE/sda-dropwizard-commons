@@ -20,15 +20,23 @@ dependencies {
 
     compile project(':sda-commons-server-kafka')
 
-    compile 'io.confluent:kafka-avro-serializer:'+confluentVersion,  {
+    compile 'io.confluent:kafka-avro-serializer:' + confluentVersion, {
         exclude group: 'org.slf4j', module: 'slf4j-log4j12'
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'org.apache.kafka', module: 'kafka-clients'
         exclude group: 'org.apache.zookeeper', module: 'zookeeper'
         exclude group: 'org.xerial.snappy', module: 'snappy-java'
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'org.apache.avro', module: 'avro'
     }
     compile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonVersion
+    compile 'org.apache.avro:avro:' + avroVersion, {
+        exclude group: 'org.xerial.snappy', module: 'snappy-java'
+        exclude group: 'org.apache.commons', module: 'commons-compress'
+        exclude group: 'org.slf4j', module: '*'
+    }
+    compile 'org.apache.commons:commons-compress:' + commonsCompressVersion
+    compile 'org.slf4j:slf4j-api:' + slf4jVersion
 
     testCompile project(':sda-commons-server-kafka-confluent-testing')
 

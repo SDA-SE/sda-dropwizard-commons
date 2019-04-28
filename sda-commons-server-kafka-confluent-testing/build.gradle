@@ -22,7 +22,15 @@ dependencies {
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
         exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
         exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-base'
+        exclude group: 'org.apache.avro', module: 'avro'
     }
+    compile 'org.apache.avro:avro:' + avroVersion, {
+        exclude group: 'org.xerial.snappy', module: 'snappy-java'
+        exclude group: 'org.apache.commons', module: 'commons-compress'
+        exclude group: 'org.slf4j', module: '*'
+    }
+    compile 'org.apache.commons:commons-compress:' + commonsCompressVersion
+    compile 'org.slf4j:slf4j-api:' + slf4jVersion
 
     // When changing the jetty version, be aware of the hack within ConfluentSchemaRegistryRule to remove the logging
     // that currently forces a NoSuchMethodException
@@ -39,6 +47,7 @@ dependencies {
         exclude group: 'org.apache.kafka', module: '*'
         exclude group: 'org.slf4j', module: '*'
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'org.apache.avro', module: 'avro'
     }
 
     // just to check transitive dependency versions

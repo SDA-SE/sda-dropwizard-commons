@@ -69,6 +69,7 @@ subprojects {
         jbossLoggingVersion        = '3.3.0.Final'
         auth0Version               = '3.3.0'
         commonsCodecVersion        = '1.11'
+        commonsCompressVersion     = '1.10'
         apacheHttpClientVersion    = '4.5.5'
         prometheusClientVersion    = '0.5.0'
         mongoJavaDriverVersion     = '3.9.1'
@@ -92,7 +93,9 @@ subprojects {
         kafkaTopicanaCoreVersion   = '0.1.0'
         kafkaJunitVersion          = '3.0.1' // testing module dependency
         kafkaVersion               = '1.1.1' // dependency for testing
-        
+
+        avroVersion                = '1.8.1'
+        snappyVersion              = '1.1.7.1'
         confluentVersion           = '4.1.2'
         jacksonVersion             = '2.9.8'
     }

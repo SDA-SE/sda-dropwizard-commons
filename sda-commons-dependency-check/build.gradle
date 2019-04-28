@@ -1,31 +1,38 @@
 dependencies {
+    // Add all new modules here to verify that there are no dependency clashes.
     testCompile project(':sda-commons-client-jersey')
     testCompile project(':sda-commons-client-jersey-wiremock-testing')
-    testCompile project(':sda-commons-server-auth-testing')
     testCompile project(':sda-commons-server-auth')
+    testCompile project(':sda-commons-server-auth-testing')
     testCompile project(':sda-commons-server-consumer')
     testCompile project(':sda-commons-server-cors')
     testCompile project(':sda-commons-server-dropwizard')
-    testCompile project(':sda-commons-server-hibernate-testing')
+    testCompile project(':sda-commons-server-healthcheck')
     testCompile project(':sda-commons-server-hibernate')
+    testCompile project(':sda-commons-server-hibernate-testing')
     testCompile project(':sda-commons-server-jackson')
-    testCompile project(':sda-commons-server-kafka-confluent-testing')
-    testCompile project(':sda-commons-server-kafka-testing')
     testCompile project(':sda-commons-server-kafka')
     testCompile project(':sda-commons-server-kafka-confluent')
+    testCompile project(':sda-commons-server-kafka-confluent-testing')
+    testCompile project(':sda-commons-server-kafka-testing')
+    testCompile project(':sda-commons-server-mongo-testing')
+    testCompile project(':sda-commons-server-morphia')
     testCompile project(':sda-commons-server-prometheus')
+    testCompile project(':sda-commons-server-s3')
+    testCompile project(':sda-commons-server-s3-testing')
     testCompile project(':sda-commons-server-security')
     testCompile project(':sda-commons-server-starter')
     testCompile project(':sda-commons-server-swagger')
     testCompile project(':sda-commons-server-testing')
     testCompile project(':sda-commons-server-trace')
-    testCompile project(':sda-commons-server-weld-testing')
     testCompile project(':sda-commons-server-weld')
+    testCompile project(':sda-commons-server-weld-testing')
     testCompile project(':sda-commons-shared-error')
     testCompile project(':sda-commons-shared-forms')
     testCompile project(':sda-commons-shared-tracing')
     testCompile project(':sda-commons-shared-yaml')
 }
+
 uploadArchives {
     // We do not upload this test module to Nexus because it should not be deployed.
     enabled = false
