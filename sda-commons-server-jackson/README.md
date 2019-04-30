@@ -131,6 +131,21 @@ GET /persons/123
 => {"_links":{"self":{"href":"/persons/123"}},"name":"John Doe"}
 ```
 
+#### EmbedHelper
+
+To decide whether a resource is just linked or embedded, the [`EmbedHelper`](./src/main/java/org/sdase/commons/server/jackson/EmbedHelper.java) can be used.
+If query parameters for embedding are passed, like `/api/cars?embed=drivers,owner`, `EmbedHelper.isEmbeddingOfRelationRequested(relationName)` can be used to check whether a resource should be embedded:
+
+```
+EmbedHelper embedHelper = new EmbedHelper(environment);
+
+...
+
+if (embedHelper.isEmbeddingOfRelationRequested("owner")) {
+   carResource.setOwner(createPerson(ownerId));
+}
+```  
+
 
 ### Field filtering feature for resources
 
