@@ -43,6 +43,7 @@ server:
   - type: http
     port: 0
 
+# The configuration of the test auth bundle is injected here
 auth: ${AUTH_RULE}
 ```
 
