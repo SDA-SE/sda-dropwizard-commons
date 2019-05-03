@@ -9,6 +9,17 @@ providing static methods for YAML-file handling.
 The [`YamlUtil`](./src/main/java/org/sdase/commons/shared/yaml/YamlUtil.java)
 provides an overloaded method for loading YAML-files and one for serialization.
 
+### A single object
+
+Given the following YAML-file
+
+```yaml
+message:  "Hello"
+attribute: "attribute1"
+```
+
+it is possible to load and serialize a single object:
+
 ```java
 import org.sdase.commons.shared.yaml.YamlUtil;
 
@@ -23,4 +34,43 @@ class MyClass {
     String serializedClass = YamlUtil.writeValueAsString(tb);
   }
 }
+```
+
+### List of objects
+
+To load a list of objects from a YAML-file like
+
+```yaml
+- message: Hello World!
+  attribute: Foo
+  id: 123
+- message: Hello Universe!
+  attribute: Bar
+  id: 456
+```
+
+use a `TypeReference<T>` as the second parameter:
+
+```java
+List<TestBean> beans = YamlUtil.load(resource, new TypeReference<List<TestBean>>() {});
+```
+
+### Multiple documents
+
+To load a YAML-file that contains multiple YAML-documents, like
+
+```yaml 
+message: Hello World!
+attribute: Foo
+id: 123
+---
+message: Hello Universe!
+attribute: Bar
+id: 456
+```
+
+use `YamlUtil.loadList()`:
+
+```java
+List<TestBean> beans = YamlUtil.loadList(resource, TestBean.class);
 ```
