@@ -195,7 +195,7 @@ public class KafkaBundleWithConfigIT {
       producer.send(1L, 1L);
       producer.send(2L, 2L);
 
-      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS * 100, MILLISECONDS).until(() -> results.size() == 2);
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> results.size() == 2);
       assertThat(results, containsInAnyOrder(1L, 2L));
    }
 

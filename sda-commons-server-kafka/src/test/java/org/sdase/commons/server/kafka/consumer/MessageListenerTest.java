@@ -66,7 +66,7 @@ public class MessageListenerTest {
    
    private ConsumerTopicMessageHistogram histogram;
 
-   private static final int WAIT_TIME_MS = 1000;
+   private static final int WAIT_TIME_MS = 5000;
    private static final int BLOCKING_TIME_MS = 10000;
    private static final int N_MESSAGES = 5;
 
