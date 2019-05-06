@@ -1,5 +1,6 @@
 package org.sdase.commons.server.weld.testing.test.resources;
 
+import org.sdase.commons.server.jackson.EmbedHelper;
 import org.sdase.commons.server.weld.testing.test.util.BarSupplier;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -19,9 +20,18 @@ public class DummyResource {
    @Inject
    private BarSupplier bar;
 
+   @Inject
+   private EmbedHelper embedHelper;
+
    @GET
    public String helloWorld() {
       return "hello " + bar.get();
+   }
+
+   @GET
+   @Path("/testLinkEmbedded")
+   public boolean isEmbedded() {
+      return embedHelper.isEmbeddingOfRelationRequested("test");
    }
 
 }

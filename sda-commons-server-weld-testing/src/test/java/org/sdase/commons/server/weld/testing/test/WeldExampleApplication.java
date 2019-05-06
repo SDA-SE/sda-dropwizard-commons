@@ -1,6 +1,7 @@
 package org.sdase.commons.server.weld.testing.test;
 
 import com.codahale.metrics.health.HealthCheck;
+import org.sdase.commons.server.jackson.EmbedHelper;
 import org.sdase.commons.server.weld.DropwizardWeldHelper;
 import org.sdase.commons.server.weld.WeldBundle;
 import org.sdase.commons.server.weld.testing.test.commands.TestDWCommand;
@@ -17,6 +18,7 @@ import io.dropwizard.setup.Environment;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
@@ -42,6 +44,8 @@ public class WeldExampleApplication extends Application<AppConfiguration> {
    @Inject
    private TestTask testTask;
 
+   private EmbedHelper embedHelper;
+
    @Override
    public void initialize(final Bootstrap<AppConfiguration> bootstrap) {
       bootstrap.addBundle(new JobsBundle(testJob));
@@ -62,6 +66,7 @@ public class WeldExampleApplication extends Application<AppConfiguration> {
       environment.jersey().register(DummyResource.class);
       environment.getApplicationContext().addServlet(TestServlet.class, "/foo");
       environment.admin().addTask(testTask);
+      this.embedHelper = new EmbedHelper(environment);
    }
 
    /**
@@ -72,6 +77,11 @@ public class WeldExampleApplication extends Application<AppConfiguration> {
     */
    public static void main(String... args) throws Exception {
       DropwizardWeldHelper.run(WeldExampleApplication.class, "server", resourceFilePath("config-test.yaml"));
+   }
+
+   @Produces
+   public EmbedHelper embedHelper() {
+      return this.embedHelper;
    }
 
    public FooLogger.Foo getFoo() {

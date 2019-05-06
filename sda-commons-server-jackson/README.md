@@ -148,6 +148,23 @@ if (embedHelper.isEmbeddingOfRelationRequested("owner")) {
 }
 ```  
 
+In an application that uses CDI the `EmbedHelper` should be instantiated the same way and provided by a producer method:
+
+```
+   private EmbedHelper embedHelper;
+
+   @Override
+   public void run(Configuration config, Environment environment) {
+      // ...
+      this.embedHelper = new EmbedHelper(environment);
+   }
+
+   @Produces
+   public EmbedHelper embedHelper() {
+      return this.embedHelper;
+   }
+```
+
 
 ### Field filtering feature for resources
 

@@ -19,6 +19,8 @@ import java.util.Optional;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -72,5 +74,26 @@ public class WeldBundleApplicationTest {
             Entity.entity("", MediaType.TEXT_PLAIN));
       assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
       assertThat(app.getTestJobResult(), equalTo("foo"));
+   }
+
+   @Test
+   public void testEmbedTrue() {
+      Boolean actual = RULE.client().target("http://localhost:" + RULE.getLocalPort())
+            .path("api").path("dummy").path("testLinkEmbedded")
+            .queryParam("embed", "test")
+            .request("application/json")
+            .get(Boolean.class);
+
+      assertTrue(actual);
+   }
+
+   @Test
+   public void testEmbedFalse() {
+      Boolean actual = RULE.client().target("http://localhost:" + RULE.getLocalPort())
+            .path("api").path("dummy").path("testLinkEmbedded")
+            .request("application/json")
+            .get(Boolean.class);
+
+      assertFalse(actual);
    }
 }
