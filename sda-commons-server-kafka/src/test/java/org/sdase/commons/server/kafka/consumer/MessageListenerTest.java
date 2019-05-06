@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -133,8 +134,7 @@ public class MessageListenerTest {
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(2)).poll(Mockito.longThat(longGtZero));
 
       listener.stopConsumer();
-      await().atMost(WAIT_TIME_MS, MILLISECONDS).until(() -> t.getState().equals(State.TERMINATED));
-      assertThat(t.getState(), equalTo(State.TERMINATED));
+      await().untilAsserted(() -> assertThat(t.getState(), equalTo(State.TERMINATED)));
    }
 
    @Test
@@ -217,7 +217,6 @@ public class MessageListenerTest {
       });
 
       records.forEach(r -> Mockito.verify(handler, atLeastOnce()).handle(r));
-
    }
 
    @Test
@@ -245,7 +244,8 @@ public class MessageListenerTest {
 
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).wakeup();
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).close();
-      assertThat(t.getState(), equalTo(State.TERMINATED));
+
+      await().untilAsserted(() -> assertThat(t.getState(), equalTo(State.TERMINATED)));
    }
 
 
@@ -276,7 +276,8 @@ public class MessageListenerTest {
 
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).wakeup();
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).close();
-      assertThat(t.getState(), equalTo(State.TERMINATED));
+
+      await().untilAsserted(() -> assertThat(t.getState(), equalTo(State.TERMINATED)));
    }
 
    private Thread startListenerThread() {
