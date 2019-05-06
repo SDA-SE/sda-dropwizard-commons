@@ -40,7 +40,8 @@ public class EmbedHelper {
    UriInfo uriInfo;
 
    /**
-    * Create a new embed helper instance.
+    * Create a new embed helper instance and register it in the given {@code environment} so that it becomes
+    * {@link Context} aware.
     * 
     * @param environment
     *           The Dropwizard environment to register this instance in.
