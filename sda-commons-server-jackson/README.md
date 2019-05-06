@@ -133,8 +133,10 @@ GET /persons/123
 
 #### EmbedHelper
 
-To decide whether a resource is just linked or embedded, the [`EmbedHelper`](./src/main/java/org/sdase/commons/server/jackson/EmbedHelper.java) can be used.
-If query parameters for embedding are passed, like `/api/cars?embed=drivers,owner`, `EmbedHelper.isEmbeddingOfRelationRequested(relationName)` can be used to check whether a resource should be embedded:
+To decide whether a resource is just linked or embedded, the 
+[`EmbedHelper`](./src/main/java/org/sdase/commons/server/jackson/EmbedHelper.java) can be used. If query parameters for 
+embedding are passed, like `/api/cars?embed=drivers,owner`, `EmbedHelper.isEmbeddingOfRelationRequested(relationName)` 
+can be used to check whether a resource should be embedded:
 
 ```
 EmbedHelper embedHelper = new EmbedHelper(environment);
