@@ -78,7 +78,12 @@ public class MessageListener<K, V> implements Runnable {
          // return immediately and resubmit Runnable
          try {
             ConsumerRecords<K, V> records = consumer.poll(pollInterval);
-            LOGGER.debug("Received {} messages from topics [{}]", records.count(), joinedTopics);
+
+            if (records.count() > 0) {
+               LOGGER.debug("Received {} messages from topics [{}]", records.count(), joinedTopics);
+            } else {
+               LOGGER.trace("Received {} messages from topics [{}]", records.count(), joinedTopics);
+            }
 
             strategy.processRecords(records, consumer);
 
