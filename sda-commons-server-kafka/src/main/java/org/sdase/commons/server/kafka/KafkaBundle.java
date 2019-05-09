@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,11 +29,14 @@ import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
+import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.config.TopicConfig;
+import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
+import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.exception.TopicCreationException;
@@ -59,6 +61,7 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+@SuppressWarnings("WeakerAccess")
 public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaBundle.class);
@@ -121,7 +124,77 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       return topics.get(name);
    }
 
+
+
    /**
+    * Creates a number of message listeners with the parameters given in the {@link MessageListenerRegistration}.
+    * <p>The depricated fields of the {@link ListenerConfig} from {@link MessageListenerRegistration} are not considered here</p>
+    *
+    * @param registration the registration configuration
+    * @param <K> the key object type
+    * @param <V> the value object type
+    * @return the newly registered message listeners
+    */
+   public <K, V> List<MessageListener<K, V>> createMessageListener(MessageListenerRegistration<K, V> registration) {
+      if (kafkaConfiguration.isDisabled()) {
+         return Collections.emptyList();
+      }
+
+      checkInit();
+
+      if (registration.isCheckTopicConfiguration()) {
+         ComparisonResult comparisonResult = checkTopics(registration.getTopics());
+         if (!comparisonResult.ok()) {
+            throw new MismatchedTopicConfigException(comparisonResult);
+         }
+      }
+
+      ListenerConfig listenerConfig = registration.getListenerConfig();
+      if (listenerConfig == null && registration.getListenerConfigName() != null) {
+         listenerConfig = kafkaConfiguration.getListenerConfig().get(registration.getListenerConfigName());
+         if (listenerConfig == null) {
+            throw new ConfigurationException(String
+                .format("Listener config with name '%s' cannot be found within the current configuration.",
+                    registration.getListenerConfigName()));
+         }
+      }
+
+      if (listenerConfig == null) {
+         throw new ConfigurationException("No valid listener config given within the MessageHandlerRegistration");
+      }
+
+      if (registration.getStrategy() == null) {
+         throw new IllegalStateException("A strategy is mandatory for message listeners.");
+      }
+
+      List<MessageListener<K, V>> listener = new ArrayList<>(listenerConfig.getInstances());
+      for (int i = 0; i < listenerConfig.getInstances(); i++) {
+         registration.getStrategy().init(topicConsumerHistogram);
+         MessageListener<K, V> instance = new MessageListener<>(registration.getTopicsNames(), createConsumer(registration), listenerConfig, registration.getStrategy());
+
+         listener.add(instance);
+         Thread t = new Thread(instance);
+         t.start();
+      }
+      messageListeners.addAll(listener);
+      return listener;
+
+
+   }
+
+   /**
+    * @deprecated Depricated. Use @{@link KafkaBundle#createMessageListener(MessageListenerRegistration)} instead.
+    *
+    * <p>
+    * The Method is depricated with introduction of @{@link MessageListenerStrategy}
+    * to give users more means to adjust message handling and commit logic.
+    * <b>This method will be removed some time in future</b>
+    * </p>
+    *
+    * <p>
+    *   The here used message handling and commit logic is implemented as @{@link LegacyMLS}
+    * </p>
+    *
     * creates a MessageListener based on the data in the
     * {@link MessageHandlerRegistration}
     *
@@ -139,8 +212,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     *            defined in
     *            {@link MessageHandlerRegistration#getListenerConfigName()}
     */
-   public <K, V> List<MessageListener<K, V>> registerMessageHandler(MessageHandlerRegistration<K, V> registration)
-         throws ConfigurationException { // NOSONAR
+   @Deprecated
+   public <K, V> List<MessageListener<K, V>> registerMessageHandler(MessageHandlerRegistration<K, V> registration) {
+
       if (kafkaConfiguration.isDisabled()) {
          return Collections.emptyList();
       }
@@ -168,10 +242,18 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          throw new ConfigurationException("No valid listener config given within the MessageHandlerRegistration");
       }
 
+      LegacyMLS<K, V> strategy = new LegacyMLS<>(
+          registration.getHandler(),
+          registration.getErrorHandler(),
+          listenerConfig.isUseAutoCommitOnly(), listenerConfig.getCommitType()
+      );
+
+      strategy.init(topicConsumerHistogram);
+
       List<MessageListener<K, V>> listener = new ArrayList<>(listenerConfig.getInstances());
       for (int i = 0; i < listenerConfig.getInstances(); i++) {
-         MessageListener<K, V> instance = new MessageListener<>(registration, createConsumer(registration),
-               listenerConfig, topicConsumerHistogram);
+         MessageListener<K, V> instance = new MessageListener<>(registration.getTopicsNames(), createConsumer(registration, strategy), listenerConfig, strategy);
+
          listener.add(instance);
          Thread t = new Thread(instance);
          t.start();
@@ -199,7 +281,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     *            no configuration available with the same name as defined in
     *            {@link ProducerRegistration#getProducerConfigName()}
     */
-   @SuppressWarnings({ "unchecked", "WeakerAccess" })
+   @SuppressWarnings({ "unchecked"})
    public <K, V> MessageProducer<K, V> registerProducer(ProducerRegistration<K, V> registration)
          throws ConfigurationException { // NOSONAR
 
@@ -382,8 +464,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       return new KafkaProducer<>(producerProperties, keySerializer, valueSerializer);
    }
 
-   private <K, V> KafkaProducer<K, V> createProducer(ProducerRegistration<K, V> registration)
-         throws ConfigurationException {
+   private <K, V> KafkaProducer<K, V> createProducer(ProducerRegistration<K, V> registration) {
 
       ProducerConfig producerConfig = registration.getProducerConfig();
       if (producerConfig == null && registration.getProducerConfigName() != null) {
@@ -399,7 +480,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * @return Consumer Configuration
     * @throws ConfigurationException exception of the configuration does not exist
     */
-   public ConsumerConfig getConsumerConfiguration(String name) throws ConfigurationException {
+   public ConsumerConfig getConsumerConfiguration(String name) {
       if (!kafkaConfiguration.getConsumers().containsKey(name)) {
          throw new ConfigurationException(String
              .format("Consumer config with name '%s' cannot be found within the current configuration.",
@@ -414,7 +495,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * @return Producer Configuration
     * @throws ConfigurationException exception of the configuration does not exist
     */
-   public ProducerConfig getProducerConfiguration(String name) throws ConfigurationException {
+   public ProducerConfig getProducerConfiguration(String name) {
       if (!kafkaConfiguration.getProducers().containsKey(name)) {
          throw new ConfigurationException(String
              .format("Producer config with name '%s' cannot be found within the current configuration.", name));
@@ -422,14 +503,32 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       return  kafkaConfiguration.getProducers().get(name);
    }
 
-   private <K, V> KafkaConsumer<K, V> createConsumer(MessageHandlerRegistration<K, V> registration)
-         throws ConfigurationException {
+   /**
+    * @deprecated since introduction of {@link MessageListenerStrategy}
+    */
+   @Deprecated
+   private <K, V> KafkaConsumer<K, V> createConsumer(MessageHandlerRegistration<K, V> registration, MessageListenerStrategy strategy) {
       ConsumerConfig consumerConfig = registration.getConsumerConfig();
       if (consumerConfig == null && registration.getConsumerConfigName() != null) {
          consumerConfig = getConsumerConfiguration(registration.getConsumerConfigName());
       }
+      if (consumerConfig != null) {
+         strategy.verifyConsumerConfig(consumerConfig.getConfig());
+      }
       return createConsumer(registration.getKeyDeserializer(), registration.getValueDeserializer(), consumerConfig);
    }
+
+   private <K, V> KafkaConsumer<K, V> createConsumer(MessageListenerRegistration<K, V> registration) {
+      ConsumerConfig consumerConfig = registration.getConsumerConfig();
+      if (consumerConfig == null && registration.getConsumerConfigName() != null) {
+         consumerConfig = getConsumerConfiguration(registration.getConsumerConfigName());
+      }
+      if (consumerConfig != null) {
+         registration.getStrategy().verifyConsumerConfig(consumerConfig.getConfig());
+      }
+      return createConsumer(registration.getKeyDeserializer(), registration.getValueDeserializer(), consumerConfig);
+   }
+
 
    /**
     * Initial checks. Configuration mus be initialized

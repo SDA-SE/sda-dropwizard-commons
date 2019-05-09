@@ -7,9 +7,9 @@ package org.sdase.commons.server.kafka.consumer;
  * It should not be thrown elsewhere. You should use return type of your
  * {@link org.sdase.commons.server.kafka.consumer.ErrorHandler} to stop listening.
  */
-class StopListenerException extends RuntimeException {
+public class StopListenerException extends RuntimeException {
 
-   protected StopListenerException(Throwable cause) {
+   public StopListenerException(Throwable cause) {
       super(cause);
    }
 

@@ -3,9 +3,8 @@ package org.sdase.commons.server.kafka.builder;
 import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
-import org.sdase.commons.server.kafka.consumer.strategies.legacy.CallbackMessageHandler;
-import org.sdase.commons.server.kafka.consumer.ErrorHandler;
-import org.sdase.commons.server.kafka.consumer.MessageHandler;
+
+import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
 import org.apache.kafka.common.serialization.Deserializer;
@@ -15,14 +14,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-public class MessageHandlerRegistration<K, V> {
+public class MessageListenerRegistration<K, V> {
 
    private Deserializer<K> keyDeserializer;
    private Deserializer<V> valueDeserializer;
    private Collection<ExpectedTopicConfiguration> topics;
-   private MessageHandler<K, V> handler;
-   private ErrorHandler<K, V> errorHandler;
    private boolean checkTopicConfiguration;
+   private MessageListenerStrategy<K, V> strategy;
+
+
    private ConsumerConfig consumerConfig;
    private String consumerConfigName;
    private String listenerConfigName;
@@ -52,9 +52,8 @@ public class MessageHandlerRegistration<K, V> {
       return topics.stream().map(ExpectedTopicConfiguration::getTopicName).collect(Collectors.toList());
    }
 
-
-   public MessageHandler<K, V> getHandler() {
-      return handler;
+   public MessageListenerStrategy<K, V> getStrategy() {
+      return strategy;
    }
 
    public ConsumerConfig getConsumerConfig() {
@@ -69,9 +68,6 @@ public class MessageHandlerRegistration<K, V> {
       return listenerConfig;
    }
 
-   public ErrorHandler<K,V> getErrorHandler() {
-      return errorHandler;
-   }
 
 
    public interface ListenerBuilder<K, V> {
@@ -103,7 +99,8 @@ public class MessageHandlerRegistration<K, V> {
        *                           This is necessary if you want to check the topic configuration during startup
        * @return builder
        */
-      ConsumerBuilder<K, V> forTopicConfigs(Collection<ExpectedTopicConfiguration> topicConfiguration);
+      ConsumerBuilder<K, V> forTopicConfigs(
+          Collection<ExpectedTopicConfiguration> topicConfiguration);
 
    }
 
@@ -152,26 +149,12 @@ public class MessageHandlerRegistration<K, V> {
        */
       HandlerBuilder<K, V> withValueDeserializer(Deserializer<V> valueDeserializer);
 
+      FinalBuilder<K, V> withListenerStrategy(MessageListenerStrategy<K, V> stratgey);
 
-      /**
-       * The message handler. Either an instance of @link {@link MessageHandler} or @{@link CallbackMessageHandler}
-       * @param handler handler with business logic
-       * @return builder
-       */
-      ErrorHandlerBuilder<K, V> withHandler(MessageHandler<K, V> handler);
-
-   }
-
-   public interface ErrorHandlerBuilder<K, V> {
-      /**
-       * @param errorHandler error handler for handle errors during processing in @{@link MessageHandler}
-       * @return builder
-       */
-      FinalBuilder<K, V> withErrorHandler(ErrorHandler<K, V> errorHandler);
    }
 
    public interface FinalBuilder<K, V> {
-      MessageHandlerRegistration<K, V> build();
+      MessageListenerRegistration<K, V> build();
    }
 
    public static <K, V> ListenerBuilder<K, V> builder() {
@@ -179,18 +162,18 @@ public class MessageHandlerRegistration<K, V> {
    }
 
    private static class Builder<K, V> implements ConsumerBuilder<K, V>, TopicBuilder<K, V>,
-         HandlerBuilder<K, V>, FinalBuilder<K, V>, ListenerBuilder<K, V>, ErrorHandlerBuilder<K, V> {
+         HandlerBuilder<K, V>, FinalBuilder<K, V>, ListenerBuilder<K, V> {
 
       private Deserializer<?> keyDeserializer;
       private Deserializer<?> valueDeserializer;
       private Collection<ExpectedTopicConfiguration> topics;
-      private MessageHandler<K, V> handler;
+
       private boolean topicExistCheck = false;
       private ConsumerConfig consumerConfig;
       private ListenerConfig listenerConfig;
       private String consumerName;
       private String listenerName;
-      private ErrorHandler<K, V> errorHandler;
+      private MessageListenerStrategy strategy;
 
 
       private Builder() {
@@ -218,11 +201,6 @@ public class MessageHandlerRegistration<K, V> {
          return this;
       }
 
-      @Override
-      public ErrorHandlerBuilder<K, V> withHandler(@NotNull MessageHandler<K, V> handler) {
-         this.handler = handler;
-         return this;
-      }
 
       @Override
       public ConsumerBuilder<K, V> checkTopicConfiguration() {
@@ -246,6 +224,12 @@ public class MessageHandlerRegistration<K, V> {
       @Override
       public HandlerBuilder<K, V> withValueDeserializer(@NotNull Deserializer<V> valueDeserializer) {
          this.valueDeserializer = valueDeserializer;
+         return this;
+      }
+
+      @Override
+      public FinalBuilder<K, V> withListenerStrategy(@NotNull MessageListenerStrategy<K, V> strategy) {
+         this.strategy = strategy;
          return this;
       }
 
@@ -279,17 +263,12 @@ public class MessageHandlerRegistration<K, V> {
          return this;
       }
 
-      @Override
-      public FinalBuilder<K, V> withErrorHandler(ErrorHandler<K, V> errorHandler) {
-         this.errorHandler = errorHandler;
-         return this;
-      }
 
       @SuppressWarnings("unchecked")
       @Override
-      public MessageHandlerRegistration<K, V> build() {
-         MessageHandlerRegistration<K, V> build = new MessageHandlerRegistration<>();
-         build.handler = handler;
+      public MessageListenerRegistration<K, V> build() {
+         MessageListenerRegistration<K, V> build = new MessageListenerRegistration<>();
+
          build.keyDeserializer = (Deserializer<K>) keyDeserializer;
          build.valueDeserializer = (Deserializer<V>) valueDeserializer;
          build.topics = topics;
@@ -298,7 +277,7 @@ public class MessageHandlerRegistration<K, V> {
          build.consumerConfigName = consumerName;
          build.listenerConfig = listenerConfig;
          build.listenerConfigName = listenerName;
-         build.errorHandler = errorHandler;
+         build.strategy = strategy;
 
          return build;
       }

@@ -2,7 +2,7 @@ package org.sdase.commons.server.kafka.builder;
 
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
-import org.sdase.commons.server.kafka.consumer.CallbackMessageHandler;
+import org.sdase.commons.server.kafka.consumer.strategies.legacy.CallbackMessageHandler;
 import org.sdase.commons.server.kafka.consumer.ErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

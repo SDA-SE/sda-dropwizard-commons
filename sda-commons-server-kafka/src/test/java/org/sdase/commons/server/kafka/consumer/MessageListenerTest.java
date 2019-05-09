@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,6 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
+import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
 public class MessageListenerTest {
@@ -87,15 +87,25 @@ public class MessageListenerTest {
    private void setupListener(int topicWaitTime) {
       ListenerConfig lc = ListenerConfig.builder().withTopicMissingRetryMs(topicWaitTime).useAutoCommitOnly(false).build(1);
 
+      MessageHandlerRegistration<String, String> registration = MessageHandlerRegistration.<String, String>builder()
+          .withListenerConfig(lc)
+          .forTopics(Arrays.asList(TOPICS))
+          .withDefaultConsumer()
+          .withHandler(handler)
+          .withErrorHandler(errorHandler)
+          .build();
+
+      LegacyMLS<String, String> strategy = new LegacyMLS<>(
+          registration.getHandler(),
+          registration.getErrorHandler(),
+          lc.isUseAutoCommitOnly(), lc.getCommitType()
+      );
+
+      strategy.init(histogram);
+
       listener = new MessageListener<>(
-            MessageHandlerRegistration.<String, String>builder()
-                  .withListenerConfig(lc)
-                  .forTopics(Arrays.asList(TOPICS))
-                  .withDefaultConsumer()
-                  .withHandler(handler)
-                  .withErrorHandler(errorHandler)
-                  .build()
-            , consumer, lc, histogram
+          registration.getTopicsNames(),
+          consumer, lc, strategy
       );
    }
 

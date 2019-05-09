@@ -1,9 +1,10 @@
-package org.sdase.commons.server.kafka.consumer;
+package org.sdase.commons.server.kafka.consumer.strategies.legacy;
 
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 
 import java.util.Map;
+import org.sdase.commons.server.kafka.consumer.MessageHandler;
 
 
 /**
