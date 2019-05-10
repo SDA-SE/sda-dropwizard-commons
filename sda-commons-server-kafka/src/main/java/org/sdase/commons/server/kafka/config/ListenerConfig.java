@@ -14,7 +14,7 @@ public class ListenerConfig {
     *             is used
     */
    @Deprecated
-   private CommitType commitType = LegacyMLS.CommitType.SYNC;
+   private CommitType commitType = LegacyMLS.CommitType.SYNC; // NOSONAR
 
    /**
     * @deprecated depricated since configuration is not needed any longer if
@@ -103,7 +103,7 @@ public class ListenerConfig {
 
    public static class ListenerConfigBuilder {
 
-      private CommitType commitType = LegacyMLS.CommitType.SYNC;
+      private CommitType commitType = LegacyMLS.CommitType.SYNC; // NOSONAR
       private boolean useAutoCommitOnly = true;
       private long topicMissingRetryMs = 0;
       private long pollInterval = 100;
@@ -142,8 +142,8 @@ public class ListenerConfig {
 
       public ListenerConfig build(@NotNull int numberInstances) {
          ListenerConfig build = new ListenerConfig();
-         build.useAutoCommitOnly = useAutoCommitOnly;
-         build.commitType = commitType;
+         build.useAutoCommitOnly = useAutoCommitOnly; // NOSONAR
+         build.commitType = commitType; // NOSONAR
          build.topicMissingRetryMs = topicMissingRetryMs;
          build.pollInterval = pollInterval;
          build.instances = numberInstances;

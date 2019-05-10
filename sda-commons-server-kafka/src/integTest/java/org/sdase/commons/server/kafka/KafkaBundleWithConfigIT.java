@@ -68,6 +68,7 @@ public class KafkaBundleWithConfigIT {
 
    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
 
+   public static final String CONSUMER_1 = "consumer1";
    private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE = new LazyRule<>(
          () -> DropwizardRuleHelper
                .dropwizardTestAppFrom(KafkaTestApplication.class)
@@ -89,7 +90,7 @@ public class KafkaBundleWithConfigIT {
 
                   kafka
                         .getConsumers()
-                        .put("consumer1", ConsumerConfig
+                        .put(CONSUMER_1, ConsumerConfig
                               .builder()
                               .withGroup("default")
                               .addConfig("key.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
@@ -113,8 +114,8 @@ public class KafkaBundleWithConfigIT {
                         .put("async",
                               ListenerConfig
                                     .builder()
-                                    .withCommitType(LegacyMLS.CommitType.ASYNC)
-                                    .useAutoCommitOnly(false)
+                                    .withCommitType(LegacyMLS.CommitType.ASYNC) // NOSONAR
+                                    .useAutoCommitOnly(false) // NOSONAR
                                     .withTopicMissingRetryMs(60000)
                                     .build(1));
 
@@ -188,7 +189,7 @@ public class KafkaBundleWithConfigIT {
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
       AtomicLong offset = new AtomicLong(0);
 
-      MessageHandler<String, String> handler = record -> {throw new RuntimeException("Something wrong");};
+      MessageHandler<String, String> handler = record -> {throw new ProcessingRecordException("Something wrong");};
       ErrorHandler<String, String> errorHandler = (record, e, consumer) -> {
          TopicPartition topicPartition = new TopicPartition(topic, record.partition());
          offset.set(consumer.endOffsets(
@@ -196,7 +197,7 @@ public class KafkaBundleWithConfigIT {
          return true;
       };
 
-      kafkaBundle.createMessageListener(MessageListenerRegistration.<String, String>builder()
+      kafkaBundle.createMessageListener(MessageListenerRegistration.<String, String>builder() // NOSONAR
           .withDefaultListenerConfig()
           .forTopic(topic)
           .withConsumerConfig(ConsumerConfig.builder().addConfig("max.poll.records", "1").addConfig("auto.commit.interval.ms", "1").build())
@@ -224,7 +225,8 @@ public class KafkaBundleWithConfigIT {
 
    @Test
    public void shouldReturnConsumerByConsumerConfigName() {
-      KafkaConsumer<String, String> consumer = kafkaBundle.createConsumer(new StringDeserializer(), new StringDeserializer(), "consumer1");
+      KafkaConsumer<String, String> consumer = kafkaBundle.createConsumer(new StringDeserializer(), new StringDeserializer(),
+          CONSUMER_1);
       assertThat(consumer, notNullValue());
       consumer.close();
    }
@@ -243,11 +245,11 @@ public class KafkaBundleWithConfigIT {
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
       kafkaBundle
-            .registerMessageHandler(MessageHandlerRegistration
+            .registerMessageHandler(MessageHandlerRegistration // NOSONAR
                   .<Long, Long> builder()
                   .withDefaultListenerConfig()
                   .forTopic(topic)
-                  .withConsumerConfig("consumer1")
+                  .withConsumerConfig(CONSUMER_1)
                   .withHandler(record -> results.add(record.value()))
                   .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
@@ -270,7 +272,7 @@ public class KafkaBundleWithConfigIT {
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
       kafkaBundle
-            .registerMessageHandler(MessageHandlerRegistration
+            .registerMessageHandler(MessageHandlerRegistration // NOSONAR
                   .<String, String> builder()
                   .withDefaultListenerConfig()
                   .forTopic(topic)
@@ -301,7 +303,7 @@ public class KafkaBundleWithConfigIT {
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
       kafkaBundle
-            .registerMessageHandler(MessageHandlerRegistration
+            .registerMessageHandler(MessageHandlerRegistration // NOSONAR
                   .<String, String> builder()
                   .withDefaultListenerConfig()
                   .forTopic(topic)
@@ -336,7 +338,7 @@ public class KafkaBundleWithConfigIT {
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
       kafkaBundle
-            .registerMessageHandler(MessageHandlerRegistration
+            .registerMessageHandler(MessageHandlerRegistration // NOSONAR
                   .<String, String> builder()
                   .withDefaultListenerConfig()
                   .forTopic(topic)
@@ -410,7 +412,7 @@ public class KafkaBundleWithConfigIT {
       StringDeserializer deserializer = new StringDeserializer();
 
       kafkaBundle
-            .registerMessageHandler(MessageHandlerRegistration
+            .registerMessageHandler(MessageHandlerRegistration // NOSONAR
                   .<String, String> builder()
                   .withDefaultListenerConfig()
                   .forTopic(topic)
@@ -455,7 +457,7 @@ public class KafkaBundleWithConfigIT {
       assertThat(kafkaBundle, notNullValue());
 
       kafkaBundle
-            .registerMessageHandler(MessageHandlerRegistration
+            .registerMessageHandler(MessageHandlerRegistration // NOSONAR
                   .<String, String> builder()
                   .withListenerConfig("async")
                   .forTopic(topic)
@@ -506,7 +508,7 @@ public class KafkaBundleWithConfigIT {
       KAFKA.getKafkaTestUtils().createTopic(TOPIC_DELETE, 1, (short) 1);
 
       kafkaBundle
-            .registerMessageHandler(MessageHandlerRegistration
+            .registerMessageHandler(MessageHandlerRegistration // NOSONAR
                   .<Long, String> builder()
                   .withDefaultListenerConfig()
                   .forTopic(TOPIC_CREATE)
@@ -517,7 +519,7 @@ public class KafkaBundleWithConfigIT {
                   .build());
 
       kafkaBundle
-            .registerMessageHandler(MessageHandlerRegistration
+            .registerMessageHandler(MessageHandlerRegistration // NOSONAR
                   .<String, String> builder()
                   .withDefaultListenerConfig()
                   .forTopic(TOPIC_DELETE)
@@ -648,5 +650,12 @@ public class KafkaBundleWithConfigIT {
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
 
       assertThat(resultsString, containsInAnyOrder("a", "c"));
+   }
+
+   public class ProcessingRecordException extends RuntimeException {
+
+      public ProcessingRecordException(String message) {
+         super(message);
+      }
    }
 }
