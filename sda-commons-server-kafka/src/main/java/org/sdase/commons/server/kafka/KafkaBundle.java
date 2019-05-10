@@ -402,6 +402,41 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             .build();
    }
 
+
+   /**
+    * creates a new Kafka Consumer with deserializers and consumer config
+    *
+    * @param keyDeSerializer
+    *           deserializer for key objects. If null, value from config or
+    *           default
+    *           {@link org.apache.kafka.common.serialization.StringDeserializer}
+    *           will be used
+    * @param valueDeSerializer
+    *           deserializer for value objects. If null, value from config or
+    *     *           default
+    *     *           {@link org.apache.kafka.common.serialization.StringDeserializer}
+    *     *           will be used
+    * @param consumerConfigName
+    *           name of a valid consumer config
+    * @param <K>
+    *           Key object type
+    * @param <V>
+    *           Value object type
+    * @return a new kafka consumer
+    */
+   public <K, V> KafkaConsumer<K, V> createConsumer(Deserializer<K> keyDeSerializer, Deserializer<V> valueDeSerializer,
+       String consumerConfigName) {
+
+      ConsumerConfig consumerConfig = kafkaConfiguration.getConsumers().get(consumerConfigName);
+      if (consumerConfig == null) {
+         throw new ConfigurationException(String
+             .format("Consumer config with name '%s' cannot be found within the current configuration.",
+                 consumerConfigName));
+      }
+
+      return createConsumer(keyDeSerializer, valueDeSerializer, consumerConfig);
+   }
+
    /**
     * creates a new Kafka Consumer with deserializers and consumer config
     *
@@ -416,7 +451,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     *     *           {@link org.apache.kafka.common.serialization.StringDeserializer}
     *     *           will be used
     * @param consumerConfig
-    *           config of the consumer
+    *           config of the consumer. If null a consumer with default config values is created.
     * @param <K>
     *           Key object type
     * @param <V>

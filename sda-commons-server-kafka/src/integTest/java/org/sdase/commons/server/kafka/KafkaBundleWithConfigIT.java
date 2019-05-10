@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import com.salesforce.kafka.test.KafkaBroker;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -49,6 +50,7 @@ import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
+import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
@@ -213,6 +215,26 @@ public class KafkaBundleWithConfigIT {
 
       await().atLeast(100, MILLISECONDS).until(
           () -> offset.get() >= 5l);
+   }
+
+   @Test(expected= ConfigurationException.class)
+   public void shouldProduceConfigExceptionWhenConsumerConfigNotExists() {
+      kafkaBundle.createConsumer(new StringDeserializer(), new StringDeserializer(), "notExistingConsumerConfig");
+   }
+
+   @Test
+   public void shouldReturnConsumerByConsumerConfigName() {
+      KafkaConsumer<String, String> consumer = kafkaBundle.createConsumer(new StringDeserializer(), new StringDeserializer(), "consumer1");
+      assertThat(consumer, notNullValue());
+      consumer.close();
+   }
+
+   @Test
+   public void shouldReturnConsumerByConsumerConfig() {
+      KafkaConsumer<String, String> consumer = kafkaBundle.createConsumer(new StringDeserializer(), new StringDeserializer(),
+          ConsumerConfig.<String, String>builder().withGroup("test-consumer").addConfig("max.poll.records", "10").addConfig("enable.auto.commit", "false").build());
+      assertThat(consumer, notNullValue());
+      consumer.close();
    }
 
    @Test
