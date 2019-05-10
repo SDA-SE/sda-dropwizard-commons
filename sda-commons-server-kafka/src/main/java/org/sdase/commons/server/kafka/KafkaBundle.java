@@ -15,7 +15,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
-
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -427,13 +426,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    public <K, V> KafkaConsumer<K, V> createConsumer(Deserializer<K> keyDeSerializer, Deserializer<V> valueDeSerializer,
        String consumerConfigName) {
 
-      ConsumerConfig consumerConfig = kafkaConfiguration.getConsumers().get(consumerConfigName);
-      if (consumerConfig == null) {
-         throw new ConfigurationException(String
-             .format("Consumer config with name '%s' cannot be found within the current configuration.",
-                 consumerConfigName));
-      }
-
+      ConsumerConfig consumerConfig = getConsumerConfiguration(consumerConfigName);
       return createConsumer(keyDeSerializer, valueDeSerializer, consumerConfig);
    }
 
@@ -497,6 +490,34 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       }
 
       return new KafkaProducer<>(producerProperties, keySerializer, valueSerializer);
+   }
+
+   /**
+    * creates a new Kafka Consumer with deserializers and consumer config
+    *
+    * @param keySerializer
+    *           deserializer for key objects. If null, value from config or
+    *           default
+    *           {@link org.apache.kafka.common.serialization.StringSerializer}
+    *           will be used
+    * @param valueSerializer
+    *           deserializer for value objects. If null, value from config or
+    *     *           default
+    *     *           {@link org.apache.kafka.common.serialization.StringSerializer}
+    *     *           will be used
+    * @param producerConfigName
+    *           name of the producer config to be used
+    * @param <K>
+    *           Key object type
+    * @param <V>
+    *           Value object type
+    * @return a new kafka producer
+    */
+   public <K, V> KafkaProducer<K, V> createProducer(Serializer<K> keySerializer, Serializer<V> valueSerializer,
+       String producerConfigName) {
+
+      ProducerConfig producerConfig = getProducerConfiguration(producerConfigName);
+      return  createProducer(keySerializer, valueSerializer, producerConfig);
    }
 
    private <K, V> KafkaProducer<K, V> createProducer(ProducerRegistration<K, V> registration) {

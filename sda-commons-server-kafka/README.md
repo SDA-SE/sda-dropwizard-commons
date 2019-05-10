@@ -1,7 +1,8 @@
 # kafka-common
 This module provides a [`KafkaBundle`](./src/main/java/org/sdase/commons/server/kafka/KafkaBundle.java) adds convenient 
-functionality to create Kafka consumers, producers, and topics via configuration or Java DSL. It additionally provides a 
-default [`MessageListener`](./src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java) that 
+functionality to create Kafka consumers, producers, and topics via configuration or Java DSL. 
+
+It additionally provides a default [`MessageListener`](./src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java) that 
 implements a polling loop for kafka consumers. The user of this bundle must only implement the functional logic. 
 
 
@@ -20,8 +21,8 @@ compile 'org.sdase.commons:sda-commons-server-kafka:<current-version>'
 
 **Bootstrap**
 
-The bundle got recently enhanced to allow more control and flexibility how kafka messages are consumed and which commit strategy is used. How to use
-the old and now deprecated `Kafkakbundle::registerMessageHandler` approach is docmented [here](docs/deperecated.md).
+The bundle got enhanced to allow more control and flexibility how kafka messages are consumed and which commit strategy is used. How to use
+the old and now deprecated `KafkaBundle::registerMessageHandler` approach is documented [here](docs/deprecated.md).
      
 The bundle should be added as field to the application since it provides methods for the creation of `MessageProducer` and `MessageListener`.
 The Builders for `MessageListenerRegistration` and `ProducerRegistration` supports the user in the creation of these complex configurable objects. 
@@ -41,13 +42,14 @@ public class DemoApplication {
       
       // replace with your handler implementation
       MessageHandler<String, String> handler = record -> results.add(record.value();
+      ErrorHandler<Sting, String> errorHandler = new IgnoreAndProceedErrorHandler<>()
       
       kafkaBundle.createMessageListener(MessageListenerRegistration.<String, String> builder()
                 .withDefaultListenerConfig()
                 .forTopic(topic) // replace topic with your topic name
                 .withDefaultConsumer()
                 .withValueDeserializer(new StringDeserializer())
-                .withListenerStrategy(new AutocommitMLS<String, String>(handler, new IgnoreAndProceedErrorHandler<>()))
+                .withListenerStrategy(new AutocommitMLS<String, String>(handler, errorHandler))
                 .build());
       
       // register with custom consumer and listener configuration (e.g. 2 instances, poll every minute)
@@ -57,11 +59,8 @@ public class DemoApplication {
                   .withListenerConfig(ListenerConfig.builder().withPollInterval(60000).build(2))
                   .forTopic("topic") // replace topic with your topic name
                   .withConsumerConfig("consumer2") // use consumer config from config yaml
-                  .withListenerStrategy(new AutocommitMLS<String, String>(handler, new IgnoreAndProceedErrorHandler<>()))
+                  .withListenerStrategy(new AutocommitMLS<String, String>(handler, errorHandler))
                   .build());      
-      
-      // create own serializer       
-      SDASerializer<ProductBundle> pbSerializer = new SDASerializer<>();
       
       // Create message producer with default KafkaProducer
       MessageProducer<String, ProductBundle> producer = kafkaBundle
@@ -77,9 +76,7 @@ public class DemoApplication {
                   .forTopic(TopicConfigurationBuilder.builder("mytopic")
                   .withReplicationFactor(2)
                   .withPartitionCount(2)
-                  .withConfig(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT)
-                  .build()
-                  )
+                  .withConfig(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT).build())
                   .checkTopicConfiguration() // enforces that topic must be configured exactly as defined above
                   .createTopicIfMissing()    // creates the topic if no topic has been found
                   .withProducerConfig("producer1") // use producer config from config yaml
@@ -87,6 +84,7 @@ public class DemoApplication {
       
       // JSON Example
       MessageHandler<String, SimpleEntity> jsonHandler = record -> jsonResults.add(record.value();
+      ErrorHandler<Sting, SimpleEntity> errorHandler = new IgnoreAndProceedErrorHandler<>()
             
       List<MessageListener> jsonListener = kafkaBundle
             .createMessageListener(MessageListenerRegistration.<String, SimpleEntity >builder()
@@ -94,7 +92,7 @@ public class DemoApplication {
                   .forTopic(topic)
                   .withDefaultConsumer()
                   .withValueDeserializer(new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class))
-                  .withListenerStrategy(new AutocommitMLS<String, SimpleEntity>(jsonHandler, new IgnoreAndProceedErrorHandler<>()))
+                  .withListenerStrategy(new AutocommitMLS<String, SimpleEntity>(jsonHandler, errorHandler))
                   .build()
             );
 
@@ -115,18 +113,18 @@ public class DemoApplication {
                 .withGroup("test-consumer")
                 .addConfig("max.poll.records", "100")
                 .addConfig("enable.auto.commit", "false").build());
-                   
+                
+      // There are similar methods for producer creation                   
    }
    
    // Optional: make producer available via CDI @Produces annotation
+   // Note: CDI is not included within the bundle.
    @Produces
    public MessageProducer<String, ProductBundle> produceKafkaProductBundleProducer() {
       return producer;
    }
 }
 ```
-
-Note: CDI is not included within the bundle.
 
 ### Known Kafka Problems
 
@@ -150,6 +148,7 @@ public class DemoApplication {
    public void run(AppConfiguration configuration, Environment environment) throws Exception {
       // register with default consumer and listener config
       // The handler implements the actual logic for the message processing
+      ...
       
       // JSON Example with wrapped Deserializer to avoid DeseriliazationException, see Note below
       List<MessageListener> jsonListener = kafkaBundle.registerMessageHandler(MessageHandlerRegistration
@@ -160,12 +159,7 @@ public class DemoApplication {
             .withValueDeserializer(
                 new WrappedNoSerializationErrorDeserializer<>(
                     new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
-            .withHandler(x -> {
-               if (x.value() != null) {
-                  resultsString.add(x.value().getName())
-               }
-            })  
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(new AutocommitMLS<String, SimpleEntity>(jsonHandler, errorHandler))
             .build()
       );
    }
@@ -250,12 +244,14 @@ kafka:
   # Map with listener configurations that can be used within MessageListener creation.
   listenerConfig:
     # id/name of the listener configuration
-    auto-commit-strategy:
+    listenerConfig1:
       # Number of listener instances that will be generated. If > 1, several KafkaConsumer are generated. Kafka assigns these consumers
       # to different partitions of the consumed topic. Number instances should be smaller or equal to the number of partitions.  
       instances: 1
       # If the topic check is configured within the DSL, the listener waits this amount of ms before checking topic existence again. 0 will disable existence check even when configured in DSL
       topicMissingRetryMs: 60000
+      # Milliseconds to sleep between two poll intervals if no messages are available
+      pollInterval: 200
 ```
 
 ### configuration value defaults (extending/changing the kafka defaults)
@@ -307,17 +303,36 @@ No defaults
 | topicMissingRetryMs | 0 |
 | pollIntervall | 100 |
 
-## The MessageListener
-The bundle provides an auto-commit strategy [`MessageListener`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java) 
-that reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle. 
+## MessageListener
+A MessageListener [`MessageListener`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java)
+is a default poll loop implementation that correctly subscribes for some topics and
+includes additional features such as a graceful shutdown when the application stops.
+
+The message listener hands over the received consumer records to a 
+[`MessageListenerStrategy`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/MessageListenerStrategy.java)
+that defines the message handling and the commit behavior. A strategy should use a 
+[`MessageHandler`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageHandler.java) and
+a [`ErrorHandler`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/ErrorHandler.java)
+to separate business logic from commit logic as shown e.g. in [`AutocommitStrategy`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/autocommit/AutocommitMLS.java) 
+to make the strategy reusable
+ 
+### Included MessageListenerStrategies
+The bundle provides some [`MessageListenerStrategy`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/MessageListenerStrategy.java)
+that can be reused in projects.
+
+A strategy is automatically inited with the Prometheus histogram class when using the builder methods. 
+You may need to do that explicitly if you use strategies, e.g. in tests. 
+
+#### Autocommit MessageListenerStrategy
+This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle. 
 
 The underlying consumer commits records periodically using the kafka config defaults. But, the `MessageListener` does not implement
-any extra logic in case of rebalancing. Therefore, the listener does not support an exactly once semantic. It might occur
-that messages are redelivered after rebalance activities. 
+any extra logic in case of re-balancing. Therefore, the listener does not support an exactly once semantic. It might occur
+that messages are redelivered after re-balance activities. 
 
-## Created Consumer
-To give the user more flexibility the bundle allows to create a plain consumer either by name of a valid configuration from the config yaml or 
-by specifying a valid consumer configuration. The user takes over the full responsibility and have to ensure that the consumer is closed when not 
+## Create preconfigured consumers and producers
+To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config yaml or 
+by specifying a configuration in code. The user takes over the full responsibility and have to ensure that the consumer is closed when not 
 longer used.   
 
 ## Migration information (from kafka-commons)

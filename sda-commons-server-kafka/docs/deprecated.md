@@ -6,6 +6,7 @@ The bundle still supports the deprecated `KafkaBundle::registerMessageHandler` t
 but also deprecated listener config properties are available. The `MessageListener` requires the implementation of the `MessageHandler` interface. The Builder
 for `MessageHandlerRegistration` supports the user in the creation of these complex configurable objects. 
 
+The former logic is implemented in a [`LegacyMLS`](../../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/legacy/LegacyMLS.java):
 The user can choose between auto-commit, sync, and async commits by configuration. But, the `MessageListener` does not implement
 any extra logic in case of rebalancing. Therefore, the listener does not support an exactly once semantic. It might occur
 that messages are redelivered after rebalance activities.
