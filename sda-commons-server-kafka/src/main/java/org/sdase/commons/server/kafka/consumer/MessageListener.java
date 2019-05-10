@@ -1,28 +1,18 @@
 package org.sdase.commons.server.kafka.consumer;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import org.apache.kafka.clients.consumer.CommitFailedException;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.common.Metric;
-import org.apache.kafka.common.MetricName;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
-import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
-import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
+
+import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.prometheus.client.SimpleTimer;
 
 /**
  * <p>
@@ -32,18 +22,19 @@ import io.prometheus.client.SimpleTimer;
  * interval and an wait interval if the topic is not available before entering
  * the polling loop.
  * </p>
+ * 
  * <p>
  * The listener requires a {@link KafkaConsumer} to connect to Kafka.
- * Additionally, it requires a {@link MessageHandler} for the business logic for
- * processing a read record and an {@link ErrorHandler} for business logic in
- * error case. The error will be logged in any case. The
- * {@link IgnoreAndProceedErrorHandler} can be used if nothing must be done in
- * error case.
+ * Additionally a @{@link MessageListenerStrategy} that defines how
+ * received @{@link ConsumerRecords} are handled.
  * </p>
+ * 
  * <p>
- * If {@link CommitType} async is selected, a {@link CallbackMessageHandler}
- * provides an additional method for callbacks if the async commit fails.
+ * If some errors occurs during record handling, the stratgey might throw an
+ * {@link StopListenerException} what will result in stopping the poll loop and
+ * gracefully shutdown the listener.
  * </p>
+ *
  * <p>
  * The MessageListener does not guarantee an exactly once or at most once
  * semantic. E.g. in case of rebalancing, some messages might be received
@@ -57,47 +48,25 @@ import io.prometheus.client.SimpleTimer;
  */
 public class MessageListener<K, V> implements Runnable {
 
+   private static final Logger LOGGER = LoggerFactory.getLogger(MessageListener.class);
    private final long pollInterval;
    private final long topicMissingRetryMs;
-
-   public enum CommitType {
-      SYNC, ASYNC;
-   }
-
-   private static final Logger LOGGER = LoggerFactory.getLogger(MessageListener.class);
-
-   private final MessageHandler<K, V> handler;
-   private ErrorHandler<K, V> errorHandler;
-
+   private final MessageListenerStrategy<K, V> strategy;
    private final Collection<String> topics;
+
    private final String joinedTopics;
-
    private final AtomicBoolean shouldStop = new AtomicBoolean(false);
-
    private final KafkaConsumer<K, V> consumer;
 
-   private final boolean autoCommitOnly;
-
-   private final CommitType commitType;
-
-   private final ConsumerTopicMessageHistogram consumerProcessedMsgHistogram;
-
-   private String consumerName;
-
-   public MessageListener(MessageHandlerRegistration<K, V> registration, KafkaConsumer<K, V> consumer,
-         ListenerConfig listenerConfig, ConsumerTopicMessageHistogram consumerProcessedMsgHistogram) {
-      this.topics = registration.getTopicsNames();
+   public MessageListener(Collection<String> topics, KafkaConsumer<K, V> consumer, ListenerConfig listenerConfig,
+         MessageListenerStrategy<K, V> strategy) {
+      this.topics = topics;
       this.joinedTopics = String.join(",", topics);
       this.consumer = consumer;
-      this.consumerName = getClientId(consumer);
       consumer.subscribe(topics);
-      this.handler = registration.getHandler();
-      this.errorHandler = registration.getErrorHandler();
+      this.strategy = strategy;
       this.pollInterval = listenerConfig.getPollInterval();
-      this.autoCommitOnly = listenerConfig.isUseAutoCommitOnly();
-      this.commitType = listenerConfig.getCommitType();
       this.topicMissingRetryMs = listenerConfig.getTopicMissingRetryMs();
-      this.consumerProcessedMsgHistogram = consumerProcessedMsgHistogram;
    }
 
    @Override
@@ -111,11 +80,7 @@ public class MessageListener<K, V> implements Runnable {
             ConsumerRecords<K, V> records = consumer.poll(pollInterval);
             LOGGER.debug("Received {} messages from topics [{}]", records.count(), joinedTopics);
 
-            processRecords(records);
-
-            if (!autoCommitOnly && records.count() > 0) {
-               commit();
-            }
+            strategy.processRecords(records, consumer);
 
          } catch (WakeupException w) {
             if (shouldStop.get()) {
@@ -131,21 +96,8 @@ public class MessageListener<K, V> implements Runnable {
          }
       }
       LOGGER.info("MessageListener closing Consumer for [{}]", joinedTopics);
-
-      commitAndClose();
-   }
-
-   private void commitAndClose() {
       try {
-         if (autoCommitOnly) {
-            // try to commit explicitly since waiting for auto commit may be
-            // lost due to closing the consumer
-            try {
-               consumer.commitSync();
-            } catch (CommitFailedException e) {
-               LOGGER.error("Commit failed", e);
-            }
-         }
+         strategy.commitOnClose(consumer);
       } finally {
          // close will auto-commit if enabled
          consumer.close();
@@ -173,77 +125,6 @@ public class MessageListener<K, V> implements Runnable {
             }
          }
       }
-   }
-
-   /**
-    * processes consumer records. Records are passed one by one to the message
-    * handler. If an exception occurs, error handler is invoked. If error
-    * handler returns false, message processing is stopped completely
-    * immediately
-    *
-    * @param records
-    *           records to process
-    */
-   private void processRecords(ConsumerRecords<K, V> records) {
-      for (ConsumerRecord<K, V> record : records) {
-         LOGGER.debug("Handling message for {}", record.key());
-         try {
-            SimpleTimer timer = new SimpleTimer();
-            handler.handle(record);
-
-            // Prometheus
-            double elapsedSeconds = timer.elapsedSeconds();
-            consumerProcessedMsgHistogram.observe(elapsedSeconds, consumerName, record.topic());
-
-            if (LOGGER.isTraceEnabled()) {
-               LOGGER.trace("calculated duration {} for message consumed by {} from {}", elapsedSeconds, consumerName,
-                     record.topic());
-            }
-         } catch (RuntimeException e) {
-            LOGGER.error("Error while handling record {} in message handler {}", record.key(), handler.getClass(), e);
-            boolean shouldContinue = errorHandler.handleError(record, e, consumer);
-            if (!shouldContinue) {
-               throw new StopListenerException(e);
-            }
-         }
-      }
-   }
-
-   private void commit() {
-      if (commitType == CommitType.SYNC) {
-         try {
-            consumer.commitSync();
-         } catch (CommitFailedException e) {
-            LOGGER.error("Commit failed", e);
-         }
-      } else {
-         if (!(handler instanceof CallbackMessageHandler)) {
-            consumer.commitAsync();
-         } else {
-            consumer.commitAsync(this::handleOnComplete);
-         }
-      }
-   }
-
-   private void handleOnComplete(Map<TopicPartition, OffsetAndMetadata> offsets, Exception exception) {
-      if (LOGGER.isDebugEnabled()) {
-         LOGGER.debug("Handling callback for topic partition {}",
-               offsets.keySet().stream().map(x -> String.format("[%s]", x.topic())).collect(Collectors.joining()));
-      }
-      if (handler instanceof CallbackMessageHandler) {
-         try {
-            ((CallbackMessageHandler) handler).handleCommitCallback(offsets, exception);
-         } catch (Exception e) {
-            LOGGER.error("Error handling callback message!", e);
-         }
-      } else {
-         LOGGER.warn("Compensation invoked, but handler is not an instance of CallbackMessageHandler");
-      }
-   }
-
-   private String getClientId(KafkaConsumer<K, V> consumer) {
-      Entry<MetricName, ? extends Metric> entry = consumer.metrics().entrySet().stream().findFirst().orElse(null);
-      return entry != null ? entry.getKey().tags().get("client-id") : "";
    }
 
    /**

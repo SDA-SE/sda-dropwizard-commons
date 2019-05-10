@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,6 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
+import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
 public class MessageListenerTest {
@@ -87,15 +87,25 @@ public class MessageListenerTest {
    private void setupListener(int topicWaitTime) {
       ListenerConfig lc = ListenerConfig.builder().withTopicMissingRetryMs(topicWaitTime).useAutoCommitOnly(false).build(1);
 
+      MessageHandlerRegistration<String, String> registration = MessageHandlerRegistration.<String, String>builder()
+          .withListenerConfig(lc)
+          .forTopics(Arrays.asList(TOPICS))
+          .withDefaultConsumer()
+          .withHandler(handler)
+          .withErrorHandler(errorHandler)
+          .build();
+
+      LegacyMLS<String, String> strategy = new LegacyMLS<>(
+          registration.getHandler(),
+          registration.getErrorHandler(),
+          lc.isUseAutoCommitOnly(), lc.getCommitType()
+      );
+
+      strategy.init(histogram);
+
       listener = new MessageListener<>(
-            MessageHandlerRegistration.<String, String>builder()
-                  .withListenerConfig(lc)
-                  .forTopics(Arrays.asList(TOPICS))
-                  .withDefaultConsumer()
-                  .withHandler(handler)
-                  .withErrorHandler(errorHandler)
-                  .build()
-            , consumer, lc, histogram
+          registration.getTopicsNames(),
+          consumer, lc, strategy
       );
    }
 
@@ -139,7 +149,7 @@ public class MessageListenerTest {
 
    @Test
    public void consumerWithUseAutocommitOnlyFalseShouldCallCommit() {
-      ConsumerRecords<String, String> records = createConsumerRecords();
+      ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
       setupMocks();
       setupListener();
       Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).thenReturn(records);
@@ -151,7 +161,7 @@ public class MessageListenerTest {
 
    @Test
    public void errorHandlerShouldBeInvokedWhenExceptionButNotStop()  {
-      ConsumerRecords<String, String> records = createConsumerRecords();
+      ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
       setupMocks();
       setupListener();
       AtomicInteger count = new AtomicInteger(0);
@@ -174,7 +184,7 @@ public class MessageListenerTest {
 
    @Test
    public void shouldStopWhenErrorHandlerReturnsFalse()  {
-      ConsumerRecords<String, String> records = createConsumerRecords();
+      ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
       setupMocks();
       setupListener();
       AtomicInteger count = new AtomicInteger(0);
@@ -197,7 +207,7 @@ public class MessageListenerTest {
    @Test
    public void itShouldHandAllRecordsToMessageHandler()  {
 
-      ConsumerRecords<String, String> records = createConsumerRecords();
+      ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
       setupMocks();
       setupListener();
       Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).thenReturn(records);
@@ -293,23 +303,4 @@ public class MessageListenerTest {
       Mockito.when(consumer.poll(0)).thenReturn(null);
    }
 
-   private static ConsumerRecords<String, String> createConsumerRecords() {
-      Map<TopicPartition, List<ConsumerRecord<String, String>>> payload = new HashMap<>();
-
-      for (String topic : TOPICS) {
-         TopicPartition tp = new TopicPartition(topic, 0);
-
-         List<ConsumerRecord<String, String>> messages = new ArrayList<>();
-         for (int i = 0; i < N_MESSAGES; i++) {
-            ConsumerRecord<String, String> cr = new ConsumerRecord<>(topic, 0, 0, topic, UUID.randomUUID().toString());
-
-            messages.add(cr);
-         }
-
-         payload.put(tp, messages);
-      }
-
-      return new ConsumerRecords<>(payload);
-
-   }
 }

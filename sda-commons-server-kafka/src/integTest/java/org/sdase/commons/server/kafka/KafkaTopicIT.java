@@ -60,8 +60,7 @@ public class KafkaTopicIT {
    public void setup() {
       results.clear();
       KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
-      //noinspection unchecked
-      bundle = (KafkaBundle<KafkaTestConfiguration>)app.kafkaBundle();
+      bundle = app.kafkaBundle();
    }
 
    @Test
