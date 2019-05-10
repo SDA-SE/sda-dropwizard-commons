@@ -69,6 +69,7 @@ public class KafkaBundleWithConfigIT {
    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
 
    public static final String CONSUMER_1 = "consumer1";
+   public static final String PRODUCER_1 = "producer1";
    private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE = new LazyRule<>(
          () -> DropwizardRuleHelper
                .dropwizardTestAppFrom(KafkaTestApplication.class)
@@ -100,7 +101,7 @@ public class KafkaBundleWithConfigIT {
 
                   kafka
                         .getProducers()
-                        .put("producer1",
+                        .put(PRODUCER_1,
                               ProducerConfig
                                     .builder()
                                     .addConfig("key.serializer", "org.apache.kafka.common.serialization.LongSerializer")
@@ -239,6 +240,30 @@ public class KafkaBundleWithConfigIT {
       consumer.close();
    }
 
+   @Test(expected= ConfigurationException.class)
+   public void shouldProduceConfigExceptionWhenProducerConfigNotExists() {
+      kafkaBundle.createProducer(new StringSerializer(), new StringSerializer(), "notExistingProducerConfig");
+   }
+
+   @Test
+   public void shouldReturnProducerByProducerConfigName() {
+      KafkaProducer<String, String> producer = kafkaBundle.createProducer(new StringSerializer(), new StringSerializer(),
+          PRODUCER_1);
+      assertThat(producer, notNullValue());
+      producer.close();
+   }
+
+   @Test
+   public void shouldReturnProducerByProducerConfig() {
+      KafkaProducer<String, String> producer = kafkaBundle.createProducer(null, null,
+          ProducerConfig.<String, String>builder()
+              .addConfig("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+              .addConfig("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+              .build());
+      assertThat(producer, notNullValue());
+      producer.close();
+   }
+
    @Test
    public void testConsumerCanReadMessages() {
       String topic = "testConsumerCanReadMessages";
@@ -256,7 +281,8 @@ public class KafkaBundleWithConfigIT {
 
       MessageProducer<Long, Long> producer = kafkaBundle
             .registerProducer(
-                  ProducerRegistration.<Long, Long> builder().forTopic(topic).withProducerConfig("producer1").build());
+                  ProducerRegistration.<Long, Long> builder().forTopic(topic).withProducerConfig(
+                      PRODUCER_1).build());
 
       // pass in messages
       producer.send(1L, 1L);

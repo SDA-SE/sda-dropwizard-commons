@@ -330,6 +330,14 @@ The underlying consumer commits records periodically using the kafka config defa
 any extra logic in case of re-balancing. Therefore, the listener does not support an exactly once semantic. It might occur
 that messages are redelivered after re-balance activities. 
 
+#### Retry processing error MessageListenerStrategy
+This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle. 
+
+The strategy requires `enable.auto.commit` set to `false` and the underlying consumer commits records for each partition. In case of processing errors the 
+handler should throw `ProcessingErrorRetryException` which is then delegated to the `ErrorHandler` where finally can be decided if the processing should be
+stopped or retried (handleError returns `false`). In case of retry the consumer set the offset on the failing record and interrupt the processing of further 
+records. The next poll will retry the records on this partition starting with the failing record.  
+
 ## Create preconfigured consumers and producers
 To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config yaml or 
 by specifying a configuration in code. The user takes over the full responsibility and have to ensure that the consumer is closed when not 
