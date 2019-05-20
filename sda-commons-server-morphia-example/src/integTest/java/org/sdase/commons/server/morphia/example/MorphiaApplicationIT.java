@@ -1,6 +1,9 @@
 package org.sdase.commons.server.morphia.example;
 
-import com.mongodb.DBObject;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import dev.morphia.Datastore;
+import org.bson.Document;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -11,11 +14,6 @@ import org.sdase.commons.server.morphia.example.mongo.model.Car;
 import org.sdase.commons.server.testing.DropwizardConfigurationHelper;
 import org.sdase.commons.server.testing.LazyRule;
 import org.sdase.commons.server.weld.testing.WeldAppRule;
-import xyz.morphia.Datastore;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class MorphiaApplicationIT {
 
@@ -51,8 +49,8 @@ public class MorphiaApplicationIT {
    @Test
    public void shouldStoreCarEntity() {
       addData();
-      assertThat(datastore.getCollection(Car.class).count()).isEqualTo(2);
-      assertThat(datastore.createQuery(Car.class).asList()).usingFieldByFieldElementComparator().contains(WL, HH);
+      assertThat(datastore.createQuery(Car.class).count()).isEqualTo(2);
+      assertThat(datastore.createQuery(Car.class).find()).usingFieldByFieldElementComparator().contains(WL, HH);
    }
 
    @Test
@@ -63,7 +61,7 @@ public class MorphiaApplicationIT {
 
    @Test
    public void shouldHaveIndexOnSign() {
-      List<DBObject> indexInfo = datastore.getCollection(Car.class).getIndexInfo();
+      Iterable<Document> indexInfo = datastore.getDatabase().getCollection("cars").listIndexes();
       assertThat(indexInfo).extracting(dbo -> dbo.get("name")).containsExactlyInAnyOrder("_id_", "sign_1");
 
    }

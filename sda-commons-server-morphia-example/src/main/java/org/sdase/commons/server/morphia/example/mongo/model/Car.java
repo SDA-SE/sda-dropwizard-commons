@@ -1,10 +1,10 @@
 package org.sdase.commons.server.morphia.example.mongo.model;
 
 import org.bson.types.ObjectId;
-import xyz.morphia.annotations.Entity;
-import xyz.morphia.annotations.Id;
-import xyz.morphia.annotations.IndexOptions;
-import xyz.morphia.annotations.Indexed;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import dev.morphia.annotations.IndexOptions;
+import dev.morphia.annotations.Indexed;
 
 @Entity("cars")
 public class Car {

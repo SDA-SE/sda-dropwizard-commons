@@ -10,11 +10,11 @@ import org.apache.commons.lang3.Validate;
 import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
 import org.sdase.commons.server.morphia.health.MongoHealthCheck;
 import org.sdase.commons.server.morphia.internal.MongoClientBuilder;
-import xyz.morphia.Datastore;
-import xyz.morphia.Morphia;
-import xyz.morphia.converters.LocalDateConverter;
-import xyz.morphia.converters.LocalDateTimeConverter;
-import xyz.morphia.converters.TypeConverter;
+import dev.morphia.Datastore;
+import dev.morphia.Morphia;
+import dev.morphia.converters.LocalDateConverter;
+import dev.morphia.converters.LocalDateTimeConverter;
+import dev.morphia.converters.TypeConverter;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -33,9 +33,11 @@ import static java.util.Collections.singletonList;
  */
 public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
-   private static final Set<TypeConverter> DEFAULT_CONVERTERS = new LinkedHashSet<>(asList(
-         new LocalDateTimeConverter(),
-         new LocalDateConverter(),
+   /**
+    * {@link LocalDateConverter} and {@link LocalDateTimeConverter} are already included in
+    * Morphia's {@link dev.morphia.converters.DefaultConverters}.
+    */
+   private static final Set<TypeConverter> DEFAULT_CONVERTERS = new LinkedHashSet<>(singletonList(
          new ZonedDateTimeConverter())
    );
 
@@ -200,14 +202,14 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
       /**
        * Adds a custom {@link TypeConverter}s, see
-       * {@link xyz.morphia.converters.Converters#addConverter(TypeConverter)}
+       * {@link dev.morphia.converters.Converters#addConverter(TypeConverter)}
        * @param typeConverters the converters to add
        */
       CustomConverterBuilder<C> addCustomTypeConverters(Iterable<TypeConverter> typeConverters);
 
       /**
        * Adds a custom {@link TypeConverter}s, see
-       * {@link xyz.morphia.converters.Converters#addConverter(TypeConverter)}
+       * {@link dev.morphia.converters.Converters#addConverter(TypeConverter)}
        * @param typeConverters the converters to add
        */
       default CustomConverterBuilder<C> addCustomTypeConverters(TypeConverter... typeConverters) {
@@ -216,7 +218,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
       /**
        * Adds a custom {@link TypeConverter}, see
-       * {@link xyz.morphia.converters.Converters#addConverter(TypeConverter)}
+       * {@link dev.morphia.converters.Converters#addConverter(TypeConverter)}
        * @param typeConverter the converter to add
        */
       default CustomConverterBuilder<C> addCustomTypeConverter(TypeConverter typeConverter) {

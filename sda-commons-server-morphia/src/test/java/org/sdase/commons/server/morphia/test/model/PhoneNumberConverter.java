@@ -1,9 +1,9 @@
 package org.sdase.commons.server.morphia.test.model;
 
 import org.apache.commons.lang3.StringUtils;
-import xyz.morphia.converters.SimpleValueConverter;
-import xyz.morphia.converters.TypeConverter;
-import xyz.morphia.mapping.MappedField;
+import dev.morphia.converters.SimpleValueConverter;
+import dev.morphia.converters.TypeConverter;
+import dev.morphia.mapping.MappedField;
 
 public class PhoneNumberConverter extends TypeConverter implements SimpleValueConverter {
    public PhoneNumberConverter() {

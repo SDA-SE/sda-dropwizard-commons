@@ -1,13 +1,19 @@
 package org.sdase.commons.server.morphia;
 
-import com.mongodb.DBObject;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import dev.morphia.Datastore;
+import dev.morphia.Key;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -20,14 +26,6 @@ import org.sdase.commons.server.morphia.test.model.PhoneNumber;
 import org.sdase.commons.server.morphia.test.model.PhoneNumberConverter;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
-import xyz.morphia.Datastore;
-import xyz.morphia.Key;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests if entities can be added by exact definition.
@@ -51,7 +49,7 @@ public class MorphiaBundleCustomConverterIT {
 
    @Before
    public void verifyIndexBeforeAccessAndClean() {
-      List<DBObject> indexInfo = getDatastore().getCollection(Person.class).getIndexInfo();
+      Iterable<Document> indexInfo = getDatastore().getDatabase().getCollection("people").listIndexes();
       assertThat(indexInfo).extracting(dbo -> dbo.get("name")).containsExactlyInAnyOrder("_id_", "name_1", "age_1");
       getDatastore().delete(getDatastore().find(Person.class));
    }
@@ -71,7 +69,8 @@ public class MorphiaBundleCustomConverterIT {
       peopleCollection.find().forEach((Consumer<? super Document>) d -> phoneNumbers.add(d.get("phoneNumber").toString()));
       assertThat(phoneNumbers).containsExactly("+49 172 123456789");
 
-      Person johnDoeFromMorphia = datastore.find(Person.class).field("id").equal(johnDoe.getId()).get();
+      Person johnDoeFromMorphia = datastore.find(Person.class).field("id").equal(johnDoe.getId()).first();
+      assertThat(johnDoeFromMorphia).isNotNull();
       assertThat(johnDoeFromMorphia.getPhoneNumber())
             .extracting(PhoneNumber::getCountryCode, PhoneNumber::getAreaCode, PhoneNumber::getNumber)
             .containsExactly("+49", "172", "123456789");

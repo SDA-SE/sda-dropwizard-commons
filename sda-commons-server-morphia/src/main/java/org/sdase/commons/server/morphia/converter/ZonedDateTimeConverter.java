@@ -1,8 +1,8 @@
 package org.sdase.commons.server.morphia.converter;
 
-import xyz.morphia.converters.SimpleValueConverter;
-import xyz.morphia.converters.TypeConverter;
-import xyz.morphia.mapping.MappedField;
+import dev.morphia.converters.SimpleValueConverter;
+import dev.morphia.converters.TypeConverter;
+import dev.morphia.mapping.MappedField;
 
 import java.time.ZonedDateTime;
 import java.util.Date;

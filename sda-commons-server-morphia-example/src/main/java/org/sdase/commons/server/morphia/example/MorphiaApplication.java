@@ -7,7 +7,7 @@ import org.sdase.commons.server.morphia.MorphiaBundle;
 import org.sdase.commons.server.morphia.example.mongo.CarManager;
 import org.sdase.commons.server.morphia.example.mongo.model.Car;
 import org.sdase.commons.server.weld.DropwizardWeldHelper;
-import xyz.morphia.Datastore;
+import dev.morphia.Datastore;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;

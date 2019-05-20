@@ -2,8 +2,9 @@ dependencies {
     compile project(':sda-commons-server-dropwizard')
     
     compile 'org.mongodb:mongo-java-driver:' + mongoJavaDriverVersion
-    compile 'xyz.morphia.morphia:core:1.4.0', {
+    compile 'dev.morphia.morphia:core:1.5.2', {
         exclude group: 'org.mongodb', module: 'mongo-java-driver'
+        exclude group: 'org.slf4j', module: 'slf4j-api' // brings SLF4J 1.8.0-beta2
     }
     compile 'org.bouncycastle:bcpkix-jdk15on:' + bouncyCastleVersion
 

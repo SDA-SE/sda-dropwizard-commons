@@ -1,16 +1,14 @@
 package org.sdase.commons.server.morphia;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.groups.Tuple.tuple;
 
 import dev.morphia.Datastore;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import java.util.Iterator;
-import org.bson.Document;
-import org.junit.Before;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -21,9 +19,9 @@ import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
 
 /**
- * Tests if entities can be added if they are not in the scanned package.
+ * Tests if entities can be added by exact definition.
  */
-public class MorphiaBundleNoEntityDefinedIT {
+public class MorphiaBundleLocalDateConvertersIT {
 
    private static final MongoDbRule MONGODB = MongoDbRule.builder().build();
 
@@ -40,25 +38,23 @@ public class MorphiaBundleNoEntityDefinedIT {
    @ClassRule
    public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
 
-   @Before
-   public void verifyIndexBeforeAccess() {
-      Iterable<Document> indexInfo = getDatastore().getDatabase().getCollection("people").listIndexes();
-      // No index is created if the entity is not found on scanning, although db operations seem to work
-      assertThat(indexInfo).isEmpty();
-   }
-
    @Test
-   public void readAndWriteToMongoDb() {
+   public void supportLocalDateAndLocalDateTime() {
       Datastore datastore = getDatastore();
-      datastore.save(new Person().setName("John Doe").setAge(42));
-      datastore.save(new Person().setName("Jane Doe").setAge(38));
-      Iterator<Person> people = datastore.find(Person.class).find();
-      assertThat(people)
-            .extracting(Person::getName, Person::getAge)
-            .containsExactly(
-                  tuple("John Doe", 42),
-                  tuple("Jane Doe", 38)
-            );
+     LocalDate birthday = LocalDate.of(1979, 2, 8);
+     LocalDateTime lastLogin = LocalDateTime.now().withNano(0); // Mongo precision
+     datastore.save(new Person()
+          .setName("Peter Parker")
+          .setBirthday(birthday)
+          .setLastLogin(lastLogin));
+
+      Person foundPerson = datastore.createQuery(Person.class)
+          .field("name").equal("Peter Parker").first();
+
+      assertThat(foundPerson).isNotNull();
+      assertThat(foundPerson.getName()).isEqualTo("Peter Parker");
+      assertThat(foundPerson.getBirthday()).isEqualTo(birthday);
+      assertThat(foundPerson.getLastLogin()).isEqualTo(lastLogin);
    }
 
    private Datastore getDatastore() {
@@ -69,7 +65,7 @@ public class MorphiaBundleNoEntityDefinedIT {
 
       private MorphiaBundle<Config> morphiaBundle = MorphiaBundle.builder()
             .withConfigurationProvider(Config::getMongo)
-            .withEntityScanPackage("java.lang")
+            .withEntity(Person.class)
             .build();
 
       @Override

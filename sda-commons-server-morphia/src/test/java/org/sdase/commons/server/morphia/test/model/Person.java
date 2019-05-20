@@ -1,9 +1,11 @@
 package org.sdase.commons.server.morphia.test.model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.bson.types.ObjectId;
-import xyz.morphia.annotations.Entity;
-import xyz.morphia.annotations.Id;
-import xyz.morphia.annotations.Indexed;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Indexed;
 
 @Entity("people") // required when entities are added by classpath scanning to ensure indexes
 public class Person {
@@ -18,6 +20,10 @@ public class Person {
    private int age;
 
    private PhoneNumber phoneNumber;
+
+   private LocalDate birthday;
+
+   private LocalDateTime lastLogin;
 
    @SuppressWarnings("unused")
    public ObjectId getId() {
@@ -54,6 +60,24 @@ public class Person {
 
    public Person setPhoneNumber(PhoneNumber phoneNumber) {
       this.phoneNumber = phoneNumber;
+      return this;
+   }
+
+   public LocalDate getBirthday() {
+      return birthday;
+   }
+
+   public Person setBirthday(LocalDate birthday) {
+      this.birthday = birthday;
+      return this;
+   }
+
+   public LocalDateTime getLastLogin() {
+      return lastLogin;
+   }
+
+   public Person setLastLogin(LocalDateTime lastLogin) {
+      this.lastLogin = lastLogin;
       return this;
    }
 }

@@ -1,26 +1,25 @@
 package org.sdase.commons.server.morphia;
 
-import com.mongodb.DBObject;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
+
+import dev.morphia.Datastore;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.util.Iterator;
+import org.bson.Document;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
-import xyz.morphia.Datastore;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.morphia.test.Config;
 import org.sdase.commons.server.morphia.test.model.ModelMarker;
 import org.sdase.commons.server.morphia.test.model.Person;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.groups.Tuple.tuple;
 
 /**
  * Tests if entities can be added by class path scanning from marker class.
@@ -44,7 +43,7 @@ public class MorphiaBundleScanPackageByMarkerClassIT {
 
    @Before
    public void verifyIndexBeforeAccess() {
-      List<DBObject> indexInfo = getDatastore().getCollection(Person.class).getIndexInfo();
+      Iterable<Document> indexInfo = getDatastore().getDatabase().getCollection("people").listIndexes();
       assertThat(indexInfo).extracting(dbo -> dbo.get("name")).containsExactlyInAnyOrder("_id_", "name_1", "age_1");
    }
 
@@ -53,7 +52,7 @@ public class MorphiaBundleScanPackageByMarkerClassIT {
       Datastore datastore = getDatastore();
       datastore.save(new Person().setName("John Doe").setAge(42));
       datastore.save(new Person().setName("Jane Doe").setAge(38));
-      List<Person> people = datastore.find(Person.class).asList();
+      Iterator<Person> people = datastore.find(Person.class).find();
       assertThat(people)
             .extracting(Person::getName, Person::getAge)
             .containsExactly(

@@ -1,15 +1,20 @@
 package org.sdase.commons.server.morphia;
 
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.tuple;
+
 import com.mongodb.MongoCommandException;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
+import dev.morphia.Datastore;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
+import org.bson.Document;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -19,13 +24,6 @@ import org.sdase.commons.server.morphia.test.Config;
 import org.sdase.commons.server.morphia.test.model.Person;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
-import xyz.morphia.Datastore;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.tuple;
 
 /**
  * Tests if entities can be added by exact definition.
@@ -51,7 +49,7 @@ public class MorphiaBundleEnsureIndexesIT {
    public void verifyNoIndexBeforeAccessAndClean() {
       MONGODB.clearCollections();
 
-      DBCollection personCollection = getDatastore().getCollection(Person.class);
+      MongoCollection<Document> personCollection = getDatastore().getDatabase().getCollection("people");
       personCollection.dropIndexes();
       assertOnlyIndexesExist("_id_");
    }
@@ -76,7 +74,7 @@ public class MorphiaBundleEnsureIndexesIT {
 
    @Test
    public void failOnIndexModification() {
-      getDatastore().getMongo().getDatabase("testPeople").getCollection("people")
+      getDatastore().getDatabase().getCollection("people")
             .createIndex(
                   new BsonDocument("age", new BsonInt32(1)),
                   new IndexOptions()
@@ -96,7 +94,7 @@ public class MorphiaBundleEnsureIndexesIT {
 
    @Test
    public void forceIndexModification() {
-      getDatastore().getMongo().getDatabase("testPeople").getCollection("people")
+      getDatastore().getDatabase().getCollection("people")
             .createIndex(
                   new BsonDocument("age", new BsonInt32(1)),
                   new IndexOptions()
@@ -141,20 +139,20 @@ public class MorphiaBundleEnsureIndexesIT {
    }
 
    private void assertOnlyIndexesExist(String... indexNames) {
-      List<DBObject> indexInfo = getDatastore().getCollection(Person.class).getIndexInfo();
-      assertThat(indexInfo).extracting(dbo -> dbo.get("name")).containsExactlyInAnyOrder(indexNames);
+      Iterable<Document> indexInfo = getDatastore().getDatabase().getCollection("people").listIndexes();
+      assertThat(indexInfo).extracting(dbo -> dbo.get("name")).containsExactlyInAnyOrder((Object[]) indexNames);
    }
 
    @SuppressWarnings("SameParameterValue")
    private void assertIndexUnique(String indexName) {
-      assertThat(getDatastore().getCollection(Person.class).getIndexInfo())
+      assertThat(getDatastore().getDatabase().getCollection("people").listIndexes())
             .extracting(dbo -> dbo.get("name"), dbo -> dbo.get("unique"))
             .contains(tuple(indexName, true));
    }
 
    @SuppressWarnings("SameParameterValue")
    private void assertIndexNotUnique(String indexName) {
-      assertThat(getDatastore().getCollection(Person.class).getIndexInfo())
+      assertThat(getDatastore().getDatabase().getCollection("people").listIndexes())
             .extracting(dbo -> dbo.get("name"), dbo -> dbo.get("unique"))
             .contains(tuple(indexName, null));
    }

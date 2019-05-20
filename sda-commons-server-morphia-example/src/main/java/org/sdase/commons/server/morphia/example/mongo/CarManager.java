@@ -1,8 +1,8 @@
 package org.sdase.commons.server.morphia.example.mongo;
 
 import org.sdase.commons.server.morphia.example.mongo.model.Car;
-import xyz.morphia.Datastore;
-import xyz.morphia.Key;
+import dev.morphia.Datastore;
+import dev.morphia.Key;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -36,7 +36,7 @@ public class CarManager {
     * @return list with cars.
     */
    public List<Car> hamburgCars() {
-      return datastore.createQuery(Car.class).field("sign").startsWith("HH").asList();
+      return datastore.createQuery(Car.class).field("sign").startsWith("HH").find().toList();
    }
 
 }

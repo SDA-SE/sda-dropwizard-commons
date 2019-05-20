@@ -1,13 +1,12 @@
 package org.sdase.commons.server.morphia;
 
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 import com.mongodb.MongoCommandException;
+import com.mongodb.client.ListIndexesIterable;
+import com.mongodb.client.MongoCollection;
+import dev.morphia.Datastore;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.morphia.Datastore;
-
-import java.util.List;
 
 class IndexEnsurer {
 
@@ -52,10 +51,10 @@ class IndexEnsurer {
       String errorMessageStartingWithIndexName = e.getErrorMessage().split("name:")[1].trim();
       String indexName = errorMessageStartingWithIndexName.split("\\s")[0].trim();
       // indexName is the only thing we know about the failed index creation, we must look for it in all collections
-      for (String collectionName : this.datastore.getDB().getCollectionNames()) {
-         DBCollection collection = this.datastore.getDB().getCollection(collectionName);
-         List<DBObject> indices = collection.getIndexInfo();
-         for (DBObject dbIndex : indices) {
+      for (String collectionName : datastore.getDatabase().listCollectionNames()) {
+         MongoCollection<Document> collection = this.datastore.getDatabase().getCollection(collectionName);
+         ListIndexesIterable<Document> indices = collection.listIndexes();
+         for (Document dbIndex : indices) {
             if (dbIndex.get("name").equals(indexName)) {
                LOG.info("Dropping index {} in collection {} to create a new index.", indexName, collectionName);
                collection.dropIndex(indexName);

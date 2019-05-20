@@ -1,5 +1,9 @@
 package org.sdase.commons.server.morphia.internal;
 
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.StringReader;
+import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
