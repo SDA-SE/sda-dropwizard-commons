@@ -41,6 +41,19 @@ public class MyApplication extends Application<MyConfiguration> {
 }
 ```
 
+MorphiaBundle supports JSR-303 **validation** by default (e.g. `@NotNull`). The feature can be 
+disabled by calling `disableValidation` when creating the bundle with the builder:
+
+```
+  MorphiaBundle.builder()
+    .withConfigurationProvider(Config::getMongo)
+    .withEntity(Person.class)
+    .disableValidation()
+    .build();
+```
+
+#### Dependency Injection
+
 In the context of a CDI application, the `Datastore` instance that is created in the `MorphiaBundle` should be
 provided as CDI bean so it can be injected into managers, repositories or however the data access objects are named in 
 the application:

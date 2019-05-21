@@ -2,6 +2,7 @@ package org.sdase.commons.server.morphia;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.mongodb.MongoClient;
+import dev.morphia.ValidationExtension;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -49,22 +50,29 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
    private final boolean ensureIndexes;
    private final boolean forceEnsureIndexes;
 
+   /**
+    * Activate JSR303 validation.
+    */
+   private final boolean activateValidation;
+
    private MongoClient mongoClient;
    private Datastore morphiaDatastore;
 
    private MorphiaBundle(
-         MongoConfigurationProvider<C> configProvider,
-         Set<String> packagesToScan,
-         Set<Class> entityClasses,
-         Set<TypeConverter> customConverters,
-         boolean ensureIndexes,
-         boolean forceEnsureIndexes) {
+       MongoConfigurationProvider<C> configProvider,
+       Set<String> packagesToScan,
+       Set<Class> entityClasses,
+       Set<TypeConverter> customConverters,
+       boolean ensureIndexes,
+       boolean forceEnsureIndexes,
+       boolean activateValidation) {
       this.configurationProvider = configProvider;
       this.packagesToScan.addAll(packagesToScan);
       this.entityClasses.addAll(entityClasses);
       this.customConverters.addAll(customConverters);
       this.ensureIndexes = ensureIndexes;
       this.forceEnsureIndexes = forceEnsureIndexes;
+      this.activateValidation = activateValidation;
    }
 
    @Override
@@ -86,6 +94,9 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       this.morphiaDatastore = configuredMorphia.createDatastore(mongoClient, mongoConfiguration.getDatabase());
       if (ensureIndexes) {
          new IndexEnsurer(this.datastore(), forceEnsureIndexes).ensureIndexes();
+      }
+      if (activateValidation) {
+         new ValidationExtension(configuredMorphia);
       }
 
       registerHealthCheck(environment.healthChecks(), mongoConfiguration.getDatabase());
@@ -256,6 +267,11 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
    public interface FinalBuilder<C extends Configuration> extends ScanPackageBuilder<C> {
 
+      /**
+       * Disable JSR303 validation for entities.
+       */
+      FinalBuilder<C> disableValidation();
+
 
       /**
        * Builds the mongo bundle
@@ -273,6 +289,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       private final Set<Class> entityClasses = new HashSet<>();
       private boolean ensureIndexes = true;
       private boolean forceEnsureIndexes = false;
+      private boolean activateValidation = true;
 
       private Builder() {
          configProvider = null;
@@ -334,8 +351,15 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       }
 
       @Override
+      public FinalBuilder<T> disableValidation() {
+         this.activateValidation = false;
+         return this;
+      }
+
+      @Override
       public MorphiaBundle<T> build() {
-         return new MorphiaBundle<>(configProvider, packagesToScan, entityClasses, customConverters, ensureIndexes, forceEnsureIndexes);
+         return new MorphiaBundle<>(configProvider, packagesToScan, entityClasses, customConverters,
+             ensureIndexes, forceEnsureIndexes, activateValidation);
       }
    }
 }

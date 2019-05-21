@@ -99,6 +99,7 @@ subprojects {
         snappyVersion              = '1.1.7.1'
         confluentVersion           = '4.1.2'
         jacksonVersion             = '2.9.8'
+        morphiaVersion             = '1.5.2'
     }
 
     configurations.all {
@@ -126,7 +127,7 @@ subprojects {
     version = System.getenv('SEMANTIC_VERSION')
 
     task('sourcesJar', type: Jar, dependsOn: classes) {
-        classifier = 'sources'
+        archiveClassifier = 'sources'
         from sourceSets.main.allSource
     }
     artifacts {

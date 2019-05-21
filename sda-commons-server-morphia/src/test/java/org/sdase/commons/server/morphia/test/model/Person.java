@@ -2,6 +2,7 @@ package org.sdase.commons.server.morphia.test.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -14,6 +15,7 @@ public class Person {
    private ObjectId id;
 
    @Indexed
+   @NotNull
    private String name;
 
    @Indexed
