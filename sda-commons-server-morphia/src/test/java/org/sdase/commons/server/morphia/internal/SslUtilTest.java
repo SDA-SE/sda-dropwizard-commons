@@ -1,9 +1,5 @@
 package org.sdase.commons.server.morphia.internal;
 
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.StringReader;
-import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
@@ -23,7 +19,7 @@ public class SslUtilTest {
 
    @Test
    public void readCustomCa() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {
-      String pemContent = IOUtils.toString(getClass().getResourceAsStream("/test.pem"));
+      String pemContent = IOUtils.toString(getClass().getResourceAsStream("/test.pem"), "UTF-8");
 
       KeyStore truststore = SslUtil.createTruststoreFromPemKey(pemContent);
 
@@ -34,7 +30,7 @@ public class SslUtilTest {
 
    @Test
    public void readLetsEncryptCaIdenTrust() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {
-      String pemContent = IOUtils.toString(getClass().getResourceAsStream("/le-ca-x3-iden-trust.pem"));
+      String pemContent = IOUtils.toString(getClass().getResourceAsStream("/le-ca-x3-iden-trust.pem"), "UTF-8");
 
       KeyStore truststore = SslUtil.createTruststoreFromPemKey(pemContent);
 
@@ -45,7 +41,7 @@ public class SslUtilTest {
 
    @Test
    public void readLetsEncryptCaIsrg() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {
-      String pemContent = IOUtils.toString(getClass().getResourceAsStream("/le-ca-x3-isrg-x1.pem"));
+      String pemContent = IOUtils.toString(getClass().getResourceAsStream("/le-ca-x3-isrg-x1.pem"), "UTF-8");
 
       KeyStore truststore = SslUtil.createTruststoreFromPemKey(pemContent);
 

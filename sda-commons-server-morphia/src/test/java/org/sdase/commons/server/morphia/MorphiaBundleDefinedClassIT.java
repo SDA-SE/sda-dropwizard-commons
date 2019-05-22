@@ -53,7 +53,7 @@ public class MorphiaBundleDefinedClassIT {
       Datastore datastore = getDatastore();
       datastore.save(new Person().setName("John Doe").setAge(42));
       datastore.save(new Person().setName("Jane Doe").setAge(38));
-      List<Person> people = datastore.find(Person.class).asList();
+      List<Person> people = datastore.find(Person.class).find().toList();
       assertThat(people)
             .extracting(Person::getName, Person::getAge)
             .containsExactly(

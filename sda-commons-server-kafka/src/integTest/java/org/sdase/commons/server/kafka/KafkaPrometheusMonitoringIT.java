@@ -21,10 +21,12 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
+import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
+import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
@@ -43,51 +45,41 @@ public class KafkaPrometheusMonitoringIT {
 
    private static final String PRODUCER_1 = "producer1";
 
-  private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(KafkaTestApplication.class)
-                  .withConfigFrom(KafkaTestConfiguration::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c -> {
-                        KafkaConfiguration kafka = c.getKafka();
-                        kafka.setBrokers(
-                            KAFKA.getKafkaBrokers().stream()
-                                .map(KafkaBroker::getConnectString)
-                                .collect(Collectors.toList()));
+   private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE = new LazyRule<>(
+         () -> DropwizardRuleHelper
+               .dropwizardTestAppFrom(KafkaTestApplication.class)
+               .withConfigFrom(KafkaTestConfiguration::new)
+               .withRandomPorts()
+               .withConfigurationModifier(c -> {
+                  KafkaConfiguration kafka = c.getKafka();
+                  kafka
+                        .setBrokers(KAFKA
+                              .getKafkaBrokers()
+                              .stream()
+                              .map(KafkaBroker::getConnectString)
+                              .collect(Collectors.toList()));
 
-                        kafka
-                            .getConsumers()
-                            .put(
-                                CONSUMER_1,
-                                ConsumerConfig.builder()
-                                    .withGroup("default")
-                                    .addConfig(
-                                        "key.deserializer",
-                                        "org.apache.kafka.common.serialization.LongDeserializer")
-                                    .addConfig(
-                                        "value.deserializer",
-                                        "org.apache.kafka.common.serialization.LongDeserializer")
-                                    .addConfig("client.id", CONSUMER_1)
-                                    .build());
+                  kafka
+                        .getConsumers()
+                        .put(CONSUMER_1, ConsumerConfig
+                              .builder()
+                              .withGroup("default")
+                              .addConfig("key.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
+                              .addConfig("value.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
+                              .build());
 
-                        kafka
-                            .getProducers()
-                            .put(
-                                PRODUCER_1,
-                                ProducerConfig.builder()
-                                    .addConfig(
-                                        "key.serializer",
-                                        "org.apache.kafka.common.serialization.LongSerializer")
-                                    .addConfig(
-                                        "value.serializer",
-                                        "org.apache.kafka.common.serialization.LongSerializer")
-                                    .addConfig("client.id", PRODUCER_1)
+                  kafka
+                        .getProducers()
+                        .put(PRODUCER_1,
+                              ProducerConfig
+                                    .builder()
+                                    .addConfig("key.serializer", "org.apache.kafka.common.serialization.LongSerializer")
+                                    .addConfig("value.serializer",
+                                          "org.apache.kafka.common.serialization.LongSerializer")
                                     .build());
-                        kafka.getProducers().put("producer2", ProducerConfig.builder().build());
-                      })
-                  .build());
+                  kafka.getProducers().put("producer2", ProducerConfig.builder().build());
+               })
+               .build());
 
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
@@ -108,18 +100,24 @@ public class KafkaPrometheusMonitoringIT {
       String topic = "testConsumeMsgForPrometheus";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
-      kafkaBundle.registerMessageHandler(MessageHandlerRegistration
-            .<Long, Long> builder()
-            .withDefaultListenerConfig()
-            .forTopic(topic)
-          .withConsumerConfig(CONSUMER_1)
-            .withHandler(record -> resultsLong.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
-            .build());
+      AutocommitMLS<Long, Long> longLongAutocommitMLS = new AutocommitMLS<>(
+          record -> resultsLong.add(record.value()),
+          new IgnoreAndProceedErrorHandler<Long, Long>());
 
-      MessageProducer<Long, Long> producer = kafkaBundle.registerProducer(
-          ProducerRegistration.<Long, Long>builder().forTopic(topic).withProducerConfig(PRODUCER_1)
-              .build());
+
+      kafkaBundle
+            .createMessageListener(MessageListenerRegistration
+                  .<Long, Long> builder()
+                  .withDefaultListenerConfig()
+                  .forTopic(topic)
+                  .withConsumerConfig(CONSUMER_1)
+                  .withListenerStrategy(longLongAutocommitMLS)
+                  .build());
+
+
+      MessageProducer<Long, Long> producer = kafkaBundle
+            .registerProducer(
+                  ProducerRegistration.<Long, Long> builder().forTopic(topic).withProducerConfig(PRODUCER_1).build());
 
       // pass in messages
       producer.send(1L, 1L);
@@ -137,27 +135,23 @@ public class KafkaPrometheusMonitoringIT {
       list.forEach(mfs -> {
          assertThat(mfs.samples.size()).isGreaterThan(0);
          for (Collector.MetricFamilySamples.Sample sample : mfs.samples) {
-            LOGGER.info(
-                "Sample: name={}, value={}, labelNames={}, labelValues={}", sample.name,
-                sample.value, sample.labelNames, sample.labelValues);
+            LOGGER
+                  .info("Sample: name={}, value={}, labelNames={}, labelValues={}", sample.name, sample.value,
+                        sample.labelNames, sample.labelValues);
          }
       });
 
-    assertThat(
-            CollectorRegistry.defaultRegistry.getSampleValue(
-                "kafka_producer_topic_message_total",
-                new String[] {"producer_name", "topic_name"},
-                new String[] {PRODUCER_1, topic}))
-        .as("sample value for metric 'kafka_producer_topic_message_total'")
-        .isEqualTo(2);
+      assertThat(CollectorRegistry.defaultRegistry
+            .getSampleValue("kafka_producer_topic_message_total", new String[] { "producer_name", "topic_name" },
+                  new String[] { PRODUCER_1, topic }))
+                        .as("sample value for metric 'kafka_producer_topic_message_total'")
+                        .isEqualTo(2);
 
-    assertThat(
-            CollectorRegistry.defaultRegistry.getSampleValue(
-                "kafka_consumer_topic_message_duration_count",
-                new String[] {"consumer_name", "topic_name"},
-                new String[] {CONSUMER_1, topic}))
-        .as("sample value for metric 'kafka_consumer_topic_message_duration_count'")
-        .isEqualTo(2);
+      assertThat(CollectorRegistry.defaultRegistry
+            .getSampleValue("kafka_consumer_topic_message_duration_count",
+                  new String[] { "consumer_name", "topic_name" }, new String[] { CONSUMER_1, topic }))
+                        .as("sample value for metric 'kafka_consumer_topic_message_duration_count'")
+                        .isEqualTo(2);
    }
 
    static class MetricExtractor implements Extractor<MetricFamilySamples, String> {

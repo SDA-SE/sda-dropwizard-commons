@@ -275,6 +275,7 @@ No defaults
 | Key | Value |
 |-----|-------|
 | group | default |
+| clientId | Name of the consumer configuration. Sets Kafka's `client.id`. |
 | config -> enable.auto.commit | true |
 | config -> auto.commit.interval.ms | 1000 |
 | config -> auto.offset.reset | earliest |
@@ -284,6 +285,7 @@ No defaults
 #### producers
 | Key | Value |
 |-----|-------|
+| clientId | Name of the producer configuration. Sets Kafka's `client.id`. |
 | config -> acks | all |
 | config -> retries | 0 |
 | config -> linger.ms | 0 |

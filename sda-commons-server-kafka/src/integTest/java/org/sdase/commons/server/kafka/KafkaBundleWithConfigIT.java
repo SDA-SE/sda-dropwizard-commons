@@ -1,15 +1,13 @@
 package org.sdase.commons.server.kafka;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.salesforce.kafka.test.KafkaBroker;
+import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,8 +15,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-
-import com.salesforce.kafka.test.KafkaBroker;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -30,6 +26,7 @@ import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -43,10 +40,11 @@ import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.config.TopicConfig;
 import org.sdase.commons.server.kafka.consumer.ErrorHandler;
+import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
+import org.sdase.commons.server.kafka.consumer.KafkaHelper;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.consumer.strategies.legacy.CallbackMessageHandler;
-import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
@@ -59,17 +57,15 @@ import org.sdase.commons.server.kafka.serializers.WrappedNoSerializationErrorDes
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
-
-import io.dropwizard.testing.junit.DropwizardAppRule;
-
 public class KafkaBundleWithConfigIT {
 
    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
 
-   public static final String CONSUMER_1 = "consumer1";
-   public static final String PRODUCER_1 = "producer1";
+   private static final String CONSUMER_1 = "consumer1";
+   private static final String PRODUCER_1 = "producer1";
+   private static final String CONSUMER_2 = "consumer2";
+   private static final String PRODUCER_2 = "producer2";
+
    private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE = new LazyRule<>(
          () -> DropwizardRuleHelper
                .dropwizardTestAppFrom(KafkaTestApplication.class)
@@ -97,7 +93,7 @@ public class KafkaBundleWithConfigIT {
                               .addConfig("key.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
                               .addConfig("value.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
                               .build());
-                  kafka.getConsumers().put("consumer2", ConsumerConfig.builder().build());
+                  kafka.getConsumers().put(CONSUMER_2, ConsumerConfig.builder().withClientId("c2").build());
 
                   kafka
                         .getProducers()
@@ -108,7 +104,7 @@ public class KafkaBundleWithConfigIT {
                                     .addConfig("value.serializer",
                                           "org.apache.kafka.common.serialization.LongSerializer")
                                     .build());
-                  kafka.getProducers().put("producer2", ProducerConfig.builder().build());
+                  kafka.getProducers().put(PRODUCER_2, ProducerConfig.builder().withClientId("p2").build());
 
                   kafka
                         .getListenerConfig()
@@ -147,6 +143,15 @@ public class KafkaBundleWithConfigIT {
    private KafkaBundle<KafkaTestConfiguration> kafkaBundle;
    private int callbackCount = 0;
 
+   private static KafkaProducer<String, String> stringStringProducer;
+
+   @BeforeClass
+   public static void beforeClass() {
+      stringStringProducer  = KAFKA
+          .getKafkaTestUtils()
+          .getKafkaProducer(StringSerializer.class, StringSerializer.class);;
+   }
+
    @Before
    public void before() {
       KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
@@ -158,17 +163,17 @@ public class KafkaBundleWithConfigIT {
    @Test
    public void healthCheckShouldBeAdded() {
       KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
-      assertThat(app.healthCheckRegistry().getHealthCheck("kafkaConnection"), is(notNullValue()));
+      assertThat(app.healthCheckRegistry().getHealthCheck("kafkaConnection")).isNotNull();
    }
 
    @Test
    public void allTopicsDescriptionsGenerated() {
       final String testTopic1 = "topicId1";
-      assertThat(kafkaBundle.getTopicConfiguration(testTopic1), is(notNullValue()));
-      assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getReplicationFactor().count(), is(2));
-      assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getPartitions().count(), is(2));
-      assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getProps().size(), is(2));
-      assertThat(kafkaBundle.getTopicConfiguration("topicId2"), is(notNullValue()));
+      assertThat(kafkaBundle.getTopicConfiguration(testTopic1)).isNotNull();
+      assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getReplicationFactor().count()).isEqualTo(2);
+      assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getPartitions().count()).isEqualTo(2);
+      assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getProps()).hasSize(2);
+      assertThat(kafkaBundle.getTopicConfiguration("topicId2")).isNotNull();
    }
 
    @Test
@@ -181,7 +186,7 @@ public class KafkaBundleWithConfigIT {
                   .withDefaultProducer()
                   .withValueSerializer(new StringSerializer())
                   .build());
-      assertThat(topicName2, is(notNullValue()));
+      assertThat(topicName2).isNotNull();
    }
 
    @Test
@@ -203,20 +208,17 @@ public class KafkaBundleWithConfigIT {
           .forTopic(topic)
           .withConsumerConfig(ConsumerConfig.builder().addConfig("max.poll.records", "1").addConfig("auto.commit.interval.ms", "1").build())
           .withValueDeserializer(new StringDeserializer())
-          .withListenerStrategy(new AutocommitMLS<String, String>(handler,errorHandler))
+          .withListenerStrategy(new AutocommitMLS<>(handler, errorHandler))
           .build()
       );
 
-      KafkaProducer<String, String> producer = KAFKA.getKafkaTestUtils().getKafkaProducer(StringSerializer.class,
-          StringSerializer.class);
-
       for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
          String message = UUID.randomUUID().toString();
-         producer.send(new ProducerRecord<>(topic, message));
+         stringStringProducer.send(new ProducerRecord<>(topic, message));
       }
 
       await().atLeast(100, MILLISECONDS).until(
-          () -> offset.get() >= 5l);
+          () -> offset.get() >= 5L);
    }
 
    @Test(expected= ConfigurationException.class)
@@ -226,18 +228,27 @@ public class KafkaBundleWithConfigIT {
 
    @Test
    public void shouldReturnConsumerByConsumerConfigName() {
-      KafkaConsumer<String, String> consumer = kafkaBundle.createConsumer(new StringDeserializer(), new StringDeserializer(),
-          CONSUMER_1);
-      assertThat(consumer, notNullValue());
-      consumer.close();
+      try (KafkaConsumer<String, String> consumer = kafkaBundle.createConsumer(new StringDeserializer(), new StringDeserializer(), CONSUMER_1)) {
+         assertThat(consumer).isNotNull();
+         assertThat(KafkaHelper.getClientId(consumer)).isEqualTo(CONSUMER_1);
+      }
    }
 
    @Test
    public void shouldReturnConsumerByConsumerConfig() {
-      KafkaConsumer<String, String> consumer = kafkaBundle.createConsumer(new StringDeserializer(), new StringDeserializer(),
-          ConsumerConfig.<String, String>builder().withGroup("test-consumer").addConfig("max.poll.records", "10").addConfig("enable.auto.commit", "false").build());
-      assertThat(consumer, notNullValue());
-      consumer.close();
+      try (KafkaConsumer<String, String> consumer =
+         kafkaBundle.createConsumer(
+            new StringDeserializer(),
+            new StringDeserializer(),
+            ConsumerConfig.builder()
+               .withGroup("test-consumer")
+               .withClientId("puff-the-magic-consumer")
+               .addConfig("max.poll.records", "10")
+               .addConfig("enable.auto.commit", "false")
+               .build())) {
+         assertThat(consumer).isNotNull();
+         assertThat(KafkaHelper.getClientId(consumer)).isEqualTo("puff-the-magic-consumer");
+      }
    }
 
    @Test(expected= ConfigurationException.class)
@@ -247,21 +258,29 @@ public class KafkaBundleWithConfigIT {
 
    @Test
    public void shouldReturnProducerByProducerConfigName() {
-      KafkaProducer<String, String> producer = kafkaBundle.createProducer(new StringSerializer(), new StringSerializer(),
-          PRODUCER_1);
-      assertThat(producer, notNullValue());
-      producer.close();
+      try (KafkaProducer<String, String> producer =
+            kafkaBundle.createProducer(new StringSerializer(), new StringSerializer(), PRODUCER_1)) {
+         assertThat(producer).isNotNull();
+         assertThat(KafkaHelper.getClientId(producer)).isEqualTo(PRODUCER_1);
+      }
    }
 
    @Test
    public void shouldReturnProducerByProducerConfig() {
-      KafkaProducer<String, String> producer = kafkaBundle.createProducer(null, null,
-          ProducerConfig.<String, String>builder()
-              .addConfig("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-              .addConfig("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-              .build());
-      assertThat(producer, notNullValue());
-      producer.close();
+      try (KafkaProducer<String, String> producer =
+            kafkaBundle.createProducer(
+               null,
+               null,
+               ProducerConfig.builder()
+                   .withClientId("puff-the-magic-producer")
+                   .addConfig(
+                       "key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+                   .addConfig(
+                       "value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+                   .build())) {
+         assertThat(producer).isNotNull();
+         assertThat(KafkaHelper.getClientId(producer)).isEqualTo("puff-the-magic-producer");
+      }
    }
 
    @Test
@@ -289,7 +308,7 @@ public class KafkaBundleWithConfigIT {
       producer.send(2L, 2L);
 
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> results.size() == 2);
-      assertThat(results, containsInAnyOrder(1L, 2L));
+      assertThat(results).containsExactlyInAnyOrder(1L, 2L);
    }
 
    @Test
@@ -302,7 +321,7 @@ public class KafkaBundleWithConfigIT {
                   .<String, String> builder()
                   .withDefaultListenerConfig()
                   .forTopic(topic)
-                  .withConsumerConfig("consumer2")
+                  .withConsumerConfig(CONSUMER_2)
                   .withHandler(record -> resultsString.add(record.value()))
                   .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
@@ -312,7 +331,7 @@ public class KafkaBundleWithConfigIT {
                   .<String, String> builder()
                   .forTopic(topic)
                   .checkTopicConfiguration()
-                  .withProducerConfig("producer2")
+                  .withProducerConfig(PRODUCER_2)
                   .build());
 
       // pass in messages
@@ -320,7 +339,7 @@ public class KafkaBundleWithConfigIT {
       producer.send("2l", "2l");
 
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
-      assertThat(resultsString, containsInAnyOrder("1l", "2l"));
+      assertThat(resultsString).containsExactlyInAnyOrder("1l", "2l");
    }
 
    @Test
@@ -352,7 +371,7 @@ public class KafkaBundleWithConfigIT {
 
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
 
-      assertThat(resultsString, containsInAnyOrder("1l", "2l"));
+      assertThat(resultsString).containsExactlyInAnyOrder("1l", "2l");
    }
 
    @Test
@@ -375,22 +394,18 @@ public class KafkaBundleWithConfigIT {
                   .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
-      KafkaProducer<String, String> producer = KAFKA
-            .getKafkaTestUtils()
-            .getKafkaProducer(StringSerializer.class, StringSerializer.class);
-
       // pass in messages
       for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
          String message = UUID.randomUUID().toString();
          checkMessages.add(message);
 
-         producer.send(new ProducerRecord<>(topic, message));
+         stringStringProducer.send(new ProducerRecord<>(topic, message));
       }
 
       await()
             .atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS)
             .until(() -> resultsString.size() == checkMessages.size());
-      assertThat(resultsString, containsInAnyOrder(checkMessages.toArray()));
+      assertThat(resultsString).containsExactlyInAnyOrderElementsOf(checkMessages);
 
    }
 
@@ -406,7 +421,7 @@ public class KafkaBundleWithConfigIT {
                   .withValueSerializer(new StringSerializer())
                   .build());
 
-      assertThat(producer, notNullValue());
+      assertThat(producer).isNotNull();
 
       List<String> messages = new ArrayList<>();
       List<String> receivedMessages = new ArrayList<>();
@@ -426,8 +441,8 @@ public class KafkaBundleWithConfigIT {
 
       });
 
-      assertThat(receivedMessages.size(), equalTo(KafkaBundleConsts.N_MESSAGES));
-      assertThat(receivedMessages, containsInAnyOrder(messages.toArray()));
+      assertThat(receivedMessages).hasSize(KafkaBundleConsts.N_MESSAGES);
+      assertThat(receivedMessages).containsExactlyInAnyOrderElementsOf(messages);
    }
 
    @Test
@@ -452,10 +467,6 @@ public class KafkaBundleWithConfigIT {
       // empty topic before test
       KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(topic);
 
-      KafkaProducer<String, String> producer = KAFKA
-            .getKafkaTestUtils()
-            .getKafkaProducer(StringSerializer.class, StringSerializer.class);
-
       List<String> checkMessages = new ArrayList<>();
 
       // pass in messages
@@ -463,13 +474,13 @@ public class KafkaBundleWithConfigIT {
          String message = UUID.randomUUID().toString();
          checkMessages.add(message);
 
-         producer.send(new ProducerRecord<>(topic, message));
+         stringStringProducer.send(new ProducerRecord<>(topic, message));
       }
 
       await()
             .atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS)
             .until(() -> resultsString.size() == checkMessages.size());
-      assertThat(resultsString, containsInAnyOrder(checkMessages.toArray()));
+      assertThat(resultsString).containsExactlyElementsOf(checkMessages);
 
    }
 
@@ -480,7 +491,7 @@ public class KafkaBundleWithConfigIT {
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
       // register adhoc implementations
-      assertThat(kafkaBundle, notNullValue());
+      assertThat(kafkaBundle).isNotNull();
 
       kafkaBundle
             .registerMessageHandler(MessageHandlerRegistration // NOSONAR
@@ -505,22 +516,19 @@ public class KafkaBundleWithConfigIT {
                   .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
-      KafkaProducer<String, String> producer = KAFKA
-            .getKafkaTestUtils()
-            .getKafkaProducer(StringSerializer.class, StringSerializer.class);
 
       List<String> checkMessages = new ArrayList<>();
       // pass in messages
       for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
          String message = UUID.randomUUID().toString();
          checkMessages.add(message);
-         producer.send(new ProducerRecord<>(topic, message));
+         stringStringProducer.send(new ProducerRecord<>(topic, message));
       }
 
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> callbackCount > 0);
 
-      assertThat(resultsString, containsInAnyOrder(checkMessages.toArray()));
-      assertThat(callbackCount, greaterThan(0));
+      assertThat(resultsString).containsExactlyInAnyOrderElementsOf(checkMessages);
+      assertThat(callbackCount).isGreaterThan(0);
 
    }
 
@@ -571,7 +579,7 @@ public class KafkaBundleWithConfigIT {
 
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
 
-      assertThat(resultsString, containsInAnyOrder("test1", "test2"));
+      assertThat(resultsString).containsExactlyInAnyOrder("test1", "test2");
    }
 
    @Test
@@ -609,7 +617,7 @@ public class KafkaBundleWithConfigIT {
 
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
 
-      assertThat(resultsString, containsInAnyOrder("a", "b"));
+      assertThat(resultsString).containsExactlyInAnyOrder("a", "b");
    }
 
    @Test
@@ -642,7 +650,7 @@ public class KafkaBundleWithConfigIT {
 
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
 
-      assertThat(resultsString, containsInAnyOrder("Heinz", "Heidi"));
+      assertThat(resultsString).containsExactlyInAnyOrder("Heinz", "Heidi");
    }
 
    @Test
@@ -675,12 +683,63 @@ public class KafkaBundleWithConfigIT {
 
       await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> resultsString.size() == 2);
 
-      assertThat(resultsString, containsInAnyOrder("a", "c"));
+      assertThat(resultsString).containsExactlyInAnyOrder("a", "c");
+   }
+
+   @Test
+   public void shouldSetProducerNameCorrectlyWithProducerConfig() {
+      KafkaProducer<String, String> p1 = kafkaBundle
+          .createProducer(new StringSerializer(), new StringSerializer(),
+              ProducerConfig.builder().withClientId("p1").build());
+      assertThat(KafkaHelper.getClientId(p1)).isEqualTo("p1");
+   }
+
+   @Test
+   public void shouldSetProducerNameCorrectlyWithProducerConfigFromYaml() {
+      KafkaProducer<String, String> p1 = kafkaBundle
+          .createProducer(new StringSerializer(), new StringSerializer(),
+              PRODUCER_1);
+      assertThat(KafkaHelper.getClientId(p1)).isEqualTo(PRODUCER_1);
+   }
+
+   @Test
+   public void shouldSetProducerNameCorrectlyWithProducerConfigFromYamlWithExplicitClientId() {
+      KafkaProducer<String, String> p1 = kafkaBundle
+          .createProducer(new StringSerializer(), new StringSerializer(),
+              PRODUCER_2);
+      assertThat(KafkaHelper.getClientId(p1)).isEqualTo("p2");
+   }
+
+   @Test
+   public void shouldSetConsumerNameCorrectlyWithConsumerConfig() {
+      KafkaConsumer<String, String> c1 = kafkaBundle
+          .createConsumer(new StringDeserializer(), new StringDeserializer(),
+              ConsumerConfig.builder().withClientId("c1").build());
+
+      assertThat(KafkaHelper.getClientId(c1)).isEqualTo("c1");
+   }
+
+   @Test
+   public void shouldSetConsumerNameCorrectlyWithConsumerConfigFromYaml() {
+      KafkaConsumer<String, String> c1 = kafkaBundle
+          .createConsumer(new StringDeserializer(), new StringDeserializer(),
+              CONSUMER_1);
+
+      assertThat(KafkaHelper.getClientId(c1)).isEqualTo(CONSUMER_1);
+   }
+
+   @Test
+   public void shouldSetConsumerNameCorrectlyWithConsumerConfigFromYamlWithExplicitClientId() {
+      KafkaConsumer<String, String> c1 = kafkaBundle
+          .createConsumer(new StringDeserializer(), new StringDeserializer(),
+              CONSUMER_2);
+
+      assertThat(KafkaHelper.getClientId(c1)).isEqualTo("c2");
    }
 
    public class ProcessingRecordException extends RuntimeException {
 
-      public ProcessingRecordException(String message) {
+      ProcessingRecordException(String message) {
          super(message);
       }
    }

@@ -11,7 +11,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 
 import org.apache.kafka.common.TopicPartition;
-import org.sdase.commons.server.kafka.consumer.ConsumerHelper;
+import org.sdase.commons.server.kafka.consumer.KafkaHelper;
 import org.sdase.commons.server.kafka.consumer.ErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
@@ -51,7 +51,7 @@ public class LegacyMLS<K, V> extends MessageListenerStrategy<K, V> {
    @Override
    public void processRecords(ConsumerRecords<K, V> records, KafkaConsumer<K, V> consumer) {
       if (consumerName == null) {
-         consumerName = ConsumerHelper.getClientId(consumer);
+         consumerName = KafkaHelper.getClientId(consumer);
       }
       for (ConsumerRecord<K, V> record : records) {
          LOGGER.debug("Handling message for {}", record.key());

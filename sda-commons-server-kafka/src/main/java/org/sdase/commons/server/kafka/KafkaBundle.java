@@ -517,6 +517,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
        String producerConfigName) {
 
       ProducerConfig producerConfig = getProducerConfiguration(producerConfigName);
+      if (producerConfig != null && producerConfig.getClientId() == null) {
+         producerConfig.setClientId(producerConfigName);
+      }
+
       return  createProducer(keySerializer, valueSerializer, producerConfig);
    }
 
@@ -525,6 +529,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       ProducerConfig producerConfig = registration.getProducerConfig();
       if (producerConfig == null && registration.getProducerConfigName() != null) {
          producerConfig = getProducerConfiguration(registration.getProducerConfigName());
+      }
+      if (producerConfig != null && producerConfig.getClientId() == null) {
+         producerConfig.setClientId(registration.getProducerConfigName());
       }
 
       return createProducer(registration.getKeySerializer(), registration.getValueSerializer(), producerConfig);
@@ -571,6 +578,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       if (consumerConfig != null) {
          strategy.verifyConsumerConfig(consumerConfig.getConfig());
       }
+      if (consumerConfig != null && consumerConfig.getClientId() == null) {
+         consumerConfig.setClientId(registration.getConsumerConfigName());
+      }
       return createConsumer(registration.getKeyDeserializer(), registration.getValueDeserializer(), consumerConfig);
    }
 
@@ -581,6 +591,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       }
       if (consumerConfig != null) {
          registration.getStrategy().verifyConsumerConfig(consumerConfig.getConfig());
+      }
+      if (consumerConfig != null && consumerConfig.getClientId() == null) {
+         consumerConfig.setClientId(registration.getConsumerConfigName());
       }
       return createConsumer(registration.getKeyDeserializer(), registration.getValueDeserializer(), consumerConfig);
    }
