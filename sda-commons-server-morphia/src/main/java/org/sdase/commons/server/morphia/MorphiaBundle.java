@@ -268,10 +268,14 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
    public interface FinalBuilder<C extends Configuration> extends ScanPackageBuilder<C> {
 
       /**
+       * Enable JSR303 validation for entities.
+       */
+      FinalBuilder<C> withValidation();
+
+      /**
        * Disable JSR303 validation for entities.
        */
-      FinalBuilder<C> disableValidation();
-
+      FinalBuilder<C> withoutValidation();
 
       /**
        * Builds the mongo bundle
@@ -289,7 +293,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       private final Set<Class> entityClasses = new HashSet<>();
       private boolean ensureIndexes = true;
       private boolean forceEnsureIndexes = false;
-      private boolean activateValidation = true;
+      private boolean activateValidation = false;
 
       private Builder() {
          configProvider = null;
@@ -351,7 +355,13 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       }
 
       @Override
-      public FinalBuilder<T> disableValidation() {
+      public FinalBuilder<T> withValidation() {
+         this.activateValidation = true;
+         return this;
+      }
+
+      @Override
+      public FinalBuilder<T> withoutValidation() {
          this.activateValidation = false;
          return this;
       }

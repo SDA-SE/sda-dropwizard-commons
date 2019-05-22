@@ -55,7 +55,7 @@ public class MorphiaBundleValidationDisabledIT {
     private MorphiaBundle<Config> morphiaBundle = MorphiaBundle.builder()
         .withConfigurationProvider(Config::getMongo)
         .withEntity(Person.class)
-        .disableValidation()
+        .withoutValidation()
         .build();
 
     @Override

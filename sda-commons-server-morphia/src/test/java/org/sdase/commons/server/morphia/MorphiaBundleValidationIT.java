@@ -56,6 +56,7 @@ public class MorphiaBundleValidationIT {
     private MorphiaBundle<Config> morphiaBundle = MorphiaBundle.builder()
         .withConfigurationProvider(Config::getMongo)
         .withEntity(Person.class)
+        .withValidation()
         .build();
 
     @Override

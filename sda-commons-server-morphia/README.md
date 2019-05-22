@@ -41,14 +41,14 @@ public class MyApplication extends Application<MyConfiguration> {
 }
 ```
 
-MorphiaBundle supports JSR-303 **validation** by default (e.g. `@NotNull`). The feature can be 
-disabled by calling `disableValidation` when creating the bundle with the builder:
+Support for JSR-303 **validation** (e.g. `@NotNull`) is provided by calling 
+`withValidation` when creating the bundle with the builder:
 
 ```
   MorphiaBundle.builder()
     .withConfigurationProvider(Config::getMongo)
     .withEntity(Person.class)
-    .disableValidation()
+    .withValidation()
     .build();
 ```
 
