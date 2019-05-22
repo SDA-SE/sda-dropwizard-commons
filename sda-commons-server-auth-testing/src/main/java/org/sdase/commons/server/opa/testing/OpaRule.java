@@ -202,14 +202,10 @@ public class OpaRule extends ExternalResource {
          if (answer != null) {
             response = answer;
          } else {
-            try {
-               response = new OpaResponse()
-                   .setResult(new Content().setAllow(allow));
-               if (constraint != null) {
-                   response.getResult().setConstraints(OM.writeValueAsString(constraint));
-               }
-            } catch (JsonProcessingException e) {
-               throw new IllegalStateException("Object mapper cannot serialize constraint");
+            response = new OpaResponse()
+                .setResult(new Content().setAllow(allow));
+            if (constraint != null) {
+                response.getResult().setConstraints(OM.valueToTree(constraint));
             }
          }
           WIRE.stubFor(mappingBuilder.willReturn(getResponse(response)));

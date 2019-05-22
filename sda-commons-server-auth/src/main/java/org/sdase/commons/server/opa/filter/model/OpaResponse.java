@@ -1,5 +1,6 @@
 package org.sdase.commons.server.opa.filter.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class OpaResponse {
 
@@ -18,7 +19,7 @@ public class OpaResponse {
 
       private boolean allow;
 
-      private String constraints;
+      private JsonNode constraints;
 
       public boolean isAllow() {
          return allow;
@@ -29,12 +30,11 @@ public class OpaResponse {
          return this;
       }
 
-      public String getConstraints() {
+      public JsonNode getConstraints() {
          return constraints;
       }
 
-      public Content setConstraints(
-          String constraints) {
+      public Content setConstraints(JsonNode constraints) {
          this.constraints = constraints;
          return this;
       }

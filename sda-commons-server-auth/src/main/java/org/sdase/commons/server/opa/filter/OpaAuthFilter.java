@@ -3,6 +3,7 @@ package org.sdase.commons.server.opa.filter;
 import static java.util.stream.Collectors.toList;
 
 import com.auth0.jwt.interfaces.Claim;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.security.Principal;
 import java.util.Collections;
@@ -105,7 +106,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
          }
       }
 
-      String constraints = null;
+      JsonNode constraints = null;
       if (!isDisabled && !isExcluded(uriInfo)) {
          // process the actual request to the open policy agent server
          String[] path = uriInfo.getPathSegments().stream().map(PathSegment::getPath).toArray(String[]::new);
@@ -160,7 +161,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
       });
    }
 
-   private String authorizeWithOpa(OpaRequest request) {
+   private JsonNode authorizeWithOpa(OpaRequest request) {
       OpaResponse resp = null;
       try {
          resp = webTarget.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(request), OpaResponse.class);

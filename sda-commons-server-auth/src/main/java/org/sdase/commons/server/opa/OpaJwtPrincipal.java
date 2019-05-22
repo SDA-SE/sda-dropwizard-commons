@@ -1,9 +1,8 @@
 package org.sdase.commons.server.opa;
 
 import com.auth0.jwt.interfaces.Claim;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
 
@@ -18,10 +17,10 @@ public class OpaJwtPrincipal implements Principal {
   private String name;
   private String jwt;
   private Map<String, Claim> claims;
-  private String constraints;
+  private JsonNode constraints;
   private ObjectMapper om;
 
-  private OpaJwtPrincipal(String name, String jwt, Map<String, Claim> claims, String constraints, ObjectMapper om) {
+  private OpaJwtPrincipal(String name, String jwt, Map<String, Claim> claims, JsonNode constraints, ObjectMapper om) {
     this.name = name;
     this.jwt = jwt;
     this.claims = claims;
@@ -34,7 +33,7 @@ public class OpaJwtPrincipal implements Principal {
    * @param claims The claims in the verified {@code jwt}.
    * @param constraints Authorization details used within the service for limiting result data
    */
-  public static OpaJwtPrincipal create(String jwt, Map<String, Claim> claims, String constraints, ObjectMapper om) {
+  public static OpaJwtPrincipal create(String jwt, Map<String, Claim> claims, JsonNode constraints, ObjectMapper om) {
     return new OpaJwtPrincipal(DEFAULT_NAME, jwt, claims, constraints, om);
   }
 
@@ -61,7 +60,7 @@ public class OpaJwtPrincipal implements Principal {
    * @return the constraint object as JSON String
    */
   public String getConstraints() {
-    return constraints;
+    return constraints.toString();
   }
 
   /**
@@ -69,11 +68,10 @@ public class OpaJwtPrincipal implements Principal {
    * @param resultType Result class to that the constraint string is parsed
    * @param <T> type for correct casting
    * @return the object or null if no constraint exists
-   * @throws IOException exception of parsing fails
    */
-  public <T> T getConstraintsAsEntity(Class<T> resultType) throws IOException {
-    if (!Strings.isNullOrEmpty(constraints)) {
-      return om.readValue(constraints, resultType);
+  public <T> T getConstraintsAsEntity(Class<T> resultType) {
+    if (constraints != null) {
+      return om.convertValue(constraints, resultType);
     } else {
       return null;
     }

@@ -6,9 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.github.tomakehurst.wiremock.client.VerificationException;
-import java.io.IOException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -56,7 +55,7 @@ public class OpaRuleIT {
       assertThat(response.getStatus()).isEqualTo(SC_OK);
       OpaResponse opaResponse = response.readEntity(OpaResponse.class);
       assertThat(opaResponse.getResult().isAllow()).isTrue();
-      assertThat(opaResponse.getResult().getConstraints()).isNull();
+      assertThat(opaResponse.getResult().getConstraints()).isEqualTo(NullNode.getInstance());
       OPA_RULE.verify(1, method, path);
    }
 
@@ -99,7 +98,7 @@ public class OpaRuleIT {
    }
 
    @Test
-   public void shouldReturnDifferentResponsesInOneTest() throws IOException {
+   public void shouldReturnDifferentResponsesInOneTest() {
       // given
       ConstraintModel constraintModel = new ConstraintModel().addConstraint("key", "A", "B");
       OPA_RULE
@@ -115,7 +114,6 @@ public class OpaRuleIT {
       assertThat(response2.getStatus()).isEqualTo(SC_OK);
       OpaResponse opaResponse = response.readEntity(OpaResponse.class);
       assertThat(opaResponse.getResult().isAllow()).isTrue();
-      assertThat(new ObjectMapper().readValue(opaResponse.getResult().getConstraints(), ConstraintModel.class)).isEqualToComparingFieldByFieldRecursively(constraintModel);
       OpaResponse opaResponse2 = response2.readEntity(OpaResponse.class);
       assertThat(opaResponse2.getResult().isAllow()).isFalse();
    }
