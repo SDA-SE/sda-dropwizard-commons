@@ -28,11 +28,53 @@ public class JwksKeySourceTest {
 
       List<LoadedPublicKey> loadedPublicKeys = keySource.loadKeysFromSource();
 
-      assertThat(loadedPublicKeys).hasSize(1);
+      assertThat(loadedPublicKeys).hasSize(2);
       LoadedPublicKey loadedPublicKey = loadedPublicKeys.get(0);
       assertThat(loadedPublicKey.getKeySource()).isSameAs(keySource);
       assertThat(loadedPublicKey.getKid()).isEqualTo("rk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00");
       assertThatLoadedKeyContainsPublicKey(loadedPublicKey);
+
+   }
+
+   @Test
+   public void shouldLoadKeyWithoutAlg() {
+
+      String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
+      JwksKeySource keySource = new JwksKeySource(location, DW.client());
+
+      List<LoadedPublicKey> loadedPublicKeys = keySource.loadKeysFromSource();
+
+      assertThat(loadedPublicKeys)
+          .extracting(LoadedPublicKey::getKid)
+          .contains("uk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00");
+
+   }
+
+   @Test
+   public void shouldNotLoadKeyWithWrongKeyType() {
+
+      String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
+      JwksKeySource keySource = new JwksKeySource(location, DW.client());
+
+      List<LoadedPublicKey> loadedPublicKeys = keySource.loadKeysFromSource();
+
+      assertThat(loadedPublicKeys)
+          .extracting(LoadedPublicKey::getKid)
+          .doesNotContain("tk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00");
+
+   }
+
+   @Test
+   public void shouldNotLoadKeyWithWrongAlg() {
+
+      String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
+      JwksKeySource keySource = new JwksKeySource(location, DW.client());
+
+      List<LoadedPublicKey> loadedPublicKeys = keySource.loadKeysFromSource();
+
+      assertThat(loadedPublicKeys)
+          .extracting(LoadedPublicKey::getKid)
+          .doesNotContain("pk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00");
 
    }
 

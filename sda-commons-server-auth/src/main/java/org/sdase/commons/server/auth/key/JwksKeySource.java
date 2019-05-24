@@ -47,6 +47,7 @@ public class JwksKeySource implements KeySource {
          return jwks.getKeys().stream()
                .filter(Objects::nonNull)
                .filter(this::isForSigning)
+               .filter(this::isRsaKeyType)
                .filter(this::isRsa256Key)
                .map(this::toPublicKey)
                .collect(Collectors.toList());
@@ -80,8 +81,13 @@ public class JwksKeySource implements KeySource {
       return StringUtils.isBlank(key.getUse()) || "sig".equals(key.getUse());
    }
 
+   private boolean isRsaKeyType(Key key) {
+      return "RSA".equals(key.getKty());
+   }
+
    private boolean isRsa256Key(Key key) {
-      return "RS256".equals(key.getAlg());
+      // We only support RSA256, if blank we assume it to be RS256.
+      return StringUtils.isBlank(key.getAlg()) || "RS256".equals(key.getAlg());
    }
 
    private LoadedPublicKey toPublicKey(Key key) throws KeyLoadFailedException { // NOSONAR

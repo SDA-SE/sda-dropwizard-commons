@@ -27,7 +27,7 @@ public class OpenIdProviderDiscoveryKeySourceTest {
 
       List<LoadedPublicKey> loadedPublicKeys = keySource.loadKeysFromSource();
 
-      assertThat(loadedPublicKeys).hasSize(1);
+      assertThat(loadedPublicKeys).hasSize(2);
       LoadedPublicKey loadedPublicKey = loadedPublicKeys.get(0);
       assertThat(loadedPublicKey.getKeySource()).isSameAs(keySource);
       assertThat(loadedPublicKey.getKid()).isEqualTo("rk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00");

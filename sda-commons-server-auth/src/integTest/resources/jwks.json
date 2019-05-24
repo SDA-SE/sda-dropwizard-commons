@@ -7,6 +7,28 @@
       "use": "sig",
       "n": "iuwnUuhlCvdh7P7jDWhLexqumnBstr7G3cCXzyhdGbkYV6AOfa9Bgl-Vf6Tii_Td-clovthcqvidvALaJ73dzJbSYsSo8GpabYHLSCqEJOAINSzNMNKwXSv3cG6yojLl-m_nL2LkeDxnx00gb92DNjmJIZBQGGFxEdnxkk2SLBtulACI2kv5YhVK3jhKpY_t5PqPJvvJjP6YE1j7DbSLtNayC1mv6WZPAim1ALVqhCtaeUvQ1YkNhOQgH91muaRnfn8jUsrKRELNVXhxqvcMneAnQXLl3buX1lXGnI1emkqrKKyUtad-sy3_DXN7y5SFM0Qm7BNx8zx15J5IQ1g3SQ",
       "e": "AQAB"
+    },
+    {
+      "kid": "uk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00",
+      "kty": "RSA",
+      "use": "sig",
+      "n": "iuwnUuhlCvdh7P7jDWhLexqumnBstr7G3cCXzyhdGbkYV6AOfa9Bgl-Vf6Tii_Td-clovthcqvidvALaJ73dzJbSYsSo8GpabYHLSCqEJOAINSzNMNKwXSv3cG6yojLl-m_nL2LkeDxnx00gb92DNjmJIZBQGGFxEdnxkk2SLBtulACI2kv5YhVK3jhKpY_t5PqPJvvJjP6YE1j7DbSLtNayC1mv6WZPAim1ALVqhCtaeUvQ1YkNhOQgH91muaRnfn8jUsrKRELNVXhxqvcMneAnQXLl3buX1lXGnI1emkqrKKyUtad-sy3_DXN7y5SFM0Qm7BNx8zx15J5IQ1g3SQ",
+      "e": "AQAB"
+    },
+    {
+      "kid": "tk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00",
+      "kty": "ECDSA",
+      "use": "sig",
+      "n": "iuwnUuhlCvdh7P7jDWhLexqumnBstr7G3cCXzyhdGbkYV6AOfa9Bgl-Vf6Tii_Td-clovthcqvidvALaJ73dzJbSYsSo8GpabYHLSCqEJOAINSzNMNKwXSv3cG6yojLl-m_nL2LkeDxnx00gb92DNjmJIZBQGGFxEdnxkk2SLBtulACI2kv5YhVK3jhKpY_t5PqPJvvJjP6YE1j7DbSLtNayC1mv6WZPAim1ALVqhCtaeUvQ1YkNhOQgH91muaRnfn8jUsrKRELNVXhxqvcMneAnQXLl3buX1lXGnI1emkqrKKyUtad-sy3_DXN7y5SFM0Qm7BNx8zx15J5IQ1g3SQ",
+      "e": "AQAB"
+    },
+    {
+      "kid": "pk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00",
+      "kty": "RSA",
+      "alg": "RS512",
+      "use": "sig",
+      "n": "iuwnUuhlCvdh7P7jDWhLexqumnBstr7G3cCXzyhdGbkYV6AOfa9Bgl-Vf6Tii_Td-clovthcqvidvALaJ73dzJbSYsSo8GpabYHLSCqEJOAINSzNMNKwXSv3cG6yojLl-m_nL2LkeDxnx00gb92DNjmJIZBQGGFxEdnxkk2SLBtulACI2kv5YhVK3jhKpY_t5PqPJvvJjP6YE1j7DbSLtNayC1mv6WZPAim1ALVqhCtaeUvQ1YkNhOQgH91muaRnfn8jUsrKRELNVXhxqvcMneAnQXLl3buX1lXGnI1emkqrKKyUtad-sy3_DXN7y5SFM0Qm7BNx8zx15J5IQ1g3SQ",
+      "e": "AQAB"
     }
   ]
 }
