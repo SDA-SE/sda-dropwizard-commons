@@ -9,6 +9,8 @@ dependencies {
   compile project(':sda-commons-server-swagger')
   compile project(':sda-commons-server-trace')
   compile project(':sda-commons-server-healthcheck')
+  compile project(':sda-commons-server-jaeger')
+  compile project(':sda-commons-server-opentracing')
 
   testCompile project(':sda-commons-server-testing')
   testCompile 'org.assertj:assertj-core'

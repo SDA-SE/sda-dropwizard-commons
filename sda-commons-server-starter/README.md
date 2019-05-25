@@ -13,6 +13,7 @@ automatically contain
 - [Authentication support](../sda-commons-server-auth/README.md)
 - [Prometheus metrics](../sda-commons-server-prometheus/README.md)
 - [Swagger documentation](../sda-commons-server-swagger/README.md)
+- [Open Tracing](../sda-commons-server-opentracing/README.md) and [Jaeger](../sda-commons-server-jaeger/README.md)
 
 They may be configured easily to
 

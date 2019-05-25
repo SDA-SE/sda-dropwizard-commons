@@ -4,9 +4,11 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static io.opentracing.tag.Tags.COMPONENT;
 import static io.opentracing.tag.Tags.HTTP_URL;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.awaitility.Awaitility.await;
 import static org.sdase.commons.server.opentracing.filter.TagUtils.HTTP_REQUEST_HEADERS;
 import static org.sdase.commons.server.opentracing.filter.TagUtils.HTTP_RESPONSE_HEADERS;
 
@@ -52,7 +54,11 @@ public class OpenTracingBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_OK);
 
-    assertThat(tracer.finishedSpans()).flatExtracting(MockSpan::parentId).contains(1337L);
+    await()
+        .untilAsserted(
+            () -> {
+              assertThat(tracer.finishedSpans()).flatExtracting(MockSpan::parentId).contains(1337L);
+            });
   }
 
   @Test
@@ -64,10 +70,14 @@ public class OpenTracingBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_OK);
 
-    assertThat(tracer.finishedSpans())
-        .flatExtracting(MockSpan::tags)
-        .extracting(COMPONENT.getKey())
-        .contains("jaxrs");
+    await()
+        .untilAsserted(
+            () -> {
+              assertThat(tracer.finishedSpans())
+                  .flatExtracting(MockSpan::tags)
+                  .extracting(COMPONENT.getKey())
+                  .contains("jaxrs");
+            });
   }
 
   @Test
@@ -79,14 +89,18 @@ public class OpenTracingBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
 
-    MockSpan span =
-        tracer.finishedSpans().stream()
-            .filter(s -> s.operationName().startsWith("GET:"))
-            .findAny()
-            .orElseThrow(IllegalStateException::new);
+    await()
+        .untilAsserted(
+            () -> {
+              MockSpan span =
+                  tracer.finishedSpans().stream()
+                      .filter(s -> s.operationName().startsWith("GET:"))
+                      .findAny()
+                      .orElseThrow(IllegalStateException::new);
 
-    assertThat(span.tags()).contains(entry(Tags.ERROR.getKey(), true));
-    assertThat(span.logEntries()).flatExtracting(LogEntry::fields).isNotEmpty();
+              assertThat(span.tags()).contains(entry(Tags.ERROR.getKey(), true));
+              assertThat(span.logEntries()).flatExtracting(LogEntry::fields).isNotEmpty();
+            });
   }
 
   @Test
