@@ -15,6 +15,8 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -47,6 +49,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   private final Set<Class> entityClasses = new HashSet<>();
   private final boolean ensureIndexes;
   private final boolean forceEnsureIndexes;
+  private final Tracer tracer;
 
   /** Activate JSR303 validation. */
   private final boolean activateValidation;
@@ -54,15 +57,17 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   private MongoClient mongoClient;
   private Datastore morphiaDatastore;
 
-  private MorphiaBundle(
+  private MorphiaBundle( // NOSONAR: Methods should not have too many parameters
       MongoConfigurationProvider<C> configProvider,
       Set<String> packagesToScan,
       Set<Class> entityClasses,
       Set<TypeConverter> customConverters,
       boolean ensureIndexes,
       boolean forceEnsureIndexes,
-      boolean activateValidation) {
+      boolean activateValidation,
+      Tracer tracer) {
     this.configurationProvider = configProvider;
+    this.tracer = tracer;
     this.packagesToScan.addAll(packagesToScan);
     this.entityClasses.addAll(entityClasses);
     this.customConverters.addAll(customConverters);
@@ -140,7 +145,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   }
 
   private MongoClient createClient(Environment environment, MongoConfiguration mongoConfiguration) {
-    return new MongoClientBuilder(mongoConfiguration).build(environment);
+    return new MongoClientBuilder(mongoConfiguration).withTracer(tracer).build(environment);
   }
 
   //
@@ -151,6 +156,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   }
 
   public interface InitialBuilder {
+
     /**
      * @param configurationProvider the method reference that provides the @{@link
      *     MongoConfiguration} from the applications configurations class
@@ -274,6 +280,15 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     FinalBuilder<C> withoutValidation();
 
     /**
+     * Specifies a custom tracer to use. If no tracer is specified, the {@link GlobalTracer} is
+     * used.
+     *
+     * @param tracer The tracer to use
+     * @return the same builder
+     */
+    FinalBuilder<C> withTracer(Tracer tracer);
+
+    /**
      * Builds the mongo bundle
      *
      * @return mongo bundle
@@ -296,6 +311,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     private boolean ensureIndexes = true;
     private boolean forceEnsureIndexes = false;
     private boolean activateValidation = false;
+    private Tracer tracer;
 
     private Builder() {
       configProvider = null;
@@ -369,6 +385,11 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       return this;
     }
 
+    public FinalBuilder<T> withTracer(Tracer tracer) {
+      this.tracer = tracer;
+      return this;
+    }
+
     @Override
     public MorphiaBundle<T> build() {
       return new MorphiaBundle<>(
@@ -378,7 +399,8 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
           customConverters,
           ensureIndexes,
           forceEnsureIndexes,
-          activateValidation);
+          activateValidation,
+          tracer);
     }
   }
 }

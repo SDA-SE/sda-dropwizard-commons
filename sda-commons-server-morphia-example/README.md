@@ -1,4 +1,4 @@
-# SDA Commons Server Morphia
+# SDA Commons Server Morphia Example
 
 This module is an example how to use the [morphia bundle](../sda-commons-server-morphia/README.md).
 
