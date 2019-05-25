@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.amazonaws.services.s3.AmazonS3;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.opentracing.mock.MockSpan;
+import io.opentracing.mock.MockTracer;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -41,5 +43,21 @@ public class S3BundleTest {
     AmazonS3 client = bundle.getClient();
 
     assertThat(client.getObject("bucket", "key").getObjectContent()).hasContent("data");
+  }
+
+  @Test()
+  public void shouldTraceCalls() {
+    TestApp app = DW.getRule().getApplication();
+    S3Bundle bundle = app.getS3Bundle();
+    AmazonS3 client = bundle.getClient();
+
+    // Create a trace
+    client.getObject("bucket", "key").getObjectContent();
+
+    MockTracer tracer = app.getMockTracer();
+
+    assertThat(tracer.finishedSpans())
+        .extracting(MockSpan::operationName)
+        .contains("GetObjectRequest");
   }
 }
