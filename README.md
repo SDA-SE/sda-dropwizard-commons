@@ -20,6 +20,7 @@ technologies that are recommended for services in the SDA Platform. These techno
 - [Kafka](https://kafka.apache.org/)
 - [MongoDB](https://www.mongodb.com)
 - [Open Policy Agent](https://www.openpolicyagent.org/)
+- [OpenTracing](https://opentracing.io/)
 
 
 ## Changelog and Versioning
@@ -168,6 +169,17 @@ provides a MongoDB instance for integration testing.
 
 The module [`sda-commons-server-morphia-exmaple`](./sda-commons-server-morphia-example/README.md) shows how
 to use the bundle within an application.
+
+
+##### Open Tracing
+
+The module [`sda-commons-server-opentracing`](./sda-commons-server-opentracing/README.md) provides [OpenTracing](https://opentracing.io/) instrumentation for Jax-Rs. 
+Other bundles like `sda-commons-client-jersey`, `sda-commons-server-morphia` or `sda-commons-server-s3` come with build in instrumentation.
+
+Besides instrumentation it's also required to specify a collector, like [Jaeger](https://www.jaegertracing.io/).
+The module [`sda-commons-server-jaeger`](./sda-commons-server-jaeger/README.md) provides the Jaeger collector.
+
+The module [`sda-commons-server-opentracing-exmaple`](./sda-commons-server-morphia-example/README.md) shows how to use OpenTracing and Jaeger within an application and has examples for manual instrumentation.
 
 
 ##### Prometheus
