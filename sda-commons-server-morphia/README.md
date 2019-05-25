@@ -117,6 +117,9 @@ In tests the config is derived from the `MongoDbRule`. See
 A health check with the name _mongo_ is automatically registered to test the mongo connection. 
 A simple _ping_ command to the database is used.
 
+### Tracing
+
+The bundle comes with [OpenTracing](https://opentracing.io/) instrumentation.
 
 ## Testing
 

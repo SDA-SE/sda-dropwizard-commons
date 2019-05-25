@@ -5,5 +5,5 @@ dependencies {
   compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names'
 
   testCompile project(':sda-commons-server-testing')
-  testCompile 'commons-io:commons-io:2.6'
+  testCompile 'commons-io:commons-io'
 }

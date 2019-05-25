@@ -26,7 +26,7 @@ dependencies {
   compile 'org.slf4j:slf4j-api'
 
   testCompile project(':sda-commons-server-testing')
-  testCompile 'net.javacrumbs.json-unit:json-unit-assertj:2.12.0'
+  testCompile 'net.javacrumbs.json-unit:json-unit-assertj'
   testCompile 'com.github.java-json-tools:json-schema-validator'
 }
 

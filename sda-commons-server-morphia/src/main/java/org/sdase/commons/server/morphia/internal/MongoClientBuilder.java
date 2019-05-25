@@ -1,5 +1,6 @@
 package org.sdase.commons.server.morphia.internal;
 
+import static java.util.Arrays.asList;
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 import static org.sdase.commons.server.morphia.internal.ConnectionStringUtil.createConnectionString;
 import static org.sdase.commons.server.morphia.internal.SslUtil.createTruststoreFromPemKey;
@@ -10,6 +11,10 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.WriteConcern;
 import io.dropwizard.setup.Environment;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.mongo.common.SpanDecorator;
+import io.opentracing.contrib.mongo.common.TracingCommandListener;
+import io.opentracing.util.GlobalTracer;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -31,6 +36,7 @@ public class MongoClientBuilder {
 
   private final MongoConfiguration configuration;
   private final MongoClientOptions.Builder mongoClientOptionsBuilder;
+  private Tracer tracer;
 
   public MongoClientBuilder(MongoConfiguration configuration) {
     this(configuration, MongoClientOptions.builder(DEFAULT_OPTIONS.build()));
@@ -40,6 +46,11 @@ public class MongoClientBuilder {
       MongoConfiguration configuration, MongoClientOptions.Builder mongoClientOptionsBuilder) {
     this.configuration = configuration;
     this.mongoClientOptionsBuilder = mongoClientOptionsBuilder;
+  }
+
+  public MongoClientBuilder withTracer(Tracer tracer) {
+    this.tracer = tracer;
+    return this;
   }
 
   /**
@@ -75,6 +86,15 @@ public class MongoClientBuilder {
         mongoClientOptionsBuilder.sslContext(sslContext);
       }
     }
+
+    // Initialize a tracer that traces all calls to the MongoDB server.
+    Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
+    TracingCommandListener listener =
+        new TracingCommandListener.Builder(currentTracer)
+            .withSpanDecorators(asList(SpanDecorator.DEFAULT, new NoStatementSpanDecorator()))
+            .build();
+    mongoClientOptionsBuilder.addCommandListener(listener);
+
     return new MongoClient(
         new MongoClientURI(createConnectionString(configuration), mongoClientOptionsBuilder));
   }
