@@ -4,5 +4,5 @@ dependencies {
   compile 'io.opentracing.contrib:opentracing-jaxrs2:0.5.0'
 
   testCompile project(':sda-commons-server-testing')
-  testCompile 'io.opentracing:opentracing-mock:0.32.0'
+  testCompile 'io.opentracing:opentracing-mock'
 }

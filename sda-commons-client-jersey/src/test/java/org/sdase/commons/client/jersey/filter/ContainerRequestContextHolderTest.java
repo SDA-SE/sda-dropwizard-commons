@@ -4,7 +4,6 @@ import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder.transferRequestContext;
 
-import io.opentracing.mock.MockTracer;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;

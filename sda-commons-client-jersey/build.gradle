@@ -1,5 +1,6 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-server-opentracing')
   compile project(':sda-commons-shared-tracing')
   compile project(':sda-commons-shared-error')
 
@@ -7,6 +8,7 @@ dependencies {
   compile 'org.glassfish.jersey.core:jersey-client'
   compile 'org.glassfish.jersey.ext:jersey-proxy-client'
   compile 'org.codefetti.proxy:proxy-handler:1.0.0'
+  compile 'io.opentracing.contrib:opentracing-concurrent'
 
   testCompile project(':sda-commons-server-testing')
   testCompile project(':sda-commons-client-jersey-wiremock-testing')
@@ -15,4 +17,5 @@ dependencies {
 
   testCompile 'org.awaitility:awaitility'
   testCompile 'org.assertj:assertj-core'
+  testCompile 'io.opentracing:opentracing-mock'
 }

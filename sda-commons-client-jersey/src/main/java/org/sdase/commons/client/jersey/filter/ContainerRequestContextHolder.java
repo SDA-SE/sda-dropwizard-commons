@@ -1,5 +1,8 @@
 package org.sdase.commons.client.jersey.filter;
 
+import io.opentracing.contrib.concurrent.TracedCallable;
+import io.opentracing.contrib.concurrent.TracedRunnable;
+import io.opentracing.util.GlobalTracer;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -52,21 +55,23 @@ public class ContainerRequestContextHolder
     Map<String, String> contextMap = MDC.getCopyOfContextMap();
     ContainerRequestContext requestContext = currentRequestContext().orElse(null);
 
-    return () -> {
-      ContainerRequestContextHolder containerRequestContextHolder =
-          new ContainerRequestContextHolder();
-      try {
-        if (contextMap != null) {
-          MDC.setContextMap(contextMap);
-        }
-        containerRequestContextHolder.filter(requestContext);
+    return new TracedRunnable(
+        () -> {
+          ContainerRequestContextHolder containerRequestContextHolder =
+              new ContainerRequestContextHolder();
+          try {
+            if (contextMap != null) {
+              MDC.setContextMap(contextMap);
+            }
+            containerRequestContextHolder.filter(requestContext);
 
-        runnable.run();
-      } finally {
-        MDC.clear();
-        containerRequestContextHolder.filter(requestContext, null);
-      }
-    };
+            runnable.run();
+          } finally {
+            MDC.clear();
+            containerRequestContextHolder.filter(requestContext, null);
+          }
+        },
+        GlobalTracer.get());
   }
 
   /**
@@ -80,20 +85,22 @@ public class ContainerRequestContextHolder
     Map<String, String> contextMap = MDC.getCopyOfContextMap();
     ContainerRequestContext requestContext = currentRequestContext().orElse(null);
 
-    return () -> {
-      ContainerRequestContextHolder containerRequestContextHolder =
-          new ContainerRequestContextHolder();
-      try {
-        if (contextMap != null) {
-          MDC.setContextMap(contextMap);
-        }
-        containerRequestContextHolder.filter(requestContext);
+    return new TracedCallable<>(
+        () -> {
+          ContainerRequestContextHolder containerRequestContextHolder =
+              new ContainerRequestContextHolder();
+          try {
+            if (contextMap != null) {
+              MDC.setContextMap(contextMap);
+            }
+            containerRequestContextHolder.filter(requestContext);
 
-        return callable.call();
-      } finally {
-        MDC.clear();
-        containerRequestContextHolder.filter(requestContext, null);
-      }
-    };
+            return callable.call();
+          } finally {
+            MDC.clear();
+            containerRequestContextHolder.filter(requestContext, null);
+          }
+        },
+        GlobalTracer.get());
   }
 }
