@@ -1,0 +1,13 @@
+dependencies {
+  compile project(':sda-commons-server-dropwizard')
+
+  compile 'io.jaegertracing:jaeger-client'
+
+  // Sadly the required code is in a test dependency, but as an alternative we cloud also copy the class here.
+  compile group: 'io.opentracing', name: 'opentracing-util', classifier: 'tests'
+  compile 'io.prometheus:simpleclient'
+
+  testCompile project(':sda-commons-server-testing')
+  testCompile project(':sda-commons-server-opentracing')
+  testCompile project(':sda-commons-server-prometheus')
+}
