@@ -10,6 +10,8 @@ import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBund
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
+import org.sdase.commons.server.jaeger.JaegerBundle;
+import org.sdase.commons.server.opentracing.OpenTracingBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.server.security.SecurityBundle;
 import org.sdase.commons.server.starter.test.BundleAssertion;
@@ -54,6 +56,12 @@ public class SdaPlatformBundleBuilderTest {
                   bundleAssertion.getBundleOfType(bundle, InternalHealthCheckEndpointBundle.class))
               .isNotNull();
           softly
+              .assertThat(bundleAssertion.getBundleOfType(bundle, JaegerBundle.class))
+              .isNotNull();
+          softly
+              .assertThat(bundleAssertion.getBundleOfType(bundle, OpenTracingBundle.class))
+              .isNotNull();
+          softly
               .assertThat(bundleAssertion.getBundleOfType(bundle, PrometheusBundle.class))
               .isNotNull();
           softly
@@ -70,7 +78,7 @@ public class SdaPlatformBundleBuilderTest {
           softly
               .assertThat(bundleAssertion.getBundleOfType(bundle, ConsumerTokenBundle.class))
               .isNotNull();
-          softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(11);
+          softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(13);
         });
   }
 }

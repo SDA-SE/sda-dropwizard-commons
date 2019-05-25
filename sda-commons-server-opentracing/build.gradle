@@ -1,8 +1,9 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
 
-  compile 'io.opentracing.contrib:opentracing-jaxrs2:0.5.0'
+  compile 'io.opentracing.contrib:opentracing-jaxrs2'
 
   testCompile project(':sda-commons-server-testing')
   testCompile 'io.opentracing:opentracing-mock'
+  testCompile 'org.awaitility:awaitility'
 }
