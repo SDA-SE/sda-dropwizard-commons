@@ -14,7 +14,7 @@ import org.sdase.commons.server.trace.test.TraceTokenTestApp;
 public class TraceTokenBundleTest {
 
   @ClassRule
-  public static DropwizardAppRule<Configuration> DW =
+  public static final DropwizardAppRule<Configuration> DW =
       new DropwizardAppRule<>(
           TraceTokenTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
