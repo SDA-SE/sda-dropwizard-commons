@@ -14,15 +14,20 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.aws.TracingRequestHandler;
+import io.opentracing.util.GlobalTracer;
 import javax.validation.constraints.NotNull;
 
 public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
 
   private final S3ConfigurationProvider<C> configurationProvider;
+  private final Tracer tracer;
   private AmazonS3 s3Client;
 
-  private S3Bundle(S3ConfigurationProvider<C> configurationProvider) {
+  private S3Bundle(S3ConfigurationProvider<C> configurationProvider, Tracer tracer) {
     this.configurationProvider = configurationProvider;
+    this.tracer = tracer;
   }
 
   @Override
@@ -44,8 +49,11 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     ClientConfiguration clientConfiguration = new ClientConfiguration();
     clientConfiguration.setSignerOverride(s3Configuration.getSignerOverride());
 
+    Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
+
     s3Client =
         AmazonS3ClientBuilder.standard()
+            .withRequestHandlers(new TracingRequestHandler(currentTracer))
             .withEndpointConfiguration(
                 new AwsClientBuilder.EndpointConfiguration(s3Configuration.getEndpoint(), region))
             .withPathStyleAccessEnabled(true)
@@ -72,6 +80,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
   }
 
   public interface InitialBuilder {
+
     /**
      * @param configurationProvider the method reference that provides the @{@link S3Configuration}
      *     from the applications configurations class
@@ -81,6 +90,15 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
   }
 
   public interface FinalBuilder<C extends Configuration> {
+
+    /**
+     * Specifies a custom tracer to use. If no tracer is specified, the {@link GlobalTracer} is
+     * used.
+     *
+     * @param tracer The tracer to use
+     * @return the same builder
+     */
+    FinalBuilder<C> withTracer(Tracer tracer);
 
     /**
      * Builds the S3 bundle
@@ -93,6 +111,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
   public static class Builder<T extends Configuration> implements InitialBuilder, FinalBuilder<T> {
 
     private final S3ConfigurationProvider<T> configProvider;
+    private Tracer tracer;
 
     private Builder() {
       configProvider = null;
@@ -109,8 +128,14 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     }
 
     @Override
+    public FinalBuilder<T> withTracer(Tracer tracer) {
+      this.tracer = tracer;
+      return this;
+    }
+
+    @Override
     public S3Bundle<T> build() {
-      return new S3Bundle<>(configProvider);
+      return new S3Bundle<>(configProvider, tracer);
     }
   }
 }

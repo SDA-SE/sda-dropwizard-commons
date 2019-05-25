@@ -20,3 +20,7 @@ configuration.
 Afterwards `getClient()` is used to access an instance of `AmazonS3` that is used to operate on the 
 object storage. 
 See [`S3BundleTest`](./src/test/java/org/sdase/commons/server/s3/S3BundleTest.java) for a detailed usage example.   
+
+### Tracing
+
+The bundle comes with [OpenTracing](https://opentracing.io/) instrumentation.
