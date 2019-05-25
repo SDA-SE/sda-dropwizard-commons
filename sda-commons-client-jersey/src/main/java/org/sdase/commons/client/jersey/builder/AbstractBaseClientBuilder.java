@@ -1,6 +1,9 @@
 package org.sdase.commons.client.jersey.builder;
 
 import io.dropwizard.client.JerseyClientBuilder;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.jaxrs2.client.ClientSpanDecorator;
+import io.opentracing.contrib.jaxrs2.client.ClientTracingFeature;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +44,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
   private static final boolean DEFAULT_FOLLOW_REDIRECTS = true;
 
   private JerseyClientBuilder jerseyClientBuilder;
+  private final Tracer tracer;
 
   private List<ClientRequestFilter> filters;
 
@@ -50,8 +54,9 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
 
   private boolean followRedirects;
 
-  AbstractBaseClientBuilder(JerseyClientBuilder jerseyClientBuilder) {
+  AbstractBaseClientBuilder(JerseyClientBuilder jerseyClientBuilder, Tracer tracer) {
     this.jerseyClientBuilder = jerseyClientBuilder;
+    this.tracer = tracer;
     this.filters = new ArrayList<>();
     this.readTimeoutMillis = DEFAULT_READ_TIMEOUT_MS;
     this.connectionTimeoutMillis = DEFAULT_CONNECTION_TIMEOUT_MS;
@@ -132,6 +137,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
     client.property(ClientProperties.CONNECT_TIMEOUT, connectionTimeoutMillis);
     client.property(ClientProperties.READ_TIMEOUT, readTimeoutMillis);
     registerMultiPartIfAvailable(client);
+    registerTracing(client);
     return client;
   }
 
@@ -174,5 +180,22 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
     } catch (Exception e) {
       LOG.warn("Failed to register MultiPartFeature for client.");
     }
+  }
+
+  private void registerTracing(Client client) {
+    List<ClientSpanDecorator> clientDecorators = new ArrayList<>();
+    clientDecorators.add(ClientSpanDecorator.STANDARD_TAGS);
+    clientDecorators.add(new CustomClientSpanDecorator());
+
+    // This registers both a filter that instruments request, but also injects
+    // the span and trace
+    // headers into the request. Passing the headers to an external service
+    // might not be desired.
+    //
+    // At the moment we can't have different behavior, without implementing
+    // more by our self. But on the other side, the headers do no harm. They
+    // neither expose secrets nor should they break server behavior.
+    client.register(
+        new ClientTracingFeature.Builder(tracer).withDecorators(clientDecorators).build());
   }
 }

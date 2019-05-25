@@ -4,6 +4,8 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 import java.util.function.Function;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
 import org.sdase.commons.client.jersey.error.ClientRequestExceptionMapper;
@@ -17,13 +19,15 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
   private boolean initialized;
 
   private Function<C, String> consumerTokenProvider;
+  private final Tracer tracer;
 
   public static InitialBuilder<Configuration> builder() {
     return new Builder<>();
   }
 
-  private JerseyClientBundle(Function<C, String> consumerTokenProvider) {
+  private JerseyClientBundle(Function<C, String> consumerTokenProvider, Tracer tracer) {
     this.consumerTokenProvider = consumerTokenProvider;
+    this.tracer = tracer;
   }
 
   @Override
@@ -33,7 +37,9 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
 
   @Override
   public void run(C configuration, Environment environment) {
-    this.clientFactory = new ClientFactory(environment, consumerTokenProvider.apply(configuration));
+    Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
+    this.clientFactory =
+        new ClientFactory(environment, consumerTokenProvider.apply(configuration), currentTracer);
     environment.jersey().register(ContainerRequestContextHolder.class);
     environment.jersey().register(ClientRequestExceptionMapper.class);
     initialized = true;
@@ -72,6 +78,12 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
   }
 
   public interface FinalBuilder<C extends Configuration> {
+    /**
+     * @param tracer A custom tracer. If no tracer is provided, the {@link GlobalTracer} is used
+     * @return a builder instance for further configuration
+     */
+    JerseyClientBundle.FinalBuilder<C> withTracer(Tracer tracer);
+
     JerseyClientBundle<C> build();
   }
 
@@ -79,6 +91,7 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
       implements InitialBuilder<C>, FinalBuilder<C> {
 
     private ConsumerTokenProvider<C> consumerTokenProvider = (C c) -> null;
+    private Tracer tracer;
 
     private Builder() {}
 
@@ -93,8 +106,14 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
     }
 
     @Override
+    public JerseyClientBundle.FinalBuilder<C> withTracer(Tracer tracer) {
+      this.tracer = tracer;
+      return this;
+    }
+
+    @Override
     public JerseyClientBundle<C> build() {
-      return new JerseyClientBundle<>(consumerTokenProvider);
+      return new JerseyClientBundle<>(consumerTokenProvider, tracer);
     }
   }
 

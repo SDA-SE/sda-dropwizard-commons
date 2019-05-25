@@ -46,8 +46,9 @@ Response response = googleClient.path("api")/* ... */.get();
 
 ## Configuration
 
-All clients defined with the `ClientFactory` can be built either for the SDA Platform or for external services. Clients
-for the SDA Platform have some magic added that clients for an external service don't have:
+All clients defined with the `ClientFactory` can be built either for the SDA Platform or for external services. 
+Both SDA Platform and external clients are [OpenTracing](https://opentracing.io/) enabled.
+Clients for the SDA Platform have some magic added that clients for an external service don't have:
 
 - _Trace-Token_
 

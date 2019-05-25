@@ -1,6 +1,7 @@
 package org.sdase.commons.client.jersey.builder;
 
 import io.dropwizard.client.JerseyClientBuilder;
+import io.opentracing.Tracer;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
@@ -13,8 +14,9 @@ public class PlatformClientBuilder extends AbstractBaseClientBuilder<PlatformCli
 
   private Supplier<Optional<String>> consumerTokenSupplier;
 
-  public PlatformClientBuilder(JerseyClientBuilder jerseyClientBuilder, String consumerToken) {
-    super(jerseyClientBuilder);
+  public PlatformClientBuilder(
+      JerseyClientBuilder jerseyClientBuilder, Tracer tracer, String consumerToken) {
+    super(jerseyClientBuilder, tracer);
     this.consumerTokenSupplier = () -> Optional.ofNullable(StringUtils.trimToNull(consumerToken));
     addFilter(new TraceTokenClientFilter());
   }

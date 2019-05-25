@@ -5,15 +5,18 @@ import io.dropwizard.Application;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.opentracing.mock.MockTracer;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.trace.TraceTokenBundle;
 
 public class ClientTestApp extends Application<ClientTestConfig> {
 
+  private final MockTracer tracer = new MockTracer();
   private JerseyClientBundle<ClientTestConfig> jerseyClientBundle =
       JerseyClientBundle.builder()
           .withConsumerTokenProvider(ClientTestConfig::getConsumerToken)
+          .withTracer(tracer)
           .build();
 
   public static void main(String[] args) throws Exception {
@@ -41,5 +44,9 @@ public class ClientTestApp extends Application<ClientTestConfig> {
 
   public JerseyClientBundle getJerseyClientBundle() {
     return jerseyClientBundle;
+  }
+
+  public MockTracer getTracer() {
+    return tracer;
   }
 }
