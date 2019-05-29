@@ -170,6 +170,26 @@ pipeline {
       }
     }
 
+    stage('Snapshot release') {
+      when {
+        changeRequest()
+      }
+      agent {
+        docker {
+          image 'quay.io/sdase/openjdk:8u191-alpine-3.8'
+        }
+      }
+      steps {
+        script {
+          env.SEMANTIC_VERSION = "${BRANCH_NAME}-SNAPSHOT"
+        }
+
+        unstash 'build'
+        prepareGradleWorkspace secretId: 'sdabot-github-token'
+        javaGradlew gradleCommand: 'uploadArchives'
+      }
+    }
+
     stage('Upload release') {
       when {
         branch 'master'

@@ -261,3 +261,72 @@ Status:
 
 The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) adds all required dependencies to support 
 `multipart/*` in Dropwizard applications.
+
+## Usage
+
+Import SDA Commons from the repository `https://nexus.intern.sda-se.online/repository/sda-se-public/` by adding it to the
+`build.gradle`:
+
+```
+    repositories {
+      ...
+      maven {
+        url "https://nexus.intern.sda-se.online/repository/sda-se-public/"
+        credentials {
+          username sdaNexusUser
+          password sdaNexusPassword
+        }
+      }
+      ...
+    }
+```
+
+Select and import the required dependencies. Please make sure to always use the same version across modules.
+Using a variable for the version is a good practice:
+
+```
+    project.ext {
+        sdaCommonsVersion = 'x.x.x'
+    }
+
+    dependencies {
+      ...
+      compile "org.sdase.commons:sda-commons-client-jersey:${sdaCommonsVersion}"
+      ...
+    }
+```
+
+### PR Snapshots
+
+Each PR creates a snapshot that can _temporarily_ be included in other projects for testing. The generated version uses
+the format: PR-<pr_number>-SNAPSHOT. Snapshots are cleaned up regularly from the repository so never use snapshots in
+stable releases.
+
+Import snapshots by adding the snapshot repository to the build.gradle:
+
+```
+    repositories {
+      ...
+      maven {
+        url "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
+        credentials {
+          username sdaNexusUser
+          password sdaNexusPassword
+        }
+      }
+      ...
+    }
+```
+
+Add to the dependencies (example):
+
+```
+    project.ext {
+        sdaCommonsVersion = 'PR-1-SNAPSHOT'
+    }
+    dependencies {
+      ...
+      compile "org.sdase.commons:sda-commons-client-jersey:${sdaCommonsVersion}"
+      ...
+    }
+```

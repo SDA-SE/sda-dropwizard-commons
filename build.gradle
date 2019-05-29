@@ -146,9 +146,10 @@ subprojects {
                 repository(url: "https://nexus.intern.sda-se.online/repository/sda-se-releases/") {
                     authentication(userName: sdaNexusUser, password: sdaNexusPassword)
                 }
+                snapshotRepository(url: "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/") {
+                    authentication(userName: sdaNexusUser, password: sdaNexusPassword)
+                }
             }
         }
     }
 }
-
-
