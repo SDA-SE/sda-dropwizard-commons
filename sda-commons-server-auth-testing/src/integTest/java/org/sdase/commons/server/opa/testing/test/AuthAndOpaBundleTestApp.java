@@ -18,13 +18,15 @@ import org.sdase.commons.server.opa.OpaJwtPrincipal;
 
 public class AuthAndOpaBundleTestApp extends Application<AuthAndOpaBundeTestAppConfiguration> {
 
-
    @Override
    public void initialize(Bootstrap<AuthAndOpaBundeTestAppConfiguration> bootstrap) {
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
       bootstrap
-            .addBundle(
-                  AuthBundle.builder().withAuthConfigProvider(AuthAndOpaBundeTestAppConfiguration::getAuth).build());
+            .addBundle(AuthBundle
+                  .builder()
+                  .withAuthConfigProvider(AuthAndOpaBundeTestAppConfiguration::getAuth)
+                  .withExternalAuthorization()
+                  .build());
       bootstrap
             .addBundle(OpaBundle.builder().withOpaConfigProvider(AuthAndOpaBundeTestAppConfiguration::getOpa).build());
    }
@@ -35,7 +37,6 @@ public class AuthAndOpaBundleTestApp extends Application<AuthAndOpaBundeTestAppC
    }
 
    @Path("/")
-   @PermitAll
    public static class Endpoint {
 
       @Context

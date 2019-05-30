@@ -43,7 +43,7 @@ public class MyApplication extends Application<MyConfiguration> {
    @Override
    public void initialize(Bootstrap<MyConfiguration> bootstrap) {
       // ...
-      bootstrap.addBundle(AuthBundle.builder().withAuthConfigProvider(MyConfiguration::getAuth).build());
+      bootstrap.addBundle(AuthBundle.builder().withAuthConfigProvider(MyConfiguration::getAuth).withAnnotatedAuthorization().build());
       // ...
    }
 
@@ -53,6 +53,12 @@ public class MyApplication extends Application<MyConfiguration> {
    }
 }
 ```
+
+The Bundle can be configured to perform basic authorization based on whether a token is presented or not on endpoints
+that are annotated with `@PermitAll` with the setting `.withAnnotatedAuthorization()`.
+If the authorization should be handled by e.g. the OpaBundle, the option `.withExternalAuthorization()` still validates
+tokens sent in the `Authorization` header but also accepts requests _without header_ to be processed and eventually
+rejected in a later stage.
 
 ## Configuration
 
@@ -140,6 +146,7 @@ In this case, the `AUTH_KEYS` variable should contain a Json array of
 ```
 
 ## OPA Bundle
+
 Details about the authorization with Open Policy Agent are documented within the authorization concept (see Confluence). 
 In short, Open Policy Agent acts as policy decision point and is started as sidecar to the actual service. The OPA bundle
 requests the policy decision providing the HTTP path and HTTP method and the JWT (if available) as input.
@@ -179,7 +186,6 @@ public class ConstraintModel {
 The principal can be accessed from the `SecurityContext`.
 
 ```java
-@PermitAll
 @Path("/secure")
 public class SecureEndPoint {
 

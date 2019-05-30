@@ -11,7 +11,12 @@ public class AuthTestApp extends Application<AuthTestConfig> {
    @Override
    public void initialize(Bootstrap<AuthTestConfig> bootstrap) {
       bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
-      bootstrap.addBundle(AuthBundle.builder().withAuthConfigProvider(AuthTestConfig::getAuth).build());
+      bootstrap
+            .addBundle(AuthBundle
+                  .builder()
+                  .withAuthConfigProvider(AuthTestConfig::getAuth)
+                  .withAnnotatedAuthorization()
+                  .build());
    }
 
    @Override

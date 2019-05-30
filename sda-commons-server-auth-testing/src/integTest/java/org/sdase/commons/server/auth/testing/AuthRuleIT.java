@@ -35,8 +35,35 @@ public class AuthRuleIT {
    @Test
    public void shouldAccessOpenEndPointWithoutToken() {
       Response response = createWebTarget()
+            .path("/open") // NOSONAR
+            .request(APPLICATION_JSON)
+            .get();
+
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+      assertThat(response.readEntity(String.class)).isEqualTo("We are open."); // NOSONAR
+   }
+
+   @Test
+   public void shouldAccessOpenEndPointWithInvalidToken() {
+      Response response = createWebTarget()
             .path("/open")
             .request(APPLICATION_JSON)
+            .header(AUTHORIZATION,
+                  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
+            .get();
+
+      // No token checking at this point
+
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+      assertThat(response.readEntity(String.class)).isEqualTo("We are open.");
+   }
+
+   @Test
+   public void shouldAccessOpenEndPointWithToken() {
+      Response response = createWebTarget()
+            .path("/open")
+            .request(APPLICATION_JSON)
+            .headers(AUTH.auth().buildAuthHeader())
             .get();
 
       assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);

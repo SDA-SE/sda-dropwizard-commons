@@ -18,6 +18,7 @@ They may be configured easily to
 
 - [require a Consumer token from clients](../sda-commons-server-consumer/README.md)
 - [allow cross origin resource sharing](../sda-commons-server-cors/README.md)
+- [use the Open Policy Agent for authorization](../sda-commons-server-auth/README.md)
 
 Using the [`SdaPlatformBundle`](./src/main/java/org/sdase/commons/server/starter/SdaPlatformBundle.java) is the easiest
 and fastest way to create a service for the SDA Platform.
@@ -92,4 +93,10 @@ cors:
 Instead of `.usingSdaPlatformConfiguration()`, the configuration may be fully customized using 
 `.usingCustomConfig(MyCustomConfiguration.class)` to support configurations that do not extend 
 [`SdaPlatformConfiguration`](./src/main/java/org/sdase/commons/server/starter/SdaPlatformConfiguration.java). This may 
-also be needed to disable some features of the starter module. 
+also be needed to disable some features of the starter module or add special features such as
+Authorization.
+
+Please note that `.withOpaAuthorization(MyConfiguration::getAuth, MyConfiguration::getOpa)`
+will configure the `AuthBundle` to use `.withExternalAuthorization()`. Please read the 
+[documentation of the Auth Bundle](../sda-commons-server-auth/README.md) carefully before
+using this option.

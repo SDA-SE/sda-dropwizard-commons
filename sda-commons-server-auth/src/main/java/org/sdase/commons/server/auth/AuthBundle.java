@@ -30,13 +30,15 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
    private static final Logger LOG = LoggerFactory.getLogger(AuthBundle.class);
 
    private AuthConfigProvider<T> configProvider;
+   private boolean useAnnotatedAuthorization;
 
    public static ProviderBuilder builder() {
       return new Builder();
    }
 
-   private AuthBundle(AuthConfigProvider<T> configProvider) {
+   private AuthBundle(AuthConfigProvider<T> configProvider, boolean useAnnotatedAuthorization) {
       this.configProvider = configProvider;
+      this.useAnnotatedAuthorization = useAnnotatedAuthorization;
    }
 
    @Override
@@ -61,10 +63,18 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
       JwtAuthenticator authenticator = new JwtAuthenticator(authRSA256Service, config.isDisableAuth());
 
       JwtAuthFilter<JwtPrincipal> authFilter = new JwtAuthFilter.Builder<JwtPrincipal>()
+            .setAcceptAnonymous(!useAnnotatedAuthorization)
             .setAuthenticator(authenticator)
             .buildAuthFilter();
 
-      environment.jersey().register(new AuthDynamicFeature(authFilter));
+      if (useAnnotatedAuthorization) {
+         // Use the AuthDynamicFeature to only affect endpoints that are
+         // annotated
+         environment.jersey().register(new AuthDynamicFeature(authFilter));
+      } else {
+         // Apply the filter for all calls
+         environment.jersey().register(authFilter);
+      }
 
       environment.jersey().register(JwtAuthExceptionMapper.class);
       environment.jersey().register(ForbiddenExceptionMapper.class);
@@ -89,16 +99,36 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
    //
 
    public interface ProviderBuilder {
-      <C extends Configuration> AuthBuilder<C> withAuthConfigProvider(AuthConfigProvider<C> authConfigProvider);
+      <C extends Configuration> AuthorizationBuilder<C> withAuthConfigProvider(
+            AuthConfigProvider<C> authConfigProvider);
+   }
+
+   public interface AuthorizationBuilder<C extends Configuration> {
+      /**
+       * Configures the bundle to require valid tokens for all endpoints that are annotated with {@code @PermitAll}.
+       *
+       * @return the builder
+       */
+      AuthBuilder<C> withAnnotatedAuthorization();
+
+      /**
+       * Configures the bundle to validate tokens but also permit requests without Authorization header. Authorization
+       * decisions need be made separately e.g. by the {@link org.sdase.commons.server.opa.OpaBundle}.
+       *
+       * @return the builder
+       */
+      AuthBuilder<C> withExternalAuthorization();
    }
 
    public interface AuthBuilder<C extends Configuration> {
       AuthBundle<C> build();
    }
 
-   public static class Builder<C extends Configuration> implements ProviderBuilder, AuthBuilder<C> {
+   public static class Builder<C extends Configuration>
+         implements ProviderBuilder, AuthorizationBuilder<C>, AuthBuilder<C> {
 
       private AuthConfigProvider<C> authConfigProvider;
+      private boolean useAnnotatedAuthorization = true;
 
       private Builder() {
       }
@@ -108,13 +138,25 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
       }
 
       @Override
-      public <T extends Configuration> AuthBuilder<T> withAuthConfigProvider(AuthConfigProvider<T> authConfigProvider) {
+      public <T extends Configuration> AuthorizationBuilder<T> withAuthConfigProvider(AuthConfigProvider<T> authConfigProvider) {
          return new Builder<>(authConfigProvider);
       }
 
       @Override
+      public AuthBuilder<C> withAnnotatedAuthorization() {
+         this.useAnnotatedAuthorization = true;
+         return this;
+      }
+
+      @Override
+      public AuthBuilder<C> withExternalAuthorization() {
+         this.useAnnotatedAuthorization = false;
+         return this;
+      }
+
+      @Override
       public AuthBundle<C> build() {
-         return new AuthBundle<>(authConfigProvider);
+         return new AuthBundle<>(authConfigProvider, useAnnotatedAuthorization);
       }
    }
 }

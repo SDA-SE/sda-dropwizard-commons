@@ -20,7 +20,8 @@ import java.util.Optional;
  * access a protected route or resource, the user agent should send the JWT,
  * typically in the Authorization header using the Bearer schema. The content of
  * the header should look like the following: Authorization: Bearer <token>
- * 
+ * If acceptAnonymous is true, the auth filter accepts non-existing tokens and
+ * skips the initial authorization.
  *
  * @param <P> The type of the principal.
  */
@@ -28,6 +29,8 @@ import java.util.Optional;
 public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<String>, P> {
 
    private static final String AUTHENTICATION_SCHEME_BEARER = "Bearer";
+
+   private boolean acceptAnonymous;
 
    private JwtAuthFilter() {
    }
@@ -37,7 +40,10 @@ public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<Stri
       final MultivaluedMap<String, String> headers = requestContext.getHeaders();
       final String jwt = extractAuthorizationToken(headers);
 
-      if (!authenticate(requestContext, Optional.ofNullable(jwt), SecurityContext.BASIC_AUTH)) {
+      // validates the token and throws exception if invalid or expired
+      boolean authenticated = authenticate(requestContext, Optional.ofNullable(jwt), SecurityContext.BASIC_AUTH);
+
+      if (!acceptAnonymous && !authenticated) {
          throw new JwtAuthException("Credentials are required to access this resource.");
       }
    }
@@ -55,9 +61,25 @@ public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<Stri
     */
    public static class Builder<P extends Principal> extends AuthFilterBuilder<Optional<String>, P, JwtAuthFilter<P>> {
 
+      private boolean acceptAnonymous;
+
       @Override
       protected JwtAuthFilter<P> newInstance() {
          return new JwtAuthFilter<>();
+      }
+
+      public Builder<P> setAcceptAnonymous(boolean acceptAnonymous) {
+         this.acceptAnonymous = acceptAnonymous;
+         return this;
+      }
+
+      @Override
+      public JwtAuthFilter<P> buildAuthFilter() {
+         JwtAuthFilter<P> jwtAuthFilter = super.buildAuthFilter();
+
+         jwtAuthFilter.acceptAnonymous = acceptAnonymous;
+
+         return jwtAuthFilter;
       }
    }
 

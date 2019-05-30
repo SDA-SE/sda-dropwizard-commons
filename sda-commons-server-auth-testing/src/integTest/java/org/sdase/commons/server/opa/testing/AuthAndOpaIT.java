@@ -1,15 +1,22 @@
 package org.sdase.commons.server.opa.testing;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.HttpHeaders.WWW_AUTHENTICATE;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import java.util.Map;
+
 import org.apache.http.HttpStatus;
 
 import org.junit.Before;
@@ -53,10 +60,24 @@ public class AuthAndOpaIT {
    }
 
    @Test
+   public void shouldNotAccessSimpleWithInvalidToken() {
+      OPA_RULE.mock(onRequest(method, path).allow());
+
+      Response response = getResources(
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer");
+      assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
+      assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
+          .containsKeys("title", "invalidParams");
+   }
+
+   @Test
    public void shouldAllowAccessSimple() {
       OPA_RULE.mock(onRequest(method, path).allow());
 
-      Response response = getResources();
+      Response response = getResources(true);
 
       assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
       PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
@@ -68,7 +89,7 @@ public class AuthAndOpaIT {
    public void shouldAllowAccessConstraints() {
       OPA_RULE.mock(onRequest(method, path).allow().withConstraint(new ConstraintModel().setFullAccess(true).addConstraint("customer_ids", "1")));
 
-      Response response = getResources();
+      Response response = getResources(true);
 
       assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
       PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
@@ -77,11 +98,41 @@ public class AuthAndOpaIT {
       assertThat(principalInfo.getConstraints().getConstraint()).contains(entry("customer_ids", newArrayList("1")));
    }
 
+   @Test
+   public void shouldAllowAccessWithoutTokenSimple() {
+      OPA_RULE.mock(onRequest(method, path).allow());
 
+      Response response = getResources(false);
 
-   private Response getResources() {
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      assertThat(principalInfo.getJwt()).isNull();
+      assertThat(principalInfo.getConstraints()).isNull();
+   }
+
+   @Test
+   public void shouldAllowAccessWithoutTokenConstraints() {
+      OPA_RULE.mock(onRequest(method, path).allow().withConstraint(new ConstraintModel().setFullAccess(true).addConstraint("customer_ids", "1")));
+
+      Response response = getResources(false);
+
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      assertThat(principalInfo.getJwt()).isNull();
+      assertThat(principalInfo.getConstraints().isFullAccess()).isTrue();
+      assertThat(principalInfo.getConstraints().getConstraint()).contains(entry("customer_ids", newArrayList("1")));
+   }
+
+   private Response getResources(boolean withJwt) {
+      return getResources(withJwt ? jwt : null);
+   }
+
+   private Response getResources(String jwt) {
       MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
-      headers.put(HttpHeaders.AUTHORIZATION, newArrayList("Bearer " + jwt));
+      if (jwt != null) {
+         headers.put(HttpHeaders.AUTHORIZATION, newArrayList("Bearer " + jwt));
+      }
+
       return DW
             .getRule()
             .client()

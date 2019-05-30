@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle.ConsumerTokenConfigProvider;
 import org.sdase.commons.server.cors.CorsConfigProvider;
+import org.sdase.commons.server.opa.config.OpaConfigProvider;
 
 /**
  * Container for builder interfaces required for custom configuration classes. They are all in one place in the order
@@ -22,11 +23,27 @@ public interface CustomConfigurationProviders {
       CorsConfigProviderBuilder<C> withoutAuthentication();
 
       /**
+       * Enables authentication (i.e. token validation) for annotated endpoints and requires tokens
+       *
        * @param authConfigProvider a provider, for the {@link org.sdase.commons.server.auth.config.AuthConfig}, e.g.
        *                           {@code MyAppConfig::getAuth}
        * @return the builder instance
        */
       CorsConfigProviderBuilder<C> withAuthConfigProvider(AuthConfigProvider<C> authConfigProvider);
+
+       /**
+        * Enables authentication (i.e. token validation) for all endpoints and use the
+        * {@link org.sdase.commons.server.opa.OpaBundle} to authorize the requests.  Requests without Authorization
+        * header will <i>not</i> be rejected but need to be handled in the Authorization policy.
+        *
+        * @param authConfigProvider a provider, for the {@link org.sdase.commons.server.auth.config.AuthConfig}, e.g.
+        *                           {@code MyAppConfig::getAuth}
+        * @param opaConfigProvider a provider, for the {@link org.sdase.commons.server.opa.config.OpaConfig}, e.g.
+        *                          {@code MyAppConfig::getOpa}
+        * @return the builder instance
+        */
+       CorsConfigProviderBuilder<C> withOpaAuthorization(
+           AuthConfigProvider<C> authConfigProvider, OpaConfigProvider<C> opaConfigProvider);
    }
 
    interface CorsConfigProviderBuilder<C extends Configuration> {

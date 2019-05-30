@@ -19,6 +19,9 @@ import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBund
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
+import org.sdase.commons.server.opa.OpaBundle;
+import org.sdase.commons.server.opa.OpaBundle.OpaBuilder;
+import org.sdase.commons.server.opa.config.OpaConfigProvider;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.server.security.SecurityBundle;
 import org.sdase.commons.server.starter.builder.CustomConfigurationProviders.AuthConfigProviderBuilder;
@@ -47,6 +50,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
    private SecurityBundle.Builder securityBundleBuilder;
    private JacksonConfigurationBundle.Builder jacksonConfigurationBundleBuilder;
    private AuthBundle.AuthBuilder<C> authBundleBuilder;
+   private OpaBuilder<C> opaBundleBuilder;
    private CorsBundle.FinalBuilder<C> corsBundleBuilder;
    private ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder;
    private SwaggerBundle.FinalBuilder swaggerBundleBuilder;
@@ -55,12 +59,14 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
          SecurityBundle.Builder securityBundleBuilder,
          JacksonConfigurationBundle.Builder jacksonConfigurationBundleBuilder,
          AuthBundle.AuthBuilder<C> authBundleBuilder,
+         OpaBundle.OpaBuilder<C> opaBundleBuilder,
          CorsBundle.FinalBuilder<C> corsBundleBuilder,
          ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder,
          SwaggerBundle.FinalBuilder swaggerBundleBuilder) {
       this.securityBundleBuilder = securityBundleBuilder;
       this.jacksonConfigurationBundleBuilder = jacksonConfigurationBundleBuilder;
       this.authBundleBuilder = authBundleBuilder;
+      this.opaBundleBuilder = opaBundleBuilder;
       this.corsBundleBuilder = corsBundleBuilder;
       this.consumerTokenBundleBuilder = consumerTokenBundleBuilder;
       this.swaggerBundleBuilder = swaggerBundleBuilder;
@@ -88,6 +94,9 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
       if (authBundleBuilder != null) {
          configuredBundles.add(authBundleBuilder.build());
       }
+      if (opaBundleBuilder != null) {
+         configuredBundles.add(opaBundleBuilder.build());
+      }
       if (corsBundleBuilder != null) {
          configuredBundles.add(corsBundleBuilder.build());
       }
@@ -114,6 +123,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
          PlatformBundleBuilder<C> {
 
       private AuthBundle.AuthBuilder<C> authBundleBuilder;
+      private OpaBundle.OpaBuilder<C> opaBundleBuilder;
       private ConsumerTokenConfig consumerTokenConfig;
       private ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder;
       private SecurityBundle.Builder securityBundleBuilder = SecurityBundle.builder();
@@ -137,6 +147,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
                securityBundleBuilder,
                jacksonBundleBuilder,
                authBundleBuilder,
+               opaBundleBuilder,
                corsBundleBuilder,
                consumerTokenBundleBuilder,
                createSwaggerBundleBuilder());
@@ -167,7 +178,15 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
       @Override
       public CorsConfigProviderBuilder<C> withAuthConfigProvider(AuthConfigProvider<C> authConfigProvider) {
-         this.authBundleBuilder = AuthBundle.builder().withAuthConfigProvider(authConfigProvider);
+         this.authBundleBuilder = AuthBundle.builder().withAuthConfigProvider(authConfigProvider).withAnnotatedAuthorization();
+         return this;
+      }
+
+      @Override
+      public CorsConfigProviderBuilder<C> withOpaAuthorization(
+          AuthConfigProvider<C> authConfigProvider, OpaConfigProvider<C> opaConfigProvider) {
+         this.authBundleBuilder = AuthBundle.builder().withAuthConfigProvider(authConfigProvider).withExternalAuthorization();
+         this.opaBundleBuilder = OpaBundle.builder().withOpaConfigProvider(opaConfigProvider);
          return this;
       }
 
