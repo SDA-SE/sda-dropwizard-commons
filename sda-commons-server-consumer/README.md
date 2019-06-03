@@ -21,9 +21,9 @@ to the Dropwizard application:
 ```java
 public class MyApplication extends Application<MyConfiguration> {
    
-    public static void main(final String[] args) {
-        new MyApplication().run(args);
-    }
+   public static void main(final String[] args) {
+      new MyApplication().run(args);
+   }
 
    @Override
    public void initialize(Bootstrap<MyConfiguration> bootstrap) {

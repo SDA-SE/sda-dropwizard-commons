@@ -1,0 +1,11 @@
+dependencies {
+    compile project(':sda-commons-server-dropwizard')
+
+    compile 'org.javassist:javassist:' + javaassistVersion
+    compile 'io.github.resilience4j:resilience4j-circuitbreaker:' + resilience4jVersion
+    compile 'io.github.resilience4j:resilience4j-prometheus:' + resilience4jVersion
+
+    testCompile project(':sda-commons-server-prometheus')
+    testCompile project(':sda-commons-server-testing')
+    testCompile project(':sda-commons-client-jersey-wiremock-testing')
+}

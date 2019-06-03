@@ -1,0 +1,11 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+  rootPath: /api/*
+
+circuitBreaker:
+  failureRateThreshold: 51.0

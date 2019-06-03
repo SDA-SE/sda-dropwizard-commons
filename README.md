@@ -74,6 +74,14 @@ using JSON Web Tokens with different sources for the public keys of the signing 
 Status:
 - Ready to use
 
+##### Circuit Breaker
+
+The module [`sda-commons-server-circuitbreaker`](./sda-commons-server-circuitbreaker/README.md) provides support to 
+inject circuit breakers into synchronous calls to other services.
+
+Status:
+- Ready to use
+
 ##### Consumer Token
 
 The module [`sda-commons-server-consumer`](./sda-commons-server-consumer/README.md) adds support to track or require a 
