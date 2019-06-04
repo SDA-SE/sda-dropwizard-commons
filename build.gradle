@@ -99,7 +99,7 @@ subprojects {
         snappyVersion              = '1.1.7.1'
         confluentVersion           = '4.1.2'
         jacksonVersion             = '2.9.9'
-        morphiaVersion             = '1.5.2'
+        morphiaVersion             = '1.5.3'
     }
 
     configurations.all {
