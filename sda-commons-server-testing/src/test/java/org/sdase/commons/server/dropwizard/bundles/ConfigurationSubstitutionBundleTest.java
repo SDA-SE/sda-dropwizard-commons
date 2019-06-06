@@ -12,7 +12,9 @@ import org.junit.Test;
 public class ConfigurationSubstitutionBundleTest {
 
    @ClassRule
-   public static final EnvironmentRule ENV = new EnvironmentRule().setEnv("envReplaced", "valueFromEnv");
+   public static final EnvironmentRule ENV = new EnvironmentRule()
+         .setEnv("ENV_REPLACEMENT", "valueFromEnv")
+         .setEnv("EXAMPLE_SUFFIX", "hello");
 
    @ClassRule
    public static final DropwizardAppRule<DropwizardConfig> DW = new DropwizardAppRule<>(
@@ -35,6 +37,16 @@ public class ConfigurationSubstitutionBundleTest {
 
    @Test
    public void shouldKeepPlaceholderIfNoEnvAndNoDefault() {
-      Assertions.assertThat(DW.getConfiguration().getEnvMissing()).isEqualTo("${envMissing}");
+      Assertions.assertThat(DW.getConfiguration().getEnvMissing()).isEqualTo("${ENV_MISSING}");
+   }
+
+   @Test
+   public void conditionalConfig(){
+      Assertions.assertThat(DW.getConfiguration().getOptionalConfig()).isNotNull();
+   }
+
+   @Test
+   public void shouldSupportNestedVariables() {
+      Assertions.assertThat(DW.getConfiguration().getExample()).startsWith("bar-").isEqualTo("bar-hello");
    }
 }

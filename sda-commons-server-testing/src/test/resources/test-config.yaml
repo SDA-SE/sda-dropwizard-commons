@@ -1,7 +1,7 @@
-envReplaced: ${envReplaced}
-envDefault: ${envDefault:-DEFAULT}
-envWithDefaultReplaced: ${envReplaced:-DEFAULT}
-envMissing: ${envMissing}
+envReplaced: ${ENV_REPLACEMENT}
+envDefault: ${ENV_DEFAULT:-DEFAULT}
+envWithDefaultReplaced: ${ENV_REPLACEMENT:-DEFAULT}
+envMissing: ${ENV_MISSING}
 
 server:
   applicationConnectors:
@@ -10,3 +10,9 @@ server:
   adminConnectors:
   - type: http
     port: 0
+
+optionalConfig: ${OPTIONAL_CONFIG:-
+  property1: ${PROPERTY_ONE}
+  property2: ${PROPERTY_TWO:-default} }
+
+example: ${FOO_NAME:-bar-${EXAMPLE_SUFFIX}}

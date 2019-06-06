@@ -21,6 +21,14 @@ import io.dropwizard.setup.Environment;
  *      rootPath: ${ROOT_PATH:/api/*}
  *    }
  * </pre>
+ * <p>
+ *    Nested placeholders are supported:
+ * </p>
+ * <pre>
+ *    {@code
+ *    example: ${EXAMPLE_VALUE:-bar-${EXAMPLE_SUFFIX}}
+ *    }
+ * </pre>
  */
 public class ConfigurationSubstitutionBundle implements Bundle {
 
@@ -31,7 +39,7 @@ public class ConfigurationSubstitutionBundle implements Bundle {
    @Override
    public void initialize(Bootstrap<?> bootstrap) {
       bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
-            bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
+            bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false, true)));
    }
 
    @Override
