@@ -26,7 +26,7 @@ pipeline {
     stage('Build jar') {
       agent {
         docker {
-          image 'quay.io/sdase/openjdk:8u191-alpine-3.8'
+          image 'quay.io/sdase/openjdk-development:8.212-hotspot'
         }
       }
       steps {
@@ -41,7 +41,7 @@ pipeline {
         stage('Module test jar (Java 8)') {
           agent {
             docker {
-              image 'quay.io/sdase/openjdk:8u191-bionic'
+              image 'quay.io/sdase/openjdk-development:8.212-hotspot'
             }
           }
           steps {
@@ -64,7 +64,7 @@ pipeline {
         stage('Integration test service (Java 8)') {
           agent {
             docker {
-              image 'quay.io/sdase/openjdk:8u191-bionic'
+              image 'quay.io/sdase/openjdk-development:8.212-hotspot'
             }
           }
           steps {
@@ -87,7 +87,7 @@ pipeline {
         stage('Module test jar (Java 11)') {
           agent {
             docker {
-              image 'openjdk:11-jdk-slim'
+              image 'quay.io/sdase/openjdk-development:11.0-hotspot'
             }
           }
           steps {
@@ -110,7 +110,7 @@ pipeline {
         stage('Integration test service (Java 11)') {
           agent {
             docker {
-              image 'openjdk:11-jdk-slim'
+              image 'quay.io/sdase/openjdk-development:11.0-hotspot'
             }
           }
           steps {
@@ -176,7 +176,7 @@ pipeline {
       }
       agent {
         docker {
-          image 'quay.io/sdase/openjdk:8u191-alpine-3.8'
+          image 'quay.io/sdase/openjdk-development:8.212-hotspot'
         }
       }
       steps {
@@ -197,7 +197,7 @@ pipeline {
       }
       agent {
         docker {
-          image 'quay.io/sdase/openjdk:8u191-alpine-3.8'
+          image 'quay.io/sdase/openjdk-development:8.212-hotspot'
         }
       }
       steps {
