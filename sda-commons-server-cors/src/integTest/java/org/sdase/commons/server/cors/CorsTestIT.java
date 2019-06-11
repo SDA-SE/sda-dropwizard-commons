@@ -3,7 +3,6 @@ package org.sdase.commons.server.cors;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.cors.test.CorsAllowTestApp;
@@ -39,12 +38,6 @@ public class CorsTestIT {
    private String allowAllEndpoint = "http://localhost:" + DW_ALLOW.getLocalPort() + "/samples/empty";
    private String denyEndpoint = "http://localhost:" + DW_DENY.getLocalPort() + "/samples/empty";
    private String restrictedEndpoint = "http://localhost:" + DW_RESTRICTED.getLocalPort() + "/samples/empty";
-
-   @BeforeClass
-   public static void setup() {
-      // allow to set headers in jersey client
-      System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
-   }
 
    @Test
    public void shouldNotSetHeaderWhenDeny() {

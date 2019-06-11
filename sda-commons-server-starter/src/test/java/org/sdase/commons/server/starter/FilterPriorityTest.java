@@ -6,7 +6,6 @@ import static org.eclipse.jetty.http.HttpStatus.OK_200;
 import static org.sdase.commons.server.testing.DropwizardRuleHelper.dropwizardTestAppFrom;
 
 import javax.ws.rs.core.Response;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.starter.test.StarterApp;
@@ -21,12 +20,6 @@ public class FilterPriorityTest {
          .withRandomPorts()
          .withRootPath("/api/*")
          .build();
-
-   @BeforeClass
-   public static void setup() {
-      // allow to set headers in jersey client
-      System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
-   }
 
    @Test
    public void corsFromSwaggerHasHigherPriority() {

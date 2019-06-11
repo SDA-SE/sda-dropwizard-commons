@@ -39,3 +39,8 @@ dependencies {
         exclude group: 'javax.activation', module: 'activation'
     }
 }
+
+integrationTest {
+    // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
+    systemProperty "sun.net.http.allowRestrictedHeaders", "true"
+}

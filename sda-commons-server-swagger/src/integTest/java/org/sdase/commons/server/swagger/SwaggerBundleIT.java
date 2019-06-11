@@ -12,7 +12,6 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.swagger.test.SwaggerAssertions;
@@ -42,12 +41,6 @@ public class SwaggerBundleIT {
 
    private static String getTarget() {
       return "http://localhost:" + DW.getLocalPort();
-   }
-
-   @BeforeClass
-   public static void setup() {
-      // allow to set headers in jersey client
-      System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
    }
 
    @Test

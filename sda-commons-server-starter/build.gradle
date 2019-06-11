@@ -12,3 +12,8 @@ dependencies {
 
     testCompile project(':sda-commons-server-testing')
 }
+
+test {
+    // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
+    systemProperty "sun.net.http.allowRestrictedHeaders", "true"
+}
