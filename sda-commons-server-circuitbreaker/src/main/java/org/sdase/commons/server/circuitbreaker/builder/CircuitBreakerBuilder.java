@@ -8,8 +8,8 @@ import org.sdase.commons.server.circuitbreaker.CircuitBreakerConfiguration;
 import org.sdase.commons.server.circuitbreaker.CircuitBreakerConfigurationProvider;
 import org.sdase.commons.server.circuitbreaker.CircuitBreakerWrapperHelper;
 
-public class CircuitBreakerBuilder<T extends Configuration> implements CircuitBreakerConfigurationBuilder<T>,
-      CircuitBreakerExceptionBuilder<T>, CircuitBreakerFinalBuilder {
+public class CircuitBreakerBuilder<T extends Configuration>
+      implements CircuitBreakerConfigurationBuilder<T>, CircuitBreakerExceptionBuilder<T>, CircuitBreakerFinalBuilder {
 
    private final String name;
    private final CircuitBreakerRegistry registry;
@@ -67,19 +67,18 @@ public class CircuitBreakerBuilder<T extends Configuration> implements CircuitBr
    }
 
    private CircuitBreakerConfig createCircuitBreakerConfig() {
+      CircuitBreakerConfig.Builder builder = CircuitBreakerConfig.from(registry.getDefaultConfig());
+
       if (configurationProvider != null) {
          CircuitBreakerConfiguration circuitBreakerConfiguration = configurationProvider.apply(configuration);
-         return CircuitBreakerConfig
+         builder = CircuitBreakerConfig
                .custom()
                .enableAutomaticTransitionFromOpenToHalfOpen()
                .failureRateThreshold(circuitBreakerConfiguration.getFailureRateThreshold())
                .ringBufferSizeInClosedState(circuitBreakerConfiguration.getRingBufferSizeInClosedState())
                .ringBufferSizeInHalfOpenState(circuitBreakerConfiguration.getRingBufferSizeInHalfOpenState())
-               .waitDurationInOpenState(circuitBreakerConfiguration.getWaitDurationInOpenState())
-               .recordExceptions(recordedErrorClasses)
-               .ignoreExceptions(ignoredErrorClasses)
-               .build();
+               .waitDurationInOpenState(circuitBreakerConfiguration.getWaitDurationInOpenState());
       }
-      return registry.getDefaultConfig();
+      return builder.recordExceptions(recordedErrorClasses).ignoreExceptions(ignoredErrorClasses).build();
    }
 }

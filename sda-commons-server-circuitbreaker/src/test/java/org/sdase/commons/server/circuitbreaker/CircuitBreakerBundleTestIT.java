@@ -7,8 +7,11 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.circuitbreaker.event.CircuitBreakerOnIgnoredErrorEvent;
 import java.time.Duration;
 import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -78,6 +81,29 @@ public class CircuitBreakerBundleTestIT {
                   CircuitBreakerConfig::getWaitDurationInOpenState)
             .containsExactly(75.0f, 50, 5, Duration.of(30, SECONDS));
       assertThat(circuitBreaker.getCircuitBreakerConfig().isAutomaticTransitionFromOpenToHalfOpenEnabled()).isTrue();
+   }
+
+   @Test
+   public void shouldApplyIgnoredExceptions() {
+      TestApp app = DW.getRule().getApplication();
+      CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
+      CircuitBreaker circuitBreaker = circuitBreakerBundle
+            .createCircuitBreaker("default")
+            .withDefaultConfig()
+            .ignoreExceptions(IllegalStateException.class)
+            .build();
+      List<CircuitBreakerOnIgnoredErrorEvent> ignoredErrors = new ArrayList<>();
+      circuitBreaker.getEventPublisher().onIgnoredError(ignoredErrors::add);
+
+      try {
+         circuitBreaker.executeSupplier(() -> {
+            throw new IllegalStateException();
+         });
+      } catch (Exception ex) {
+         // Handle exception
+      }
+
+      assertThat(ignoredErrors).isNotEmpty();
    }
 
    @Test
