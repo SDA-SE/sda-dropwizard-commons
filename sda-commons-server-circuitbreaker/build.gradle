@@ -4,6 +4,7 @@ dependencies {
     compile 'org.javassist:javassist:' + javaassistVersion
     compile 'io.github.resilience4j:resilience4j-circuitbreaker:' + resilience4jVersion
     compile 'io.github.resilience4j:resilience4j-prometheus:' + resilience4jVersion
+    compile 'org.objenesis:objenesis:2.6' // not 3.x because we have a version conflict with Mockito
 
     testCompile project(':sda-commons-server-prometheus')
     testCompile project(':sda-commons-server-testing')

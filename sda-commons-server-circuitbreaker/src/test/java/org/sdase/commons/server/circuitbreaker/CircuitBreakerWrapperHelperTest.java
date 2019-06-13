@@ -19,7 +19,7 @@ public class CircuitBreakerWrapperHelperTest {
 
       Simple wrapped = CircuitBreakerWrapperHelper.wrapWithCircuitBreaker(target, circuitBreaker);
 
-      wrapped.check();
+      assertThat(wrapped.check()).isEqualTo(42);
 
       assertThat(circuitBreaker.getMetrics().getNumberOfSuccessfulCalls()).isEqualTo(1);
    }
@@ -33,7 +33,19 @@ public class CircuitBreakerWrapperHelperTest {
 
       Complex wrapped = CircuitBreakerWrapperHelper.wrapWithCircuitBreaker(target, circuitBreaker);
 
-      wrapped.check();
+      assertThat(wrapped.check()).isEqualTo(42);
+
+      assertThat(circuitBreaker.getMetrics().getNumberOfSuccessfulCalls()).isEqualTo(1);
+   }
+
+   @Test
+   public void shouldWrapClassWithoutDefaultConstructorAndWithoutInterface() {
+      CircuitBreaker circuitBreaker = CircuitBreakerRegistry.ofDefaults().circuitBreaker("wrap");
+      NoDefaultConstructor target = new NoDefaultConstructor(42);
+
+      NoDefaultConstructor wrapped = CircuitBreakerWrapperHelper.wrapWithCircuitBreaker(target, circuitBreaker);
+
+      assertThat(wrapped.check()).isEqualTo(42);
 
       assertThat(circuitBreaker.getMetrics().getNumberOfSuccessfulCalls()).isEqualTo(1);
    }
@@ -47,7 +59,7 @@ public class CircuitBreakerWrapperHelperTest {
 
       Simple wrapped = CircuitBreakerWrapperHelper.wrapWithCircuitBreaker(target, circuitBreaker);
 
-      wrapped.check();
+      assertThat(wrapped.check()).isEqualTo(42);
 
       assertThat(circuitBreaker.getMetrics().getNumberOfSuccessfulCalls()).isEqualTo(1);
    }
@@ -69,7 +81,7 @@ public class CircuitBreakerWrapperHelperTest {
 
       Simple wrapped = CircuitBreakerWrapperHelper.wrapWithCircuitBreaker(target, circuitBreaker);
 
-      wrapped.check();
+      assertThat(wrapped.check()).isEqualTo(42);
 
       assertThat(circuitBreaker.getMetrics().getNumberOfSuccessfulCalls()).isEqualTo(1);
    }
@@ -107,6 +119,19 @@ public class CircuitBreakerWrapperHelperTest {
       private final int value;
 
       public ComplexImpl(int value) {
+         this.value = value;
+      }
+
+      public int check() {
+         return value;
+      }
+   }
+
+   static class NoDefaultConstructor {
+
+      private final int value;
+
+      public NoDefaultConstructor(int value) {
          this.value = value;
       }
 
