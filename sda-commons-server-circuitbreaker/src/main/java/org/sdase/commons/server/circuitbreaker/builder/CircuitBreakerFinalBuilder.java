@@ -13,10 +13,9 @@ public interface CircuitBreakerFinalBuilder {
 
    /**
     * Wrap target with a circuit breaker
-    * 
+    *
     * @param target
-    *           The target to wrap. Make sure that the target either has a
-    *           default constructor, or use an interface.
+    *           The target to wrap. Final classes have to implement an interface.
     * @param <U>
     *           The type of the target
     * @return A proxy object that passes all calls to target, but wraps them in

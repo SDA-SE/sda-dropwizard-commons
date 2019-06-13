@@ -33,8 +33,8 @@ public class CircuitBreakerWrapperHelper {
     * Wraps all calls on target using a circuit breaker.
     *
     * @param target
-    *           The target to wrap. Either a class, or a final class that
-    *           implements an interface (e.g. a Jersey client proxy).
+    *           The target to wrap. Final classes have to implement an interface.
+    *           (e.g. a Jersey client proxy).
     * @param circuitBreaker
     *           The circuit breaker to use.
     * @param <T>
