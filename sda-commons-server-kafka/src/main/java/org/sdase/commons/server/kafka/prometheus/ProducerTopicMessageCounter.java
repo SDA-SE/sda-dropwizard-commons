@@ -2,7 +2,6 @@ package org.sdase.commons.server.kafka.prometheus;
 
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
-import io.prometheus.client.Histogram;
 
 /**
  * The central definition of the response duration histogram. This is the
@@ -24,8 +23,7 @@ public class ProducerTopicMessageCounter {
    /**
     * The labels added by {@code RequestDurationHistogram}. The labels and their
     * order have to be aligned with the values created in
-    * {@link #createLabelValuesForCurrentRequest(ResourceInfo,
-    * ContainerRequestContext, ContainerRespons eContext)}
+    * {@link #createLabelValuesForCurrentRequest(String, String)}
     */
    private static final String[] LABELS = {
          // the name of the client handling the message
@@ -55,7 +53,7 @@ public class ProducerTopicMessageCounter {
    /**
     * Increases the counter by 1.
     * 
-    * @see {@link io.prometheus.client.Counter.Child#inc}
+    * @see io.prometheus.client.Counter.Child#inc
     */
    public void increase(String producerName, String topicName) {
       String[] labelValues = createLabelValuesForCurrentRequest(producerName, topicName);
@@ -66,9 +64,9 @@ public class ProducerTopicMessageCounter {
     * Creates all values for the labels required by the counter in appropriate
     * order.
     * 
-    * @param producerName
-    * @param topicName
-    * @return
+    * @param producerName producer name
+    * @param topicName topic name
+    * @return array of labels
     */
    @SuppressWarnings("static-method")
    private String[] createLabelValuesForCurrentRequest(String producerName, String topicName) {
@@ -78,9 +76,9 @@ public class ProducerTopicMessageCounter {
    }
 
    /**
-    * Builds the {@link Histogram} to measure request duration and registers it.
+    * Builds the {@link Counter} to measure the number of messages.
     *
-    * @return the registered {@link Histogram}
+    * @return the registered {@link Counter}
     */
    @SuppressWarnings("static-method")
    private Counter createAndRegister() {
