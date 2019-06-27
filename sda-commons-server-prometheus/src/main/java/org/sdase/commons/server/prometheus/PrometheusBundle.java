@@ -1,6 +1,15 @@
 package org.sdase.commons.server.prometheus;
 
+import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
+import org.sdase.commons.server.prometheus.mapping.DropwizardSampleBuilder;
+import org.sdase.commons.server.prometheus.mapping.MapperConfig;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
 import io.dropwizard.Bundle;
@@ -63,17 +72,79 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
 
       // init Histogram at startup
       requestDurationHistogramSpecification = new RequestDurationHistogramSpecification();
+      initializeDropwizardMetricsBridge(environment);
 
-      // Bridge all metrics
-      DropwizardExports dropwizardExports = new DropwizardExports(environment.metrics());
+   }
+
+   private void initializeDropwizardMetricsBridge(Environment environment) {
+      // Create a custom mapper to convert the Graphite style Dropwizard metrics
+      // to Prometheus metrics.
+      List<MapperConfig> mappers = createMetricsMapperConfigs();
+
+      SampleBuilder sampleBuilder = new DropwizardSampleBuilder(mappers);
+      DropwizardExports dropwizardExports = new DropwizardExports(environment.metrics(), sampleBuilder);
       CollectorRegistry.defaultRegistry.register(dropwizardExports);
 
       environment.lifecycle().manage(onShutdown(() -> {
-            requestDurationHistogramSpecification.unregister();
-            CollectorRegistry.defaultRegistry.unregister(dropwizardExports);
-         })
-      );
+         requestDurationHistogramSpecification.unregister();
+         CollectorRegistry.defaultRegistry.unregister(dropwizardExports);
+      }));
+   }
 
+   private List<MapperConfig> createMetricsMapperConfigs() {
+      List<MapperConfig> mappers = new ArrayList<>();
+      mappers.add(createMapperConfig("ch.qos.logback.core.*.*", "logback_appender", "name", "level"));
+      mappers.add(createMapperConfig("jvm.gc.*.count", "jvm_gc_total", "step"));
+      mappers.add(createMapperConfig("jvm.gc.*.time", "jvm_gc_seconds", "step"));
+      mappers.add(createMapperConfig("jvm.memory.pools.*.committed", "jvm_memory_pools_committed_bytes", "pool"));
+      mappers.add(createMapperConfig("jvm.memory.pools.*.init", "jvm_memory_pools_init_bytes", "pool"));
+      mappers.add(createMapperConfig("jvm.memory.pools.*.max", "jvm_memory_pools_max_bytes", "pool"));
+      mappers.add(createMapperConfig("jvm.memory.pools.*.used", "jvm_memory_pools_used_bytes", "pool"));
+      mappers.add(createMapperConfig("jvm.memory.pools.*.usage", "jvm_memory_pools_usage_ratio", "pool"));
+      mappers.add(createMapperConfig("jvm.memory.pools.*.used-after-gc", "jvm_memory_pools_used_after_gc_bytes", "pool"));
+      mappers.add(createMapperConfig("org.apache.http.conn.*.*.available-connections", "apache_http_client_connections", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("state", "available"))); // NOSONAR
+      mappers.add(createMapperConfig("org.apache.http.conn.*.*.leased-connections", "apache_http_client_connections", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("state", "leased")));
+      mappers.add(createMapperConfig("org.apache.http.conn.*.*.max-connections", "apache_http_client_connections", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("state", "max")));
+      mappers.add(createMapperConfig("org.apache.http.conn.*.*.pending-connections", "apache_http_client_connections", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("state", "pending")));
+      mappers.add(createMapperConfig("org.apache.http.client.*.*.get-requests", "apache_http_client_request_duration_seconds", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("method", "get"))); // NOSONAR
+      mappers.add(createMapperConfig("org.apache.http.client.*.*.post-requests", "apache_http_client_request_duration_seconds", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("method", "post")));
+      mappers.add(createMapperConfig("org.apache.http.client.*.*.put-requests", "apache_http_client_request_duration_seconds", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("method", "put")));
+      mappers.add(createMapperConfig("org.apache.http.client.*.*.delete-requests", "apache_http_client_request_duration_seconds", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("method", "delete")));
+      mappers.add(createMapperConfig("org.apache.http.client.*.*.head-requests", "apache_http_client_request_duration_seconds", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("method", "head")));
+      mappers.add(createMapperConfig("org.apache.http.client.*.*.connect-requests", "apache_http_client_request_duration_seconds", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("method", "connect")));
+      mappers.add(createMapperConfig("org.apache.http.client.*.*.options-requests", "apache_http_client_request_duration_seconds", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("method", "options")));
+      mappers.add(createMapperConfig("org.apache.http.client.*.*.trace-requests", "apache_http_client_request_duration_seconds", "manager", "name", new AbstractMap.SimpleImmutableEntry<>("method", "trace")));
+      mappers.add(createMapperConfig("org.eclipse.jetty.server.*.*.connections", "jetty_connections", "factory", "port"));
+      mappers.add(createMapperConfig("org.eclipse.jetty.util.thread.*.*.jobs", "jetty_util_thread_jobs_count", "type", "pool"));
+      mappers.add(createMapperConfig("org.eclipse.jetty.util.thread.*.*.size", "jetty_util_thread_size_count", "type", "pool"));
+      mappers.add(createMapperConfig("org.eclipse.jetty.util.thread.*.*.utilization", "jetty_util_thread_utilization_ratio", "type", "pool"));
+      mappers.add(createMapperConfig("org.eclipse.jetty.util.thread.*.*.utilization-max", "jetty_util_thread_max_utilization_ratio", "type", "pool"));
+      mappers.add(createMapperConfig("io.dropwizard.jetty.*.active-dispatches", "jetty_handler_active_dispatches_total", "handler")); // NOSONAR
+      mappers.add(createMapperConfig("io.dropwizard.jetty.*.active-requests", "jetty_handler_active_requests_total", "handler"));
+      mappers.add(createMapperConfig("io.dropwizard.jetty.*.active-suspended", "jetty_handler_active_suspended_total", "handler"));
+      mappers.add(createMapperConfig("io.dropwizard.jetty.*.async-dispatches", "jetty_handler_async_dispatches", "handler"));
+      mappers.add(createMapperConfig("io.dropwizard.jetty.*.async-timeouts", "jetty_handler_async_timeouts", "handler"));
+      return mappers;
+   }
+
+   private MapperConfig createMapperConfig(String match, String name, Object... labelNames) {
+      MapperConfig config = new MapperConfig();
+      config.setMatch(match);
+      config.setName(name);
+      Map<String, String> labels = new HashMap<>();
+      for (int i = 0; i < labelNames.length; ++i) {
+         Object labelName = labelNames[i];
+
+         if (labelName instanceof AbstractMap.Entry) {
+            AbstractMap.Entry pair = (Entry) labelName;
+            labels.put(pair.getKey().toString(), pair.getValue().toString());
+         } else {
+            labels.put(labelName.toString(), "${" + i + "}");
+         }
+
+      }
+      config.setLabels(labels);
+      return config;
    }
 
    @Override
