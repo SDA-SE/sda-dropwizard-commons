@@ -9,14 +9,15 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaTimeoutIT {
 
@@ -31,15 +32,11 @@ public class OpaTimeoutIT {
                .withConfigurationModifier(c -> c.getOpa().setReadTimeout(100))
                .build());
 
-   @ClassRule
-   public static final RuleChain chain = RuleChain.outerRule(WIRE).around(DW);
-
-   @BeforeClass
-   public static void start() {
-      WIRE.start();
-   }
+   @Rule
+   public final RuleChain chain = RuleChain.outerRule(new RetryRule()).around(WIRE).around(DW);
 
    @Test
+   @Retry(5)
    public void shouldDenyAccess() {
       WIRE.stubFor(post("/v1/data/my/policy")
           .willReturn(aResponse()
@@ -65,8 +62,8 @@ public class OpaTimeoutIT {
       assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
    }
 
-
    @Test
+   @Retry(5)
    public void shouldGrantAccess() {
       WIRE.stubFor(post("/v1/data/my/policy")
           .willReturn(aResponse()
