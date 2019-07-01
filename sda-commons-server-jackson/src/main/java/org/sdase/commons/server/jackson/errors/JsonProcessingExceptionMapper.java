@@ -19,30 +19,31 @@ import java.util.stream.Collectors;
 @Provider
 public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProcessingException> {
 
-   private static final String ERROR_MESSAGE = "Failed to process json. Exception '%s'; Location 'line: %s, column: %s'";
-   private static final String ERROR_MESSAGE_W_FIELD = "Failed to process json. Exception '%s'; Location 'line: %s, column: %s'; FieldName '%s'";
    private static final Logger LOGGER = LoggerFactory.getLogger(JsonProcessingExceptionMapper.class);
 
    @Override
    public Response toResponse(JsonProcessingException exception) {
-      String message;
-      if (exception instanceof JsonMappingException) {
-         message = String.format(ERROR_MESSAGE_W_FIELD, exception.getClass(),
-               exception.getLocation().getLineNr(),
-               exception.getLocation().getColumnNr(),
-               ((JsonMappingException)exception).getPath().stream()
-                     .map(JsonMappingException.Reference::getFieldName)
-                     .collect(Collectors.joining(".")));
-      } else {
-         message = String.format(ERROR_MESSAGE, exception.getClass(),
-               exception.getLocation().getLineNr(),
-               exception.getLocation().getColumnNr());
-      }
+      LOGGER.error("Failed to process json", exception);
 
-      LOGGER.error(message);
-
+      String message = getErrorMessage(exception);
       ApiError apiError = new ApiError(message);
       return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON).entity(apiError).build();
+   }
 
+   private String getErrorMessage(JsonProcessingException exception) {
+      if (exception instanceof JsonMappingException) {
+         return String
+               .format("Failed to process json: Location 'line: %s, column: %s'; FieldName '%s'",
+                     exception.getLocation().getLineNr(), exception.getLocation().getColumnNr(),
+                     ((JsonMappingException) exception)
+                           .getPath()
+                           .stream()
+                           .map(JsonMappingException.Reference::getFieldName)
+                           .collect(Collectors.joining(".")));
+      } else {
+         return String
+               .format("Failed to process json: Location 'line: %s, column: %s'", exception.getLocation().getLineNr(),
+                     exception.getLocation().getColumnNr());
+      }
    }
 }

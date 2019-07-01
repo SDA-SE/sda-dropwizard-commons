@@ -262,7 +262,7 @@ public class JacksonConfigurationBundleIT {
 
       assertThat(response.getStatus()).isEqualTo(400);
       ApiError apiError = response.readEntity(ApiError.class);
-      assertThat(apiError.getTitle()).startsWith("Failed to process json.");
+      assertThat(apiError.getTitle()).startsWith("Failed to process json:");
    }
 
 
@@ -278,8 +278,7 @@ public class JacksonConfigurationBundleIT {
 
       assertThat(response.getStatus()).isEqualTo(400);
       ApiError apiError = response.readEntity(ApiError.class);
-      assertThat(apiError.getTitle()).isEqualTo("Failed to process json. " +
-            "Exception 'class com.fasterxml.jackson.databind.exc.InvalidFormatException'; " +
+      assertThat(apiError.getTitle()).isEqualTo("Failed to process json: " +
             "Location 'line: 2, column: 62'; FieldName 'myNestedResource.someNumber'");
    }
 
