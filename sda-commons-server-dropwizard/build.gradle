@@ -61,6 +61,7 @@ dependencies {
 
     // should not be needed in Dropwizard 2 (https://github.com/dropwizard/dropwizard/issues/2318#issuecomment-485385183)
     compile 'javax.activation:javax.activation-api:' + activationVersion
+    compile 'javax.xml.bind:jaxb-api:' + jaxbVersion
 
     testCompile 'junit:junit:' + junit4Version
     testCompile 'org.assertj:assertj-core:' + assertjVersion
