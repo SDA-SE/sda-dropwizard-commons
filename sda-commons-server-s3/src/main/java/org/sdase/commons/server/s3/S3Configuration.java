@@ -42,6 +42,15 @@ public class S3Configuration {
    @NotEmpty
    private String secretKey;
 
+   /**
+    * <p>
+    * The signer type to use, overrides the default behavior, default is
+    * {@code AWSS3V4SignerType}.
+    * See documentation of {@code com.amazonaws.ClientConfiguration.setSignerOverride} for more details
+    * </p>
+    */
+   private String signerOverride = "AWSS3V4SignerType";
+
    public String getEndpoint() {
       return endpoint;
    }
@@ -75,6 +84,15 @@ public class S3Configuration {
 
    public S3Configuration setSecretKey(String secretKey) {
       this.secretKey = secretKey;
+      return this;
+   }
+
+   public String getSignerOverride() {
+      return signerOverride;
+   }
+
+   public S3Configuration setSignerOverride(String signerOverride) {
+      this.signerOverride = signerOverride;
       return this;
    }
 }

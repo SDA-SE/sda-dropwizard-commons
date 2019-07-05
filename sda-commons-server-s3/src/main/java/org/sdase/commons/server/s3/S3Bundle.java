@@ -42,7 +42,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
       AWSCredentials credentials = new BasicAWSCredentials(s3Configuration.getAccessKey(),
             s3Configuration.getSecretKey());
       ClientConfiguration clientConfiguration = new ClientConfiguration();
-      clientConfiguration.setSignerOverride("AWSS3V4SignerType");
+      clientConfiguration.setSignerOverride(s3Configuration.getSignerOverride());
 
       s3Client = AmazonS3ClientBuilder
             .standard()
