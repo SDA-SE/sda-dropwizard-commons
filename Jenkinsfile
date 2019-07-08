@@ -130,80 +130,114 @@ pipeline {
             }
           }
         }
+        stage('License analysis') {
+          agent {
+            docker {
+              image 'quay.io/sdase/openjdk-development:8.212-hotspot'
+            }
+          }
+          steps {
+            prepareGradleWorkspace secretId: 'sdabot-github-token'
+            fossaLicenseAnalysis project: 'sda-commons', apiKey: 'api-key-service'
+          }
+        }
       }
     }
 
-    stage('Sonar Scan Sources (Publish to SonarQube)') {
-      when {
-        branch 'master'
+    stage('Sonar Scan') {
+      agent {
+        node {
+          label 'master'
+        }
       }
+
+      when {
+        anyOf {
+          branch 'develop'
+          changeRequest()
+        }
+      }
+
       steps {
         unstash 'moduletest'
         unstash 'integrationtest'
-        sonarScanBranch project: 'org.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']
-      }
-    }
-
-    stage('Sonar Scan Sources (Annotate Pull Request)') {
-      when {
-        changeRequest()
-      }
-      steps {
-        unstash 'moduletest'
-        unstash 'integrationtest'
-        sonarScanPullRequest project: 'org.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']
-      }
-    }
-
-    stage('Create Release') {
-      when {
-        branch 'master'
-        not { environment name: 'SEMANTIC_VERSION', value: '' }
-      }
-      agent {
-        docker {
-          image 'quay.io/sdase/semantic-release:15.13.3'
-        }
-      }
-      steps {
-        semanticRelease()
-      }
-    }
-
-    stage('Snapshot release') {
-      when {
-        changeRequest()
-      }
-      agent {
-        docker {
-          image 'quay.io/sdase/openjdk-development:8.212-hotspot'
-        }
-      }
-      steps {
         script {
-          env.SEMANTIC_VERSION = "${BRANCH_NAME}-SNAPSHOT"
+          if (env.BRANCH_NAME == 'develop') {
+            sonarScanBranch project: 'org.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']
+          } else {
+            sonarScanPullRequest project: 'org.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']
+          }
         }
-
-        unstash 'build'
-        prepareGradleWorkspace secretId: 'sdabot-github-token'
-        javaGradlew gradleCommand: 'uploadArchives'
       }
     }
 
-    stage('Upload release') {
-      when {
-        branch 'master'
-        not { environment name: 'SEMANTIC_VERSION', value: '' }
-      }
-      agent {
-        docker {
-          image 'quay.io/sdase/openjdk-development:8.212-hotspot'
+    stage('Releases') {
+      parallel {
+        stage('Master') {
+          stages {
+            stage('Create Release') {
+              when {
+                branch 'master'
+                not { environment name: 'SEMANTIC_VERSION', value: '' }
+              }
+
+              agent {
+                docker {
+                  image 'quay.io/sdase/semantic-release:15.13.3'
+                }
+              }
+
+              steps {
+                semanticRelease()
+              }
+            }
+
+            stage('Upload Release') {
+              when {
+                branch 'master'
+                not { environment name: 'SEMANTIC_VERSION', value: '' }
+              }
+
+              agent {
+                docker {
+                  image 'quay.io/sdase/openjdk-development:8.212-hotspot'
+                }
+              }
+
+              steps {
+                unstash 'build'
+                prepareGradleWorkspace secretId: 'sdabot-github-token'
+                javaGradlew gradleCommand: 'uploadArchives'
+              }
+            }
+          }
         }
-      }
-      steps {
-        unstash 'build'
-        prepareGradleWorkspace secretId: 'sdabot-github-token'
-        javaGradlew gradleCommand: 'uploadArchives'
+
+        stage("Snapshot") {
+          stages {
+            stage('Upload Release') {
+              when {
+                changeRequest()
+              }
+
+              agent {
+                docker {
+                  image 'quay.io/sdase/openjdk-development:8.212-hotspot'
+                }
+              }
+
+              steps {
+                script {
+                  env.SEMANTIC_VERSION = "${BRANCH_NAME}-SNAPSHOT"
+                }
+
+                unstash 'build'
+                prepareGradleWorkspace secretId: 'sdabot-github-token'
+                javaGradlew gradleCommand: 'uploadArchives'
+              }
+            }
+          }
+        }
       }
     }
   }
