@@ -1,8 +1,10 @@
 package org.sdase.commons.server.kafka.consumer.strategies;
 
+import java.util.Collections;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
@@ -60,4 +62,17 @@ public abstract class MessageListenerStrategy<K, V> {
 
 
    public abstract void verifyConsumerConfig(Map<String, String> config);
+
+   /**
+    * Configuration properties that are applied to the {@link ConsumerConfig} of a consumer using this strategy. If
+    * these properties are absent in the configuration or configured different, the properties returned by this method
+    * must be applied. {@link #verifyConsumerConfig(Map)} may still verify that the forced config is correctly applied
+    * or may require further conditions the user has to set intentionally.
+    *
+    * @return a map with configuration properties that must be applied to {@link ConsumerConfig#setConfig(Map)} to make
+    * the strategy work as expected
+    */
+   public Map<String, String> forcedConfigToApply() {
+      return Collections.emptyMap();
+   }
 }

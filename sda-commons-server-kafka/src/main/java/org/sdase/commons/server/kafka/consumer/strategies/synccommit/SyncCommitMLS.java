@@ -2,8 +2,10 @@ package org.sdase.commons.server.kafka.consumer.strategies.synccommit;
 
 import io.prometheus.client.SimpleTimer;
 
+import java.util.Collections;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.CommitFailedException;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -80,10 +82,14 @@ public class SyncCommitMLS<K, V> extends MessageListenerStrategy<K, V> {
 
    @Override
    public void verifyConsumerConfig(Map<String, String> config) {
-      if (!Boolean.valueOf(config.getOrDefault("enable.auto.commit", "false"))) {
+      if (Boolean.valueOf(config.getOrDefault(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true"))) {
          throw new ConfigurationException(
-               "The strategy should use autocommit but property 'enable.auto.commit' in consumer config is set to 'true'");
+               "The strategy should NOT use autocommit but property 'enable.auto.commit' in consumer config is set to 'true' (which is the default and must be disabled).");
       }
    }
 
+   @Override
+   public Map<String, String> forcedConfigToApply() {
+      return Collections.singletonMap(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+   }
 }

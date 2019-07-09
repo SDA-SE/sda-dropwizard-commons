@@ -590,12 +590,33 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          consumerConfig = getConsumerConfiguration(registration.getConsumerConfigName());
       }
       if (consumerConfig != null) {
+         applyForcedConfigFromStrategy(registration, consumerConfig);
          registration.getStrategy().verifyConsumerConfig(consumerConfig.getConfig());
       }
       if (consumerConfig != null && consumerConfig.getClientId() == null) {
          consumerConfig.setClientId(registration.getConsumerConfigName());
       }
       return createConsumer(registration.getKeyDeserializer(), registration.getValueDeserializer(), consumerConfig);
+   }
+
+   private void applyForcedConfigFromStrategy(MessageListenerRegistration<?, ?> registration, ConsumerConfig consumerConfig) {
+      Map<String, String> newConfig = new HashMap<>(consumerConfig.getConfig());
+      Map<String, String> forcedConfig = registration.getStrategy().forcedConfigToApply();
+      for (Entry<String, String> configEntry : forcedConfig.entrySet()) {
+         String key = configEntry.getKey();
+         String newValue = configEntry.getValue();
+         String oldValue = newConfig.get(key); // NOSONAR I have no idea, why sonar is complaining here (squid S3824)
+         if (oldValue == null) {
+            LOGGER.info("Setting in consumer config: '{}'='{}' (forced from strategy {})",
+                  key, newValue, registration.getStrategy().getClass().getSimpleName());
+         }
+         else if (!newValue.equals(oldValue)) {
+            LOGGER.warn("Overwriting in consumer config: '{}'='{}' with new value '{}' (forced from strategy {})",
+                  key, oldValue, newValue, registration.getStrategy().getClass().getSimpleName());
+         }
+         newConfig.put(key, newValue);
+      }
+      consumerConfig.setConfig(newConfig);
    }
 
 

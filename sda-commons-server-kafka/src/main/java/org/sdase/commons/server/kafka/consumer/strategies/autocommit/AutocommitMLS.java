@@ -2,8 +2,10 @@ package org.sdase.commons.server.kafka.consumer.strategies.autocommit;
 
 import io.prometheus.client.SimpleTimer;
 
+import java.util.Collections;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.CommitFailedException;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -83,4 +85,8 @@ public class AutocommitMLS<K, V> extends MessageListenerStrategy<K, V> {
       }
    }
 
+   @Override
+   public Map<String, String> forcedConfigToApply() {
+      return Collections.singletonMap(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+   }
 }
