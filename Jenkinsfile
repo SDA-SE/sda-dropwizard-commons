@@ -1,14 +1,13 @@
 @Library('jenkins-library') _
 
 pipeline {
-  agent {
-    node {
-      label 'master'
-    }
-  }
+  agent none
+
   options {
     disableConcurrentBuilds()
+    timeout time: 1, unit: 'HOURS'
   }
+
   stages {
     stage('Generate Semantic Release') {
       agent {
@@ -16,23 +15,11 @@ pipeline {
           image 'quay.io/sdase/semantic-release:15.13.3'
         }
       }
+
       steps {
         script {
            env.SEMANTIC_VERSION = semanticRelease dryRun: "true"
         }
-      }
-    }
-
-    stage('Build jar') {
-      agent {
-        docker {
-          image 'quay.io/sdase/openjdk-development:8.212-hotspot'
-        }
-      }
-      steps {
-        prepareGradleWorkspace secretId: 'sdabot-github-token'
-        javaGradlew gradleCommand: 'assemble', clean: true
-        stash includes: '**/build/libs/*', name: 'build'
       }
     }
 
@@ -44,98 +31,85 @@ pipeline {
               image 'quay.io/sdase/openjdk-development:8.212-hotspot'
             }
           }
+
           steps {
             prepareGradleWorkspace secretId: 'sdabot-github-token'
             javaGradlew gradleCommand: 'test'
-            script {
-              def testResults = findFiles(glob: '**/build/test-results/test/*.xml')
-              for(xml in testResults) {
-                touch xml.getPath()
-              }
-            }
             stash includes: '**/build/**/*', name: 'moduletest'
           }
+
           post {
             always {
               junit '**/build/test-results/test/*.xml'
             }
           }
         }
+
         stage('Integration test service (Java 8)') {
           agent {
             docker {
               image 'quay.io/sdase/openjdk-development:8.212-hotspot'
             }
           }
+
           steps {
             prepareGradleWorkspace secretId: 'sdabot-github-token'
             javaGradlew gradleCommand: 'integrationTest'
-            script {
-              def testResults = findFiles(glob: '**/build/integTest-results/*.xml')
-              for(xml in testResults) {
-                touch xml.getPath()
-              }
-            }
             stash includes: '**/build/**/*', name: 'integrationtest'
           }
+
           post {
             always {
               junit '**/build/integTest-results/*.xml'
             }
           }
         }
+
         stage('Module test jar (Java 11)') {
           agent {
             docker {
               image 'quay.io/sdase/openjdk-development:11.0-hotspot'
             }
           }
+
           steps {
             prepareGradleWorkspace secretId: 'sdabot-github-token'
             javaGradlew gradleCommand: 'test'
-            script {
-              def testResults = findFiles(glob: '**/build/test-results/test/*.xml')
-              for(xml in testResults) {
-                touch xml.getPath()
-              }
-            }
-            //stash includes: '**/build/**/*', name: 'moduletest'
           }
+
           post {
             always {
               junit '**/build/test-results/test/*.xml'
             }
           }
         }
+
         stage('Integration test service (Java 11)') {
           agent {
             docker {
               image 'quay.io/sdase/openjdk-development:11.0-hotspot'
             }
           }
+
           steps {
             prepareGradleWorkspace secretId: 'sdabot-github-token'
             javaGradlew gradleCommand: 'integrationTest'
-            script {
-              def testResults = findFiles(glob: '**/build/integTest-results/*.xml')
-              for(xml in testResults) {
-                touch xml.getPath()
-              }
-            }
-            //stash includes: '**/build/**/*', name: 'integrationtest'
           }
+
           post {
             always {
               junit '**/build/integTest-results/*.xml'
             }
           }
         }
+
         stage('License analysis') {
           agent {
             docker {
               image 'quay.io/sdase/openjdk-development:8.212-hotspot'
             }
           }
+
           steps {
             prepareGradleWorkspace secretId: 'sdabot-github-token'
             fossaLicenseAnalysis project: 'sda-commons', apiKey: 'api-key-service'
@@ -174,13 +148,13 @@ pipeline {
     stage('Releases') {
       parallel {
         stage('Master') {
+          when {
+            branch 'master'
+            not { environment name: 'SEMANTIC_VERSION', value: '' }
+          }
+
           stages {
             stage('Create Release') {
-              when {
-                branch 'master'
-                not { environment name: 'SEMANTIC_VERSION', value: '' }
-              }
-
               agent {
                 docker {
                   image 'quay.io/sdase/semantic-release:15.13.3'
@@ -193,11 +167,6 @@ pipeline {
             }
 
             stage('Upload Release') {
-              when {
-                branch 'master'
-                not { environment name: 'SEMANTIC_VERSION', value: '' }
-              }
-
               agent {
                 docker {
                   image 'quay.io/sdase/openjdk-development:8.212-hotspot'
@@ -205,7 +174,6 @@ pipeline {
               }
 
               steps {
-                unstash 'build'
                 prepareGradleWorkspace secretId: 'sdabot-github-token'
                 javaGradlew gradleCommand: 'uploadArchives'
               }
@@ -214,12 +182,12 @@ pipeline {
         }
 
         stage("Snapshot") {
+          when {
+            changeRequest()
+          }
+
           stages {
             stage('Upload Release') {
-              when {
-                changeRequest()
-              }
-
               agent {
                 docker {
                   image 'quay.io/sdase/openjdk-development:8.212-hotspot'
@@ -231,7 +199,6 @@ pipeline {
                   env.SEMANTIC_VERSION = "${BRANCH_NAME}-SNAPSHOT"
                 }
 
-                unstash 'build'
                 prepareGradleWorkspace secretId: 'sdabot-github-token'
                 javaGradlew gradleCommand: 'uploadArchives'
               }
