@@ -51,11 +51,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.github.tomakehurst.wiremock.http.RequestMethod.GET;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_SEE_OTHER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.entry;
@@ -66,15 +68,13 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
 public class ApiClientTest {
 
    @ClassRule
-   public static final WireMockClassRule WIRE = new WireMockClassRule(wireMockConfig().dynamicPort()
-         .httpServerFactory(new JettyHttpServerFactory()));
-
+   public static final WireMockClassRule WIRE = new WireMockClassRule(
+         wireMockConfig().dynamicPort().httpServerFactory(new JettyHttpServerFactory()));
+   public static final Car LIGHT_BLUE_CAR = new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
    private static final ObjectMapper OM = new ObjectMapper();
    private static final Car BRIGHT_BLUE_CAR = new Car().setSign("HH XX 1234").setColor("bright blue"); // NOSONAR
-   public static final Car LIGHT_BLUE_CAR = new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
-
-   private final DropwizardAppRule<ClientTestConfig> dw = new DropwizardAppRule<>(
-         ClientTestApp.class, resourceFilePath("test-config.yaml"));
+   private final DropwizardAppRule<ClientTestConfig> dw = new DropwizardAppRule<>(ClientTestApp.class,
+         resourceFilePath("test-config.yaml"));
 
    @Rule
    public final RuleChain rule = RuleChain
@@ -86,53 +86,40 @@ public class ApiClientTest {
    @BeforeClass
    public static void initWires() throws JsonProcessingException {
       WIRE.start();
-      WIRE.stubFor(
-            get("/api/cars") // NOSONAR
+      WIRE
+            .stubFor(get("/api/cars") // NOSONAR
                   .withHeader("Accept", equalTo("application/json")) // NOSONAR
                   .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-type", "application/json") // NOSONAR
-                        .withBody(OM.writeValueAsBytes(asList(BRIGHT_BLUE_CAR, LIGHT_BLUE_CAR))
-                        )
-                  )
-      );
-      WIRE.stubFor(
-            post("/api/multi-part") // NOSONAR
+                        .withBody(OM.writeValueAsBytes(asList(BRIGHT_BLUE_CAR, LIGHT_BLUE_CAR)))));
+      WIRE
+            .stubFor(post("/api/multi-part") // NOSONAR
                   .withHeader("Content-type", matching("multipart/form-data.*")) // NOSONAR
                   .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-type", "application/json") // NOSONAR
-                        .withBody(OM.writeValueAsBytes(singletonMap("got", "it"))
-                        )
-                  )
-      );
-      WIRE.stubFor(
-            post("/api/cars") // NOSONAR
+                        .withBody(OM.writeValueAsBytes(singletonMap("got", "it")))));
+      WIRE
+            .stubFor(post("/api/cars") // NOSONAR
                   .withHeader("Content-type", equalTo("application/json")) // NOSONAR
                   .withRequestBody(equalToJson("{\"sign\":\"HH AB 1234\", \"color\":\"white\"}"))
-                  .willReturn(aResponse()
-                        .withStatus(201)
-                        .withHeader("Location", "/api/cars/dummyId") // NOSONAR
-                  )
-      );
-      WIRE.stubFor(
-            get(urlMatching("/api/cars/HH%20XX%201234(\\?.*)?"))
+                  .willReturn(aResponse().withStatus(201).withHeader("Location", "/api/cars/dummyId") // NOSONAR
+                  ));
+      WIRE
+            .stubFor(get(urlMatching("/api/cars/HH%20XX%201234(\\?.*)?"))
                   .withHeader("Accept", equalTo("application/json"))
                   .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-type", "application/json")
-                        .withBody(OM.writeValueAsBytes(BRIGHT_BLUE_CAR))
-                  )
-      );
-      WIRE.stubFor(
-            get(urlMatching("/api/cars/HH%20XY%204321(\\?.*)?"))
+                        .withBody(OM.writeValueAsBytes(BRIGHT_BLUE_CAR))));
+      WIRE
+            .stubFor(get(urlMatching("/api/cars/HH%20XY%204321(\\?.*)?"))
                   .withHeader("Accept", equalTo("application/json"))
                   .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-type", "application/json")
-                        .withBody(OM.writeValueAsBytes(LIGHT_BLUE_CAR))
-                  )
-      );
+                        .withBody(OM.writeValueAsBytes(LIGHT_BLUE_CAR))));
    }
 
    @Before
@@ -146,10 +133,14 @@ public class ApiClientTest {
       try (FormDataMultiPart multiPart = new FormDataMultiPart()
             .field("test", "test-value", MediaType.TEXT_PLAIN_TYPE)
             .field("anotherTest", "another-test-value", MediaType.TEXT_PLAIN_TYPE)) {
-         Response response = app.getJerseyClientBundle().getClientFactory().platformClient()
+         Response response = app
+               .getJerseyClientBundle()
+               .getClientFactory()
+               .platformClient()
                .buildGenericClient("multi-part")
                .target(WIRE.baseUrl())
-               .path("api").path("multi-part")
+               .path("api")
+               .path("multi-part")
                .register(MultiPartFeature.class)
                .request(MediaType.APPLICATION_JSON)
                .post(Entity.entity(multiPart, multiPart.getMediaType()));
@@ -158,23 +149,15 @@ public class ApiClientTest {
 
          String contentType = WIRE.getAllServeEvents().get(0).getRequest().contentTypeHeader().firstValue();
          String boundary = MediaType.valueOf(contentType).getParameters().get("boundary");
-         WIRE.verify(
-               RequestPatternBuilder.newRequestPattern(RequestMethod.POST, urlEqualTo("/api/multi-part"))
+         WIRE
+               .verify(RequestPatternBuilder
+                     .newRequestPattern(RequestMethod.POST, urlEqualTo("/api/multi-part"))
                      .withHeader("Content-type", matching("multipart/form-data;boundary=.+"))
-                     .withRequestBody(
-                           equalTo("--" + boundary + "\r\n" +
-                                 "Content-Type: text/plain\r\n" +  // NOSONAR
-                                 "Content-Disposition: form-data; name=\"test\"\r\n" +
-                                 "\r\n" +
-                                 "test-value\r\n" +
-                                 "--" + boundary + "\r\n" +
-                                 "Content-Type: text/plain\r\n" +
-                                 "Content-Disposition: form-data; name=\"anotherTest\"\r\n" +
-                                 "\r\n" +
-                                 "another-test-value\r\n" +
-                                 "--" + boundary + "--\r\n")
-                     )
-         );
+                     .withRequestBody(equalTo("--" + boundary + "\r\n" + "Content-Type: text/plain\r\n" + // NOSONAR
+                           "Content-Disposition: form-data; name=\"test\"\r\n" + "\r\n" + "test-value\r\n" + "--"
+                           + boundary + "\r\n" + "Content-Type: text/plain\r\n"
+                           + "Content-Disposition: form-data; name=\"anotherTest\"\r\n" + "\r\n"
+                           + "another-test-value\r\n" + "--" + boundary + "--\r\n")));
       }
    }
 
@@ -189,23 +172,15 @@ public class ApiClientTest {
 
          String contentType = WIRE.getAllServeEvents().get(0).getRequest().contentTypeHeader().firstValue();
          String boundary = MediaType.valueOf(contentType).getParameters().get("boundary");
-         WIRE.verify(
-               RequestPatternBuilder.newRequestPattern(RequestMethod.POST, urlEqualTo("/api/multi-part"))
+         WIRE
+               .verify(RequestPatternBuilder
+                     .newRequestPattern(RequestMethod.POST, urlEqualTo("/api/multi-part"))
                      .withHeader("Content-type", matching("multipart/form-data;boundary=.+"))
-                     .withRequestBody(
-                           equalTo("--" + boundary + "\r\n" +
-                                 "Content-Type: text/plain\r\n" +
-                                 "Content-Disposition: form-data; name=\"test\"\r\n" +
-                                 "\r\n" +
-                                 "test-value\r\n" +
-                                 "--" + boundary + "\r\n" +
-                                 "Content-Type: text/plain\r\n" +
-                                 "Content-Disposition: form-data; name=\"anotherTest\"\r\n" +
-                                 "\r\n" +
-                                 "another-test-value\r\n" +
-                                 "--" + boundary + "--\r\n")
-                     )
-         );
+                     .withRequestBody(equalTo("--" + boundary + "\r\n" + "Content-Type: text/plain\r\n"
+                           + "Content-Disposition: form-data; name=\"test\"\r\n" + "\r\n" + "test-value\r\n" + "--"
+                           + boundary + "\r\n" + "Content-Type: text/plain\r\n"
+                           + "Content-Disposition: form-data; name=\"anotherTest\"\r\n" + "\r\n"
+                           + "another-test-value\r\n" + "--" + boundary + "--\r\n")));
       }
    }
 
@@ -213,7 +188,8 @@ public class ApiClientTest {
    public void loadCars() {
       List<Car> cars = createMockApiClient().getCars();
 
-      assertThat(cars).extracting(Car::getSign, Car::getColor)
+      assertThat(cars)
+            .extracting(Car::getSign, Car::getColor)
             .containsExactly(tuple("HH XX 1234", "bright blue"), tuple("HH XY 4321", "light blue"));
    }
 
@@ -222,11 +198,11 @@ public class ApiClientTest {
       Response response = createMockApiClient().requestCars();
 
       assertThat(response.getStatus()).isEqualTo(200);
-      WIRE.verify(
-            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
-            .withHeader("Trace-Token", matchingUuid()) // NOSONAR
-            .withoutHeader(HttpHeaders.AUTHORIZATION)
-      );
+      WIRE
+            .verify(RequestPatternBuilder
+                  .newRequestPattern(GET, urlEqualTo("/api/cars"))
+                  .withHeader("Trace-Token", matchingUuid()) // NOSONAR
+                  .withoutHeader(HttpHeaders.AUTHORIZATION));
    }
 
    @Test
@@ -234,11 +210,11 @@ public class ApiClientTest {
       Response response = createMockApiClient().requestCars();
 
       assertThat(response.getStatus()).isEqualTo(200);
-      WIRE.verify(
-            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
-            .withHeader("Consumer-Token", equalTo("test-consumer")) // NOSONAR
-            .withoutHeader(HttpHeaders.AUTHORIZATION)
-      );
+      WIRE
+            .verify(RequestPatternBuilder
+                  .newRequestPattern(GET, urlEqualTo("/api/cars"))
+                  .withHeader("Consumer-Token", equalTo("test-consumer")) // NOSONAR
+                  .withoutHeader(HttpHeaders.AUTHORIZATION));
    }
 
    @Test
@@ -247,10 +223,11 @@ public class ApiClientTest {
 
       assertThat(response.getStatus()).isEqualTo(201);
       assertThat(response.getLocation()).isEqualTo(URI.create("/api/cars/dummyId"));
-      WIRE.verify(
-            RequestPatternBuilder.newRequestPattern(RequestMethod.POST, urlEqualTo("/api/cars"))
+      WIRE
+            .verify(RequestPatternBuilder
+                  .newRequestPattern(RequestMethod.POST, urlEqualTo("/api/cars"))
                   .withHeader("Content-type", equalTo("application/json")) // NOSONAR
-      );
+            );
    }
 
    @Test
@@ -258,71 +235,80 @@ public class ApiClientTest {
       Response response = createMockApiClient().requestCarsWithCustomConsumerToken("my-custom-consumer");
 
       assertThat(response.getStatus()).isEqualTo(200);
-      WIRE.verify(
-            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
-            .withHeader("Consumer-Token", equalTo("my-custom-consumer"))
-            .withHeader("Consumer-Token", notMatching("test-consumer"))
-            .withoutHeader(HttpHeaders.AUTHORIZATION)
-      );
+      WIRE
+            .verify(RequestPatternBuilder
+                  .newRequestPattern(GET, urlEqualTo("/api/cars"))
+                  .withHeader("Consumer-Token", equalTo("my-custom-consumer"))
+                  .withHeader("Consumer-Token", notMatching("test-consumer"))
+                  .withoutHeader(HttpHeaders.AUTHORIZATION));
    }
 
    @Test
    public void addReceivedTraceTokenToHeadersToPlatformCall() {
-      int status = dwClient().path("api").path("cars")
+      int status = dwClient()
+            .path("api")
+            .path("cars")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .header("Trace-Token", "test-trace-token-1")
-            .get().getStatus();
+            .get()
+            .getStatus();
 
       assertThat(status).isEqualTo(200);
-      WIRE.verify(
-            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
+      WIRE
+            .verify(RequestPatternBuilder
+                  .newRequestPattern(GET, urlEqualTo("/api/cars"))
                   .withHeader("Trace-Token", equalTo("test-trace-token-1"))
-                  .withoutHeader(HttpHeaders.AUTHORIZATION)
-      );
+                  .withoutHeader(HttpHeaders.AUTHORIZATION));
    }
 
    @Test
    public void addReceivedAuthHeaderToPlatformCall() {
-      int status = dwClient().path("api").path("carsAuth")
+      int status = dwClient()
+            .path("api")
+            .path("carsAuth")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .header("Authorization", "custom-dummy-token")
             .header("Trace-Token", "test-trace-token-3")
-            .get().getStatus();
+            .get()
+            .getStatus();
 
       assertThat(status).isEqualTo(200);
-      WIRE.verify(
-            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
+      WIRE
+            .verify(RequestPatternBuilder
+                  .newRequestPattern(GET, urlEqualTo("/api/cars"))
                   .withHeader("Trace-Token", equalTo("test-trace-token-3"))
-                  .withHeader(HttpHeaders.AUTHORIZATION, equalTo("custom-dummy-token"))
-      );
+                  .withHeader(HttpHeaders.AUTHORIZATION, equalTo("custom-dummy-token")));
    }
 
    @Test
    public void notAddingReceivedTraceTokenToHeadersOfExternalCall() {
-      int status = dwClient().path("api").path("carsExternal")
+      int status = dwClient()
+            .path("api")
+            .path("carsExternal")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .header("Trace-Token", "test-trace-token-2")
-            .get().getStatus();
+            .get()
+            .getStatus();
 
       assertThat(status).isEqualTo(200);
-      WIRE.verify(
-            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
-            .withoutHeader("Trace-Token")
-      );
+      WIRE.verify(RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars")).withoutHeader("Trace-Token"));
    }
 
    @Test
    public void notAddingReceivedAuthorizationToHeadersOfExternalCall() {
-      int status = dwClient().path("api").path("carsExternal")
+      int status = dwClient()
+            .path("api")
+            .path("carsExternal")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .header(HttpHeaders.AUTHORIZATION, "BEARER dummy")
-            .get().getStatus();
+            .get()
+            .getStatus();
 
       assertThat(status).isEqualTo(200);
-      WIRE.verify(
-            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
-                  .withoutHeader(HttpHeaders.AUTHORIZATION)
-      );
+      WIRE
+            .verify(RequestPatternBuilder
+                  .newRequestPattern(GET, urlEqualTo("/api/cars"))
+                  .withoutHeader(HttpHeaders.AUTHORIZATION));
    }
 
    @Test
@@ -334,19 +320,14 @@ public class ApiClientTest {
    @Test
    public void loadSingleCarWithFieldFilterAllFields() {
       createMockApiClient().getCarWithFilteredFields("HH XY 4321", asList("sign", "color"));
-      verify(RequestPatternBuilder.newRequestPattern(
-            RequestMethod.GET,
-            urlEqualTo("/api/cars/HH%20XY%204321?fields=sign&fields=color")
-      ));
+      verify(RequestPatternBuilder
+            .newRequestPattern(GET, urlEqualTo("/api/cars/HH%20XY%204321?fields=sign&fields=color")));
    }
 
    @Test
    public void loadSingleCarWithFieldFilterOneField() {
       createMockApiClient().getCarWithFilteredFields("HH XY 4321", singletonList("color"));
-      verify(RequestPatternBuilder.newRequestPattern(
-            RequestMethod.GET,
-            urlEqualTo("/api/cars/HH%20XY%204321?fields=color")
-      ));
+      verify(RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars/HH%20XY%204321?fields=color")));
    }
 
    @Test
@@ -374,8 +355,15 @@ public class ApiClientTest {
 
    @Test
    public void return404ForMissingCarWithGenericClient() {
-      Response response = app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("foo")
-            .target(WIRE.baseUrl()).path("api").path("cars").path("HH AA 7777")
+      Response response = app
+            .getJerseyClientBundle()
+            .getClientFactory()
+            .externalClient()
+            .buildGenericClient("foo")
+            .target(WIRE.baseUrl())
+            .path("api")
+            .path("cars")
+            .path("HH AA 7777")
             .request(MediaType.APPLICATION_JSON)
             .get();
       assertThat(response.getStatus()).isEqualTo(404);
@@ -383,20 +371,26 @@ public class ApiClientTest {
 
    @Test
    public void return500ForDelegatedMissingCar() {
-      Response response = dwClient().path("api").path("cars").path("HH AA 7777")
+      Response response = dwClient()
+            .path("api")
+            .path("cars")
+            .path("HH AA 7777")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .get();
       assertThat(response.getStatus()).isEqualTo(500);
-      assertThat(ClientErrorUtil.readErrorBody(response, new GenericType<Map<String, Object>>() {}))
+      assertThat(ClientErrorUtil.readErrorBody(response, new GenericType<Map<String, Object>>() {
+      }))
             .containsExactly(
                   entry("title", "Request could not be fulfilled: Received status '404' from another service."),
-                  entry("invalidParams", Lists.emptyList())
-            );
+                  entry("invalidParams", Lists.emptyList()));
    }
 
    @Test
    public void addCustomFiltersToPlatformClient() {
-      MockApiClient mockApiClient = app.getJerseyClientBundle().getClientFactory().platformClient()
+      MockApiClient mockApiClient = app
+            .getJerseyClientBundle()
+            .getClientFactory()
+            .platformClient()
             .addFilter(requestContext -> requestContext.getHeaders().add("Hello", "World")) // NOSONAR
             .addFilter(requestContext -> requestContext.getHeaders().add("Foo", "Bar"))
             .api(MockApiClient.class)
@@ -404,16 +398,19 @@ public class ApiClientTest {
 
       mockApiClient.getCars();
 
-      WIRE.verify(
-            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
-            .withHeader("Hello", equalTo("World"))
-            .withHeader("Foo", equalTo("Bar"))
-      );
+      WIRE
+            .verify(RequestPatternBuilder
+                  .newRequestPattern(GET, urlEqualTo("/api/cars"))
+                  .withHeader("Hello", equalTo("World"))
+                  .withHeader("Foo", equalTo("Bar")));
    }
 
    @Test
    public void addCustomFiltersToExternalClient() {
-      MockApiClient mockApiClient = app.getJerseyClientBundle().getClientFactory().externalClient()
+      MockApiClient mockApiClient = app
+            .getJerseyClientBundle()
+            .getClientFactory()
+            .externalClient()
             .addFilter(requestContext -> requestContext.getHeaders().add("Hello", "World"))
             .addFilter(requestContext -> requestContext.getHeaders().add("Foo", "Bar"))
             .api(MockApiClient.class)
@@ -421,49 +418,45 @@ public class ApiClientTest {
 
       mockApiClient.getCars();
 
-      WIRE.verify(
-            RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
-            .withHeader("Hello", equalTo("World"))
-            .withHeader("Foo", equalTo("Bar"))
-      );
+      WIRE
+            .verify(RequestPatternBuilder
+                  .newRequestPattern(GET, urlEqualTo("/api/cars"))
+                  .withHeader("Hello", equalTo("World"))
+                  .withHeader("Foo", equalTo("Bar")));
    }
 
    @Test
    public void failOnReadJsonWithGenericClient() {
 
-      WIRE.stubFor(get("/badJsonResponse")
-            .willReturn(aResponse()
-                  .withStatus(200)
-                  .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                  .withBody("{ \"sign\": \"xyz\"")
-            )
-      );
+      WIRE
+            .stubFor(get("/badJsonResponse")
+                  .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody("{ \"sign\": \"xyz\"")));
 
-      Client client = app.getJerseyClientBundle().getClientFactory()
-            .externalClient()
-            .buildGenericClient("test");
+      Client client = app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("test");
 
       assertThatExceptionOfType(ClientRequestException.class).isThrownBy(() ->
-            // receives invalid json
-            convertExceptions(() ->
-                  client.target(WIRE.baseUrl()).path("badJsonResponse").request().get(Car.class)
-            )
-      ).is(processingError());
+      // receives invalid json
+      convertExceptions(() -> client.target(WIRE.baseUrl()).path("badJsonResponse").request().get(Car.class)))
+            .is(processingError());
 
    }
 
    @Test
    public void failOnReadJsonWithApiClient() {
 
-      WIRE.stubFor(get("/api/cars/123")
-            .willReturn(aResponse()
-                  .withStatus(200)
-                  .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                  .withBody("{ \"sign\": \"xyz\"")
-            )
-      );
+      WIRE
+            .stubFor(get("/api/cars/123")
+                  .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody("{ \"sign\": \"xyz\"")));
 
-      MockApiClient client = app.getJerseyClientBundle().getClientFactory()
+      MockApiClient client = app
+            .getJerseyClientBundle()
+            .getClientFactory()
             .externalClient()
             .api(MockApiClient.class)
             .atTarget(WIRE.baseUrl());
@@ -478,8 +471,8 @@ public class ApiClientTest {
    public void seeOtherAfterPost() {
       WIRE
             .stubFor(post("/api/cars")
-                  .withRequestBody(equalToJson("{ \"sign\": \"HH XY 1234\", \"color\": \"yellow\" }"))
-                  .willReturn(seeOther(WIRE.url("/api/cars/HH%20XY%201234"))));
+                  .withRequestBody(equalToJson("{ \"sign\": \"HH XY 1234\", \"color\": \"yellow\" }")) // NOSONAR
+                  .willReturn(seeOther(WIRE.url("/api/cars/HH%20XY%201234")))); // NOSONAR
       WIRE
             .stubFor(get("/api/cars/HH%20XY%201234")
                   .willReturn(aResponse()
@@ -494,14 +487,48 @@ public class ApiClientTest {
       // for GET requests.
       MockApiClient client = createMockApiClient();
 
-      Response r = client.createCar(new Car().setSign("HH XY 1234").setColor("yellow"));
+      Response r = client.createCar(new Car().setSign("HH XY 1234").setColor("yellow")); // NOSONAR
       assertThat(r.getStatus()).isEqualTo(SC_OK);
       Car car = r.readEntity(Car.class);
       assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 1234", "yellow");
    }
 
+   @Test
+   public void disableRedirectsForSeeOther() {
+      WIRE
+            .stubFor(post("/api/cars")
+                  .withRequestBody(equalToJson("{ \"sign\": \"HH XY 1234\", \"color\": \"yellow\" }"))
+                  .willReturn(seeOther(WIRE.url("/api/cars/HH%20XY%201234"))));
+      WIRE
+            .stubFor(get("/api/cars/HH%20XY%201234")
+                  .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody("{ \"sign\": \"HH XY 1234\", \"color\": \"yellow\" }")));
+
+      MockApiClient client = createMockApiClientWithoutFollowRedirects();
+
+      Response r = client.createCar(new Car().setSign("HH XY 1234").setColor("yellow"));
+      assertThat(r.getStatus()).isEqualTo(SC_SEE_OTHER);
+      assertThat(r.getHeaderString(HttpHeaders.LOCATION)).isEqualTo(WIRE.url("/api/cars/HH%20XY%201234"));
+      WIRE.verify(0, RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars/HH%20XY%201234")));
+   }
+
+   private MockApiClient createMockApiClientWithoutFollowRedirects() {
+      return app
+            .getJerseyClientBundle()
+            .getClientFactory()
+            .platformClient()
+            .disableFollowRedirects()
+            .enableConsumerToken()
+            .api(MockApiClient.class)
+            .atTarget(WIRE.baseUrl());
+   }
+
    private MockApiClient createMockApiClient() {
-      return app.getJerseyClientBundle().getClientFactory()
+      return app
+            .getJerseyClientBundle()
+            .getClientFactory()
             .platformClient()
             .enableConsumerToken()
             .api(MockApiClient.class)

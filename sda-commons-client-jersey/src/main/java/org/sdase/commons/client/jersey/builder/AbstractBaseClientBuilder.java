@@ -34,6 +34,12 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
     */
    private static final int DEFAULT_CONNECTION_TIMEOUT_MS = 500;
 
+
+   /**
+    * As default, the client will follow redirects so that redirect status codes are automatically resolved by the client.
+    */
+   private static final boolean DEFAULT_FOLLOW_REDIRECTS = true;
+
    private JerseyClientBuilder jerseyClientBuilder;
 
    private List<ClientRequestFilter> filters;
@@ -42,11 +48,14 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
 
    private int readTimeoutMillis;
 
+   private boolean followRedirects;
+
    AbstractBaseClientBuilder(JerseyClientBuilder jerseyClientBuilder) {
       this.jerseyClientBuilder = jerseyClientBuilder;
       this.filters = new ArrayList<>();
       this.readTimeoutMillis = DEFAULT_READ_TIMEOUT_MS;
       this.connectionTimeoutMillis = DEFAULT_CONNECTION_TIMEOUT_MS;
+      this.followRedirects = DEFAULT_FOLLOW_REDIRECTS;
    }
 
    /**
@@ -106,6 +115,17 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
    }
 
    /**
+    * <p>
+    *   Set this client to not follow redirects and therewith automatically resolve 3xx status codes
+    * </p>
+    * @return this builder instance
+    */
+   public T disableFollowRedirects() {
+      this.followRedirects = false;
+      return (T) this;
+   }
+
+   /**
     * Builds a generic client that can be used for Http requests.
     *
     * @param name the name of the client is used for metrics and thread names
@@ -114,6 +134,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
    public Client buildGenericClient(String name) {
       Client client = jerseyClientBuilder.build(name);
       filters.forEach(client::register);
+      client.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
       client.property(ClientProperties.CONNECT_TIMEOUT, connectionTimeoutMillis);
       client.property(ClientProperties.READ_TIMEOUT, readTimeoutMillis);
       registerMultiPartIfAvailable(client);
