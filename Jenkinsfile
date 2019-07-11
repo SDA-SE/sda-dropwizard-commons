@@ -126,6 +126,7 @@ pipeline {
       }
 
       when {
+        beforeAgent true
         anyOf {
           branch 'develop'
           changeRequest()
@@ -149,6 +150,7 @@ pipeline {
       parallel {
         stage('Master') {
           when {
+            beforeAgent true
             branch 'master'
             not { environment name: 'SEMANTIC_VERSION', value: '' }
           }
@@ -183,6 +185,7 @@ pipeline {
 
         stage("Snapshot") {
           when {
+            beforeAgent true
             changeRequest()
           }
 
