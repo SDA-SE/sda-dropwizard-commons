@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -32,7 +34,7 @@ import javax.ws.rs.core.UriInfo;
  * <li>GET /api/cars?embed=drivers,owner
  * </ul>
  */
-public class EmbedHelper {
+public class EmbedHelper implements Feature {
 
    private static final String EMBED_QUERY_PARAM = "embed";
 
@@ -78,5 +80,12 @@ public class EmbedHelper {
             .map(String::trim)
             .filter(s -> !s.isEmpty())
             .collect(Collectors.toSet());
+   }
+
+   @Override
+   public boolean configure(FeatureContext context) {
+      // nothing to do here, registration is done at time of construction
+      // this class implements Feature to avoid a warning in Jersey
+      return true;
    }
 }
