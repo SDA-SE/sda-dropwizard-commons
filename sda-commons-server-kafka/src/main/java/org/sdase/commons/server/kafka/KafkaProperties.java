@@ -1,5 +1,6 @@
 package org.sdase.commons.server.kafka;
 
+import com.google.common.base.Strings;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -21,7 +22,7 @@ public class KafkaProperties extends Properties {
    }
 
    private static KafkaProperties baseProperties(KafkaConfiguration configuration) {
-	   
+
       KafkaProperties props = new KafkaProperties();
 
       if (configuration.getBrokers() != null) {
@@ -43,19 +44,21 @@ public class KafkaProperties extends Properties {
 
       return props;
    }
-   
+
    private static KafkaProperties adminProperties(KafkaConfiguration configuration) {
-      
+
       KafkaProperties props = new KafkaProperties();
-      
+
       // If AdminEndpoint is not set, the base configuration is used because no add
-      if (configuration.getAdminConfig() == null || configuration.getAdminConfig().getAdminEndpoint() == null || configuration.getAdminConfig().getAdminEndpoint().isEmpty()) {
+      if (configuration.getAdminConfig() == null || configuration.getAdminConfig().getAdminEndpoint() == null || configuration.getAdminConfig().getAdminEndpoint().isEmpty()
+         || Strings.isNullOrEmpty(String.join(",", configuration.getAdminConfig().getAdminEndpoint()))
+      ) {
           props = baseProperties(configuration);
           return props;
       }
-      
+
       props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, String.join(",", configuration.getAdminConfig().getAdminEndpoint()));
-      
+
       if (configuration.getAdminConfig().getAdminSecurity().getPassword() != null && configuration.getAdminConfig().getAdminSecurity().getUser() != null
             && configuration.getAdminConfig().getAdminSecurity().getProtocol() != null) {
          props.put("sasl.mechanism", "PLAIN");
