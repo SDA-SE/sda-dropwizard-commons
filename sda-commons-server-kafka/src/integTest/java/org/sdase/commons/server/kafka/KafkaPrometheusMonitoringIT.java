@@ -20,7 +20,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
-import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
@@ -102,7 +101,7 @@ public class KafkaPrometheusMonitoringIT {
 
       AutocommitMLS<Long, Long> longLongAutocommitMLS = new AutocommitMLS<>(
           record -> resultsLong.add(record.value()),
-          new IgnoreAndProceedErrorHandler<Long, Long>());
+          new IgnoreAndProceedErrorHandler<>());
 
 
       kafkaBundle
@@ -149,7 +148,7 @@ public class KafkaPrometheusMonitoringIT {
 
       assertThat(CollectorRegistry.defaultRegistry
             .getSampleValue("kafka_consumer_topic_message_duration_count",
-                  new String[] { "consumer_name", "topic_name" }, new String[] { CONSUMER_1, topic }))
+                  new String[] { "consumer_name", "topic_name" }, new String[] { CONSUMER_1+"-0", topic }))
                         .as("sample value for metric 'kafka_consumer_topic_message_duration_count'")
                         .isEqualTo(2);
    }

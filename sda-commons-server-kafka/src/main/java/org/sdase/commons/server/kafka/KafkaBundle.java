@@ -169,7 +169,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       List<MessageListener<K, V>> listener = new ArrayList<>(listenerConfig.getInstances());
       for (int i = 0; i < listenerConfig.getInstances(); i++) {
          registration.getStrategy().init(topicConsumerHistogram);
-         MessageListener<K, V> instance = new MessageListener<>(registration.getTopicsNames(), createConsumer(registration), listenerConfig, registration.getStrategy());
+         MessageListener<K, V> instance = new MessageListener<>(registration.getTopicsNames(), createConsumer(registration, i), listenerConfig, registration.getStrategy());
 
          listener.add(instance);
          Thread t = new Thread(instance);
@@ -251,7 +251,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
       List<MessageListener<K, V>> listener = new ArrayList<>(listenerConfig.getInstances());
       for (int i = 0; i < listenerConfig.getInstances(); i++) {
-         MessageListener<K, V> instance = new MessageListener<>(registration.getTopicsNames(), createConsumer(registration, strategy), listenerConfig, strategy);
+         MessageListener<K, V> instance = new MessageListener<>(registration.getTopicsNames(), createConsumer(registration, strategy, i), listenerConfig, strategy);
 
          listener.add(instance);
          Thread t = new Thread(instance);
@@ -427,7 +427,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
        String consumerConfigName) {
 
       ConsumerConfig consumerConfig = getConsumerConfiguration(consumerConfigName);
-      return createConsumer(keyDeSerializer, valueDeSerializer, consumerConfig);
+      return createConsumer(keyDeSerializer, valueDeSerializer, consumerConfig, 0);
    }
 
    /**
@@ -452,10 +452,11 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * @return a new kafka consumer
     */
    public <K, V> KafkaConsumer<K, V> createConsumer(Deserializer<K> keyDeSerializer, Deserializer<V> valueDeSerializer,
-         ConsumerConfig consumerConfig) {
+         ConsumerConfig consumerConfig, int instanceId) {
       KafkaProperties consumerProperties = KafkaProperties.forConsumer(kafkaConfiguration);
       if (consumerConfig != null) {
          consumerProperties.putAll(consumerConfig.getConfig());
+         consumerProperties.put(org.apache.kafka.clients.consumer.ConsumerConfig.CLIENT_ID_CONFIG, consumerConfig.getClientId()+"-"+instanceId);
       }
       return new KafkaConsumer<>(consumerProperties, keyDeSerializer, valueDeSerializer);
    }
@@ -570,7 +571,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * @deprecated since introduction of {@link MessageListenerStrategy}
     */
    @Deprecated
-   private <K, V> KafkaConsumer<K, V> createConsumer(MessageHandlerRegistration<K, V> registration, MessageListenerStrategy strategy) {
+   private <K, V> KafkaConsumer<K, V> createConsumer(MessageHandlerRegistration<K, V> registration, MessageListenerStrategy strategy, int instanceId) {
       ConsumerConfig consumerConfig = registration.getConsumerConfig();
       if (consumerConfig == null && registration.getConsumerConfigName() != null) {
          consumerConfig = getConsumerConfiguration(registration.getConsumerConfigName());
@@ -581,10 +582,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       if (consumerConfig != null && consumerConfig.getClientId() == null) {
          consumerConfig.setClientId(registration.getConsumerConfigName());
       }
-      return createConsumer(registration.getKeyDeserializer(), registration.getValueDeserializer(), consumerConfig);
+      return createConsumer(registration.getKeyDeserializer(), registration.getValueDeserializer(), consumerConfig, instanceId);
    }
 
-   private <K, V> KafkaConsumer<K, V> createConsumer(MessageListenerRegistration<K, V> registration) {
+   private <K, V> KafkaConsumer<K, V> createConsumer(MessageListenerRegistration<K, V> registration, int instanceId) {
       ConsumerConfig consumerConfig = registration.getConsumerConfig();
       if (consumerConfig == null && registration.getConsumerConfigName() != null) {
          consumerConfig = getConsumerConfiguration(registration.getConsumerConfigName());
@@ -596,7 +597,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       if (consumerConfig != null && consumerConfig.getClientId() == null) {
          consumerConfig.setClientId(registration.getConsumerConfigName());
       }
-      return createConsumer(registration.getKeyDeserializer(), registration.getValueDeserializer(), consumerConfig);
+      return createConsumer(registration.getKeyDeserializer(), registration.getValueDeserializer(), consumerConfig, instanceId);
    }
 
    private void applyForcedConfigFromStrategy(MessageListenerRegistration<?, ?> registration, ConsumerConfig consumerConfig) {

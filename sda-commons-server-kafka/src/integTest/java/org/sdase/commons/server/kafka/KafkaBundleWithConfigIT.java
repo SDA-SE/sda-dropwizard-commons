@@ -10,8 +10,10 @@ import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -43,6 +45,7 @@ import org.sdase.commons.server.kafka.consumer.ErrorHandler;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.KafkaHelper;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
+import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.consumer.strategies.legacy.CallbackMessageHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS;
@@ -149,7 +152,7 @@ public class KafkaBundleWithConfigIT {
    public static void beforeClass() {
       stringStringProducer  = KAFKA
           .getKafkaTestUtils()
-          .getKafkaProducer(StringSerializer.class, StringSerializer.class);;
+          .getKafkaProducer(StringSerializer.class, StringSerializer.class);
    }
 
    @Before
@@ -230,7 +233,7 @@ public class KafkaBundleWithConfigIT {
    public void shouldReturnConsumerByConsumerConfigName() {
       try (KafkaConsumer<String, String> consumer = kafkaBundle.createConsumer(new StringDeserializer(), new StringDeserializer(), CONSUMER_1)) {
          assertThat(consumer).isNotNull();
-         assertThat(KafkaHelper.getClientId(consumer)).isEqualTo(CONSUMER_1);
+         assertThat(KafkaHelper.getClientId(consumer)).isEqualTo(CONSUMER_1+"-0");
       }
    }
 
@@ -245,9 +248,9 @@ public class KafkaBundleWithConfigIT {
                .withClientId("puff-the-magic-consumer")
                .addConfig("max.poll.records", "10")
                .addConfig("enable.auto.commit", "false")
-               .build())) {
+               .build(), 1)) {
          assertThat(consumer).isNotNull();
-         assertThat(KafkaHelper.getClientId(consumer)).isEqualTo("puff-the-magic-consumer");
+         assertThat(KafkaHelper.getClientId(consumer)).isEqualTo("puff-the-magic-consumer-1");
       }
    }
 
@@ -687,6 +690,34 @@ public class KafkaBundleWithConfigIT {
    }
 
    @Test
+   public void shouldCreateSeveralInstancesOfConsumer() {
+      String topic = "shouldCreateSeveralInstancesOfConsumer";
+      // when
+      List<MessageListener<SimpleEntity, String>> listener = kafkaBundle
+          .registerMessageHandler(MessageHandlerRegistration
+              .<SimpleEntity, String>builder()
+              .withListenerConfig(ListenerConfig.builder().build(2))
+              .forTopic(topic)
+              .withConsumerConfig(ConsumerConfig.builder().withClientId("myclient").build())
+              .withKeyDeserializer(new WrappedNoSerializationErrorDeserializer<>(
+                  new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
+              .withHandler(x -> {
+                 if (x.key() != null && x.value() != null) {
+                    resultsString.add(x.value());
+                 }
+              })
+              .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+              .build());
+
+      // then
+      Set<String> clientIds = new HashSet<>();
+      clientIds.add(KafkaHelper.getClientId(listener.get(0).getConsumer()));
+      clientIds.add(KafkaHelper.getClientId(listener.get(1).getConsumer()));
+      assertThat(clientIds).containsExactlyInAnyOrder("myclient-0", "myclient-1");
+
+   }
+
+   @Test
    public void shouldSetProducerNameCorrectlyWithProducerConfig() {
       KafkaProducer<String, String> p1 = kafkaBundle
           .createProducer(new StringSerializer(), new StringSerializer(),
@@ -714,9 +745,9 @@ public class KafkaBundleWithConfigIT {
    public void shouldSetConsumerNameCorrectlyWithConsumerConfig() {
       KafkaConsumer<String, String> c1 = kafkaBundle
           .createConsumer(new StringDeserializer(), new StringDeserializer(),
-              ConsumerConfig.builder().withClientId("c1").build());
+              ConsumerConfig.builder().withClientId("c1").build(), 1);
 
-      assertThat(KafkaHelper.getClientId(c1)).isEqualTo("c1");
+      assertThat(KafkaHelper.getClientId(c1)).isEqualTo("c1-1");
    }
 
    @Test
@@ -725,7 +756,7 @@ public class KafkaBundleWithConfigIT {
           .createConsumer(new StringDeserializer(), new StringDeserializer(),
               CONSUMER_1);
 
-      assertThat(KafkaHelper.getClientId(c1)).isEqualTo(CONSUMER_1);
+      assertThat(KafkaHelper.getClientId(c1)).isEqualTo(CONSUMER_1+"-0");
    }
 
    @Test
@@ -734,7 +765,7 @@ public class KafkaBundleWithConfigIT {
           .createConsumer(new StringDeserializer(), new StringDeserializer(),
               CONSUMER_2);
 
-      assertThat(KafkaHelper.getClientId(c1)).isEqualTo("c2");
+      assertThat(KafkaHelper.getClientId(c1)).isEqualTo("c2-0");
    }
 
    public class ProcessingRecordException extends RuntimeException {
