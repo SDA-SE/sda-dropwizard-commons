@@ -7,7 +7,7 @@ public class AdminConfig {
 	
    private int adminClientRequestTimeoutMs = 5000;
 	   
-   private List<String> adminRestApi = new ArrayList<>();
+   private List<String> adminEndpoint = new ArrayList<>();
    
    private Security adminSecurity = new Security();
 
@@ -19,12 +19,12 @@ public class AdminConfig {
       this.adminClientRequestTimeoutMs = adminClientRequestTimeoutMs;
    }
 
-   public List<String> getAdminRestApi() {
-      return adminRestApi;
+   public List<String> getAdminEndpoint() {
+      return adminEndpoint;
    }
 
-   public void setAdminRestApi(List<String> adminRestApi) {
-      this.adminRestApi = adminRestApi;
+   public void setAdminEndpoint(List<String> adminEndpoint) {
+      this.adminEndpoint = adminEndpoint;
    }
 
    public Security getAdminSecurity() {

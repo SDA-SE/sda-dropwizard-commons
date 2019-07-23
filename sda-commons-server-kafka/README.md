@@ -178,7 +178,7 @@ kafka:
     adminClientRequestTimeoutMs: 2000
   
     # Admin Rest Api for accessing the accessing admin functionality
-    adminRestApi:
+    adminEndpoint:
       - kafka-admin-api-1:9092 
       - kafka-admin-api-2:9092 
   
