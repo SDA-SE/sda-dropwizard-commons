@@ -175,14 +175,14 @@ public class OpaAuthFilter implements ContainerRequestFilter {
          LOG.warn("Invalid response from OPA. Maybe the policy path or the response format is not correct");
          throw new ForbiddenException("Not authorized");
       }
-      if (!resp.getResult().isAllow()) {
+      if (!resp.isAllow()) {
          throw new ForbiddenException("Not authorized");
       }
-      if (null == resp.getResult().getConstraints()) {
+      if (null == resp.getResult()) {
          // no constraints defined
          return null;
       }
-      return resp.getResult().getConstraints();
+      return resp.getResult();
    }
 
    private JwtPrincipal getJwtPrincipal(SecurityContext securityContext) {

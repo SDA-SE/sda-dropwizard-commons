@@ -30,26 +30,25 @@ public class HealthCheckTest {
    public void shouldBeHealthyIfNormalResponse() {
       // since the health check does not send any input, the response of OPA
       // will be false (default) for allow
-     OPA_RULE.mock(onAnyRequest().deny());
+      OPA_RULE.mock(onAnyRequest().deny());
       assertThat(policyExistsHealthCheck.check().isHealthy()).isTrue();
    }
 
    @Test
    public void shouldBeUnhealthyIfOpaGivesEmptyResponse() {
-     OPA_RULE.mock(onAnyRequest().emptyResponse());
-     assertThat(policyExistsHealthCheck.check().isHealthy()).isFalse();
-  }
+      OPA_RULE.mock(onAnyRequest().emptyResponse());
+      assertThat(policyExistsHealthCheck.check().isHealthy()).isFalse();
+   }
 
-  @Test(expected = InternalServerErrorException.class)
-  public void shouldBeUnhealthyIfOpaError() {
-    OPA_RULE.mock(onAnyRequest().serverError());
-    policyExistsHealthCheck.check();
-  }
+   @Test(expected = InternalServerErrorException.class)
+   public void shouldBeUnhealthyIfOpaError() {
+      OPA_RULE.mock(onAnyRequest().serverError());
+      policyExistsHealthCheck.check();
+   }
 
-  @Test
-  public void shouldBeUnhealthyIfMessageDoesNotContainDefaultDecision() {
-    OPA_RULE.mock(onAnyRequest().answer(new OpaResponse()));
-    assertThat(policyExistsHealthCheck.check().isHealthy()).isFalse();
-  }
-
+   @Test
+   public void shouldBeUnhealthyIfMessageDoesNotContainDefaultDecision() {
+      OPA_RULE.mock(onAnyRequest().answer(new OpaResponse()));
+      assertThat(policyExistsHealthCheck.check().isHealthy()).isFalse();
+   }
 }

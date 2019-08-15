@@ -54,15 +54,20 @@ public class OpaIT {
       // then
       assertThat(response.getStatus()).isEqualTo(SC_OK);
       PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
-      assertThat(principalInfo.getConstraints()).isNull();
+      assertThat(principalInfo.getConstraints().getConstraint()).isNull();
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
       assertThat(principalInfo.getJwt()).isNull();
    }
 
    @Test
    public void shouldAllowAccessWithConstraints() {
       // given
-      OPA_RULE.mock(onRequest(method, path).allow()
-          .withConstraint(new ConstraintModel().addConstraint("customer_ids", "1", "2").addConstraint("agent_ids", "A1")));
+      OPA_RULE
+            .mock(onRequest(method, path)
+                  .allow()
+                  .withConstraint(new ConstraintModel()
+                        .addConstraint("customer_ids", "1", "2")
+                        .addConstraint("agent_ids", "A1")));
 
       // when
       Response response = doGetRequest();
@@ -70,7 +75,10 @@ public class OpaIT {
       assertThat(response.getStatus()).isEqualTo(SC_OK);
       PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
 
-      assertThat(principalInfo.getConstraints().getConstraint()).contains(entry("customer_ids", Lists.newArrayList("1", "2")), entry("agent_ids", Lists.newArrayList("A1")));
+      assertThat(principalInfo.getConstraints().getConstraint())
+            .contains(entry("customer_ids", Lists.newArrayList("1", "2")),
+                  entry("agent_ids", Lists.newArrayList("A1")));
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
       assertThat(principalInfo.getJwt()).isNull();
    }
 
@@ -87,7 +95,10 @@ public class OpaIT {
    @Test
    public void shouldDenyAccessWithConstraints() {
       // given
-      OPA_RULE.mock(onRequest(method, path).deny().withConstraint(new ConstraintModel().addConstraint("customer_is", "1")));
+      OPA_RULE
+            .mock(onRequest(method, path)
+                  .deny()
+                  .withConstraint(new ConstraintModel().addConstraint("customer_is", "1")));
       // when
       Response response = doGetRequest();
       // then
@@ -141,24 +152,29 @@ public class OpaIT {
    @Test
    public void shouldIncludeHealthCheck() {
       Response response = DW
-          .getRule()
-          .client()
-          .target("http://localhost:" + DW.getRule().getAdminPort()) // NOSONAR
-          .path("healthcheck")
-          .request(MediaType.APPLICATION_JSON_TYPE)
-          .get();
+            .getRule()
+            .client()
+            .target("http://localhost:" + DW.getRule().getAdminPort()) // NOSONAR
+            .path("healthcheck")
+            .request(MediaType.APPLICATION_JSON_TYPE)
+            .get();
 
       assertThat(response.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
       assertThat(response.readEntity(String.class)).contains(PolicyExistsHealthCheck.DEFAULT_NAME);
    }
-
 
    private Response doGetRequest() {
       return doGetRequest(path);
    }
 
    private Response doGetRequest(String rPath) {
-      return DW.getRule().client().target("http://localhost:" + DW.getRule().getLocalPort()).path(rPath).request().get();
+      return DW
+            .getRule()
+            .client()
+            .target("http://localhost:" + DW.getRule().getLocalPort())
+            .path(rPath)
+            .request()
+            .get();
    }
 
    private Response doPostRequest(String rPath) {

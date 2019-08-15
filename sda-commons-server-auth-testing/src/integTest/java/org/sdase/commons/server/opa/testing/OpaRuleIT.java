@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
-import com.fasterxml.jackson.databind.node.NullNode;
 import com.github.tomakehurst.wiremock.client.VerificationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -41,7 +40,7 @@ public class OpaRuleIT {
       Response response = requestMock(request(method, path));
       // then
       assertThat(response.getStatus()).isEqualTo(SC_OK);
-      assertThat(response.readEntity(OpaResponse.class).getResult().isAllow()).isTrue();
+      assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
       OPA_RULE.verify(1, method, path);
    }
 
@@ -54,8 +53,7 @@ public class OpaRuleIT {
       // then
       assertThat(response.getStatus()).isEqualTo(SC_OK);
       OpaResponse opaResponse = response.readEntity(OpaResponse.class);
-      assertThat(opaResponse.getResult().isAllow()).isTrue();
-      assertThat(opaResponse.getResult().getConstraints()).isEqualTo(NullNode.getInstance());
+      assertThat(opaResponse.isAllow()).isTrue();
       OPA_RULE.verify(1, method, path);
    }
 
@@ -94,7 +92,7 @@ public class OpaRuleIT {
       Response response = requestMock(request("GET", "p1", "p2"));
       // then
       assertThat(response.getStatus()).isEqualTo(SC_OK);
-      assertThat(response.readEntity(OpaResponse.class).getResult().isAllow()).isTrue();
+      assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
    }
 
    @Test
@@ -113,9 +111,9 @@ public class OpaRuleIT {
       assertThat(response.getStatus()).isEqualTo(SC_OK);
       assertThat(response2.getStatus()).isEqualTo(SC_OK);
       OpaResponse opaResponse = response.readEntity(OpaResponse.class);
-      assertThat(opaResponse.getResult().isAllow()).isTrue();
+      assertThat(opaResponse.isAllow()).isTrue();
       OpaResponse opaResponse2 = response2.readEntity(OpaResponse.class);
-      assertThat(opaResponse2.getResult().isAllow()).isFalse();
+      assertThat(opaResponse2.isAllow()).isFalse();
    }
 
    private Response requestMock(OpaRequest request) {

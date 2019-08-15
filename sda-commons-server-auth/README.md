@@ -153,7 +153,7 @@ requests the policy decision providing the HTTP path and HTTP method and the JWT
 
 ![Overview](./docs/Overview.svg)
 
-The response consists of two parts, the overall `allow` decision and optional object that represents `constraints` to limit data access
+The response consists of two parts, the overall `allow` decision and optional rules that represents constraints to limit data access
 within the service. The constraints are fully service dependent and MUST be applied when querying the database or
 filtering received data. 
 
@@ -163,7 +163,8 @@ with a list of string values.
  {
      "result": {
         "allow": true,
-        "constraints": { "constraint1": true, "constraint2": [ "v2.1", "v2.2" ] }
+        "constraint1": true,
+        "constraint2": [ "v2.1", "v2.2" ]
      }
   }
 ```

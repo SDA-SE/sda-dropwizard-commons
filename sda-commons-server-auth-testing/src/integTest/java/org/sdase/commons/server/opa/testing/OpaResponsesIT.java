@@ -30,12 +30,12 @@ public class OpaResponsesIT {
    private static final WireMockClassRule WIRE = new WireMockClassRule(wireMockConfig().dynamicPort());
 
    private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW = new LazyRule<>(
-       () -> DropwizardRuleHelper
-           .dropwizardTestAppFrom(OpaBundleTestApp.class)
-           .withConfigFrom(OpaBundeTestAppConfiguration::new)
-           .withRandomPorts()
-           .withConfigurationModifier(c -> c.getOpa().setBaseUrl(WIRE.baseUrl()).setPolicyPackage("my.policy")) // NOSONAR
-           .build());
+         () -> DropwizardRuleHelper
+               .dropwizardTestAppFrom(OpaBundleTestApp.class)
+               .withConfigFrom(OpaBundeTestAppConfiguration::new)
+               .withRandomPorts()
+               .withConfigurationModifier(c -> c.getOpa().setBaseUrl(WIRE.baseUrl()).setPolicyPackage("my.policy")) // NOSONAR
+               .build());
 
    @ClassRule
    public static final RuleChain chain = RuleChain.outerRule(WIRE).around(DW);
@@ -83,10 +83,10 @@ public class OpaResponsesIT {
       // then
       assertThat(response.getStatus()).isEqualTo(SC_OK);
       PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
-      assertThat(principalInfo.getConstraints()).isNull();
+      assertThat(principalInfo.getConstraints().getConstraint()).isNull();
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
       assertThat(principalInfo.getJwt()).isNull();
    }
-
 
    @Test
    public void shouldAllowAccessWithConstraints() {
@@ -94,11 +94,10 @@ public class OpaResponsesIT {
       mock(200, "{\n"
                       + "  \"result\": {\n"
                       + "    \"allow\": true,\n"
-                      + "    \"constraints\": {\n"
-                      + "      \"constraint\": {\n"
-                      + "        \"customer_ids\": [\"1\", \"2\"],"
-                      + "        \"agent_ids\": [\"A1\"]\n"
-                      + "      }\n"
+                      + "    \"fullAccess\": true,\n"
+                      + "    \"constraint\": {\n"
+                      + "      \"customer_ids\": [\"1\", \"2\"],"
+                      + "      \"agent_ids\": [\"A1\"]\n"
                       + "    }\n" // NOSONAR
                       + "  }\n"
                       + "}");
@@ -110,7 +109,10 @@ public class OpaResponsesIT {
       assertThat(response.getStatus()).isEqualTo(SC_OK);
       PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
 
-      assertThat(principalInfo.getConstraints().getConstraint()).contains(entry("customer_ids", Lists.newArrayList("1", "2")), entry("agent_ids", Lists.newArrayList("A1")));
+      assertThat(principalInfo.getConstraints().getConstraint())
+            .contains(entry("customer_ids", Lists.newArrayList("1", "2")),
+                  entry("agent_ids", Lists.newArrayList("A1")));
+      assertThat(principalInfo.getConstraints().isFullAccess()).isTrue();
       assertThat(principalInfo.getJwt()).isNull();
    }
 
@@ -166,7 +168,9 @@ public class OpaResponsesIT {
       // then
       assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
       PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
-      assertThat(principalInfo.getConstraints()).isNull();
+      assertThat(principalInfo.getConstraints().getConstraint()).isNull();
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
+      assertThat(principalInfo.getJwt()).isNull();
    }
 
    @Test
@@ -198,6 +202,4 @@ public class OpaResponsesIT {
    private Response doGetRequest() {
       return DW.getRule().client().target("http://localhost:" + DW.getRule().getLocalPort()).path("resources").request().get();
    }
-
-
 }

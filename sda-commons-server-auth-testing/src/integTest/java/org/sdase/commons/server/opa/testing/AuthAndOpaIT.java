@@ -82,7 +82,8 @@ public class AuthAndOpaIT {
       assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
       PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
       assertThat(principalInfo.getJwt()).isEqualTo(jwt);
-      assertThat(principalInfo.getConstraints()).isNull();
+      assertThat(principalInfo.getConstraints().getConstraint()).isNull();
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
    }
 
    @Test
@@ -107,7 +108,8 @@ public class AuthAndOpaIT {
       assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
       PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
       assertThat(principalInfo.getJwt()).isNull();
-      assertThat(principalInfo.getConstraints()).isNull();
+      assertThat(principalInfo.getConstraints().getConstraint()).isNull();
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
    }
 
    @Test

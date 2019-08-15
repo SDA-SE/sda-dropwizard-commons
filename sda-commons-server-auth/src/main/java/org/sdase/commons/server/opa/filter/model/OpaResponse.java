@@ -1,42 +1,27 @@
 package org.sdase.commons.server.opa.filter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class OpaResponse {
+   private static final String ALLOW = "allow";
 
-   private Content result;
+   private JsonNode result;
 
-   public Content getResult() {
+   public JsonNode getResult() {
       return result;
    }
 
-   public OpaResponse setResult(Content result) {
+   public OpaResponse setResult(JsonNode result) {
       this.result = result;
       return this;
    }
 
-   public static class Content {
-
-      private boolean allow;
-
-      private JsonNode constraints;
-
-      public boolean isAllow() {
-         return allow;
+   @JsonIgnore()
+   public boolean isAllow() {
+      if (result.has(ALLOW) && result.get(ALLOW).isBoolean()) {
+         return result.get(ALLOW).asBoolean();
       }
-
-      public Content setAllow(boolean allow) {
-         this.allow = allow;
-         return this;
-      }
-
-      public JsonNode getConstraints() {
-         return constraints;
-      }
-
-      public Content setConstraints(JsonNode constraints) {
-         this.constraints = constraints;
-         return this;
-      }
+      return false;
    }
 }

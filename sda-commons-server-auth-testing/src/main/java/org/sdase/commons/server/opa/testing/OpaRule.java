@@ -10,6 +10,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
@@ -21,7 +22,6 @@ import org.junit.rules.RuleChain;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
-import org.sdase.commons.server.opa.filter.model.OpaResponse.Content;
 
 @SuppressWarnings("WeakerAccess")
 public class OpaRule extends ExternalResource {
@@ -125,7 +125,7 @@ public class OpaRule extends ExternalResource {
       private Object constraint;
 
       public StubBuilder() {
-        onAnyRequest = true;
+         onAnyRequest = true;
       }
 
       public StubBuilder(String method, String path) {
@@ -202,13 +202,17 @@ public class OpaRule extends ExternalResource {
          if (answer != null) {
             response = answer;
          } else {
-            response = new OpaResponse()
-                .setResult(new Content().setAllow(allow));
+            ObjectNode objectNode = OM.createObjectNode();
+
             if (constraint != null) {
-                response.getResult().setConstraints(OM.valueToTree(constraint));
+               objectNode = OM.valueToTree(constraint);
             }
+
+            objectNode.put("allow", allow);
+
+            response = new OpaResponse().setResult(objectNode);
          }
-          WIRE.stubFor(mappingBuilder.willReturn(getResponse(response)));
+         WIRE.stubFor(mappingBuilder.willReturn(getResponse(response)));
 
       }
 

@@ -40,12 +40,11 @@ public class OpaProgrammaticIT {
     Response response = DW.getRule().client().target("http://localhost:" + DW.getRule().getLocalPort()) // NOSONAR
         .path("resources").request().get(); // NOSONAR
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
-    assertThat(principalInfo.getConstraints()).isNull();
-    assertThat(principalInfo.getJwt()).isNull();
-  }
-
-
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      assertThat(principalInfo.getConstraints().getConstraint()).isNull();
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
+      assertThat(principalInfo.getJwt()).isNull();
+   }
 }
