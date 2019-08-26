@@ -29,7 +29,7 @@ dependencies {
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
         exclude group: 'org.apache.avro', module: 'avro'
     }
-    compile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonVersion
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion"
     compile 'org.apache.avro:avro:' + avroVersion, {
         exclude group: 'org.xerial.snappy', module: 'snappy-java'
         exclude group: 'org.apache.commons', module: 'commons-compress'

@@ -37,9 +37,18 @@ dependencies {
     compile 'org.eclipse.jetty:jetty-server:' + jettyVersion
     compile 'org.eclipse.jetty:jetty-jmx:' + jettyVersion
     compile 'org.slf4j:slf4j-api:'+slf4jVersion
-    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:' + jacksonVersion
-    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:' + jacksonVersion
-    compile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonVersion
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-base'
+        exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-jaxb-annotations'
+    }
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+    compile 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion"
     
     testCompile 'io.confluent:kafka-avro-serializer:'+confluentVersion, {
         exclude group: 'org.apache.zookeeper', module: '*'

@@ -12,8 +12,24 @@ dependencies {
         exclude group: 'io.dropwizard.metrics', module: 'metrics-jersey2'
         exclude group: 'io.dropwizard.metrics', module: 'metrics-annotation'
         exclude group: 'io.dropwizard', module: 'dropwizard-util'
+        exclude group: 'io.dropwizard', module: 'dropwizard-jackson'
         exclude group: 'org.apache.commons', module: 'commons-lang3'
     }
+    compile 'io.dropwizard:dropwizard-jackson:' + dropwizardVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-guava'
+        exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-joda'
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-guava:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'joda-time', module: 'joda-time'
+    }
+    compile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonDatabindVersion
     compile 'io.dropwizard:dropwizard-util:' + dropwizardVersion, {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
@@ -33,6 +49,18 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
         exclude group: 'org.glassfish.jersey.containers', module: 'jersey-container-servlet'
+        exclude group: 'io.dropwizard', module: 'dropwizard-jackson'
+        exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
+    }
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-base'
+        exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-jaxb-annotations'
+    }
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+    compile 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
     }
     compile 'io.dropwizard.metrics:metrics-jersey2:' + dropwizardMetricsVersion, {
         exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'

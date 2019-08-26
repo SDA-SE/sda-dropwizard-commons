@@ -1,8 +1,15 @@
 dependencies {
-    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
-    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: jacksonVersion
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:' + jacksonVersion
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+    compile 'com.fasterxml.jackson.module:jackson-module-parameter-names:' + jacksonVersion, {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+    compile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonDatabindVersion
 
     testCompile project(':sda-commons-server-testing')
     testCompile 'commons-io:commons-io:2.6'
