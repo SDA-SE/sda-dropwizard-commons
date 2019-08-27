@@ -59,6 +59,12 @@ database using the `MongoClient`.
 If the `http_proxy` environment variable is present, the configured proxy is used to download the 
 mongod executable.
 
+### Scripting
+
+By default, scripting using JavaScript is disabled.
+You should avoid using it, as it can cause security issues.
+If you still need to use it, activate it using the build `enableScripting()`.
+
 ### Configuration in a special CI-environment
 
 Normally the mongod executable is downloaded directly from the mongodb web page.

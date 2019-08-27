@@ -1,5 +1,11 @@
 package org.sdase.commons.server.mongo.testing;
 
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
+import static java.lang.Runtime.getRuntime;
+import static java.util.Objects.requireNonNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -26,11 +32,6 @@ import de.flapdoodle.embed.process.config.store.IDownloadConfig;
 import de.flapdoodle.embed.process.config.store.IProxyFactory;
 import de.flapdoodle.embed.process.config.store.NoProxyFactory;
 import de.flapdoodle.embed.process.runtime.Network;
-import org.bson.Document;
-import org.junit.rules.ExternalResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.Authenticator;
@@ -39,12 +40,10 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
-
-import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
-import static java.lang.Runtime.getRuntime;
-import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.MINUTES;
+import org.bson.Document;
+import org.junit.rules.ExternalResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -164,6 +163,7 @@ public class MongoDbRule extends ExternalResource {
       return new Builder();
    }
 
+   private final boolean enableScripting;
    private final IFeatureAwareVersion version;
    private final long timeoutMs;
    private final String username;
@@ -175,13 +175,14 @@ public class MongoDbRule extends ExternalResource {
 
    private volatile boolean started;
 
-   private MongoDbRule(String username, String password, String database, IFeatureAwareVersion version,
-         long timeoutMs) {
+   private MongoDbRule(String username, String password, String database, boolean enableScripting,
+         IFeatureAwareVersion version, long timeoutMs) {
 
       this.version = requireNonNull(version, "version");
       this.username = requireNonNull(username, "username");
       this.password = requireNonNull(password, "password");
       this.database = requireNonNull(database, "database");
+      this.enableScripting = enableScripting;
       this.timeoutMs = timeoutMs;
    }
 
@@ -245,10 +246,15 @@ public class MongoDbRule extends ExternalResource {
       }
 
       try {
-         mongodConfig = new MongodConfigBuilder()
-               .version(version)
-               .net(new Net(Network.getLocalHost().getHostName(), Network.getFreeServerPort(), false))
-               .build();
+         MongodConfigBuilder mongodConfigBuilder = new MongodConfigBuilder()
+             .version(version)
+             .net(new Net(Network.getLocalHost().getHostName(), Network.getFreeServerPort(), false));
+
+         if (!enableScripting) {
+            mongodConfigBuilder = mongodConfigBuilder.withLaunchArgument("--noscripting");
+         }
+         
+         mongodConfig = mongodConfigBuilder.build();
 
          mongodExecutable = ensureMongodStarter().prepare(mongodConfig);
          mongodExecutable.start();
@@ -324,6 +330,7 @@ public class MongoDbRule extends ExternalResource {
       private String username = DEFAULT_USER;
       private String password = DEFAULT_PASSWORD; // NOSONAR
       private String database = DEFAULT_DATABASE;
+      private boolean scripting = false;
 
       private Builder() {
          // prevent instantiation
@@ -375,11 +382,21 @@ public class MongoDbRule extends ExternalResource {
          return this;
       }
 
+      /**
+       * Allows to enable scripting using JavaScript, which is disabled by
+       * default. Avoid this option, as it expose your application to security
+       * risks.
+       */
+      public Builder enableScripting() {
+         this.scripting = true;
+         return this;
+      }
+
       public MongoDbRule build() {
          IFeatureAwareVersion v = version == null ? DEFAULT_VERSION : version;
          long t = timeoutInMillis == null || timeoutInMillis < 1L ? DEFAULT_TIMEOUT_MS : timeoutInMillis;
 
-         return new MongoDbRule(username, password, database, v, t);
+         return new MongoDbRule(username, password, database, scripting, v, t);
       }
    }
 }
