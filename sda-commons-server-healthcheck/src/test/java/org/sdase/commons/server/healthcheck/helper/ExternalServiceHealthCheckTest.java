@@ -13,6 +13,7 @@ import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -94,6 +95,8 @@ public class ExternalServiceHealthCheckTest {
       Mockito.when(headConnectionMock.getResponseCode()).thenReturn(SC_NOT_FOUND);
       Result result = headHealthCheck.check();
       assertFalse(result.isHealthy());
+      assertThat(result.getMessage()).contains("404");
+      assertThat(result.getMessage()).contains("http://www.testurl.com");
    }
 
    @Test
@@ -101,6 +104,8 @@ public class ExternalServiceHealthCheckTest {
       Mockito.when(headConnectionMock.getResponseCode()).thenReturn(SC_INTERNAL_SERVER_ERROR);
       Result result = headHealthCheck.check();
       assertFalse(result.isHealthy());
+      assertThat(result.getMessage()).contains("500");
+      assertThat(result.getMessage()).contains("http://www.testurl.com");
    }
 
    @Test
@@ -108,5 +113,6 @@ public class ExternalServiceHealthCheckTest {
       Mockito.when(headConnectionMock.getResponseCode()).thenThrow(new IOException());
       Result result = headHealthCheck.check();
       assertFalse(result.isHealthy());
+      assertThat(result.getMessage()).contains("http://www.testurl.com");
    }
 }

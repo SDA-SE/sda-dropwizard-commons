@@ -97,11 +97,11 @@ public class ExternalServiceHealthCheck extends HealthCheck {
          }
       } catch (IOException exception) {
          LOGGER.warn("IOException (Details in Logs) - Endpoint not available (URL: {})", this.url, exception);
-         return Result.unhealthy("IOException (Details in Logs) - Endpoint not available (URL: {})", this.url);
+         return Result.unhealthy("IOException (Details in Logs) - Endpoint not available (URL: %s)", this.url);
       }
 
       LOGGER.warn("Endpoint not available (URL: {})", this.url);
-      return Result.unhealthy("Endpoint not available (URL: {}, StatusCode: {})", this.url, statusCode);
+      return Result.unhealthy("Endpoint not available (URL: %s, StatusCode: %s)", this.url, statusCode);
    }
 
    private static HttpURLConnection openHttpURLConnection(String url) throws IOException {
