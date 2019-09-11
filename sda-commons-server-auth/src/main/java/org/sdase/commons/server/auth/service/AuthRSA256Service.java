@@ -55,8 +55,13 @@ public class AuthRSA256Service implements AuthService {
          else {
             RSAPublicKey key = rsaPublicKeyLoader.getKey(keyId);
 
-            DecodedJWT jwt = JWT.require(Algorithm.RSA256(key, null)).acceptLeeway(leeway).build().verify(
-                  authorizationToken);
+            if (key == null) {
+               log.error("No key found for verification, matching the requested kid {}", keyId);
+               throw new JwtAuthException("Could not verify JWT with the requested kid.");
+            }
+
+            DecodedJWT jwt = verifyJwtSignature(authorizationToken, key)
+                  .orElseThrow(() -> new JwtAuthException("Verifying token failed"));
             return jwt.getClaims();
          }
       } catch (JWTVerificationException e) {
