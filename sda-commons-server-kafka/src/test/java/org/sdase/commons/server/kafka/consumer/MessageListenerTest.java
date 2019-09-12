@@ -1,31 +1,22 @@
 package org.sdase.commons.server.kafka.consumer;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.AdditionalMatchers.gt;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.when;
 
 import java.lang.Thread.State;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -36,24 +27,6 @@ import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
 public class MessageListenerTest {
-
-
-   private static final Matcher<Long> longGtZero = new BaseMatcher<Long>() {
-
-      @Override
-      public boolean matches(Object item) {
-         if (item instanceof Long) {
-            return ((Long) item) > 0;
-         }
-         return false;
-      }
-
-      @Override
-      public void describeTo(Description description) {
-         //
-      }
-
-   };
 
    private static final String[] TOPICS = { "create", "delete", "update" };
 
@@ -115,7 +88,13 @@ public class MessageListenerTest {
    public void itShouldSubscribeToAllTopics()  {
       setupMocks();
       setupListener();
-      Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).thenThrow(new WakeupException());
+      when(consumer.poll(gt(-10))).thenAnswer(invocation -> {
+         long timeout = invocation.getArgument(0);
+         if (timeout > 0) {
+            throw new WakeupException();
+         }
+         return null;
+      });
 
       startListenerThread();
 
@@ -130,7 +109,7 @@ public class MessageListenerTest {
       setupListener();
 
       AtomicInteger counter = new AtomicInteger(0);
-      Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).thenAnswer((Answer<Void>) invocation -> {
+      when(consumer.poll(gt(0L))).thenAnswer(invocation -> {
          if (counter.incrementAndGet() < 2) {
             throw new WakeupException();
          } else {
@@ -141,10 +120,10 @@ public class MessageListenerTest {
       Thread t = startListenerThread();
 
 
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(2)).poll(Mockito.longThat(longGtZero));
+      Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(2)).poll(gt(0L));
 
       listener.stopConsumer();
-      await().untilAsserted(() -> assertThat(t.getState(), equalTo(State.TERMINATED)));
+      await().untilAsserted(() -> assertThat(t.getState()).isEqualTo(State.TERMINATED));
    }
 
    @Test
@@ -152,7 +131,7 @@ public class MessageListenerTest {
       ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
       setupMocks();
       setupListener();
-      Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).thenReturn(records);
+      when(consumer.poll(gt(0L))).thenReturn(records);
 
       startListenerThread();
 
@@ -166,12 +145,12 @@ public class MessageListenerTest {
       setupListener();
       AtomicInteger count = new AtomicInteger(0);
 
-      Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).thenReturn(records);
+      when(consumer.poll(gt(0L))).thenReturn(records);
 
-      Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(Mockito.anyObject());
+      Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(any());
 
-      Mockito.when(errorHandler.handleError(Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject())).then(
-            (Answer<Boolean>)invocation -> {
+      when(errorHandler.handleError(any(), any(), any())).then(
+            invocation -> {
                count.incrementAndGet();
                return true;
       });
@@ -189,10 +168,10 @@ public class MessageListenerTest {
       setupListener();
       AtomicInteger count = new AtomicInteger(0);
 
-      Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).thenReturn(records);
-      Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(Mockito.anyObject());
+      when(consumer.poll(gt(0L))).thenReturn(records);
+      Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(any());
 
-      Mockito.when(errorHandler.handleError(Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject())).then(
+      when(errorHandler.handleError(any(), any(), any())).then(
             (Answer<Boolean>)invocation -> {
                count.incrementAndGet();
                return false;
@@ -210,7 +189,7 @@ public class MessageListenerTest {
       ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
       setupMocks();
       setupListener();
-      Mockito.when(consumer.poll(Mockito.longThat(longGtZero))).thenReturn(records);
+      when(consumer.poll(gt(0L))).thenReturn(records);
 
       startListenerThread();
       await().atMost(BLOCKING_TIME_MS, MILLISECONDS).until(() -> {
@@ -240,22 +219,22 @@ public class MessageListenerTest {
          return null;
       }).when(consumer).wakeup();
 
-      Mockito.doAnswer((Answer<Void>) invocation -> {
+      when(consumer.poll(gt(0L))).thenAnswer((Answer<Void>) invocation -> {
          await().atMost(BLOCKING_TIME_MS, MILLISECONDS).untilTrue(throwException);
          throw new WakeupException();
-      }).when(consumer).poll(Mockito.longThat(longGtZero));
+      });
 
       Thread t = startListenerThread();
 
       //verify and wait until poll has been invoked
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).poll(Mockito.longThat(longGtZero));
+      Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).poll(gt(0L));
 
       listener.stopConsumer();
 
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).wakeup();
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).close();
 
-      await().untilAsserted(() -> assertThat(t.getState(), equalTo(State.TERMINATED)));
+      await().untilAsserted(() -> assertThat(t.getState()).isEqualTo(State.TERMINATED));
    }
 
 
@@ -265,7 +244,7 @@ public class MessageListenerTest {
       setupMocks();
       setupListener(waitTime);
 
-      Mockito.when(consumer.partitionsFor(Mockito.anyString())).thenReturn(new LinkedList<>());
+      when(consumer.partitionsFor(Mockito.anyString())).thenReturn(new LinkedList<>());
 
 
       AtomicBoolean throwException = new AtomicBoolean(false);
@@ -287,7 +266,7 @@ public class MessageListenerTest {
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).wakeup();
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).close();
 
-      await().untilAsserted(() -> assertThat(t.getState(), equalTo(State.TERMINATED)));
+      await().untilAsserted(() -> assertThat(t.getState()).isEqualTo(State.TERMINATED));
    }
 
    private Thread startListenerThread() {
@@ -297,10 +276,9 @@ public class MessageListenerTest {
       return t;
    }
 
-   @SuppressWarnings("unchecked")
    private void setupMocks() {
       Mockito.doNothing().when(consumer).subscribe(Mockito.anyList());
-      Mockito.when(consumer.poll(0)).thenReturn(null);
+      when(consumer.poll(0)).thenReturn(null);
    }
 
 }

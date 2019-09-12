@@ -1,36 +1,31 @@
 package org.sdase.commons.server.kafka;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
+import com.github.ftrossbach.club_topicana.core.MismatchedTopicConfigException;
+import com.salesforce.kafka.test.KafkaBroker;
+import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.salesforce.kafka.test.KafkaBroker;
-import org.sdase.commons.server.kafka.builder.ProducerRegistration;
-import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
-import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
-
-import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
-import com.github.ftrossbach.club_topicana.core.MismatchedTopicConfigException;
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
+import org.sdase.commons.server.kafka.builder.ProducerRegistration;
+import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.exception.TopicCreationException;
+import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
-
-import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
 
@@ -79,7 +74,7 @@ public class KafkaTopicIT {
                   .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
-      assertThat(stringStringMessageListener, is(notNullValue()));
+      assertThat(stringStringMessageListener).isNotNull();
 
    }
 
@@ -103,7 +98,7 @@ public class KafkaTopicIT {
                   .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
-      assertThat(stringStringMessageListener, is(notNullValue()));
+      assertThat(stringStringMessageListener).isNotNull();
 
    }
 
@@ -122,7 +117,7 @@ public class KafkaTopicIT {
                   .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
-      assertThat(stringStringMessageListener, is(notNullValue()));
+      assertThat(stringStringMessageListener).isNotNull();
 
    }
 
@@ -136,14 +131,14 @@ public class KafkaTopicIT {
             .build();
 
       MessageProducer<Object, Object> producer = bundle.registerProducer(ProducerRegistration.builder().forTopic(topic).createTopicIfMissing().withDefaultProducer().build());
-      assertThat(producer, is(notNullValue()));
+      assertThat(producer).isNotNull();
    }
 
    @Test
    public void createSimpleTopicNameOnly()  {
       String topicName = "createSimpleTopicNameOnly";
       MessageProducer<Object, Object> producer = bundle.registerProducer(ProducerRegistration.builder().forTopic(topicName).createTopicIfMissing().withDefaultProducer().build());
-      assertThat(producer, is(notNullValue()));
+      assertThat(producer).isNotNull();
    }
 
    @Test(expected = TopicCreationException.class)
@@ -170,7 +165,7 @@ public class KafkaTopicIT {
             .withConfig("cleanup.policy", "delete")
             .build();
       MessageProducer<Object, Object> producer = bundle.registerProducer(ProducerRegistration.builder().forTopic(topic).createTopicIfMissing().withDefaultProducer().build());
-      assertThat(producer, is(notNullValue()));
+      assertThat(producer).isNotNull();
    }
 
 

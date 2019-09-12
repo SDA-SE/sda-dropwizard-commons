@@ -2,19 +2,19 @@ package org.sdase.commons.server.kafka;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration.ExpectedTopicConfigurationBuilder;
+import com.salesforce.kafka.test.KafkaBroker;
+import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import com.salesforce.kafka.test.KafkaBroker;
 import java.util.stream.IntStream;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -29,8 +29,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
-
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
@@ -43,8 +41,6 @@ import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.P
 import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.RetryProcessingErrorMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
-
-import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
 
@@ -121,7 +117,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
 
       await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> numberExceptionThrown == 1);
 
-      assertThat(numberExceptionThrown, equalTo(1));
+      assertThat(numberExceptionThrown).isEqualTo(1);
       errorListener.forEach(MessageListener::stopConsumer);
 
       // wait for retention of fetch information
@@ -144,9 +140,9 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
 
       await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> results.size() == 1);
 
-      assertThat("Still only one exception is thrown", numberExceptionThrown, equalTo(1));
-      assertThat("handler has reread message", results.size(), is(1));
-      assertThat(results, containsInAnyOrder(uuid));
+      assertThat(numberExceptionThrown).withFailMessage("Still only one exception is thrown").isEqualTo(1);
+      assertThat(results).withFailMessage("handler has reread message").hasSize(1);
+      assertThat(results).containsExactlyInAnyOrder(uuid);
    }
 
    @Test
@@ -173,7 +169,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
       producer.send(new ProducerRecord<>(topic, uuid));
 
       await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> results.size() == 1);
-      assertThat(results, containsInAnyOrder(uuid));
+      assertThat(results).containsExactlyInAnyOrder(uuid);
       firstListener.forEach(MessageListener::stopConsumer);
       results.clear();
 
@@ -193,7 +189,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
       // wait until consumer is up an running and read data
       await().atMost(N_MAX_WAIT_MS, MILLISECONDS);
 
-      assertThat("There must be no results read by second consumer", results.isEmpty(), is(true));
+      assertThat(results).withFailMessage("There must be no results read by second consumer").isEmpty();
 
    }
 
@@ -242,12 +238,13 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
           .send(new ProducerRecord<String, Integer>(topic, UUID.randomUUID().toString(), e)));
 
       await().atMost(4, SECONDS).until(() -> testResults.size() == 20);
-      assertThat("There was at least 1 processing error", processingError.get(),
-          greaterThanOrEqualTo(1));
-      assertThat("There must be 20 results finally processed by consumer", testResults.size(),
-          equalTo(20));
-      assertThat(testResults,
-          containsInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20));
+      assertThat(processingError.get())
+          .withFailMessage("There was at least 1 processing error")
+          .isGreaterThanOrEqualTo(1);
+      assertThat(testResults)
+          .withFailMessage("There must be 20 results finally processed by consumer")
+          .hasSize(20);
+      assertThat(testResults).containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
    }
 
    @Test
@@ -299,11 +296,12 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
           .send(new ProducerRecord<String, Integer>(topic, UUID.randomUUID().toString(), e)));
 
       await().atMost(4, SECONDS).until(() -> testResults.size() == 20);
-      assertThat("There was at least 1 processing error", processingError.get(),
-          greaterThanOrEqualTo(1));
-      assertThat("There must be 20 results finally processed by consumer", testResults.size(),
-          equalTo(20));
-      assertThat(testResults,
-          containsInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20));
+      assertThat(processingError.get())
+          .withFailMessage("There was at least 1 processing error")
+          .isGreaterThanOrEqualTo(1);
+      assertThat(testResults)
+          .withFailMessage("There must be 20 results finally processed by consumer")
+          .hasSize(20);
+      assertThat(testResults).containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
    }
 }

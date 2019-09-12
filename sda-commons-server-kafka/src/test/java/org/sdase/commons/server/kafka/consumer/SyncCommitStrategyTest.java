@@ -1,22 +1,16 @@
 package org.sdase.commons.server.kafka.consumer;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.when;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.errors.WakeupException;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
@@ -53,7 +47,7 @@ public class SyncCommitStrategyTest {
 
   @Test
   public void shouldInvokeErrorHandlerWhenException() {
-    doThrow(new RuntimeException("Test")).when(handler).handle(anyObject());
+    doThrow(new RuntimeException("Test")).when(handler).handle(any());
     when(errorHandler.handleError(any(), any(), any())).thenReturn(true);
 
     SyncCommitMLS<String, String> strategy = new SyncCommitMLS<>(handler, errorHandler);
@@ -61,7 +55,7 @@ public class SyncCommitStrategyTest {
 
     strategy.processRecords(TestHelper.createConsumerRecords(5, "topic"), consumer);
     Mockito.verify(consumer, timeout(100).times(1)).commitSync();
-    Mockito.verify(handler, timeout(100).times(5)).handle(anyObject());
+    Mockito.verify(handler, timeout(100).times(5)).handle(any());
     Mockito.verify(errorHandler, timeout(100).times(5)).handleError(any(), any(), any());
 
   }

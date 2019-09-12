@@ -1,5 +1,7 @@
 package org.sdase.commons.server.kafka.builder;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.consumer.strategies.legacy.CallbackMessageHandler;
@@ -11,15 +13,11 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 public class MessageHandlerRegistationTest {
 
@@ -40,10 +38,10 @@ public class MessageHandlerRegistationTest {
             .withErrorHandler(errorHandler)
             .build();
 
-      assertThat(registration.getTopicsNames(), contains("TOPIC1"));
-      assertThat(registration.getHandler(), equalTo(messageHandler));
-      assertThat(registration.getKeyDeserializer(), instanceOf(StringDeserializer.class));
-      assertThat(registration.getValueDeserializer(), instanceOf(StringDeserializer.class));
+      assertThat(registration.getTopicsNames()).contains("TOPIC1");
+      assertThat(registration.getHandler()).isEqualTo(messageHandler);
+      assertThat(registration.getKeyDeserializer()).isInstanceOf(StringDeserializer.class);
+      assertThat(registration.getValueDeserializer()).isInstanceOf(StringDeserializer.class);
 
       CallbackMessageHandler<String, String> cbHandler = new CallbackMessageHandler<String, String>() {
 
@@ -67,10 +65,10 @@ public class MessageHandlerRegistationTest {
             .withErrorHandler(errorHandler)
             .build();
 
-      assertThat(registration1.getTopicsNames(), containsInAnyOrder("Topic1", "Topic2"));
-      assertThat(registration1.getHandler(), equalTo(cbHandler));
-      assertThat(registration1.getKeyDeserializer(), instanceOf(StringDeserializer.class));
-      assertThat(registration1.getValueDeserializer(), instanceOf(StringDeserializer.class));
+      assertThat(registration1.getTopicsNames()).containsExactlyInAnyOrder("Topic1", "Topic2");
+      assertThat(registration1.getHandler()).isEqualTo(cbHandler);
+      assertThat(registration1.getKeyDeserializer()).isInstanceOf(StringDeserializer.class);
+      assertThat(registration1.getValueDeserializer()).isInstanceOf(StringDeserializer.class);
    }
 
    @Test
@@ -89,10 +87,10 @@ public class MessageHandlerRegistationTest {
             .withErrorHandler(((record, e, consumer) -> true))
             .build();
 
-      assertThat(registration, is(notNullValue()));
-      assertThat(registration.getKeyDeserializer(), instanceOf(IntegerDeserializer.class));
-      assertThat(registration.getValueDeserializer(), instanceOf(LongDeserializer.class));
-      MatcherAssert.assertThat(registration.getListenerConfig().getPollInterval(), is(99L));
+      assertThat(registration).isNotNull();
+      assertThat(registration.getKeyDeserializer()).isInstanceOf(IntegerDeserializer.class);
+      assertThat(registration.getValueDeserializer()).isInstanceOf(LongDeserializer.class);
+      assertThat(registration.getListenerConfig().getPollInterval()).isEqualTo(99L);
    }
 
 
@@ -118,8 +116,8 @@ public class MessageHandlerRegistationTest {
             .withErrorHandler(((record, e, consumer1) -> true))
             .build();
 
-      assertThat(registration, is(notNullValue()));
-      assertThat(registration.getConsumerConfig(), is(consumer));
+      assertThat(registration).isNotNull();
+      assertThat(registration.getConsumerConfig()).isEqualTo(consumer);
    }
 
 

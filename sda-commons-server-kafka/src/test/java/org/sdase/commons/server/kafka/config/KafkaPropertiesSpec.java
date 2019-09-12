@@ -1,7 +1,6 @@
 package org.sdase.commons.server.kafka.config;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Properties;
 
@@ -26,7 +25,7 @@ public class KafkaPropertiesSpec {
       Properties props = KafkaProperties.forProducer(config);
 
       final String saslJaasConfig = "org.apache.kafka.common.security.plain.PlainLoginModule required username='user' password='password';";
-      assertThat(props.getProperty("sasl.jaas.config"), equalTo(saslJaasConfig));
+      assertThat(props.getProperty("sasl.jaas.config")).isEqualTo(saslJaasConfig);
 
    }
 

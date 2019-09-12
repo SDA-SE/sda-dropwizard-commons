@@ -8,33 +8,12 @@ import java.util.UUID;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 
 class TestHelper {
 
   private TestHelper() {
     // no instance
   }
-
-  static final Matcher<Long> longGtZero = new BaseMatcher<Long>() {
-
-    @Override
-    public boolean matches(Object item) {
-      if (item instanceof Long) {
-        return ((Long) item) > 0;
-      }
-      return false;
-    }
-
-    @Override
-    public void describeTo(Description description) {
-      //
-    }
-
-  };
-
 
   static ConsumerRecords<String, String> createConsumerRecords(int noMessages, String ... topics) {
     Map<TopicPartition, List<ConsumerRecord<String, String>>> payload = new HashMap<>();

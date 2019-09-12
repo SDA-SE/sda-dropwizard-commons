@@ -1,16 +1,14 @@
 package org.sdase.commons.server.kafka.builder;
 
-import org.sdase.commons.server.kafka.config.ProducerConfig;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import org.sdase.commons.server.kafka.config.ProducerConfig;
 
 public class ProducerRegistrationTest {
 
@@ -25,10 +23,10 @@ public class ProducerRegistrationTest {
                   .withValueSerializer(new StringSerializer())
                   .build();
 
-      assertThat(producerRegistration, is(notNullValue()));
-      assertThat(producerRegistration.getTopic().getTopicName(), equalTo("TOPIC"));
-      assertThat(producerRegistration.getKeySerializer(), instanceOf(StringSerializer.class));
-      assertThat(producerRegistration.getValueSerializer(), instanceOf(StringSerializer.class));
+      assertThat(producerRegistration).isNotNull();
+      assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
+      assertThat(producerRegistration.getKeySerializer()).isInstanceOf(StringSerializer.class);
+      assertThat(producerRegistration.getValueSerializer()).isInstanceOf(StringSerializer.class);
    }
 
 
@@ -44,10 +42,10 @@ public class ProducerRegistrationTest {
                   .withValueSerializer(new IntegerSerializer())
                   .build();
 
-      assertThat(producerRegistration, is(notNullValue()));
-      assertThat(producerRegistration.getTopic().getTopicName(), equalTo("TOPIC"));
-      assertThat(producerRegistration.getKeySerializer(), instanceOf(LongSerializer.class));
-      assertThat(producerRegistration.getValueSerializer(), instanceOf(IntegerSerializer.class));
+      assertThat(producerRegistration).isNotNull();
+      assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
+      assertThat(producerRegistration.getKeySerializer()).isInstanceOf(LongSerializer.class);
+      assertThat(producerRegistration.getValueSerializer()).isInstanceOf(IntegerSerializer.class);
    }
 
    @Test
@@ -66,9 +64,9 @@ public class ProducerRegistrationTest {
                   .withProducerConfig(producerConfig)
                   .build();
 
-      assertThat(producerRegistration, is(notNullValue()));
-      assertThat(producerRegistration.getTopic().getTopicName(), equalTo("TOPIC"));
-      assertThat(producerRegistration.getProducerConfig(), equalTo(producerConfig));
+      assertThat(producerRegistration).isNotNull();
+      assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
+      assertThat(producerRegistration.getProducerConfig()).isEqualTo(producerConfig);
    }
 
 }
