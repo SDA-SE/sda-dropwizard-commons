@@ -1,25 +1,10 @@
 dependencies {
     compile project(':sda-commons-server-dropwizard')
-    compile 'io.dropwizard:dropwizard-hibernate:' + dropwizardVersion, {
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
-        exclude group: 'joda-time', module: 'joda-time'
-        exclude group: 'org.hibernate', module: 'hibernate-validator'
-        exclude group: 'org.javassist', module :'javassist'
-        exclude group: 'com.fasterxml', module: 'classmate'
-        exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-hibernate5'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-        exclude group: 'io.dropwizard', module: 'dropwizard-core'
-    }
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:' + jacksonVersion, {
-      exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-    }
-    compile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonDatabindVersion
-    compile 'org.slf4j:slf4j-api:' + slf4jVersion
-    compile 'org.postgresql:postgresql:42.1.1'
-    compile 'org.flywaydb:flyway-core:4.2.0'
-    compile 'javax.xml.bind:jaxb-api:' + jaxbVersion
+    compile 'io.dropwizard:dropwizard-hibernate'
+    compile 'org.postgresql:postgresql'
+    compile 'org.flywaydb:flyway-core'
+    compile 'javax.xml.bind:jaxb-api'
 
     testCompile project(':sda-commons-server-hibernate-testing')
+    testCompile 'org.assertj:assertj-core'
 }

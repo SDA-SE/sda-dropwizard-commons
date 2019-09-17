@@ -33,8 +33,3 @@ dependencies {
     testCompile project(':sda-commons-shared-tracing')
     testCompile project(':sda-commons-shared-yaml')
 }
-
-uploadArchives {
-    // We do not upload this test module to Nexus because it should not be deployed.
-    enabled = false
-}

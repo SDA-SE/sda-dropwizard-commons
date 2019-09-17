@@ -1,102 +1,11 @@
 dependencies {
-    compile 'io.dropwizard:dropwizard-core:' + dropwizardVersion, {
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'joda-time', module: 'joda-time'
-        exclude group: 'org.javassist', module: 'javassist'
-        exclude group: 'org.hibernate', module: 'hibernate-validator'
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'io.dropwizard', module: 'dropwizard-jersey'
-        exclude group: 'io.dropwizard', module: 'dropwizard-servlets'
-        exclude group: 'io.dropwizard.metrics', module: 'metrics-jersey2'
-        exclude group: 'io.dropwizard.metrics', module: 'metrics-annotation'
-        exclude group: 'io.dropwizard', module: 'dropwizard-util'
-        exclude group: 'io.dropwizard', module: 'dropwizard-jackson'
-        exclude group: 'org.apache.commons', module: 'commons-lang3'
-    }
-    compile 'io.dropwizard:dropwizard-jackson:' + dropwizardVersion, {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-        exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-guava'
-        exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-joda'
-        exclude group: 'com.google.guava', module: 'guava'
-    }
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-guava:' + jacksonVersion, {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-        exclude group: 'com.google.guava', module: 'guava'
-    }
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:' + jacksonVersion, {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-        exclude group: 'joda-time', module: 'joda-time'
-    }
-    compile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonDatabindVersion
-    compile 'io.dropwizard:dropwizard-util:' + dropwizardVersion, {
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-    }
-    compile 'io.dropwizard:dropwizard-servlets:' + dropwizardVersion, {
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'io.dropwizard.metrics', module: 'metrics-annotation'
-    }
-    compile 'io.dropwizard:dropwizard-jersey:' + dropwizardVersion, {
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'joda-time', module: 'joda-time'
-        exclude group: 'org.javassist', module: 'javassist'
-        exclude group: 'org.hibernate', module: 'hibernate-validator'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-        exclude group: 'org.glassfish.jersey.containers', module: 'jersey-container-servlet'
-        exclude group: 'io.dropwizard', module: 'dropwizard-jackson'
-        exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
-    }
-    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:' + jacksonVersion, {
-        exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-base'
-        exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-jaxb-annotations'
-    }
-    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:' + jacksonVersion, {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-    }
-    compile 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:' + jacksonVersion, {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-    }
-    compile 'io.dropwizard.metrics:metrics-jersey2:' + dropwizardMetricsVersion, {
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'org.javassist', module: 'javassist'
-    }
-    compile 'io.dropwizard.metrics:metrics-annotation:' + dropwizardMetricsVersion, {
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-    }
-    compile 'org.glassfish.jersey.containers:jersey-container-servlet:' + jerseyVersion, {
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-        exclude group: 'org.javassist', module: 'javassist'
-    }
-    // use latest WS RS API as Response implements AutoClosable now
-    compile 'javax.ws.rs:javax.ws.rs-api:' + javaxWsRsVersion
-    compile 'com.google.guava:guava:' + guavaVersion, {
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
-    }
-    compile 'org.slf4j:slf4j-api:' + slf4jVersion
-    compile 'com.google.code.findbugs:jsr305:' + findbugsVersion
-    compile 'joda-time:joda-time:' + jodaTimeVersion
-    compile 'org.javassist:javassist:' + javaassistVersion
-    compile 'org.hibernate:hibernate-validator:' + hibernateValidatorVersion
-    compile 'org.apache.commons:commons-lang3:' + commonsLang3Version
+    compile 'io.dropwizard:dropwizard-core'
 
     // should not be needed in Dropwizard 2 (https://github.com/dropwizard/dropwizard/issues/2318#issuecomment-485385183)
-    compile 'javax.activation:javax.activation-api:' + activationVersion
-    compile 'javax.xml.bind:jaxb-api:' + jaxbVersion
+    compile 'javax.activation:javax.activation-api'
+    compile 'javax.xml.bind:jaxb-api'
 
-    testCompile 'junit:junit:' + junit4Version
-    testCompile 'org.assertj:assertj-core:' + assertjVersion
-    testCompile 'io.dropwizard:dropwizard-testing:' + dropwizardVersion, {
-        exclude group: 'io.dropwizard', module: 'dropwizard-core'
-        exclude group: 'org.javassist', module: 'javassist'
-        exclude group: 'org.assertj', module: 'assertj-core'
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-    }
+    testCompile 'junit:junit'
+    testCompile 'org.assertj:assertj-core'
+    testCompile 'io.dropwizard:dropwizard-testing'
 }

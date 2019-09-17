@@ -1,0 +1,22 @@
+plugins {
+  id 'java-platform'
+}
+
+List<String> unpublishedModules = Arrays.asList("sda-commons-bom", "sda-commons-dependencies", "sda-commons-dependency-check")
+dependencies {
+  constraints {
+    rootProject.subprojects.each {
+      if (!unpublishedModules.contains(it.name) && !it.name.endsWith("-example")) {
+        api(group: it.group, name: it.name, version: "\${project.version}")
+      }
+    }
+  }
+}
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      from components.javaPlatform
+    }
+  }
+}

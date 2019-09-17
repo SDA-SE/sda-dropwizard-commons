@@ -1,41 +1,8 @@
 dependencies {
 
-    compile 'com.github.tomakehurst:wiremock-jre8:2.21.0', {
-        exclude group: 'commons-codec', module: 'commons-codec'
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
-        exclude group: 'junit', module: 'junit'
-        exclude group: 'org.apache.commons', module: 'commons-lang3'
-        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'org.ow2.asm', module: 'asm'
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-        exclude group: 'net.sf.jopt-simple', module: 'jopt-simple'
-        exclude group: 'org.eclipse.jetty', module: '*'
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-    }
-    compile 'org.eclipse.jetty:jetty-util:' + jettyVersion
-    compile 'org.eclipse.jetty:jetty-server:' + jettyVersion
-    compile 'org.eclipse.jetty:jetty-webapp:' + jettyVersion
-    compile 'org.eclipse.jetty:jetty-continuation:' + jettyVersion
-    compile 'org.eclipse.jetty:jetty-servlet:' + jettyVersion
-    compile 'org.eclipse.jetty:jetty-servlets:' + jettyVersion
+    compile "com.github.tomakehurst:wiremock-jre8"
 
-    compile 'org.ow2.asm:asm:5.0.4'
-    compile 'org.apache.httpcomponents:httpclient:' + apacheHttpClientVersion, {
-        exclude group: 'commons-codec', module: 'commons-codec'
-    }
-    compile 'commons-codec:commons-codec:' + commonsCodecVersion
-    compile 'org.glassfish.jersey.core:jersey-client:' + jerseyVersion, {
-        exclude group: 'org.javassist', module: 'javassist'
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-    }
-    compile 'org.glassfish.jersey.ext:jersey-proxy-client:' + jerseyVersion, {
-        exclude group: 'org.javassist', module: 'javassist'
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-    }
-    compile 'javax.ws.rs:javax.ws.rs-api:' + javaxWsRsVersion
+    compile 'org.glassfish.jersey.core:jersey-client'
+    compile 'org.glassfish.jersey.ext:jersey-proxy-client'
 
 }

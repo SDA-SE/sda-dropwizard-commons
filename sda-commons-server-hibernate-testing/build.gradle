@@ -1,17 +1,5 @@
 dependencies {
     compile project(':sda-commons-server-testing')
-    compile 'com.h2database:h2:' + h2Version
-    compile 'com.github.database-rider:rider-core:' + databaseRiderVersion, {
-        exclude group: 'junit', module: 'junit'
-        exclude group: 'org.yaml', module: 'snakeyaml'
-        exclude group: 'org.codehaus.jackson', module: 'jackson-mapper-lgpl'
-        exclude group: 'org.dbunit', module: 'dbunit'
-    }
-    compile 'org.dbunit:dbunit:' + dbUnitVersion, {
-        exclude group: 'junit', module: 'junit'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'org.apache.poi', module: 'poi-ooxml'
-    }
-
-    testCompile 'org.slf4j:slf4j-api:' + slf4jVersion
+    compile 'com.h2database:h2'
+    compile 'com.github.database-rider:rider-core'
 }

@@ -1,43 +1,16 @@
 dependencies {
     compile project(':sda-commons-server-dropwizard')
-    compile 'io.swagger:swagger-jaxrs:' + swaggerVersion, {
-        exclude group: 'javax.ws.rs', module: 'jsr311-api'
-        exclude group: 'javax.validation', module: 'validation-api'
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'org.apache.commons', module: 'commons-lang3'
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'org.javassist', module: 'javassist'
-    }
+    compile 'io.swagger:swagger-jaxrs'
     
-    compile 'io.openapitools.hal:swagger-hal:' + openApiToolVersion, {
-        exclude group: 'io.openapitools.jackson.dataformat', module: 'jackson-dataformat-hal'
-        exclude group: 'io.swagger', module: 'swagger-jaxrs'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-    }
+    compile 'io.openapitools.hal:swagger-hal'
+    compile 'io.openapitools.jackson.dataformat:jackson-dataformat-hal'
 
-    compile 'io.openapitools.jackson.dataformat:jackson-dataformat-hal:' + openApiToolVersion, {
-        exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-    }
-
-    compile 'javax.xml.bind:jaxb-api:' + jaxbVersion
+    compile 'javax.xml.bind:jaxb-api'
+    compile 'org.slf4j:slf4j-api'
 
     testCompile project(':sda-commons-server-testing')
-    testCompile 'net.javacrumbs.json-unit:json-unit-assertj:2.2.0', {
-        exclude group: 'org.assertj', module: 'assertj-core'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-    }
-    compile 'org.slf4j:slf4j-api:' + slf4jVersion
-    testCompile 'com.github.java-json-tools:json-schema-validator:' + jsonSchemaValidatorVersion, {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
-        exclude group: 'joda-time', module: 'joda-time'
-        exclude group: 'javax.activation', module: 'activation'
-    }
+    testCompile 'net.javacrumbs.json-unit:json-unit-assertj:2.2.0'
+    testCompile 'com.github.java-json-tools:json-schema-validator'
 }
 
 integrationTest {

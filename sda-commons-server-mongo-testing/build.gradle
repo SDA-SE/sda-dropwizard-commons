@@ -1,9 +1,6 @@
 dependencies {
     compile project(':sda-commons-server-testing')
 
-    compile 'org.mongodb:mongo-java-driver:' + mongoJavaDriverVersion
-    compile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: '2.1.1', {
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-        exclude group: 'org.apache.commons', module: 'commons-lang3'
-    }
+    compile 'org.mongodb:mongo-java-driver'
+    compile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 }

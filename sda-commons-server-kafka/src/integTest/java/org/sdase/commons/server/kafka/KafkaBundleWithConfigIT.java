@@ -62,14 +62,17 @@ import org.sdase.commons.server.testing.LazyRule;
 
 public class KafkaBundleWithConfigIT {
 
-   private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
+  private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
 
-   private static final String CONSUMER_1 = "consumer1";
-   private static final String PRODUCER_1 = "producer1";
-   private static final String CONSUMER_2 = "consumer2";
-   private static final String PRODUCER_2 = "producer2";
+  private static final String CONSUMER_1 = "consumer1";
+  private static final String PRODUCER_1 = "producer1";
+  private static final String CONSUMER_2 = "consumer2";
+  private static final String PRODUCER_2 = "producer2";
 
-   private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE = new LazyRule<>(
+  private static final String LISTENER_CONFIG_ASYNC = "async";
+  private static final String CLIENT_ID_ASYNC = "async";
+
+  private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE = new LazyRule<>(
          () -> DropwizardRuleHelper
                .dropwizardTestAppFrom(KafkaTestApplication.class)
                .withConfigFrom(KafkaTestConfiguration::new)
@@ -111,7 +114,7 @@ public class KafkaBundleWithConfigIT {
 
                   kafka
                         .getListenerConfig()
-                        .put("async",
+                        .put(LISTENER_CONFIG_ASYNC,
                               ListenerConfig
                                     .builder()
                                     .withCommitType(LegacyMLS.CommitType.ASYNC) // NOSONAR
@@ -499,9 +502,13 @@ public class KafkaBundleWithConfigIT {
       kafkaBundle
             .registerMessageHandler(MessageHandlerRegistration // NOSONAR
                   .<String, String> builder()
-                  .withListenerConfig("async")
+                  .withListenerConfig(LISTENER_CONFIG_ASYNC)
                   .forTopic(topic)
-                  .withDefaultConsumer()
+                  .withConsumerConfig(ConsumerConfig.builder()
+                      .withGroup(UUID.randomUUID().toString())
+                      .withClientId(CLIENT_ID_ASYNC)
+                      .build()
+                  )
                   .withKeyDeserializer(deserializer)
                   .withValueDeserializer(deserializer)
                   .withHandler(new CallbackMessageHandler<String, String>() {

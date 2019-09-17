@@ -1,19 +1,12 @@
 dependencies {
     compile project(':sda-commons-server-dropwizard')
     
-    compile 'org.mongodb:mongo-java-driver:' + mongoJavaDriverVersion
-    compile 'dev.morphia.morphia:core:' + morphiaVersion, {
-        exclude group: 'org.mongodb', module: 'mongo-java-driver'
-        exclude group: 'org.slf4j', module: 'slf4j-api' // brings SLF4J 1.8.0-beta2
-    }
-    compile 'dev.morphia.morphia:validation:' + morphiaVersion, { // optional
-        exclude group: 'org.mongodb', module: 'mongo-java-driver'
-        exclude group: 'org.slf4j', module: 'slf4j-api' // brings SLF4J 1.8.0-beta2
-        exclude group: 'com.google.guava', module: 'guava' // conflict
-    }
+    compile 'dev.morphia.morphia:core'
+    compile 'dev.morphia.morphia:validation'
 
-    compile 'org.bouncycastle:bcpkix-jdk15on:' + bouncyCastleVersion
+    compile 'org.bouncycastle:bcpkix-jdk15on'
 
     testCompile project(':sda-commons-server-mongo-testing')
     testCompile 'commons-io:commons-io:2.6'
+    testCompile 'org.assertj:assertj-core'
 }

@@ -290,8 +290,14 @@ Import SDA Commons from the repository `https://nexus.intern.sda-se.online/repos
     }
 ```
 
-Select and import the required dependencies. Please make sure to always use the same version across modules.
-Using a variable for the version is a good practice:
+Include `sda-commons-bom` and `sda-commons-dependencies` as platform constraints. You will inherit 
+all versions defined there and won't have to specify versions for them yourself.
+
+More details: 
+- [sda-commons-bom](sda-commons-bom/README.md) 
+- [sda-commons-dependencies](sda-commons-dependencies/README.md) 
+
+Note: You need Gradle 5.x for platform dependencies. [More information can be found here](https://gradle.org/whats-new/gradle-5/).
 
 ```
     project.ext {
@@ -299,9 +305,20 @@ Using a variable for the version is a good practice:
     }
 
     dependencies {
+      // define platform dependencies for simplified dependency management
+      compile enforcedPlatform("org.sdase.commons.sda-commons-dependencies:$sdaCommonsVersion")
+      compile enforcedPlatform("org.sdase.commons.sda-commons-bom:$sdaCommonsVersion")
       ...
-      compile "org.sdase.commons:sda-commons-client-jersey:${sdaCommonsVersion}"
+
+      // Add dependencies to sda-commons-modules (managed by sda-commons-bom)
+      compile "org.sdase.commons:sda-commons-client-jersey"
       ...
+
+      // Add other dependencies (managed by 'sda-commons-dependencies')
+      compile 'org.glassfish.jersey.core:jersey-client'
+
+      // Add other unmanaged dependencies
+      compile 'org.apache.commons:commons-digester3:3.2'
     }
 ```
 

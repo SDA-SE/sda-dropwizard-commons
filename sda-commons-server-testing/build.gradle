@@ -1,21 +1,7 @@
 dependencies {
     compile project(':sda-commons-server-dropwizard')
-    compile 'junit:junit:' + junit4Version
-    compile 'org.mockito:mockito-core:' + mockitoVersion
-    compile 'org.assertj:assertj-core:' + assertjVersion
-    compile 'com.google.truth:truth:' + googleTruthVersion, {
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'org.checkerframework', module: 'checker-compat-qual'
-        exclude group: 'com.google.auto.value', module: 'auto-value-annotations'
-        exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
-    }
-    compile 'io.dropwizard:dropwizard-testing:' + dropwizardVersion, {
-        exclude group: 'io.dropwizard', module: 'dropwizard-core'
-        exclude group: 'org.javassist', module: 'javassist'
-        exclude group: 'org.assertj', module: 'assertj-core'
-        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
-        exclude group: 'io.dropwizard', module: 'dropwizard-jersey'
-        exclude group: 'org.glassfish.jersey.containers', module: 'jersey-container-servlet'
-    }
-    compile 'javax.ws.rs:javax.ws.rs-api:' + javaxWsRsVersion
+    compile 'junit:junit'
+    compile 'org.mockito:mockito-core'
+    compile 'org.assertj:assertj-core'
+    compile 'io.dropwizard:dropwizard-testing'
 }

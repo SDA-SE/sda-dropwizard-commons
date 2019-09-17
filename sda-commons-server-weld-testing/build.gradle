@@ -3,9 +3,6 @@ dependencies {
     compile project(':sda-commons-server-weld')
 
     testCompile project(':sda-commons-server-jackson')
-    testCompile 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0', {
-        exclude group: 'io.dropwizard', module: 'dropwizard-core'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-    }
+    testCompile 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
 }

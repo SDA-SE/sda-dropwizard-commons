@@ -1,16 +1,8 @@
 dependencies {
     compile project(':sda-commons-server-dropwizard')
-    compile 'javax.xml.bind:jaxb-api:' + jaxbVersion
-    compile 'com.amazonaws:aws-java-sdk-s3:' + awsJavaSdkS3Version, {
-        exclude group: 'commons-logging', module: 'commons-logging'
-        exclude group: 'joda-time', module: 'joda-time'
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
-        exclude group: 'commons-logging', module: 'commons-logging'
-        exclude group: 'commons-codec', module: 'commons-codec'
-    }
-    compile 'commons-codec:commons-codec:' + commonsCodecVersion
+    compile 'javax.xml.bind:jaxb-api'
+    compile 'com.amazonaws:aws-java-sdk-s3'
 
     testCompile project(':sda-commons-server-s3-testing')
+    testCompile 'org.assertj:assertj-core'
 }

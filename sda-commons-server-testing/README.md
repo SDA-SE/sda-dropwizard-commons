@@ -18,8 +18,6 @@ For testing some frameworks are included:
 | io.dropwizard    | dropwizard-testing | 1.3.5   |
 | org.mockito      | mockito-core       | 2.23.0  |
 | org.assertj      | assertj-core       | 3.11.1  |
-| com.google.truth | truth              | 0.42    |
-
 
 ## Provided Rules
 

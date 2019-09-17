@@ -177,7 +177,7 @@ pipeline {
 
               steps {
                 prepareGradleWorkspace secretId: 'sdabot-github-token'
-                javaGradlew gradleCommand: 'uploadArchives'
+                javaGradlew gradleCommand: 'publish'
               }
             }
           }
@@ -203,7 +203,7 @@ pipeline {
                 }
 
                 prepareGradleWorkspace secretId: 'sdabot-github-token'
-                javaGradlew gradleCommand: 'uploadArchives'
+                javaGradlew gradleCommand: 'publish'
               }
             }
           }

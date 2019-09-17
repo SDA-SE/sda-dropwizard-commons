@@ -1,10 +1,10 @@
 dependencies {
     compile project(':sda-commons-server-dropwizard')
 
-    compile 'org.javassist:javassist:' + javaassistVersion
-    compile 'io.github.resilience4j:resilience4j-circuitbreaker:' + resilience4jVersion
-    compile 'io.github.resilience4j:resilience4j-prometheus:' + resilience4jVersion
-    compile 'org.objenesis:objenesis:2.6' // not 3.x because we have a version conflict with Mockito
+    compile 'org.javassist:javassist'
+    compile 'io.github.resilience4j:resilience4j-circuitbreaker'
+    compile 'io.github.resilience4j:resilience4j-prometheus'
+    compile 'org.objenesis:objenesis'
 
     testCompile project(':sda-commons-server-prometheus')
     testCompile project(':sda-commons-server-testing')
