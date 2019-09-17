@@ -1,3 +1,5 @@
+import java.util.stream.Collectors
+
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
@@ -94,6 +96,52 @@ configure(subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-c
     jar {
         version = null
     }
+
+    /**
+     * This task fails if we find an uncertain dependency that is not covered by constraints. I.e.
+     * - take all constraints
+     * - for each dependency
+     *   - check if artifact is already covered by constraints
+     *   - check if requested version of the artifact differs from the selected version
+     *   -> fail
+     */
+    task failOnMissingConstraints {
+        doLast {
+            def compileConfig = project.configurations.compile
+            def dependencies = compileConfig.incoming.resolutionResult.allDependencies
+            def constraints = new HashMap<String, ? extends DependencyResult>()
+
+            // println "req vs. sel"
+            // dependencies.forEach { dep -> println "Req: ${dep.requested}, sel: ${dep.selected}" }
+            // println ""
+
+            dependencies.stream()
+                .filter { dep -> dep.isConstraint() }
+                .forEach { dep -> constraints.put("${dep.selected}", dep) }
+            // println "Constraints:"
+            // constraints.keySet().sort().each { println it }
+
+            def notConvergentDeps = dependencies.stream()
+                .filter { dep -> !dep.isConstraint() }
+                .filter { dep -> !constraints.containsKey("${dep.selected}") }
+                .filter { dep -> "${dep.requested}" != "${dep.selected}" }
+                .map { dep -> "${dep.selected}" }
+                .collect(Collectors.toSet())
+
+            if (!notConvergentDeps.isEmpty()) {
+                println "Dependencies that need a constraint:"
+                notConvergentDeps.sort().each { println "- ${it}" }
+                println "Check your dependency graph by the following tools"
+                println "./gradlew :${project.name}:dependencies --configuration compile"
+                notConvergentDeps.forEach {
+                    println "./gradlew :${project.name}:dependencyInsight --configuration compile --dependency ${it}"
+                }
+                throw new GradleException("Found dependencies that is not covered by constraints: ${notConvergentDeps}")
+            }
+        }
+    }
+
+    compileJava.dependsOn failOnMissingConstraints
 }
 
 /**
