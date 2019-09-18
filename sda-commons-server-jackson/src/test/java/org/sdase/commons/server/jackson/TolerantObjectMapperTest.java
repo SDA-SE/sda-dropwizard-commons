@@ -181,7 +181,7 @@ public class TolerantObjectMapperTest {
 
       Filter actual = om.readValue(given, Filter.class);
 
-      assertThat(actual).isInstanceOf(MyFilter.class).extracting("value").contains("foo");
+      assertThat(actual).isInstanceOf(MyFilter.class).extracting("value").isEqualTo("foo");
    }
 
    @Test

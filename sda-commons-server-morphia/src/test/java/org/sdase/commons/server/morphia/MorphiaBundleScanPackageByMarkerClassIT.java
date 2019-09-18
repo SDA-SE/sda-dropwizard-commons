@@ -54,11 +54,9 @@ public class MorphiaBundleScanPackageByMarkerClassIT {
       datastore.save(new Person().setName("Jane Doe").setAge(38));
       Iterator<Person> people = datastore.find(Person.class).find();
       assertThat(people)
+            .toIterable()
             .extracting(Person::getName, Person::getAge)
-            .containsExactly(
-                  tuple("John Doe", 42),
-                  tuple("Jane Doe", 38)
-            );
+            .containsExactly(tuple("John Doe", 42), tuple("Jane Doe", 38));
    }
 
    private Datastore getDatastore() {

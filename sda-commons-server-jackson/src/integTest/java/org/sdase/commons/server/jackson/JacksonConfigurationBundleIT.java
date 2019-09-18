@@ -312,8 +312,12 @@ public class JacksonConfigurationBundleIT {
             });
 
       assertThat(johnny).containsKeys("_links", "nickName").doesNotContainKeys("firstName", "lastName"); //NOSONAR
-      assertThat(johnny).extracting("_embedded").flatExtracting("address")
-            .extracting("city").contains("Hamburg");
+      assertThat(johnny)
+            .extracting("_embedded")
+            .extracting("address")
+            .asList()
+            .extracting("city")
+            .containsExactly("Hamburg");
    }
 
    @Test
