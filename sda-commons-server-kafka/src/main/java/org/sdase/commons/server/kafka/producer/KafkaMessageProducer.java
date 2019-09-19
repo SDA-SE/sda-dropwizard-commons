@@ -42,7 +42,8 @@ public class KafkaMessageProducer<K, V> implements MessageProducer<K, V> {
     return producer.send(record);
   }
 
-  public void close() {
-    producer.close();
-  }
+  @Override
+   public void close() {
+      producer.close();
+   }
 }

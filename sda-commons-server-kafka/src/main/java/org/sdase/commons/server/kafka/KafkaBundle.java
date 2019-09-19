@@ -241,7 +241,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     }
 
     LegacyMLS<K, V> strategy =
-        new LegacyMLS<>(
+        new LegacyMLS<>( // NOSONAR strategy is closed when listener is closed
             registration.getHandler(),
             registration.getErrorHandler(),
             listenerConfig.isUseAutoCommitOnly(),
@@ -295,12 +295,17 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
           return null;
         }
 
-        @Override
-        public Future<RecordMetadata> send(K key, V value, Headers headers) {
-          return null;
-        }
-      };
-    }
+            @Override
+            public Future<RecordMetadata> send(K key, V value, Headers headers) {
+               return null;
+            }
+
+            @Override
+            public void close() {
+               // dummy
+            }
+         };
+      }
 
     checkInit();
 

@@ -1,5 +1,6 @@
 package org.sdase.commons.server.kafka.consumer.strategies;
 
+import java.io.Closeable;
 import java.util.Collections;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -19,7 +20,7 @@ import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
  * @param <K> key object type
  * @param <V> value object type
  */
-public abstract class MessageListenerStrategy<K, V> {
+public abstract class MessageListenerStrategy<K, V> implements Closeable {
 
   protected ConsumerTopicMessageHistogram consumerProcessedMsgHistogram;
 
@@ -68,5 +69,10 @@ public abstract class MessageListenerStrategy<K, V> {
    */
   public Map<String, String> forcedConfigToApply() {
     return Collections.emptyMap();
+  }
+
+  @Override
+  public void close() {
+    // implement if necessary
   }
 }
