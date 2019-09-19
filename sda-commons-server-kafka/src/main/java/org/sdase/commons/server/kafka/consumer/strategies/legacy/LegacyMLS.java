@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public class LegacyMLS<K, V> extends MessageListenerStrategy<K, V> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MessageListenerStrategy.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(LegacyMLS.class);
 
   private final MessageHandler<K, V> handler;
   private final boolean autoCommitOnly;

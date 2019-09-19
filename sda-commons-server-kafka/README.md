@@ -1,4 +1,4 @@
-# kafka-common
+# SDA Commons Server Kafka
 This module provides a [`KafkaBundle`](./src/main/java/org/sdase/commons/server/kafka/KafkaBundle.java) adds convenient 
 functionality to create Kafka consumers, producers, and topics via configuration or Java DSL. 
 
@@ -341,9 +341,98 @@ The strategy requires `enable.auto.commit` set to `false` and uses sync commit e
 This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle. 
 
 The strategy requires `enable.auto.commit` set to `false` and the underlying consumer commits records for each partition. In case of processing errors the 
-handler should throw `ProcessingErrorRetryException` which is then delegated to the `ErrorHandler` where finally can be decided if the processing should be
-stopped or retried (handleError returns `false`). In case of retry the consumer set the offset on the failing record and interrupt the processing of further 
-records. The next poll will retry the records on this partition starting with the failing record.  
+handler should throw `ProcessingErrorRetryException` which is then delegated to either the self-implemented `ErrorHandler` where finally can be decided if the processing should be stopped or retried (handleError returns any RuntimeException). In case of retry the consumer set the offset on the failing record and interrupt the processing of further records. The next poll will retry the records on this partition starting with the failing record.  
+
+Instead of providing a self-implemented error-handler you can simply don't provide one and the default error handler will be used which simply either returns the thrown RuntimeException or throws a new RuntimeException if there is none occured before. This leads to the wanted, expected, and configured Dead-Letter-Handling.
+
+#### Dead Letter Handling MessageListenerStrategy
+This strategy offers a way to retry the processing of failed records, without blocking the running process.
+The strategy requires to extra topics for each main topic, one for temporary storing messages for
+retry and one for parking messages if retry fails (dead letter).
+The message is copied to the retry topic, when the message handler and if existing the error handler also throws an exception.
+
+Messages in the retry topic are copied back to the main topic after a configurable interval for a configurable number of reties.
+If retry also fails, the  message is copied to the dead letter topic. From the dead letter topic a process needs to be manually triggered
+to put messages from the dead letter topics back to the main topics by a developer. This is implemented via an admin Task.
+
+This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the strategy.
+
+The strategy requires `enable.auto.commit` set to `false` and the underlying consumer commits the records. 
+
+In case of processing errors the handler must throw any `RuntimeException` which is then delegated to the `ErrorHandler` where finally can be decided if
+* the processing should be stopped (handleError returns `false`). In case the handleError returns `false` the offset is not being commited and the listener will be stopped.
+* the processing continues normally (handleError returns `true`) - e.g. the error could be fixed.
+* message will go into the dead letter handling mechanism (handleError again throws a Runtime Exception)
+
+The strategy requires the usage of the `DeadLetterNoSerializationErrorDeserializer`  as a wrapper for key and value deserializer.
+If deserialization exception occurs, the message is redirected to the dead letter mechanism.
+
+When adding a message to the retry topic, additional information is being added to the header of the message
+* the exception
+* the number of retries
+
+##### Example for setting it up in your Application:
+
+```
+MessageListenerRegistration.<Pair<String, String>, CareApplication> builder()
+            .withDefaultListenerConfig()
+            .forTopicConfigs(Collections.singletonList((this.kafkaBundle.getTopicConfiguration("sourceTopicConfigName"))))
+            .withConsumerConfig("mainTopicConfigName")
+            .withKeyDeserializer(new DeadLetterNoSerializationErrorDeserializer(new SDADeserializer<>((Class<Pair<String, String>>)(Object)Pair.class)))
+            .withValueDeserializer(new DeadLetterNoSerializationErrorDeserializer(new SDAFormFieldStringPairDeserializer<>(CareApplication.class)))
+            .withListenerStrategy(new DeadLetterMLS(environment, careApplicationService, kafkaBundle, "sourceTopicConsumerConfigName", "sourceTopicConsumerConfigName", 5, 5_000))
+            .build();
+```
+
+##### Dead Letter Resend Admin Task  
+The Admin task name will be: deadLetterResend/"deadLetterTopic", e.g. deadLetterResend/myInputTopic. That means for each strategy that is implemented within the service
+a separate admin task will be created to handle multiple strategy usages within a single service. A call is a simple POST, without any parameters, 
+e.g. curl -X POST http://localhost:8082/tasks/"Task Name"
+
+##### Naming Conventions for Topic and Consumer/Producer Configurations
+All required topics/consumers/producers configuration names are deducted from the source topic name for that the dead-letter strategy is applied.
+
+* TopicConfigurationNames
+  * `<main-topic>`  The original topic from that the service normally consumes messages
+  * `<main-topic>-retry` The topic where the strategy temporary parks messages until the next retry
+  * `<main-topic>-deadLetter` The topic where finally the messages are stored if retry fails
+Note, if no configuration for retry and dead letter topics are given, the  convention assumes the following names:
+  * `<main-topic>.retry` for retry topic
+  * `<main-topic>.deadLetter` for dead letter topic
+
+* ConsumerConfigurationNames
+  * `<main-topic>` The consumer that reads messages from `<main-topic>`. The is the consumer in the message listener that uses the DeadLetter strategy
+  * `<main-topic>-retry` The consumer that reads messages from the `<main-topic>-retry` topic. This consumer uses the SyncCommit strategy to reinsert messages top the `<main-topic>`
+  * `<main-topic>-deadLetter` The consumer that reads messages from the `<main-topic>.deadLetter` topic. This consumer is used in the `DeadLetterTriggerTask` to reinsert parked messages
+  
+* ProducerConfigurationNames
+  * `<main-topic>` The producer that writes messages to the `<main-topic>` topic.
+  * `<main-topic>-retry` The producer that writes messages with processing errors to the `<main-topic>.retry` topic.
+  * `<main-topic>-deadLetter` The producer that writes messages to `<main-topic>.deadLetter` topic.
+  
+Example: Original topic is `myTopic`
+```yaml
+kafka:
+  topics:
+    myTopic:
+      name: myTopic-name
+    myTopic-retry:
+      name: myTopic-name.retry
+    myTopic-deadLetter:
+      name: myTopic-name.deadLetter
+  consumers:
+    myTopic:
+      group: defaultConsumer
+    myTopic-retry:
+      group: defaultRetryConsumer
+    myTopic-deadLetter:
+      group: defaultDeadLetterConsumer
+  producers:
+    myTopic-error:
+    myTopic-retry:
+    myTopic-reinsert:            
+```
+
 
 ## Create preconfigured consumers and producers
 To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config yaml or 
