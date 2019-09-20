@@ -93,10 +93,6 @@ configure(subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-c
         }
     }
 
-    jar {
-        version = null
-    }
-
     /**
      * This task fails if we find an uncertain dependency that is not covered by constraints. I.e.
      * - take all constraints
@@ -168,6 +164,13 @@ configure(subprojects.findAll {
 
                 artifact sourcesJar
             }
+        }
+    }
+
+    jar {
+        into("META-INF/maven/$project.group/$project.name") {
+            from { generatePomFileForMavenPublication }
+            rename ".*", "pom.xml"
         }
     }
 }
