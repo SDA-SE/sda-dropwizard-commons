@@ -6,6 +6,8 @@ import io.dropwizard.Bundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.jaegertracing.Configuration;
+import io.jaegertracing.Configuration.CodecConfiguration;
+import io.jaegertracing.Configuration.Propagation;
 import io.jaegertracing.Configuration.ReporterConfiguration;
 import io.jaegertracing.Configuration.SamplerConfiguration;
 import io.opentracing.Tracer;
@@ -41,12 +43,17 @@ public class JaegerBundle implements Bundle {
       samplerConfig.withType("const").withParam(1);
     }
 
-    ReporterConfiguration reporterConfig = ReporterConfiguration.fromEnv().withLogSpans(true);
+    ReporterConfiguration reporterConfig = ReporterConfiguration.fromEnv();
+    CodecConfiguration codecConfig =
+        CodecConfiguration.fromEnv()
+            .withPropagation(Propagation.B3)
+            .withPropagation(Propagation.JAEGER);
     String serviceName = environment.getName();
 
     Configuration config =
         io.jaegertracing.Configuration.fromEnv(serviceName)
             .withSampler(samplerConfig)
+            .withCodec(codecConfig)
             .withReporter(reporterConfig);
 
     PrometheusMetricsFactory prometheusMetricsFactory = new PrometheusMetricsFactory();
