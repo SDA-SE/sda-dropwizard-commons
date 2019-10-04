@@ -143,3 +143,19 @@ catch (ClientRequestException e) {
 To support sending multipart requests like file uploads, `sda-commons-shared-forms` has to be added to the project. 
 
 The client is the configured automatically to support multipart.
+
+## Tips and Tricks
+
+### 3rd Party `javax.ws.rs-api` Client Implementations in Classpath
+
+The clients used in sda-commons require the Jersey Client implementation. 
+If you are facing problems with other `javax.ws.rs-api` implementations in the classpath (e.g. RestEasy which comes
+with the Keycloak SDK) the Jersey Client Builder must be propagated in your project as service.
+Therefore the service definition `src/main/resources/META-INF/services/javax.ws.rs.client.ClientBuilder` must be added
+to your project containing:
+
+```
+org.glassfish.jersey.client.JerseyClientBuilder
+```
+
+This works if the library that requires the other implementation does not rely on the Java ServiceLoader.
