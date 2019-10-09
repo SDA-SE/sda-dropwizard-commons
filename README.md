@@ -256,7 +256,7 @@ The module [`sda-commons-client-jersey`](./sda-commons-client-jersey/README.md) 
 clients withing the dropwizard application.
 
 The module [`sda-commons-client-jersey-wiremock-testing`](./sda-commons-client-jersey-wiremock-testing/README.md) 
-bundles the [WireMock]('https://wiremock.org') dependencies to mock services in integration tests consistently to 
+bundles the [WireMock](https://wiremock.org) dependencies to mock services in integration tests consistently to 
 sda-commons library versions.
 
 The module [`sda-commons-client-jersey-example`](./sda-commons-client-jersey-example/README.md)
