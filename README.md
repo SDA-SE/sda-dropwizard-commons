@@ -350,9 +350,15 @@ Add to the dependencies (example):
     project.ext {
         sdaCommonsVersion = 'PR-1-SNAPSHOT'
     }
+
     dependencies {
+      // define platform dependencies for simplified dependency management
+      compile enforcedPlatform("org.sdase.commons.sda-commons-dependencies:$sdaCommonsVersion")
+      compile enforcedPlatform("org.sdase.commons.sda-commons-bom:$sdaCommonsVersion")
       ...
-      compile "org.sdase.commons:sda-commons-client-jersey:${sdaCommonsVersion}"
+
+      // Add dependencies to sda-commons-modules (managed by sda-commons-bom)
+      compile "org.sdase.commons:sda-commons-client-jersey"
       ...
     }
 ```
