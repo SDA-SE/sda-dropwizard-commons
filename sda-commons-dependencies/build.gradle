@@ -86,7 +86,7 @@ dependencies {
         api "com.github.tomakehurst:wiremock-jre8:2.21.0"
         api "org.ow2.asm:asm:7.0"
         api "com.salesforce.kafka.test:kafka-junit4:3.0.1"
-        api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.1.1"
+        api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0"
         api "io.findify:s3mock_2.12:0.2.5"
         api "junit:junit:4.12"
         api "net.javacrumbs.json-unit:json-unit-assertj:2.2.0"

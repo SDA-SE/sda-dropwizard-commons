@@ -31,7 +31,6 @@ public class MongoDbRuleWithScriptingTest {
          .withUsername(DATABASE_USERNAME)
          .withPassword(DATABASE_PASSWORD)
          .withTimeoutInMillis(30_000)
-         .withVersion(Version.V3_6_5)
          .enableScripting()
          .build();
 

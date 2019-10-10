@@ -10,14 +10,18 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.internal.connection.ServerAddressHelper;
+import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import java.util.ArrayList;
+
+import org.apache.commons.lang3.SystemUtils;
 import org.bson.BSONObject;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,7 +38,6 @@ public class MongoDbRuleTest {
          .withUsername(DATABASE_USERNAME)
          .withPassword(DATABASE_PASSWORD)
          .withTimeoutInMillis(30_000)
-         .withVersion(Version.V3_6_5)
          .build();
 
    @Test
@@ -119,4 +122,28 @@ public class MongoDbRuleTest {
          assertThat(db.listCollectionNames()).doesNotContain("clearDatabaseTest");
       }
    }
+
+   @Test
+   public void shouldTakeSpecificMongoDbVersion() {
+      final IFeatureAwareVersion specificMongoDbVersion = Version.V3_2_20;
+      assertThat(MongoDbRule.builder().withVersion(specificMongoDbVersion).build().getVersion()).isEqualTo(specificMongoDbVersion);
+   }
+
+   @Test
+   public void shouldDetermineMongoDbVersionIfVersionIsNull() {
+      assertThat(MongoDbRule.builder().withVersion(null).build().getVersion()).isIn(MongoDbRule.Builder.DEFAULT_VERSION, MongoDbRule.Builder.WINDOWS_VERSION);
+   }
+
+   @Test
+   public void shouldUseOsSpecificMongoDbVersion() {
+      final IFeatureAwareVersion mongoDbVersion = MongoDbRule.builder().build().getVersion();
+      if (SystemUtils.IS_OS_WINDOWS) {
+         assertThat(mongoDbVersion).isEqualTo(MongoDbRule.Builder.WINDOWS_VERSION);
+         assertThat(mongoDbVersion).isNotEqualTo(MongoDbRule.Builder.DEFAULT_VERSION);
+      } else {
+         assertThat(mongoDbVersion).isEqualTo(MongoDbRule.Builder.DEFAULT_VERSION);
+         assertThat(mongoDbVersion).isNotEqualTo(MongoDbRule.Builder.WINDOWS_VERSION);
+      }
+   }
+
 }

@@ -1,6 +1,6 @@
 package org.sdase.commons.server.mongo.testing;
 
-import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.*;
 import static java.lang.Runtime.getRuntime;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -40,6 +40,8 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
+
+import org.apache.commons.lang3.SystemUtils;
 import org.bson.Document;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
@@ -196,6 +198,13 @@ public class MongoDbRule extends ExternalResource {
    }
 
    /**
+    * @return the version of the MongoDB instance which is associated with this MongoDbRule
+    */
+   public IFeatureAwareVersion getVersion() {
+      return version;
+   }
+
+   /**
     * Creates a MongoClient that is connected to the database. The caller is
     * responsible for closing the connection.
     * 
@@ -317,7 +326,8 @@ public class MongoDbRule extends ExternalResource {
 
    public static final class Builder {
 
-      private static final Main DEFAULT_VERSION = PRODUCTION;
+      public static final Main DEFAULT_VERSION = V3_6;
+      public static final Main WINDOWS_VERSION = V4_0;
 
       private static final long DEFAULT_TIMEOUT_MS = MINUTES.toMillis(1L);
 
@@ -392,11 +402,21 @@ public class MongoDbRule extends ExternalResource {
          return this;
       }
 
-      public MongoDbRule build() {
-         IFeatureAwareVersion v = version == null ? DEFAULT_VERSION : version;
-         long t = timeoutInMillis == null || timeoutInMillis < 1L ? DEFAULT_TIMEOUT_MS : timeoutInMillis;
+      private IFeatureAwareVersion determineMongoDbVersion() {
+         if (version != null) {
+            return version;
+         } else if (SystemUtils.IS_OS_WINDOWS) {
+            LOG.warn("Using MongoDB {} as any version of MongoDB < 4.x may cause issues on a Windows system", WINDOWS_VERSION);
+            return WINDOWS_VERSION;
+         } else {
+            return DEFAULT_VERSION;
+         }
+      }
 
-         return new MongoDbRule(username, password, database, scripting, v, t);
+      public MongoDbRule build() {
+         IFeatureAwareVersion mongoDbVersion = determineMongoDbVersion();
+         long t = timeoutInMillis == null || timeoutInMillis < 1L ? DEFAULT_TIMEOUT_MS : timeoutInMillis;
+         return new MongoDbRule(username, password, database, scripting, mongoDbVersion, t);
       }
    }
 }
