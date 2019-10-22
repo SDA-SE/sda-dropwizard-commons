@@ -12,6 +12,7 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.core.Response;
@@ -30,7 +31,7 @@ import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 public class ApiClientConfigurationTest {
 
    @ClassRule
-   public static final WireMockRule WIRE = new WireMockRule();
+   public static final WireMockRule WIRE = new WireMockRule(new WireMockConfiguration().dynamicPort());
 
    @Rule
    public final DropwizardAppRule<ClientTestConfig> dw = new DropwizardAppRule<>(ClientTestApp.class,
