@@ -131,6 +131,8 @@ public class MorphiaBundleLocalDateConvertersIT {
 
     @Override
     public void initialize(Bootstrap<Config> bootstrap) {
+      // TODO: This is problematic. See {@link
+      // MorphiaBundle#registerHealthCheck(HealthCheckRegistry, String)}.
       bootstrap.addBundle(morphiaBundleWithSdaConverter);
       bootstrap.addBundle(morphiaBundleWithPlainMorphia);
     }

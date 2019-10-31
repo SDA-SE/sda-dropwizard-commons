@@ -116,8 +116,13 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
    * @param database database name that is used within health check
    */
   private void registerHealthCheck(HealthCheckRegistry healthCheckRegistry, String database) {
+    // TODO: When the bundle is instantiated multiple times the health check is broken. This is only
+    // a quick fix.
+    long existingHealthChecks =
+        healthCheckRegistry.getNames().stream().filter(n -> n.startsWith("mongo")).count();
     healthCheckRegistry.register(
-        "mongo", new MongoHealthCheck(mongoClient().getDatabase((database))));
+        "mongo" + (existingHealthChecks > 0 ? existingHealthChecks : ""),
+        new MongoHealthCheck(mongoClient().getDatabase((database))));
   }
 
   /**

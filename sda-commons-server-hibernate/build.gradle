@@ -1,9 +1,9 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
   compile 'io.dropwizard:dropwizard-hibernate'
-  compile 'org.postgresql:postgresql'
+  // TODO: Why do we need to specify a version here??
+  compile 'org.postgresql:postgresql:42.2.5'
   compile 'org.flywaydb:flyway-core'
-  compile 'javax.xml.bind:jaxb-api'
 
   testCompile project(':sda-commons-server-hibernate-testing')
   testCompile 'org.assertj:assertj-core'

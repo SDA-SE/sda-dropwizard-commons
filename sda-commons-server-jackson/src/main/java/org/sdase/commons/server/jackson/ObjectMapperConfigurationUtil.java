@@ -11,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import io.dropwizard.jackson.AnnotationSensitivePropertyNamingStrategy;
+import io.dropwizard.jackson.CaffeineModule;
 import io.dropwizard.jackson.GuavaExtrasModule;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Bootstrap;
@@ -118,6 +119,7 @@ public class ObjectMapperConfigurationUtil {
               .registerModule(new ParameterNamesModule())
               .registerModule(new Jdk8Module())
               .registerModule(new JavaTimeModule())
+              .registerModule(new CaffeineModule())
               .setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy())
           // .setSubtypeResolver(new DiscoverableSubtypeResolver()) in  newMinimalObjectMapper
           ;

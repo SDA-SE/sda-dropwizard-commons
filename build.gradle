@@ -201,6 +201,7 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     }
   }
 
+  // TODO: Temporary disabled, to find issues first!
   configurations.all {
     resolutionStrategy {
       // fail eagerly on version conflict (includes transitive dependencies)
