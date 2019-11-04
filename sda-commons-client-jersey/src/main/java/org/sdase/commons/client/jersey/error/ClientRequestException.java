@@ -5,6 +5,7 @@ import org.apache.http.conn.ConnectTimeoutException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import java.io.Closeable;
 import java.net.SocketTimeoutException;
 import java.util.Optional;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
  * Exception that wraps any {@link javax.ws.rs.WebApplicationException} that occurred in a Http request to avoid that
  * it is used to delegate the same response to the own caller by default exception mappers.
  */
-public class ClientRequestException extends RuntimeException {
+public class ClientRequestException extends RuntimeException implements Closeable {
 
    /**
     * @param cause the caught {@link javax.ws.rs.WebApplicationException} that occurred in a Http request
@@ -88,4 +89,15 @@ public class ClientRequestException extends RuntimeException {
       return Optional.empty();
    }
 
+   /**
+    * This implementation can be called multiple times and will never throw an exception.
+    */
+   @Override
+   public void close() {
+      try {
+         this.getResponse().ifPresent(Response::close);
+      }
+      catch (Throwable ignored) { // NOSONAR
+      }
+   }
 }

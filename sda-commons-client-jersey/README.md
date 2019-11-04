@@ -101,6 +101,9 @@ wrapping `javax.ws.rs.ProcessingException` or subclasses of `javax.ws.rs.WebAppl
 - `javax.ws.rs.ClientErrorException` for client errors
 - `javax.ws.rs.ServerErrorException` for server errors
 
+If the `ClientRequestException` exception is handled in the application code **the application must `close()` the 
+exception**.
+
 If a `javax.ws.rs.core.Response` is defined as return type, Http errors and redirects can be read from the `Response`
 object. **Remember to always close the `Response` object. It references open socket streams.**
 
@@ -125,7 +128,11 @@ MyResource myResource = ClientErrorUtil.convertExceptions(() -> requestBuilder.g
 ```
 
 If the error should be handled in the application, the exception may be caught and the error can be read from the 
-response:
+response.
+If the `ClientRequestException` is caught the implementation **must `close()` it**.
+If it is not handled or rethrown, the `ClientRequestExceptionMapper` will take care about closing the underlying open 
+socket.
+Therefore the `ClientRequestException` **must not** be wrapped as `cause` in another exception!
 
 ```java
 Client client = clientFactory.platformClient().buildGenericClient("test")
@@ -135,6 +142,7 @@ try {
 }
 catch (ClientRequestException e) {
    ApiError error = ClientErrorUtil.readErrorBody(e);
+   e.close();
 }
 ```
 

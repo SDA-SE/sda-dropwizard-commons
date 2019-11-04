@@ -34,6 +34,7 @@ public class ClientRequestExceptionMapper implements ExceptionMapper<ClientReque
       String title = createTitle(exception);
       LOG.info("Client request error not handled in application: {}", title, exception);
       ApiError error = new ApiError(title, emptyList());
+      exception.close();
       return Response.status(RESPONSE_STATUS_CODE).type(APPLICATION_JSON).entity(error).build();
    }
 

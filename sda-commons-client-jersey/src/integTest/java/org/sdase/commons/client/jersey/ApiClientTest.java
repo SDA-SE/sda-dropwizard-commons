@@ -219,28 +219,30 @@ public class ApiClientTest {
 
    @Test
    public void postNewCar() {
-      Response response = createMockApiClient().createCar(new Car().setSign("HH AB 1234").setColor("white"));
+      try (Response response = createMockApiClient().createCar(new Car().setSign("HH AB 1234").setColor("white"))) {
 
-      assertThat(response.getStatus()).isEqualTo(201);
-      assertThat(response.getLocation()).isEqualTo(URI.create("/api/cars/dummyId"));
-      WIRE
-            .verify(RequestPatternBuilder
-                  .newRequestPattern(RequestMethod.POST, urlEqualTo("/api/cars"))
-                  .withHeader("Content-type", equalTo("application/json")) // NOSONAR
-            );
+         assertThat(response.getStatus()).isEqualTo(201);
+         assertThat(response.getLocation()).isEqualTo(URI.create("/api/cars/dummyId"));
+         WIRE
+               .verify(RequestPatternBuilder
+                     .newRequestPattern(RequestMethod.POST, urlEqualTo("/api/cars"))
+                     .withHeader("Content-type", equalTo("application/json")) // NOSONAR
+               );
+      }
    }
 
    @Test
    public void notAddConsumerTokenIfAlreadySet() {
-      Response response = createMockApiClient().requestCarsWithCustomConsumerToken("my-custom-consumer");
+      try (Response response = createMockApiClient().requestCarsWithCustomConsumerToken("my-custom-consumer")) {
 
-      assertThat(response.getStatus()).isEqualTo(200);
-      WIRE
-            .verify(RequestPatternBuilder
-                  .newRequestPattern(GET, urlEqualTo("/api/cars"))
-                  .withHeader("Consumer-Token", equalTo("my-custom-consumer"))
-                  .withHeader("Consumer-Token", notMatching("test-consumer"))
-                  .withoutHeader(HttpHeaders.AUTHORIZATION));
+         assertThat(response.getStatus()).isEqualTo(200);
+         WIRE
+               .verify(RequestPatternBuilder
+                     .newRequestPattern(GET, urlEqualTo("/api/cars"))
+                     .withHeader("Consumer-Token", equalTo("my-custom-consumer"))
+                     .withHeader("Consumer-Token", notMatching("test-consumer"))
+                     .withoutHeader(HttpHeaders.AUTHORIZATION));
+      }
    }
 
    @Test
@@ -333,11 +335,12 @@ public class ApiClientTest {
    @Test
    @Ignore("Default methods in API client interfaces are not supported by Jersey. A custom proxy may fix this later.")
    public void loadLightBlueCarThroughDefaultMethod() {
-      Response response = createMockApiClient().getLightBlueCar();
-      assertThat(response.getStatus()).isEqualTo(200);
-      assertThat(response.readEntity(Car.class))
-            .extracting(Car::getSign, Car::getColor)
-            .containsExactly("HH XY 4321", "light blue");
+      try (Response response = createMockApiClient().getLightBlueCar()) {
+         assertThat(response.getStatus()).isEqualTo(200);
+         assertThat(response.readEntity(Car.class))
+               .extracting(Car::getSign, Car::getColor)
+               .containsExactly("HH XY 4321", "light blue");
+      }
    }
 
    @Test
@@ -348,14 +351,27 @@ public class ApiClientTest {
    }
 
    @Test
+   public void demonstrateToCloseException() {
+      try {
+         createMockApiClient().getCar("HH AA 4444");
+      }
+      catch (ClientRequestException e) {
+         assertThat(e.getResponse().map(Response::getStatus)).isPresent().hasValue(404);
+         assertThat(e.getResponse().map(Response::hasEntity)).isPresent().hasValue(true);
+         e.close(); // important if exception is not rethrown
+      }
+   }
+
+   @Test
    public void return404ForMissingCar() {
-      Response response = createMockApiClient().getCarResponse("HH AA 5555");
-      assertThat(response.getStatus()).isEqualTo(404);
+      try (Response response = createMockApiClient().getCarResponse("HH AA 5555")) {
+         assertThat(response.getStatus()).isEqualTo(404);
+      }
    }
 
    @Test
    public void return404ForMissingCarWithGenericClient() {
-      Response response = app
+      try (Response response = app
             .getJerseyClientBundle()
             .getClientFactory()
             .externalClient()
@@ -365,24 +381,26 @@ public class ApiClientTest {
             .path("cars")
             .path("HH AA 7777")
             .request(MediaType.APPLICATION_JSON)
-            .get();
-      assertThat(response.getStatus()).isEqualTo(404);
+            .get()) {
+         assertThat(response.getStatus()).isEqualTo(404);
+      }
    }
 
    @Test
    public void return500ForDelegatedMissingCar() {
-      Response response = dwClient()
+      try(Response response = dwClient()
             .path("api")
             .path("cars")
             .path("HH AA 7777")
             .request(MediaType.APPLICATION_JSON_TYPE)
-            .get();
-      assertThat(response.getStatus()).isEqualTo(500);
-      assertThat(ClientErrorUtil.readErrorBody(response, new GenericType<Map<String, Object>>() {
-      }))
-            .containsExactly(
-                  entry("title", "Request could not be fulfilled: Received status '404' from another service."),
-                  entry("invalidParams", Lists.emptyList()));
+            .get()) {
+         assertThat(response.getStatus()).isEqualTo(500);
+         assertThat(ClientErrorUtil.readErrorBody(response, new GenericType<Map<String, Object>>() {
+         }))
+               .containsExactly(
+                     entry("title", "Request could not be fulfilled: Received status '404' from another service."),
+                     entry("invalidParams", Lists.emptyList()));
+      }
    }
 
    @Test
@@ -487,10 +505,11 @@ public class ApiClientTest {
       // for GET requests.
       MockApiClient client = createMockApiClient();
 
-      Response r = client.createCar(new Car().setSign("HH XY 1234").setColor("yellow")); // NOSONAR
-      assertThat(r.getStatus()).isEqualTo(SC_OK);
-      Car car = r.readEntity(Car.class);
-      assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 1234", "yellow");
+      try (Response r = client.createCar(new Car().setSign("HH XY 1234").setColor("yellow"))) { // NOSONAR
+         assertThat(r.getStatus()).isEqualTo(SC_OK);
+         Car car = r.readEntity(Car.class);
+         assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 1234", "yellow");
+      }
    }
 
    @Test
@@ -508,10 +527,11 @@ public class ApiClientTest {
 
       MockApiClient client = createMockApiClientWithoutFollowRedirects();
 
-      Response r = client.createCar(new Car().setSign("HH XY 1234").setColor("yellow"));
-      assertThat(r.getStatus()).isEqualTo(SC_SEE_OTHER);
-      assertThat(r.getHeaderString(HttpHeaders.LOCATION)).isEqualTo(WIRE.url("/api/cars/HH%20XY%201234"));
-      WIRE.verify(0, RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars/HH%20XY%201234")));
+      try (Response r = client.createCar(new Car().setSign("HH XY 1234").setColor("yellow"))) {
+         assertThat(r.getStatus()).isEqualTo(SC_SEE_OTHER);
+         assertThat(r.getHeaderString(HttpHeaders.LOCATION)).isEqualTo(WIRE.url("/api/cars/HH%20XY%201234"));
+         WIRE.verify(0, RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars/HH%20XY%201234")));
+      }
    }
 
    private MockApiClient createMockApiClientWithoutFollowRedirects() {
