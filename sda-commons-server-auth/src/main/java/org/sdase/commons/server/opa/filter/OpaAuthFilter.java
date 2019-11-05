@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  *
  * <p>
- *   The filtre replaces the principal within the security context with a new
+ *   The filter replaces the principal within the security context with a new
  *   {@link OpaJwtPrincipal} that might include a JWT if provided before this filter
  *   as a ({@link JwtPrincipal}.
  * </p>
@@ -166,6 +166,11 @@ public class OpaAuthFilter implements ContainerRequestFilter {
       try {
          resp = webTarget.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(request), OpaResponse.class);
       } catch (WebApplicationException e) {
+         try {
+            e.getResponse().close();
+         } catch(ProcessingException ex) {
+            LOG.warn("Error while closing response", ex);
+         }
          LOG.warn("Exception when querying OPA. Maybe policy is broken", e);
       } catch (ProcessingException e) {
          LOG.warn("Exception during processing of OPA request.", e);

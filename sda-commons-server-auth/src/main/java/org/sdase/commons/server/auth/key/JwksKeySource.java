@@ -1,6 +1,8 @@
 package org.sdase.commons.server.auth.key;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.client.Client;
@@ -16,12 +18,15 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads public keys from a
  * <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5">JSON Web Key Set</a>.
  */
 public class JwksKeySource implements KeySource {
+   private static final Logger LOGGER = LoggerFactory.getLogger(JwksKeySource.class);
 
    private String jwksUri;
 
@@ -51,6 +56,13 @@ public class JwksKeySource implements KeySource {
                .filter(this::isRsa256Key)
                .map(this::toPublicKey)
                .collect(Collectors.toList());
+      } catch (WebApplicationException e) {
+         try {
+            e.getResponse().close();
+         } catch (ProcessingException ex) {
+            LOGGER.warn("Error while loading keys from JWKS while closing response", ex);
+         }
+         throw new KeyLoadFailedException(e);
       } catch (Exception e) {
          throw new KeyLoadFailedException(e);
       }

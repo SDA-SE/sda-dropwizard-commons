@@ -3,16 +3,21 @@ package org.sdase.commons.server.auth.key;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads public keys by discovering the configuration of an OpenID provider.
  */
 public class OpenIdProviderDiscoveryKeySource implements KeySource {
+   private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdProviderDiscoveryKeySource.class);
 
    /**
     * The path where the OpenID providers configuration can be discovered from. Further reading:
@@ -48,6 +53,14 @@ public class OpenIdProviderDiscoveryKeySource implements KeySource {
       }
       catch (KeyLoadFailedException e) {
          throw e;
+      }
+      catch (WebApplicationException e) {
+         try {
+            e.getResponse().close();
+         } catch (ProcessingException ex) {
+            LOGGER.warn("Error while loading keys from OpenId Provider Discovery while closing response", ex);
+         }
+         throw new KeyLoadFailedException(e);
       }
       catch (Exception e) {
          throw new KeyLoadFailedException(e);
