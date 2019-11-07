@@ -48,9 +48,10 @@ dependencies {
         api "io.github.resilience4j:resilience4j-prometheus:0.15.0"
 
         // Prometheus
-        api "io.prometheus:simpleclient:0.6.0"
-        api "io.prometheus:simpleclient_dropwizard:0.6.0"
-        api "io.prometheus:simpleclient_servlet:0.6.0"
+        api "io.prometheus:simpleclient:0.8.0"
+        api "io.prometheus:simpleclient_common:0.8.0"
+        api "io.prometheus:simpleclient_dropwizard:0.8.0"
+        api "io.prometheus:simpleclient_servlet:0.8.0"
 
         // Swagger
         api "io.openapitools.hal:swagger-hal:1.0.4"

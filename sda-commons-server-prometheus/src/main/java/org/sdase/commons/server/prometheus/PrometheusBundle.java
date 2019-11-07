@@ -1,5 +1,7 @@
 package org.sdase.commons.server.prometheus;
 
+import io.prometheus.client.dropwizard.samplebuilder.CustomMappingSampleBuilder;
+import io.prometheus.client.dropwizard.samplebuilder.MapperConfig;
 import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -8,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
-import org.sdase.commons.server.prometheus.mapping.DropwizardSampleBuilder;
-import org.sdase.commons.server.prometheus.mapping.MapperConfig;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
 import io.dropwizard.Bundle;
@@ -81,7 +81,7 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
       // to Prometheus metrics.
       List<MapperConfig> mappers = createMetricsMapperConfigs();
 
-      SampleBuilder sampleBuilder = new DropwizardSampleBuilder(mappers);
+      SampleBuilder sampleBuilder = new CustomMappingSampleBuilder(mappers);
       DropwizardExports dropwizardExports = new DropwizardExports(environment.metrics(), sampleBuilder);
       CollectorRegistry.defaultRegistry.register(dropwizardExports);
 
@@ -135,8 +135,8 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
       for (int i = 0; i < labelNames.length; ++i) {
          Object labelName = labelNames[i];
 
-         if (labelName instanceof AbstractMap.Entry) {
-            AbstractMap.Entry pair = (Entry) labelName;
+         if (labelName instanceof Entry) {
+            Entry pair = (Entry) labelName;
             labels.put(pair.getKey().toString(), pair.getValue().toString());
          } else {
             labels.put(labelName.toString(), "${" + i + "}");
