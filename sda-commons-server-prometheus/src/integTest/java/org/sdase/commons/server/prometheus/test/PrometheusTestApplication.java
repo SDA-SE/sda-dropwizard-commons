@@ -1,6 +1,10 @@
 package org.sdase.commons.server.prometheus.test;
 
 import com.codahale.metrics.health.HealthCheck;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
+import org.sdase.commons.client.jersey.ClientFactory;
+import org.sdase.commons.client.jersey.JerseyClientBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import io.dropwizard.Application;
@@ -16,10 +20,13 @@ import javax.ws.rs.core.Response;
 
 @Path("/")
 public class PrometheusTestApplication extends Application<Configuration> {
-
+   private JerseyClientBundle jerseyClientBundle = JerseyClientBundle.builder().build();
+   private WebTarget googleClient;
 
    @Override
    public void initialize(final Bootstrap<Configuration> bootstrap) {
+      bootstrap.addBundle(jerseyClientBundle);
+
       bootstrap.addBundle(PrometheusBundle.builder().build());
    }
 
@@ -45,6 +52,8 @@ public class PrometheusTestApplication extends Application<Configuration> {
       environment.jersey().register((ContainerRequestFilter) requestContext
             -> requestContext.setProperty(ConsumerTracing.NAME_ATTRIBUTE, requestContext.getHeaders().getFirst("Consumer-Name")));
 
+      ClientFactory clientFactory = jerseyClientBundle.getClientFactory();
+      googleClient = clientFactory.externalClient().buildGenericClient("sdase").target("https://sda.se");
    }
 
    @GET
@@ -54,11 +63,16 @@ public class PrometheusTestApplication extends Application<Configuration> {
    }
 
    @GET
+   @Path("/client")
+   public Response testClient() {
+      googleClient.request().get();
+      return Response.ok("client").build();
+   }
+
+   @GET
    @Path("/path/{param}")
    public Response pathWithSegment(@PathParam("param") String pathParam) {
       return Response.ok(pathParam).build();
    }
-
-
 
 }

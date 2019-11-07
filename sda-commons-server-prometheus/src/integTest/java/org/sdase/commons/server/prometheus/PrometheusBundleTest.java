@@ -135,6 +135,15 @@ public class PrometheusBundleTest {
    }
 
    @Test
+   public void shouldMapCustomMetrics() {
+      DW.client().target(resourceUri).path("client").request().get(String.class);
+
+      String metrics = readMetrics();
+
+      assertThat(metrics).contains("apache_http_client_request_duration_seconds{manager=\"HttpClient\",method=\"get\",name=\"sdase\",quantile=\"0.5\",}");
+   }
+
+   @Test
    public void shouldProvideHealthChecksAsPrometheusMetrics() {
       String healthChecks = readHealthChecks();
 
