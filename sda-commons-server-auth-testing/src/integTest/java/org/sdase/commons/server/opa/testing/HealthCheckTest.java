@@ -40,10 +40,10 @@ public class HealthCheckTest {
       assertThat(policyExistsHealthCheck.check().isHealthy()).isFalse();
    }
 
-   @Test(expected = InternalServerErrorException.class)
+   @Test
    public void shouldBeUnhealthyIfOpaError() {
       OPA_RULE.mock(onAnyRequest().serverError());
-      policyExistsHealthCheck.check();
+      assertThat(policyExistsHealthCheck.check().isHealthy()).isFalse();
    }
 
    @Test
