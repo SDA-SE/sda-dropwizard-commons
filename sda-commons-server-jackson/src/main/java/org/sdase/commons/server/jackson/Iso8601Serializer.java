@@ -2,7 +2,11 @@ package org.sdase.commons.server.jackson;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
@@ -62,6 +66,11 @@ public class Iso8601Serializer extends StdSerializer<ZonedDateTime> {
    public void serialize(ZonedDateTime value, JsonGenerator gen, SerializerProvider arg2)
          throws IOException {
       gen.writeString(formatter.format(value));
+   }
+
+   @Override
+   public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException {
+      visitStringFormat(visitor, typeHint, JsonValueFormat.DATE_TIME);
    }
 
    /**
