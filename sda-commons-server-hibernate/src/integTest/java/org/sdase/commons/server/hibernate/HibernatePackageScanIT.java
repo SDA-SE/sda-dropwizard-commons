@@ -3,6 +3,7 @@ package org.sdase.commons.server.hibernate;
 import com.github.database.rider.core.DBUnitRule;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.configuration.DataSetConfig;
+import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.sdase.commons.server.hibernate.test.HibernateITestConfiguration;
 import org.sdase.commons.server.hibernate.test.HibernatePackageScanApp;
 import org.sdase.commons.server.hibernate.test.model.Person;
@@ -37,8 +38,9 @@ public class HibernatePackageScanIT {
    @BeforeClass
    public static void initDb() {
       DataSourceFactory database = DW.getConfiguration().getDatabase();
-      Flyway flyway = new Flyway();
-      flyway.setDataSource(database.getUrl(), database.getUser(), database.getPassword());
+      Flyway flyway = new Flyway(
+          new FluentConfiguration().dataSource(database.getUrl(), database.getUser(), database.getPassword())
+      );
       flyway.migrate();
    }
 

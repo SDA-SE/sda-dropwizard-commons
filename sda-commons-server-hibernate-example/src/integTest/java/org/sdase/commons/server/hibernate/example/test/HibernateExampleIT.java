@@ -6,6 +6,7 @@ import com.github.database.rider.core.configuration.DataSetConfig;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.junit.*;
 import org.sdase.commons.server.hibernate.example.HibernateExampleApplication;
 import org.sdase.commons.server.hibernate.example.HibernateExampleConfiguration;
@@ -48,8 +49,9 @@ public class HibernateExampleIT {
    @BeforeClass
    public static void initDb() {
       DataSourceFactory database = DW.getConfiguration().getDatabase();
-      Flyway flyway = new Flyway();
-      flyway.setDataSource(database.getUrl(), database.getUser(), database.getPassword());
+      Flyway flyway = new Flyway(
+          new FluentConfiguration().dataSource(database.getUrl(), database.getUser(), database.getPassword())
+      );
       flyway.migrate();
    }
 

@@ -38,7 +38,7 @@ public class DbMigrationServiceTest {
 
       // then see annotation
       Connection connection = ((SessionImpl) daoTestRule.getSessionFactory().getCurrentSession()).connection();
-      ResultSet tables = connection.getMetaData().getTables("", "public", "schema_version", null);
+      ResultSet tables = connection.getMetaData().getTables("", "public", "flyway_schema_history", null);
       assertTrue("Expect a result for schema_version", tables.first());
    }
 

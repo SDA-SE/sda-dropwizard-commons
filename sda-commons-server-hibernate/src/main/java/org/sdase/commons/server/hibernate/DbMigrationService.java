@@ -2,6 +2,8 @@ package org.sdase.commons.server.hibernate;
 
 import io.dropwizard.db.DataSourceFactory;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.configuration.Configuration;
+import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +45,10 @@ public class DbMigrationService {
       String databaseUrl = database.getUrl();
       String databaseSchema = database.getProperties().getOrDefault("currentSchema", "public");
       LOG.info("Starting database migration for schema {} using database {}", databaseSchema, databaseUrl);
-      Flyway flyway = new Flyway();
-      flyway.setDataSource(databaseUrl, database.getUser(), database.getPassword());
-      flyway.setSchemas(databaseSchema);
+      Configuration configuration = new FluentConfiguration()
+          .dataSource(databaseUrl, database.getUser(), database.getPassword())
+          .schemas(databaseSchema);
+      Flyway flyway = new Flyway(configuration);
       flyway.migrate();
       LOG.info("Database migration successful.");
 

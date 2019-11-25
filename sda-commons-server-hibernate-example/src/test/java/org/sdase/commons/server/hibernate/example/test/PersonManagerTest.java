@@ -6,6 +6,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import io.dropwizard.testing.junit.DAOTestRule;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.hibernate.cfg.AvailableSettings;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -51,8 +52,9 @@ public class PersonManagerTest {
    @BeforeClass
    public static void initDb() {
       // init database with schema
-      Flyway flyway = new Flyway();
-      flyway.setDataSource(URL, USER, PWD);
+      Flyway flyway = new Flyway(
+          new FluentConfiguration().dataSource(URL, USER, PWD)
+      );
       flyway.migrate();
    }
 
