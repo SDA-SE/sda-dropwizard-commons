@@ -18,6 +18,7 @@ import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockSpan.LogEntry;
 import io.opentracing.mock.MockTracer;
 import io.opentracing.tag.Tags;
+import java.util.Map;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.junit.Before;
@@ -150,7 +151,36 @@ public class OpenTracingBundleTest {
                       .findAny()
                       .orElseThrow(IllegalStateException::new);
 
-              assertThat(span.logEntries().get(0).fields().get("message")).isEqualTo("Hello World");
+              Map<String, ?> fields = span.logEntries().get(0).fields();
+              assertThat(fields.get("level")).isEqualTo("INFO");
+              assertThat(fields.get("message")).isEqualTo("Hello World");
+            });
+  }
+
+  @Test
+  public void shouldCollectLogErrorStatementsInTrace() {
+    Response r = createClient().path("logError").request().get();
+
+    // Make sure to wait till the request is completed:
+    r.readEntity(String.class);
+
+    assertThat(r.getStatus()).isEqualTo(SC_NO_CONTENT);
+
+    await()
+        .untilAsserted(
+            () -> {
+              MockSpan span =
+                  tracer.finishedSpans().stream()
+                      .filter(s -> s.operationName().startsWith("GET:"))
+                      .findAny()
+                      .orElseThrow(IllegalStateException::new);
+              Map<String, ?> fields = span.logEntries().get(0).fields();
+              assertThat(fields.get("level")).isEqualTo("ERROR");
+              assertThat(fields.get("event")).isEqualTo("error");
+              assertThat(fields.get("message")).isEqualTo("Something went wrong");
+              assertThat(fields.get("stack")).isNotNull();
+              assertThat(fields.get("error.kind")).isEqualTo("java.lang.IllegalStateException");
+              assertThat(fields.get("error.object")).isNotNull();
             });
   }
 

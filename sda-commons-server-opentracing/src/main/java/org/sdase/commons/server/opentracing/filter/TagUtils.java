@@ -2,7 +2,6 @@ package org.sdase.commons.server.opentracing.filter;
 
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
-import io.opentracing.tag.BooleanTag;
 import io.opentracing.tag.StringTag;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.MultivaluedHashMap;
