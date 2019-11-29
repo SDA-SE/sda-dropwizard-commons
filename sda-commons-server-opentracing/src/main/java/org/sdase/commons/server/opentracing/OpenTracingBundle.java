@@ -1,5 +1,9 @@
 package org.sdase.commons.server.opentracing;
 
+import static org.slf4j.Logger.ROOT_LOGGER_NAME;
+
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import io.dropwizard.Bundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -15,6 +19,8 @@ import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration.Dynamic;
 import org.sdase.commons.server.opentracing.filter.CustomServerSpanDecorator;
 import org.sdase.commons.server.opentracing.filter.ExceptionListener;
+import org.sdase.commons.server.opentracing.logging.SpanLogsAppender;
+import org.slf4j.LoggerFactory;
 
 public class OpenTracingBundle implements Bundle {
 
@@ -33,6 +39,20 @@ public class OpenTracingBundle implements Bundle {
   public void run(Environment environment) {
     Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
 
+    registerLogAppender(currentTracer);
+    registerJerseyFilters(currentTracer, environment);
+  }
+
+  private void registerLogAppender(Tracer currentTracer) {
+    LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+    Logger rootLogger = context.getLogger(ROOT_LOGGER_NAME);
+    SpanLogsAppender appender = new SpanLogsAppender(currentTracer);
+    appender.start();
+
+    rootLogger.addAppender(appender);
+  }
+
+  private void registerJerseyFilters(Tracer currentTracer, Environment environment) {
     List<ServerSpanDecorator> serverDecorators = new ArrayList<>();
     serverDecorators.add(ServerSpanDecorator.STANDARD_TAGS);
     serverDecorators.add(new CustomServerSpanDecorator());

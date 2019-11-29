@@ -18,9 +18,14 @@ import javax.ws.rs.client.Client;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
 import org.sdase.commons.server.jaeger.JaegerBundle;
 import org.sdase.commons.server.opentracing.OpenTracingBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("/")
 public class OpenTracingApplication extends Application<Configuration> {
+
+  static final Logger LOGGER = LoggerFactory.getLogger(OpenTracingApplication.class);
+
   private JerseyClientBundle<Configuration> jerseyClientBundle =
       JerseyClientBundle.builder().build();
   private Client searchClient;
@@ -141,9 +146,9 @@ public class OpenTracingApplication extends Application<Configuration> {
 
     try (Scope ignored = GlobalTracer.get().scopeManager().activate(span)) {
       // You can also add log entries to your span
-      span.log("Before sleep");
+      LOGGER.info("Before sleep");
       Thread.sleep(25);
-      span.log("After sleep");
+      LOGGER.info("After sleep");
     } catch (Exception ex) {
       // Add exceptions to your span. See the OpenTracing documentation with
       // guidance for common tags and logs:
