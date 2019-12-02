@@ -10,7 +10,7 @@ Beside the initialization of the bundle, it includes a
 registration of endpoints to map resources.
 
 The 
-[integration test](./src/integTest/java/org/sdase/commons/server/starter/example/SdaPlatformExampleApplicationIT.java) 
+[integration test](./src/test/java/org/sdase/commons/server/starter/example/SdaPlatformExampleApplicationIT.java) 
 shows how the application is bootstrapped in tests. The tests show the capabilities of a standard platform application.
 
 The provided [`local-config.yaml`](./local-config.yaml) allows to start the 

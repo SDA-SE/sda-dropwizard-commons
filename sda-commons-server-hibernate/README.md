@@ -188,4 +188,4 @@ For creating tests without a Dropwizard application please refer to the
 [`DbMigrationServiceTest`](./src/test/java/org/sdase/commons/server/hibernate/DbMigrationServiceTest.java) as example.
 
 For creating full integration tests of a Dropwizard application please refer to
-[`HibernateIT`](./src/integTest/java/org/sdase/commons/server/hibernate/HibernateIT.java) as example. 
+[`HibernateIT`](./src/test/java/org/sdase/commons/server/hibernate/HibernateIT.java) as example. 

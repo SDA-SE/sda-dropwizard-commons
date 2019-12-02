@@ -13,7 +13,7 @@ dependencies {
     testCompile 'com.github.java-json-tools:json-schema-validator'
 }
 
-integrationTest {
+test {
     // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
     systemProperty "sun.net.http.allowRestrictedHeaders", "true"
 }

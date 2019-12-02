@@ -25,7 +25,7 @@ pipeline {
 
     stage('Run Tests') {
       parallel {
-        stage('Module test jar (Java 8)') {
+        stage('Java 8') {
           agent {
             docker {
               image 'quay.io/sdase/openjdk-development:8.212-hotspot'
@@ -34,7 +34,7 @@ pipeline {
 
           steps {
             prepareGradleWorkspace secretId: 'sdabot-github-token'
-            javaGradlew gradleCommand: 'test'
+            javaGradlew gradleCommand: 'check'
             stash includes: '**/build/**/*', name: 'moduletest'
           }
 
@@ -45,27 +45,7 @@ pipeline {
           }
         }
 
-        stage('Integration test service (Java 8)') {
-          agent {
-            docker {
-              image 'quay.io/sdase/openjdk-development:8.212-hotspot'
-            }
-          }
-
-          steps {
-            prepareGradleWorkspace secretId: 'sdabot-github-token'
-            javaGradlew gradleCommand: 'integrationTest'
-            stash includes: '**/build/**/*', name: 'integrationtest'
-          }
-
-          post {
-            always {
-              junit '**/build/integTest-results/*.xml'
-            }
-          }
-        }
-
-        stage('Module test jar (Java 11)') {
+        stage('Java 11') {
           agent {
             docker {
               image 'quay.io/sdase/openjdk-development:11.0-hotspot'
@@ -74,31 +54,12 @@ pipeline {
 
           steps {
             prepareGradleWorkspace secretId: 'sdabot-github-token'
-            javaGradlew gradleCommand: 'test'
+            javaGradlew gradleCommand: 'check'
           }
 
           post {
             always {
               junit '**/build/test-results/test/*.xml'
-            }
-          }
-        }
-
-        stage('Integration test service (Java 11)') {
-          agent {
-            docker {
-              image 'quay.io/sdase/openjdk-development:11.0-hotspot'
-            }
-          }
-
-          steps {
-            prepareGradleWorkspace secretId: 'sdabot-github-token'
-            javaGradlew gradleCommand: 'integrationTest'
-          }
-
-          post {
-            always {
-              junit '**/build/integTest-results/*.xml'
             }
           }
         }
@@ -135,7 +96,6 @@ pipeline {
 
       steps {
         unstash 'moduletest'
-        unstash 'integrationtest'
         script {
           if (env.BRANCH_NAME == 'develop') {
             sonarScanBranch project: 'org.sdase.commons', javaBaseDir: '.', exclusionPatterns: ['**main/generated/**']

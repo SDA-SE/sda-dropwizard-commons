@@ -19,7 +19,6 @@ plugins {
     id 'maven-publish'
     id 'jacoco'
     id 'org.owasp.dependencycheck' version '4.0.2'
-    id 'nebula.integtest' version '6.0.2'
 }
 
 allprojects {
@@ -69,7 +68,6 @@ subprojects {
 configure(subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-commons-dependencies'}) {
     apply plugin: 'java'
     apply plugin: 'jacoco'
-    apply plugin: 'nebula.integtest'
     apply plugin: 'org.owasp.dependencycheck'
     apply plugin: 'com.sdase.gradle.eclipse-settings'
 
@@ -84,9 +82,6 @@ configure(subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-c
             output.resourcesDir = output.classesDirs.singleFile
         }
         test {
-            output.resourcesDir = output.classesDirs.singleFile
-        }
-        integTest {
             output.resourcesDir = output.classesDirs.singleFile
         }
     }
