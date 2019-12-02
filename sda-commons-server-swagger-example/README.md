@@ -11,7 +11,7 @@ as well a [`PersonResource`](src/main/java/org/sdase/commons/server/swagger/exam
 to demonstrate some cases of Api documentation.
 
 The 
-[integration test](src/integTest/java/org/sdase/commons/server/swagger/example/people/rest/SwaggerIT.java) 
+[integration test](src/test/java/org/sdase/commons/server/swagger/example/people/rest/SwaggerIT.java) 
 shows how the existence of a Swagger endpoint can be tested.
 
 The provided [`local-config.yaml`](local-config.yaml) allows to start the 
