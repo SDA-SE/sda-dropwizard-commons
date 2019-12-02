@@ -8,7 +8,6 @@ import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;

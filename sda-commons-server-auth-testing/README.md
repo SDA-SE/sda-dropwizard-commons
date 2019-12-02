@@ -94,13 +94,13 @@ The `AuthRule` provides functions to generate a valid token that matches to the 
             .get();
 ```
 
-Examples can be found in the [integTest source branch](./src/integTest) of this module. There is
+Examples can be found in the [test source branch](./src/test) of this module. There is
 
-- [An example app](./src/integTest/java/org/sdase/commons/server/auth/testing/test/AuthTestApp.java)  
-- [A test with authentication](./src/integTest/java/org/sdase/commons/server/auth/testing/AuthRuleIT.java)  
-- [A test with disabled authentication](./src/integTest/java/org/sdase/commons/server/auth/testing/AuthDisabledIT.java)
+- [An example app](./src/test/java/org/sdase/commons/server/auth/testing/test/AuthTestApp.java)  
+- [A test with authentication](./src/test/java/org/sdase/commons/server/auth/testing/AuthRuleIT.java)  
+- [A test with disabled authentication](./src/test/java/org/sdase/commons/server/auth/testing/AuthDisabledIT.java)
   which uses the `EnvironmentRule` instead of the `AuthRule`
-- [An appropriate test config yaml](./src/integTest/resources/test-config.yaml)
+- [An appropriate test config yaml](./src/test/resources/test-config.yaml)
 
 ## OPA Rule
 
@@ -165,13 +165,13 @@ To control the OPA mock behavior, the following API is provided
  verify(int count, String httpMethod, String path) {
 ```
 
-Examples can be found in the [integTest source branch](./src/integTest) of this module. There is
+Examples can be found in the [test source branch](./src/test) of this module. There is
 
-- [An example app](./src/integTest/java/org/sdase/commons/server/opa/testing/test/OpaBundleTestApp.java)  
-- [A test with opa](./src/integTest/java/org/sdase/commons/server/opa/testing/OpaIT.java)  
-- [A test with disabled opa support](./src/integTest/java/org/sdase/commons/server/opa/testing/OpaDisabledIT.java). In this case, only empty constraints are within the principal
-- [An appropriate test config yaml](./src/integTest/resources/test-opa-config.yaml)
+- [An example app](./src/test/java/org/sdase/commons/server/opa/testing/test/OpaBundleTestApp.java)  
+- [A test with opa](./src/test/java/org/sdase/commons/server/opa/testing/OpaIT.java)  
+- [A test with disabled opa support](./src/test/java/org/sdase/commons/server/opa/testing/OpaDisabledIT.java). In this case, only empty constraints are within the principal
+- [An appropriate test config yaml](./src/test/resources/test-opa-config.yaml)
 
 Example with activated AUTH and OPA bundle can be found here:
-- [Example app](./src/integTest/java/org/sdase/commons/server/opa/testing/test/AuthAndOpaBundleTestApp.java)
-- [Test](./src/integTest/java/org/sdase/commons/server/opa/testing/AuthAndOpaIT.java)
+- [Example app](./src/test/java/org/sdase/commons/server/opa/testing/test/AuthAndOpaBundleTestApp.java)
+- [Test](./src/test/java/org/sdase/commons/server/opa/testing/AuthAndOpaIT.java)

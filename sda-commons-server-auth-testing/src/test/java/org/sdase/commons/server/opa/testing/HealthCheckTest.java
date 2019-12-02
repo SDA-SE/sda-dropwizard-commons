@@ -11,6 +11,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
+import org.sdase.commons.server.opa.testing.OpaRule;
 
 public class HealthCheckTest {
 
