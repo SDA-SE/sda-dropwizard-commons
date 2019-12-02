@@ -88,7 +88,7 @@ for the SDA Platform have some magic added that clients for an external service 
 ## Writing API Clients as interfaces
 
 Client interfaces use the same annotations as the service definitions for REST endpoints. An example is the 
-[`MockApiClient`](./src/integTest/java/org/sdase/commons/client/jersey/test/MockApiClient.java) in the integration tests
+[`MockApiClient`](./src/test/java/org/sdase/commons/client/jersey/test/MockApiClient.java) in the integration tests
 of this module.
 
 Error handling is different based on the return type:

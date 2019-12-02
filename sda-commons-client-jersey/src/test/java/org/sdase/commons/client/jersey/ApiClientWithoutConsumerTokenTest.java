@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -67,7 +68,7 @@ public class ApiClientWithoutConsumerTokenTest {
    public void loadCars() {
       List<Car> cars = createMockApiClient().getCars();
 
-      assertThat(cars).extracting(Car::getSign, Car::getColor).containsExactly(tuple("HH XX 1234", "bright blue"),
+      Assertions.assertThat(cars).extracting(Car::getSign, Car::getColor).containsExactly(tuple("HH XX 1234", "bright blue"),
             tuple("HH XY 4321", "light blue"));
    }
 
