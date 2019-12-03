@@ -71,7 +71,6 @@ public class MessageListener<K, V> implements Runnable {
 
    @Override
    public void run() {
-      shouldStop.set(false);
       waitForTopic(joinedTopics);
 
       while (!shouldStop.get()) {

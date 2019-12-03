@@ -17,6 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
+import org.awaitility.Duration;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -37,12 +39,14 @@ public class MessageListenerTest {
    private ErrorHandler<String, String> errorHandler;
 
    private KafkaConsumer<String, String> consumer;
-   
+
    private ConsumerTopicMessageHistogram histogram;
 
    private static final int WAIT_TIME_MS = 5000;
    private static final int BLOCKING_TIME_MS = 10000;
    private static final int N_MESSAGES = 5;
+
+   private Thread listenerThread;
 
    @SuppressWarnings("unchecked")
    @Before
@@ -51,6 +55,23 @@ public class MessageListenerTest {
       handler = Mockito.mock(MessageHandler.class);
       errorHandler = Mockito.mock(ErrorHandler.class);
       histogram = Mockito.mock(ConsumerTopicMessageHistogram.class);
+   }
+
+   @After
+   public void stop() throws InterruptedException {
+      try {
+         // stop the consumer
+         if (listener != null) {
+            listener.stopConsumer();
+         }
+
+         // wait for the thread to terminate
+         if (listenerThread != null) {
+            listenerThread.join();
+         }
+      } finally {
+         listenerThread = null;
+      }
    }
 
    private void setupListener() {
@@ -82,10 +103,8 @@ public class MessageListenerTest {
       );
    }
 
-
-
    @Test
-   public void itShouldSubscribeToAllTopics()  {
+   public void itShouldSubscribeToAllTopics() {
       setupMocks();
       setupListener();
       when(consumer.poll(gt(-10))).thenAnswer(invocation -> {
@@ -93,12 +112,10 @@ public class MessageListenerTest {
          if (timeout > 0) {
             throw new WakeupException();
          }
-         return null;
+         return ConsumerRecords.EMPTY;
       });
 
       startListenerThread();
-
-      listener.stopConsumer();
 
       Mockito.verify(consumer).subscribe(Arrays.asList(TOPICS));
    }
@@ -113,17 +130,13 @@ public class MessageListenerTest {
          if (counter.incrementAndGet() < 2) {
             throw new WakeupException();
          } else {
-            return null;
+            return ConsumerRecords.EMPTY;
          }
       });
 
-      Thread t = startListenerThread();
-
+      startListenerThread();
 
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(2)).poll(gt(0L));
-
-      listener.stopConsumer();
-      await().untilAsserted(() -> assertThat(t.getState()).isEqualTo(State.TERMINATED));
    }
 
    @Test
@@ -139,7 +152,7 @@ public class MessageListenerTest {
    }
 
    @Test
-   public void errorHandlerShouldBeInvokedWhenExceptionButNotStop()  {
+   public void errorHandlerShouldBeInvokedWhenExceptionButNotStop() {
       ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
       setupMocks();
       setupListener();
@@ -156,13 +169,12 @@ public class MessageListenerTest {
       });
 
       startListenerThread();
-      await().until(() -> count.get() >= 1);
+      await().pollInterval(new Duration(1, MILLISECONDS)).until(() -> count.get() >= 1);
       Mockito.verify(consumer, Mockito.never()).close();
    }
 
-
    @Test
-   public void shouldStopWhenErrorHandlerReturnsFalse()  {
+   public void shouldStopWhenErrorHandlerReturnsFalse() {
       ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
       setupMocks();
       setupListener();
@@ -184,7 +196,7 @@ public class MessageListenerTest {
    }
 
    @Test
-   public void itShouldHandAllRecordsToMessageHandler()  {
+   public void itShouldHandAllRecordsToMessageHandler() {
 
       ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
       setupMocks();
@@ -226,7 +238,7 @@ public class MessageListenerTest {
 
       Thread t = startListenerThread();
 
-      //verify and wait until poll has been invoked
+      // verify and wait until poll has been invoked
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).poll(gt(0L));
 
       listener.stopConsumer();
@@ -237,7 +249,6 @@ public class MessageListenerTest {
       await().untilAsserted(() -> assertThat(t.getState()).isEqualTo(State.TERMINATED));
    }
 
-
    @Test
    public void itShouldCorrectlyStopEvenWhenTopicDoesNotExist() {
       int waitTime = 10000;
@@ -246,7 +257,6 @@ public class MessageListenerTest {
 
       when(consumer.partitionsFor(Mockito.anyString())).thenReturn(new LinkedList<>());
 
-
       AtomicBoolean throwException = new AtomicBoolean(false);
 
       Mockito.doAnswer((Answer<Void>) invocation -> {
@@ -254,10 +264,9 @@ public class MessageListenerTest {
          return null;
       }).when(consumer).wakeup();
 
-
       Thread t = startListenerThread();
 
-      //verify and wait until poll has been invoked
+      // verify and wait until poll has been invoked
       Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(3)).partitionsFor(Mockito.anyString());
 
       t.interrupt();
@@ -270,15 +279,14 @@ public class MessageListenerTest {
    }
 
    private Thread startListenerThread() {
-      Thread t = new Thread(listener);
-      t.start();
+      listenerThread = new Thread(listener);
+      listenerThread.start();
 
-      return t;
+      return listenerThread;
    }
 
    private void setupMocks() {
       Mockito.doNothing().when(consumer).subscribe(Mockito.anyList());
       when(consumer.poll(0)).thenReturn(null);
    }
-
 }
