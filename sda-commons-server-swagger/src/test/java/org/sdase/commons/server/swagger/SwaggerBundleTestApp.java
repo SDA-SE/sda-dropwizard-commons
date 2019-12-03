@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -32,6 +33,9 @@ public class SwaggerBundleTestApp extends Application<Configuration> {
    private static final String JOHN_DOE_PATH = "/jdoe";
    private static final String HOUSE_PATH = "/house";
 
+   private static AtomicInteger counter = new AtomicInteger(0);
+   private int instanceNumber;
+
    @Context
    private UriInfo uriInfo;
 
@@ -39,11 +43,16 @@ public class SwaggerBundleTestApp extends Application<Configuration> {
       new SwaggerBundleTestApp().run(args);
    }
 
+   public String getTitle() {
+      return getName() + instanceNumber;
+   }
+
    @Override
    public void initialize(Bootstrap<Configuration> bootstrap) {
+      instanceNumber = counter.incrementAndGet();
       bootstrap.addBundle(
             SwaggerBundle.builder()
-                  .withTitle(getName())
+                  .withTitle(getTitle())
                   .addResourcePackageClass(getClass())
                   .build());
    }

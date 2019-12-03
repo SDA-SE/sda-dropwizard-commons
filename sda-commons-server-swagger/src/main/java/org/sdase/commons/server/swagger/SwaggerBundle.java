@@ -27,8 +27,10 @@ import java.lang.invoke.MethodHandles;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
+import static io.swagger.jaxrs.config.SwaggerContextService.*;
 import static java.lang.String.join;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.Validate.notBlank;
@@ -82,6 +84,7 @@ import static org.apache.commons.lang3.Validate.notBlank;
 public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
 
    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+   private static final AtomicInteger UNIQUE_ID_COUNTER = new AtomicInteger();
 
    // https://www.dropwizard.io/0.9.1/docs/manual/configuration.html#man-configuration-all
    private static final String DROPWIZARD_DEFAULT_ROOT_PATH = "/*";
@@ -107,6 +110,10 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
 
    @Override
    public void run(Configuration configuration, Environment environment) {
+      // Get a new ID to register the swagger file in a unique context that is
+      // not reused by another instance of this class.
+      String instanceId = Integer.toString(UNIQUE_ID_COUNTER.incrementAndGet());
+
       String basePath = determineBasePath(configuration);
 
       beanConfig = new BeanConfig();
@@ -114,12 +121,20 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
       beanConfig.setBasePath(basePath);
       beanConfig.setPrettyPrint(true);
 
+      // Set the config, context, and scanner ids to be used. These must be the
+      // same as in {@link
+      // ApiListingResourceWithDeducedHost.DelegatingServletConfig}.
+      beanConfig.setConfigId(CONFIG_ID_PREFIX + instanceId);
+      beanConfig.setContextId(CONTEXT_ID_KEY + "." + instanceId);
+      beanConfig.setScannerId(SCANNER_ID_PREFIX + instanceId);
+      //
+
       // order important
       beanConfig.setScan();
       beanConfig.getSwagger().getInfo().mergeWith(info);
       //
 
-      environment.jersey().register(new ApiListingResourceWithDeducedHost());
+      environment.jersey().register(new ApiListingResourceWithDeducedHost(instanceId));
       environment.jersey().register(new SwaggerSerializers());
 
       // Allow CORS to access (via wildcard) from Swagger UI/editor

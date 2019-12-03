@@ -99,7 +99,7 @@ public class SwaggerBundleIT {
 
       assertThatJson(response)
           .inPath("$.info.title")
-          .isEqualTo(SwaggerBundleTestApp.class.getSimpleName());
+          .isEqualTo(((SwaggerBundleTestApp)DW.getApplication()).getTitle());
       assertThatJson(response)
           .inPath("$.info.version")
           .asString()
