@@ -63,6 +63,7 @@ public class KafkaPrometheusMonitoringIT {
                         .put(CONSUMER_1, ConsumerConfig
                               .builder()
                               .withGroup("default")
+                              .withClientId(CONSUMER_1)
                               .addConfig("key.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
                               .addConfig("value.deserializer", "org.apache.kafka.common.serialization.LongDeserializer")
                               .build());
@@ -99,10 +100,8 @@ public class KafkaPrometheusMonitoringIT {
       String topic = "testConsumeMsgForPrometheus";
       KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
-      AutocommitMLS<Long, Long> longLongAutocommitMLS = new AutocommitMLS<>(
-          record -> resultsLong.add(record.value()),
-          new IgnoreAndProceedErrorHandler<>());
-
+      AutocommitMLS<Long, Long> longLongAutocommitMLS = new AutocommitMLS<>(record -> resultsLong.add(record.value()),
+            new IgnoreAndProceedErrorHandler<>());
 
       kafkaBundle
             .createMessageListener(MessageListenerRegistration
@@ -112,7 +111,6 @@ public class KafkaPrometheusMonitoringIT {
                   .withConsumerConfig(CONSUMER_1)
                   .withListenerStrategy(longLongAutocommitMLS)
                   .build());
-
 
       MessageProducer<Long, Long> producer = kafkaBundle
             .registerProducer(
@@ -148,7 +146,7 @@ public class KafkaPrometheusMonitoringIT {
 
       assertThat(CollectorRegistry.defaultRegistry
             .getSampleValue("kafka_consumer_topic_message_duration_count",
-                  new String[] { "consumer_name", "topic_name" }, new String[] { CONSUMER_1+"-0", topic }))
+                  new String[] { "consumer_name", "topic_name" }, new String[] { CONSUMER_1 + "-0", topic }))
                         .as("sample value for metric 'kafka_consumer_topic_message_duration_count'")
                         .isEqualTo(2);
    }

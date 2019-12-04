@@ -66,7 +66,6 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                })
                .build());
 
-
    @ClassRule
    public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
 
@@ -75,8 +74,9 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
    private int numberExceptionThrown = 0;
    private List<String> results = Collections.synchronizedList(new ArrayList<>());
 
-
-   private KafkaBundle<KafkaTestConfiguration> bundle = ((KafkaTestApplication) DROPWIZARD_APP_RULE.getRule().getApplication()).kafkaBundle();
+   private KafkaBundle<KafkaTestConfiguration> bundle = ((KafkaTestApplication) DROPWIZARD_APP_RULE
+         .getRule()
+         .getApplication()).kafkaBundle();
 
    @Before
    public void setup() {
@@ -85,11 +85,12 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
 
    // Test ignored to speed up integration testing. Waiting for retention must
    // not necessarily tested, since this is default kafka behavior
-   // This test might be relevant again, if changes in the @MessageListener with respect to the commit behavior
+   // This test might be relevant again, if changes in the @MessageListener with
+   // respect to the commit behavior
    // are done
    @Ignore
    @Test
-   public void messagesThrowingExceptionsMustBeRetried()  { // NOSONAR
+   public void messagesThrowingExceptionsMustBeRetried() { // NOSONAR
       String topic = "messagesThrowingExceptionsMustBeRetried";
       String uuid = UUID.randomUUID().toString();
       KafkaProducer<String, String> producer = KAFKA
@@ -97,13 +98,10 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
             .getKafkaProducer(StringSerializer.class, StringSerializer.class);
       producer.send(new ProducerRecord<>(topic, uuid));
 
-
       List<MessageListener<String, String>> errorListener = bundle
             .registerMessageHandler(MessageHandlerRegistration // NOSONAR
                   .<String, String> builder()
-                  .withListenerConfig(
-                        ListenerConfig.getDefault()
-                        )
+                  .withListenerConfig(ListenerConfig.getDefault())
                   .forTopic(topic)
                   .withDefaultConsumer()
                   .withKeyDeserializer(deserializer)
@@ -151,7 +149,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
 
       List<MessageListener<String, String>> firstListener = bundle
             .registerMessageHandler(MessageHandlerRegistration // NOSONAR
-                  .<String, String>builder()
+                  .<String, String> builder()
                   .withDefaultListenerConfig()
                   .forTopic(topic)
                   .withDefaultConsumer()
@@ -161,12 +159,12 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                   .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                   .build());
 
-
       String uuid = UUID.randomUUID().toString();
-      KafkaProducer<String, String> producer = KAFKA
+      try (KafkaProducer<String, String> producer = KAFKA
             .getKafkaTestUtils()
-            .getKafkaProducer(StringSerializer.class, StringSerializer.class);
-      producer.send(new ProducerRecord<>(topic, uuid));
+            .getKafkaProducer(StringSerializer.class, StringSerializer.class)) {
+         producer.send(new ProducerRecord<>(topic, uuid));
+      }
 
       await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> results.size() == 1);
       assertThat(results).containsExactlyInAnyOrder(uuid);
@@ -220,31 +218,36 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
       ErrorHandler<String, Integer> errorHandler = (record, e, consumer) -> e instanceof ProcessingErrorRetryException;
 
       bundle
-          .createMessageListener(MessageListenerRegistration
-              .<String, Integer>builder()
-              .withDefaultListenerConfig()
-              .forTopic(topic)
-              .withConsumerConfig(
-                  ConsumerConfig.<String, Integer>builder().withGroup("test").addConfig("enable.auto.commit", "false")
-                      .addConfig("max.poll.records", "5").build())
-              .withValueDeserializer(new IntegerDeserializer())
-              .withListenerStrategy( new RetryProcessingErrorMLS<>(handler, errorHandler))
-              .build());
+            .createMessageListener(MessageListenerRegistration
+                  .<String, Integer> builder()
+                  .withDefaultListenerConfig()
+                  .forTopic(topic)
+                  .withConsumerConfig(ConsumerConfig
+                        .<String, Integer> builder()
+                        .withGroup("test")
+                        .addConfig("enable.auto.commit", "false")
+                        .addConfig("max.poll.records", "5")
+                        .build())
+                  .withValueDeserializer(new IntegerDeserializer())
+                  .withListenerStrategy(new RetryProcessingErrorMLS<>(handler, errorHandler))
+                  .build());
 
-      KafkaProducer<String, Integer> producer = KAFKA
-          .getKafkaTestUtils()
-          .getKafkaProducer(StringSerializer.class, IntegerSerializer.class);
-      IntStream.range(1, 21).forEach(e -> producer
-          .send(new ProducerRecord<String, Integer>(topic, UUID.randomUUID().toString(), e)));
+      try (KafkaProducer<String, Integer> producer = KAFKA
+            .getKafkaTestUtils()
+            .getKafkaProducer(StringSerializer.class, IntegerSerializer.class)) {
+         IntStream
+               .range(1, 21)
+               .forEach(
+                     e -> producer.send(new ProducerRecord<String, Integer>(topic, UUID.randomUUID().toString(), e)));
+      }
 
       await().atMost(4, SECONDS).until(() -> testResults.size() == 20);
       assertThat(processingError.get())
-          .withFailMessage("There was at least 1 processing error")
-          .isGreaterThanOrEqualTo(1);
+            .withFailMessage("There was at least 1 processing error")
+            .isGreaterThanOrEqualTo(1);
+      assertThat(testResults).withFailMessage("There must be 20 results finally processed by consumer").hasSize(20);
       assertThat(testResults)
-          .withFailMessage("There must be 20 results finally processed by consumer")
-          .hasSize(20);
-      assertThat(testResults).containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+            .containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
    }
 
    @Test
@@ -274,34 +277,41 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
       ErrorHandler<String, Integer> errorHandler = (record, e, consumer) -> e instanceof ProcessingErrorRetryException;
 
       bundle
-          .createMessageListener(MessageListenerRegistration
-              .<String, Integer>builder()
-              .withDefaultListenerConfig()
-              .forTopicConfigs(Collections.singletonList(
-                  new ExpectedTopicConfigurationBuilder(topic).withPartitionCount(2)
-                      .withReplicationFactor(1).build()))
-              .withConsumerConfig(
-                  ConsumerConfig.<String, Integer>builder().withGroup("test").addConfig("enable.auto.commit", "false")
-                      .addConfig("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
-                      .addConfig("value.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer")
-                      .addConfig("max.poll.records", "5").build())
-              //.withValueDeserializer(new IntegerDeserializer())
-              .withListenerStrategy( new RetryProcessingErrorMLS<>(handler, errorHandler))
-              .build());
+            .createMessageListener(MessageListenerRegistration
+                  .<String, Integer> builder()
+                  .withDefaultListenerConfig()
+                  .forTopicConfigs(Collections
+                        .singletonList(new ExpectedTopicConfigurationBuilder(topic)
+                              .withPartitionCount(2)
+                              .withReplicationFactor(1)
+                              .build()))
+                  .withConsumerConfig(ConsumerConfig
+                        .<String, Integer> builder()
+                        .withGroup("test")
+                        .addConfig("enable.auto.commit", "false")
+                        .addConfig("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
+                        .addConfig("value.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer")
+                        .addConfig("max.poll.records", "5")
+                        .build())
+                  // .withValueDeserializer(new IntegerDeserializer())
+                  .withListenerStrategy(new RetryProcessingErrorMLS<>(handler, errorHandler))
+                  .build());
 
-      KafkaProducer<String, Integer> producer = KAFKA
-          .getKafkaTestUtils()
-          .getKafkaProducer(StringSerializer.class, IntegerSerializer.class);
-      IntStream.range(1, 21).forEach(e -> producer
-          .send(new ProducerRecord<String, Integer>(topic, UUID.randomUUID().toString(), e)));
+      try (KafkaProducer<String, Integer> producer = KAFKA
+            .getKafkaTestUtils()
+            .getKafkaProducer(StringSerializer.class, IntegerSerializer.class)) {
+         IntStream
+               .range(1, 21)
+               .forEach(
+                     e -> producer.send(new ProducerRecord<String, Integer>(topic, UUID.randomUUID().toString(), e)));
+      }
 
       await().atMost(4, SECONDS).until(() -> testResults.size() == 20);
       assertThat(processingError.get())
-          .withFailMessage("There was at least 1 processing error")
-          .isGreaterThanOrEqualTo(1);
+            .withFailMessage("There was at least 1 processing error")
+            .isGreaterThanOrEqualTo(1);
+      assertThat(testResults).withFailMessage("There must be 20 results finally processed by consumer").hasSize(20);
       assertThat(testResults)
-          .withFailMessage("There must be 20 results finally processed by consumer")
-          .hasSize(20);
-      assertThat(testResults).containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+            .containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
    }
 }

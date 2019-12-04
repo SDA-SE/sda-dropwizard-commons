@@ -402,9 +402,11 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             .build();
    }
 
-
    /**
     * creates a new Kafka Consumer with deserializers and consumer config
+    *
+    * Note: after creating a {@code KafkaConsumer} you must always
+    * {@link KafkaConsumer#close()} it to avoid resource leaks.
     *
     * @param keyDeSerializer
     *           deserializer for key objects. If null, value from config or
@@ -425,7 +427,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * @return a new kafka consumer
     */
    public <K, V> KafkaConsumer<K, V> createConsumer(Deserializer<K> keyDeSerializer, Deserializer<V> valueDeSerializer,
-       String consumerConfigName) {
+         String consumerConfigName) {
 
       ConsumerConfig consumerConfig = getConsumerConfiguration(consumerConfigName);
       return createConsumer(keyDeSerializer, valueDeSerializer, consumerConfig, 0);
@@ -433,6 +435,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
    /**
     * creates a new Kafka Consumer with deserializers and consumer config
+    *
+    * Note: after creating a {@code KafkaConsumer} you must always
+    * {@link KafkaConsumer#close()} it to avoid resource leaks.
     *
     * @param keyDeSerializer
     *           deserializer for key objects. If null, value from config or
@@ -457,13 +462,20 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       KafkaProperties consumerProperties = KafkaProperties.forConsumer(kafkaConfiguration);
       if (consumerConfig != null) {
          consumerProperties.putAll(consumerConfig.getConfig());
-         consumerProperties.put(org.apache.kafka.clients.consumer.ConsumerConfig.CLIENT_ID_CONFIG, consumerConfig.getClientId()+"-"+instanceId);
+         consumerProperties
+               .put(org.apache.kafka.clients.consumer.ConsumerConfig.CLIENT_ID_CONFIG,
+                     consumerConfig.getClientId() + "-" + instanceId);
       }
+
+      // TODO: who is managing the lifecycle? Maybe we want to manage it by this bundle?
       return new KafkaConsumer<>(consumerProperties, keyDeSerializer, valueDeSerializer);
    }
 
    /**
     * creates a new Kafka Consumer with deserializers and consumer config
+    *
+    * Note: after creating a {@code KafkaProducer} you must always
+    * {@link KafkaProducer#close()} it to avoid resource leaks.
     *
     * @param keySerializer
     *           deserializer for key objects. If null, value from config or
@@ -491,11 +503,16 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          producerConfig.getConfig().forEach(producerProperties::put);
       }
 
+      // TODO: who is managing the lifecycle? Maybe we want to manage it by this bundle?
+
       return new KafkaProducer<>(producerProperties, keySerializer, valueSerializer);
    }
 
    /**
     * creates a new Kafka Consumer with deserializers and consumer config
+    *
+    * Note: after creating a {@code KafkaProducer} you must always
+    * {@link KafkaProducer#close()} it to avoid resource leaks.
     *
     * @param keySerializer
     *           deserializer for key objects. If null, value from config or
@@ -516,14 +533,14 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     * @return a new kafka producer
     */
    public <K, V> KafkaProducer<K, V> createProducer(Serializer<K> keySerializer, Serializer<V> valueSerializer,
-       String producerConfigName) {
+         String producerConfigName) {
 
       ProducerConfig producerConfig = getProducerConfiguration(producerConfigName);
       if (producerConfig != null && producerConfig.getClientId() == null) {
          producerConfig.setClientId(producerConfigName);
       }
 
-      return  createProducer(keySerializer, valueSerializer, producerConfig);
+      return createProducer(keySerializer, valueSerializer, producerConfig);
    }
 
    private <K, V> KafkaProducer<K, V> createProducer(ProducerRegistration<K, V> registration) {
@@ -565,7 +582,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          throw new ConfigurationException(String
              .format("Producer config with name '%s' cannot be found within the current configuration.", name));
       }
-      return  kafkaConfiguration.getProducers().get(name);
+      return kafkaConfiguration.getProducers().get(name);
    }
 
    /**
@@ -620,7 +637,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       }
       consumerConfig.setConfig(newConfig);
    }
-
 
    /**
     * Initial checks. Configuration mus be initialized
