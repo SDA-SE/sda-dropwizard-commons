@@ -43,6 +43,11 @@ subprojects {
         }
     }
 
+    // TODO: reenable this setting on a new ci environment
+    // tasks.withType(Test) {
+    //     maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+    // }
+
     version = System.getenv('SEMANTIC_VERSION')
 
     publishing {
