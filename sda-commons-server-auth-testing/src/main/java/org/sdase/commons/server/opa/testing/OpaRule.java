@@ -26,8 +26,9 @@ import org.sdase.commons.server.opa.filter.model.OpaResponse;
 @SuppressWarnings("WeakerAccess")
 public class OpaRule extends ExternalResource {
 
-   private static final WireMockClassRule WIRE = new WireMockClassRule(wireMockConfig().dynamicPort());
    private static final ObjectMapper OM = new ObjectMapper();
+
+   private final WireMockClassRule wire = new WireMockClassRule(wireMockConfig().dynamicPort());
 
    public static AllowBuilder onRequest(String method, String path) {
       return new StubBuilder(method, path);
@@ -54,33 +55,33 @@ public class OpaRule extends ExternalResource {
 
    @Override
    public Statement apply(Statement base, Description description) {
-      return RuleChain.outerRule(WIRE).apply(base, description);
+      return RuleChain.outerRule(wire).apply(base, description);
    }
 
    public String getUrl() {
-      return WIRE.baseUrl();
+      return wire.baseUrl();
    }
 
    public void reset() {
-      WIRE.resetAll();
+      wire.resetAll();
    }
 
    @Override
    protected void before() {
-      WIRE.start();
+      wire.start();
    }
 
    @Override
    protected void after() {
-      WIRE.stop();
+      wire.stop();
    }
 
    public void verify(int count, String httpMethod, String paths) {
-      WIRE.verify(count, matchForVerify(httpMethod, splitPath(paths)));
+      wire.verify(count, matchForVerify(httpMethod, splitPath(paths)));
    }
 
    public void mock(BuildBuilder builder) {
-      builder.build();
+      builder.build(wire);
    }
 
    private RequestPatternBuilder matchForVerify(String httpMethod, String[] paths) {
@@ -110,7 +111,7 @@ public class OpaRule extends ExternalResource {
    }
 
    public interface BuildBuilder {
-      void build();
+      void build(WireMockClassRule wire);
    }
 
    public static class StubBuilder implements AllowBuilder, FinalBuilder, BuildBuilder {
@@ -179,8 +180,7 @@ public class OpaRule extends ExternalResource {
       }
 
       @Override
-      public void build() {
-
+      public void build(WireMockClassRule wire) {
          MappingBuilder mappingBuilder;
          if (onAnyRequest) {
             mappingBuilder = matchAnyPostUrl();
@@ -189,12 +189,12 @@ public class OpaRule extends ExternalResource {
          }
 
          if (errorResponse) {
-            WIRE.stubFor(mappingBuilder.willReturn(aResponse().withStatus(500)));
+            wire.stubFor(mappingBuilder.willReturn(aResponse().withStatus(500)));
             return;
          }
 
          if (emptyResponse) {
-            WIRE.stubFor(mappingBuilder.willReturn(null));
+            wire.stubFor(mappingBuilder.willReturn(null));
             return;
          }
 
@@ -212,7 +212,7 @@ public class OpaRule extends ExternalResource {
 
             response = new OpaResponse().setResult(objectNode);
          }
-         WIRE.stubFor(mappingBuilder.willReturn(getResponse(response)));
+         wire.stubFor(mappingBuilder.willReturn(getResponse(response)));
 
       }
 

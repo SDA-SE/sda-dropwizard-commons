@@ -47,7 +47,7 @@ public class AuthAndOpaIT {
                .build());
 
    @ClassRule
-   public static final RuleChain chain = RuleChain.outerRule(OPA_RULE).around(DW);
+   public static final RuleChain chain = RuleChain.outerRule(AUTH).around(OPA_RULE).around(DW);
 
    private static String path = "resources";
    private static String method = "GET";

@@ -55,6 +55,7 @@ public class AuthRule implements TestRule {
 
    private final String subject;
 
+
    private RuleChain delegate;
 
    private RSAPrivateKey privateKey;
