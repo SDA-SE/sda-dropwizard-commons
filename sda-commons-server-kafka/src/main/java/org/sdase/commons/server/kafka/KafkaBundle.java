@@ -72,6 +72,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    private ConsumerTopicMessageHistogram topicConsumerHistogram;
 
    private List<MessageListener<?, ?>> messageListeners = new ArrayList<>();
+   private List<ThreadedMessageListener<?, ?>> threadedMessageListeners = new ArrayList<>();
    private List<KafkaMessageProducer<?, ?>> messageProducers = new ArrayList<>();
 
    private Map<String, ExpectedTopicConfiguration> topics = new HashMap<>();
@@ -123,8 +124,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       return topics.get(name);
    }
 
-
-
    /**
     * Creates a number of message listeners with the parameters given in the {@link MessageListenerRegistration}.
     * <p>The depricated fields of the {@link ListenerConfig} from {@link MessageListenerRegistration} are not considered here</p>
@@ -174,11 +173,11 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          listener.add(instance);
          Thread t = new Thread(instance);
          t.start();
+
+         threadedMessageListeners.add(new ThreadedMessageListener<>(instance, t));
       }
       messageListeners.addAll(listener);
       return listener;
-
-
    }
 
    /**
@@ -256,6 +255,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
          listener.add(instance);
          Thread t = new Thread(instance);
          t.start();
+
+         threadedMessageListeners.add(new ThreadedMessageListener<>(instance, t));
       }
       messageListeners.addAll(listener);
       return listener;
@@ -280,7 +281,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     *            no configuration available with the same name as defined in
     *            {@link ProducerRegistration#getProducerConfigName()}
     */
-   @SuppressWarnings({ "unchecked"})
+   @SuppressWarnings({ "unchecked" })
    public <K, V> MessageProducer<K, V> registerProducer(ProducerRegistration<K, V> registration)
          throws ConfigurationException { // NOSONAR
 
@@ -654,7 +655,16 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    //
 
    private void shutdownConsumerThreads() {
-      messageListeners.forEach(MessageListener::stopConsumer);
+      threadedMessageListeners.forEach(l -> l.messageListener.stopConsumer());
+      threadedMessageListeners.forEach(l -> {
+         try {
+            l.thread.join();
+         } catch (InterruptedException e) {
+            LOGGER.warn("Error while shutting down consumer threads", e);
+            Thread.currentThread().interrupt();
+         }
+      });
+
       topicConsumerHistogram.unregister();
    }
 
@@ -696,4 +706,13 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       }
    }
 
+   private static class ThreadedMessageListener<K, V> {
+      private final MessageListener<K, V> messageListener;
+      private final Thread thread;
+
+      private ThreadedMessageListener(MessageListener<K, V> messageListener, Thread thread) {
+         this.messageListener = messageListener;
+         this.thread = thread;
+      }
+   }
 }
