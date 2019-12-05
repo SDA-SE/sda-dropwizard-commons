@@ -1,7 +1,7 @@
 server:
   applicationConnectors:
   - type: http
-    port: 3456
+    port: 0
   adminConnectors:
   - type: http
     port: 0
