@@ -16,7 +16,6 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.core.Response;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -60,7 +59,7 @@ public class ApiClientConfigurationTest {
                   .withHeader("Accept", notMatching("gzip"))
                   .willReturn(ok().withHeader("Content-type", "application/json").withBody("[]")));
 
-      Assertions.assertThat(client.getCars()).isEmpty();
+      assertThat(client.getCars()).isEmpty();
    }
 
    @Test
@@ -77,7 +76,7 @@ public class ApiClientConfigurationTest {
                   .withHeader("Content-Encoding", matching("gzip"))
                   .willReturn(created()));
 
-      Assertions.assertThat(client.createCar(new Car().setSign("HH UV 42"))).extracting(Response::getStatus).isEqualTo(SC_CREATED);
+      assertThat(client.createCar(new Car().setSign("HH UV 42"))).extracting(Response::getStatus).isEqualTo(SC_CREATED);
    }
 
    @Test
@@ -94,6 +93,6 @@ public class ApiClientConfigurationTest {
                   .withHeader("Transfer-Encoding", equalTo("chunked"))
                   .willReturn(created()));
 
-      Assertions.assertThat(client.createCar(new Car().setSign("HH UV 42"))).extracting(Response::getStatus).isEqualTo(SC_CREATED);
+      assertThat(client.createCar(new Car().setSign("HH UV 42"))).extracting(Response::getStatus).isEqualTo(SC_CREATED);
    }
 }

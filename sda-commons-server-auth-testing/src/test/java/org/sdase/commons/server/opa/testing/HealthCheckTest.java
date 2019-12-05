@@ -3,7 +3,6 @@ package org.sdase.commons.server.opa.testing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.client.WebTarget;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Before;
@@ -11,7 +10,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
-import org.sdase.commons.server.opa.testing.OpaRule;
 
 public class HealthCheckTest {
 

@@ -8,7 +8,6 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -189,7 +188,7 @@ public class ApiClientTest {
    public void loadCars() {
       List<Car> cars = createMockApiClient().getCars();
 
-      Assertions.assertThat(cars)
+      assertThat(cars)
             .extracting(Car::getSign, Car::getColor)
             .containsExactly(tuple("HH XX 1234", "bright blue"), tuple("HH XY 4321", "light blue"));
    }
@@ -317,7 +316,7 @@ public class ApiClientTest {
    @Test
    public void loadSingleCar() {
       Car car = createMockApiClient().getCar("HH XY 4321");
-      Assertions.assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 4321", "light blue");
+      assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 4321", "light blue");
    }
 
    @Test
@@ -338,7 +337,7 @@ public class ApiClientTest {
    public void loadLightBlueCarThroughDefaultMethod() {
       try (Response response = createMockApiClient().getLightBlueCar()) {
          assertThat(response.getStatus()).isEqualTo(200);
-         Assertions.assertThat(response.readEntity(Car.class))
+         assertThat(response.readEntity(Car.class))
                .extracting(Car::getSign, Car::getColor)
                .containsExactly("HH XY 4321", "light blue");
       }
@@ -509,7 +508,7 @@ public class ApiClientTest {
       try (Response r = client.createCar(new Car().setSign("HH XY 1234").setColor("yellow"))) { // NOSONAR
          assertThat(r.getStatus()).isEqualTo(SC_OK);
          Car car = r.readEntity(Car.class);
-         Assertions.assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 1234", "yellow");
+         assertThat(car).extracting(Car::getSign, Car::getColor).containsExactly("HH XY 1234", "yellow");
       }
    }
 
