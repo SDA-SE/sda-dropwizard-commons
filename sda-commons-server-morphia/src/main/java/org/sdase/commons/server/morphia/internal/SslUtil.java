@@ -4,6 +4,8 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.X509TrustedCertificateBlock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -22,6 +24,9 @@ import java.security.cert.X509Certificate;
  * Utility to help with SSL related stuff according to the {@code MorphiaBundle}
  */
 class SslUtil {
+
+   private static final Logger LOG = LoggerFactory.getLogger(SslUtil.class);
+
    private SslUtil() {
       // this is a utility
    }
@@ -33,11 +38,10 @@ class SslUtil {
       trustManagerFactory.init(keyStore);
 
       SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-      sslContext.init(null, trustManagerFactory.getTrustManagers(), SecureRandom.getInstance("NativePRNG"));
+      sslContext.init(null, trustManagerFactory.getTrustManagers(), createSecureRandom());
 
       return sslContext;
    }
-
 
 
    static KeyStore createTruststoreFromPemKey(String certificateAsString)
@@ -70,5 +74,19 @@ class SslUtil {
          return new JcaX509CertificateConverter().getCertificate(certHolder);
       }
       throw new CertificateException("Could not read certificate of type " + certificateObject.getClass());
+   }
+
+   private static SecureRandom createSecureRandom() throws NoSuchAlgorithmException {
+      String algorithmNativePRNG = "NativePRNG";
+      String algorithmWindowsPRNG = "Windows-PRNG";
+      try {
+         return SecureRandom.getInstance(algorithmNativePRNG);
+      }
+      catch (NoSuchAlgorithmException e) {
+         LOG.warn("Failed to create SecureRandom with algorithm {}. Falling back to {}." +
+                     "This should only happen on windows machines.",
+               algorithmNativePRNG, algorithmWindowsPRNG, e);
+         return SecureRandom.getInstance(algorithmWindowsPRNG);
+      }
    }
 }
