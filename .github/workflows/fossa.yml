@@ -1,0 +1,32 @@
+# This workflow scans the licenses with Fossa and waits until the license test finished
+name: Fossa License Scan
+
+on: [push]
+
+jobs:
+  fossa-license-analyze:
+    # do not execute for PRs that origin from forks since we are missing the secrets for the scan
+    if: "!(github.event.pull_request && github.event.pull_request.head.repo.fork)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Install Fossa
+        run: "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash"
+
+      - name: Fossa Analyze
+        env:
+          FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
+        run: fossa analyze --project "sda-commons" --branch "$GITHUB_REF"
+
+      - name: Fossa Test
+        env:
+          FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
+        run: fossa test --project "sda-commons" --branch "$GITHUB_REF" --debug
+        # TODO: fossa test is still unstable so we allow this step to fail for now
+        continue-on-error: true
