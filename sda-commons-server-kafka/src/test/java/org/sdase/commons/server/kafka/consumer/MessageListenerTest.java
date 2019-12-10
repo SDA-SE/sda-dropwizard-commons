@@ -197,27 +197,18 @@ public class MessageListenerTest {
 
    @Test
    public void itShouldHandAllRecordsToMessageHandler() {
-
       ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
       setupMocks();
       setupListener();
-      when(consumer.poll(gt(0L))).thenReturn(records);
+
+      AtomicBoolean wasReturned = new AtomicBoolean(false);
+      when(consumer.poll(gt(0L))).thenAnswer(
+            invocation -> !wasReturned.getAndSet(true) ? records : ConsumerRecords.empty());
 
       startListenerThread();
-      await().atMost(BLOCKING_TIME_MS, MILLISECONDS).until(() -> {
-         AtomicBoolean test = new AtomicBoolean(true);
-         records.forEach(r -> {
-               try {
-                  Mockito.verify(handler, atLeastOnce()).handle(r);
-               } catch (Exception e) {
-                  test.set(false);
-               }
-
-         });
-         return test.get();
-      });
-
-      records.forEach(r -> Mockito.verify(handler, atLeastOnce()).handle(r));
+      await().atMost(BLOCKING_TIME_MS, MILLISECONDS).untilAsserted(() ->
+         records.forEach(r ->
+               Mockito.verify(handler, atLeastOnce()).handle(r)));
    }
 
    @Test
