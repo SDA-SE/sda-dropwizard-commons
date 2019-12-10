@@ -136,11 +136,13 @@ public class PrometheusBundleTest {
 
    @Test
    public void shouldMapCustomMetrics() {
-      DW.client().target(resourceUri).path("client").request().get(String.class);
+      DW.client().target(resourceUri).path("client").path("" + DW.getLocalPort()).request().get(String.class);
 
       String metrics = readMetrics();
 
-      assertThat(metrics).contains("apache_http_client_request_duration_seconds{manager=\"HttpClient\",method=\"get\",name=\"sdase\",quantile=\"0.5\",}");
+      assertThat(metrics)
+            .contains(
+                  "apache_http_client_request_duration_seconds{manager=\"HttpClient\",method=\"get\",name=\"myClient\",quantile=\"0.5\",}");
    }
 
    @Test

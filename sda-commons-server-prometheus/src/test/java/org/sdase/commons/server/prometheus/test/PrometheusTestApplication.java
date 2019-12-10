@@ -1,27 +1,27 @@
 package org.sdase.commons.server.prometheus.test;
 
 import com.codahale.metrics.health.HealthCheck;
+import io.dropwizard.Application;
+import io.dropwizard.Configuration;
+import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.server.SimpleServerFactory;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Response;
 import org.sdase.commons.client.jersey.ClientFactory;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Response;
 
 @Path("/")
 public class PrometheusTestApplication extends Application<Configuration> {
-   private JerseyClientBundle jerseyClientBundle = JerseyClientBundle.builder().build();
-   private WebTarget googleClient;
+   private JerseyClientBundle<Configuration> jerseyClientBundle = JerseyClientBundle.builder().build();
+   private Client myClient;
 
    @Override
    public void initialize(final Bootstrap<Configuration> bootstrap) {
@@ -53,7 +53,7 @@ public class PrometheusTestApplication extends Application<Configuration> {
             -> requestContext.setProperty(ConsumerTracing.NAME_ATTRIBUTE, requestContext.getHeaders().getFirst("Consumer-Name")));
 
       ClientFactory clientFactory = jerseyClientBundle.getClientFactory();
-      googleClient = clientFactory.externalClient().buildGenericClient("sdase").target("https://sda.se");
+      myClient = clientFactory.externalClient().buildGenericClient("myClient");
    }
 
    @GET
@@ -63,9 +63,9 @@ public class PrometheusTestApplication extends Application<Configuration> {
    }
 
    @GET
-   @Path("/client")
-   public Response testClient() {
-      googleClient.request().get();
+   @Path("/client/{port}")
+   public Response testClient(@PathParam("port") int port) {
+      myClient.target(String.format("http://localhost:%d/ping", port)).request().get();
       return Response.ok("client").build();
    }
 
@@ -74,5 +74,4 @@ public class PrometheusTestApplication extends Application<Configuration> {
    public Response pathWithSegment(@PathParam("param") String pathParam) {
       return Response.ok(pathParam).build();
    }
-
 }
