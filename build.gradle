@@ -1,16 +1,6 @@
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
-        maven {
-            url "https://nexus.intern.sda-se.online/repository/sda-se-public/"
-            credentials {
-                username sdaNexusUser
-                password sdaNexusPassword
-            }
-        }
-    }
-    dependencies {
-        classpath group: 'com.sdase.gradle', name: 'eclipse-settings' , version: '0.+'
     }
 }
 
@@ -34,13 +24,6 @@ subprojects {
     repositories {
         mavenCentral()
         maven { url "http://packages.confluent.io/maven/" } // for sda-commons-server-kafka-confluent-testing only
-        maven {
-            url "https://nexus.intern.sda-se.online/repository/sda-se-public/"
-            credentials {
-                username sdaNexusUser
-                password sdaNexusPassword
-            }
-        }
     }
 
     // TODO: reenable this setting on a new ci environment
@@ -56,9 +39,10 @@ subprojects {
                 def releasesRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-releases/"
                 def snapshotsRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
                 url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
                 credentials {
-                    username sdaNexusUser
-                    password sdaNexusPassword
+                    username System.getenv('SDA_NEXUS_USER')
+                    password System.getenv('SDA_NEXUS_PASSWORD')
                 }
             }
         }
@@ -74,7 +58,6 @@ configure(subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-c
     apply plugin: 'java'
     apply plugin: 'jacoco'
     apply plugin: 'org.owasp.dependencycheck'
-    apply plugin: 'com.sdase.gradle.eclipse-settings'
 
     sourceCompatibility = 1.8
 

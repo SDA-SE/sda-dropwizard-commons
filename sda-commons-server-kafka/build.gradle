@@ -2,13 +2,6 @@
 buildscript {
     repositories {
         jcenter()
-        maven {
-            url 'https://nexus.intern.sda-se.online/repository/sda-se-public/'
-            credentials {
-                username sdaNexusUser
-                password sdaNexusPassword
-            }
-        }
     }
 }
 

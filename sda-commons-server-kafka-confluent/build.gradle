@@ -1,13 +1,6 @@
 buildscript {
     repositories {
         jcenter()
-        maven {
-            url 'https://nexus.intern.sda-se.online/repository/sda-se-public/'
-            credentials {
-                username sdaNexusUser
-                password sdaNexusPassword
-            }
-        }
     }
     dependencies {
         classpath 'com.commercehub.gradle.plugin:gradle-avro-plugin:0.10.0'
