@@ -117,3 +117,10 @@ configure(subprojects.findAll {
         }
     }
 }
+
+// Reconfigure the testReport task to display the results of all modules into a single report
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    // Include the results from the `test` task in all subprojects
+    reportOn subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-commons-dependencies'}*.test
+}
