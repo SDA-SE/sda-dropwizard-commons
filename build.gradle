@@ -62,6 +62,13 @@ configure(subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-c
 
     sourceCompatibility = 1.8
 
+    // Configure JaCoCo to export the reports in XML format
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+        }
+    }
+
     dependencies {
         compile enforcedPlatform(project(':sda-commons-dependencies'))
     }
