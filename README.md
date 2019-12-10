@@ -1,6 +1,5 @@
-
-[![Build Status](https://jenkins.intern.sda-se.com/buildStatus/icon?job=SDA%20Open%20Industry%20Solutions/sda-commons/master)](https://jenkins.intern.sda-se.com/job/SDA%20Open%20Industry%20Solutions/job/sda-commons/job/master/)
-[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B8463%2Fsda-commons.svg?type=shield)](https://app.fossa.com/projects/custom%2B8463%2Fsda-commons?ref=badge_shield)
+[![Build Status](https://img.shields.io/github/workflow/status/SDA-SE/sda-commons/CI/master)](https://github.com/SDA-SE/sda-commons/actions?query=branch%3Amaster+workflow%3A%22Java+CI%22)
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B8463%2Fsda-commons.svg?type=shield)](https://app.fossa.com/reports/9ab0a88c-2ebf-43a5-b246-84ea03696e3a)
 
 SDA Commons is a set of libraries to bootstrap services easily that follow the patterns and specifications promoted by
 the SDA SE.
