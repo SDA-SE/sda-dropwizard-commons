@@ -34,6 +34,10 @@ public class KafkaTopicIT {
 
    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
          .withBrokerProperty("auto.create.topics.enable", "false")
+         // we only need one consumer offsets partition
+         .withBrokerProperty("offsets.topic.num.partitions", "1")
+         // we don't need to wait that a consumer group rebalances since we always start with a fresh kafka instance
+         .withBrokerProperty("group.initial.rebalance.delay.ms", "0")
          .withBrokers(2);
 
    private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE =new LazyRule<>( () -> DropwizardRuleHelper

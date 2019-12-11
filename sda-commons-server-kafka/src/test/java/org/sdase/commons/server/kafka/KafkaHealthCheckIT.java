@@ -15,7 +15,11 @@ public class KafkaHealthCheckIT {
 
    @ClassRule
    public static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
-         .withBrokers(1);
+         .withBrokers(1)
+         // we only need one consumer offsets partition
+         .withBrokerProperty("offsets.topic.num.partitions", "1")
+         // we don't need to wait that a consumer group rebalances since we always start with a fresh kafka instance
+         .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
 
    @Test

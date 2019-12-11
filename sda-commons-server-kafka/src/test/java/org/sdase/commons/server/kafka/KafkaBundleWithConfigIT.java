@@ -63,7 +63,11 @@ import org.sdase.commons.server.testing.LazyRule;
 
 public class KafkaBundleWithConfigIT {
 
-  private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
+  private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
+        // we only need one consumer offsets partition
+        .withBrokerProperty("offsets.topic.num.partitions", "1")
+        // we don't need to wait that a consumer group rebalances since we always start with a fresh kafka instance
+        .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
   private static final String CONSUMER_1 = "consumer1";
   private static final String PRODUCER_1 = "producer1";
