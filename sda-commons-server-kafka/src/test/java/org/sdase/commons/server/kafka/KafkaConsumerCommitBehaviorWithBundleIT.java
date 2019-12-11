@@ -48,7 +48,11 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
 
    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
          .withBrokerProperty("offsets.retention.minutes", "1")
-         .withBrokerProperty("offsets.retention.check.interval.ms", "10000");
+         .withBrokerProperty("offsets.retention.check.interval.ms", "10000")
+         // we only need one consumer offsets partition
+         .withBrokerProperty("offsets.topic.num.partitions", "1")
+         // we don't need to wait that a consumer group rebalances since we always start with a fresh kafka instance
+         .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
    private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE = new LazyRule<>(
          () -> DropwizardRuleHelper
@@ -200,13 +204,12 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
       List<Integer> testResults = Collections.synchronizedList(new ArrayList<Integer>());
 
       MessageHandler<String, Integer> handler = new MessageHandler<String, Integer>() {
-         private int pollCount = 0;
+         private AtomicInteger pollCount = new AtomicInteger(0);
 
          @Override
          public void handle(ConsumerRecord<String, Integer> record) {
-            pollCount++;
             Integer value = record.value();
-            if ((value % 2) == 0 && pollCount <= 4) {
+            if (pollCount.incrementAndGet() <= 4 && (value % 2) == 0) {
                processingError.incrementAndGet();
                throw new ProcessingErrorRetryException("processing error of record: " + record.key());
             }
@@ -241,7 +244,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                      e -> producer.send(new ProducerRecord<String, Integer>(topic, UUID.randomUUID().toString(), e)));
       }
 
-      await().atMost(4, SECONDS).until(() -> testResults.size() == 20);
+      await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> testResults.size() == 20);
       assertThat(processingError.get())
             .withFailMessage("There was at least 1 processing error")
             .isGreaterThanOrEqualTo(1);
@@ -259,13 +262,12 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
       List<Integer> testResults = Collections.synchronizedList(new ArrayList<Integer>());
 
       MessageHandler<String, Integer> handler = new MessageHandler<String, Integer>() {
-         private int pollCount = 0;
+         private AtomicInteger pollCount = new AtomicInteger(0);
 
          @Override
          public void handle(ConsumerRecord<String, Integer> record) {
-            pollCount++;
             Integer value = record.value();
-            if ((value % 2) == 0 && pollCount <= 4) {
+            if (pollCount.incrementAndGet() <= 4 && (value % 2) == 0 ) {
                processingError.incrementAndGet();
                throw new ProcessingErrorRetryException("processing error of record: " + record.key());
             }
@@ -306,7 +308,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                      e -> producer.send(new ProducerRecord<String, Integer>(topic, UUID.randomUUID().toString(), e)));
       }
 
-      await().atMost(4, SECONDS).until(() -> testResults.size() == 20);
+      await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> testResults.size() == 20);
       assertThat(processingError.get())
             .withFailMessage("There was at least 1 processing error")
             .isGreaterThanOrEqualTo(1);
