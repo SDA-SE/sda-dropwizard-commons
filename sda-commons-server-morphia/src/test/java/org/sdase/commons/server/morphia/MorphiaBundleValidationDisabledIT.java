@@ -14,6 +14,8 @@ import org.sdase.commons.server.morphia.test.model.Person;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 /**
  * Tests if entities are NOT validated if validation was disabled.
  */
@@ -36,14 +38,18 @@ public class MorphiaBundleValidationDisabledIT {
 
   @Test
   public void shouldStoreInvalidPerson() {
-    Datastore datastore = getDatastore();
-    datastore.save(new Person());
+    assertThatThrownBy(() -> {
+      Datastore datastore = getDatastore();
+      datastore.save(new Person());
+    }).doesNotThrowAnyException();
   }
 
   @Test
   public void shouldStoreValidPerson() {
-    Datastore datastore = getDatastore();
-    datastore.save(new Person().setName("Name"));
+    assertThatThrownBy(() -> {
+      Datastore datastore = getDatastore();
+      datastore.save(new Person().setName("Name"));
+    }).doesNotThrowAnyException();
   }
 
   private Datastore getDatastore() {

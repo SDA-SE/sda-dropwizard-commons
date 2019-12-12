@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -235,7 +234,7 @@ public class KafkaBundleWithConfigIT {
          stringStringProducer.send(new ProducerRecord<>(topic, message));
       }
 
-      await().atLeast(100, MILLISECONDS).until(() -> offset.get() >= 5L);
+      await().atLeast(100, MILLISECONDS).untilAsserted(() -> assertThat(offset.get()).isGreaterThanOrEqualTo(5L));
    }
 
    @Test(expected = ConfigurationException.class)

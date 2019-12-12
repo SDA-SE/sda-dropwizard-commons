@@ -10,6 +10,8 @@ import io.dropwizard.setup.Environment;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Info;
 import javax.servlet.FilterRegistration;
+
+import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -22,6 +24,7 @@ import java.util.Optional;
 
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -452,12 +455,14 @@ public class SwaggerBundleTest {
 
    @Test
    public void shouldAllowInitialization() {
-      SwaggerBundle bundle = SwaggerBundle.builder()
-            .withTitle(VALID_TITLE)
-            .addResourcePackageClass(String.class)
-            .build();
+      assertThatThrownBy(() -> {
+         SwaggerBundle bundle = SwaggerBundle.builder()
+               .withTitle(VALID_TITLE)
+               .addResourcePackageClass(String.class)
+               .build();
 
-      bundle.initialize(bootstrap);
+         bundle.initialize(bootstrap);
+      }).doesNotThrowAnyException();
    }
 
    @Test
