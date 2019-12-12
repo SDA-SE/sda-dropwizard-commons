@@ -21,6 +21,7 @@ import org.apache.http.HttpStatus;
 
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.testing.AuthRule;
@@ -30,6 +31,8 @@ import org.sdase.commons.server.opa.testing.test.ConstraintModel;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 public class AuthAndOpaIT {
 
@@ -48,6 +51,8 @@ public class AuthAndOpaIT {
 
    @ClassRule
    public static final RuleChain chain = RuleChain.outerRule(AUTH).around(OPA_RULE).around(DW);
+   @Rule
+   public RetryRule retryRule = new RetryRule();
 
    private static String path = "resources";
    private static String method = "GET";
@@ -60,6 +65,7 @@ public class AuthAndOpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldNotAccessSimpleWithInvalidToken() {
       OPA_RULE.mock(onRequest(method, path).allow());
 
@@ -74,6 +80,7 @@ public class AuthAndOpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldAllowAccessSimple() {
       OPA_RULE.mock(onRequest(method, path).allow());
 
@@ -87,6 +94,7 @@ public class AuthAndOpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldAllowAccessConstraints() {
       OPA_RULE.mock(onRequest(method, path).allow().withConstraint(new ConstraintModel().setFullAccess(true).addConstraint("customer_ids", "1")));
 
@@ -100,6 +108,7 @@ public class AuthAndOpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldAllowAccessWithoutTokenSimple() {
       OPA_RULE.mock(onRequest(method, path).allow());
 
@@ -113,6 +122,7 @@ public class AuthAndOpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldAllowAccessWithoutTokenConstraints() {
       OPA_RULE.mock(onRequest(method, path).allow().withConstraint(new ConstraintModel().setFullAccess(true).addConstraint("customer_ids", "1")));
 

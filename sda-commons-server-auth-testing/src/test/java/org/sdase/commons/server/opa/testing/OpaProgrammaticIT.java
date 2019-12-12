@@ -8,6 +8,7 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
@@ -15,6 +16,8 @@ import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaProgrammaticIT {
 
@@ -29,9 +32,12 @@ public class OpaProgrammaticIT {
 
   @ClassRule
   public static final RuleChain chain = RuleChain.outerRule(OPA_RULE).around(DW);
+  @Rule
+  public RetryRule rule = new RetryRule();
 
   // only one test since this is for demonstration with programmatic config
   @Test
+  @Retry(5)
   public void shouldAllowAccess() {
     // given
     OPA_RULE.mock(onRequest("GET", "resources").allow());

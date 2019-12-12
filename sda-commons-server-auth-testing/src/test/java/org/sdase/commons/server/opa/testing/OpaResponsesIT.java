@@ -17,6 +17,7 @@ import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
@@ -24,6 +25,8 @@ import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaResponsesIT {
 
@@ -39,6 +42,8 @@ public class OpaResponsesIT {
 
    @ClassRule
    public static final RuleChain chain = RuleChain.outerRule(WIRE).around(DW);
+   @Rule
+   public RetryRule retryRule = new RetryRule();
 
    @BeforeClass
    public static void start() {
@@ -69,6 +74,7 @@ public class OpaResponsesIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldAllowAccess() {
       // given
       mock(200, "{\n"
@@ -89,6 +95,7 @@ public class OpaResponsesIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldAllowAccessWithConstraints() {
       // given
       mock(200, "{\n"
@@ -117,6 +124,7 @@ public class OpaResponsesIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldDenyAccess() {
       // given
       mock(200, "{\n"
@@ -134,6 +142,7 @@ public class OpaResponsesIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldDenyAccessWithNonMatchingConstraintResponse() {
       // given
       mock(200, "{\n"
@@ -152,6 +161,7 @@ public class OpaResponsesIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldAllowAccessWithNonMatchingConstraintResponse() {
       // given
       mock(200, "{\n"
@@ -174,6 +184,7 @@ public class OpaResponsesIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldDenyAccessIfOpaResponseIsBroken() {
       // given
       mock(500, "");
@@ -186,6 +197,7 @@ public class OpaResponsesIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldDenyAccessIfOpaResponseEmpty() {
       // given
       // given

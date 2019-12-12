@@ -13,16 +13,21 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.filter.model.OpaRequest;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.sdase.commons.server.opa.testing.test.ConstraintModel;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaRuleIT {
 
    @ClassRule
    public static final OpaRule OPA_RULE = new OpaRule();
+   @Rule
+   public RetryRule rule = new RetryRule();
 
    private String path = "resources";
    private String method = "GET";
@@ -33,6 +38,7 @@ public class OpaRuleIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldReturnResponseOnMatch() {
       // given
       OPA_RULE.mock(onRequest(method, path).allow());
@@ -45,6 +51,7 @@ public class OpaRuleIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldReturnResponseOnMatchOpaRequest() {
       // given
       OPA_RULE.mock(onRequest(method, path).allow());
@@ -63,6 +70,7 @@ public class OpaRuleIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldReturnServerError() {
       // given
       OPA_RULE.mock(onAnyRequest().serverError());
@@ -73,6 +81,7 @@ public class OpaRuleIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldReturnEmptyResponse() {
       // given
       OPA_RULE.mock(onAnyRequest().emptyResponse());
@@ -84,6 +93,7 @@ public class OpaRuleIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldMockLongPathSuccessfully() {
       // given
       OPA_RULE.mock(onRequest("GET", "/p1/p2").allow());
@@ -96,6 +106,7 @@ public class OpaRuleIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldReturnDifferentResponsesInOneTest() {
       // given
       ConstraintModel constraintModel = new ConstraintModel().addConstraint("key", "A", "B");

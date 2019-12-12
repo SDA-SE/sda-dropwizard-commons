@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
@@ -25,6 +26,8 @@ import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
 import org.sdase.commons.server.testing.LazyRule;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaIT {
 
@@ -36,6 +39,8 @@ public class OpaIT {
 
    @ClassRule
    public static final RuleChain chain = RuleChain.outerRule(OPA_RULE).around(DW);
+   @Rule
+   public RetryRule retryRule = new RetryRule();
 
    private static String path = "resources";
    private static String method = "GET";
@@ -46,6 +51,7 @@ public class OpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldAllowAccess() {
       // given
       OPA_RULE.mock(onRequest(method, path).allow());
@@ -60,6 +66,7 @@ public class OpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldAllowAccessWithConstraints() {
       // given
       OPA_RULE
@@ -83,6 +90,7 @@ public class OpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldDenyAccess() {
       // given
       OPA_RULE.mock(onRequest(method, path).deny());
@@ -93,6 +101,7 @@ public class OpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldDenyAccessWithConstraints() {
       // given
       OPA_RULE
@@ -106,6 +115,7 @@ public class OpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldDenyAccessIfOpaResponseIsBroken() {
       // given
       OPA_RULE.mock(onAnyRequest().serverError());
@@ -116,6 +126,7 @@ public class OpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldDenyAccessIfOpaResponseEmpty() {
       // given
       OPA_RULE.mock(onAnyRequest().emptyResponse());
@@ -126,6 +137,7 @@ public class OpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldAllowAccessForLongerPathAndPost() {
       // given
       String longerPath = "resources/actions";
@@ -138,6 +150,7 @@ public class OpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldNotInvokeSwaggerUrls() {
       // given
       String excludedPath = "swagger.json";
@@ -150,6 +163,7 @@ public class OpaIT {
    }
 
    @Test
+   @Retry(5)
    public void shouldIncludeHealthCheck() {
       Response response = DW
             .getRule()
