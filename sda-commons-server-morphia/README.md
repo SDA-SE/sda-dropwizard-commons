@@ -89,14 +89,15 @@ The database connection is configured in the `config.yaml` of the application.
 Example config for **production** to be used with environment variables of the cluster configuration:
 ```yaml
 mongo:
-  hosts: ${MONGODB_HOSTS}
-  database: ${MONGODB_DATABASE:-}
-  options: ${MONGODB_OPTIONS:-}
-  username: ${MONGODB_USERNAME:-}
-  password: ${MONGODB_PASSWORD:-}
+  hosts: "${MONGODB_HOSTS}"
+  database: "${MONGODB_DATABASE:-}"
+  options: "${MONGODB_OPTIONS:-}"
+  username: "${MONGODB_USERNAME:-}"
+  password: "${MONGODB_PASSWORD:-}"
   useSsl: ${MONGODB_USE_SSL:-true}
-  caCertificate: ${MONGODB_CA_CERTIFICATE}
+  caCertificate: "${MONGODB_CA_CERTIFICATE}"
 ```
+_Please note the double quotes around the value for `caCertificate`. Without them, Dropwizard will not be able to load the certificate correctly because the `MONGODB_CA_CERTIFICATE` variable contains line breaks._
 
 Example config for **developer** machines using [local-infra](https://github.com/SDA-SE/local-infra):
 ```yaml
