@@ -17,6 +17,11 @@ allprojects {
     idea.module.inheritOutputDirs = true
 }
 
+// we need a repository for the combination of jacoco and sonarcloud
+repositories {
+    mavenCentral()
+}
+
 subprojects {
     apply plugin: 'maven-publish'
 
@@ -66,6 +71,13 @@ configure(subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-c
     jacocoTestReport {
         reports {
             xml.enabled true
+        }
+    }
+
+    // Configure sonar to use the aggregated global report file
+    sonarqube {
+        properties {
+            property "sonar.coverage.jacoco.xmlReportPaths", '../build/reports/jacoco/report.xml'
         }
     }
 
@@ -131,6 +143,21 @@ task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/allTests")
     // Include the results from the `test` task in all subprojects
     reportOn subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-commons-dependencies'}*.test
+}
+
+// Create a combined XML report of all modules in the root project
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    subprojects.each {
+        // noinspection GroovyAssignabilityCheck
+        sourceSets it.sourceSets.main
+    }
+
+    reports {
+        xml.enabled = true
+        xml.destination file("${buildDir}/reports/jacoco/report.xml")
+    }
 }
 
 sonarqube {

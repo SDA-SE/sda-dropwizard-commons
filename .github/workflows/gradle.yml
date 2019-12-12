@@ -42,7 +42,7 @@ jobs:
       - name: Sonarcloud
         # do not execute for PRs that origin from forks since we are missing the secrets for the scan
         if: "always() && matrix.java_version == '1.8' && matrix.os == 'ubuntu-latest' && !(github.event.pull_request && github.event.pull_request.head.repo.fork)"
-        run: ./gradlew -x test sonarqube
+        run: ./gradlew -x test codeCoverageReport sonarqube
         env:
           SONAR_LOGIN_TOKEN: ${{ secrets.SONAR_LOGIN_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
