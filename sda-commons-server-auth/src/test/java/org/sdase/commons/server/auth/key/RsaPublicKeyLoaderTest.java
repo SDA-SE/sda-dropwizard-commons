@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Collections.singletonList;
@@ -194,6 +195,29 @@ public class RsaPublicKeyLoaderTest {
 
    @Test
    public void shouldNotRemoveKeysIfReloadingFailed() {
+      AtomicBoolean loaded = new AtomicBoolean();
+      AtomicBoolean thrown = new AtomicBoolean();
+      RsaPublicKeyLoader rsaPublicKeyLoader = new RsaPublicKeyLoader();
+      KeySource keySource = new KeySource() {
+         @Override
+         public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
+            if (loaded.getAndSet(true)) {
+               thrown.set(true);
+               throw new KeyLoadFailedException();
+            }
+            return singletonList(new LoadedPublicKey("the-kid", Mockito.mock(RSAPublicKey.class), this));
+         }
+      };
 
+      rsaPublicKeyLoader.addKeySource(keySource);
+      assertThat(rsaPublicKeyLoader.getKey("the-kid")).isNotNull();
+
+      assertThat(loaded).isTrue();
+      assertThat(rsaPublicKeyLoader.getTotalNumberOfKeys()).isEqualTo(1);
+
+      rsaPublicKeyLoader.getKey("unknown-key-id");
+      assertThat(rsaPublicKeyLoader.getTotalNumberOfKeys()).isEqualTo(1);
+
+      assertThat(thrown).isTrue();
    }
 }
