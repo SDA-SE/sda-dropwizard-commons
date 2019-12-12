@@ -5,4 +5,5 @@ dependencies {
 
     testCompile project(':sda-commons-server-jackson')
     testCompile project(':sda-commons-server-testing')
+    testCompile project(':sda-commons-server-swagger')
 }
