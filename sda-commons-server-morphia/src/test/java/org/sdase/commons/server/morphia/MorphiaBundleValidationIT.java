@@ -15,7 +15,7 @@ import org.sdase.commons.server.morphia.test.model.Person;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Tests if entities are validated.
@@ -45,7 +45,7 @@ public class MorphiaBundleValidationIT {
 
   @Test
   public void shouldStoreValidPerson() {
-    assertThatThrownBy(() -> {
+    assertThatCode(() -> {
       Datastore datastore = getDatastore();
       datastore.save(new Person().setName("Name"));
     }).doesNotThrowAnyException();

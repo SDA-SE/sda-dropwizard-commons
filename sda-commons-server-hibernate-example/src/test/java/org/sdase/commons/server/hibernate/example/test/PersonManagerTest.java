@@ -73,7 +73,7 @@ public class PersonManagerTest {
    @Test
    @DataSet("datasets/base.yml")  // initialize database with data from yml file
    @ExpectedDataSet({"datasets/base.yml", "datasets/added.yml"}) // assert that database reflects the given data
-   public void testCreation() {
+   public void testCreation() { // NOSONAR the assertion is fulfilled by DBUnit with @ExpectedDataSet
       PersonEntity person = new PersonEntity();
       person.setName("Jasmin Doe");
       daoTestRule.inTransaction(() -> personManager.persist(person));

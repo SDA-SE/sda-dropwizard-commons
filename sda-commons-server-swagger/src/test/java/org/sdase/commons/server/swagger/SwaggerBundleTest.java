@@ -11,7 +11,6 @@ import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Info;
 import javax.servlet.FilterRegistration;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -24,7 +23,7 @@ import java.util.Optional;
 
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -455,7 +454,7 @@ public class SwaggerBundleTest {
 
    @Test
    public void shouldAllowInitialization() {
-      assertThatThrownBy(() -> {
+      assertThatCode(() -> {
          SwaggerBundle bundle = SwaggerBundle.builder()
                .withTitle(VALID_TITLE)
                .addResourcePackageClass(String.class)
