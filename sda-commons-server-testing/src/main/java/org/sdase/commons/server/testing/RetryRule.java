@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Retry flaky tests. Used together with the {@code Retry} annotation.
+ * Retry flaky tests. Used together with the {@link Retry} annotation.
  */
 public class RetryRule implements TestRule {
 
