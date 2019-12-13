@@ -17,6 +17,10 @@ Avoid breaking changes!
 >
 > Maintainers have to run these checks manually.
 
+### Code Formatting
+
+This project adhere to the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html).
+You can use `./gradlew spotlessApply` to format your code according to the style guide.
 
 ### Changelog and Versioning
 

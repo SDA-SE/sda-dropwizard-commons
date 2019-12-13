@@ -9,6 +9,7 @@ plugins {
     id 'maven-publish'
     id 'jacoco'
     id 'org.sonarqube' version '2.8'
+    id 'com.diffplug.gradle.spotless' version '3.27.1'
 }
 
 allprojects {
@@ -23,12 +24,25 @@ repositories {
 
 subprojects {
     apply plugin: 'maven-publish'
+    apply plugin: 'com.diffplug.gradle.spotless'
 
     group 'org.sdase.commons'
 
     repositories {
         mavenCentral()
         maven { url "http://packages.confluent.io/maven/" } // for sda-commons-server-kafka-confluent-testing only
+    }
+
+    spotless {
+        if (project.name != 'sda-commons-bom' && project.name != 'sda-commons-dependencies') {
+            java {
+                googleJavaFormat()
+            }
+        }
+        groovyGradle {
+            greclipse()
+            indentWithSpaces(2)
+        }
     }
 
     // TODO: reenable this setting on a new ci environment
