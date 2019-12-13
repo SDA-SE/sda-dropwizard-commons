@@ -3,6 +3,7 @@ package org.sdase.commons.server.kafka;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 
 import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration.ExpectedTopicConfigurationBuilder;
@@ -12,7 +13,9 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -43,8 +46,11 @@ import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
+   private static Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerCommitBehaviorWithBundleIT.class);
 
    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
          .withBrokerProperty("offsets.retention.minutes", "1")
@@ -196,12 +202,27 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
    }
 
    @Test
-   public void processingErrorsNotCommitedAndShouldBeRetried() {
-      String topic = "processinErrorsNotCommitedAndShouldBeRetried";
-      KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
+   public void processingErrorsNotCommittedAndShouldBeRetriedWith1Partitions() {
+      processingErrorsNotCommittedAndShouldBeRetried(1);
+   }
+
+   @Test
+   public void processingErrorsNotCommittedAndShouldBeRetriedWith2Partitions() {
+      processingErrorsNotCommittedAndShouldBeRetried(2);
+   }
+
+   @Test
+   public void processingErrorsNotCommittedAndShouldBeRetriedWith10Partitions() {
+      processingErrorsNotCommittedAndShouldBeRetried(10);
+   }
+
+   private void processingErrorsNotCommittedAndShouldBeRetried(int partitions) {
+      String testName = String.format("processingErrorsNotCommittedAndShouldBeRetriedWith%dPartitions", partitions);
+
+      KAFKA.getKafkaTestUtils().createTopic(testName, partitions, (short) 1);
 
       AtomicInteger processingError = new AtomicInteger(0);
-      List<Integer> testResults = Collections.synchronizedList(new ArrayList<Integer>());
+      Set<Integer> testResults = new CopyOnWriteArraySet<>();
 
       MessageHandler<String, Integer> handler = new MessageHandler<String, Integer>() {
          private AtomicInteger pollCount = new AtomicInteger(0);
@@ -209,11 +230,14 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
          @Override
          public void handle(ConsumerRecord<String, Integer> record) {
             Integer value = record.value();
+            LOGGER.info("[{}] Poll count is {}", testName, pollCount.get());
             if (pollCount.incrementAndGet() <= 4 && (value % 2) == 0) {
                processingError.incrementAndGet();
+               LOGGER.info("[{}] Fail with ProcessingErrorRetryException since pollCount is {}", testName, pollCount.get());
                throw new ProcessingErrorRetryException("processing error of record: " + record.key());
             }
 
+            LOGGER.info("[{}] Capture event with value {} on partition {}", testName, value, record.partition());
             testResults.add(value);
          }
       };
@@ -222,12 +246,16 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
 
       bundle
             .createMessageListener(MessageListenerRegistration
-                  .<String, Integer> builder()
+                  .<String, Integer>builder()
                   .withDefaultListenerConfig()
-                  .forTopic(topic)
+                  .forTopicConfigs(Collections
+                        .singletonList(new ExpectedTopicConfigurationBuilder(testName)
+                              .withPartitionCount(partitions)
+                              .withReplicationFactor(1)
+                              .build()))
                   .withConsumerConfig(ConsumerConfig
-                        .<String, Integer> builder()
-                        .withGroup("test")
+                        .builder()
+                        .withGroup(testName)
                         .addConfig("enable.auto.commit", "false")
                         .addConfig("max.poll.records", "5")
                         .build())
@@ -241,79 +269,22 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
          IntStream
                .range(1, 21)
                .forEach(
-                     e -> producer.send(new ProducerRecord<String, Integer>(topic, UUID.randomUUID().toString(), e)));
+                     e -> producer.send(new ProducerRecord<String, Integer>(testName, UUID.randomUUID().toString(), e)));
       }
 
-      await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> testResults.size() == 20);
-      assertThat(processingError.get())
-            .withFailMessage("There was at least 1 processing error")
-            .isGreaterThanOrEqualTo(1);
-      assertThat(testResults).withFailMessage("There must be 20 results finally processed by consumer").hasSize(20);
-      assertThat(testResults)
-            .containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
-   }
-
-   @Test
-   public void processingErrorsNotCommitedAndShouldBeRetriedWith2Partitions() {
-      String topic = "processingErrorsNotCommitedAndShouldBeRetriedWith2Partitions";
-      KAFKA.getKafkaTestUtils().createTopic(topic, 2, (short) 1);
-
-      AtomicInteger processingError = new AtomicInteger(0);
-      List<Integer> testResults = Collections.synchronizedList(new ArrayList<Integer>());
-
-      MessageHandler<String, Integer> handler = new MessageHandler<String, Integer>() {
-         private AtomicInteger pollCount = new AtomicInteger(0);
-
-         @Override
-         public void handle(ConsumerRecord<String, Integer> record) {
-            Integer value = record.value();
-            if (pollCount.incrementAndGet() <= 4 && (value % 2) == 0 ) {
-               processingError.incrementAndGet();
-               throw new ProcessingErrorRetryException("processing error of record: " + record.key());
-            }
-
-            testResults.add(value);
-         }
-      };
-
-      ErrorHandler<String, Integer> errorHandler = (record, e, consumer) -> e instanceof ProcessingErrorRetryException;
-
-      bundle
-            .createMessageListener(MessageListenerRegistration
-                  .<String, Integer> builder()
-                  .withDefaultListenerConfig()
-                  .forTopicConfigs(Collections
-                        .singletonList(new ExpectedTopicConfigurationBuilder(topic)
-                              .withPartitionCount(2)
-                              .withReplicationFactor(1)
-                              .build()))
-                  .withConsumerConfig(ConsumerConfig
-                        .<String, Integer> builder()
-                        .withGroup("test")
-                        .addConfig("enable.auto.commit", "false")
-                        .addConfig("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
-                        .addConfig("value.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer")
-                        .addConfig("max.poll.records", "5")
-                        .build())
-                  // .withValueDeserializer(new IntegerDeserializer())
-                  .withListenerStrategy(new RetryProcessingErrorMLS<>(handler, errorHandler))
-                  .build());
-
-      try (KafkaProducer<String, Integer> producer = KAFKA
-            .getKafkaTestUtils()
-            .getKafkaProducer(StringSerializer.class, IntegerSerializer.class)) {
-         IntStream
-               .range(1, 21)
-               .forEach(
-                     e -> producer.send(new ProducerRecord<String, Integer>(topic, UUID.randomUUID().toString(), e)));
-      }
-
-      await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> testResults.size() == 20);
-      assertThat(processingError.get())
-            .withFailMessage("There was at least 1 processing error")
-            .isGreaterThanOrEqualTo(1);
-      assertThat(testResults).withFailMessage("There must be 20 results finally processed by consumer").hasSize(20);
-      assertThat(testResults)
-            .containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+      assertSoftly(softly -> {
+         softly
+               .assertThatCode(() ->
+                     await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> testResults.size() == 20))
+               .withFailMessage("There must be 20 results finally processed by consumer")
+               .doesNotThrowAnyException();
+         softly
+               .assertThat(processingError.get())
+               .withFailMessage("There was at least 1 processing error")
+               .isGreaterThanOrEqualTo(1);
+         softly
+               .assertThat(testResults)
+               .containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+      });
    }
 }
