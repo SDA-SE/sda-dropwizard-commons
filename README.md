@@ -18,10 +18,16 @@ technologies that are recommended for services in the SDA SE Platform. These tec
 
 ## Changelog and Versioning
 
-This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and uses 
-[Semantic Commits](https://gist.github.com/stephenparish/9941e89d80e2bc58a153).
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Our [changelog](https://github.com/SDA-SE/sda-commons/releases/) is maintained in the GitHub releases.
+See our [changelog](https://github.com/SDA-SE/sda-commons/releases/) for more information about the latest features.
+
+
+## Contributing
+
+We are looking forward to contributions.
+Take a look at our (Contribution Guidelines)[./CONTRIBUTING.md] before submitting Pull Requests.
+
 
 ## Modules in SDA Commons
 
@@ -272,8 +278,8 @@ The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) ad
 
 ## Usage
 
-Import SDA Commons from the repository `https://nexus.intern.sda-se.online/repository/sda-se-public/` by adding it to the
-`build.gradle`:
+Up till now, compiled releases aren't available publicly. 
+In case our have access to our internal Nexus repository, add `https://nexus.intern.sda-se.online/repository/sda-se-public/` to your `build.gradle`:
 
 ```gradle
     repositories {
@@ -321,43 +327,3 @@ Note: You need Gradle 5.x for platform dependencies. [More information can be fo
     }
 ```
 
-### PR Snapshots
-
-Each PR creates a snapshot that can _temporarily_ be included in other projects for testing. The generated version uses
-the format: PR-<pr_number>-SNAPSHOT. Snapshots are cleaned up regularly from the repository so never use snapshots in
-stable releases.
-
-Import snapshots by adding the snapshot repository to the build.gradle:
-
-```gradle
-    repositories {
-      ...
-      maven {
-        url "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
-        credentials {
-          username sdaNexusUser
-          password sdaNexusPassword
-        }
-      }
-      ...
-    }
-```
-
-Add to the dependencies (example):
-
-```gradle
-    project.ext {
-        sdaCommonsVersion = 'PR-1-SNAPSHOT'
-    }
-
-    dependencies {
-      // define platform dependencies for simplified dependency management
-      compile enforcedPlatform("org.sdase.commons.sda-commons-dependencies:$sdaCommonsVersion")
-      compile enforcedPlatform("org.sdase.commons.sda-commons-bom:$sdaCommonsVersion")
-      ...
-
-      // Add dependencies to sda-commons-modules (managed by sda-commons-bom)
-      compile "org.sdase.commons:sda-commons-client-jersey"
-      ...
-    }
-```
