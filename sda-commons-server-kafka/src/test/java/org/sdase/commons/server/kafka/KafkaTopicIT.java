@@ -1,17 +1,28 @@
 package org.sdase.commons.server.kafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
+import com.github.ftrossbach.club_topicana.core.ComparisonResult;
+import com.github.ftrossbach.club_topicana.core.ComparisonResult.Comparison;
 import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import com.github.ftrossbach.club_topicana.core.MismatchedTopicConfigException;
 import com.salesforce.kafka.test.KafkaBroker;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.CreateTopicsOptions;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.assertj.core.util.Maps;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -25,6 +36,7 @@ import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.exception.TopicCreationException;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
+import org.sdase.commons.server.kafka.topicana.TopicComparer;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
@@ -156,6 +168,125 @@ public class KafkaTopicIT {
             .withConfig("some.bullshit", "2000")
             .build();
       bundle.registerProducer(ProducerRegistration.builder().forTopic(topic).createTopicIfMissing().withDefaultProducer().build());
+   }
+
+   @Test(expected = MismatchedTopicConfigException.class)
+   public void compareTopicWithConfigFail()  {
+      String topicName = "compareTopicWithConfigFail";
+      createTopic(topicName, Maps.newHashMap("delete.retention.ms", "9999"));
+
+      ExpectedTopicConfiguration topic = TopicConfigurationBuilder
+          .builder(topicName)
+          .withPartitionCount(2)
+          .withReplicationFactor(2)
+          .withConfig("delete.retention.ms", "2000")
+          .build();
+      bundle.registerProducer(ProducerRegistration.builder().forTopic(topic).checkTopicConfiguration().withDefaultProducer().build());
+   }
+
+   @Test
+   public void compareTopicWrongProperty() {
+     String topicName = "compareTopicWrongProperty";
+     createTopic(topicName, Maps.newHashMap("delete.retention.ms", "9999"));
+
+     TopicComparer comparer = new TopicComparer();
+     ExpectedTopicConfiguration topic = TopicConfigurationBuilder
+         .builder(topicName)
+         .withPartitionCount(2)
+         .withReplicationFactor(2)
+         .withConfig("delete.retention.ms", "2000")
+         .build();
+     ComparisonResult compare = comparer
+         .compare(Collections.singletonList(topic),
+             DROPWIZARD_APP_RULE.getRule().getConfiguration().getKafka());
+
+     assertThat(compare).isNotNull();
+     Collection<Comparison<String>> topicCompareDetails = compare
+         .getMismatchingConfiguration().get(topicName);
+     assertThat(topicCompareDetails).hasSize(1);
+     assertThat(topicCompareDetails.toArray(new ComparisonResult.Comparison[]{})[0])
+         .extracting("property", "actualValue", "expectedValue")
+         .containsExactly("delete.retention.ms", "9999", "2000");
+   }
+
+  @Test
+  public void compareTopicMissing() {
+    String topicName = "compareTopicMissing";
+
+    TopicComparer comparer = new TopicComparer();
+    ExpectedTopicConfiguration topic = TopicConfigurationBuilder
+        .builder(topicName)
+        .withPartitionCount(2)
+        .withReplicationFactor(2)
+        .build();
+    ComparisonResult compare = comparer
+        .compare(Collections.singletonList(topic),
+            DROPWIZARD_APP_RULE.getRule().getConfiguration().getKafka());
+
+    assertThat(compare).isNotNull();
+    assertThat(compare.getMissingTopics()).containsExactly(topicName);
+  }
+
+  @Test
+  public void compareTopicWrongReplication() {
+    String topicName = "compareTopicWrongReplication";
+
+    createTopic(topicName);
+
+    TopicComparer comparer = new TopicComparer();
+    ExpectedTopicConfiguration topic = TopicConfigurationBuilder
+        .builder(topicName)
+        .withPartitionCount(1)
+        .withReplicationFactor(1)
+        .build();
+
+    ComparisonResult compare = comparer
+        .compare(Collections.singletonList(topic),
+            DROPWIZARD_APP_RULE.getRule().getConfiguration().getKafka());
+
+    assertThat(compare).isNotNull();
+    assertThat(compare.getMismatchingReplicationFactor().get(topicName))
+        .extracting("property", "actualValue", "expectedValue")
+        .containsExactly("replication factor", 2, 1);
+    assertThat(compare.getMismatchingPartitionCount().get(topicName))
+        .extracting("property", "actualValue", "expectedValue")
+        .containsExactly("partition count", 2, 1);
+  }
+
+
+  private void createTopic(String topicName, Map<String, String> properties) {
+    try (AdminClient admin = KAFKA.getKafkaTestUtils().getAdminClient()) {
+      NewTopic newTopic = new NewTopic(topicName, 2, (short)2).configs(properties);
+      KafkaFuture<Void> result = admin
+          .createTopics(Collections.singletonList(newTopic)).all();
+      await().atMost(5, TimeUnit.SECONDS).until(result::isDone);
+    }
+  }
+
+  private void createTopic(String topicName) {
+    createTopic(topicName,  null);
+  }
+
+  @Test
+   public void compareTopicWithConfigOk()  {
+      String topicName = "compareTopicWithConfigOk";
+
+      try (AdminClient admin = KAFKA.getKafkaTestUtils().getAdminClient()) {
+         NewTopic newTopic = new NewTopic(topicName, 2, (short)2);
+         newTopic.configs(Maps.newHashMap("delete.retention.ms", "9999"));
+         KafkaFuture<Void> result = admin
+             .createTopics(Collections.singletonList(newTopic)).all();
+
+         await().atMost(5, TimeUnit.SECONDS).until(result::isDone);
+      }
+
+      ExpectedTopicConfiguration topic = TopicConfigurationBuilder
+          .builder(topicName)
+          .withPartitionCount(2)
+          .withReplicationFactor(2)
+          .withConfig("delete.retention.ms", "9999")
+          .build();
+      bundle.registerProducer(ProducerRegistration.builder().forTopic(topic).checkTopicConfiguration().withDefaultProducer().build());
    }
 
    @Test

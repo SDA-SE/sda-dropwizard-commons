@@ -1,8 +1,24 @@
+/**
+ * Copyright © 2017 Florian Troßbach (trossbach@gmail.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.sdase.commons.server.kafka.topicana;
 
 import com.github.ftrossbach.club_topicana.core.ComparisonResult;
 import com.github.ftrossbach.club_topicana.core.EvaluationException;
 import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
+import java.util.stream.Stream;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 import org.sdase.commons.server.kafka.KafkaProperties;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -14,7 +30,6 @@ import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +39,15 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * copy of the original
- * club_topicana @{@link com.github.ftrossbach.club_topicana.core.TopicComparer}
- * using an {@link AdminClient} as parameter to support credentials
+ * This is a copy of the original {@link com.github.ftrossbach.club_topicana.core.TopicComparer}
+ *
+ * Changes made:
+ * <ul>
+ *   <li>Include Kafka Configuration to support a configurable admin client, for example for Kafka
+ *   broker that require auth credentials</li>
+ *   <li>Refactoring of code to reduce complexity</li>
+ * </ul>
+ *
  */
 public class TopicComparer {
 
@@ -51,26 +72,27 @@ public class TopicComparer {
 
          Map<String, Config> topicConfigs = getTopicConfigs(topicNames, topicDescriptions, adminClient);
 
-         compareTopicConfigs(expectedTopicConfiguration, resultBuilder, topicNames, topicDescriptions, topicConfigs);
+         compareTopicConfigs(expectedTopicConfiguration, resultBuilder, topicDescriptions, topicConfigs);
 
          return resultBuilder.build();
       }
 
    }
 
-   private void compareTopicConfigs(Collection<ExpectedTopicConfiguration> expectedTopicConfiguration, ComparisonResult.ComparisonResultBuilder resultBuilder, List<String> topicNames, Map<String, TopicDescription> topicDescriptions, Map<String, Config> topicConfigs) {
-      expectedTopicConfiguration.stream().filter(exp -> topicDescriptions.containsKey(topicNames)).forEach(exp -> {
+   private void compareTopicConfigs(Collection<ExpectedTopicConfiguration> expectedTopicConfiguration, ComparisonResult.ComparisonResultBuilder resultBuilder, Map<String, TopicDescription> topicDescriptions, Map<String, Config> topicConfigs) {
+
+      expectedTopicConfiguration.stream().filter(exp -> topicDescriptions.containsKey(exp.getTopicName())).forEach(exp -> {
          Config config = topicConfigs.get(exp.getTopicName());
 
-         exp.getProps().entrySet().forEach(prop -> {
-            ConfigEntry entry = config.get(prop.getKey());
+         exp.getProps().forEach((key, value) -> {
+           ConfigEntry entry = config.get(key);
 
-            if (entry == null) {
-               resultBuilder.addMismatchingConfiguration(exp.getTopicName(), prop.getKey(), prop.getValue(), null);
-            } else if (!prop.getValue().equals(entry.value())) {
-               resultBuilder
-                     .addMismatchingConfiguration(exp.getTopicName(), prop.getKey(), prop.getValue(), entry.value());
-            }
+           if (entry == null) {
+             resultBuilder.addMismatchingConfiguration(exp.getTopicName(), key, value, null);
+           } else if (!value.equals(entry.value())) {
+             resultBuilder
+                 .addMismatchingConfiguration(exp.getTopicName(), key, value, entry.value());
+           }
          });
       });
    }
@@ -79,7 +101,7 @@ public class TopicComparer {
       return adminClient
                .describeConfigs(topicNames
                      .stream()
-                     .filter(exp -> topicDescriptions.containsKey(topicNames))
+                     .filter(topicDescriptions::containsKey)
                      .map(this::topicNameToResource)
                      .collect(toList()))
                .values()
@@ -115,14 +137,15 @@ public class TopicComparer {
                         .addMismatchingPartitionCount(exp.getTopicName(), exp.getPartitions().count(),
                               topicDescription.partitions().size());
                }
-               int repflicationFactor = topicDescription.partitions().stream().findFirst().get().replicas().size();
-               if (exp.getReplicationFactor().isSpecified()
-                     && repflicationFactor != exp.getReplicationFactor().count()) {
+              if (!topicDescription.partitions().isEmpty()) {
+                int repflicationFactor = topicDescription.partitions().get(0).replicas().size();
+                if (exp.getReplicationFactor().isSpecified()
+                    && repflicationFactor != exp.getReplicationFactor().count()) {
                   resultBuilder
-                        .addMismatchingReplicationFactor(exp.getTopicName(), exp.getReplicationFactor().count(),
-                              repflicationFactor);
-               }
-
+                      .addMismatchingReplicationFactor(exp.getTopicName(), exp.getReplicationFactor().count(),
+                          repflicationFactor);
+                }
+              }
             });
    }
 
@@ -135,11 +158,11 @@ public class TopicComparer {
                .flatMap(desc -> {
                   try {
                      TopicDescription topicDescription = desc.getValue().get();
-                     return Collections.singletonList(topicDescription).stream();
+                     return Stream.of(topicDescription);
                   } catch (ExecutionException e) {
                      if (e.getCause() instanceof UnknownTopicOrPartitionException) {
                         resultBuilder.addMissingTopic(desc.getKey());
-                        return Collections.<TopicDescription> emptySet().stream();
+                        return Stream.empty();
                      } else {
                         throw (KafkaException) e.getCause();
                      }
