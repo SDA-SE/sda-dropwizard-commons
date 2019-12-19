@@ -52,7 +52,8 @@ import org.slf4j.LoggerFactory;
  *      {
  *         "result": {
  *            "allow": true,
- *            "constraints": { "constraint1": true, "constraint2": [ "v2.1", "v2.2" ] }
+ *            "constraint1": true,
+ *            "constraint2": [ "v2.1", "v2.2" ]
  *         }
  *      }
  *     }
