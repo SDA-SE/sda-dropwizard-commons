@@ -1,5 +1,6 @@
 package org.sdase.commons.client.jersey.proxy;
 
+import org.codefetti.proxy.handler.InterfaceProxyBuilder;
 import org.sdase.commons.client.jersey.error.ClientRequestException;
 
 import javax.ws.rs.ProcessingException;
@@ -7,7 +8,6 @@ import javax.ws.rs.WebApplicationException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 public class ApiClientInvocationHandler implements InvocationHandler {
 
@@ -28,10 +28,7 @@ public class ApiClientInvocationHandler implements InvocationHandler {
          throw new IllegalArgumentException("apiInterface is not an interface but '" + apiInterface.getName() + "'");
       }
       ApiClientInvocationHandler clientInvocationHandler = new ApiClientInvocationHandler(jerseyClientProxy);
-      ClassLoader classLoader = ApiClientInvocationHandler.class.getClassLoader();
-      Class[] proxyDefinition = { apiInterface };
-      //noinspection unchecked
-      return (T) Proxy.newProxyInstance(classLoader, proxyDefinition, clientInvocationHandler);
+      return InterfaceProxyBuilder.createProxy(apiInterface, clientInvocationHandler);
    }
 
    private ApiClientInvocationHandler(Object delegate) {

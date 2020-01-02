@@ -6,6 +6,7 @@ dependencies {
     compile 'io.dropwizard:dropwizard-client'
     compile 'org.glassfish.jersey.core:jersey-client'
     compile 'org.glassfish.jersey.ext:jersey-proxy-client'
+    compile 'org.codefetti.proxy:proxy-handler:1.0.0'
 
     testCompile project(':sda-commons-server-testing')
     testCompile project(':sda-commons-client-jersey-wiremock-testing')

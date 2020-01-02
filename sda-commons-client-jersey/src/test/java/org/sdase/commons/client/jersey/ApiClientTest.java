@@ -14,7 +14,6 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -25,6 +24,7 @@ import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.shared.api.error.ApiException;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
@@ -333,7 +333,6 @@ public class ApiClientTest {
    }
 
    @Test
-   @Ignore("Default methods in API client interfaces are not supported by Jersey. A custom proxy may fix this later.")
    public void loadLightBlueCarThroughDefaultMethod() {
       try (Response response = createMockApiClient().getLightBlueCar()) {
          assertThat(response.getStatus()).isEqualTo(200);
@@ -341,6 +340,30 @@ public class ApiClientTest {
                .extracting(Car::getSign, Car::getColor)
                .containsExactly("HH XY 4321", "light blue");
       }
+   }
+
+   @Test
+   public void handle404ErrorInDefaultMethod() {
+      WIRE
+            .stubFor(get("/api/cars/UNKNOWN")
+                  .willReturn(aResponse()
+                        .withStatus(404)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody("{}")));
+      assertThat(createMockApiClient().getCarOrHandleError("UNKNOWN")).isNull();
+   }
+
+   @Test
+   public void handleClientErrorInDefaultMethod() {
+      WIRE
+            .stubFor(get("/api/cars/UNKNOWN")
+                  .willReturn(aResponse()
+                        .withStatus(500)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody("{}")));
+      assertThatExceptionOfType(ApiException.class)
+            .isThrownBy(() -> createMockApiClient().getCarOrHandleError("UNKNOWN"))
+            .withCauseInstanceOf(ClientRequestException.class);
    }
 
    @Test
