@@ -24,9 +24,6 @@ public class ApiClientInvocationHandler implements InvocationHandler {
     * @return a proxy around the {@code jerseyClientProxy}
     */
    public static <T> T createProxy(Class<T> apiInterface, T jerseyClientProxy) {
-      if (!apiInterface.isInterface()) {
-         throw new IllegalArgumentException("apiInterface is not an interface but '" + apiInterface.getName() + "'");
-      }
       ApiClientInvocationHandler clientInvocationHandler = new ApiClientInvocationHandler(jerseyClientProxy);
       return InterfaceProxyBuilder.createProxy(apiInterface, clientInvocationHandler);
    }
