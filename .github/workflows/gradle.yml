@@ -78,5 +78,5 @@ jobs:
         run: semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SDA_NEXUS_USER: SDABot
-          SDA_NEXUS_PASSWORD: ${{ secrets.NEXUS_LOGIN_TOKEN }}
+          SDA_NEXUS_USER: ${{ secrets.NEXUS_LOGIN_USER }}
+          SDA_NEXUS_PASSWORD: ${{ secrets.NEXUS_LOGIN_PASSWORD }}
