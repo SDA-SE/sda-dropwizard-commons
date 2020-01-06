@@ -1,5 +1,7 @@
 package org.sdase.commons.server.opa.filter.model;
 
+import javax.ws.rs.core.MultivaluedMap;
+
 public class OpaInput {
 
   /**
@@ -22,15 +24,21 @@ public class OpaInput {
    */
   private String httpMethod;
 
+  /**
+   * Additional, optional headers that get passed to the OPA service.
+   */
+  private MultivaluedMap<String, String> headers;
+
   public OpaInput() {
     // nothing here, just for Jackson
   }
 
-  OpaInput(String jwt, String[] path, String httpMethod, String traceToken) {
+  OpaInput(String jwt, String[] path, String httpMethod, String traceToken, MultivaluedMap<String, String> headers) {
     this.jwt = jwt;
     this.path = path;
     this.httpMethod = httpMethod;
     this.trace = traceToken;
+    this.headers = headers;
   }
 
   public String getJwt() {
@@ -66,6 +74,15 @@ public class OpaInput {
 
   public OpaInput setTrace(String trace) {
     this.trace = trace;
+    return this;
+  }
+
+  public MultivaluedMap<String, String> getHeaders() {
+    return headers;
+  }
+
+  public OpaInput setHeaders(MultivaluedMap<String, String> headers) {
+    this.headers = headers;
     return this;
   }
 }

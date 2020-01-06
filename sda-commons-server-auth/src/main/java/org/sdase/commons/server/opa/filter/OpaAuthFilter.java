@@ -20,6 +20,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -78,7 +80,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
       this.webTarget = webTarget;
       this.isDisabled = config.isDisableOpa();
       this.excludePatterns = excludePatterns == null ? Collections.emptyList()
-            : excludePatterns.stream().map(Pattern::compile).collect(toList());
+          : excludePatterns.stream().map(Pattern::compile).collect(toList());
       this.om = om;
    }
 
@@ -90,6 +92,11 @@ public class OpaAuthFilter implements ContainerRequestFilter {
       String method = requestContext.getMethod();
       String trace = requestContext.getHeaderString(RequestTracing.TOKEN_HEADER);
       String jwt = null;
+      // Headers are currently passed to OPA as read by the framework. There might be an issue
+      // with multivalued headers. The representation differs depending on how the client
+      // sends the headers. It might be a list with values, or one entry separated with a
+      // separator, for example ',' or a combination of both.
+      MultivaluedMap<String, String> headers = lowercaseHeaderNames(requestContext.getHeaders());
 
       // if security context already exist and if it is a jwt security context,
       // we include the jwt in the request
@@ -110,7 +117,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
       if (!isDisabled && !isExcluded(uriInfo)) {
          // process the actual request to the open policy agent server
          String[] path = uriInfo.getPathSegments().stream().map(PathSegment::getPath).toArray(String[]::new);
-         OpaRequest request = OpaRequest.request(jwt, path, method, trace);
+         OpaRequest request = OpaRequest.request(jwt, path, method, trace, headers);
          constraints = authorizeWithOpa(request);
       }
 
@@ -123,9 +130,21 @@ public class OpaAuthFilter implements ContainerRequestFilter {
    }
 
    /**
+    * Lowercase header names. In HTTP RFC, the header names are defined as case-insensitive, so
+    * a normalization is needed to define how the headers are named in OPA
+    * @param headers request headers
+    * @return Map with normalized header names
+    */
+   private  MultivaluedMap<String, String> lowercaseHeaderNames(MultivaluedMap<String, String> headers) {
+      MultivaluedMap<String, String> result = new MultivaluedHashMap<>();
+      headers.forEach((key, value) -> result.addAll(key.toLowerCase(), value));
+      return result;
+   }
+
+   /**
     * replaces the current security context within the request context with a
     * new context providing an OpaJwtPrincipal
-    * 
+    *
     * @param requestContext
     *           the request context
     * @param securityContext
@@ -134,7 +153,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
     *           the new OpaJwtPrincipal
     */
    private void replaceSecurityContext(ContainerRequestContext requestContext, SecurityContext securityContext,
-         OpaJwtPrincipal principal) {
+       OpaJwtPrincipal principal) {
       final boolean secure = securityContext != null && securityContext.isSecure();
       final String scheme = securityContext != null ? securityContext.getAuthenticationScheme() : "unknown";
 

@@ -64,7 +64,7 @@ public class OpaResponsesIT {
               + "    \"path\": [\"resources\"],\n"
               + "    \"httpMethod\":\"GET\"\n"
               + "  }\n" // NOSONAR
-              + "}"))
+              + "}", true, true))
           .willReturn(aResponse()
               .withHeader("Content-Type", "application/json")
               .withStatus(status)
