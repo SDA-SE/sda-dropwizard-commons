@@ -275,7 +275,7 @@ The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) ad
 Import SDA Commons from the repository `https://nexus.intern.sda-se.online/repository/sda-se-public/` by adding it to the
 `build.gradle`:
 
-```
+```gradle
     repositories {
       ...
       maven {
@@ -298,7 +298,7 @@ More details:
 
 Note: You need Gradle 5.x for platform dependencies. [More information can be found here](https://gradle.org/whats-new/gradle-5/).
 
-```
+```gradle
     project.ext {
         sdaCommonsVersion = 'x.x.x'
     }
@@ -329,7 +329,7 @@ stable releases.
 
 Import snapshots by adding the snapshot repository to the build.gradle:
 
-```
+```gradle
     repositories {
       ...
       maven {
@@ -345,7 +345,7 @@ Import snapshots by adding the snapshot repository to the build.gradle:
 
 Add to the dependencies (example):
 
-```
+```gradle
     project.ext {
         sdaCommonsVersion = 'PR-1-SNAPSHOT'
     }
