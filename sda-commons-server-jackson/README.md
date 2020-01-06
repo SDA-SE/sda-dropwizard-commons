@@ -125,7 +125,7 @@ public class Person {
    // ...
 }
 ```
-```
+```javascript
 GET /persons/123
 
 => {"_links":{"self":{"href":"/persons/123"}},"name":"John Doe"}
@@ -138,7 +138,7 @@ To decide whether a resource is just linked or embedded, the
 embedding are passed, like `/api/cars?embed=drivers,owner`, `EmbedHelper.isEmbeddingOfRelationRequested(relationName)` 
 can be used to check whether a resource should be embedded:
 
-```
+```java
 EmbedHelper embedHelper = new EmbedHelper(environment);
 
 ...
@@ -150,7 +150,7 @@ if (embedHelper.isEmbeddingOfRelationRequested("owner")) {
 
 In an application that uses CDI the `EmbedHelper` should be instantiated the same way and provided by a producer method:
 
-```
+```java
    private EmbedHelper embedHelper;
 
    @Override
@@ -186,7 +186,7 @@ public class Person {
    // ...
 }
 ```
-```
+```javascript
 GET /persons/123?fields=firstName,nickName
 
 => {"firstName":"John","nickName":"Johnny"}
@@ -199,7 +199,7 @@ GET /persons/123?fields=firstName,nickName
 The `JacksonConfigurationBundle` may be initialized without HAL support, if links are not needed or achieved in another
 way in the application:
 
-```
+```java
 JacksonConfigurationBundle.builder().withoutHalSupport().build();
 ```
 
@@ -208,7 +208,7 @@ JacksonConfigurationBundle.builder().withoutHalSupport().build();
 Custom configurations of the `ObjectMapper` can be achieved by adding a customization consumer which receives the used
 `ObjectMapper` instance:
 
-```
+```java
 JacksonConfigurationBundle.builder()
     .withCustomization(om -> om.enable(SerializationFeature.INDENT_OUTPUT))
     .build();
@@ -225,7 +225,7 @@ is shipped in an appropriate version with [sda-commons-server-swagger](../sda-co
 
 ## Error Format
 Exceptions are mapped to a common error format that looks like the following example
-```
+```javascript
 422 Unprocessable Entity
 {
     "title": "Request parameters are not valid",
