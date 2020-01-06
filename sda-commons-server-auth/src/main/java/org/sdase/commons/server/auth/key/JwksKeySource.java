@@ -56,6 +56,8 @@ public class JwksKeySource implements KeySource {
                .filter(this::isRsa256Key)
                .map(this::toPublicKey)
                .collect(Collectors.toList());
+      } catch (KeyLoadFailedException e) {
+         throw e;
       } catch (WebApplicationException e) {
          try {
             e.getResponse().close();

@@ -8,11 +8,13 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class PemKeySourceTest {
 
@@ -51,7 +53,26 @@ public class PemKeySourceTest {
 
    }
 
+   @Test
+   public void shouldNotFailWithIOException() {
+      File unknownFile = new File("DOES_NOT_EXIST.pem");
+      PemKeySource pemKeySource = new PemKeySource(null, unknownFile.toURI());
 
+      assertThatExceptionOfType(KeyLoadFailedException.class)
+            .isThrownBy(pemKeySource::loadKeysFromSource)
+            .withCauseInstanceOf(IOException.class);
+
+   }
+
+   @Test
+   public void shouldNotFailWithNPE() {
+      PemKeySource pemKeySource = new PemKeySource(null, null);
+
+      assertThatExceptionOfType(KeyLoadFailedException.class)
+            .isThrownBy(pemKeySource::loadKeysFromSource)
+            .withCauseInstanceOf(NullPointerException.class);
+
+   }
 
    private void assertThatLoadedKeyContainsPublicKey(LoadedPublicKey loadedPublicKey) {
       assertThat(loadedPublicKey.getPublicKey().getPublicExponent()).isEqualTo(new BigInteger("65537"));
