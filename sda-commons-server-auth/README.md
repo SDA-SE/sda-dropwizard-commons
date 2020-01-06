@@ -148,25 +148,62 @@ In this case, the `AUTH_KEYS` variable should contain a Json array of
 ## OPA Bundle
 
 Details about the authorization with Open Policy Agent are documented within the authorization concept (see Confluence). 
-In short, Open Policy Agent acts as policy decision point and is started as sidecar to the actual service. The OPA bundle
-requests the policy decision providing the HTTP path and HTTP method and the JWT (if available) as input.
+In short, Open Policy Agent acts as policy decision point and is started as sidecar to the actual service.
 
 ![Overview](./docs/Overview.svg)
 
-The response consists of two parts, the overall `allow` decision and optional rules that represents constraints to limit data access
+The OPA bundle requests the policy decision providing the following inputs
+ * HTTP path as Array
+ * HTTP method as String
+ * validated JWT (if available) 
+ * all request headers 
+ 
+_Remark to HTTP request headers:_  
+The bundle normalizes  header names to lower case to simplify handling in OPA since HTTP specification defines header names as case insensitive.
+Multivalued headers are not normalized with respect to the representation as list or single string with separator char.
+They are forwarded as parsed by the framework. 
+  
+
+These inputs can be accessed inside a policy `.rego`-file in this way:
+```
+# decode the JWT as new variable 'token'
+token = {"payload": payload} {
+    not input.jwt == null
+    io.jwt.decode(input.jwt, [_, payload, _])
+}
+
+# deny by default
+default allow = false
+
+allow {
+    # allow if path match '/contracts' 
+    input.path = ["contracts"]
+
+    # allow if request method 'GET' is used
+    input.httpMethod == "GET"
+
+    # allow if 'claim' exists in the JWT payload
+    token.payload.claim
+
+    # allow if a request header 'HttpRequestHeaderName' has a certain value 
+    input.headers["httprequestheadername"][_] == "certain-value" 
+}
+```
+
+The response consists of two parts, the overall `allow` decision and optional rules that represent constraints to limit data access
 within the service. The constraints are fully service dependent and MUST be applied when querying the database or
 filtering received data. 
 
-The following listing presents an sample OPA result with a positive allow decision and two constraints, the first with boolean value and second
+The following listing presents a sample OPA result with a positive allow decision and two constraints, the first with boolean value and second
 with a list of string values.
 ```
- {
-     "result": {
-        "allow": true,
-        "constraint1": true,
-        "constraint2": [ "v2.1", "v2.2" ]
-     }
+{
+  "result": {
+    "allow": true,
+    "constraint1": true,
+    "constraint2": [ "v2.1", "v2.2" ]
   }
+}
 ```
 
 The bundle creates a [`OpaJwtPrincipal`](./src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) for each 
