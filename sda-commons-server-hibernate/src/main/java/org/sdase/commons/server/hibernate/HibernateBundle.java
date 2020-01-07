@@ -8,11 +8,17 @@ import io.dropwizard.hibernate.ScanningHibernateBundle;
 import io.dropwizard.hibernate.SessionFactoryFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.SessionFactory;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
 
 public class HibernateBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
@@ -27,11 +33,24 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
       return defaults;
    }
 
-   private ScanningHibernateBundle<C> delegate;
+   private io.dropwizard.hibernate.HibernateBundle<C> delegate;
 
    private HibernateBundle(Set<String> packagesToScanForEntities, DatabaseConfigurationProvider<C> configurationProvider) {
       String[] packagesToScan = packagesToScanForEntities.toArray(new String[]{});
       delegate = new ScanningHibernateBundle<C>(packagesToScan, new SessionFactoryFactory()) {
+
+         @Override
+         public PooledDataSourceFactory getDataSourceFactory(C configuration) {
+            DataSourceFactory database = configurationProvider.apply(configuration);
+            applyDefaultSettings(database);
+            return database;
+         }
+      };
+   }
+
+   private HibernateBundle(List<Class<?>> entityClasses, DatabaseConfigurationProvider<C> configurationProvider) {
+      delegate = new NonScanningHibernateBundle<C>(entityClasses, new SessionFactoryFactory()) {
+
          @Override
          public PooledDataSourceFactory getDataSourceFactory(C configuration) {
             DataSourceFactory database = configurationProvider.apply(configuration);
@@ -98,6 +117,11 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
        *                    may be a marker interface or a specific entity class.
        */
       FinalBuilder<T> withEntityScanPackageClass(@NotNull Class<?> markerClass);
+
+      /**
+       * @param entityClasses The entity classes
+       */
+      FinalBuilder<T> withEntityClasses(@NotNull Class<?>... entityClasses);
    }
 
    public interface FinalBuilder<T extends Configuration> extends ScanPackageBuilder<T> {
@@ -110,6 +134,8 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
       private Set<String> packagesToScan = new LinkedHashSet<>();
 
       private DatabaseConfigurationProvider<T> configurationProvider;
+
+      private List<Class<?>> entityClasses;
 
       private Builder() {
       }
@@ -130,6 +156,12 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
          return this;
       }
 
+      public FinalBuilder<T> withEntityClasses(@NotNull Class<?>... entityClasses) {
+         Validate.notEmpty(entityClasses);
+         this.entityClasses = Arrays.asList(entityClasses);
+         return this;
+      }
+
       @Override
       public FinalBuilder<T> withEntityScanPackageClass(@NotNull Class markerClass) {
          return withEntityScanPackage(markerClass.getPackage().getName());
@@ -137,7 +169,9 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
 
       @Override
       public HibernateBundle<T> build() {
-         return new HibernateBundle<>(packagesToScan, configurationProvider);
+         return packagesToScan != null && !packagesToScan.isEmpty() ?
+             new HibernateBundle<>(packagesToScan, configurationProvider) :
+             new HibernateBundle<>(entityClasses, configurationProvider);
       }
    }
 }
