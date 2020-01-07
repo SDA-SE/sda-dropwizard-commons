@@ -1,7 +1,6 @@
-package org.sdase.commons.server.kafka;
+package org.sdase.commons.server.kafka.consumer;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
@@ -32,14 +31,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
+import org.sdase.commons.server.kafka.KafkaBundle;
+import org.sdase.commons.server.kafka.KafkaBundleConsts;
+import org.sdase.commons.server.kafka.KafkaConfiguration;
 import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
-import org.sdase.commons.server.kafka.consumer.ErrorHandler;
-import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
-import org.sdase.commons.server.kafka.consumer.MessageHandler;
-import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.ProcessingErrorRetryException;
 import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.RetryProcessingErrorMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
@@ -49,8 +47,8 @@ import org.sdase.commons.server.testing.LazyRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
-   private static Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerCommitBehaviorWithBundleIT.class);
+public class LegacyMlsIT extends KafkaBundleConsts {
+   private static Logger LOGGER = LoggerFactory.getLogger(LegacyMlsIT.class);
 
    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
          .withBrokerProperty("offsets.retention.minutes", "1")
@@ -100,7 +98,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
    // are done
    @Ignore
    @Test
-   public void messagesThrowingExceptionsMustBeRetried() { // NOSONAR
+   public void messagesThrowingExceptionsMustBeRetried() throws InterruptedException { // NOSONAR
       String topic = "messagesThrowingExceptionsMustBeRetried";
       String uuid = UUID.randomUUID().toString();
       KafkaProducer<String, String> producer = KAFKA
@@ -124,12 +122,11 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                   .build());
 
       await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> numberExceptionThrown == 1);
-
       assertThat(numberExceptionThrown).isEqualTo(1);
       errorListener.forEach(MessageListener::stopConsumer);
 
-      // wait for retention of fetch information
-      await().atMost(70, SECONDS);
+      // wait until retention time expires. New consumer must re-read the message
+      Thread.sleep(70000); // NOSONAR
 
       // reread
       bundle
@@ -145,7 +142,6 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                   .build());
 
       // wait until consumer is up an running and read data
-
       await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> results.size() == 1);
 
       assertThat(numberExceptionThrown).withFailMessage("Still only one exception is thrown").isEqualTo(1);
@@ -154,7 +150,7 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
    }
 
    @Test
-   public void committedMessagesMustNotBeRetried() {
+   public void committedMessagesMustNotBeRetried() throws InterruptedException {
       String topic = "committedMessagesMustNotBeRetried";
 
       List<MessageListener<String, String>> firstListener = bundle
@@ -195,10 +191,8 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
                   .build());
 
       // wait until consumer is up an running and read data
-      await().atMost(N_MAX_WAIT_MS, MILLISECONDS);
-
+      Thread.sleep(N_MAX_WAIT_MS); // NOSONAR We just want to wait some time
       assertThat(results).withFailMessage("There must be no results read by second consumer").isEmpty();
-
    }
 
    @Test
@@ -225,19 +219,18 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
       Set<Integer> testResults = new CopyOnWriteArraySet<>();
 
       MessageHandler<String, Integer> handler = new MessageHandler<String, Integer>() {
-         private AtomicInteger pollCount = new AtomicInteger(0);
+         private AtomicInteger recordCount = new AtomicInteger(0);
 
          @Override
          public void handle(ConsumerRecord<String, Integer> record) {
             Integer value = record.value();
-            LOGGER.info("[{}] Poll count is {}", testName, pollCount.get());
-            if (pollCount.incrementAndGet() <= 4 && (value % 2) == 0) {
+            LOGGER.info("[{}] Capture event {} with value {} on partition {}",
+                testName, recordCount.get(), value, record.partition());
+            if (recordCount.incrementAndGet() <= 4) {
                processingError.incrementAndGet();
-               LOGGER.info("[{}] Fail with ProcessingErrorRetryException since pollCount is {}", testName, pollCount.get());
+               LOGGER.info("[{}] Fail with ProcessingErrorRetryException", testName);
                throw new ProcessingErrorRetryException("processing error of record: " + record.key());
             }
-
-            LOGGER.info("[{}] Capture event with value {} on partition {}", testName, value, record.partition());
             testResults.add(value);
          }
       };
@@ -269,22 +262,21 @@ public class KafkaConsumerCommitBehaviorWithBundleIT extends KafkaBundleConsts {
          IntStream
                .range(1, 21)
                .forEach(
-                     e -> producer.send(new ProducerRecord<String, Integer>(testName, UUID.randomUUID().toString(), e)));
+                     value -> producer.send(new ProducerRecord<>(testName, UUID.randomUUID().toString(), value)));
       }
 
-      assertSoftly(softly -> {
+      await().atMost(N_MAX_WAIT_MS, MILLISECONDS).untilAsserted(() -> assertSoftly(softly -> {
          softly
-               .assertThatCode(() ->
-                     await().atMost(N_MAX_WAIT_MS, MILLISECONDS).until(() -> testResults.size() == 20))
-               .withFailMessage("There must be 20 results finally processed by consumer")
-               .doesNotThrowAnyException();
+             .assertThat(testResults.size())
+             .withFailMessage("There must be 20 results finally processed by consumer")
+             .isEqualTo(20);
          softly
-               .assertThat(processingError.get())
-               .withFailMessage("There was at least 1 processing error")
-               .isGreaterThanOrEqualTo(1);
+             .assertThat(processingError.get())
+             .withFailMessage("There was at least 1 processing error")
+             .isGreaterThanOrEqualTo(1);
          softly
-               .assertThat(testResults)
-               .containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
-      });
+             .assertThat(testResults)
+             .containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+      }));
    }
 }
