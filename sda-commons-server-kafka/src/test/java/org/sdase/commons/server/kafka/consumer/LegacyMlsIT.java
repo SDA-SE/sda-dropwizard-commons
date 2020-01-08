@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -219,14 +220,14 @@ public class LegacyMlsIT extends KafkaBundleConsts {
       Set<Integer> testResults = new CopyOnWriteArraySet<>();
 
       MessageHandler<String, Integer> handler = new MessageHandler<String, Integer>() {
-         private AtomicInteger recordCount = new AtomicInteger(0);
+         private AtomicBoolean didThrow = new AtomicBoolean(false);
 
          @Override
          public void handle(ConsumerRecord<String, Integer> record) {
             Integer value = record.value();
-            LOGGER.info("[{}] Capture event {} with value {} on partition {}",
-                testName, recordCount.get(), value, record.partition());
-            if (recordCount.incrementAndGet() <= 4) {
+             LOGGER.info("[{}] Capture event with value {} on partition {}",
+                 testName, value, record.partition());
+            if (!didThrow.getAndSet(true)) {
                processingError.incrementAndGet();
                LOGGER.info("[{}] Fail with ProcessingErrorRetryException", testName);
                throw new ProcessingErrorRetryException("processing error of record: " + record.key());
@@ -272,8 +273,8 @@ public class LegacyMlsIT extends KafkaBundleConsts {
              .isEqualTo(20);
          softly
              .assertThat(processingError.get())
-             .withFailMessage("There was at least 1 processing error")
-             .isGreaterThanOrEqualTo(1);
+             .withFailMessage("There should be one processing error")
+             .isEqualTo(1);
          softly
              .assertThat(testResults)
              .containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);

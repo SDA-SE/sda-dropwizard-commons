@@ -467,7 +467,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
                      consumerConfig.getClientId() + "-" + instanceId);
       }
 
-      // TODO: who is managing the lifecycle? Maybe we want to manage it by this bundle?
       return new KafkaConsumer<>(consumerProperties, keyDeSerializer, valueDeSerializer);
    }
 
@@ -502,8 +501,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       if (producerConfig != null) {
          producerConfig.getConfig().forEach(producerProperties::put);
       }
-
-      // TODO: who is managing the lifecycle? Maybe we want to manage it by this bundle?
 
       return new KafkaProducer<>(producerProperties, keySerializer, valueSerializer);
    }
