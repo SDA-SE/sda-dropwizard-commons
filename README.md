@@ -26,7 +26,7 @@ See our [changelog](https://github.com/SDA-SE/sda-commons/releases/) for more in
 ## Contributing
 
 We are looking forward to contributions.
-Take a look at our (Contribution Guidelines)[./CONTRIBUTING.md] before submitting Pull Requests.
+Take a look at our [Contribution Guidelines](./CONTRIBUTING.md) before submitting Pull Requests.
 
 
 ## Modules in SDA Commons
@@ -327,3 +327,5 @@ Note: You need Gradle 5.x for platform dependencies. [More information can be fo
     }
 ```
 
+## Responsible Disclosure and Security
+The [SECURITY.md](./SECURITY.md) includes information on responsible disclosure and security related topics like security patches.
