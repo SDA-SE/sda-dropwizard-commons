@@ -108,14 +108,13 @@ public class ConfluentSchemaRegistryRule implements TestRule {
          return null;
       }).orElse(null);
 
-      Stream.of(Slf4jRequestLog.class.getDeclaredFields()).filter(f -> f.getName().equals("logger")).findFirst().map(f -> {
+      Stream.of(Slf4jRequestLog.class.getDeclaredFields()).filter(f -> f.getName().equals("logger")).findFirst().ifPresent(f -> {
          try {
             f.setAccessible(true);
             f.set(requestLog, null);
          } catch (IllegalAccessException e) {
             LOG.warn("Error when trying to remove logger for request log. Maybe the application will fail with NoSuchMethodException when logger is still active", e);
          }
-         return null;
       });
    }
 
