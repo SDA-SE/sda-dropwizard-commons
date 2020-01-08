@@ -13,6 +13,10 @@ request context. This should be only the case, if a service call firstly enters 
 The calls can be correlated in logs and metrics using this trace token that is also added to the 
 [`MDC`](https://www.slf4j.org/manual.html#mdc).
 
+When using new threads for clients to invoke another service, the trace token is not transferred out-of-the-box. 
+The same holds for mentioning the trace token in log entries of new threads.
+
+
 ## Usage
 
 The trace token is loaded within a filter that is created and registered by the 
