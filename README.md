@@ -1,11 +1,11 @@
-[![Build Status](https://img.shields.io/github/workflow/status/SDA-SE/sda-commons/CI/master)](https://github.com/SDA-SE/sda-commons/actions?query=branch%3Amaster+workflow%3A%22Java+CI%22)
-[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B8463%2Fsda-commons.svg?type=shield)](https://app.fossa.com/reports/9ab0a88c-2ebf-43a5-b246-84ea03696e3a)
+[![Build Status](https://img.shields.io/github/workflow/status/SDA-SE/sda-dropwizard-commons/CI/master)](https://github.com/SDA-SE/sda-dropwizard-commons/actions?query=branch%3Amaster+workflow%3A%22Java+CI%22)
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B8463%2Fsda-dropwizard-commons.svg?type=shield)](https://app.fossa.com/reports/2d8b4a40-db62-4c73-a978-588e252aa6e8)
 
-SDA Commons is a set of libraries to bootstrap services easily that follow the patterns and specifications promoted by
+SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow the patterns and specifications promoted by
 the SDA SE.
 
-SDA Commons is separated in different modules that can be combined as needed. Most of the modules require the 
-technologies that are recommended for services in the SDA SE Platform. These technologies include
+SDA Dropwizard Commons is separated in different modules that can be combined as needed. Most of the modules require the 
+technologies that are recommended for services in the SDA Platform. These technologies include
 
 - [Dropwizard](https://www.dropwizard.io)
 - [Jackson](https://github.com/FasterXML/jackson)
@@ -15,12 +15,14 @@ technologies that are recommended for services in the SDA SE Platform. These tec
 - [Hibernate](http://hibernate.org/)
 - [Kafka](https://kafka.apache.org/)
 - [MongoDB](https://www.mongodb.com)
+- [Open Policy Agent](https://www.openpolicyagent.org/)
+
 
 ## Changelog and Versioning
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-See our [changelog](https://github.com/SDA-SE/sda-commons/releases/) for more information about the latest features.
+See our [changelog](https://github.com/SDA-SE/sda-dropwizard-commons/releases/) for more information about the latest features.
 
 
 ## Contributing
@@ -29,7 +31,13 @@ We are looking forward to contributions.
 Take a look at our [Contribution Guidelines](./CONTRIBUTING.md) before submitting Pull Requests.
 
 
-## Modules in SDA Commons
+## Responsible Disclosure and Security
+
+The [SECURITY.md](./SECURITY.md) includes information on responsible disclosure and security related topics like security patches.
+
+
+## Modules in SDA Dropwizard Commons
+
 
 ### Server
 
@@ -41,6 +49,7 @@ to provide REST Endpoints.
 
 The main server modules help to bootstrap and test a Dropwizard application with convergent dependencies. 
 
+
 ##### Starter
 
 The module [`sda-commons-server-starter`](./sda-commons-server-starter/README.md) provides all basics required to build 
@@ -49,8 +58,6 @@ a service for the SDA Platform with Dropwizard.
 The module [`sda-commons-server-starter-example`](./sda-commons-server-starter-example/README.md) gives a small example 
 on starting an application using defaults for the SDA Platform.
 
-Status:
-- Ready to use
 
 ##### Testing
 
@@ -65,54 +72,43 @@ support.
 The module [`sda-commons-server-kafka-confluent-testing`](./sda-commons-server-kafka-confluent-testing/README.md),
 provides support to start a confluent schema registry needed if you use Avro with the confluent serializers. 
 
-Status:
-- Ready to use
 
 #### Additional Server Modules
 
 The additional server modules add helpful technologies to the Dropwizard application. 
+
 
 ##### Auth
 
 The module [`sda-commons-server-auth`](./sda-commons-server-auth/README.md) provides support to add authentication
 using JSON Web Tokens with different sources for the public keys of the signing authorities.
 
-Status:
-- Ready to use
 
 ##### Circuit Breaker
 
 The module [`sda-commons-server-circuitbreaker`](./sda-commons-server-circuitbreaker/README.md) provides support to 
 inject circuit breakers into synchronous calls to other services.
 
-Status:
-- Ready to use
 
 ##### Consumer Token
 
 The module [`sda-commons-server-consumer`](./sda-commons-server-consumer/README.md) adds support to track or require a 
 consumer token identifying the calling application. 
 
-Status:
-- Ready to use
 
 ##### Cross-Origin Resource Sharing
 
 The module [`sda-commons-server-cors`](./sda-commons-server-cors/README.md) adds support for CORS. This allows
 Cross-origin resource sharing for the service.
 
-Status:
-- Ready to use
 
 ##### Dropwizard
 
 The module [`sda-commons-server-dropwizard`](./sda-commons-server-dropwizard/README.md) provides 
-`io.dropwizard:dropwizard-core` with convergent dependencies. All other SDA Commons Server modules use this dependency
+`io.dropwizard:dropwizard-core` with convergent dependencies. All other SDA Dropwizard Commons Server modules use this dependency
 and are aligned to the versions provided by `sda-commons-server-dropwizard`. It also provides some common bundles that
 require no additional dependencies.
 
-Status:
-- Ready to use
 
 ##### Healthcheck
 The module [`sda-commons-server-healthcheck`](./sda-commons-server-healthcheck/README.md) introduces the possibility
@@ -121,8 +117,6 @@ to distinguish internal and external health checks.
 The module [`sda-commons-server-healthcheck-example`](./sda-commons-server-healthcheck-example/README.md) 
 presents a simple application that shows the usage of the bundle and implementation of new health checks. 
 
-Status:
-- Ready to use
 
 ##### Hibernate
 
@@ -132,8 +126,6 @@ databases with hibernate.
 The module [`sda-commons-server-hibernate-exmaple`](./sda-commons-server-hibernate-example/README.md) shows how
 to use the bundle within an application.
 
-Status:
-- Ready to use
 
 ##### Jackson
 
@@ -143,13 +135,12 @@ The module [`sda-commons-server-jackson`](./sda-commons-server-jackson/README.md
 * adds the ability to filter fields on client request
 * registers exception mapper to support the common error structure as defined within the rest guide
 
-Status:
-- Ready to use
 
 ##### Forms
 
 The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) adds all required dependencies to support 
 `multipart/*` in Dropwizard applications.
+
 
 ##### Kafka
 
@@ -162,8 +153,6 @@ applications, one with consumer and one with producer examples.
 The module [`sda-commons-server-kafka-confluent`](./sda-commons-server-kafka-confluent/README.md) is 
 the base module to add Avro specific support to Kafka.
 
-Status:
-- Ready to use with JSON messages
 
 ##### MongoDB
 
@@ -176,9 +165,6 @@ provides a MongoDB instance for integration testing.
 The module [`sda-commons-server-morphia-exmaple`](./sda-commons-server-morphia-example/README.md) shows how
 to use the bundle within an application.
 
-Status:
-- Ready to use
-
 
 ##### Prometheus
 
@@ -188,10 +174,6 @@ serve metrics in a format that Prometheus can read.
 The module [`sda-commons-server-prometheus-example`](./sda-commons-server-prometheus-example/README.md) 
 presents a simple application that shows the three main types of metrics to use in a service. 
 
-Status:
-- Ready to use for custom metrics
-- Ready to use in combination with [SDA Commons Consumer Token](#consumer-token) or when provided by 
-  [SDA Commons Server Starter](#starter) for built in request duration metrics
 
 ##### S3 Object Storage
 
@@ -201,18 +183,12 @@ AWS S3-compatible object storage.
 The module [`sda-commons-server-s3-testing`](./sda-commons-server-s3-testing/README.md) is used to 
 provide an [AWS S3-compatible Object Storage](https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html) during integrations tests.
 
-Status:
-- Ready to use
-
 
 ##### Security
 
 The module [`sda-commons-server-security`](./sda-commons-server-security/README.md) helps to configure a secure 
 Dropwizard application.
 
-Status
-- Ready to use, but providing only a subset of the "Härtungsmaßnahmen Dropwizard" available at the internal wiki entry 
-  written by Timo Pagel
 
 ##### Swagger
 
@@ -220,8 +196,6 @@ The module [`sda-commons-server-swagger`](./sda-commons-server-swagger/README.md
 module to add [Swagger](https://github.com/swagger-api/swagger-core) support for applications
 in the SDA SE infrastructure.
 
-Status:
-- Ready to use
 
 ##### Trace Token
 
@@ -229,10 +203,6 @@ The module [`sda-commons-server-trace`](./sda-commons-server-trace/README.md) ad
 trace token to correlate  a set of service invocations that belongs to the same logically cohesive call of a higher 
 level service offered by the SDA platform, e.g. interaction service. . 
 
-Status:
-- Ready to use
-- When using new threads for clients to invoke another service, the trace token is not transferred out-of-the-box. 
-  The same holds for mentioning the trace token in log entries of new threads.
 
 ##### Weld
 
@@ -242,8 +212,6 @@ inside a Weld-SE container and provides CDI support for servlets, listeners and 
 The module [`sda-commons-server-weld-example`](./sda-commons-server-weld-example/README.md) gives a small example on
 starting an application within an Weld container.
 
-Status:
-- Ready to use
 
 ##### YAML
 
@@ -254,6 +222,7 @@ The module [`sda-commons-shared-yaml`](./sda-commons-shared-yaml/README.md) adds
 
 All modules prefixed with `sda-commons-client-` provide support for applications that use a Http client to access other
 services.
+
 
 #### Jersey
 
@@ -267,14 +236,12 @@ sda-commons library versions.
 The module [`sda-commons-client-jersey-example`](./sda-commons-client-jersey-example/README.md)
 presents an example application that shows how to invoke services.
 
-Status:
-- Ready to use
-- When using new threads for clients to invoke another service, the trace token is not transferred out-of-the-box.
 
 #### Forms
 
 The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) adds all required dependencies to support 
 `multipart/*` in Dropwizard applications.
+
 
 ## Usage
 
@@ -326,6 +293,3 @@ Note: You need Gradle 5.x for platform dependencies. [More information can be fo
       compile 'org.apache.commons:commons-digester3:3.2'
     }
 ```
-
-## Responsible Disclosure and Security
-The [SECURITY.md](./SECURITY.md) includes information on responsible disclosure and security related topics like security patches.

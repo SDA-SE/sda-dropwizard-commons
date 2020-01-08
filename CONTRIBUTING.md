@@ -29,7 +29,7 @@ Some examples for semantic commits:
 * `docs: add a CONTRIBUTING.md` - for changes that only modify documentation, no release is created.
 * `chore: improve build speed` - for changes to everything else, no release is created.
 
-Our [changelog](https://github.com/SDA-SE/sda-commons/releases/) is maintained in the GitHub releases.
+Our [changelog](https://github.com/SDA-SE/sda-dropwizard-commons/releases/) is maintained in the GitHub releases.
 
 
 ### PR Snapshots

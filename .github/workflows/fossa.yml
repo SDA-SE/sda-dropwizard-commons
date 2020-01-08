@@ -22,11 +22,11 @@ jobs:
       - name: Fossa Analyze
         env:
           FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
-        run: fossa analyze --project "sda-commons" --branch "$GITHUB_REF"
+        run: fossa analyze --project "sda-dropwizard-commons" --branch "$GITHUB_REF"
 
       - name: Fossa Test
         env:
           FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
-        run: fossa test --project "sda-commons" --branch "$GITHUB_REF" --debug
+        run: fossa test --project "sda-dropwizard-commons" --branch "$GITHUB_REF" --debug
         # TODO: fossa test is still unstable so we allow this step to fail for now
         continue-on-error: true
