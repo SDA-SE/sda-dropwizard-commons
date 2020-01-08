@@ -6,6 +6,10 @@ javaPlatform {
     allowDependencies() // enable importing other BOMs
 }
 
+ext {
+    morphiaVersion = '1.5.8'
+}
+
 dependencies {
     api enforcedPlatform("io.dropwizard:dropwizard-bom:1.3.17")
     // add dropwizard-dependencies for Dropwizard 2.x.y
@@ -24,8 +28,8 @@ dependencies {
         api "commons-logging:commons-logging:1.2"
 
         // MongoDB
-        api "dev.morphia.morphia:core:1.5.3"
-        api "dev.morphia.morphia:validation:1.5.3"
+        api "dev.morphia.morphia:core:$morphiaVersion"
+        api "dev.morphia.morphia:validation:$morphiaVersion"
         api "org.mongodb:mongo-java-driver:3.10.1"
 
         // Kafka
