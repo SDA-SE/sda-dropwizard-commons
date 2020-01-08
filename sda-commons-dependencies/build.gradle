@@ -45,7 +45,7 @@ dependencies {
 
         // Resilience4J
         api "io.github.resilience4j:resilience4j-circuitbreaker:0.15.0"
-        api "io.github.resilience4j:resilience4j-prometheus:0.15.0"
+        api "io.github.resilience4j:resilience4j-prometheus:1.2.0"
 
         // Prometheus
         api "io.prometheus:simpleclient:0.8.0"
