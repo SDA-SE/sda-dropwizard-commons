@@ -1,15 +1,6 @@
 package org.sdase.commons.server.opa.testing;
 
-import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
-import static org.apache.http.HttpStatus.SC_OK;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
-import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
-
 import com.github.tomakehurst.wiremock.client.VerificationException;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -21,6 +12,16 @@ import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.sdase.commons.server.opa.testing.test.ConstraintModel;
 import org.sdase.commons.server.testing.Retry;
 import org.sdase.commons.server.testing.RetryRule;
+
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
+import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
 public class OpaRuleIT {
 
@@ -137,7 +138,11 @@ public class OpaRuleIT {
    }
 
    private OpaRequest request(String method, String... path) {
-      return new OpaRequest().setInput(new OpaInput().setHttpMethod(method).setPath(path));
+      return new OpaRequest().setInput(new OpaInput()
+          .setJwt(null)
+          .setHttpMethod(method)
+          .setPath(path)
+          .setHeaders(null)
+      );
    }
-
 }
