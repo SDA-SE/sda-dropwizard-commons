@@ -60,7 +60,7 @@ dependencies {
         // Swagger
         api "io.openapitools.hal:swagger-hal:1.0.4"
         api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.4"
-        api "io.swagger:swagger-annotations:1.5.22"
+        api "io.swagger:swagger-annotations:1.6.0"
         api "io.swagger:swagger-jaxrs:1.5.22"
 
         api "javax.activation:activation:1.1.1"
