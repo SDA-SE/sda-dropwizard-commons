@@ -1,6 +1,9 @@
 [![Build Status](https://img.shields.io/github/workflow/status/SDA-SE/sda-dropwizard-commons/Java%20CI/master)](https://github.com/SDA-SE/sda-dropwizard-commons/actions?query=branch%3Amaster+workflow%3A%22Java+CI%22)
 [![FOSSA Status](https://app.fossa.com/api/projects/custom%2B8463%2Fsda-dropwizard-commons.svg?type=shield)](https://app.fossa.com/reports/2d8b4a40-db62-4c73-a978-588e252aa6e8)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SDA-SE_sda-dropwizard-commons&metric=alert_status)](https://sonarcloud.io/dashboard?id=SDA-SE_sda-dropwizard-commons)
+[![SonarCloud Coverage](https://img.shields.io/sonar/coverage/SDA-SE_sda-dropwizard-commons?server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/component_measures/metric/coverage/list?id=SDA-SE_sda-dropwizard-commons)
+[![SonarCloud Reliability](https://sonarcloud.io/api/project_badges/measure?project=SDA-SE_sda-dropwizard-commons&metric=reliability_rating)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=SDA-SE_sda-dropwizard-commons)
+[![SonarCloud Security](https://sonarcloud.io/api/project_badges/measure?project=SDA-SE_sda-dropwizard-commons&metric=security_rating)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=SDA-SE_sda-dropwizard-commons)
 
 SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow the patterns and specifications promoted by
 the SDA SE.
