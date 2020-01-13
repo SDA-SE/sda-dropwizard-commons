@@ -8,6 +8,8 @@ javaPlatform {
 
 ext {
     morphiaVersion = '1.5.8'
+    prometheusVersion = '0.8.0'
+    resilience4jVersion = '0.15.0'
 }
 
 dependencies {
@@ -48,14 +50,14 @@ dependencies {
         api "org.xerial.snappy:snappy-java:1.1.7.1" // clash between kafka-clients and avro
 
         // Resilience4J
-        api "io.github.resilience4j:resilience4j-circuitbreaker:0.15.0"
-        api "io.github.resilience4j:resilience4j-prometheus:0.15.0"
+        api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
+        api "io.github.resilience4j:resilience4j-prometheus:$resilience4jVersion"
 
         // Prometheus
-        api "io.prometheus:simpleclient:0.8.0"
-        api "io.prometheus:simpleclient_common:0.8.0"
-        api "io.prometheus:simpleclient_dropwizard:0.8.0"
-        api "io.prometheus:simpleclient_servlet:0.8.0"
+        api "io.prometheus:simpleclient:$prometheusVersion"
+        api "io.prometheus:simpleclient_common:$prometheusVersion"
+        api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
+        api "io.prometheus:simpleclient_servlet:$prometheusVersion"
 
         // Swagger
         api "io.openapitools.hal:swagger-hal:1.0.4"
