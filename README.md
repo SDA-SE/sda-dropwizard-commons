@@ -250,7 +250,7 @@ The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) ad
 ## Usage
 
 Up till now, compiled releases aren't available publicly. 
-In case our have access to our internal Nexus repository, add `https://nexus.intern.sda-se.online/repository/sda-se-public/` to your `build.gradle`:
+In case you have access to our internal Nexus repository, add `https://nexus.intern.sda-se.online/repository/sda-se-public/` to your `build.gradle`:
 
 ```gradle
     repositories {
