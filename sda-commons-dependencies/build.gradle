@@ -76,7 +76,7 @@ dependencies {
         api "net.sf.jopt-simple:jopt-simple:5.0.4"
 
         api "org.apache.commons:commons-compress:1.10"
-        api "org.bouncycastle:bcpkix-jdk15on:1.60"
+        api "org.bouncycastle:bcpkix-jdk15on:1.64"
         api "org.dbunit:dbunit:2.6.0"
         api "org.flywaydb:flyway-core:6.1.4"
         api "org.javassist:javassist:3.24.1-GA"
