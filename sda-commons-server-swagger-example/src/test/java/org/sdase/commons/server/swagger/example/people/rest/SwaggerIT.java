@@ -41,10 +41,10 @@ public class SwaggerIT {
       // given
 
       // when
-      final Response r = baseUrlWebTarget().path("swagger.json").request().get();
-
-      // then
-      assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+      try (final Response r = baseUrlWebTarget().path("swagger.json").request().get()) {
+         // then
+         assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+      }
    }
 
    @Test
@@ -52,10 +52,10 @@ public class SwaggerIT {
       // given
 
       // when
-      final Response r = baseUrlWebTarget().path("swagger.yaml").request().get();
-
-      // then
-      assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+      try (final Response r = baseUrlWebTarget().path("swagger.yaml").request().get()) {
+         // then
+         assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+      }
    }
 
    private WebTarget baseUrlWebTarget() {
