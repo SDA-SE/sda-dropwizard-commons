@@ -234,7 +234,7 @@ public class KafkaBundleWithConfigIT {
                   .build());
 
       for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
-         String message = UUID.randomUUID().toString();
+         String message = "message-" + i;
          stringStringProducer.send(new ProducerRecord<>(topic, message));
       }
 
@@ -419,7 +419,7 @@ public class KafkaBundleWithConfigIT {
 
       // pass in messages
       for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
-         String message = UUID.randomUUID().toString();
+         String message = "message-" + i;
          checkMessages.add(message);
 
          stringStringProducer.send(new ProducerRecord<>(topic, message));
@@ -450,7 +450,7 @@ public class KafkaBundleWithConfigIT {
       List<String> receivedMessages = new ArrayList<>();
 
       for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
-         String message = UUID.randomUUID().toString();
+         String message = "message-" + i;
          messages.add(message);
          producer.send("test", message);
       }
@@ -494,7 +494,7 @@ public class KafkaBundleWithConfigIT {
 
       // pass in messages
       for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
-         String message = UUID.randomUUID().toString();
+         String message = "message-" + i;
          checkMessages.add(message);
 
          stringStringProducer.send(new ProducerRecord<>(topic, message));
@@ -523,7 +523,7 @@ public class KafkaBundleWithConfigIT {
                   .forTopic(topic)
                   .withConsumerConfig(ConsumerConfig
                         .builder()
-                        .withGroup(UUID.randomUUID().toString())
+                        .withGroup("group-" + UUID.randomUUID().toString())
                         .withClientId(CLIENT_ID_ASYNC)
                         .build())
                   .withKeyDeserializer(deserializer)
@@ -546,12 +546,14 @@ public class KafkaBundleWithConfigIT {
       List<String> checkMessages = new ArrayList<>();
       // pass in messages
       for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
-         String message = UUID.randomUUID().toString();
+         String message = "message-" + i;
          checkMessages.add(message);
          stringStringProducer.send(new ProducerRecord<>(topic, message));
       }
 
-      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> callbackCount > 0);
+      await()
+          .atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS)
+          .until(() -> resultsString.size() == KafkaBundleConsts.N_MESSAGES);
 
       assertThat(resultsString).containsExactlyInAnyOrderElementsOf(checkMessages);
       assertThat(callbackCount).isGreaterThan(0);
