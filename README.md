@@ -118,7 +118,7 @@ and are aligned to the versions provided by `sda-commons-server-dropwizard`. It 
 require no additional dependencies.
 
 
-##### Healthcheck
+##### Health Check
 The module [`sda-commons-server-healthcheck`](./sda-commons-server-healthcheck/README.md) introduces the possibility
 to distinguish internal and external health checks.
 
@@ -153,7 +153,7 @@ The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) ad
 ##### Kafka
 
 The module [`sda-commons-server-kafka`](./sda-commons-server-kafka/README.md) provides means to send and consume 
-messages from a kafka topic.
+messages from a Kafka topic.
 
 The module [`sda-commons-server-kafka-example`](./sda-commons-server-kafka-example/README.md) includes 
 applications, one with consumer and one with producer examples.   
@@ -220,7 +220,7 @@ in the SDA SE infrastructure.
 
 The module [`sda-commons-server-trace`](./sda-commons-server-trace/README.md) adds support to track create a 
 trace token to correlate  a set of service invocations that belongs to the same logically cohesive call of a higher 
-level service offered by the SDA platform, e.g. interaction service. . 
+level service offered by the SDA Platform, e.g. interaction service. . 
 
 
 ##### Weld
@@ -239,14 +239,14 @@ The module [`sda-commons-shared-yaml`](./sda-commons-shared-yaml/README.md) adds
 
 ### Client
 
-All modules prefixed with `sda-commons-client-` provide support for applications that use a Http client to access other
+All modules prefixed with `sda-commons-client-` provide support for applications that use a HTTP client to access other
 services.
 
 
 #### Jersey
 
 The module [`sda-commons-client-jersey`](./sda-commons-client-jersey/README.md) provides support for using Jersey 
-clients withing the dropwizard application.
+clients withing the Dropwizard application.
 
 The module [`sda-commons-client-jersey-wiremock-testing`](./sda-commons-client-jersey-wiremock-testing/README.md) 
 bundles the [WireMock](https://wiremock.org) dependencies to mock services in integration tests consistently to 

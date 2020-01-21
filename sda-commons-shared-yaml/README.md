@@ -20,7 +20,7 @@ message:  "Hello"
 attribute: "attribute1"
 ```
 
-it is possible to load and serialize a single object:
+it's possible to load and serialize a single object:
 
 ```java
 import org.sdase.commons.shared.yaml.YamlUtil;

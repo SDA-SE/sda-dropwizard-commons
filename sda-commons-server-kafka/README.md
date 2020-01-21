@@ -1,4 +1,4 @@
-# kafka-common
+# SDA Dropwizard Commons Server Kafka
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka)
 
@@ -6,7 +6,7 @@ This module provides a [`KafkaBundle`](./src/main/java/org/sdase/commons/server/
 functionality to create Kafka consumers, producers, and topics via configuration or Java DSL. 
 
 It additionally provides a default [`MessageListener`](./src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java) that 
-implements a polling loop for kafka consumers. The user of this bundle must only implement the functional logic. 
+implements a polling loop for Kafka consumers. The user of this bundle must only implement the functional logic. 
 
 
 ## Usage
@@ -17,14 +17,14 @@ compile 'org.sdase.commons:sda-commons-server-kafka:<current-version>'
 
 **Dependencies**
 
-| Group                        | Name                    | Version     | Description |
-|------------------------------|-------------------------|-------------|-------------|
-| org.apache.kafka             | kafka-clients           | 1.1.1       | Client API for Apache Kafka |
-| com.github.ftrossbach | club-topicana-core | 0.1.0 | Helper for Topic description | 
+| Group                        | Name                    | Version     | Description                  |
+|------------------------------|-------------------------|-------------|------------------------------|
+| `org.apache.kafka`           | `kafka-clients`         | 1.1.1       | Client API for Apache Kafka  |
+| `com.github.ftrossbach`      | `club-topicana-core`    | 0.1.0       | Helper for Topic description | 
 
 **Bootstrap**
 
-The bundle got enhanced to allow more control and flexibility how kafka messages are consumed and which commit strategy is used. How to use
+The bundle got enhanced to allow more control and flexibility how Kafka messages are consumed and which commit strategy is used. How to use
 the old and now deprecated `KafkaBundle::registerMessageHandler` approach is documented [here](docs/deprecated.md).
      
 The bundle should be added as field to the application since it provides methods for the creation of `MessageProducer` and `MessageListener`.
@@ -257,7 +257,7 @@ kafka:
       pollInterval: 200
 ```
 
-### configuration value defaults (extending/changing the kafka defaults)
+### Configuration value defaults (extending/changing the Kafka defaults)
 This are only the defaults that are explicitly set within the code of the bundle. All other properties depends on the actual broker configuration or the Kafka defaults are used. 
 
 | Key | Value |
@@ -349,7 +349,7 @@ stopped or retried (handleError returns `false`). In case of retry the consumer 
 records. The next poll will retry the records on this partition starting with the failing record.  
 
 ## Create preconfigured consumers and producers
-To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config yaml or 
+To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config YAML or 
 by specifying a configuration in code. The user takes over the full responsibility and have to ensure that the consumer is closed when not 
 longer used.   
 
@@ -392,7 +392,7 @@ kafka:
 ```
 _Note_: Do not use `;` in passwords, as this will crash your application.
 
-In this case, the `KAFKA_BROKERS` variable should contain a Json array with a list of broker 
+In this case, the `KAFKA_BROKERS` variable should contain a JSON array with a list of broker 
 
 ```json
 [
@@ -406,5 +406,5 @@ In this case, the `KAFKA_BROKERS` variable should contain a Json array with a li
 A health check with the name kafkaConnection is automatically registered to test the Kafka connection. The health check tries to list the topics available at the broker.
 
 ## Testing
-[`sda-commons-server-kafka-testing`](../sda-commons-server-kafka-testing/README.md) provides support for integration testing with kafka with JUnit 4.
+[`sda-commons-server-kafka-testing`](../sda-commons-server-kafka-testing/README.md) provides support for integration testing with Kafka with JUnit 4.
 

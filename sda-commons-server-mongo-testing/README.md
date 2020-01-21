@@ -56,10 +56,10 @@ method to remove all documents from the database between tests, without restarti
 To verify and modify the database during tests, `RULE.createClient()` provides a way to access the
 database using the `MongoClient`.
 
-### Http Proxy
+### HTTP Proxy
 
 If the `http_proxy` environment variable is present, the configured proxy is used to download the 
-mongod executable.
+`mongod` executable.
 
 ### Scripting
 
@@ -79,11 +79,11 @@ This is a temporary solution until all systems run on MongoDB >= version 4.x.
 
 ### Configuration in a special CI-environment
 
-Normally the mongod executable is downloaded directly from the mongodb web page.
+Normally the `mongod` executable is downloaded directly from the MongoDB web page.
 However in some CI-environments this behavior might be undesired, because of proxy servers, missing 
 internet access, or to avoid downloading executables from untrusted sources.
  
-Therefor it is possible to change the download location of the embedded mongod using the optional 
+Therefor it is possible to change the download location of the embedded `mongod` using the optional 
 environment variable `EMBEDDED_MONGO_DOWNLOAD_PATH`.
 If `EMBEDDED_MONGO_DOWNLOAD_PATH` is set to `http://example.com/download/`, the rule for example 
 tries to download `http://example.com/download/osx/mongodb-osx-ssl-x86_64-3.6.5.tgz`.

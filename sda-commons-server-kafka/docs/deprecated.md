@@ -1,6 +1,6 @@
 # server-kafka
 
-## Deperecated APIs
+## Deprecated APIs
 
 The bundle still supports the deprecated `KafkaBundle::registerMessageHandler` to support backward compatibility. In this context some additional 
 but also deprecated listener config properties are available. The `MessageListener` requires the implementation of the `MessageHandler` interface. The Builder

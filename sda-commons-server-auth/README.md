@@ -83,8 +83,8 @@ The config allows to set the _leeway_ in seconds for validation of
 Multiple sources for public keys for verification of the signature can be configured. Each source may refer to a 
 
 - certificate in PEM format
-- a authentication provider root url or
-- an url providing a [`JSON Web Key Set`](https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5)
+- a authentication provider root URL or
+- an URL providing a [`JSON Web Key Set`](https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5)
 
 The authentication can be disabled for use in test and development environments. **Be careful to NEVER disable
 authentication in production.**
@@ -131,7 +131,7 @@ auth:
   keys: ${AUTH_KEYS:-[]}
 ```
 
-In this case, the `AUTH_KEYS` variable should contain a Json array of 
+In this case, the `AUTH_KEYS` variable should contain a JSON array of 
 [`KeyLocation`](./src/main/java/org/sdase/commons/server/auth/config/KeyLocation.java) objects:
 
 ```json
@@ -243,7 +243,7 @@ public class SecureEndPoint {
 }
 ```
 
-To activate the OPA integration in an application, the bundle has to be added to the application. The kubernetes file of the 
+To activate the OPA integration in an application, the bundle has to be added to the application. The Kubernetes file of the 
 service must also be adjusted to start OPA as sidecar.
 
 ```java
@@ -280,7 +280,7 @@ public class MyConfig extends Configuration {
 }
 ```
 
-The config includes the connection data to the opa sidecar and the path to the used policy endpoint.
+The config includes the connection data to the OPA sidecar and the path to the used policy endpoint.
 
 Example config:
 ```yaml

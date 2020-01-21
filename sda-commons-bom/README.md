@@ -6,7 +6,7 @@ The module `sda-commons-bom` defines the versions of sda-commons modules.
 
 ## Usage
 
-[Gradle 5 required!](https://gradle.org/whats-new/gradle-5/)
+> ##### [Gradle 5 required!](https://gradle.org/whats-new/gradle-5/)
 
 Services using sda-commons can import `sda-commons-bom` to make sure to use the same 
 dependencies. After that you can use all modules of sda-commons **without** declaring the version.

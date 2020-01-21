@@ -41,11 +41,11 @@ Our [changelog](https://github.com/SDA-SE/sda-dropwizard-commons/releases/) is m
 > **PR Snapshots are unavailable for Pull Requests from forks!**
 
 Each PR creates a snapshot that can _temporarily_ be included in other projects for testing.
-The generated version uses the format: PR-<pr_number>-SNAPSHOT.
+The generated version uses the format: `PR-<pr_number>-SNAPSHOT`.
 Snapshots are cleaned up regularly from the repository so never use snapshots in stable releases.
 The snapshots are currently hosted in our internal Nexus repository.
 
-Import snapshots by adding the snapshot repository to the build.gradle:
+Import snapshots by adding the snapshot repository to the `build.gradle`:
 
 ```gradle
     repositories {

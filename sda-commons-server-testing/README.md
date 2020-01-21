@@ -14,12 +14,12 @@ mocking.
 
 For testing some frameworks are included:
 
-| Group            | Artifact           | Version |
-|------------------|--------------------|---------|
-| junit            | junit              | 4.12    |
-| io.dropwizard    | dropwizard-testing | 1.3.5   |
-| org.mockito      | mockito-core       | 2.23.0  |
-| org.assertj      | assertj-core       | 3.11.1  |
+| Group            | Artifact             | Version |
+|------------------|----------------------|---------|
+| `junit`          | `junit`              | 4.12    |
+| `io.dropwizard`  | `dropwizard-testing` | 1.3.5   |
+| `org.mockito`    | `mockito-core`       | 2.23.0  |
+| `org.assertj`    | `assertj-core`       | 3.11.1  |
 
 ## Provided Rules
 

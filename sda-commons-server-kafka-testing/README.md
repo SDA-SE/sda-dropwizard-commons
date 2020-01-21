@@ -2,7 +2,7 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka-testing)
 
-The module `sda-commons-server-kafka-testing` is the base module to add unit and integrations test for kafka broker usage.
+The module `sda-commons-server-kafka-testing` is the base module to add unit and integrations test for Kafka broker usage.
 
 It includes the dependencies to [sda-commons-server-testing](../sda-commons-server-testing/README.md) module.
 
@@ -10,15 +10,15 @@ For Kafka based tests, the following libraries are included
 
 | Group            | Artifact           | Version |
 |------------------|--------------------|---------|
-| com.salesforce.kafka.test | kafka-junit4 | 3.0.1 |
-| org.apache.kafka | kafka_2.12 | 1.1.1|
-| org.awaitility | awaitility | 3.1.2 |
+| `com.salesforce.kafka.test` | `kafka-junit4` | 3.0.1 |
+| `org.apache.kafka` | `kafka_2.12` | 1.1.1|
+| `org.awaitility` | `awaitility` | 3.1.2 |
 
-kafka-junit4 does not depend on a fixed kafka broker version. The kafka must be included in the used version within an dedicated dependency.
-Currently, the kafka version 1.1.1 with scala version 2.12 is used.
+kafka-junit4 does not depend on a fixed Kafka broker version. The kafka must be included in the used version within an dedicated dependency.
+Currently, the Kafka version 1.1.1 with scala version 2.12 is used.
 
 ## Usage of Kafka-Unit
-The kafka-junit4 library provides means for easily setting up a kafka broker that can be reconfigured easily by using the following class rule:
+The kafka-junit4 library provides means for easily setting up a Kafka broker that can be reconfigured easily by using the following class rule:
 ```
 @ClassRule
 protected static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
@@ -30,8 +30,8 @@ protected static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResour
 ## Test support with random broker ports
 The usage of random ports allows to execute tests in parallel and reduce the probability of port conflicts, e.g. when local-infra is also started.  
 
-The example above, starts two kafka brokers within a cluster. To test your application, you have to configure these servers as 
-bootstrap servers. This is normally done via the configuration yaml file within the property kafka -> brokers.
+The example above, starts two Kafka brokers within a cluster. To test your application, you have to configure these servers as 
+bootstrap servers. This is normally done via the configuration YAML file within the property `kafka -> brokers`.
 
 By using the following snippets, the broker urls are passed to the application.  
 

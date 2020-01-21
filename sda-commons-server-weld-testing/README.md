@@ -3,7 +3,7 @@
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-weld-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-weld-testing)
 
 `sda-commons-server-weld-testing` is used to bootstrap Dropwizard applications inside a Weld-SE container using the
-`DropwizardAppRule` during testing and provides CDI support for servlets, listeners and resources.
+`DropwizardAppRule` during testing and provides CDI support for Servlets, listeners and resources.
 
 ## Usage
 

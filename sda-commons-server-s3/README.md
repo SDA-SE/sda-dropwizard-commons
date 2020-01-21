@@ -13,7 +13,7 @@ The [`S3Bundle`](src/main/java/org/sdase/commons/server/s3/S3Bundle.java) should
 field in the application class instead of being anonymously added in the initialize method like other bundles of this 
 library. Implementations need to refer to the instance to access the client.
 
-The Dropwizard applications config class needs to provide a 
+The Dropwizard applications configuration class needs to provide a 
 [`S3Configuration`](./src/main/java/org/sdase/commons/server/s3/S3Configuration.java).
 
 The bundle builder requires to define the getter of the `S3Configuration` as method reference to access the 
