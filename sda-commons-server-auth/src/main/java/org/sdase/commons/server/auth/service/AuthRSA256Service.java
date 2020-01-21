@@ -4,6 +4,7 @@ package org.sdase.commons.server.auth.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.sdase.commons.server.auth.error.JwtAuthException;
@@ -76,6 +77,9 @@ public class AuthRSA256Service implements AuthService {
                .build()
                .verify(authorizationToken);
          return Optional.of(jwt);
+      } catch (TokenExpiredException e) {
+         log.warn("Verifying token failed.", e);
+         return Optional.empty();
       } catch (JWTVerificationException e) {
          log.error("Verifying token failed.", e);
          return Optional.empty();
