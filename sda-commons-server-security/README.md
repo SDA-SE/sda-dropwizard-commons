@@ -19,9 +19,9 @@ Currently the [`SecurityBundle`](./src/main/java/org/sdase/commons/server/securi
 - Risk: Buffer Overflow
  -> Attackers use buffer overflow to corrupt the execution stack. Attackers send prepared packets to a web application to execute malicious code.
 - Risk: Clickjacking
- -> Clickjacking integrates an existing website, such as www.sda-se.de, into another malicious website (e.g. www.sda-se.de.xx). The malicious website inserts a transparent layer (technical IFrame) over the integration of the page www.sda-se.de. In addition, the malicious website installed a key logger that records all mouse movements and keystrokes of a victim and sends them to the attacker. URLs such as www.sda-se.de.xx are often distributed via phishing to obtain user access data.
+ -> Clickjacking integrates an existing website, such as `www.sda-se.de`, into another malicious website (e.g. `www.sda-se.de.xx`). The malicious website inserts a transparent layer (technical IFrame) over the integration of the page `www.sda-se.de`. In addition, the malicious website installed a key logger that records all mouse movements and keystrokes of a victim and sends them to the attacker. URLs such as `www.sda-se.de.xx` are often distributed via phishing to obtain user access data.
 - Risk: Interpretation of content by the browser
- -> Attackers can attempt to upload files to a server, which are then delivered to other users. If the browser of the user/victim interprets the uploaded file, the content type can be misinterpreted. For example, an attacker can hide and upload Javascript code in images, which is then executed in the victim's browser.
+ -> Attackers can attempt to upload files to a server, which are then delivered to other users. If the browser of the user/victim interprets the uploaded file, the content type can be misinterpreted. For example, an attacker can hide and upload JavaScript code in images, which is then executed in the victim's browser.
 - Risk: Cross Site Scripting (XSS)
  -> Attackers attempt to manipulate external resources, such as the content on content delivery services, to execute malicious code on users' browsers. In addition, attackers try to execute malicious JavaScript code via cross-site scripting (XSS) on users' browsers.
 - Risk: Passing on visited URLs to third parties

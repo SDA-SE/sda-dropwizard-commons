@@ -3,7 +3,7 @@
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka-confluent-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka-confluent-testing)
 
 This module adds support for testing with a Confluent Schema Registry. It provides a `ConfluentSchemaRegistryRule`
-that will start a confluent schema registry connecting to a kafka broker. With this registry, you can use Confluent 
+that will start a confluent schema registry connecting to a Kafka broker. With this registry, you can use Confluent 
 `KafkaAvroSerializer` and `KafkaAvroDeserilizer` (that are not included). Please use the same version for these serializers
 than used for confluent schema registry provided with this project.
 
@@ -28,7 +28,8 @@ A running broker is mandatory for a Schema registry. The folloging snippet shows
 ```
 
 ## Example for Confluent AVRO Serializers Test
-An example for using Confluent AVRO Serializers/Deserializers within the kafka bundle, can be found within the
+
+An example for using Confluent AVRO Serializers/Deserializers within the Kafka bundle, can be found within the
 bundle test class  [`KafkaAvroIT`](../sda-commons-server-kafka/src/test/java/org/sdase/commons/server/kafka/KafkaAvroIT.java)
 
 You need to configure the serializers via the config objects since the Confluent classes are not designed using generics.

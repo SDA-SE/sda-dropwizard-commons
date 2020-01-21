@@ -17,7 +17,7 @@ The provided [`local-config.yaml`](./local-config.yaml) allows to start the
 [application](./src/main/java/org/sdase/commons/server/starter/example/SdaPlatformExampleApplication.java) without the 
 need for authentication locally using a run configuration of the favourite IDE that defines the program arguments 
 `server sda-commons-server-starter-example/local-config.yaml`. Note that there will be no data available and the example
-application does not provide POST endpoints. So all that is available is an empty array at `GET /people` and the simple
+application does not provide POST endpoints. All that is available is an empty array at `GET /people` and the simple
 Swagger documentation at `GET /swagger.json` or `GET /swagger.yaml`
 
 The [`config.yaml`](./config.yaml) is an example how the application can be started in production. Such file should be 

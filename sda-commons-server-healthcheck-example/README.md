@@ -1,4 +1,4 @@
-# SDA Commons Server Healthcheck Example
+# SDA Commons Server Health Check Example
 
 This module presents an example 
 [application](/src/main/java/org/sdase/commons/server/healthcheck/example/HealthExampleApplication.java) on how to 

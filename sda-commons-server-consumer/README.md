@@ -11,7 +11,7 @@ Consumers can be differentiated in logs and metrics via a consumers token. The c
 The consumer name will be derived from the received token (currently they are the same) and is added to the 
 [`MDC`](https://www.slf4j.org/manual.html#mdc) and as request property.
 
-If the consumer token is configured as required (= _not optional_) which is the default when using the yaml 
+If the consumer token is configured as required (= _not optional_) which is the default when using the YAML 
 configuration, the server will respond `401 Unauthorized` when the client does not provide a consumer token.
 
 ## Usage
@@ -48,7 +48,7 @@ public class MyApplication extends Application<MyConfiguration> {
 ```
 
 ### Exclude patterns
-When consumer token is set to required, exclude regex patterns can be defined to exclude some urls to require a consumer token. The regex must match
+When consumer token is set to required, exclude regex patterns can be defined to exclude some URLs to require a consumer token. The regex must match
 the resource path to exclude it.
  
 E.g. in `http://localhost:8080/api/projects/1`, `http://localhost:8080/api/` is the base path

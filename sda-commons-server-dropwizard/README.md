@@ -6,7 +6,7 @@
 dependencies and some common Dropwizard bundles for easier configuration that are not dependent on other technology
 than Dropwizard.
 
-This module fixes some version mixes of transitive dependencies in dropwizard. Dependency convergence should be checked 
+This module fixes some version mixes of transitive dependencies in Dropwizard. Dependency convergence should be checked 
 with `gradlew dependencies` on upgrades.
 
 ## Provided Bundles

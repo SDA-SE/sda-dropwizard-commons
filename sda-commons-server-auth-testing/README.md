@@ -102,11 +102,11 @@ Examples can be found in the [test source branch](./src/test) of this module. Th
 - [A test with authentication](./src/test/java/org/sdase/commons/server/auth/testing/AuthRuleIT.java)  
 - [A test with disabled authentication](./src/test/java/org/sdase/commons/server/auth/testing/AuthDisabledIT.java)
   which uses the `EnvironmentRule` instead of the `AuthRule`
-- [An appropriate test config yaml](./src/test/resources/test-config.yaml)
+- [An appropriate test `config.yaml`](./src/test/resources/test-config.yaml)
 
 ## OPA Rule
 
-The OPA Rule is build around Wiremock. The mock can be configured via the rule.
+The OPA Rule is build around WireMock. The mock can be configured via the rule.
 
 To implement a test with an OPA Mock, the `OpaRule` has to be applied around the `DropwizardAppRule` with a RuleChain. Lazy Rule must be used since the OPA Mock starts on a random port. 
 
@@ -174,9 +174,9 @@ To control the OPA mock behavior, the following API is provided
 Examples can be found in the [test source branch](./src/test) of this module. There is
 
 - [An example app](./src/test/java/org/sdase/commons/server/opa/testing/test/OpaBundleTestApp.java)  
-- [A test with opa](./src/test/java/org/sdase/commons/server/opa/testing/OpaIT.java)  
-- [A test with disabled opa support](./src/test/java/org/sdase/commons/server/opa/testing/OpaDisabledIT.java). In this case, only empty constraints are within the principal
-- [An appropriate test config yaml](./src/test/resources/test-opa-config.yaml)
+- [A test with OPA](./src/test/java/org/sdase/commons/server/opa/testing/OpaIT.java)  
+- [A test with disabled OPA support](./src/test/java/org/sdase/commons/server/opa/testing/OpaDisabledIT.java). In this case, only empty constraints are within the principal
+- [An appropriate test `config.yaml`](./src/test/resources/test-opa-config.yaml)
 
 Example with activated AUTH and OPA bundle can be found here:
 - [Example app](./src/test/java/org/sdase/commons/server/opa/testing/test/AuthAndOpaBundleTestApp.java)

@@ -6,8 +6,8 @@ The module `sda-commons-server-prometheus` provides
 
 - an admin endpoint to serve metrics in a format that Prometheus can read. The endpoint is available at the applications 
   admin port at `/metrics/prometheus`
-- an admin endpoint te server Health Check results as prometheus metrics. The endpoint is available at the applications 
-   admin port at `/healthcheck/prometheus`
+- an admin endpoint to serve health check results as Prometheus metrics. The endpoint is available at the applications 
+  admin port at `/healthcheck/prometheus`
 
 ## Provided metrics
 
@@ -15,26 +15,26 @@ Default metrics that are provided at `/metrics/prometheus`:
 
 | Metric name                       | Labels                | Description                                                  | Source                                    |
 |-----------------------------------|-----------------------|--------------------------------------------------------------|-------------------------------------------|
-| **http_request_duration_seconds** |                       | Tracks the time needed to handle a request                   | `RequestDurationFilter`                   | 
-|                                   | _implementing_method_ | The name of the method that handled the request.             | Request Context                           |
-|                                   | _http_method_         | The Http method the client used for the request.             | Request Context                           |
-|                                   | _resource_path_       | The mapped path of the request with path param placeholders. | Request Context                           |
-|                                   | _status_code_         | The Http status code sent with the response.                 | Response Context                          |
-|                                   | _consumer_name_       | Name of the consumer that started the request.               | Request Context Property `Consumer-Name`* |
-| **kafka_consumer_records_lag**    |                       | See https://kafka.apache.org/documentation/#consumer_fetch_monitoring | Bridged from Kafka               | 
-|                                   | _consumer_name_       | Name of the consumer that processed the message              | Bridged from Kafka                        |
-|                                   | _topic_name_          | Name of the topic where messages where consumed from         | Bridged from Kafka                        |
-| **kafka_consumer_topic_message_duration**                 | Tracks the time needed to handle consumed Kafka message      | `MessageListener`                         |
-|                                   | _consumer_name_       | Name of the consumer that processed the message              | Bridged from Kafka                        |
-|                                   | _topic_name_          | Name of the topic where messages where consumed from         | Bridged from Kafka                        |
-| **kafka_producer_topic_message_total**                    | Tracks the number of messaged published to a Kafka topic     | `KafkaMessageProducer`                    |
-|                                   | _consumer_name_       | Name of the consumer that processed the message              | Bridged from Kafka                        |
-|                                   | _topic_name_          | Name of the topic where messages where consumed from         | Bridged from Kafka                        |
-| **jvm_***                         |                       | Multiple metrics about the JVM                               | Bridged from Dropwizard                   |
-| **io_dropwizard_jetty_***         |                       | Multiple metrics from the embedded Jetty server              | Bridged from Dropwizard                   |
-| **io_dropwizard_db_***            |                       | Multiple metrics from the database if a database is used     | Bridged from Dropwizard                   |
+| **`http_request_duration_seconds`** |                       | Tracks the time needed to handle a request                   | `RequestDurationFilter`                   | 
+|                                   | _`implementing_method`_ | The name of the method that handled the request.             | Request Context                           |
+|                                   | _`http_method`_         | The HTTP method the client used for the request.             | Request Context                           |
+|                                   | _`resource_path`_       | The mapped path of the request with path param placeholders. | Request Context                           |
+|                                   | _`status_code`_         | The HTTP status code sent with the response.                 | Response Context                          |
+|                                   | _`consumer_name`_       | Name of the consumer that started the request.               | Request Context Property `Consumer-Name`* |
+| **`kafka_consumer_records_lag`**    |                       | See [Kafka Documentation](https://kafka.apache.org/documentation/#consumer_fetch_monitoring) | Bridged from Kafka               | 
+|                                   | _`consumer_name`_       | Name of the consumer that processed the message              | Bridged from Kafka                        |
+|                                   | _`topic_name`_          | Name of the topic where messages where consumed from         | Bridged from Kafka                        |
+| **`kafka_consumer_topic_message_duration`**                 | Tracks the time needed to handle consumed Kafka message      | `MessageListener`                         |
+|                                   | _`consumer_name`_       | Name of the consumer that processed the message              | Bridged from Kafka                        |
+|                                   | _`topic_name`_          | Name of the topic where messages where consumed from         | Bridged from Kafka                        |
+| **`kafka_producer_topic_message_total`**                    | Tracks the number of messaged published to a Kafka topic     | `KafkaMessageProducer`                    |
+|                                   | _`consumer_name`_       | Name of the consumer that processed the message              | Bridged from Kafka                        |
+|                                   | _`topic_name`_          | Name of the topic where messages where consumed from         | Bridged from Kafka                        |
+| **`jvm_`***                         |                       | Multiple metrics about the JVM                               | Bridged from Dropwizard                   |
+| **`io_dropwizard_jetty_`***         |                       | Multiple metrics from the embedded Jetty server              | Bridged from Dropwizard                   |
+| **`io_dropwizard_db_`***            |                       | Multiple metrics from the database if a database is used     | Bridged from Dropwizard                   |
 
-*) A filter that extracts the consumer from the Http headers should add `Consumer-Name` to the request properties. That
+*) A filter that extracts the consumer from the HTTP headers should add `Consumer-Name` to the request properties. That
    filter is not part of the `PrometheusBundle`.
 
 ## Health Checks
