@@ -16,6 +16,10 @@ jobs:
       matrix:
         java_version: ['1.8', '11']
         os: ['ubuntu-latest', 'windows-latest']
+        exclude:
+          # We have a lot of failures with exactly the Windows with Java 11 combination
+          - os: windows-latest
+            java_version: '11'
 
     steps:
       - uses: actions/checkout@v1
