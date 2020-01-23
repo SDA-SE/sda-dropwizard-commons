@@ -42,7 +42,7 @@ dependencies {
         api "io.confluent:kafka-avro-serializer:4.1.2"
         api "io.confluent:kafka-schema-registry:4.1.2"
         api "io.confluent:kafka-schema-registry-client:4.1.2"
-        api "io.confluent:common-config:4.1.2"
+        api "io.confluent:common-config:5.4.0"
         api "io.confluent:common-utils:4.1.2"
         api "io.confluent:rest-utils:4.1.2"
         api "com.101tec:zkclient:0.10"
