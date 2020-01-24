@@ -77,12 +77,18 @@ public class MongoDbRule extends ExternalResource {
       static final MongodStarter INSTANCE = getMongoStarter();
 
       private static MongodStarter getMongoStarter() {
+         de.flapdoodle.embed.process.store.ExtractedArtifactStoreBuilder artifactStoreBuilder = new ExtractedArtifactStoreBuilder()
+               .defaults(Command.MongoD)
+               .download(createDownloadConfig());
+         // avoid recurring firewall requests on mac,
+         // see https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues/40#issuecomment-14969151
+         if (SystemUtils.IS_OS_MAC_OSX) {
+            artifactStoreBuilder.executableNaming((prefix, postfix) -> "mongod");
+         }
          return MongodStarter
                .getInstance(new RuntimeConfigBuilder()
                      .defaults(Command.MongoD)
-                     .artifactStore(new ExtractedArtifactStoreBuilder()
-                           .defaults(Command.MongoD)
-                           .download(createDownloadConfig()))
+                     .artifactStore(artifactStoreBuilder)
                      .build());
       }
 
