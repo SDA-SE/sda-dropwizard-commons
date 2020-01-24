@@ -86,7 +86,7 @@ dependencies {
         api "org.jboss.weld.servlet:weld-servlet-core:3.0.4.Final"
         api "org.objenesis:objenesis:2.6" // not 3.x because we have a version conflict with Mockito
         api "org.yaml:snakeyaml:1.25"
-        api "org.eclipse.jetty:jetty-security:9.4.18.v20190429" // io.confluent:rest-utils uses old Jetty version
+        api "org.eclipse.jetty:jetty-security:9.4.26.v20200117" // io.confluent:rest-utils uses old Jetty version
         api "org.eclipse.jetty:jetty-jmx:9.4.18.v20190429" // see above
 
         // test dependencies
