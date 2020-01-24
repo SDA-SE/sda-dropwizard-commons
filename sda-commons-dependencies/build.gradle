@@ -19,7 +19,7 @@ dependencies {
 
     constraints {
         api "com.auth0:java-jwt:3.9.0"
-        api "com.amazonaws:aws-java-sdk-s3:1.11.705"
+        api "com.amazonaws:aws-java-sdk-s3:1.11.713"
         api "com.github.database-rider:rider-core:1.2.9" // latest version that supports Parameterized tests: https://github.com/database-rider/database-rider/issues/104
         api "com.github.ftrossbach:club-topicana-core:0.1.0"
         api "com.google.code.findbugs:jsr305:3.0.2"
