@@ -11,6 +11,7 @@ ext {
     prometheusVersion = '0.8.1'
     resilience4jVersion = '0.15.0'
     swaggerCoreVersion = '1.6.0'
+    jettyVersion = '9.4.18.v20190429'
 }
 
 dependencies {
@@ -86,8 +87,8 @@ dependencies {
         api "org.jboss.weld.servlet:weld-servlet-core:3.0.4.Final"
         api "org.objenesis:objenesis:2.6" // not 3.x because we have a version conflict with Mockito
         api "org.yaml:snakeyaml:1.25"
-        api "org.eclipse.jetty:jetty-security:9.4.18.v20190429" // io.confluent:rest-utils uses old Jetty version
-        api "org.eclipse.jetty:jetty-jmx:9.4.18.v20190429" // see above
+        api "org.eclipse.jetty:jetty-security:$jettyVersion" // io.confluent:rest-utils uses old Jetty version
+        api "org.eclipse.jetty:jetty-jmx:$jettyVersion" // see above
 
         // test dependencies
         api "com.github.java-json-tools:json-schema-validator:2.2.10"
