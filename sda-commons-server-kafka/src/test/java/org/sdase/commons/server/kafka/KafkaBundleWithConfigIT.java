@@ -551,11 +551,10 @@ public class KafkaBundleWithConfigIT {
          stringStringProducer.send(new ProducerRecord<>(topic, message));
       }
 
-      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).until(() -> callbackCount > 0);
-
-      assertThat(resultsString).containsExactlyInAnyOrderElementsOf(checkMessages);
-      assertThat(callbackCount).isGreaterThan(0);
-
+      await().atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS).untilAsserted(() -> {
+        assertThat(resultsString).containsExactlyInAnyOrderElementsOf(checkMessages);
+        assertThat(callbackCount).isGreaterThan(0);
+      });
    }
 
    @Test
