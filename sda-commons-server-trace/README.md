@@ -15,6 +15,7 @@ The calls can be correlated in logs and metrics using this trace token that is a
 
 When using new threads for clients to invoke another service, the trace token is not transferred out-of-the-box. 
 The same holds for mentioning the trace token in log entries of new threads.
+See the documentation about [concurrency](../sda-commons-client-jersey/README.md#concurrency) on how to transfer this context into another thread.
 
 
 ## Usage

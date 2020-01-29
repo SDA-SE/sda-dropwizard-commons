@@ -152,6 +152,20 @@ To support sending multipart requests like file uploads, `sda-commons-shared-for
 
 The client is the configured automatically to support multipart.
 
+
+## Concurrency
+
+If you plan to use the Jersey client from another thread, note that the authorization from the request context and the trace token are missing.
+This can cause issues.
+You can use `ContainerRequestContextHolder.transferRequestContext` to transfer the request context and `MDC` to another thread.
+
+```java
+executorService.submit(transferRequestContext(() -> {
+  // MDC.get("Trace-Token") returns the same value as the parent thread
+})).get();
+```
+
+
 ## Tips and Tricks
 
 ### 3rd Party `javax.ws.rs-api` Client Implementations in Classpath
