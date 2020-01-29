@@ -1,5 +1,7 @@
 package org.sdase.commons.client.jersey.filter;
 
+import java.util.Map;
+import java.util.concurrent.Callable;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -7,6 +9,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import java.util.Optional;
+import org.slf4j.MDC;
 
 /**
  * A filter that provides the current request from a {@link ThreadLocal}. Currently it is only implemented for the
@@ -33,5 +36,56 @@ public class ContainerRequestContextHolder implements ContainerRequestFilter, Co
    @Override
    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
       REQUEST_CONTEXT_HOLDER.remove();
+   }
+
+   /**
+    * Transfers the request context and MDC with the runnable to a new thread.
+    * @param runnable The runnable to wrap with the current request context and MDC.
+    * @return The original runnable wrapped with code to transfer the request context and MDC.
+    */
+   public static Runnable transferRequestContext(Runnable runnable) {
+      Map<String, String> contextMap = MDC.getCopyOfContextMap();
+      ContainerRequestContext requestContext = currentRequestContext().orElse(null);
+
+      return () -> {
+         ContainerRequestContextHolder containerRequestContextHolder = new ContainerRequestContextHolder();
+         try {
+            if (contextMap != null) {
+               MDC.setContextMap(contextMap);
+            }
+            containerRequestContextHolder.filter(requestContext);
+
+            runnable.run();
+         } finally {
+            MDC.clear();
+            containerRequestContextHolder.filter(requestContext, null);
+         }
+      };
+   }
+
+   /**
+    * Transfers the request context and MDC with the callable to a new thread.
+    * @param callable The callable to wrap with the current request context and MDC.
+    * @param <V> The return type of the callable
+    * @return The original callable wrapped with code to transfer the request context and MDC.
+    */
+   public static <V> Callable<V> transferRequestContext(Callable<V> callable) {
+      Map<String, String> contextMap = MDC.getCopyOfContextMap();
+      ContainerRequestContext requestContext = currentRequestContext().orElse(null);
+
+      return () -> {
+         ContainerRequestContextHolder containerRequestContextHolder = new ContainerRequestContextHolder();
+         try {
+            if (contextMap != null) {
+               MDC.setContextMap(contextMap);
+            }
+            containerRequestContextHolder.filter(requestContext);
+
+            return callable.call();
+         } finally {
+            MDC.clear();
+            containerRequestContextHolder.filter(requestContext, null);
+         }
+      };
    }
 }
