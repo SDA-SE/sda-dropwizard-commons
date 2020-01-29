@@ -332,6 +332,11 @@ The underlying consumer commits records periodically using the kafka config defa
 any extra logic in case of re-balancing. Therefore, the listener does not support an exactly once semantic. It might occur
 that messages are redelivered after re-balance activities. 
 
+#### SyncCommit MessageListenerStrategy
+This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle.
+
+The strategy requires `enable.auto.commit` set to `false` and uses sync commit explicitly before polling a new chunk.
+
 #### Retry processing error MessageListenerStrategy
 This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle. 
 

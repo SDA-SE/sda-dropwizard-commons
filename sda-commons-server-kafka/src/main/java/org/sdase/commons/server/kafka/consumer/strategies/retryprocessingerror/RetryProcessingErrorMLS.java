@@ -20,7 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link MessageListenerStrategy} that uses autocommit only.
+ * {@link MessageListenerStrategy} commits records for each partition.
+ * In case of processing errors an error handler can decide if processing should be retried or stopped.
  */
 public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V> {
 
