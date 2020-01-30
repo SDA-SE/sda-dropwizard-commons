@@ -15,28 +15,31 @@ import org.sdase.commons.server.testing.LazyRule;
 
 public class S3BundleTest {
 
-   private static final S3MockRule S_3_MOCK_RULE = S3MockRule.builder().putObject("bucket", "key", "data").build();
+  private static final S3MockRule S_3_MOCK_RULE =
+      S3MockRule.builder().putObject("bucket", "key", "data").build();
 
-   private static final LazyRule<DropwizardAppRule<Config>> DW = new LazyRule<>(() -> DropwizardRuleHelper
-         .dropwizardTestAppFrom(TestApp.class)
-         .withConfigFrom(Config::new)
-         .withRandomPorts()
-         .withConfigurationModifier(c -> c
-               .getS3Config()
-               .setEndpoint(S_3_MOCK_RULE.getEndpoint())
-               .setAccessKey("access-key")
-               .setSecretKey("secret-key"))
-         .build());
+  private static final LazyRule<DropwizardAppRule<Config>> DW =
+      new LazyRule<>(
+          () ->
+              DropwizardRuleHelper.dropwizardTestAppFrom(TestApp.class)
+                  .withConfigFrom(Config::new)
+                  .withRandomPorts()
+                  .withConfigurationModifier(
+                      c ->
+                          c.getS3Config()
+                              .setEndpoint(S_3_MOCK_RULE.getEndpoint())
+                              .setAccessKey("access-key")
+                              .setSecretKey("secret-key"))
+                  .build());
 
-   @ClassRule
-   public static final RuleChain CHAIN = RuleChain.outerRule(S_3_MOCK_RULE).around(DW);
+  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(S_3_MOCK_RULE).around(DW);
 
-   @Test()
-   public void shouldProvideClient() {
-      TestApp app = DW.getRule().getApplication();
-      S3Bundle bundle = app.getS3Bundle();
-      AmazonS3 client = bundle.getClient();
+  @Test()
+  public void shouldProvideClient() {
+    TestApp app = DW.getRule().getApplication();
+    S3Bundle bundle = app.getS3Bundle();
+    AmazonS3 client = bundle.getClient();
 
-      assertThat(client.getObject("bucket", "key").getObjectContent()).hasContent("data");
-   }
+    assertThat(client.getObject("bucket", "key").getObjectContent()).hasContent("data");
+  }
 }

@@ -8,6 +8,4 @@ import java.util.function.Function;
  *
  * @param <C> the type of the specific {@link Configuration} used in the application
  */
-public interface OpaConfigProvider<C extends Configuration> extends Function<C, OpaConfig> {
-
-}
+public interface OpaConfigProvider<C extends Configuration> extends Function<C, OpaConfig> {}

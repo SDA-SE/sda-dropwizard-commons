@@ -7,37 +7,37 @@ import org.sdase.commons.server.swagger.SwaggerBundle;
 
 public class SwaggerBuilderTest {
 
-   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
+  private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
-   @Before
-   public void setUp() {
-      bundleAssertion = new BundleAssertion<>();
-   }
+  @Before
+  public void setUp() {
+    bundleAssertion = new BundleAssertion<>();
+  }
 
-   @Test
-   public void simplestConfig() {
+  @Test
+  public void simplestConfig() {
 
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withRequiredConsumerToken()
-            .withSwaggerInfoTitle("Starter")// NOSONAR
+            .withSwaggerInfoTitle("Starter") // NOSONAR
             .addSwaggerResourcePackageClass(this.getClass())
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            SwaggerBundle.builder()
-                  .withTitle("Starter")
-                  .addResourcePackageClass(this.getClass())
-                  .build()
-      );
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        SwaggerBundle.builder()
+            .withTitle("Starter")
+            .addResourcePackageClass(this.getClass())
+            .build());
+  }
 
-   }
+  @Test
+  public void allConfigSimple() {
 
-   @Test
-   public void allConfigSimple() {
-
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withRequiredConsumerToken()
             .withSwaggerInfoTitle("Starter")
@@ -48,24 +48,23 @@ public class SwaggerBuilderTest {
             .addSwaggerResourcePackageClass(this.getClass())
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            SwaggerBundle.builder()
-                  .withTitle("Starter")
-                  .addResourcePackageClass(this.getClass())
-                  .withVersion("1.1.1")
-                  .withDescription("A test application")
-                  .withLicense("Sample License")
-                  .withContact("John Doe")
-                  .build()
-      );
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        SwaggerBundle.builder()
+            .withTitle("Starter")
+            .addResourcePackageClass(this.getClass())
+            .withVersion("1.1.1")
+            .withDescription("A test application")
+            .withLicense("Sample License")
+            .withContact("John Doe")
+            .build());
+  }
 
-   }
+  @Test
+  public void allConfigMedium() {
 
-   @Test
-   public void allConfigMedium() {
-
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withRequiredConsumerToken()
             .withSwaggerInfoTitle("Starter")
@@ -76,24 +75,23 @@ public class SwaggerBuilderTest {
             .addSwaggerResourcePackageClass(this.getClass())
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            SwaggerBundle.builder()
-                  .withTitle("Starter")
-                  .addResourcePackageClass(this.getClass())
-                  .withVersion("1.1.1")
-                  .withDescription("A test application")
-                  .withLicense("Sample License", "http://example.com/license")
-                  .withContact("John Doe", "j.doe@example.com")
-                  .build()
-      );
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        SwaggerBundle.builder()
+            .withTitle("Starter")
+            .addResourcePackageClass(this.getClass())
+            .withVersion("1.1.1")
+            .withDescription("A test application")
+            .withLicense("Sample License", "http://example.com/license")
+            .withContact("John Doe", "j.doe@example.com")
+            .build());
+  }
 
-   }
+  @Test
+  public void allConfigFullDetail() {
 
-   @Test
-   public void allConfigFullDetail() {
-
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withRequiredConsumerToken()
             .withSwaggerInfoTitle("Starter")
@@ -101,51 +99,50 @@ public class SwaggerBuilderTest {
             .withSwaggerInfoDescription("A test application")
             .withSwaggerInfoTermsOfServiceUrl("http://example.com/tos")
             .withSwaggerInfoLicense("Sample License", "http://example.com/license")
-            .withSwaggerInfoContact("John Doe", "j.doe@example.com", "http://example.com/users/jdoe")
+            .withSwaggerInfoContact(
+                "John Doe", "j.doe@example.com", "http://example.com/users/jdoe")
             .addSwaggerResourcePackageClass(this.getClass())
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            SwaggerBundle.builder()
-                  .withTitle("Starter")
-                  .addResourcePackageClass(this.getClass())
-                  .withVersion("1.1.1")
-                  .withDescription("A test application")
-                  .withTermsOfServiceUrl("http://example.com/tos")
-                  .withLicense("Sample License", "http://example.com/license")
-                  .withContact("John Doe", "j.doe@example.com", "http://example.com/users/jdoe")
-                  .build()
-      );
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        SwaggerBundle.builder()
+            .withTitle("Starter")
+            .addResourcePackageClass(this.getClass())
+            .withVersion("1.1.1")
+            .withDescription("A test application")
+            .withTermsOfServiceUrl("http://example.com/tos")
+            .withLicense("Sample License", "http://example.com/license")
+            .withContact("John Doe", "j.doe@example.com", "http://example.com/users/jdoe")
+            .build());
+  }
 
-   }
+  @Test
+  public void noEmbedParameter() {
 
-   @Test
-   public void noEmbedParameter() {
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
+            .usingSdaPlatformConfiguration()
+            .withRequiredConsumerToken()
+            .withSwaggerInfoTitle("Starter")
+            .disableSwaggerEmbedParameter()
+            .addSwaggerResourcePackageClass(this.getClass())
+            .build();
 
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
-          .usingSdaPlatformConfiguration()
-          .withRequiredConsumerToken()
-          .withSwaggerInfoTitle("Starter")
-          .disableSwaggerEmbedParameter()
-          .addSwaggerResourcePackageClass(this.getClass())
-          .build();
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        SwaggerBundle.builder()
+            .withTitle("Starter")
+            .addResourcePackageClass(this.getClass())
+            .disableEmbedParameter()
+            .build());
+  }
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-          bundle,
-          SwaggerBundle.builder()
-              .withTitle("Starter")
-              .addResourcePackageClass(this.getClass())
-              .disableEmbedParameter()
-              .build()
-      );
+  @Test
+  public void noJsonExamples() {
 
-   }
-
-   @Test
-   public void noJsonExamples() {
-
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withRequiredConsumerToken()
             .withSwaggerInfoTitle("Starter")
@@ -153,21 +150,20 @@ public class SwaggerBuilderTest {
             .addSwaggerResourcePackageClass(this.getClass())
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            SwaggerBundle.builder()
-                  .withTitle("Starter")
-                  .addResourcePackageClass(this.getClass())
-                  .disableJsonExamples()
-                  .build()
-      );
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        SwaggerBundle.builder()
+            .withTitle("Starter")
+            .addResourcePackageClass(this.getClass())
+            .disableJsonExamples()
+            .build());
+  }
 
-   }
+  @Test
+  public void multipleResourcePackages() {
 
-   @Test
-   public void multipleResourcePackages() {
-
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withRequiredConsumerToken()
             .withSwaggerInfoTitle("Starter")
@@ -175,14 +171,12 @@ public class SwaggerBuilderTest {
             .addSwaggerResourcePackage("com.example")
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            SwaggerBundle.builder()
-                  .withTitle("Starter")
-                  .addResourcePackageClass(this.getClass())
-                  .addResourcePackage("com.example")
-                  .build()
-      );
-
-   }
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        SwaggerBundle.builder()
+            .withTitle("Starter")
+            .addResourcePackageClass(this.getClass())
+            .addResourcePackage("com.example")
+            .build());
+  }
 }

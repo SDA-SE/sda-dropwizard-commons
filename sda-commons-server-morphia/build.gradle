@@ -1,12 +1,12 @@
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
-    
-    compile 'dev.morphia.morphia:core'
-    compile 'dev.morphia.morphia:validation'
+  compile project(':sda-commons-server-dropwizard')
 
-    compile 'org.bouncycastle:bcpkix-jdk15on'
+  compile 'dev.morphia.morphia:core'
+  compile 'dev.morphia.morphia:validation'
 
-    testCompile project(':sda-commons-server-mongo-testing')
-    testCompile 'commons-io:commons-io:2.6'
-    testCompile 'org.assertj:assertj-core'
+  compile 'org.bouncycastle:bcpkix-jdk15on'
+
+  testCompile project(':sda-commons-server-mongo-testing')
+  testCompile 'commons-io:commons-io:2.6'
+  testCompile 'org.assertj:assertj-core'
 }

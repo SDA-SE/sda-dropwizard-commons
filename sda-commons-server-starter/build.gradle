@@ -1,20 +1,20 @@
 dependencies {
-    compile project(':sda-commons-server-auth')
-    compile project(':sda-commons-server-consumer')
-    compile project(':sda-commons-server-cors')
-    compile project(':sda-commons-server-dropwizard')
-    compile project(':sda-commons-server-jackson')
-    compile project(':sda-commons-server-prometheus')
-    compile project(':sda-commons-server-security')
-    compile project(':sda-commons-server-swagger')
-    compile project(':sda-commons-server-trace')
-    compile project(':sda-commons-server-healthcheck')
+  compile project(':sda-commons-server-auth')
+  compile project(':sda-commons-server-consumer')
+  compile project(':sda-commons-server-cors')
+  compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-server-jackson')
+  compile project(':sda-commons-server-prometheus')
+  compile project(':sda-commons-server-security')
+  compile project(':sda-commons-server-swagger')
+  compile project(':sda-commons-server-trace')
+  compile project(':sda-commons-server-healthcheck')
 
-    testCompile project(':sda-commons-server-testing')
-    testCompile 'org.assertj:assertj-core'
+  testCompile project(':sda-commons-server-testing')
+  testCompile 'org.assertj:assertj-core'
 }
 
 test {
-    // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
-    systemProperty "sun.net.http.allowRestrictedHeaders", "true"
+  // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
+  systemProperty "sun.net.http.allowRestrictedHeaders", "true"
 }

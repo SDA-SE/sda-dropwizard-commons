@@ -9,6 +9,5 @@ import java.util.function.Function;
  * @param <C> the type of the specific {@link Configuration} used in the application
  */
 @FunctionalInterface
-public interface CorsConfigProvider<C extends Configuration> extends Function<C, CorsConfiguration> {
-
-}
+public interface CorsConfigProvider<C extends Configuration>
+    extends Function<C, CorsConfiguration> {}

@@ -1,14 +1,14 @@
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-server-dropwizard')
 
-    compile 'org.jboss.weld.se:weld-se-core', {
-        exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
-    }
-    compile 'org.jboss.weld.servlet:weld-servlet-core', {
-        exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
-    }
-    compile 'javax.el:javax.el-api'
+  compile 'org.jboss.weld.se:weld-se-core', {
+    exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
+  }
+  compile 'org.jboss.weld.servlet:weld-servlet-core', {
+    exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
+  }
+  compile 'javax.el:javax.el-api'
 
-    compile 'javax.enterprise:cdi-api'
-    compile 'org.glassfish.jersey.ext.cdi:jersey-cdi1x'
+  compile 'javax.enterprise:cdi-api'
+  compile 'org.glassfish.jersey.ext.cdi:jersey-cdi1x'
 }

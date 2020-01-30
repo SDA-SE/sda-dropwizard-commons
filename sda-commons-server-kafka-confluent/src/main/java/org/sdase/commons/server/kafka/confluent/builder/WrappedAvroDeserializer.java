@@ -5,9 +5,10 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.sdase.commons.server.kafka.confluent.serializers.WrappedNoSerializationErrorAvroDeserializer;
 
 /**
- * Helper to create a @{@link WrappedNoSerializationErrorAvroDeserializer} specific for Avro deserializer
+ * Helper to create a @{@link WrappedNoSerializationErrorAvroDeserializer} specific for Avro
+ * deserializer
  */
-public class WrappedAvroDeserializer  {
+public class WrappedAvroDeserializer {
 
   public interface ClassTypeBuilder<T> {
     ConfigBuilder<T> withClassType(Class<T> clazz);
@@ -25,7 +26,8 @@ public class WrappedAvroDeserializer  {
     return new Builder<>();
   }
 
-  private static class Builder<T> implements ClassTypeBuilder<T>, ConfigBuilder<T>, FinalBuilder<T> {
+  private static class Builder<T>
+      implements ClassTypeBuilder<T>, ConfigBuilder<T>, FinalBuilder<T> {
     private Class<T> clazz;
     private Map<String, String> configMap;
 

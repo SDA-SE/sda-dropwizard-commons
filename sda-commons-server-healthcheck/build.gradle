@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-server-dropwizard')
 
-    testCompile project(':sda-commons-server-testing')
+  testCompile project(':sda-commons-server-testing')
 }

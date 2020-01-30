@@ -21,10 +21,15 @@ public class ContainerRequestContextHolderTest {
     initializeContext();
 
     ExecutorService executorService = Executors.newFixedThreadPool(1);
-    executorService.submit(transferRequestContext(() -> {
-      assertThat(MDC.get("Trace-Token")).isEqualTo("a-trace-token");
-      assertThat(new AuthHeaderClientFilter().getHeaderValue().orElse(null)).isEqualTo("an-access-token");
-    })).get();
+    executorService
+        .submit(
+            transferRequestContext(
+                () -> {
+                  assertThat(MDC.get("Trace-Token")).isEqualTo("a-trace-token");
+                  assertThat(new AuthHeaderClientFilter().getHeaderValue().orElse(null))
+                      .isEqualTo("an-access-token");
+                }))
+        .get();
 
     executorService.shutdown();
   }
@@ -35,11 +40,17 @@ public class ContainerRequestContextHolderTest {
     initializeContext();
 
     ExecutorService executorService = Executors.newFixedThreadPool(1);
-    int result = executorService.submit(transferRequestContext(() -> {
-      assertThat(MDC.get("Trace-Token")).isEqualTo("a-trace-token");
-      assertThat(new AuthHeaderClientFilter().getHeaderValue().orElse(null)).isEqualTo("an-access-token");
-      return 42;
-    })).get();
+    int result =
+        executorService
+            .submit(
+                transferRequestContext(
+                    () -> {
+                      assertThat(MDC.get("Trace-Token")).isEqualTo("a-trace-token");
+                      assertThat(new AuthHeaderClientFilter().getHeaderValue().orElse(null))
+                          .isEqualTo("an-access-token");
+                      return 42;
+                    }))
+            .get();
 
     assertThat(result).isEqualTo(42);
 
@@ -53,11 +64,14 @@ public class ContainerRequestContextHolderTest {
 
     ExecutorService executorService = Executors.newFixedThreadPool(1);
     executorService.submit(transferRequestContext(() -> {})).get();
-    executorService.submit(() -> {
-      // As the thread is reused, we expect it to be cleaned.
-      assertThat(MDC.get("Trace-Token")).isNull();
-      assertThat(new AuthHeaderClientFilter().getHeaderValue().isPresent()).isFalse();
-    }).get();
+    executorService
+        .submit(
+            () -> {
+              // As the thread is reused, we expect it to be cleaned.
+              assertThat(MDC.get("Trace-Token")).isNull();
+              assertThat(new AuthHeaderClientFilter().getHeaderValue().isPresent()).isFalse();
+            })
+        .get();
 
     executorService.shutdown();
   }
@@ -69,21 +83,28 @@ public class ContainerRequestContextHolderTest {
 
     ExecutorService executorService = Executors.newFixedThreadPool(1);
     executorService.submit(transferRequestContext(() -> {})).get();
-    executorService.submit(() -> {
-      // As the thread is reused, we expect it to be cleaned.
-      assertThat(MDC.get("Trace-Token")).isNull();
-      assertThat(new AuthHeaderClientFilter().getHeaderValue().isPresent()).isFalse();
-      return 42;
-    }).get();
+    executorService
+        .submit(
+            () -> {
+              // As the thread is reused, we expect it to be cleaned.
+              assertThat(MDC.get("Trace-Token")).isNull();
+              assertThat(new AuthHeaderClientFilter().getHeaderValue().isPresent()).isFalse();
+              return 42;
+            })
+        .get();
 
     executorService.shutdown();
   }
 
   private void initializeContext() {
     MDC.put("Trace-Token", "a-trace-token");
-    ContainerRequest containerRequest = new ContainerRequest(
-        URI.create("http://example.com"), URI.create("http://example.com/path"), "PUT", null,
-        new MapPropertiesDelegate());
+    ContainerRequest containerRequest =
+        new ContainerRequest(
+            URI.create("http://example.com"),
+            URI.create("http://example.com/path"),
+            "PUT",
+            null,
+            new MapPropertiesDelegate());
     containerRequest.header(AUTHORIZATION, "an-access-token");
     new ContainerRequestContextHolder().filter(containerRequest);
   }

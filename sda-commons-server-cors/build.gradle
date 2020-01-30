@@ -1,11 +1,11 @@
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
-    compile project(':sda-commons-shared-tracing')
+  compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-shared-tracing')
 
-    testCompile project(':sda-commons-server-testing')
+  testCompile project(':sda-commons-server-testing')
 }
 
 test {
-    // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
-    systemProperty "sun.net.http.allowRestrictedHeaders", "true"
+  // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
+  systemProperty "sun.net.http.allowRestrictedHeaders", "true"
 }

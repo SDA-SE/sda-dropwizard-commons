@@ -8,10 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>
- *    Service to use with a custom Command to initiate database migrations from the command line. An implementation may
- *    be:
- * </p>
+ * Service to use with a custom Command to initiate database migrations from the command line. An
+ * implementation may be:
+ *
  * <pre>
  *    <code>public class DbMigrationCommand extends ConfiguredCommand&lt;MyAppConfig&gt; {
  *        &#x40;Override
@@ -21,36 +20,35 @@ import org.slf4j.LoggerFactory;
  *    }
  *    </code>
  * </pre>
- * <p>
  *
- * </p>
+ * <p>
  */
 public class DbMigrationService {
 
-   public static final String DEFAULT_COMMAND_NAME = "migrateDB";
+  public static final String DEFAULT_COMMAND_NAME = "migrateDB";
 
-   public static final String DEFAULT_COMMAND_DOC = "Migrate DB to the actual schema version.";
+  public static final String DEFAULT_COMMAND_DOC = "Migrate DB to the actual schema version.";
 
-   private static final Logger LOG = LoggerFactory.getLogger(DbMigrationService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DbMigrationService.class);
 
-   private DataSourceFactory database;
+  private DataSourceFactory database;
 
+  public DbMigrationService(DataSourceFactory database) {
+    this.database = database;
+  }
 
-   public DbMigrationService(DataSourceFactory database) {
-      this.database = database;
-   }
+  public void migrateDatabase() {
 
-   public void migrateDatabase() {
-
-      String databaseUrl = database.getUrl();
-      String databaseSchema = database.getProperties().getOrDefault("currentSchema", "public");
-      LOG.info("Starting database migration for schema {} using database {}", databaseSchema, databaseUrl);
-      Configuration configuration = new FluentConfiguration()
-          .dataSource(databaseUrl, database.getUser(), database.getPassword())
-          .schemas(databaseSchema);
-      Flyway flyway = new Flyway(configuration);
-      flyway.migrate();
-      LOG.info("Database migration successful.");
-
-   }
+    String databaseUrl = database.getUrl();
+    String databaseSchema = database.getProperties().getOrDefault("currentSchema", "public");
+    LOG.info(
+        "Starting database migration for schema {} using database {}", databaseSchema, databaseUrl);
+    Configuration configuration =
+        new FluentConfiguration()
+            .dataSource(databaseUrl, database.getUser(), database.getPassword())
+            .schemas(databaseSchema);
+    Flyway flyway = new Flyway(configuration);
+    flyway.migrate();
+    LOG.info("Database migration successful.");
+  }
 }

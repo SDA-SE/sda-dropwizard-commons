@@ -6,8 +6,8 @@ import javax.ws.rs.core.Response;
 
 @Path("/open")
 public class OpenEndPoint {
-   @GET
-   public Response getOpenData() {
-      return Response.ok("We are open.").build();
-   }
+  @GET
+  public Response getOpenData() {
+    return Response.ok("We are open.").build();
+  }
 }

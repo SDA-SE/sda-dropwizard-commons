@@ -1,7 +1,7 @@
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
-    compile 'junit:junit'
-    compile 'org.mockito:mockito-core'
-    compile 'org.assertj:assertj-core'
-    compile 'io.dropwizard:dropwizard-testing'
+  compile project(':sda-commons-server-dropwizard')
+  compile 'junit:junit'
+  compile 'org.mockito:mockito-core'
+  compile 'org.assertj:assertj-core'
+  compile 'io.dropwizard:dropwizard-testing'
 }

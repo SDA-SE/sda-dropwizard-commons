@@ -5,12 +5,9 @@ import io.dropwizard.Configuration;
 
 public class KafkaExampleConfiguration extends Configuration {
 
-   @JsonProperty
-   private KafkaConfiguration kafka = new KafkaConfiguration();
+  @JsonProperty private KafkaConfiguration kafka = new KafkaConfiguration();
 
-   KafkaConfiguration getKafka() {
-      return kafka;
-   }
-
-
+  KafkaConfiguration getKafka() {
+    return kafka;
+  }
 }

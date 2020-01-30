@@ -4,14 +4,14 @@ import io.dropwizard.Configuration;
 
 public class JacksonConfigurationTestAppConfig extends Configuration {
 
-   private boolean disableFieldFilter;
+  private boolean disableFieldFilter;
 
-   public boolean isDisableFieldFilter() {
-      return disableFieldFilter;
-   }
+  public boolean isDisableFieldFilter() {
+    return disableFieldFilter;
+  }
 
-   public JacksonConfigurationTestAppConfig setDisableFieldFilter(boolean disableFieldFilter) {
-      this.disableFieldFilter = disableFieldFilter;
-      return this;
-   }
+  public JacksonConfigurationTestAppConfig setDisableFieldFilter(boolean disableFieldFilter) {
+    this.disableFieldFilter = disableFieldFilter;
+    return this;
+  }
 }

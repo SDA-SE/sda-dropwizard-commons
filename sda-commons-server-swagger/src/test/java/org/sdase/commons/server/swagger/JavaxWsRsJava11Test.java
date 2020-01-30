@@ -7,9 +7,7 @@ import org.junit.Test;
 
 public class JavaxWsRsJava11Test {
 
-  /**
-   * This test makes sure RS API 2 is in the classpath.
-   */
+  /** This test makes sure RS API 2 is in the classpath. */
   @Test
   public void shouldBeAbleToImportClassFromRsApi2() {
     assertThat(Status.REQUEST_TIMEOUT).isNotNull();

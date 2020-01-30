@@ -19,46 +19,45 @@ import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaDisabledIT {
 
-   @ClassRule
-   public static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW = new LazyRule<>(
-         () -> DropwizardRuleHelper
-               .dropwizardTestAppFrom(OpaBundleTestApp.class)
-               .withConfigFrom(OpaBundeTestAppConfiguration::new)
-               .withRandomPorts()
-               .withConfigurationModifier(c -> c.getOpa().setDisableOpa(true))
-               .build());
+  @ClassRule
+  public static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW =
+      new LazyRule<>(
+          () ->
+              DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
+                  .withConfigFrom(OpaBundeTestAppConfiguration::new)
+                  .withRandomPorts()
+                  .withConfigurationModifier(c -> c.getOpa().setDisableOpa(true))
+                  .build());
 
-   @Rule
-   public RetryRule rule = new RetryRule();
+  @Rule public RetryRule rule = new RetryRule();
 
-   @Test
-   @Retry(5)
-   public void shouldAllowAccess() {
-      Response response = DW
-            .getRule()
+  @Test
+  @Retry(5)
+  public void shouldAllowAccess() {
+    Response response =
+        DW.getRule()
             .client()
             .target("http://localhost:" + DW.getRule().getLocalPort()) // NOSONAR
             .path("resources")
             .request()
             .get(); // NOSONAR
 
-      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-   }
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+  }
 
   @Test
   @Retry(5)
   public void shouldNotIncludeHealthCheck() {
-    Response response = DW
-        .getRule()
-        .client()
-        .target("http://localhost:" + DW.getRule().getAdminPort()) // NOSONAR
-        .path("healthcheck")
-        .request(MediaType.APPLICATION_JSON_TYPE)
-        .get();
+    Response response =
+        DW.getRule()
+            .client()
+            .target("http://localhost:" + DW.getRule().getAdminPort()) // NOSONAR
+            .path("healthcheck")
+            .request(MediaType.APPLICATION_JSON_TYPE)
+            .get();
 
     assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-    assertThat(response.readEntity(String.class)).doesNotContain(PolicyExistsHealthCheck.DEFAULT_NAME);
-
+    assertThat(response.readEntity(String.class))
+        .doesNotContain(PolicyExistsHealthCheck.DEFAULT_NAME);
   }
-
 }

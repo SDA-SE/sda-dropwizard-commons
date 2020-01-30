@@ -11,32 +11,35 @@ import org.sdase.commons.server.trace.TraceTokenBundle;
 
 public class ClientTestApp extends Application<ClientTestConfig> {
 
-   private JerseyClientBundle<ClientTestConfig> jerseyClientBundle = JerseyClientBundle
-         .builder()
-         .withConsumerTokenProvider(ClientTestConfig::getConsumerToken)
-         .build();
+  private JerseyClientBundle<ClientTestConfig> jerseyClientBundle =
+      JerseyClientBundle.builder()
+          .withConsumerTokenProvider(ClientTestConfig::getConsumerToken)
+          .build();
 
-   public static void main(String[] args) throws Exception {
-      new ClientTestApp().run(args);
-   }
+  public static void main(String[] args) throws Exception {
+    new ClientTestApp().run(args);
+  }
 
-   @Override
-   public void initialize(Bootstrap<ClientTestConfig> bootstrap) {
-      bootstrap.getObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-      bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
-      bootstrap.addBundle(TraceTokenBundle.builder().build());
-      bootstrap.addBundle(jerseyClientBundle);
-      bootstrap.addBundle(new MultiPartBundle());
-   }
+  @Override
+  public void initialize(Bootstrap<ClientTestConfig> bootstrap) {
+    bootstrap.getObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
+    bootstrap.addBundle(TraceTokenBundle.builder().build());
+    bootstrap.addBundle(jerseyClientBundle);
+    bootstrap.addBundle(new MultiPartBundle());
+  }
 
-   @Override
-   public void run(ClientTestConfig configuration, Environment environment) {
-      environment.jersey().register(this);
-      environment.jersey().register(
-            new ClientTestEndPoint(jerseyClientBundle.getClientFactory(), configuration.getMockBaseUrl()));
-   }
+  @Override
+  public void run(ClientTestConfig configuration, Environment environment) {
+    environment.jersey().register(this);
+    environment
+        .jersey()
+        .register(
+            new ClientTestEndPoint(
+                jerseyClientBundle.getClientFactory(), configuration.getMockBaseUrl()));
+  }
 
-   public JerseyClientBundle getJerseyClientBundle() {
-      return jerseyClientBundle;
-   }
+  public JerseyClientBundle getJerseyClientBundle() {
+    return jerseyClientBundle;
+  }
 }

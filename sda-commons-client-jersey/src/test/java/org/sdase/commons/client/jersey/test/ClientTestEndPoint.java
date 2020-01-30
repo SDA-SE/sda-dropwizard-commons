@@ -11,52 +11,54 @@ import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 
 @Path("/api")
 public class ClientTestEndPoint {
-   private MockApiClient mockApiClient;
-   private MockApiClient externalMockApiClient;
-   private MockApiClient authMockApiClient;
+  private MockApiClient mockApiClient;
+  private MockApiClient externalMockApiClient;
+  private MockApiClient authMockApiClient;
 
-   ClientTestEndPoint(ClientFactory clientFactory, String baseUrl) {
-      mockApiClient = clientFactory
+  ClientTestEndPoint(ClientFactory clientFactory, String baseUrl) {
+    mockApiClient =
+        clientFactory
             .platformClient()
             .api(MockApiClient.class, "MockApiClientWithoutAuth")
             .atTarget(baseUrl);
-      authMockApiClient = clientFactory
+    authMockApiClient =
+        clientFactory
             .platformClient()
             .enableAuthenticationPassThrough()
             .api(MockApiClient.class, "MockApiClientWithAuth")
             .atTarget(baseUrl);
-      externalMockApiClient = clientFactory
+    externalMockApiClient =
+        clientFactory
             .externalClient()
             .api(MockApiClient.class, "MockApiClientExternal")
             .atTarget(baseUrl);
-   }
+  }
 
-   @GET
-   @Path("/cars")
-   @Produces(MediaType.APPLICATION_JSON)
-   public Response delegate() {
-      return mockApiClient.requestCars();
-   }
+  @GET
+  @Path("/cars")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response delegate() {
+    return mockApiClient.requestCars();
+  }
 
-   @GET
-   @Path("/cars/{sign}")
-   @Produces(MediaType.APPLICATION_JSON)
-   public Car delegateGetCar(@PathParam("sign") String sign) {
-      return mockApiClient.getCar(sign);
-   }
+  @GET
+  @Path("/cars/{sign}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Car delegateGetCar(@PathParam("sign") String sign) {
+    return mockApiClient.getCar(sign);
+  }
 
-   @GET
-   @Path("/carsExternal")
-   @Produces(MediaType.APPLICATION_JSON)
-   public Response delegateExternal() {
-      return externalMockApiClient.requestCars();
-   }
+  @GET
+  @Path("/carsExternal")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response delegateExternal() {
+    return externalMockApiClient.requestCars();
+  }
 
-   @GET
-   @Path("/carsAuth")
-   @Produces(MediaType.APPLICATION_JSON)
-   public Response delegateWithAuth() {
-      return authMockApiClient.requestCars();
-   }
-
+  @GET
+  @Path("/carsAuth")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response delegateWithAuth() {
+    return authMockApiClient.requestCars();
+  }
 }

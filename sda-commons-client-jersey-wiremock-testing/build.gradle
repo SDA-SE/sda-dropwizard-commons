@@ -1,8 +1,7 @@
 dependencies {
 
-    compile "com.github.tomakehurst:wiremock-jre8"
+  compile "com.github.tomakehurst:wiremock-jre8"
 
-    compile 'org.glassfish.jersey.core:jersey-client'
-    compile 'org.glassfish.jersey.ext:jersey-proxy-client'
-
+  compile 'org.glassfish.jersey.core:jersey-client'
+  compile 'org.glassfish.jersey.ext:jersey-proxy-client'
 }

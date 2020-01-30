@@ -1,13 +1,13 @@
 dependencies {
 
-    compile project(':sda-commons-server-dropwizard')
-    compile project(':sda-commons-shared-tracing')
-    compile 'io.dropwizard:dropwizard-client'
+  compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-shared-tracing')
+  compile 'io.dropwizard:dropwizard-client'
 
-    compile 'io.prometheus:simpleclient'
-    compile 'io.prometheus:simpleclient_dropwizard'
-    compile 'io.prometheus:simpleclient_servlet'
+  compile 'io.prometheus:simpleclient'
+  compile 'io.prometheus:simpleclient_dropwizard'
+  compile 'io.prometheus:simpleclient_servlet'
 
-    testCompile project(':sda-commons-server-testing')
-    testCompile project(':sda-commons-client-jersey')
+  testCompile project(':sda-commons-server-testing')
+  testCompile project(':sda-commons-client-jersey')
 }

@@ -29,44 +29,49 @@ import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaRequestsIT {
 
-  private static final WireMockClassRule WIRE = new WireMockClassRule(
-      wireMockConfig().dynamicPort());
+  private static final WireMockClassRule WIRE =
+      new WireMockClassRule(wireMockConfig().dynamicPort());
 
   private static final AuthRule AUTH = AuthRule.builder().build();
 
-  private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW = new LazyRule<>(
-      () -> DropwizardRuleHelper
-          .dropwizardTestAppFrom(OpaBundleTestApp.class)
-          .withConfigFrom(OpaBundeTestAppConfiguration::new)
-          .withRandomPorts()
-          .withConfigurationModifier(
-              c -> c.getOpa().setBaseUrl(WIRE.baseUrl()).setPolicyPackage("my.policy")) // NOSONAR
-          .withConfigurationModifier(AUTH.applyConfig(OpaBundeTestAppConfiguration::setAuth))
-          .build());
+  private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW =
+      new LazyRule<>(
+          () ->
+              DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
+                  .withConfigFrom(OpaBundeTestAppConfiguration::new)
+                  .withRandomPorts()
+                  .withConfigurationModifier(
+                      c ->
+                          c.getOpa()
+                              .setBaseUrl(WIRE.baseUrl())
+                              .setPolicyPackage("my.policy")) // NOSONAR
+                  .withConfigurationModifier(
+                      AUTH.applyConfig(OpaBundeTestAppConfiguration::setAuth))
+                  .build());
 
   @ClassRule
   public static final RuleChain chain = RuleChain.outerRule(WIRE).around(AUTH).around(DW);
-  @Rule
-  public RetryRule retryRule = new RetryRule();
+
+  @Rule public RetryRule retryRule = new RetryRule();
 
   @BeforeClass
   public static void start() {
     WIRE.start();
   }
 
-
   private void mock() {
-    WIRE.stubFor(post("/v1/data/my/policy")
-        .willReturn(aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withStatus(200)
-            .withBody("{\n"
-                + "  \"result\": {\n" // NOSONAR
-                + "    \"allow\": true\n"
-                + "  }\n"
-                + "}")
-        )
-    );
+    WIRE.stubFor(
+        post("/v1/data/my/policy")
+            .willReturn(
+                aResponse()
+                    .withHeader("Content-Type", "application/json")
+                    .withStatus(200)
+                    .withBody(
+                        "{\n"
+                            + "  \"result\": {\n" // NOSONAR
+                            + "    \"allow\": true\n"
+                            + "  }\n"
+                            + "}")));
   }
 
   @Before
@@ -83,16 +88,13 @@ public class OpaRequestsIT {
 
     // then
     String body = WIRE.getAllServeEvents().get(0).getRequest().getBodyAsString();
-    Map<String, Object> opaInput = new ObjectMapper()
-        .readValue(body, new TypeReference<Map<String, Object>>() {
-        });
+    Map<String, Object> opaInput =
+        new ObjectMapper().readValue(body, new TypeReference<Map<String, Object>>() {});
 
     basicAssertions(opaInput);
     assertThat(opaInput).extracting("input").extracting("trace").isNull(); // NOSONAR
     assertThat(opaInput).extracting("input").extracting("jwt").isNull();
   }
-
-
 
   @Test
   @Retry(5)
@@ -103,13 +105,14 @@ public class OpaRequestsIT {
 
     // then
     String body = WIRE.getAllServeEvents().get(0).getRequest().getBodyAsString();
-    Map<String, Object> opaInput = new ObjectMapper()
-        .readValue(body, new TypeReference<Map<String, Object>>() {
-        });
+    Map<String, Object> opaInput =
+        new ObjectMapper().readValue(body, new TypeReference<Map<String, Object>>() {});
 
     basicAssertions(opaInput);
     assertThat(opaInput).extracting("input").extracting("trace").isNull();
-    assertThat(opaInput).extracting("input").extracting("jwt")
+    assertThat(opaInput)
+        .extracting("input")
+        .extracting("jwt")
         .isEqualTo(((String) headers.getFirst("Authorization")).substring("Bearer ".length()));
   }
 
@@ -123,14 +126,12 @@ public class OpaRequestsIT {
 
     // then
     String body = WIRE.getAllServeEvents().get(0).getRequest().getBodyAsString();
-    Map<String, Object> opaInput = new ObjectMapper()
-        .readValue(body, new TypeReference<Map<String, Object>>() {
-        });
+    Map<String, Object> opaInput =
+        new ObjectMapper().readValue(body, new TypeReference<Map<String, Object>>() {});
 
     basicAssertions(opaInput);
     assertThat(opaInput).extracting("input").extracting("trace").isEqualTo("myTrace");
   }
-
 
   @Test
   @Retry(5)
@@ -144,30 +145,36 @@ public class OpaRequestsIT {
 
     // then
     String body = WIRE.getAllServeEvents().get(0).getRequest().getBodyAsString();
-    Map<String, Object> opaInput = new ObjectMapper()
-        .readValue(body, new TypeReference<Map<String, Object>>() {
-        });
+    Map<String, Object> opaInput =
+        new ObjectMapper().readValue(body, new TypeReference<Map<String, Object>>() {});
 
     basicAssertions(opaInput);
     //noinspection unchecked,ConstantConditions
-    Map<String, Object> extractedHeaders = (Map<String, Object>) ((Map<String, Object>) opaInput
-        .get("input")).get("headers");
+    Map<String, Object> extractedHeaders =
+        (Map<String, Object>) ((Map<String, Object>) opaInput.get("input")).get("headers");
     assertThat(extractedHeaders).extracting("simple").asList().containsExactly("SimpleValue");
     assertThat(extractedHeaders).extracting("complex").asList().containsExactly("1,2");
   }
 
   private void doGetRequest(MultivaluedMap<String, Object> headers) {
-    Response response = DW.getRule().client()
-        .target("http://localhost:" + DW.getRule().getLocalPort()).path("resources").request()
-        .headers(headers).get();
+    Response response =
+        DW.getRule()
+            .client()
+            .target("http://localhost:" + DW.getRule().getLocalPort())
+            .path("resources")
+            .request()
+            .headers(headers)
+            .get();
 
     assertThat(response.getStatus()).isEqualTo(200);
   }
 
   private void basicAssertions(Map<String, Object> opaInput) {
     assertThat(opaInput).extracting("input").extracting("httpMethod").isEqualTo("GET");
-    assertThat(opaInput).extracting("input").extracting("path").asList()
+    assertThat(opaInput)
+        .extracting("input")
+        .extracting("path")
+        .asList()
         .containsExactly("resources");
   }
-
 }

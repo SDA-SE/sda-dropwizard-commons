@@ -7,25 +7,25 @@ import org.sdase.commons.server.jackson.EnableFieldFilter;
 @EnableFieldFilter
 public class Address {
 
-   private String id;
+  private String id;
 
-   private String city;
+  private String city;
 
-   public String getCity() {
-      return city;
-   }
+  public String getCity() {
+    return city;
+  }
 
-   public Address setCity(String city) {
-      this.city = city;
-      return this;
-   }
+  public Address setCity(String city) {
+    this.city = city;
+    return this;
+  }
 
-   public String getId() {
-      return id;
-   }
+  public String getId() {
+    return id;
+  }
 
-   public Address setId(String id) {
-      this.id = id;
-      return this;
-   }
+  public Address setId(String id) {
+    this.id = id;
+    return this;
+  }
 }

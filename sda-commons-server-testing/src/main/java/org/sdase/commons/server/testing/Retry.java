@@ -8,14 +8,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>
- * Marks a test to be repeated if it fails the first time. Allows to specify how
- * often the test should be repeated. Requires to be used together with the
- * {@link RetryRule}.
+ * Marks a test to be repeated if it fails the first time. Allows to specify how often the test
+ * should be repeated. Requires to be used together with the {@link RetryRule}.
  *
- * In case you have a flaky test, you can retry a test multiple times:
- * </p>
- * 
+ * <p>In case you have a flaky test, you can retry a test multiple times:
+ *
  * <pre>
  * <code>
  *    &#64;Rule
@@ -29,12 +26,10 @@ import java.lang.annotation.Target;
  * </code>
  * </pre>
  *
- * <p>
- * Please note that the retry rule must be used as {@code @Rule} and not as {@code @ClassRule}
- * </p>
+ * <p>Please note that the retry rule must be used as {@code @Rule} and not as {@code @ClassRule}
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ METHOD, ANNOTATION_TYPE })
+@Target({METHOD, ANNOTATION_TYPE})
 public @interface Retry {
-   int value() default 1;
+  int value() default 1;
 }

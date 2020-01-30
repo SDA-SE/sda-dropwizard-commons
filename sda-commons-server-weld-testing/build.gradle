@@ -1,8 +1,8 @@
 dependencies {
-    compile project(':sda-commons-server-testing')
-    compile project(':sda-commons-server-weld')
+  compile project(':sda-commons-server-testing')
+  compile project(':sda-commons-server-weld')
 
-    testCompile project(':sda-commons-server-jackson')
-    testCompile 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0'
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
+  testCompile project(':sda-commons-server-jackson')
+  testCompile 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0'
+  testCompile 'org.hamcrest:hamcrest-all:1.3'
 }

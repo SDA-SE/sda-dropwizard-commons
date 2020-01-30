@@ -7,32 +7,27 @@ import org.sdase.commons.server.trace.filter.TraceTokenServerFilter;
 
 public class TraceTokenBundle implements Bundle {
 
+  private TraceTokenBundle() {}
 
-   private TraceTokenBundle() {
+  @Override
+  public void initialize(Bootstrap<?> bootstrap) {
+    // nothing to initialize
+  }
 
-   }
+  @Override
+  public void run(Environment environment) {
+    TraceTokenServerFilter filter = new TraceTokenServerFilter();
+    environment.jersey().register(filter);
+  }
 
-   @Override
-   public void initialize(Bootstrap<?> bootstrap) {
-      // nothing to initialize
-   }
+  public static Builder builder() {
+    return new Builder();
+  }
 
-   @Override
-   public void run(Environment environment) {
-      TraceTokenServerFilter filter = new TraceTokenServerFilter();
-      environment.jersey().register(filter);
-   }
+  public static class Builder {
 
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public static class Builder {
-
-      public TraceTokenBundle build() {
-         return new TraceTokenBundle();
-      }
-
-   }
-
+    public TraceTokenBundle build() {
+      return new TraceTokenBundle();
+    }
+  }
 }

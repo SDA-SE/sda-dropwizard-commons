@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':sda-commons-server-testing')
-    compile 'com.h2database:h2'
-    compile 'com.github.database-rider:rider-core'
+  compile project(':sda-commons-server-testing')
+  compile 'com.h2database:h2'
+  compile 'com.github.database-rider:rider-core'
 }

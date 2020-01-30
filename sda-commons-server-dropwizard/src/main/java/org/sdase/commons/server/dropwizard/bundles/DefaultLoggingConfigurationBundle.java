@@ -6,31 +6,28 @@ import io.dropwizard.setup.Environment;
 import org.sdase.commons.server.dropwizard.logging.ConsoleAppenderInjectorSourceProvider;
 
 /**
- * <p>
- * The {@code DefaultLoggingConfigurationBundle} allows to configure the console
- * logger with the settings desired by the SDA.
- * </p>
+ * The {@code DefaultLoggingConfigurationBundle} allows to configure the console logger with the
+ * settings desired by the SDA.
  */
 public class DefaultLoggingConfigurationBundle implements Bundle {
-   public static Builder builder() {
-      return new Builder();
-   }
+  public static Builder builder() {
+    return new Builder();
+  }
 
-   @Override
-   public void initialize(Bootstrap<?> bootstrap) {
-      bootstrap
-            .setConfigurationSourceProvider(
-                  new ConsoleAppenderInjectorSourceProvider(bootstrap.getConfigurationSourceProvider()));
-   }
+  @Override
+  public void initialize(Bootstrap<?> bootstrap) {
+    bootstrap.setConfigurationSourceProvider(
+        new ConsoleAppenderInjectorSourceProvider(bootstrap.getConfigurationSourceProvider()));
+  }
 
-   @Override
-   public void run(Environment environment) {
-      // nothing to run
-   }
+  @Override
+  public void run(Environment environment) {
+    // nothing to run
+  }
 
-   public static class Builder {
-      public DefaultLoggingConfigurationBundle build() {
-         return new DefaultLoggingConfigurationBundle();
-      }
-   }
+  public static class Builder {
+    public DefaultLoggingConfigurationBundle build() {
+      return new DefaultLoggingConfigurationBundle();
+    }
+  }
 }

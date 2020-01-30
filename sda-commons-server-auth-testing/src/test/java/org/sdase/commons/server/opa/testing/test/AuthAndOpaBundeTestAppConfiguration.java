@@ -14,8 +14,7 @@ public class AuthAndOpaBundeTestAppConfiguration extends Configuration {
     return opa;
   }
 
-  public AuthAndOpaBundeTestAppConfiguration setOpa(
-      OpaConfig opa) {
+  public AuthAndOpaBundeTestAppConfiguration setOpa(OpaConfig opa) {
     this.opa = opa;
     return this;
   }
@@ -24,8 +23,7 @@ public class AuthAndOpaBundeTestAppConfiguration extends Configuration {
     return auth;
   }
 
-  public AuthAndOpaBundeTestAppConfiguration setAuth(
-      AuthConfig auth) {
+  public AuthAndOpaBundeTestAppConfiguration setAuth(AuthConfig auth) {
     this.auth = auth;
     return this;
   }

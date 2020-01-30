@@ -1,10 +1,10 @@
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
-    compile project(':sda-commons-shared-error')
-    compile project(':sda-commons-shared-tracing')
-    compile 'io.dropwizard:dropwizard-auth'
-    compile 'io.dropwizard:dropwizard-client'
-    compile 'com.auth0:java-jwt'
+  compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-shared-error')
+  compile project(':sda-commons-shared-tracing')
+  compile 'io.dropwizard:dropwizard-auth'
+  compile 'io.dropwizard:dropwizard-client'
+  compile 'com.auth0:java-jwt'
 
-    testCompile project(':sda-commons-server-testing')
+  testCompile project(':sda-commons-server-testing')
 }

@@ -30,254 +30,275 @@ import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
 public class MessageListenerTest {
 
-   private static final String[] TOPICS = { "create", "delete", "update" };
+  private static final String[] TOPICS = {"create", "delete", "update"};
 
-   private MessageListener<String, String> listener;
+  private MessageListener<String, String> listener;
 
-   private MessageHandler<String, String> handler;
+  private MessageHandler<String, String> handler;
 
-   private ErrorHandler<String, String> errorHandler;
+  private ErrorHandler<String, String> errorHandler;
 
-   private KafkaConsumer<String, String> consumer;
+  private KafkaConsumer<String, String> consumer;
 
-   private ConsumerTopicMessageHistogram histogram;
+  private ConsumerTopicMessageHistogram histogram;
 
-   private static final int WAIT_TIME_MS = 5000;
-   private static final int BLOCKING_TIME_MS = 10000;
-   private static final int N_MESSAGES = 5;
+  private static final int WAIT_TIME_MS = 5000;
+  private static final int BLOCKING_TIME_MS = 10000;
+  private static final int N_MESSAGES = 5;
 
-   private Thread listenerThread;
+  private Thread listenerThread;
 
-   @SuppressWarnings("unchecked")
-   @Before
-   public void setup() {
-      consumer = Mockito.mock(KafkaConsumer.class);
-      handler = Mockito.mock(MessageHandler.class);
-      errorHandler = Mockito.mock(ErrorHandler.class);
-      histogram = Mockito.mock(ConsumerTopicMessageHistogram.class);
-   }
+  @SuppressWarnings("unchecked")
+  @Before
+  public void setup() {
+    consumer = Mockito.mock(KafkaConsumer.class);
+    handler = Mockito.mock(MessageHandler.class);
+    errorHandler = Mockito.mock(ErrorHandler.class);
+    histogram = Mockito.mock(ConsumerTopicMessageHistogram.class);
+  }
 
-   @After
-   public void stop() throws InterruptedException {
-      try {
-         // stop the consumer
-         if (listener != null) {
-            listener.stopConsumer();
-         }
-
-         // wait for the thread to terminate
-         if (listenerThread != null) {
-            listenerThread.join();
-         }
-      } finally {
-         listenerThread = null;
+  @After
+  public void stop() throws InterruptedException {
+    try {
+      // stop the consumer
+      if (listener != null) {
+        listener.stopConsumer();
       }
-   }
 
-   private void setupListener() {
-      setupListener(0);
-   }
+      // wait for the thread to terminate
+      if (listenerThread != null) {
+        listenerThread.join();
+      }
+    } finally {
+      listenerThread = null;
+    }
+  }
 
-   private void setupListener(int topicWaitTime) {
-      ListenerConfig lc = ListenerConfig.builder().withTopicMissingRetryMs(topicWaitTime).useAutoCommitOnly(false).build(1);
+  private void setupListener() {
+    setupListener(0);
+  }
 
-      MessageHandlerRegistration<String, String> registration = MessageHandlerRegistration.<String, String>builder()
-          .withListenerConfig(lc)
-          .forTopics(Arrays.asList(TOPICS))
-          .withDefaultConsumer()
-          .withHandler(handler)
-          .withErrorHandler(errorHandler)
-          .build();
+  private void setupListener(int topicWaitTime) {
+    ListenerConfig lc =
+        ListenerConfig.builder()
+            .withTopicMissingRetryMs(topicWaitTime)
+            .useAutoCommitOnly(false)
+            .build(1);
 
-      LegacyMLS<String, String> strategy = new LegacyMLS<>(
-          registration.getHandler(),
-          registration.getErrorHandler(),
-          lc.isUseAutoCommitOnly(), lc.getCommitType()
-      );
+    MessageHandlerRegistration<String, String> registration =
+        MessageHandlerRegistration.<String, String>builder()
+            .withListenerConfig(lc)
+            .forTopics(Arrays.asList(TOPICS))
+            .withDefaultConsumer()
+            .withHandler(handler)
+            .withErrorHandler(errorHandler)
+            .build();
 
-      strategy.init(histogram);
+    LegacyMLS<String, String> strategy =
+        new LegacyMLS<>(
+            registration.getHandler(),
+            registration.getErrorHandler(),
+            lc.isUseAutoCommitOnly(),
+            lc.getCommitType());
 
-      listener = new MessageListener<>(
-          registration.getTopicsNames(),
-          consumer, lc, strategy
-      );
-   }
+    strategy.init(histogram);
 
-   @Test
-   public void itShouldSubscribeToAllTopics() {
-      setupMocks();
-      setupListener();
-      when(consumer.poll(gt(-10))).thenAnswer(invocation -> {
-         long timeout = invocation.getArgument(0);
-         if (timeout > 0) {
-            throw new WakeupException();
-         }
-         return ConsumerRecords.EMPTY;
-      });
+    listener = new MessageListener<>(registration.getTopicsNames(), consumer, lc, strategy);
+  }
 
-      startListenerThread();
-
-      Mockito.verify(consumer).subscribe(Arrays.asList(TOPICS));
-   }
-
-   @Test
-   public void itShouldReenterPollingQueue() {
-      setupMocks();
-      setupListener();
-
-      AtomicInteger counter = new AtomicInteger(0);
-      when(consumer.poll(gt(0L))).thenAnswer(invocation -> {
-         if (counter.incrementAndGet() < 2) {
-            throw new WakeupException();
-         } else {
-            return ConsumerRecords.EMPTY;
-         }
-      });
-
-      startListenerThread();
-
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(2)).poll(gt(0L));
-   }
-
-   @Test
-   public void consumerWithUseAutocommitOnlyFalseShouldCallCommit() {
-      ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
-      setupMocks();
-      setupListener();
-      when(consumer.poll(gt(0L))).thenReturn(records);
-
-      startListenerThread();
-
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeastOnce()).commitSync();
-   }
-
-   @Test
-   public void errorHandlerShouldBeInvokedWhenExceptionButNotStop() {
-      ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
-      setupMocks();
-      setupListener();
-      AtomicInteger count = new AtomicInteger(0);
-
-      when(consumer.poll(gt(0L))).thenReturn(records);
-
-      Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(any());
-
-      when(errorHandler.handleError(any(), any(), any())).then(
+  @Test
+  public void itShouldSubscribeToAllTopics() {
+    setupMocks();
+    setupListener();
+    when(consumer.poll(gt(-10)))
+        .thenAnswer(
             invocation -> {
-               count.incrementAndGet();
-               return true;
-      });
-
-      startListenerThread();
-      await().pollInterval(new Duration(1, MILLISECONDS)).until(() -> count.get() >= 1);
-      Mockito.verify(consumer, Mockito.never()).close();
-   }
-
-   @Test
-   public void shouldStopWhenErrorHandlerReturnsFalse() {
-      ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
-      setupMocks();
-      setupListener();
-      AtomicInteger count = new AtomicInteger(0);
-
-      when(consumer.poll(gt(0L))).thenReturn(records);
-      Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(any());
-
-      when(errorHandler.handleError(any(), any(), any())).then(
-            (Answer<Boolean>)invocation -> {
-               count.incrementAndGet();
-               return false;
+              long timeout = invocation.getArgument(0);
+              if (timeout > 0) {
+                throw new WakeupException();
+              }
+              return ConsumerRecords.EMPTY;
             });
 
-      startListenerThread();
-      await().until(() -> count.get() >= 1);
-      Mockito.verify(consumer, Mockito.atLeastOnce()).close();
+    startListenerThread();
 
-   }
+    Mockito.verify(consumer).subscribe(Arrays.asList(TOPICS));
+  }
 
-   @Test
-   public void itShouldHandAllRecordsToMessageHandler() {
-      ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
-      setupMocks();
-      setupListener();
+  @Test
+  public void itShouldReenterPollingQueue() {
+    setupMocks();
+    setupListener();
 
-      AtomicBoolean wasReturned = new AtomicBoolean(false);
-      when(consumer.poll(gt(0L))).thenAnswer(
-            invocation -> !wasReturned.getAndSet(true) ? records : ConsumerRecords.empty());
+    AtomicInteger counter = new AtomicInteger(0);
+    when(consumer.poll(gt(0L)))
+        .thenAnswer(
+            invocation -> {
+              if (counter.incrementAndGet() < 2) {
+                throw new WakeupException();
+              } else {
+                return ConsumerRecords.EMPTY;
+              }
+            });
 
-      startListenerThread();
-      await().atMost(BLOCKING_TIME_MS, MILLISECONDS).untilAsserted(() ->
-         records.forEach(r ->
-               Mockito.verify(handler, atLeastOnce()).handle(r)));
-   }
+    startListenerThread();
 
-   @Test
-   public void itShouldCorrectlyStop() {
-      setupMocks();
-      setupListener();
-      AtomicBoolean throwException = new AtomicBoolean(false);
+    Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(2)).poll(gt(0L));
+  }
 
-      Mockito.doAnswer((Answer<Void>) invocation -> {
-         throwException.set(true);
-         return null;
-      }).when(consumer).wakeup();
+  @Test
+  public void consumerWithUseAutocommitOnlyFalseShouldCallCommit() {
+    ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
+    setupMocks();
+    setupListener();
+    when(consumer.poll(gt(0L))).thenReturn(records);
 
-      when(consumer.poll(gt(0L))).thenAnswer((Answer<Void>) invocation -> {
-         await().atMost(BLOCKING_TIME_MS, MILLISECONDS).untilTrue(throwException);
-         throw new WakeupException();
-      });
+    startListenerThread();
 
-      Thread t = startListenerThread();
+    Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeastOnce()).commitSync();
+  }
 
-      // verify and wait until poll has been invoked
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).poll(gt(0L));
+  @Test
+  public void errorHandlerShouldBeInvokedWhenExceptionButNotStop() {
+    ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
+    setupMocks();
+    setupListener();
+    AtomicInteger count = new AtomicInteger(0);
 
-      listener.stopConsumer();
+    when(consumer.poll(gt(0L))).thenReturn(records);
 
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).wakeup();
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).close();
+    Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(any());
 
-      await().untilAsserted(() -> assertThat(t.getState()).isEqualTo(State.TERMINATED));
-   }
+    when(errorHandler.handleError(any(), any(), any()))
+        .then(
+            invocation -> {
+              count.incrementAndGet();
+              return true;
+            });
 
-   @Test
-   public void itShouldCorrectlyStopEvenWhenTopicDoesNotExist() {
-      int waitTime = 10000;
-      setupMocks();
-      setupListener(waitTime);
+    startListenerThread();
+    await().pollInterval(new Duration(1, MILLISECONDS)).until(() -> count.get() >= 1);
+    Mockito.verify(consumer, Mockito.never()).close();
+  }
 
-      when(consumer.partitionsFor(Mockito.anyString())).thenReturn(new LinkedList<>());
+  @Test
+  public void shouldStopWhenErrorHandlerReturnsFalse() {
+    ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
+    setupMocks();
+    setupListener();
+    AtomicInteger count = new AtomicInteger(0);
 
-      AtomicBoolean throwException = new AtomicBoolean(false);
+    when(consumer.poll(gt(0L))).thenReturn(records);
+    Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(any());
 
-      Mockito.doAnswer((Answer<Void>) invocation -> {
-         throwException.set(true);
-         return null;
-      }).when(consumer).wakeup();
+    when(errorHandler.handleError(any(), any(), any()))
+        .then(
+            (Answer<Boolean>)
+                invocation -> {
+                  count.incrementAndGet();
+                  return false;
+                });
 
-      Thread t = startListenerThread();
+    startListenerThread();
+    await().until(() -> count.get() >= 1);
+    Mockito.verify(consumer, Mockito.atLeastOnce()).close();
+  }
 
-      // verify and wait until poll has been invoked
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(3)).partitionsFor(Mockito.anyString());
+  @Test
+  public void itShouldHandAllRecordsToMessageHandler() {
+    ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
+    setupMocks();
+    setupListener();
 
-      t.interrupt();
-      listener.stopConsumer();
+    AtomicBoolean wasReturned = new AtomicBoolean(false);
+    when(consumer.poll(gt(0L)))
+        .thenAnswer(invocation -> !wasReturned.getAndSet(true) ? records : ConsumerRecords.empty());
 
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).wakeup();
-      Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).close();
+    startListenerThread();
+    await()
+        .atMost(BLOCKING_TIME_MS, MILLISECONDS)
+        .untilAsserted(
+            () -> records.forEach(r -> Mockito.verify(handler, atLeastOnce()).handle(r)));
+  }
 
-      await().untilAsserted(() -> assertThat(t.getState()).isEqualTo(State.TERMINATED));
-   }
+  @Test
+  public void itShouldCorrectlyStop() {
+    setupMocks();
+    setupListener();
+    AtomicBoolean throwException = new AtomicBoolean(false);
 
-   private Thread startListenerThread() {
-      listenerThread = new Thread(listener);
-      listenerThread.start();
+    Mockito.doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  throwException.set(true);
+                  return null;
+                })
+        .when(consumer)
+        .wakeup();
 
-      return listenerThread;
-   }
+    when(consumer.poll(gt(0L)))
+        .thenAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  await().atMost(BLOCKING_TIME_MS, MILLISECONDS).untilTrue(throwException);
+                  throw new WakeupException();
+                });
 
-   private void setupMocks() {
-      Mockito.doNothing().when(consumer).subscribe(Mockito.anyList());
-      when(consumer.poll(0)).thenReturn(null);
-   }
+    Thread t = startListenerThread();
+
+    // verify and wait until poll has been invoked
+    Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).poll(gt(0L));
+
+    listener.stopConsumer();
+
+    Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).wakeup();
+    Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).close();
+
+    await().untilAsserted(() -> assertThat(t.getState()).isEqualTo(State.TERMINATED));
+  }
+
+  @Test
+  public void itShouldCorrectlyStopEvenWhenTopicDoesNotExist() {
+    int waitTime = 10000;
+    setupMocks();
+    setupListener(waitTime);
+
+    when(consumer.partitionsFor(Mockito.anyString())).thenReturn(new LinkedList<>());
+
+    AtomicBoolean throwException = new AtomicBoolean(false);
+
+    Mockito.doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  throwException.set(true);
+                  return null;
+                })
+        .when(consumer)
+        .wakeup();
+
+    Thread t = startListenerThread();
+
+    // verify and wait until poll has been invoked
+    Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(3)).partitionsFor(Mockito.anyString());
+
+    t.interrupt();
+    listener.stopConsumer();
+
+    Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).wakeup();
+    Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).close();
+
+    await().untilAsserted(() -> assertThat(t.getState()).isEqualTo(State.TERMINATED));
+  }
+
+  private Thread startListenerThread() {
+    listenerThread = new Thread(listener);
+    listenerThread.start();
+
+    return listenerThread;
+  }
+
+  private void setupMocks() {
+    Mockito.doNothing().when(consumer).subscribe(Mockito.anyList());
+    when(consumer.poll(0)).thenReturn(null);
+  }
 }

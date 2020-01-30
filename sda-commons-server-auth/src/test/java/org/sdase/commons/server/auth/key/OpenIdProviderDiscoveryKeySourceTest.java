@@ -16,91 +16,85 @@ import org.junit.Test;
 
 public class OpenIdProviderDiscoveryKeySourceTest {
 
-   @Test
-   public void shouldRethrowSameKeyloadFailedException() {
+  @Test
+  public void shouldRethrowSameKeyloadFailedException() {
 
-      KeyLoadFailedException keyLoadFailedException = new KeyLoadFailedException();
+    KeyLoadFailedException keyLoadFailedException = new KeyLoadFailedException();
 
-      Client client = mock(Client.class);
-      doThrow(keyLoadFailedException).when(client).target(anyString());
+    Client client = mock(Client.class);
+    doThrow(keyLoadFailedException).when(client).target(anyString());
 
-      OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource = new OpenIdProviderDiscoveryKeySource("uri",
-            client);
+    OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource =
+        new OpenIdProviderDiscoveryKeySource("uri", client);
 
-      assertThatExceptionOfType(KeyLoadFailedException.class)
-            .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
-            .isSameAs(keyLoadFailedException);
+    assertThatExceptionOfType(KeyLoadFailedException.class)
+        .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
+        .isSameAs(keyLoadFailedException);
+  }
 
-   }
+  @Test
+  public void shouldCloseWebApplicationExceptionResponse() {
 
+    Response response = mock(Response.class);
+    Client client = mock(Client.class);
+    WebApplicationException webApplicationException = mock(WebApplicationException.class);
+    doReturn(response).when(webApplicationException).getResponse();
+    doThrow(webApplicationException).when(client).target(anyString());
+    OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource =
+        new OpenIdProviderDiscoveryKeySource("uri", client);
 
+    assertThatExceptionOfType(KeyLoadFailedException.class)
+        .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource);
 
-   @Test
-   public void shouldCloseWebApplicationExceptionResponse() {
+    verify(response, times(1)).close();
+  }
 
-      Response response = mock(Response.class);
-      Client client = mock(Client.class);
-      WebApplicationException webApplicationException = mock(WebApplicationException.class);
-      doReturn(response).when(webApplicationException).getResponse();
-      doThrow(webApplicationException).when(client).target(anyString());
-      OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource = new OpenIdProviderDiscoveryKeySource("uri",
-            client);
+  @Test
+  public void shouldHandleExceptionOnCloseWebApplicationException() {
 
-      assertThatExceptionOfType(KeyLoadFailedException.class)
-            .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource);
+    Response response = mock(Response.class);
+    Client client = mock(Client.class);
+    WebApplicationException webApplicationException = mock(WebApplicationException.class);
+    doReturn(response).when(webApplicationException).getResponse();
+    doThrow(webApplicationException).when(client).target(anyString());
+    doThrow(new ProcessingException("Test")).when(response).close();
+    OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource =
+        new OpenIdProviderDiscoveryKeySource("uri", client);
 
-      verify(response, times(1)).close();
-   }
+    assertThatExceptionOfType(KeyLoadFailedException.class)
+        .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
+        .withCause(webApplicationException);
+  }
 
-   @Test
-   public void shouldHandleExceptionOnCloseWebApplicationException() {
+  @Test
+  public void shouldWrapWebApplicationExceptionInKeyloadFailedException() {
 
-      Response response = mock(Response.class);
-      Client client = mock(Client.class);
-      WebApplicationException webApplicationException = mock(WebApplicationException.class);
-      doReturn(response).when(webApplicationException).getResponse();
-      doThrow(webApplicationException).when(client).target(anyString());
-      doThrow(new ProcessingException("Test")).when(response).close();
-      OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource = new OpenIdProviderDiscoveryKeySource("uri",
-            client);
+    Response response = mock(Response.class);
+    Client client = mock(Client.class);
+    WebApplicationException webApplicationException = mock(WebApplicationException.class);
+    doReturn(response).when(webApplicationException).getResponse();
+    doThrow(webApplicationException).when(client).target(anyString());
+    OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource =
+        new OpenIdProviderDiscoveryKeySource("uri", client);
 
-      assertThatExceptionOfType(KeyLoadFailedException.class)
-            .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
-            .withCause(webApplicationException);
+    assertThatExceptionOfType(KeyLoadFailedException.class)
+        .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
+        .withCause(webApplicationException);
+  }
 
-   }
+  @Test
+  public void shouldWrapAnyExceptionInKeyloadFailedException() {
 
-   @Test
-   public void shouldWrapWebApplicationExceptionInKeyloadFailedException() {
+    Exception e = new IllegalArgumentException();
 
-      Response response = mock(Response.class);
-      Client client = mock(Client.class);
-      WebApplicationException webApplicationException = mock(WebApplicationException.class);
-      doReturn(response).when(webApplicationException).getResponse();
-      doThrow(webApplicationException).when(client).target(anyString());
-      OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource = new OpenIdProviderDiscoveryKeySource("uri",
-            client);
+    Client client = mock(Client.class);
+    doThrow(e).when(client).target(anyString());
 
-      assertThatExceptionOfType(KeyLoadFailedException.class)
-            .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
-            .withCause(webApplicationException);
+    OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource =
+        new OpenIdProviderDiscoveryKeySource("uri", client);
 
-   }
-
-   @Test
-   public void shouldWrapAnyExceptionInKeyloadFailedException() {
-
-      Exception e = new IllegalArgumentException();
-
-      Client client = mock(Client.class);
-      doThrow(e).when(client).target(anyString());
-
-      OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource = new OpenIdProviderDiscoveryKeySource("uri",
-            client);
-
-      assertThatExceptionOfType(KeyLoadFailedException.class)
-            .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
-            .withCause(e);
-
-   }
+    assertThatExceptionOfType(KeyLoadFailedException.class)
+        .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
+        .withCause(e);
+  }
 }

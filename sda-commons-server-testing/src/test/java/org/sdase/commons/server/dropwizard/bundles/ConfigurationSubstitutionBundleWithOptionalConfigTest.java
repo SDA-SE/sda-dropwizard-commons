@@ -11,16 +11,18 @@ import org.sdase.commons.server.testing.EnvironmentRule;
 
 public class ConfigurationSubstitutionBundleWithOptionalConfigTest {
 
-   @ClassRule
-   public static final EnvironmentRule ENV = new EnvironmentRule()
-         .setEnv("PROPERTY_ONE", "valueFromEnv");
+  @ClassRule
+  public static final EnvironmentRule ENV =
+      new EnvironmentRule().setEnv("PROPERTY_ONE", "valueFromEnv");
 
-   @ClassRule
-   public static final DropwizardAppRule<DropwizardConfig> DW = new DropwizardAppRule<>(
-         DropwizardApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
+  @ClassRule
+  public static final DropwizardAppRule<DropwizardConfig> DW =
+      new DropwizardAppRule<>(
+          DropwizardApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-   @Test
-   public void shouldReplaceInNestedProperties() {
-      Assertions.assertThat(DW.getConfiguration().getOptionalConfig().getProperty1()).isEqualTo("valueFromEnv");
-   }
+  @Test
+  public void shouldReplaceInNestedProperties() {
+    Assertions.assertThat(DW.getConfiguration().getOptionalConfig().getProperty1())
+        .isEqualTo("valueFromEnv");
+  }
 }

@@ -7,15 +7,14 @@ import io.openapitools.jackson.dataformat.hal.annotation.Resource;
 @Resource
 public class ResourceWithLink {
 
-   @Link
-   private HALLink self;
+  @Link private HALLink self;
 
-   public HALLink getSelf() {
-      return self;
-   }
+  public HALLink getSelf() {
+    return self;
+  }
 
-   public ResourceWithLink setSelf(HALLink self) {
-      this.self = self;
-      return this;
-   }
+  public ResourceWithLink setSelf(HALLink self) {
+    this.self = self;
+    return this;
+  }
 }

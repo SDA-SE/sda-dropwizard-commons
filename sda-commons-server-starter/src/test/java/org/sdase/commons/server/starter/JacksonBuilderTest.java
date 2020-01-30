@@ -2,40 +2,39 @@ package org.sdase.commons.server.starter;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.function.Consumer;
 import org.junit.Before;
 import org.junit.Test;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.starter.test.BundleAssertion;
 
-import java.util.function.Consumer;
-
 public class JacksonBuilderTest {
 
-   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
+  private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
-   @Before
-   public void setUp() {
-      bundleAssertion = new BundleAssertion<>();
-   }
+  @Before
+  public void setUp() {
+    bundleAssertion = new BundleAssertion<>();
+  }
 
-   @Test
-   public void defaultJacksonConfig() {
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+  @Test
+  public void defaultJacksonConfig() {
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withoutConsumerTokenSupport()
             .withSwaggerInfoTitle("Starter") // NOSONAR
             .addSwaggerResourcePackageClass(this.getClass())
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            JacksonConfigurationBundle.builder().build()
-      );
-   }
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle, JacksonConfigurationBundle.builder().build());
+  }
 
-   @Test
-   public void noHalSupport() {
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+  @Test
+  public void noHalSupport() {
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withoutConsumerTokenSupport()
             .withSwaggerInfoTitle("Starter")
@@ -43,15 +42,14 @@ public class JacksonBuilderTest {
             .withoutHalSupport()
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            JacksonConfigurationBundle.builder().withoutHalSupport().build()
-      );
-   }
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle, JacksonConfigurationBundle.builder().withoutHalSupport().build());
+  }
 
-   @Test
-   public void noFieldFilter() {
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+  @Test
+  public void noFieldFilter() {
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withoutConsumerTokenSupport()
             .withSwaggerInfoTitle("Starter")
@@ -59,15 +57,14 @@ public class JacksonBuilderTest {
             .withoutFieldFilter()
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            JacksonConfigurationBundle.builder().withoutFieldFilter().build()
-      );
-   }
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle, JacksonConfigurationBundle.builder().withoutFieldFilter().build());
+  }
 
-   @Test
-   public void alwaysWithMillis() {
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+  @Test
+  public void alwaysWithMillis() {
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withoutConsumerTokenSupport()
             .withSwaggerInfoTitle("Starter")
@@ -75,15 +72,14 @@ public class JacksonBuilderTest {
             .alwaysWriteZonedDateTimeWithMillisInJson()
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            JacksonConfigurationBundle.builder().alwaysWriteZonedDateTimeWithMillis().build()
-      );
-   }
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle, JacksonConfigurationBundle.builder().alwaysWriteZonedDateTimeWithMillis().build());
+  }
 
-   @Test
-   public void alwaysWithoutMillis() {
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+  @Test
+  public void alwaysWithoutMillis() {
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withoutConsumerTokenSupport()
             .withSwaggerInfoTitle("Starter")
@@ -91,18 +87,19 @@ public class JacksonBuilderTest {
             .alwaysWriteZonedDateTimeWithoutMillisInJson()
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            JacksonConfigurationBundle.builder().alwaysWriteZonedDateTimeWithoutMillis().build()
-      );
-   }
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        JacksonConfigurationBundle.builder().alwaysWriteZonedDateTimeWithoutMillis().build());
+  }
 
-   @Test
-   public void withCustomizer() {
+  @Test
+  public void withCustomizer() {
 
-      Consumer<ObjectMapper> omc = om -> om.disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
+    Consumer<ObjectMapper> omc =
+        om -> om.disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
 
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withoutConsumerTokenSupport()
             .withSwaggerInfoTitle("Starter")
@@ -110,9 +107,7 @@ public class JacksonBuilderTest {
             .withObjectMapperCustomization(omc)
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            JacksonConfigurationBundle.builder().withCustomization(omc).build()
-      );
-   }
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle, JacksonConfigurationBundle.builder().withCustomization(omc).build());
+  }
 }

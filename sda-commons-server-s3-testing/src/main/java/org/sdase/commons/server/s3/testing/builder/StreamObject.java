@@ -9,26 +9,26 @@ import java.io.InputStream;
 
 public class StreamObject implements MockObject {
 
-   private final String bucketName;
-   private final String key;
-   private final InputStream stream;
+  private final String bucketName;
+  private final String key;
+  private final InputStream stream;
 
-   public StreamObject(String bucketName, String key, InputStream stream) {
-      this.bucketName = bucketName;
-      this.key = key;
-      this.stream = stream;
-   }
+  public StreamObject(String bucketName, String key, InputStream stream) {
+    this.bucketName = bucketName;
+    this.key = key;
+    this.stream = stream;
+  }
 
-   @Override
-   public void putObject(AmazonS3 s3Client) {
-      try {
-         byte[] bytes = IOUtils.toByteArray(stream);
+  @Override
+  public void putObject(AmazonS3 s3Client) {
+    try {
+      byte[] bytes = IOUtils.toByteArray(stream);
 
-         try (ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes)) {
-            s3Client.putObject(bucketName, key, byteStream, new ObjectMetadata());
-         }
-      } catch (IOException exception) {
-         throw new IllegalStateException(exception);
+      try (ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes)) {
+        s3Client.putObject(bucketName, key, byteStream, new ObjectMetadata());
       }
-   }
+    } catch (IOException exception) {
+      throw new IllegalStateException(exception);
+    }
+  }
 }

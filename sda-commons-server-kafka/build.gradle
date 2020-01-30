@@ -1,50 +1,50 @@
 
 buildscript {
-    repositories {
-        jcenter()
-    }
+  repositories {
+    jcenter()
+  }
 }
 
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-server-dropwizard')
 
-    compile ('com.github.ftrossbach:club-topicana-core') {
-        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
-        exclude group: 'org.apache.kafka', module: 'kafka_2.12'
-        exclude group: 'org.apache.kafka', module: 'kafka_2.11'
-        exclude group: 'org.apache.kafka', module: 'kafka-clients'
-    }
+  compile ('com.github.ftrossbach:club-topicana-core') {
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    exclude group: 'org.apache.kafka', module: 'kafka_2.12'
+    exclude group: 'org.apache.kafka', module: 'kafka_2.11'
+    exclude group: 'org.apache.kafka', module: 'kafka-clients'
+  }
 
-    compile "org.apache.kafka:kafka-clients", {
-        exclude group: 'io.confluent', module: 'common-config'
-    }
+  compile "org.apache.kafka:kafka-clients", {
+    exclude group: 'io.confluent', module: 'common-config'
+  }
 
-    compile "io.confluent:common-config", {
-        exclude group: 'io.confluent', module: 'common-utils'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-    }
+  compile "io.confluent:common-config", {
+    exclude group: 'io.confluent', module: 'common-utils'
+    exclude group: 'org.slf4j', module: 'slf4j-api'
+  }
 
-    compile "io.confluent:common-utils", {
-        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
-        exclude group: 'com.101tec', module: 'zkclient'
-    }
+  compile "io.confluent:common-utils", {
+    exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    exclude group: 'com.101tec', module: 'zkclient'
+  }
 
-    compile "com.101tec:zkclient", {
-        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
-    }
+  compile "com.101tec:zkclient", {
+    exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+  }
 
-    compile "org.apache.zookeeper:zookeeper", {
-        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-        exclude group: 'log4j', module: 'log4j'
-    }
+  compile "org.apache.zookeeper:zookeeper", {
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    exclude group: 'log4j', module: 'log4j'
+  }
 
-    compile 'io.prometheus:simpleclient'
+  compile 'io.prometheus:simpleclient'
 
-    testCompile 'org.mockito:mockito-core'
-    
-    testCompile 'org.assertj:assertj-core'
+  testCompile 'org.mockito:mockito-core'
 
-    testCompile project(':sda-commons-server-kafka-testing')
+  testCompile 'org.assertj:assertj-core'
+
+  testCompile project(':sda-commons-server-kafka-testing')
 }
 

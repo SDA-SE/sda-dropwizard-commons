@@ -11,17 +11,20 @@ import org.sdase.commons.server.testing.EnvironmentRule;
 
 public class ConfigurationSubstitutionBundleWithOptionalConfigAsJsonTest {
 
-   @ClassRule
-   public static final EnvironmentRule ENV = new EnvironmentRule()
-         .setEnv("OPTIONAL_CONFIG", "{'property1':'juice', 'property2':'beer'}");
+  @ClassRule
+  public static final EnvironmentRule ENV =
+      new EnvironmentRule().setEnv("OPTIONAL_CONFIG", "{'property1':'juice', 'property2':'beer'}");
 
-   @ClassRule
-   public static final DropwizardAppRule<DropwizardConfig> DW = new DropwizardAppRule<>(
-         DropwizardApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
+  @ClassRule
+  public static final DropwizardAppRule<DropwizardConfig> DW =
+      new DropwizardAppRule<>(
+          DropwizardApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-   @Test
-   public void shouldReplaceInNestedProperties() {
-      Assertions.assertThat(DW.getConfiguration().getOptionalConfig().getProperty1()).isEqualTo("juice");
-      Assertions.assertThat(DW.getConfiguration().getOptionalConfig().getProperty2()).isEqualTo("beer");
-   }
+  @Test
+  public void shouldReplaceInNestedProperties() {
+    Assertions.assertThat(DW.getConfiguration().getOptionalConfig().getProperty1())
+        .isEqualTo("juice");
+    Assertions.assertThat(DW.getConfiguration().getOptionalConfig().getProperty2())
+        .isEqualTo("beer");
+  }
 }

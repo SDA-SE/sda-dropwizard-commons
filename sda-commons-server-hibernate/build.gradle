@@ -1,10 +1,10 @@
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
-    compile 'io.dropwizard:dropwizard-hibernate'
-    compile 'org.postgresql:postgresql'
-    compile 'org.flywaydb:flyway-core'
-    compile 'javax.xml.bind:jaxb-api'
+  compile project(':sda-commons-server-dropwizard')
+  compile 'io.dropwizard:dropwizard-hibernate'
+  compile 'org.postgresql:postgresql'
+  compile 'org.flywaydb:flyway-core'
+  compile 'javax.xml.bind:jaxb-api'
 
-    testCompile project(':sda-commons-server-hibernate-testing')
-    testCompile 'org.assertj:assertj-core'
+  testCompile project(':sda-commons-server-hibernate-testing')
+  testCompile 'org.assertj:assertj-core'
 }

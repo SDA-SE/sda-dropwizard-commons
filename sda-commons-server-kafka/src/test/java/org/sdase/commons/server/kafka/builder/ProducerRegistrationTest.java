@@ -12,61 +12,58 @@ import org.sdase.commons.server.kafka.config.ProducerConfig;
 
 public class ProducerRegistrationTest {
 
-   @Test
-   public void defaultBuilderHasStringSerializer() {
+  @Test
+  public void defaultBuilderHasStringSerializer() {
 
-      ProducerRegistration<String, String> producerRegistration =
-            ProducerRegistration.<String, String>builder()
-                  .forTopic("TOPIC")
-                  .withDefaultProducer()
-                  .withKeySerializer(new StringSerializer())
-                  .withValueSerializer(new StringSerializer())
-                  .build();
+    ProducerRegistration<String, String> producerRegistration =
+        ProducerRegistration.<String, String>builder()
+            .forTopic("TOPIC")
+            .withDefaultProducer()
+            .withKeySerializer(new StringSerializer())
+            .withValueSerializer(new StringSerializer())
+            .build();
 
-      assertThat(producerRegistration).isNotNull();
-      assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
-      assertThat(producerRegistration.getKeySerializer()).isInstanceOf(StringSerializer.class);
-      assertThat(producerRegistration.getValueSerializer()).isInstanceOf(StringSerializer.class);
-   }
+    assertThat(producerRegistration).isNotNull();
+    assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
+    assertThat(producerRegistration.getKeySerializer()).isInstanceOf(StringSerializer.class);
+    assertThat(producerRegistration.getValueSerializer()).isInstanceOf(StringSerializer.class);
+  }
 
+  @Test
+  public void serializerShouldBeSetCorrectly() {
 
+    ProducerRegistration<Long, Integer> producerRegistration =
+        ProducerRegistration.<Long, Integer>builder()
+            .forTopic("TOPIC")
+            .withDefaultProducer()
+            .withKeySerializer(new LongSerializer())
+            .withValueSerializer(new IntegerSerializer())
+            .build();
 
-   @Test
-   public void serializerShouldBeSetCorrectly() {
+    assertThat(producerRegistration).isNotNull();
+    assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
+    assertThat(producerRegistration.getKeySerializer()).isInstanceOf(LongSerializer.class);
+    assertThat(producerRegistration.getValueSerializer()).isInstanceOf(IntegerSerializer.class);
+  }
 
-      ProducerRegistration<Long, Integer> producerRegistration =
-            ProducerRegistration.<Long, Integer>builder()
-                  .forTopic("TOPIC")
-                  .withDefaultProducer()
-                  .withKeySerializer(new LongSerializer())
-                  .withValueSerializer(new IntegerSerializer())
-                  .build();
+  @Test
+  public void customProducerCanBeUsed() {
 
-      assertThat(producerRegistration).isNotNull();
-      assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
-      assertThat(producerRegistration.getKeySerializer()).isInstanceOf(LongSerializer.class);
-      assertThat(producerRegistration.getValueSerializer()).isInstanceOf(IntegerSerializer.class);
-   }
+    Map<String, String> test = new HashMap<>();
+    test.put("key.serializer", StringSerializer.class.getName());
+    test.put("value.serializer", StringSerializer.class.getName());
+    test.put("bootstrap.servers", "localhost:9092");
+    ProducerConfig producerConfig = new ProducerConfig();
+    producerConfig.getConfig().putAll(test);
 
-   @Test
-   public void customProducerCanBeUsed() {
+    ProducerRegistration<String, String> producerRegistration =
+        ProducerRegistration.<String, String>builder()
+            .forTopic("TOPIC")
+            .withProducerConfig(producerConfig)
+            .build();
 
-      Map<String, String> test = new HashMap<>();
-      test.put("key.serializer", StringSerializer.class.getName());
-      test.put("value.serializer", StringSerializer.class.getName());
-      test.put("bootstrap.servers", "localhost:9092");
-      ProducerConfig producerConfig = new ProducerConfig();
-      producerConfig.getConfig().putAll(test);
-
-      ProducerRegistration<String, String> producerRegistration =
-            ProducerRegistration.<String, String>builder()
-                  .forTopic("TOPIC")
-                  .withProducerConfig(producerConfig)
-                  .build();
-
-      assertThat(producerRegistration).isNotNull();
-      assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
-      assertThat(producerRegistration.getProducerConfig()).isEqualTo(producerConfig);
-   }
-
+    assertThat(producerRegistration).isNotNull();
+    assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
+    assertThat(producerRegistration.getProducerConfig()).isEqualTo(producerConfig);
+  }
 }

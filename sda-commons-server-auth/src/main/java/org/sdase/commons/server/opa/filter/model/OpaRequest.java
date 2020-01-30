@@ -14,7 +14,6 @@ public class OpaRequest {
     this.input = input;
   }
 
-
   public OpaInput getInput() {
     return input;
   }
@@ -24,9 +23,12 @@ public class OpaRequest {
     return this;
   }
 
-  public static OpaRequest request(String jwt, String[] path, String method, String traceToken,
-                                   MultivaluedMap<String, String> headers) {
+  public static OpaRequest request(
+      String jwt,
+      String[] path,
+      String method,
+      String traceToken,
+      MultivaluedMap<String, String> headers) {
     return new OpaRequest(new OpaInput(jwt, path, method, traceToken, headers));
   }
-
 }

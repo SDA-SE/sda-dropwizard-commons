@@ -2,45 +2,39 @@ package org.sdase.commons.server.morphia.test.model;
 
 public class PhoneNumber {
 
-   /**
-    * e.g. 0049 or +49
-    */
-   private String countryCode;
+  /** e.g. 0049 or +49 */
+  private String countryCode;
 
-   /**
-    * e.g. 0172
-    */
-   private String areaCode;
+  /** e.g. 0172 */
+  private String areaCode;
 
-   /**
-    * e.g. 12345678
-    */
-   private String number;
+  /** e.g. 12345678 */
+  private String number;
 
-   public String getCountryCode() {
-      return countryCode;
-   }
+  public String getCountryCode() {
+    return countryCode;
+  }
 
-   public PhoneNumber setCountryCode(String countryCode) {
-      this.countryCode = countryCode;
-      return this;
-   }
+  public PhoneNumber setCountryCode(String countryCode) {
+    this.countryCode = countryCode;
+    return this;
+  }
 
-   public String getAreaCode() {
-      return areaCode;
-   }
+  public String getAreaCode() {
+    return areaCode;
+  }
 
-   public PhoneNumber setAreaCode(String areaCode) {
-      this.areaCode = areaCode;
-      return this;
-   }
+  public PhoneNumber setAreaCode(String areaCode) {
+    this.areaCode = areaCode;
+    return this;
+  }
 
-   public String getNumber() {
-      return number;
-   }
+  public String getNumber() {
+    return number;
+  }
 
-   public PhoneNumber setNumber(String number) {
-      this.number = number;
-      return this;
-   }
+  public PhoneNumber setNumber(String number) {
+    this.number = number;
+    return this;
+  }
 }

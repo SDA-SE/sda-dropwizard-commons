@@ -4,15 +4,14 @@ import javax.inject.Inject;
 
 public class UsageBean {
 
-   private SimpleBean simpleBean;
+  private SimpleBean simpleBean;
 
-   @Inject
-   public UsageBean(SimpleBean simpleBean) {
-      this.simpleBean = simpleBean;
-   }
+  @Inject
+  public UsageBean(SimpleBean simpleBean) {
+    this.simpleBean = simpleBean;
+  }
 
-   public void useSimpleBean() {
-      simpleBean.doStuff();
-   }
-
+  public void useSimpleBean() {
+    simpleBean.doStuff();
+  }
 }

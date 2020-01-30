@@ -7,23 +7,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A simple helper that delegates all deserialization calls to the wrapped deserializer given
- * in the constructor. Potential deserialization exceptions are caught, logged and null value is returned.
- * This helper can be used to workaround a known Kafka problem, see https://issues.apache.org/jira/browse/KAFKA-4740.
+ * A simple helper that delegates all deserialization calls to the wrapped deserializer given in the
+ * constructor. Potential deserialization exceptions are caught, logged and null value is returned.
+ * This helper can be used to workaround a known Kafka problem, see
+ * https://issues.apache.org/jira/browse/KAFKA-4740.
  *
- * @param <T>
- *           class to deserialize
+ * @param <T> class to deserialize
  */
 public class WrappedNoSerializationErrorDeserializer<T> implements Deserializer<T> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(WrappedNoSerializationErrorDeserializer.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(WrappedNoSerializationErrorDeserializer.class);
 
   private Deserializer<T> wrappedDeserializer;
 
   public WrappedNoSerializationErrorDeserializer(Deserializer<T> deserializer) {
     this.wrappedDeserializer = deserializer;
   }
-
 
   @Override
   public void configure(Map<String, ?> configs, boolean isKey) {
@@ -40,10 +40,8 @@ public class WrappedNoSerializationErrorDeserializer<T> implements Deserializer<
     return null;
   }
 
-
   @Override
   public void close() {
     wrappedDeserializer.close();
   }
-
 }

@@ -1,12 +1,5 @@
 package org.sdase.commons.server.auth.key;
 
-import org.junit.Test;
-
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
-
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -15,86 +8,87 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
+import org.junit.Test;
+
 public class JwksKeySourceTest {
 
-   @Test
-   public void shouldRethrowSameKeyloadFailedException() {
+  @Test
+  public void shouldRethrowSameKeyloadFailedException() {
 
-      KeyLoadFailedException keyLoadFailedException = new KeyLoadFailedException();
+    KeyLoadFailedException keyLoadFailedException = new KeyLoadFailedException();
 
-      Client client = mock(Client.class);
-      doThrow(keyLoadFailedException).when(client).target(anyString());
+    Client client = mock(Client.class);
+    doThrow(keyLoadFailedException).when(client).target(anyString());
 
-      JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
+    JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
 
-      assertThatExceptionOfType(KeyLoadFailedException.class)
-            .isThrownBy(jwksKeySource::loadKeysFromSource)
-            .isSameAs(keyLoadFailedException);
+    assertThatExceptionOfType(KeyLoadFailedException.class)
+        .isThrownBy(jwksKeySource::loadKeysFromSource)
+        .isSameAs(keyLoadFailedException);
+  }
 
-   }
+  @Test
+  public void shouldCloseWebApplicationExceptionResponse() {
 
-   @Test
-   public void shouldCloseWebApplicationExceptionResponse() {
+    Response response = mock(Response.class);
+    Client client = mock(Client.class);
+    WebApplicationException webApplicationException = mock(WebApplicationException.class);
+    doReturn(response).when(webApplicationException).getResponse();
+    doThrow(webApplicationException).when(client).target(anyString());
+    JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
 
-      Response response = mock(Response.class);
-      Client client = mock(Client.class);
-      WebApplicationException webApplicationException = mock(WebApplicationException.class);
-      doReturn(response).when(webApplicationException).getResponse();
-      doThrow(webApplicationException).when(client).target(anyString());
-      JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
+    assertThatExceptionOfType(KeyLoadFailedException.class)
+        .isThrownBy(jwksKeySource::loadKeysFromSource);
 
-      assertThatExceptionOfType(KeyLoadFailedException.class)
-            .isThrownBy(jwksKeySource::loadKeysFromSource);
+    verify(response, times(1)).close();
+  }
 
-      verify(response, times(1)).close();
-   }
+  @Test
+  public void shouldHandleExceptionOnCloseWebApplicationException() {
 
-   @Test
-   public void shouldHandleExceptionOnCloseWebApplicationException() {
+    Response response = mock(Response.class);
+    Client client = mock(Client.class);
+    WebApplicationException webApplicationException = mock(WebApplicationException.class);
+    doReturn(response).when(webApplicationException).getResponse();
+    doThrow(webApplicationException).when(client).target(anyString());
+    doThrow(new ProcessingException("Test")).when(response).close();
+    JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
 
-      Response response = mock(Response.class);
-      Client client = mock(Client.class);
-      WebApplicationException webApplicationException = mock(WebApplicationException.class);
-      doReturn(response).when(webApplicationException).getResponse();
-      doThrow(webApplicationException).when(client).target(anyString());
-      doThrow(new ProcessingException("Test")).when(response).close();
-      JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
+    assertThatExceptionOfType(KeyLoadFailedException.class)
+        .isThrownBy(jwksKeySource::loadKeysFromSource)
+        .withCause(webApplicationException);
+  }
 
-      assertThatExceptionOfType(KeyLoadFailedException.class)
-            .isThrownBy(jwksKeySource::loadKeysFromSource)
-            .withCause(webApplicationException);
+  @Test
+  public void shouldWrapWebApplicationExceptionInKeyloadFailedException() {
 
-   }
+    Response response = mock(Response.class);
+    Client client = mock(Client.class);
+    WebApplicationException webApplicationException = mock(WebApplicationException.class);
+    doReturn(response).when(webApplicationException).getResponse();
+    doThrow(webApplicationException).when(client).target(anyString());
+    JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
 
-   @Test
-   public void shouldWrapWebApplicationExceptionInKeyloadFailedException() {
+    assertThatExceptionOfType(KeyLoadFailedException.class)
+        .isThrownBy(jwksKeySource::loadKeysFromSource)
+        .withCause(webApplicationException);
+  }
 
-      Response response = mock(Response.class);
-      Client client = mock(Client.class);
-      WebApplicationException webApplicationException = mock(WebApplicationException.class);
-      doReturn(response).when(webApplicationException).getResponse();
-      doThrow(webApplicationException).when(client).target(anyString());
-      JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
+  @Test
+  public void shouldWrapAnyExceptionInKeyloadFailedException() {
 
-      assertThatExceptionOfType(KeyLoadFailedException.class)
-            .isThrownBy(jwksKeySource::loadKeysFromSource)
-            .withCause(webApplicationException);
+    Exception e = new IllegalArgumentException();
 
-   }
+    Client client = mock(Client.class);
+    doThrow(e).when(client).target(anyString());
+    JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
 
-   @Test
-   public void shouldWrapAnyExceptionInKeyloadFailedException() {
-
-      Exception e = new IllegalArgumentException();
-
-      Client client = mock(Client.class);
-      doThrow(e).when(client).target(anyString());
-      JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
-
-      assertThatExceptionOfType(KeyLoadFailedException.class)
-            .isThrownBy(jwksKeySource::loadKeysFromSource)
-            .withCause(e);
-
-   }
-
+    assertThatExceptionOfType(KeyLoadFailedException.class)
+        .isThrownBy(jwksKeySource::loadKeysFromSource)
+        .withCause(e);
+  }
 }
