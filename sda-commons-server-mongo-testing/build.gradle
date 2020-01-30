@@ -1,6 +1,6 @@
 dependencies {
-    compile project(':sda-commons-server-testing')
+  compile project(':sda-commons-server-testing')
 
-    compile 'org.mongodb:mongo-java-driver'
-    compile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+  compile 'org.mongodb:mongo-java-driver'
+  compile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 }

@@ -1,12 +1,6 @@
 package org.sdase.commons.server.auth.key;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.WebApplicationException;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MediaType;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -18,195 +12,199 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.MediaType;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Loads public keys from a
- * <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5">JSON Web Key Set</a>.
+ * Loads public keys from a <a
+ * href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5">JSON Web Key
+ * Set</a>.
  */
 public class JwksKeySource implements KeySource {
-   private static final Logger LOGGER = LoggerFactory.getLogger(JwksKeySource.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JwksKeySource.class);
 
-   private String jwksUri;
+  private String jwksUri;
 
-   private Client client;
+  private Client client;
 
-   /**
-    * @param jwksUri the uri providing a
-    *                <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5">JSON Web Key Set</a>
-    *                as Json, e.g. {@code http://keycloak.example.com/auth/realms/sda-reference-solution/protocol/openid-connect/certs}
-    * @param client the client used to execute the discovery request, may be created from the application
-    *               {@link io.dropwizard.setup.Environment} using {@link io.dropwizard.client.JerseyClientBuilder}
-    */
-   public JwksKeySource(String jwksUri, Client client) {
-      this.jwksUri = jwksUri;
-      this.client = client;
-   }
+  /**
+   * @param jwksUri the uri providing a <a
+   *     href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5">JSON Web Key
+   *     Set</a> as Json, e.g. {@code
+   *     http://keycloak.example.com/auth/realms/sda-reference-solution/protocol/openid-connect/certs}
+   * @param client the client used to execute the discovery request, may be created from the
+   *     application {@link io.dropwizard.setup.Environment} using {@link
+   *     io.dropwizard.client.JerseyClientBuilder}
+   */
+  public JwksKeySource(String jwksUri, Client client) {
+    this.jwksUri = jwksUri;
+    this.client = client;
+  }
 
-   @Override
-   public List<LoadedPublicKey> loadKeysFromSource() {
+  @Override
+  public List<LoadedPublicKey> loadKeysFromSource() {
+    try {
+      Jwks jwks = client.target(jwksUri).request(MediaType.APPLICATION_JSON).get(Jwks.class);
+      return jwks.getKeys().stream()
+          .filter(Objects::nonNull)
+          .filter(this::isForSigning)
+          .filter(this::isRsaKeyType)
+          .filter(this::isRsa256Key)
+          .map(this::toPublicKey)
+          .collect(Collectors.toList());
+    } catch (KeyLoadFailedException e) {
+      throw e;
+    } catch (WebApplicationException e) {
       try {
-         Jwks jwks = client.target(jwksUri).request(MediaType.APPLICATION_JSON)
-               .get(Jwks.class);
-         return jwks.getKeys().stream()
-               .filter(Objects::nonNull)
-               .filter(this::isForSigning)
-               .filter(this::isRsaKeyType)
-               .filter(this::isRsa256Key)
-               .map(this::toPublicKey)
-               .collect(Collectors.toList());
-      } catch (KeyLoadFailedException e) {
-         throw e;
-      } catch (WebApplicationException e) {
-         try {
-            e.getResponse().close();
-         } catch (ProcessingException ex) {
-            LOGGER.warn("Error while loading keys from JWKS while closing response", ex);
-         }
-         throw new KeyLoadFailedException(e);
-      } catch (Exception e) {
-         throw new KeyLoadFailedException(e);
+        e.getResponse().close();
+      } catch (ProcessingException ex) {
+        LOGGER.warn("Error while loading keys from JWKS while closing response", ex);
       }
-   }
+      throw new KeyLoadFailedException(e);
+    } catch (Exception e) {
+      throw new KeyLoadFailedException(e);
+    }
+  }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      JwksKeySource keySource = (JwksKeySource) o;
-      return Objects.equals(jwksUri, keySource.jwksUri) &&
-            Objects.equals(client, keySource.client);
-   }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    JwksKeySource keySource = (JwksKeySource) o;
+    return Objects.equals(jwksUri, keySource.jwksUri) && Objects.equals(client, keySource.client);
+  }
 
-   @Override
-   public int hashCode() {
-      return Objects.hash(jwksUri, client);
-   }
+  @Override
+  public int hashCode() {
+    return Objects.hash(jwksUri, client);
+  }
 
-   @Override
-   public String toString() {
-      return "JwksKeySource{" +
-            "jwksUri='" + jwksUri + '\'' +
-            '}';
-   }
+  @Override
+  public String toString() {
+    return "JwksKeySource{" + "jwksUri='" + jwksUri + '\'' + '}';
+  }
 
-   private boolean isForSigning(Key key) {
-      return StringUtils.isBlank(key.getUse()) || "sig".equals(key.getUse());
-   }
+  private boolean isForSigning(Key key) {
+    return StringUtils.isBlank(key.getUse()) || "sig".equals(key.getUse());
+  }
 
-   private boolean isRsaKeyType(Key key) {
-      return "RSA".equals(key.getKty());
-   }
+  private boolean isRsaKeyType(Key key) {
+    return "RSA".equals(key.getKty());
+  }
 
-   private boolean isRsa256Key(Key key) {
-      // We only support RSA256, if blank we assume it to be RS256.
-      return StringUtils.isBlank(key.getAlg()) || "RS256".equals(key.getAlg());
-   }
+  private boolean isRsa256Key(Key key) {
+    // We only support RSA256, if blank we assume it to be RS256.
+    return StringUtils.isBlank(key.getAlg()) || "RS256".equals(key.getAlg());
+  }
 
-   private LoadedPublicKey toPublicKey(Key key) throws KeyLoadFailedException { // NOSONAR
-      try {
-         String kid = key.getKid();
-         String keyType = key.getKty();
-         KeyFactory keyFactory = KeyFactory.getInstance(keyType);
+  private LoadedPublicKey toPublicKey(Key key) throws KeyLoadFailedException { // NOSONAR
+    try {
+      String kid = key.getKid();
+      String keyType = key.getKty();
+      KeyFactory keyFactory = KeyFactory.getInstance(keyType);
 
-         BigInteger modulus = readBase64AsBigInt(key.getN());
-         BigInteger exponent = readBase64AsBigInt(key.getE());
+      BigInteger modulus = readBase64AsBigInt(key.getN());
+      BigInteger exponent = readBase64AsBigInt(key.getE());
 
-         PublicKey publicKey = keyFactory.generatePublic(new RSAPublicKeySpec(modulus, exponent));
-         if (publicKey instanceof RSAPublicKey) {
-            return new LoadedPublicKey(kid, (RSAPublicKey) publicKey, this);
-         } else {
-            throw new KeyLoadFailedException("Only RSA keys are supported but loaded a " + publicKey.getClass()
-                  + " from " + jwksUri);
-         }
-      } catch (NullPointerException | InvalidKeySpecException | NoSuchAlgorithmException e) {
-         throw new KeyLoadFailedException(e);
+      PublicKey publicKey = keyFactory.generatePublic(new RSAPublicKeySpec(modulus, exponent));
+      if (publicKey instanceof RSAPublicKey) {
+        return new LoadedPublicKey(kid, (RSAPublicKey) publicKey, this);
+      } else {
+        throw new KeyLoadFailedException(
+            "Only RSA keys are supported but loaded a "
+                + publicKey.getClass()
+                + " from "
+                + jwksUri);
       }
+    } catch (NullPointerException | InvalidKeySpecException | NoSuchAlgorithmException e) {
+      throw new KeyLoadFailedException(e);
+    }
+  }
 
-   }
+  private static BigInteger readBase64AsBigInt(String encodedBigInt) {
+    return new BigInteger(1, Base64.getUrlDecoder().decode(encodedBigInt));
+  }
 
-   private static BigInteger readBase64AsBigInt(String encodedBigInt) {
-      return new BigInteger(1, Base64.getUrlDecoder().decode(encodedBigInt));
-   }
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  private static class Jwks {
+    private List<Key> keys;
 
+    public List<Key> getKeys() {
+      return keys;
+    }
 
-   @JsonIgnoreProperties(ignoreUnknown = true)
-   private static class Jwks {
-      private List<Key> keys;
+    public Jwks setKeys(List<Key> keys) {
+      this.keys = keys;
+      return this;
+    }
+  }
 
-      public List<Key> getKeys() {
-         return keys;
-      }
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  private static class Key {
+    private String kid;
+    private String kty;
+    private String alg;
+    private String use;
+    private String n;
+    private String e;
 
-      public Jwks setKeys(List<Key> keys) {
-         this.keys = keys;
-         return this;
-      }
-   }
+    public String getKid() {
+      return kid;
+    }
 
-   @JsonIgnoreProperties(ignoreUnknown = true)
-   private static class Key {
-      private String kid;
-      private String kty;
-      private String alg;
-      private String use;
-      private String n;
-      private String e;
+    public Key setKid(String kid) {
+      this.kid = kid;
+      return this;
+    }
 
-      public String getKid() {
-         return kid;
-      }
+    public String getKty() {
+      return kty;
+    }
 
-      public Key setKid(String kid) {
-         this.kid = kid;
-         return this;
-      }
+    public Key setKty(String kty) {
+      this.kty = kty;
+      return this;
+    }
 
-      public String getKty() {
-         return kty;
-      }
+    public String getAlg() {
+      return alg;
+    }
 
-      public Key setKty(String kty) {
-         this.kty = kty;
-         return this;
-      }
+    public Key setAlg(String alg) {
+      this.alg = alg;
+      return this;
+    }
 
-      public String getAlg() {
-         return alg;
-      }
+    public String getUse() {
+      return use;
+    }
 
-      public Key setAlg(String alg) {
-         this.alg = alg;
-         return this;
-      }
+    public Key setUse(String use) {
+      this.use = use;
+      return this;
+    }
 
-      public String getUse() {
-         return use;
-      }
+    public String getN() {
+      return n;
+    }
 
-      public Key setUse(String use) {
-         this.use = use;
-         return this;
-      }
+    public Key setN(String n) {
+      this.n = n;
+      return this;
+    }
 
-      public String getN() {
-         return n;
-      }
+    public String getE() {
+      return e;
+    }
 
-      public Key setN(String n) {
-         this.n = n;
-         return this;
-      }
-
-      public String getE() {
-         return e;
-      }
-
-      public Key setE(String e) {
-         this.e = e;
-         return this;
-      }
-   }
-
+    public Key setE(String e) {
+      this.e = e;
+      return this;
+    }
+  }
 }

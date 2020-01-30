@@ -1,5 +1,7 @@
 package org.sdase.commons.server.morphia;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
+
 import dev.morphia.Datastore;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -14,42 +16,41 @@ import org.sdase.commons.server.morphia.test.model.Person;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-
-/**
- * Tests if entities are NOT validated if validation was disabled.
- */
+/** Tests if entities are NOT validated if validation was disabled. */
 public class MorphiaBundleValidationDisabledIT {
 
   private static final MongoDbRule MONGODB = MongoDbRule.builder().build();
 
   private static final LazyRule<DropwizardAppRule<Config>> DW =
-      new LazyRule<>(() ->
-          DropwizardRuleHelper.dropwizardTestAppFrom(MorphiaTestApp.class)
-              .withConfigFrom(Config::new)
-              .withRandomPorts()
-              .withConfigurationModifier(c -> c.getMongo()
-                  .setHosts(MONGODB.getHost())
-                  .setDatabase("testPeople"))
-              .build());
+      new LazyRule<>(
+          () ->
+              DropwizardRuleHelper.dropwizardTestAppFrom(MorphiaTestApp.class)
+                  .withConfigFrom(Config::new)
+                  .withRandomPorts()
+                  .withConfigurationModifier(
+                      c -> c.getMongo().setHosts(MONGODB.getHost()).setDatabase("testPeople"))
+                  .build());
 
-  @ClassRule
-  public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
+  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
 
   @Test
   public void shouldStoreInvalidPerson() {
-    assertThatCode(() -> {
-      Datastore datastore = getDatastore();
-      datastore.save(new Person());
-    }).doesNotThrowAnyException();
+    assertThatCode(
+            () -> {
+              Datastore datastore = getDatastore();
+              datastore.save(new Person());
+            })
+        .doesNotThrowAnyException();
   }
 
   @Test
   public void shouldStoreValidPerson() {
-    assertThatCode(() -> {
-      Datastore datastore = getDatastore();
-      datastore.save(new Person().setName("Name"));
-    }).doesNotThrowAnyException();
+    assertThatCode(
+            () -> {
+              Datastore datastore = getDatastore();
+              datastore.save(new Person().setName("Name"));
+            })
+        .doesNotThrowAnyException();
   }
 
   private Datastore getDatastore() {
@@ -58,11 +59,12 @@ public class MorphiaBundleValidationDisabledIT {
 
   public static class MorphiaTestApp extends Application<Config> {
 
-    private MorphiaBundle<Config> morphiaBundle = MorphiaBundle.builder()
-        .withConfigurationProvider(Config::getMongo)
-        .withEntity(Person.class)
-        .withoutValidation()
-        .build();
+    private MorphiaBundle<Config> morphiaBundle =
+        MorphiaBundle.builder()
+            .withConfigurationProvider(Config::getMongo)
+            .withEntity(Person.class)
+            .withoutValidation()
+            .build();
 
     @Override
     public void initialize(Bootstrap<Config> bootstrap) {
@@ -77,7 +79,5 @@ public class MorphiaBundleValidationDisabledIT {
     MorphiaBundle<Config> getMorphiaBundle() {
       return morphiaBundle;
     }
-
   }
-
 }

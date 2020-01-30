@@ -10,14 +10,14 @@ import org.sdase.commons.server.weld.testing.WeldAppRule;
 
 public class WeldExampleApplicationIT {
 
-   @ClassRule
-   public static final DropwizardAppRule<Configuration> RULE = new WeldAppRule<>(WeldExampleApplication.class,
-         ResourceHelpers.resourceFilePath("test-config.yaml"));
+  @ClassRule
+  public static final DropwizardAppRule<Configuration> RULE =
+      new WeldAppRule<>(
+          WeldExampleApplication.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-   @Test
-   public void shouldBeInjectedCorrectly() {
-      WeldExampleApplication app = RULE.getApplication();
-      Assertions.assertThat(app.getUsageBean()).isNotNull();
-   }
-
+  @Test
+  public void shouldBeInjectedCorrectly() {
+    WeldExampleApplication app = RULE.getApplication();
+    Assertions.assertThat(app.getUsageBean()).isNotNull();
+  }
 }

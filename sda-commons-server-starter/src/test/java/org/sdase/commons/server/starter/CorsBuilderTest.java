@@ -8,31 +8,32 @@ import org.sdase.commons.server.starter.test.BundleAssertion;
 
 public class CorsBuilderTest {
 
-   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
+  private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
-   @Before
-   public void setUp() {
-      bundleAssertion = new BundleAssertion<>();
-   }
+  @Before
+  public void setUp() {
+    bundleAssertion = new BundleAssertion<>();
+  }
 
-   @Test
-   public void defaultCorsSettings() {
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+  @Test
+  public void defaultCorsSettings() {
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withoutConsumerTokenSupport()
             .withSwaggerInfoTitle("Starter")
             .addSwaggerResourcePackageClass(this.getClass())
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            CorsBundle.builder().withCorsConfigProvider(SdaPlatformConfiguration::getCors).build()
-      );
-   }
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        CorsBundle.builder().withCorsConfigProvider(SdaPlatformConfiguration::getCors).build());
+  }
 
-   @Test
-   public void customCorsSettings() {
-      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
+  @Test
+  public void customCorsSettings() {
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withoutConsumerTokenSupport()
             .withSwaggerInfoTitle("Starter")
@@ -42,27 +43,25 @@ public class CorsBuilderTest {
             .withCorsAllowedMethods("GET")
             .build();
 
-      bundleAssertion.assertBundleConfiguredByPlatformBundle(
-            bundle,
-            CorsBundle.builder()
-                  .withCorsConfigProvider(SdaPlatformConfiguration::getCors)
-                  .withAdditionalExposedHeaders("X-custom-header-1", "X-custom-header-2")
-                  .withAdditionalAllowedHeaders("X-custom-header-3", "X-custom-header-4")
-                  .withAllowedMethods("GET")
-                  .build()
-      );
-   }
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        CorsBundle.builder()
+            .withCorsConfigProvider(SdaPlatformConfiguration::getCors)
+            .withAdditionalExposedHeaders("X-custom-header-1", "X-custom-header-2")
+            .withAdditionalAllowedHeaders("X-custom-header-3", "X-custom-header-4")
+            .withAllowedMethods("GET")
+            .build());
+  }
 
-   @Test(expected = IllegalStateException.class)
-   public void noCorsConfigurationIfCorsDisabled() {
-      SdaPlatformBundle.builder()
-            .usingCustomConfig(SdaPlatformConfiguration.class)
-            .withAuthConfigProvider(c -> new AuthConfig())
-            .withoutCorsSupport()
-            .withoutConsumerTokenSupport()
-            .withSwaggerInfoTitle("The test title")
-            .addSwaggerResourcePackageClass(this.getClass())
-            .withCorsAdditionalExposedHeaders("x-foo");
-   }
-
+  @Test(expected = IllegalStateException.class)
+  public void noCorsConfigurationIfCorsDisabled() {
+    SdaPlatformBundle.builder()
+        .usingCustomConfig(SdaPlatformConfiguration.class)
+        .withAuthConfigProvider(c -> new AuthConfig())
+        .withoutCorsSupport()
+        .withoutConsumerTokenSupport()
+        .withSwaggerInfoTitle("The test title")
+        .addSwaggerResourcePackageClass(this.getClass())
+        .withCorsAdditionalExposedHeaders("x-foo");
+  }
 }

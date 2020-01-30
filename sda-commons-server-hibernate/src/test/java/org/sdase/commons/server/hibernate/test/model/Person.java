@@ -6,40 +6,38 @@ import javax.persistence.*;
 @Table(name = "person")
 public class Person {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-   @Column
-   private String name;
+  @Column private String name;
 
-   @Column
-   private String email;
+  @Column private String email;
 
-   public long getId() {
-      return id;
-   }
+  public long getId() {
+    return id;
+  }
 
-   public Person setId(long id) {
-      this.id = id;
-      return this;
-   }
+  public Person setId(long id) {
+    this.id = id;
+    return this;
+  }
 
-   public String getName() {
-      return name;
-   }
+  public String getName() {
+    return name;
+  }
 
-   public Person setName(String name) {
-      this.name = name;
-      return this;
-   }
+  public Person setName(String name) {
+    this.name = name;
+    return this;
+  }
 
-   public String getEmail() {
-      return email;
-   }
+  public String getEmail() {
+    return email;
+  }
 
-   public Person setEmail(String email) {
-      this.email = email;
-      return this;
-   }
+  public Person setEmail(String email) {
+    this.email = email;
+    return this;
+  }
 }

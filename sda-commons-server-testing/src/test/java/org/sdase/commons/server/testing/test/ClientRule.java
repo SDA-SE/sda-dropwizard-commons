@@ -5,18 +5,18 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 public class ClientRule implements TestRule {
-   private int port;
+  private int port;
 
-   public ClientRule(int port) {
-      this.port = port;
-   }
+  public ClientRule(int port) {
+    this.port = port;
+  }
 
-   public int getPort() {
-      return port;
-   }
+  public int getPort() {
+    return port;
+  }
 
-   @Override
-   public Statement apply(Statement base, Description description) {
-      return base;
-   }
+  @Override
+  public Statement apply(Statement base, Description description) {
+    return base;
+  }
 }

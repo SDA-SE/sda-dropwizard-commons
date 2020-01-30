@@ -8,30 +8,23 @@ import org.sdase.commons.server.kafka.KafkaConfiguration;
 
 public class KafkaTestConfiguration extends Configuration {
 
+  @JsonProperty private KafkaConfiguration kafka = new KafkaConfiguration();
 
-   @JsonProperty
-   private KafkaConfiguration kafka = new KafkaConfiguration();
+  public KafkaTestConfiguration() {
+    // Empty
+  }
 
+  public KafkaTestConfiguration withBrokers(KafkaBrokers kafkaBrokers) {
+    kafkaBrokers.forEach(b -> kafka.getBrokers().add(b.getConnectString()));
+    return this;
+  }
 
-   public KafkaTestConfiguration() {
-      // Empty
-   }
+  public KafkaTestConfiguration withBrokers(List<String> kafkaBrokers) {
+    kafka.getBrokers().addAll(kafkaBrokers);
+    return this;
+  }
 
-   public KafkaTestConfiguration withBrokers(KafkaBrokers kafkaBrokers) {
-      kafkaBrokers.forEach(b ->
-         kafka.getBrokers().add(b.getConnectString())
-      );
-      return this;
-   }
-
-   public KafkaTestConfiguration withBrokers(List<String> kafkaBrokers) {
-      kafka.getBrokers().addAll(kafkaBrokers);
-      return this;
-   }
-
-
-   public KafkaConfiguration getKafka() {
-      return kafka;
-   }
-
+  public KafkaConfiguration getKafka() {
+    return kafka;
+  }
 }

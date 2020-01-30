@@ -2,78 +2,64 @@ package org.sdase.commons.server.opa.config;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * Configuration for requesting OPA PDP.
- */
+/** Configuration for requesting OPA PDP. */
 @SuppressWarnings("UnusedReturnValue")
 public class OpaConfig {
 
-   /**
-    * flag if OPA is disabled (for testing)
-    */
-   private boolean disableOpa;
+  /** flag if OPA is disabled (for testing) */
+  private boolean disableOpa;
 
-   /**
-    * base url where to find the OPA
-    */
-   private String baseUrl = "http://localhost:8181";
+  /** base url where to find the OPA */
+  private String baseUrl = "http://localhost:8181";
 
-   /**
-    * <p>
-    * dot-separated package name as defined in the policy
-    * </p>
-    *
-    * <p>
-    * The package name is reformatted as part of the URL. Test
-    * <code>my.policy</code> becomes <code>my/policy</code>
-    * </p>
-    */
-   @NotNull
-   private String policyPackage = "";
+  /**
+   * dot-separated package name as defined in the policy
+   *
+   * <p>The package name is reformatted as part of the URL. Test <code>my.policy</code> becomes
+   * <code>my/policy</code>
+   */
+  @NotNull private String policyPackage = "";
 
-   /**
-    * readTimeout for opa requests in milliseconds
-    */
-   private int readTimeout = 500;
+  /** readTimeout for opa requests in milliseconds */
+  private int readTimeout = 500;
 
-   public boolean isDisableOpa() {
-      return disableOpa;
-   }
+  public boolean isDisableOpa() {
+    return disableOpa;
+  }
 
-   public OpaConfig setDisableOpa(boolean disableOpa) {
-      this.disableOpa = disableOpa;
-      return this;
-   }
+  public OpaConfig setDisableOpa(boolean disableOpa) {
+    this.disableOpa = disableOpa;
+    return this;
+  }
 
-   public String getBaseUrl() {
-      return baseUrl;
-   }
+  public String getBaseUrl() {
+    return baseUrl;
+  }
 
-   public OpaConfig setBaseUrl(String baseUrl) {
-      this.baseUrl = baseUrl;
-      return this;
-   }
+  public OpaConfig setBaseUrl(String baseUrl) {
+    this.baseUrl = baseUrl;
+    return this;
+  }
 
-   public String getPolicyPackage() {
-      return policyPackage;
-   }
+  public String getPolicyPackage() {
+    return policyPackage;
+  }
 
-   public OpaConfig setPolicyPackage(String policyPackage) {
-      this.policyPackage = policyPackage;
-      return this;
-   }
+  public OpaConfig setPolicyPackage(String policyPackage) {
+    this.policyPackage = policyPackage;
+    return this;
+  }
 
-   public int getReadTimeout() {
-      return readTimeout;
-   }
+  public int getReadTimeout() {
+    return readTimeout;
+  }
 
-   public OpaConfig setReadTimeout(int readTimeout) {
-      this.readTimeout = readTimeout;
-      return this;
-   }
+  public OpaConfig setReadTimeout(int readTimeout) {
+    this.readTimeout = readTimeout;
+    return this;
+  }
 
-   public String getPolicyPackagePath() {
-      return policyPackage.replaceAll("\\.", "/").trim();
-   }
-
+  public String getPolicyPackagePath() {
+    return policyPackage.replaceAll("\\.", "/").trim();
+  }
 }

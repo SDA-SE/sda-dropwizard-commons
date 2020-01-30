@@ -1,220 +1,216 @@
 package org.sdase.commons.server.kafka.builder;
 
 import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
+import javax.validation.constraints.NotNull;
+import org.apache.kafka.common.serialization.Serializer;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.exception.TopicMissingException;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
-import org.apache.kafka.common.serialization.Serializer;
-
-import javax.validation.constraints.NotNull;
 
 public class ProducerRegistration<K, V> {
 
+  private Serializer<K> keySerializer;
+  private Serializer<V> valueSerializer;
+  private ExpectedTopicConfiguration topic;
 
-   private Serializer<K> keySerializer;
-   private Serializer<V> valueSerializer;
-   private ExpectedTopicConfiguration topic;
+  private boolean checkTopicConfiguration;
+  private ProducerConfig producerConfig;
+  private String producerName;
+  private boolean createTopicIfMissing;
 
-   private boolean checkTopicConfiguration;
-   private ProducerConfig producerConfig;
-   private String producerName;
-   private boolean createTopicIfMissing;
+  public String getProducerConfigName() {
+    return producerName;
+  }
 
+  public ExpectedTopicConfiguration getTopic() {
+    return topic;
+  }
 
-   public String getProducerConfigName() {
-      return producerName;
-   }
+  public String getTopicName() {
+    return topic.getTopicName();
+  }
 
-   public ExpectedTopicConfiguration getTopic() {
-      return topic;
-   }
+  public boolean isCheckTopicConfiguration() {
+    return checkTopicConfiguration;
+  }
 
-   public String getTopicName() {
-      return topic.getTopicName();
-   }
+  public boolean isCreateTopicIfMissing() {
+    return createTopicIfMissing;
+  }
 
-   public boolean isCheckTopicConfiguration() {
-      return checkTopicConfiguration;
-   }
+  public Serializer<K> getKeySerializer() {
+    return keySerializer;
+  }
 
-   public boolean isCreateTopicIfMissing() {
-      return createTopicIfMissing;
-   }
+  public Serializer<V> getValueSerializer() {
+    return valueSerializer;
+  }
 
-   public Serializer<K> getKeySerializer() {
-      return keySerializer;
-   }
+  public ProducerConfig getProducerConfig() {
+    return producerConfig;
+  }
 
-   public Serializer<V> getValueSerializer() {
-      return valueSerializer;
-   }
+  public interface TopicBuilder<K, V> {
 
-   public ProducerConfig getProducerConfig() {
-      return producerConfig;
-   }
+    /**
+     * @param topic the topic for that messages will be produced
+     * @return builder
+     */
+    ProducerBuilder<K, V> forTopic(String topic);
 
-   public interface TopicBuilder<K, V> {
+    /**
+     * @param topic detailed definition of the topic for that messages will be produced. This
+     *     details are used when topic existence should be checked or topic should be created if
+     *     missing. If topic differs, a {@link TopicMissingException} is thrown.
+     * @return builder
+     */
+    ProducerBuilder<K, V> forTopic(ExpectedTopicConfiguration topic);
+  }
 
-      /**
-       * @param topic the topic for that  messages will be produced
-       * @return builder
-       */
-      ProducerBuilder<K, V> forTopic(String topic);
+  public interface ProducerBuilder<K, V> {
 
-      /**
-       * @param topic detailed definition of the topic for that messages will be produced. This details are used when topic
-       *              existence should be checked or topic should be created if missing. If topic differs, a {@link TopicMissingException}
-       *              is thrown.
-       * @return builder
-       */
-      ProducerBuilder<K, V> forTopic(ExpectedTopicConfiguration topic);
+    /**
+     * defines that the topic configuration should be checked. If the name is given only, just topic
+     * existance is checked.
+     *
+     * @return builder
+     */
+    ProducerBuilder<K, V> checkTopicConfiguration();
 
-   }
+    /**
+     * defines that the topic should be created if it does not exist
+     *
+     * @return builder
+     */
+    ProducerBuilder<K, V> createTopicIfMissing();
 
+    /**
+     * defines that the default producer should be used
+     *
+     * @return builder
+     */
+    FinalBuilder<K, V> withDefaultProducer();
 
-   public interface ProducerBuilder<K, V> {
+    /**
+     * @param config configuration used for KafkaProducer creation
+     * @return builder
+     */
+    FinalBuilder<K, V> withProducerConfig(ProducerConfig config);
 
-      /**
-       * defines that the topic configuration should be checked. If the name is given only, just topic existance is checked.
-       * @return builder
-       */
-      ProducerBuilder<K, V> checkTopicConfiguration();
+    /**
+     * @param name name of the ProducerConfig that is defined in the coniguration yaml
+     * @return builder
+     */
+    FinalBuilder<K, V> withProducerConfig(String name);
+  }
 
-      /**
-       * defines that the topic should be created if it does not exist
-       * @return builder
-       */
-      ProducerBuilder<K, V> createTopicIfMissing();
+  public interface FinalBuilder<K, V> {
 
-      /**
-       * defines that the default producer should be used
-       * @return builder
-       */
-      FinalBuilder<K, V> withDefaultProducer();
+    /**
+     * @param keySerializer define a new key serializer
+     * @return builder
+     */
+    FinalBuilder<K, V> withKeySerializer(Serializer<K> keySerializer);
 
-      /**
-       * @param config configuration used for KafkaProducer creation
-       * @return builder
-       */
-      FinalBuilder<K, V> withProducerConfig(ProducerConfig config);
+    /**
+     * @param valueSerializer define a new value serializer
+     * @return builder
+     */
+    FinalBuilder<K, V> withValueSerializer(Serializer<V> valueSerializer);
 
-      /**
-       * @param name name of the ProducerConfig that is defined in the coniguration yaml
-       * @return builder
-       */
-      FinalBuilder<K, V> withProducerConfig(String name);
+    ProducerRegistration<K, V> build();
+  }
 
-   }
+  /**
+   * creates a new builder
+   *
+   * @return builder
+   */
+  public static <K, V> TopicBuilder<K, V> builder() {
+    return new Builder<>();
+  }
 
-   public interface FinalBuilder<K, V> {
+  private static class Builder<K, V>
+      implements TopicBuilder<K, V>, ProducerBuilder<K, V>, FinalBuilder<K, V> {
 
-      /**
-       * @param keySerializer define a new key serializer
-       * @return builder
-       */
-      FinalBuilder<K, V> withKeySerializer(Serializer<K> keySerializer);
+    private Serializer<?> keySerializer = null;
+    private Serializer<?> valueSerializer = null;
+    private ExpectedTopicConfiguration topic;
+    private boolean checkTopicConfiguration = false;
+    private boolean createTopicIfMissing = false;
+    private ProducerConfig producerConfig;
+    private String producerName = null;
 
-      /**
-       * @param valueSerializer define a new value serializer
-       * @return builder
-       */
-      FinalBuilder<K, V> withValueSerializer(Serializer<V> valueSerializer);
+    private Builder() {}
 
-      ProducerRegistration<K, V> build();
-   }
+    @Override
+    public ProducerBuilder<K, V> forTopic(@NotNull String topic) {
+      this.topic = TopicConfigurationBuilder.builder(topic).build();
+      return this;
+    }
 
-   /**
-    * creates a new builder
-    * @return builder
-    */
-   public static <K, V> TopicBuilder<K, V> builder() {
-      return new Builder<>();
-   }
+    @Override
+    public ProducerBuilder<K, V> forTopic(@NotNull ExpectedTopicConfiguration topic) {
+      this.topic = topic;
+      return this;
+    }
 
+    @Override
+    public FinalBuilder<K, V> withKeySerializer(@NotNull Serializer<K> keySerializer) {
+      this.keySerializer = keySerializer;
+      return this;
+    }
 
-   private static class Builder<K, V> implements TopicBuilder<K, V>, ProducerBuilder<K,V>,  FinalBuilder<K, V> {
+    @Override
+    public FinalBuilder<K, V> withValueSerializer(@NotNull Serializer<V> valueDeserializer) {
+      this.valueSerializer = valueDeserializer;
+      return this;
+    }
 
-      private Serializer<?> keySerializer = null;
-      private Serializer<?> valueSerializer = null;
-      private ExpectedTopicConfiguration topic;
-      private boolean checkTopicConfiguration = false;
-      private boolean createTopicIfMissing = false;
-      private ProducerConfig producerConfig;
-      private String producerName = null;
+    @Override
+    public ProducerBuilder<K, V> checkTopicConfiguration() {
+      this.checkTopicConfiguration = true;
+      return this;
+    }
 
+    @Override
+    public ProducerBuilder<K, V> createTopicIfMissing() {
+      this.createTopicIfMissing = true;
+      return this;
+    }
 
-      private Builder() {
-      }
+    @Override
+    public FinalBuilder<K, V> withDefaultProducer() {
+      this.producerConfig = null;
+      this.producerName = null;
+      return this;
+    }
 
-      @Override
-      public ProducerBuilder<K, V> forTopic(@NotNull String topic) {
-         this.topic = TopicConfigurationBuilder.builder(topic).build();
-         return this;
-      }
+    @Override
+    public FinalBuilder<K, V> withProducerConfig(ProducerConfig config) {
+      this.producerConfig = config;
+      return this;
+    }
 
-      @Override
-      public ProducerBuilder<K, V> forTopic(@NotNull ExpectedTopicConfiguration topic) {
-         this.topic = topic;
-         return this;
-      }
+    @Override
+    public FinalBuilder<K, V> withProducerConfig(String name) {
+      this.producerName = name;
+      return this;
+    }
 
-      @Override
-      public FinalBuilder<K, V> withKeySerializer(@NotNull Serializer<K> keySerializer) {
-         this.keySerializer = keySerializer;
-         return this;
-      }
+    @SuppressWarnings("unchecked")
+    @Override
+    public ProducerRegistration<K, V> build() {
+      ProducerRegistration<K, V> build = new ProducerRegistration<>();
+      build.keySerializer = (Serializer<K>) keySerializer;
+      build.valueSerializer = (Serializer<V>) valueSerializer;
+      build.topic = topic;
+      build.checkTopicConfiguration = checkTopicConfiguration;
+      build.createTopicIfMissing = createTopicIfMissing;
+      build.producerConfig = producerConfig;
+      build.producerName = producerName;
 
-      @Override
-      public FinalBuilder<K, V> withValueSerializer(@NotNull Serializer<V> valueDeserializer) {
-         this.valueSerializer = valueDeserializer;
-         return this;
-      }
-
-      @Override
-      public ProducerBuilder<K, V> checkTopicConfiguration() {
-         this.checkTopicConfiguration = true;
-         return this;
-      }
-
-      @Override
-      public ProducerBuilder<K, V> createTopicIfMissing() {
-         this.createTopicIfMissing = true;
-         return this;
-      }
-
-      @Override
-      public FinalBuilder<K, V> withDefaultProducer() {
-         this.producerConfig = null;
-         this.producerName = null;
-         return this;
-      }
-
-      @Override
-      public FinalBuilder<K, V> withProducerConfig(ProducerConfig config) {
-         this.producerConfig = config;
-         return this;
-      }
-
-      @Override
-      public FinalBuilder<K, V> withProducerConfig(String name) {
-         this.producerName = name;
-         return this;
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public ProducerRegistration<K, V> build() {
-         ProducerRegistration<K, V> build = new ProducerRegistration<>();
-         build.keySerializer = (Serializer<K>) keySerializer;
-         build.valueSerializer = (Serializer<V>) valueSerializer;
-         build.topic = topic;
-         build.checkTopicConfiguration = checkTopicConfiguration;
-         build.createTopicIfMissing = createTopicIfMissing;
-         build.producerConfig = producerConfig;
-         build.producerName = producerName;
-
-         return build;
-      }
-   }
-
+      return build;
+    }
+  }
 }

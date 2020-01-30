@@ -1,17 +1,5 @@
 package org.sdase.commons.client.jersey.error;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import java.net.SocketTimeoutException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.junit.Test;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.doThrow;
@@ -27,66 +15,99 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.timeoutError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.webApplicationExceptionCause;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import java.net.SocketTimeoutException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.junit.Test;
 
 public class ClientRequestExceptionTest {
 
-   @Test
-   public void identifyClientError() {
-      assertThatExceptionOfType(ClientRequestException.class).isThrownBy(() -> {
-         throw new ClientRequestException(new NotFoundException());
-      }).is(clientError()).has(webApplicationExceptionCause());
-   }
+  @Test
+  public void identifyClientError() {
+    assertThatExceptionOfType(ClientRequestException.class)
+        .isThrownBy(
+            () -> {
+              throw new ClientRequestException(new NotFoundException());
+            })
+        .is(clientError())
+        .has(webApplicationExceptionCause());
+  }
 
-   @Test
-   public void identifyServerError() {
-      assertThatExceptionOfType(ClientRequestException.class).isThrownBy(() -> {
-         throw new ClientRequestException(new InternalServerErrorException());
-      }).is(serverError()).has(webApplicationExceptionCause());
-   }
+  @Test
+  public void identifyServerError() {
+    assertThatExceptionOfType(ClientRequestException.class)
+        .isThrownBy(
+            () -> {
+              throw new ClientRequestException(new InternalServerErrorException());
+            })
+        .is(serverError())
+        .has(webApplicationExceptionCause());
+  }
 
-   @Test
-   public void identifyConnectTimeout() {
-      assertThatExceptionOfType(ClientRequestException.class).isThrownBy(() -> {
-         throw new ClientRequestException(new ProcessingException(new ConnectTimeoutException()));
-      }).is(timeoutError()).is(connectTimeoutError()).doesNotHave(webApplicationExceptionCause());
-   }
+  @Test
+  public void identifyConnectTimeout() {
+    assertThatExceptionOfType(ClientRequestException.class)
+        .isThrownBy(
+            () -> {
+              throw new ClientRequestException(
+                  new ProcessingException(new ConnectTimeoutException()));
+            })
+        .is(timeoutError())
+        .is(connectTimeoutError())
+        .doesNotHave(webApplicationExceptionCause());
+  }
 
-   @Test
-   public void identifyReadTimeout() {
-      assertThatExceptionOfType(ClientRequestException.class).isThrownBy(() -> {
-         throw new ClientRequestException(new ProcessingException(new SocketTimeoutException()));
-      }).is(timeoutError()).is(readTimeoutError()).doesNotHave(webApplicationExceptionCause());
-   }
+  @Test
+  public void identifyReadTimeout() {
+    assertThatExceptionOfType(ClientRequestException.class)
+        .isThrownBy(
+            () -> {
+              throw new ClientRequestException(
+                  new ProcessingException(new SocketTimeoutException()));
+            })
+        .is(timeoutError())
+        .is(readTimeoutError())
+        .doesNotHave(webApplicationExceptionCause());
+  }
 
-   @Test
-   public void identifyProcessing() {
-      assertThatExceptionOfType(ClientRequestException.class).isThrownBy(() -> {
-         throw new ClientRequestException(new ProcessingException(new JsonParseException(mock(
-             JsonParser.class), "dummy")));
-      }).is(processingError()).doesNotHave(webApplicationExceptionCause());
-   }
+  @Test
+  public void identifyProcessing() {
+    assertThatExceptionOfType(ClientRequestException.class)
+        .isThrownBy(
+            () -> {
+              throw new ClientRequestException(
+                  new ProcessingException(new JsonParseException(mock(JsonParser.class), "dummy")));
+            })
+        .is(processingError())
+        .doesNotHave(webApplicationExceptionCause());
+  }
 
-   @Test
-   public void doNotFailOnCloseIfNoResponseIsAvailable() {
-      ClientRequestException clientRequestException = new ClientRequestException(new RuntimeException());
-      assertThat(clientRequestException.getResponse()).isNotPresent();
-      clientRequestException.close();
-   }
+  @Test
+  public void doNotFailOnCloseIfNoResponseIsAvailable() {
+    ClientRequestException clientRequestException =
+        new ClientRequestException(new RuntimeException());
+    assertThat(clientRequestException.getResponse()).isNotPresent();
+    clientRequestException.close();
+  }
 
-   @Test
-   public void doNotFailOnCloseException() { // NOSONAR
-      Response mockResponse = mock(Response.class);
-      doThrow(new RuntimeException()).when(mockResponse).close();
-      when(mockResponse.getStatusInfo()).thenReturn(Response.Status.OK);
+  @Test
+  public void doNotFailOnCloseException() { // NOSONAR
+    Response mockResponse = mock(Response.class);
+    doThrow(new RuntimeException()).when(mockResponse).close();
+    when(mockResponse.getStatusInfo()).thenReturn(Response.Status.OK);
 
-      ClientRequestException clientRequestException = new ClientRequestException(
-            new WebApplicationException(mockResponse)
-      );
+    ClientRequestException clientRequestException =
+        new ClientRequestException(new WebApplicationException(mockResponse));
 
-      clientRequestException.close();
-      clientRequestException.close();
+    clientRequestException.close();
+    clientRequestException.close();
 
-      verify(mockResponse, times(2)).close();
-   }
-
+    verify(mockResponse, times(2)).close();
+  }
 }

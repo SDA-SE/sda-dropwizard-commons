@@ -1,6 +1,6 @@
 dependencies {
-    compile project(':sda-commons-server-testing')
+  compile project(':sda-commons-server-testing')
 
-    compile 'io.findify:s3mock_2.12'
-    compile 'javax.xml.bind:jaxb-api'
+  compile 'io.findify:s3mock_2.12'
+  compile 'javax.xml.bind:jaxb-api'
 }

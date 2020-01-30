@@ -10,8 +10,7 @@ public class RetryRuleTest {
   private final AtomicInteger shouldRetryOnAssertion = new AtomicInteger(0);
   private final AtomicInteger shouldNotRetryOnSuccess = new AtomicInteger(0);
 
-  @Rule
-  public final RetryRule retryRule = new RetryRule();
+  @Rule public final RetryRule retryRule = new RetryRule();
 
   @Test()
   @Retry(6)

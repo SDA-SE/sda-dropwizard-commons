@@ -1,5 +1,9 @@
 package org.sdase.commons.server.kafka;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.sdase.commons.server.kafka.config.AdminConfig;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
@@ -7,94 +11,86 @@ import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.config.Security;
 import org.sdase.commons.server.kafka.config.TopicConfig;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-/**
- * Subclass of Dropwizard Configuration class to hold any values necessary to
- * connect to Kafka
- */
+/** Subclass of Dropwizard Configuration class to hold any values necessary to connect to Kafka */
 public class KafkaConfiguration {
 
-   private boolean disabled = false;
+  private boolean disabled = false;
 
-   private List<String> brokers = new ArrayList<>();
+  private List<String> brokers = new ArrayList<>();
 
-   private Map<String, ProducerConfig> producers = new HashMap<>();
+  private Map<String, ProducerConfig> producers = new HashMap<>();
 
-   private Map<String, ConsumerConfig> consumers = new HashMap<>();
+  private Map<String, ConsumerConfig> consumers = new HashMap<>();
 
-   private Map<String, TopicConfig> topics = new HashMap<>();
+  private Map<String, TopicConfig> topics = new HashMap<>();
 
-   private Map<String, ListenerConfig> listenerConfig = new HashMap<>();
+  private Map<String, ListenerConfig> listenerConfig = new HashMap<>();
 
-   private Security security = new Security();
-   
-   private AdminConfig adminConfig = new AdminConfig();
+  private Security security = new Security();
 
-   public List<String> getBrokers() {
-      return brokers;
-   }
+  private AdminConfig adminConfig = new AdminConfig();
 
-   public void setBrokers(List<String> brokers) {
-      this.brokers = brokers;
-   }
+  public List<String> getBrokers() {
+    return brokers;
+  }
 
-   public Security getSecurity() {
-      return security;
-   }
+  public void setBrokers(List<String> brokers) {
+    this.brokers = brokers;
+  }
 
-   public void setSecurity(Security security) {
-      this.security = security;
-   }
+  public Security getSecurity() {
+    return security;
+  }
 
-   public Map<String, ProducerConfig> getProducers() {
-      return producers;
-   }
+  public void setSecurity(Security security) {
+    this.security = security;
+  }
 
-   public Map<String, ConsumerConfig> getConsumers() {
-      return consumers;
-   }
+  public Map<String, ProducerConfig> getProducers() {
+    return producers;
+  }
 
-   public Map<String, TopicConfig> getTopics() {
-      return topics;
-   }
+  public Map<String, ConsumerConfig> getConsumers() {
+    return consumers;
+  }
 
-   public Map<String, ListenerConfig> getListenerConfig() {
-      return listenerConfig;
-   }
+  public Map<String, TopicConfig> getTopics() {
+    return topics;
+  }
 
-   public boolean isDisabled() {
-      return disabled;
-   }
+  public Map<String, ListenerConfig> getListenerConfig() {
+    return listenerConfig;
+  }
 
-   public void setDisabled(boolean disabled) {
-      this.disabled = disabled;
-   }
+  public boolean isDisabled() {
+    return disabled;
+  }
 
-   public void setProducers(Map<String, ProducerConfig> producers) {
-      this.producers = producers;
-   }
+  public void setDisabled(boolean disabled) {
+    this.disabled = disabled;
+  }
 
-   public void setConsumers(Map<String, ConsumerConfig> consumers) {
-      this.consumers = consumers;
-   }
+  public void setProducers(Map<String, ProducerConfig> producers) {
+    this.producers = producers;
+  }
 
-   public void setTopics(Map<String, TopicConfig> topics) {
-      this.topics = topics;
-   }
+  public void setConsumers(Map<String, ConsumerConfig> consumers) {
+    this.consumers = consumers;
+  }
 
-   public void setListenerConfig(Map<String, ListenerConfig> listenerConfig) {
-      this.listenerConfig = listenerConfig;
-   }
+  public void setTopics(Map<String, TopicConfig> topics) {
+    this.topics = topics;
+  }
 
-   public AdminConfig getAdminConfig() {
-      return adminConfig;
-   }
+  public void setListenerConfig(Map<String, ListenerConfig> listenerConfig) {
+    this.listenerConfig = listenerConfig;
+  }
 
-   public void setAdminConfig(AdminConfig adminConfig) {
-      this.adminConfig = adminConfig;
-   }
+  public AdminConfig getAdminConfig() {
+    return adminConfig;
+  }
+
+  public void setAdminConfig(AdminConfig adminConfig) {
+    this.adminConfig = adminConfig;
+  }
 }

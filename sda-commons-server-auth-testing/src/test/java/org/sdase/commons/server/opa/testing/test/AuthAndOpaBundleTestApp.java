@@ -17,42 +17,42 @@ import org.sdase.commons.server.opa.OpaJwtPrincipal;
 
 public class AuthAndOpaBundleTestApp extends Application<AuthAndOpaBundeTestAppConfiguration> {
 
-   @Override
-   public void initialize(Bootstrap<AuthAndOpaBundeTestAppConfiguration> bootstrap) {
-      bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
-      bootstrap
-            .addBundle(AuthBundle
-                  .builder()
-                  .withAuthConfigProvider(AuthAndOpaBundeTestAppConfiguration::getAuth)
-                  .withExternalAuthorization()
-                  .build());
-      bootstrap
-            .addBundle(OpaBundle.builder().withOpaConfigProvider(AuthAndOpaBundeTestAppConfiguration::getOpa).build());
-   }
+  @Override
+  public void initialize(Bootstrap<AuthAndOpaBundeTestAppConfiguration> bootstrap) {
+    bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
+    bootstrap.addBundle(
+        AuthBundle.builder()
+            .withAuthConfigProvider(AuthAndOpaBundeTestAppConfiguration::getAuth)
+            .withExternalAuthorization()
+            .build());
+    bootstrap.addBundle(
+        OpaBundle.builder()
+            .withOpaConfigProvider(AuthAndOpaBundeTestAppConfiguration::getOpa)
+            .build());
+  }
 
-   @Override
-   public void run(AuthAndOpaBundeTestAppConfiguration configuration, Environment environment) {
-      environment.jersey().register(Endpoint.class);
-   }
+  @Override
+  public void run(AuthAndOpaBundeTestAppConfiguration configuration, Environment environment) {
+    environment.jersey().register(Endpoint.class);
+  }
 
-   @Path("/")
-   public static class Endpoint {
+  @Path("/")
+  public static class Endpoint {
 
-      @Context
-      SecurityContext securityContext;
+    @Context SecurityContext securityContext;
 
-      @GET
-      @Path("resources")
-      public Response get() throws IOException {
-         OpaJwtPrincipal principal = (OpaJwtPrincipal) securityContext.getUserPrincipal();
+    @GET
+    @Path("resources")
+    public Response get() throws IOException {
+      OpaJwtPrincipal principal = (OpaJwtPrincipal) securityContext.getUserPrincipal();
 
-         PrincipalInfo result = new PrincipalInfo()
-               .setName(principal.getName())
-               .setJwt(principal.getJwt())
-               .setConstraints(principal.getConstraintsAsEntity(ConstraintModel.class));
+      PrincipalInfo result =
+          new PrincipalInfo()
+              .setName(principal.getName())
+              .setJwt(principal.getJwt())
+              .setConstraints(principal.getConstraintsAsEntity(ConstraintModel.class));
 
-         return Response.ok(result, MediaType.APPLICATION_JSON_TYPE).build();
-      }
-
-   }
+      return Response.ok(result, MediaType.APPLICATION_JSON_TYPE).build();
+    }
+  }
 }

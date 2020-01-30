@@ -1,5 +1,8 @@
 package org.sdase.commons.server.jackson;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -10,293 +13,282 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TolerantObjectMapperTest {
 
-   private ObjectMapper om;
+  private ObjectMapper om;
 
-   @Before
-   public void setUp() {
-      this.om = ObjectMapperConfigurationUtil.configureMapper().build();
-   }
+  @Before
+  public void setUp() {
+    this.om = ObjectMapperConfigurationUtil.configureMapper().build();
+  }
 
-   @Test
-   public void omShouldHaveSameModulesAsDefaultFromDropwizardButNoFuzzyEnumModule() {
-      Bootstrap<Configuration> standardBootstrap = new Bootstrap<>(
+  @Test
+  public void omShouldHaveSameModulesAsDefaultFromDropwizardButNoFuzzyEnumModule() {
+    Bootstrap<Configuration> standardBootstrap =
+        new Bootstrap<>(
             new Application<Configuration>() {
-               @Override
-               public void run(Configuration configuration, Environment environment) {
+              @Override
+              public void run(Configuration configuration, Environment environment) {}
+            });
+    ObjectMapper dropwizardStandardOm = standardBootstrap.getObjectMapper();
+    String unwantedFuzzyEnumModule = "io.dropwizard.jackson.FuzzyEnumModule";
 
-               }
-            }
-      );
-      ObjectMapper dropwizardStandardOm = standardBootstrap.getObjectMapper();
-      String unwantedFuzzyEnumModule = "io.dropwizard.jackson.FuzzyEnumModule";
+    Set<Object> expected = new HashSet<>(dropwizardStandardOm.getRegisteredModuleIds());
 
-      Set<Object> expected = new HashSet<>(dropwizardStandardOm.getRegisteredModuleIds());
+    // if this fails (due to Dropwizard upgrade) we may go back to
+    // io.dropwizard.jackson.Jackson.newObjectMapper() or the default
+    // ObjectMapper provided by Bootstrap instead of customizing the ObjectMapper
+    // instantiation in JacksonConfigurationBundle#initialize(Bootstrap)
+    assertThat(expected).contains(unwantedFuzzyEnumModule);
 
-      // if this fails (due to Dropwizard upgrade) we may go back to
-      // io.dropwizard.jackson.Jackson.newObjectMapper() or the default
-      // ObjectMapper provided by Bootstrap instead of customizing the ObjectMapper
-      // instantiation in JacksonConfigurationBundle#initialize(Bootstrap)
-      assertThat(expected).contains(unwantedFuzzyEnumModule);
+    expected.remove(unwantedFuzzyEnumModule);
 
-      expected.remove(unwantedFuzzyEnumModule);
+    assertThat(om.getRegisteredModuleIds())
+        .containsAll(expected)
+        .doesNotContain(unwantedFuzzyEnumModule);
+  }
 
-      assertThat(om.getRegisteredModuleIds())
-            .containsAll(expected)
-            .doesNotContain(unwantedFuzzyEnumModule);
+  @Test
+  public void deserializeJsonWithUnknownFields() throws Exception {
+    // age is not part of model class
+    String given = "{\"name\": \"John Doe\", \"age\": 28}";
 
-   }
+    Person actual = om.readValue(given, Person.class);
 
-   @Test
-   public void deserializeJsonWithUnknownFields() throws Exception {
-      // age is not part of model class
-      String given = "{\"name\": \"John Doe\", \"age\": 28}";
+    assertThat(actual)
+        .extracting(Person::getName, Person::getDob)
+        .containsExactly("John Doe", null);
+  }
 
-      Person actual = om.readValue(given, Person.class);
+  @Test
+  public void readSingleStringAsList() throws Exception {
+    String given = "{\"addresses\": \"Main Street 1\\n12345 Gotham City\"}";
 
-      assertThat(actual)
-            .extracting(Person::getName, Person::getDob)
-            .containsExactly("John Doe", null);
-   }
+    Person actual = om.readValue(given, Person.class);
 
-   @Test
-   public void readSingleStringAsList() throws Exception {
-      String given = "{\"addresses\": \"Main Street 1\\n12345 Gotham City\"}";
+    assertThat(actual.getAddresses()).containsExactly("Main Street 1\n12345 Gotham City");
+  }
 
-      Person actual = om.readValue(given, Person.class);
+  @Test
+  public void readEnumValue() throws Exception {
+    String given = "{\"title\": \"DOCTOR\"}";
 
-      assertThat(actual.getAddresses())
-            .containsExactly("Main Street 1\n12345 Gotham City");
-   }
+    Person actual = om.readValue(given, Person.class);
 
-   @Test
-   public void readEnumValue() throws Exception {
-      String given = "{\"title\": \"DOCTOR\"}";
+    assertThat(actual).extracting(Person::getTitle).isEqualTo(Title.DOCTOR);
+  }
 
-      Person actual = om.readValue(given, Person.class);
+  @Test
+  public void readUnknownEnumAsNull() throws Exception {
+    String given = "{\"title\": \"DOCTOR_HC\"}";
 
-      assertThat(actual).extracting(Person::getTitle).isEqualTo(Title.DOCTOR);
-   }
+    Person actual = om.readValue(given, Person.class);
 
-   @Test
-   public void readUnknownEnumAsNull() throws Exception {
-      String given = "{\"title\": \"DOCTOR_HC\"}";
+    assertThat(actual).extracting(Person::getTitle).isNull();
+  }
 
-      Person actual = om.readValue(given, Person.class);
+  @Test
+  public void readEnumValueWithDefault() throws Exception {
+    String given = "{\"profession\": \"IT\"}";
 
-      assertThat(actual).extracting(Person::getTitle).isNull();
-   }
+    Person actual = om.readValue(given, Person.class);
 
-   @Test
-   public void readEnumValueWithDefault() throws Exception {
-      String given = "{\"profession\": \"IT\"}";
+    assertThat(actual).extracting(Person::getProfession).isEqualTo(Profession.IT);
+  }
 
-      Person actual = om.readValue(given, Person.class);
+  @Test
+  public void readUnknownEnumValueAsDefault() throws Exception {
+    String given = "{\"profession\": \"CRAFTMANSHIP\"}";
 
-      assertThat(actual).extracting(Person::getProfession).isEqualTo(Profession.IT);
-   }
+    Person actual = om.readValue(given, Person.class);
 
-   @Test
-   public void readUnknownEnumValueAsDefault() throws Exception {
-      String given = "{\"profession\": \"CRAFTMANSHIP\"}";
+    assertThat(actual).extracting(Person::getProfession).isEqualTo(Profession.OTHER);
+  }
 
-      Person actual = om.readValue(given, Person.class);
+  @Test
+  public void writeEmptyBeans() throws Exception {
+    String actual = om.writeValueAsString(new Object());
 
-      assertThat(actual).extracting(Person::getProfession).isEqualTo(Profession.OTHER);
-   }
+    assertThat(actual).isEqualTo("{}");
+  }
 
-   @Test
-   public void writeEmptyBeans() throws Exception {
-      String actual = om.writeValueAsString(new Object());
+  @Test
+  public void failOnSelfReferenceToAvoidRecursion() {
+    Person given = new Person();
+    given.setPartner(given);
 
-      assertThat(actual).isEqualTo("{}");
-   }
+    assertThatExceptionOfType(JsonMappingException.class)
+        .isThrownBy(() -> om.writeValueAsString(given))
+        .withMessageContaining("cycle");
+  }
 
-   @Test
-   public void failOnSelfReferenceToAvoidRecursion() {
-      Person given = new Person();
-      given.setPartner(given);
+  @Test
+  public void writeNullFields() throws Exception {
 
-      assertThatExceptionOfType(JsonMappingException.class)
-            .isThrownBy(() -> om.writeValueAsString(given))
-            .withMessageContaining("cycle");
-   }
+    Person given = new Person();
 
-   @Test
-   public void writeNullFields() throws Exception {
+    String actual = om.writeValueAsString(given);
 
-      Person given = new Person();
+    assertThat(actual)
+        .contains("\"name\":null")
+        .contains("\"title\":null")
+        .contains("\"dob\":null")
+        .contains("\"addresses\":null")
+        .contains("\"partner\":null")
+        .contains("\"profession\":null");
+  }
 
-      String actual = om.writeValueAsString(given);
+  @Test
+  public void doNotWriteIgnoredField() throws Exception {
 
-      assertThat(actual)
-            .contains("\"name\":null")
-            .contains("\"title\":null")
-            .contains("\"dob\":null")
-            .contains("\"addresses\":null")
-            .contains("\"partner\":null")
-            .contains("\"profession\":null");
-   }
+    Person given = new Person().setIdCardNumber("123-456-789");
 
-   @Test
-   public void doNotWriteIgnoredField() throws Exception {
+    String actual = om.writeValueAsString(given);
 
-      Person given = new Person().setIdCardNumber("123-456-789");
+    assertThat(actual).doesNotContain("idCardNumber", "123-456-789");
+  }
 
-      String actual = om.writeValueAsString(given);
+  @Test
+  public void skipIgnoredFieldWhenReading() throws Exception {
 
-      assertThat(actual).doesNotContain(
-            "idCardNumber",
-            "123-456-789"
-      );
+    String given = "{\"idCardNumber\": \"123-456-789\"}";
 
-   }
+    Person actual = om.readValue(given, Person.class);
 
-   @Test
-   public void skipIgnoredFieldWhenReading() throws Exception {
+    assertThat(actual).isNotNull().extracting(Person::getIdCardNumber).isNull();
+  }
 
-      String given = "{\"idCardNumber\": \"123-456-789\"}";
+  @Test
+  public void shouldReadSubType() throws Exception {
+    String given = "{\"type\":\"my\", \"value\":\"foo\"}";
 
-      Person actual = om.readValue(given, Person.class);
+    Filter actual = om.readValue(given, Filter.class);
 
-      assertThat(actual).isNotNull().extracting(Person::getIdCardNumber).isNull();
+    assertThat(actual).isInstanceOf(MyFilter.class).extracting("value").isEqualTo("foo");
+  }
+
+  @Test
+  public void shouldNotFailForUnknownSubtype() throws Exception {
+    String given = "{\"type\":\"notMy\", \"value\":\"foo\"}";
+
+    Filter actual = om.readValue(given, Filter.class);
+
+    assertThat(actual).isNull();
+  }
 
-   }
-
-   @Test
-   public void shouldReadSubType() throws Exception {
-      String given = "{\"type\":\"my\", \"value\":\"foo\"}";
-
-      Filter actual = om.readValue(given, Filter.class);
-
-      assertThat(actual).isInstanceOf(MyFilter.class).extracting("value").isEqualTo("foo");
-   }
-
-   @Test
-   public void shouldNotFailForUnknownSubtype() throws Exception {
-      String given = "{\"type\":\"notMy\", \"value\":\"foo\"}";
-
-      Filter actual = om.readValue(given, Filter.class);
-
-      assertThat(actual).isNull();
-   }
-
-   @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
-   private static class Person {
-
-      private String name;
-      private Title title;
-      private LocalDate dob;
-      private List<String> addresses;
-      private Person partner;
-      @JsonIgnore
-      private String idCardNumber;
-
-      private Profession profession;
-
-      public String getName() {
-         return name;
-      }
-
-      public Person setName(String name) {
-         this.name = name;
-         return this;
-      }
-
-      public Title getTitle() {
-         return title;
-      }
-
-      public Person setTitle(Title title) {
-         this.title = title;
-         return this;
-      }
-
-      public LocalDate getDob() {
-         return dob;
-      }
-
-      public Person setDob(LocalDate dob) {
-         this.dob = dob;
-         return this;
-      }
-
-      public List<String> getAddresses() {
-         return addresses;
-      }
-
-      public Person setAddresses(List<String> addresses) {
-         this.addresses = addresses;
-         return this;
-      }
-
-      public Person getPartner() {
-         return partner;
-      }
-
-      public Person setPartner(Person partner) {
-         this.partner = partner;
-         return this;
-      }
-
-      public String getIdCardNumber() {
-         return idCardNumber;
-      }
-
-      public Person setIdCardNumber(String idCardNumber) {
-         this.idCardNumber = idCardNumber;
-         return this;
-      }
-
-      public Profession getProfession() {
-         return profession;
-      }
-
-      public Person setProfession(Profession profession) {
-         this.profession = profession;
-         return this;
-      }
-   }
-
-   @SuppressWarnings("unused")
-   private enum Title {
-      PROFESSOR, DOCTOR
-   }
-
-   @SuppressWarnings("unused")
-   private enum Profession {
-      IT, FINANCE, LEGAL, @JsonEnumDefaultValue OTHER
-   }
-
-   @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
-   @JsonSubTypes({
-         @JsonSubTypes.Type(value = MyFilter.class, name = "my")
-   })
-   private interface Filter {}
-
-   @SuppressWarnings("unused")
-   private static class MyFilter implements Filter {
-      private String value;
-
-      public MyFilter setValue(String value) {
-         this.value = value;
-         return this;
-      }
-
-      public String getValue() {
-         return value;
-      }
-   }
+  @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
+  private static class Person {
+
+    private String name;
+    private Title title;
+    private LocalDate dob;
+    private List<String> addresses;
+    private Person partner;
+    @JsonIgnore private String idCardNumber;
+
+    private Profession profession;
+
+    public String getName() {
+      return name;
+    }
+
+    public Person setName(String name) {
+      this.name = name;
+      return this;
+    }
+
+    public Title getTitle() {
+      return title;
+    }
+
+    public Person setTitle(Title title) {
+      this.title = title;
+      return this;
+    }
+
+    public LocalDate getDob() {
+      return dob;
+    }
+
+    public Person setDob(LocalDate dob) {
+      this.dob = dob;
+      return this;
+    }
+
+    public List<String> getAddresses() {
+      return addresses;
+    }
+
+    public Person setAddresses(List<String> addresses) {
+      this.addresses = addresses;
+      return this;
+    }
+
+    public Person getPartner() {
+      return partner;
+    }
+
+    public Person setPartner(Person partner) {
+      this.partner = partner;
+      return this;
+    }
+
+    public String getIdCardNumber() {
+      return idCardNumber;
+    }
+
+    public Person setIdCardNumber(String idCardNumber) {
+      this.idCardNumber = idCardNumber;
+      return this;
+    }
+
+    public Profession getProfession() {
+      return profession;
+    }
+
+    public Person setProfession(Profession profession) {
+      this.profession = profession;
+      return this;
+    }
+  }
+
+  @SuppressWarnings("unused")
+  private enum Title {
+    PROFESSOR,
+    DOCTOR
+  }
+
+  @SuppressWarnings("unused")
+  private enum Profession {
+    IT,
+    FINANCE,
+    LEGAL,
+    @JsonEnumDefaultValue
+    OTHER
+  }
+
+  @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
+  @JsonSubTypes({@JsonSubTypes.Type(value = MyFilter.class, name = "my")})
+  private interface Filter {}
+
+  @SuppressWarnings("unused")
+  private static class MyFilter implements Filter {
+    private String value;
+
+    public MyFilter setValue(String value) {
+      this.value = value;
+      return this;
+    }
+
+    public String getValue() {
+      return value;
+    }
+  }
 }

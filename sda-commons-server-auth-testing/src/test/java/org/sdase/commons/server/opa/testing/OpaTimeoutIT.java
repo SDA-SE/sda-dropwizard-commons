@@ -21,72 +21,68 @@ import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaTimeoutIT {
 
-   private static final WireMockClassRule WIRE = new WireMockClassRule(wireMockConfig().dynamicPort());
+  private static final WireMockClassRule WIRE =
+      new WireMockClassRule(wireMockConfig().dynamicPort());
 
-   private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW = new LazyRule<>(
-         () -> DropwizardRuleHelper
-               .dropwizardTestAppFrom(OpaBundleTestApp.class)
-               .withConfigFrom(OpaBundeTestAppConfiguration::new)
-               .withRandomPorts()
-               .withConfigurationModifier(c -> c.getOpa().setBaseUrl(WIRE.baseUrl()).setPolicyPackage("my.policy")) // NOSONAR
-               .withConfigurationModifier(c -> c.getOpa().setReadTimeout(100))
-               .build());
+  private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW =
+      new LazyRule<>(
+          () ->
+              DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
+                  .withConfigFrom(OpaBundeTestAppConfiguration::new)
+                  .withRandomPorts()
+                  .withConfigurationModifier(
+                      c ->
+                          c.getOpa()
+                              .setBaseUrl(WIRE.baseUrl())
+                              .setPolicyPackage("my.policy")) // NOSONAR
+                  .withConfigurationModifier(c -> c.getOpa().setReadTimeout(100))
+                  .build());
 
-   @Rule
-   public final RuleChain chain = RuleChain.outerRule(new RetryRule()).around(WIRE).around(DW);
+  @Rule public final RuleChain chain = RuleChain.outerRule(new RetryRule()).around(WIRE).around(DW);
 
-   @Test
-   @Retry(5)
-   public void shouldDenyAccess() {
-      WIRE.stubFor(post("/v1/data/my/policy")
-          .willReturn(aResponse()
-              .withHeader("Content-Type", "application/json")
-              .withStatus(200)
-              .withBody("{\n"
-                  + "  \"result\": {\n"
-                  + "    \"allow\": true\n"
-                  + "  }\n"
-                  + "}")
-              .withFixedDelay(400)
-          )
-      );
+  @Test
+  @Retry(5)
+  public void shouldDenyAccess() {
+    WIRE.stubFor(
+        post("/v1/data/my/policy")
+            .willReturn(
+                aResponse()
+                    .withHeader("Content-Type", "application/json")
+                    .withStatus(200)
+                    .withBody("{\n" + "  \"result\": {\n" + "    \"allow\": true\n" + "  }\n" + "}")
+                    .withFixedDelay(400)));
 
-      Response response = DW
-            .getRule()
+    Response response =
+        DW.getRule()
             .client()
             .target("http://localhost:" + DW.getRule().getLocalPort())
             .path("resources")
             .request()
             .get();
 
-      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
-   }
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+  }
 
-   @Test
-   @Retry(5)
-   public void shouldGrantAccess() {
-      WIRE.stubFor(post("/v1/data/my/policy")
-          .willReturn(aResponse()
-              .withHeader("Content-Type", "application/json")
-              .withStatus(200)
-              .withBody("{\n"
-                  + "  \"result\": {\n"
-                  + "    \"allow\": true\n"
-                  + "  }\n"
-                  + "}")
-              .withFixedDelay(1)
-          )
-      );
+  @Test
+  @Retry(5)
+  public void shouldGrantAccess() {
+    WIRE.stubFor(
+        post("/v1/data/my/policy")
+            .willReturn(
+                aResponse()
+                    .withHeader("Content-Type", "application/json")
+                    .withStatus(200)
+                    .withBody("{\n" + "  \"result\": {\n" + "    \"allow\": true\n" + "  }\n" + "}")
+                    .withFixedDelay(1)));
 
-      Response response = DW
-          .getRule()
-          .client()
-          .target("http://localhost:" + DW.getRule().getLocalPort())
-          .path("resources")
-          .request()
-          .get();
+    Response response =
+        DW.getRule()
+            .client()
+            .target("http://localhost:" + DW.getRule().getLocalPort())
+            .path("resources")
+            .request()
+            .get();
 
-      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-   }
-
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+  }
 }

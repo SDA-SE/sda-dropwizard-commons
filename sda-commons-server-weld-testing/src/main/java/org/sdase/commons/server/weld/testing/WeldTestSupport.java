@@ -1,21 +1,17 @@
 package org.sdase.commons.server.weld.testing;
 
-import org.sdase.commons.server.weld.internal.WeldSupport;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
-import org.jboss.weld.environment.se.WeldContainer;
-
 import javax.annotation.Nullable;
+import org.jboss.weld.environment.se.WeldContainer;
+import org.sdase.commons.server.weld.internal.WeldSupport;
 
 /**
- * <p>
  * Test support rule that uses WELD to inject the application class.
- * </p>
- * <p>
- * Example usage:
- * </p>
+ *
+ * <p>Example usage:
  *
  * <pre>
  *    <code>
@@ -27,38 +23,40 @@ import javax.annotation.Nullable;
  */
 public class WeldTestSupport<C extends Configuration> extends DropwizardTestSupport<C> {
 
-   private WeldContainer container;
+  private WeldContainer container;
 
-   public WeldTestSupport(Class<? extends Application<C>> applicationClass, @Nullable String configPath,
-         ConfigOverride... configOverrides) {
-      super(applicationClass, configPath, configOverrides);
-   }
+  public WeldTestSupport(
+      Class<? extends Application<C>> applicationClass,
+      @Nullable String configPath,
+      ConfigOverride... configOverrides) {
+    super(applicationClass, configPath, configOverrides);
+  }
 
-   public WeldTestSupport(Class<? extends Application<C>> applicationClass, C configuration) {
-      super(applicationClass, configuration);
-   }
+  public WeldTestSupport(Class<? extends Application<C>> applicationClass, C configuration) {
+    super(applicationClass, configuration);
+  }
 
-   @Override
-   public Application<C> newApplication() {
-      // DI container setup
-      container = WeldSupport.createWeldContainer();
+  @Override
+  public Application<C> newApplication() {
+    // DI container setup
+    container = WeldSupport.createWeldContainer();
 
-      WeldSupport.initializeCDIProviderIfRequired();
+    WeldSupport.initializeCDIProviderIfRequired();
 
-      return container.select(applicationClass).get();
-   }
+    return container.select(applicationClass).get();
+  }
 
-   @Override
-   public void after() {
-      shutdownWeld();
+  @Override
+  public void after() {
+    shutdownWeld();
 
-      super.after();
-   }
+    super.after();
+  }
 
-   private void shutdownWeld() {
-      if (container != null) {
-         container.shutdown();
-         container = null;
-      }
-   }
+  private void shutdownWeld() {
+    if (container != null) {
+      container.shutdown();
+      container = null;
+    }
+  }
 }

@@ -1,8 +1,8 @@
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
-    compile 'javax.xml.bind:jaxb-api'
-    compile 'com.amazonaws:aws-java-sdk-s3'
+  compile project(':sda-commons-server-dropwizard')
+  compile 'javax.xml.bind:jaxb-api'
+  compile 'com.amazonaws:aws-java-sdk-s3'
 
-    testCompile project(':sda-commons-server-s3-testing')
-    testCompile 'org.assertj:assertj-core'
+  testCompile project(':sda-commons-server-s3-testing')
+  testCompile 'org.assertj:assertj-core'
 }

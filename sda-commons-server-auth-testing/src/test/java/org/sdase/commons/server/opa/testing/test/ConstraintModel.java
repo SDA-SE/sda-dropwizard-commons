@@ -23,13 +23,12 @@ public class ConstraintModel {
     return constraint;
   }
 
-  public ConstraintModel setConstraint(
-      MultivaluedStringMap constraint) {
+  public ConstraintModel setConstraint(MultivaluedStringMap constraint) {
     this.constraint = constraint;
     return this;
   }
 
-  public ConstraintModel addConstraint(String name, String ... value) {
+  public ConstraintModel addConstraint(String name, String... value) {
     if (constraint == null) {
       constraint = new MultivaluedStringMap();
     }

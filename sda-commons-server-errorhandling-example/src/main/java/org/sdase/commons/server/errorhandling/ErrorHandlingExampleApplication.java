@@ -10,22 +10,20 @@ import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 
 public class ErrorHandlingExampleApplication extends Application<Configuration> {
 
-   public static void main(String [] args) throws Exception {
-      new ErrorHandlingExampleApplication().run(args);
-   }
+  public static void main(String[] args) throws Exception {
+    new ErrorHandlingExampleApplication().run(args);
+  }
 
+  @Override
+  public void initialize(Bootstrap bootstrap) {
+    bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
+    // Jackson Bundle includes error mappers to provide errors in common error structure
+    bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
+  }
 
-   @Override
-   public void initialize(Bootstrap bootstrap) {
-      bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
-      // Jackson Bundle includes error mappers to provide errors in common error structure
-      bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
-   }
-
-   @Override
-   public void run(Configuration configuration, Environment environment)  {
-      // register dummy endpoint to show behavior in tests
-      environment.jersey().register(ErrorHandlingExampleEndpoint.class);
-   }
-
+  @Override
+  public void run(Configuration configuration, Environment environment) {
+    // register dummy endpoint to show behavior in tests
+    environment.jersey().register(ErrorHandlingExampleEndpoint.class);
+  }
 }

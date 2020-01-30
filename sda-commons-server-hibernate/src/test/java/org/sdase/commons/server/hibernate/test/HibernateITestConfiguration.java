@@ -5,24 +5,24 @@ import io.dropwizard.db.DataSourceFactory;
 
 public class HibernateITestConfiguration extends Configuration {
 
-   private DataSourceFactory database;
+  private DataSourceFactory database;
 
-   private String propertyForOtherBundle;
+  private String propertyForOtherBundle;
 
-   public void setDatabase(DataSourceFactory database) {
-      this.database = database;
-   }
+  public void setDatabase(DataSourceFactory database) {
+    this.database = database;
+  }
 
-   public DataSourceFactory getDatabase() {
-      return database;
-   }
+  public DataSourceFactory getDatabase() {
+    return database;
+  }
 
-   public String getPropertyForOtherBundle() {
-      return propertyForOtherBundle;
-   }
+  public String getPropertyForOtherBundle() {
+    return propertyForOtherBundle;
+  }
 
-   public HibernateITestConfiguration setPropertyForOtherBundle(String propertyForOtherBundle) {
-      this.propertyForOtherBundle = propertyForOtherBundle;
-      return this;
-   }
+  public HibernateITestConfiguration setPropertyForOtherBundle(String propertyForOtherBundle) {
+    this.propertyForOtherBundle = propertyForOtherBundle;
+    return this;
+  }
 }

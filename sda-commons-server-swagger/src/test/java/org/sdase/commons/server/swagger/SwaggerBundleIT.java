@@ -18,191 +18,173 @@ import org.sdase.commons.server.swagger.test.SwaggerAssertions;
 
 public class SwaggerBundleIT {
 
-   private static final String NATURAL_PERSON_DEFINITION = "NaturalPerson";
-   private static final String PARTNER_DEFINITION = "Partner";
+  private static final String NATURAL_PERSON_DEFINITION = "NaturalPerson";
+  private static final String PARTNER_DEFINITION = "Partner";
 
-   @ClassRule
-   public static final DropwizardAppRule<Configuration> DW = new DropwizardAppRule<>(
-         SwaggerBundleTestApp.class, resourceFilePath("test-config.yaml"));
+  @ClassRule
+  public static final DropwizardAppRule<Configuration> DW =
+      new DropwizardAppRule<>(SwaggerBundleTestApp.class, resourceFilePath("test-config.yaml"));
 
-   private static Builder getJsonRequest() {
-      return DW.client()
+  private static Builder getJsonRequest() {
+    return DW.client().target(getTarget()).path("/swagger.json").request(APPLICATION_JSON);
+  }
+
+  private static Builder getYamlRequest() {
+    return DW.client().target(getTarget()).path("/swagger.yaml").request("application/yaml");
+  }
+
+  private static String getTarget() {
+    return "http://localhost:" + DW.getLocalPort();
+  }
+
+  @Test
+  public void shouldProvideSchemaCompliantJson() {
+    try (Response response = getJsonRequest().get()) {
+
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getMediaType()).isEqualTo(APPLICATION_JSON_TYPE);
+
+      SwaggerAssertions.assertValidSwagger2Json(response);
+    }
+  }
+
+  @Test
+  public void shouldProvideValidYaml() {
+    try (Response response = getYamlRequest().get()) {
+
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getMediaType()).isEqualTo(MediaType.valueOf("application/yaml"));
+
+      SwaggerAssertions.assertValidSwagger2Yaml(response);
+    }
+  }
+
+  @Test
+  public void shouldHaveCORSWildcardJson() {
+    try (Response response = getJsonRequest().header("Origin", "example.com").get()) {
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
+    }
+  }
+
+  @Test
+  public void shouldHaveCORSWildcardYaml() {
+    try (Response response = getYamlRequest().header("Origin", "example.com").get()) {
+
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
+    }
+  }
+
+  @Test
+  public void shouldNotHaveCORSWildcardOnOtherPath() {
+    try (Response response =
+        DW.client()
             .target(getTarget())
-            .path("/swagger.json")
-            .request(APPLICATION_JSON);
-   }
+            .path("jdoe")
+            .request()
+            .header("Origin", "example.com")
+            .get()) {
 
-   private static Builder getYamlRequest() {
-      return DW.client()
-            .target(getTarget())
-            .path("/swagger.yaml")
-            .request("application/yaml");
-   }
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isNull();
+    }
+  }
 
-   private static String getTarget() {
-      return "http://localhost:" + DW.getLocalPort();
-   }
+  @Test
+  public void shouldIncludeInfo() {
+    String response = getJsonRequest().get(String.class);
 
-   @Test
-   public void shouldProvideSchemaCompliantJson() {
-      try (Response response = getJsonRequest().get()) {
+    assertThatJson(response)
+        .inPath("$.info.title")
+        .isEqualTo(((SwaggerBundleTestApp) DW.getApplication()).getTitle());
+    assertThatJson(response).inPath("$.info.version").asString().isEqualTo("1");
+  }
 
-         assertThat(response.getStatus()).isEqualTo(OK_200);
-         assertThat(response.getMediaType()).isEqualTo(APPLICATION_JSON_TYPE);
+  @Test
+  public void shouldIncludeBasePath() {
+    String response = getJsonRequest().get(String.class);
 
-         SwaggerAssertions.assertValidSwagger2Json(response);
-      }
-   }
+    assertThatJson(response).inPath("$.basePath").asString().isEqualTo("/");
+  }
 
-   @Test
-   public void shouldProvideValidYaml() {
-      try (Response response = getYamlRequest().get()) {
+  @Test
+  public void shouldDeduceHost() {
+    String response = getJsonRequest().get(String.class);
 
-         assertThat(response.getStatus()).isEqualTo(OK_200);
-         assertThat(response.getMediaType()).isEqualTo(MediaType.valueOf("application/yaml"));
+    assertThatJson(response).inPath("$.host").asString().contains("localhost:" + DW.getLocalPort());
+  }
 
-         SwaggerAssertions.assertValidSwagger2Yaml(response);
-      }
-   }
+  @Test
+  public void shouldIncludePaths() {
+    String response = getJsonRequest().get(String.class);
 
-   @Test
-   public void shouldHaveCORSWildcardJson() {
-      try (Response response = getJsonRequest().header("Origin", "example.com").get()) {
-         assertThat(response.getStatus()).isEqualTo(OK_200);
-         assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
-      }
-   }
+    assertThatJson(response).inPath("$.paths").isObject().containsOnlyKeys("/jdoe", "/house");
 
-   @Test
-   public void shouldHaveCORSWildcardYaml() {
-      try (Response response = getYamlRequest().header("Origin", "example.com").get()) {
+    assertThatJson(response)
+        .inPath("$.paths./jdoe")
+        .isObject()
+        .containsOnlyKeys("get", "post", "delete");
 
-         assertThat(response.getStatus()).isEqualTo(OK_200);
-         assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
+    assertThatJson(response).inPath("$.paths./house").isObject().containsOnlyKeys("get");
+  }
 
-      }
-   }
+  @Test
+  public void shouldIncludeDefinitions() {
+    String response = getJsonRequest().get(String.class);
 
-   @Test
-   public void shouldNotHaveCORSWildcardOnOtherPath() {
-      try (Response response = DW.client().target(getTarget())
-            .path("jdoe").request().header("Origin", "example.com").get()) {
+    assertThatJson(response)
+        .inPath("$.definitions")
+        .isObject()
+        .containsKeys(NATURAL_PERSON_DEFINITION, PARTNER_DEFINITION);
 
-         assertThat(response.getStatus()).isEqualTo(OK_200);
-         assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isNull();
-      }
-   }
+    assertThatJson(response)
+        .inPath("$.definitions." + PARTNER_DEFINITION + ".properties") // NOSONAR
+        .isObject()
+        .containsKeys("type");
 
-   @Test
-   public void shouldIncludeInfo() {
-      String response = getJsonRequest().get(String.class);
+    assertThatJson(response)
+        .inPath("$.definitions." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties")
+        .isObject()
+        .containsKeys("firstName", "lastName", "traits", "_links");
+  }
 
-      assertThatJson(response)
-          .inPath("$.info.title")
-          .isEqualTo(((SwaggerBundleTestApp)DW.getApplication()).getTitle());
-      assertThatJson(response)
-          .inPath("$.info.version")
-          .asString()
-          .isEqualTo("1");
-   }
+  @Test
+  public void shouldIncludePropertyExampleAsJson() {
+    String response = getJsonRequest().get(String.class);
 
-   @Test
-   public void shouldIncludeBasePath() {
-      String response = getJsonRequest().get(String.class);
+    assertThatJson(response)
+        .inPath(
+            "$.definitions." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties.traits.example")
+        .isArray()
+        .containsExactlyInAnyOrder("hipster", "generous");
 
-      assertThatJson(response)
-          .inPath("$.basePath")
-          .asString()
-          .isEqualTo("/");
-   }
+    assertThatJson(response)
+        .inPath("$.definitions." + PARTNER_DEFINITION + ".properties.type.example")
+        .isString()
+        .isEqualTo("naturalPerson");
+  }
 
-   @Test
-   public void shouldDeduceHost() {
-      String response = getJsonRequest().get(String.class);
+  @Test
+  public void shouldIncludeHALSelfLink() {
+    String response = getJsonRequest().get(String.class);
 
-      assertThatJson(response)
-          .inPath("$.host")
-          .asString()
-          .contains("localhost:" + DW.getLocalPort());
-   }
+    assertThatJson(response)
+        .inPath(
+            "$.definitions." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties._links.properties")
+        .isObject()
+        .containsKeys("self");
+  }
 
-   @Test
-   public void shouldIncludePaths() {
-      String response = getJsonRequest().get(String.class);
+  @Test
+  public void shouldIncludeEmbedParameter() {
+    String response = getJsonRequest().get(String.class);
 
-      assertThatJson(response)
-          .inPath("$.paths")
-          .isObject()
-          .containsOnlyKeys("/jdoe", "/house");
+    assertThatJson(response).inPath("$.paths./house.get.parameters").isArray().isNotEmpty();
 
-      assertThatJson(response)
-          .inPath("$.paths./jdoe")
-          .isObject()
-          .containsOnlyKeys("get", "post", "delete");
-
-      assertThatJson(response)
-          .inPath("$.paths./house")
-          .isObject()
-          .containsOnlyKeys("get");
-   }
-
-   @Test
-   public void shouldIncludeDefinitions() {
-      String response = getJsonRequest().get(String.class);
-
-      assertThatJson(response)
-          .inPath("$.definitions")
-          .isObject()
-          .containsKeys(NATURAL_PERSON_DEFINITION, PARTNER_DEFINITION);
-
-      assertThatJson(response)
-          .inPath("$.definitions." + PARTNER_DEFINITION + ".properties") // NOSONAR
-          .isObject()
-          .containsKeys("type");
-
-      assertThatJson(response)
-          .inPath("$.definitions." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties")
-          .isObject()
-          .containsKeys("firstName", "lastName", "traits", "_links");
-   }
-
-   @Test
-   public void shouldIncludePropertyExampleAsJson() {
-      String response = getJsonRequest().get(String.class);
-
-      assertThatJson(response)
-          .inPath("$.definitions." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties.traits.example")
-          .isArray()
-          .containsExactlyInAnyOrder("hipster", "generous");
-
-      assertThatJson(response)
-          .inPath("$.definitions." + PARTNER_DEFINITION + ".properties.type.example")
-          .isString()
-          .isEqualTo("naturalPerson");
-   }
-
-   @Test
-   public void shouldIncludeHALSelfLink() {
-      String response = getJsonRequest().get(String.class);
-
-      assertThatJson(response)
-          .inPath("$.definitions." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties._links.properties")
-          .isObject()
-          .containsKeys("self");
-   }
-
-   @Test
-   public void shouldIncludeEmbedParameter() {
-      String response = getJsonRequest().get(String.class);
-
-      assertThatJson(response)
-          .inPath("$.paths./house.get.parameters")
-          .isArray()
-          .isNotEmpty();
-
-     assertThatJson(response)
-         .inPath("$.paths./house.get.parameters[0].items.enum")
-         .isArray()
-         .containsOnly("animals", "partners");
-   }
+    assertThatJson(response)
+        .inPath("$.paths./house.get.parameters[0].items.enum")
+        .isArray()
+        .containsOnly("animals", "partners");
+  }
 }

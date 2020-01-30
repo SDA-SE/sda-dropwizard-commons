@@ -4,36 +4,31 @@ import javax.ws.rs.core.MultivaluedMap;
 
 public class OpaInput {
 
-  /**
-   * trace token to be able to find opa debug
-   */
+  /** trace token to be able to find opa debug */
   private String trace;
 
-  /**
-   * JWT received with the request
-   */
+  /** JWT received with the request */
   private String jwt;
 
-  /**
-   * url path to the resource without base url
-   */
+  /** url path to the resource without base url */
   private String[] path;
 
-  /**
-   * HTTP Method
-   */
+  /** HTTP Method */
   private String httpMethod;
 
-  /**
-   * Additional, optional headers that get passed to the OPA service.
-   */
+  /** Additional, optional headers that get passed to the OPA service. */
   private MultivaluedMap<String, String> headers;
 
   public OpaInput() {
     // nothing here, just for Jackson
   }
 
-  OpaInput(String jwt, String[] path, String httpMethod, String traceToken, MultivaluedMap<String, String> headers) {
+  OpaInput(
+      String jwt,
+      String[] path,
+      String httpMethod,
+      String traceToken,
+      MultivaluedMap<String, String> headers) {
     this.jwt = jwt;
     this.path = path;
     this.httpMethod = httpMethod;

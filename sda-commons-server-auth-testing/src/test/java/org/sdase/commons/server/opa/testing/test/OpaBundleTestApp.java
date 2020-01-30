@@ -13,14 +13,22 @@ public class OpaBundleTestApp extends Application<OpaBundeTestAppConfiguration> 
   @Override
   public void initialize(Bootstrap<OpaBundeTestAppConfiguration> bootstrap) {
     bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
-    bootstrap.addBundle(AuthBundle.builder().withAuthConfigProvider(OpaBundeTestAppConfiguration::getAuth).withExternalAuthorization().build());
-    bootstrap.addBundle(SwaggerBundle.builder().withTitle("Test").addResourcePackageClass(OpaBundleTestApp.class).build());
-    bootstrap.addBundle(OpaBundle.builder().withOpaConfigProvider(OpaBundeTestAppConfiguration::getOpa).build());
+    bootstrap.addBundle(
+        AuthBundle.builder()
+            .withAuthConfigProvider(OpaBundeTestAppConfiguration::getAuth)
+            .withExternalAuthorization()
+            .build());
+    bootstrap.addBundle(
+        SwaggerBundle.builder()
+            .withTitle("Test")
+            .addResourcePackageClass(OpaBundleTestApp.class)
+            .build());
+    bootstrap.addBundle(
+        OpaBundle.builder().withOpaConfigProvider(OpaBundeTestAppConfiguration::getOpa).build());
   }
 
   @Override
   public void run(OpaBundeTestAppConfiguration configuration, Environment environment) {
-      environment.jersey().register(Endpoint.class);
+    environment.jersey().register(Endpoint.class);
   }
-
 }

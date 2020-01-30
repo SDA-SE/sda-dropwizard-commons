@@ -10,16 +10,15 @@ import org.sdase.commons.server.testing.test.ServerRule;
 
 public class LazyRuleTest {
 
-   private static final ServerRule SERVER = new ServerRule();
+  private static final ServerRule SERVER = new ServerRule();
 
-   private static final LazyRule<ClientRule> CLIENT = new LazyRule<>(() -> new ClientRule(SERVER.getPort()));
+  private static final LazyRule<ClientRule> CLIENT =
+      new LazyRule<>(() -> new ClientRule(SERVER.getPort()));
 
-   @ClassRule
-   public static final RuleChain RULE_CHAIN = RuleChain.outerRule(SERVER).around(CLIENT);
+  @ClassRule public static final RuleChain RULE_CHAIN = RuleChain.outerRule(SERVER).around(CLIENT);
 
-   @Test
-   public void testLazyInitialization() {
-      assertThat(CLIENT.getRule().getPort()).isEqualTo(4);
-   }
-
+  @Test
+  public void testLazyInitialization() {
+    assertThat(CLIENT.getRule().getPort()).isEqualTo(4);
+  }
 }

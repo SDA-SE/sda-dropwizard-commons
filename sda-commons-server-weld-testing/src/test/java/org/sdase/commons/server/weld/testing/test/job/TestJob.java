@@ -1,23 +1,21 @@
 package org.sdase.commons.server.weld.testing.test.job;
 
-import org.sdase.commons.server.weld.testing.test.util.BarSupplier;
 import de.spinscale.dropwizard.jobs.Job;
+import javax.inject.Inject;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-
-import javax.inject.Inject;
+import org.sdase.commons.server.weld.testing.test.util.BarSupplier;
 
 public class TestJob extends Job {
 
-   @Inject
-   BarSupplier supplier;
+  @Inject BarSupplier supplier;
 
-   @Override
-   public void doJob(JobExecutionContext context) throws JobExecutionException {
-      // nothing to do...
-   }
+  @Override
+  public void doJob(JobExecutionContext context) throws JobExecutionException {
+    // nothing to do...
+  }
 
-   public String getResult() {
-      return supplier.get();
-   }
+  public String getResult() {
+    return supplier.get();
+  }
 }

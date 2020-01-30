@@ -14,31 +14,31 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 
 public class EmbedHelperTest {
-   @Test
-   public void shouldEmbedResourceIfRequested() {
-      MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
-      queryParameters.put("embed", singletonList("drivers"));
-      EmbedHelper embedHelper = createEmbedHelper(queryParameters);
+  @Test
+  public void shouldEmbedResourceIfRequested() {
+    MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
+    queryParameters.put("embed", singletonList("drivers"));
+    EmbedHelper embedHelper = createEmbedHelper(queryParameters);
 
-      assertThat(embedHelper.isEmbeddingOfRelationRequested("drivers")).isTrue();
-      assertThat(embedHelper.isEmbeddingOfRelationRequested("owner")).isFalse();
-   }
+    assertThat(embedHelper.isEmbeddingOfRelationRequested("drivers")).isTrue();
+    assertThat(embedHelper.isEmbeddingOfRelationRequested("owner")).isFalse();
+  }
 
-   @Test
-   public void shouldEmbedMultipleResourcesIfRequested() {
-      MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
-      queryParameters.put("embed", asList("drivers", "owner"));
-      EmbedHelper embedHelper = createEmbedHelper(queryParameters);
+  @Test
+  public void shouldEmbedMultipleResourcesIfRequested() {
+    MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
+    queryParameters.put("embed", asList("drivers", "owner"));
+    EmbedHelper embedHelper = createEmbedHelper(queryParameters);
 
-      assertThat(embedHelper.isEmbeddingOfRelationRequested("drivers")).isTrue();
-      assertThat(embedHelper.isEmbeddingOfRelationRequested("owner")).isTrue();
-   }
+    assertThat(embedHelper.isEmbeddingOfRelationRequested("drivers")).isTrue();
+    assertThat(embedHelper.isEmbeddingOfRelationRequested("owner")).isTrue();
+  }
 
-   private EmbedHelper createEmbedHelper(MultivaluedMap<String, String> queryParameters) {
-      Environment environment = mock(Environment.class, RETURNS_DEEP_STUBS);
-      EmbedHelper embedHelper = new EmbedHelper(environment);
-      embedHelper.uriInfo = mock(UriInfo.class);
-      when(embedHelper.uriInfo.getQueryParameters()).thenReturn(queryParameters);
-      return embedHelper;
-   }
+  private EmbedHelper createEmbedHelper(MultivaluedMap<String, String> queryParameters) {
+    Environment environment = mock(Environment.class, RETURNS_DEEP_STUBS);
+    EmbedHelper embedHelper = new EmbedHelper(environment);
+    embedHelper.uriInfo = mock(UriInfo.class);
+    when(embedHelper.uriInfo.getQueryParameters()).thenReturn(queryParameters);
+    return embedHelper;
+  }
 }

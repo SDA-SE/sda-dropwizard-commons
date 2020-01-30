@@ -1,12 +1,12 @@
 dependencies {
-    compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-server-dropwizard')
 
-    compile 'org.javassist:javassist'
-    compile 'io.github.resilience4j:resilience4j-circuitbreaker'
-    compile 'io.github.resilience4j:resilience4j-prometheus'
-    compile 'org.objenesis:objenesis'
+  compile 'org.javassist:javassist'
+  compile 'io.github.resilience4j:resilience4j-circuitbreaker'
+  compile 'io.github.resilience4j:resilience4j-prometheus'
+  compile 'org.objenesis:objenesis'
 
-    testCompile project(':sda-commons-server-prometheus')
-    testCompile project(':sda-commons-server-testing')
-    testCompile project(':sda-commons-client-jersey-wiremock-testing')
+  testCompile project(':sda-commons-server-prometheus')
+  testCompile project(':sda-commons-server-testing')
+  testCompile project(':sda-commons-client-jersey-wiremock-testing')
 }

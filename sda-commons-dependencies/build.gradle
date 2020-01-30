@@ -1,117 +1,117 @@
 plugins {
-    id 'java-platform'
+  id 'java-platform'
 }
 
 javaPlatform {
-    allowDependencies() // enable importing other BOMs
+  allowDependencies() // enable importing other BOMs
 }
 
 ext {
-    morphiaVersion = '1.5.8'
-    prometheusVersion = '0.8.1'
-    resilience4jVersion = '0.15.0'
-    swaggerCoreVersion = '1.6.0'
-    jettyVersion = '9.4.18.v20190429'
-    weldVersion = '3.0.4.Final'
+  morphiaVersion = '1.5.8'
+  prometheusVersion = '0.8.1'
+  resilience4jVersion = '0.15.0'
+  swaggerCoreVersion = '1.6.0'
+  jettyVersion = '9.4.18.v20190429'
+  weldVersion = '3.0.4.Final'
 }
 
 dependencies {
-    api enforcedPlatform("io.dropwizard:dropwizard-bom:1.3.17")
-    // add dropwizard-dependencies for Dropwizard 2.x.y
+  api enforcedPlatform("io.dropwizard:dropwizard-bom:1.3.17")
+  // add dropwizard-dependencies for Dropwizard 2.x.y
 
-    constraints {
-        api "com.auth0:java-jwt:3.9.0"
-        api "com.amazonaws:aws-java-sdk-s3:1.11.714"
-        api "com.github.database-rider:rider-core:1.2.9" // latest version that supports Parameterized tests: https://github.com/database-rider/database-rider/issues/104
-        api "com.github.ftrossbach:club-topicana-core:0.1.0"
-        api "com.google.code.findbugs:jsr305:3.0.2"
-        api "com.google.guava:guava:24.1.1-jre"
-        api "com.h2database:h2:1.4.197"
+  constraints {
+    api "com.auth0:java-jwt:3.9.0"
+    api "com.amazonaws:aws-java-sdk-s3:1.11.714"
+    api "com.github.database-rider:rider-core:1.2.9" // latest version that supports Parameterized tests: https://github.com/database-rider/database-rider/issues/104
+    api "com.github.ftrossbach:club-topicana-core:0.1.0"
+    api "com.google.code.findbugs:jsr305:3.0.2"
+    api "com.google.guava:guava:24.1.1-jre"
+    api "com.h2database:h2:1.4.197"
 
-        api "commons-codec:commons-codec:1.11"
-        // upgrade from 1.1.3 which comes with com.amazonaws:aws-java-sdk-core
-        api "commons-logging:commons-logging:1.2"
+    api "commons-codec:commons-codec:1.11"
+    // upgrade from 1.1.3 which comes with com.amazonaws:aws-java-sdk-core
+    api "commons-logging:commons-logging:1.2"
 
-        // MongoDB
-        api "dev.morphia.morphia:core:$morphiaVersion"
-        api "dev.morphia.morphia:validation:$morphiaVersion"
-        api "org.mongodb:mongo-java-driver:3.10.1"
+    // MongoDB
+    api "dev.morphia.morphia:core:$morphiaVersion"
+    api "dev.morphia.morphia:validation:$morphiaVersion"
+    api "org.mongodb:mongo-java-driver:3.10.1"
 
-        // Kafka
-        api "org.apache.avro:avro:1.8.2"
-        api "org.apache.kafka:kafka_2.12:1.1.1"
-        api "org.apache.kafka:kafka-clients:1.1.1"
-        api "org.apache.zookeeper:zookeeper:3.4.10"
-        api "io.confluent:kafka-avro-serializer:4.1.2"
-        api "io.confluent:kafka-schema-registry:4.1.2"
-        api "io.confluent:kafka-schema-registry-client:4.1.2"
-        api "io.confluent:common-config:4.1.2"
-        api "io.confluent:common-utils:4.1.2"
-        api "io.confluent:rest-utils:4.1.2"
-        api "com.101tec:zkclient:0.10"
-        api "org.apache.curator:curator-test:2.12.0"
-        api "org.xerial.snappy:snappy-java:1.1.7.1" // clash between kafka-clients and avro
+    // Kafka
+    api "org.apache.avro:avro:1.8.2"
+    api "org.apache.kafka:kafka_2.12:1.1.1"
+    api "org.apache.kafka:kafka-clients:1.1.1"
+    api "org.apache.zookeeper:zookeeper:3.4.10"
+    api "io.confluent:kafka-avro-serializer:4.1.2"
+    api "io.confluent:kafka-schema-registry:4.1.2"
+    api "io.confluent:kafka-schema-registry-client:4.1.2"
+    api "io.confluent:common-config:4.1.2"
+    api "io.confluent:common-utils:4.1.2"
+    api "io.confluent:rest-utils:4.1.2"
+    api "com.101tec:zkclient:0.10"
+    api "org.apache.curator:curator-test:2.12.0"
+    api "org.xerial.snappy:snappy-java:1.1.7.1" // clash between kafka-clients and avro
 
-        // Resilience4J
-        api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
-        api "io.github.resilience4j:resilience4j-prometheus:$resilience4jVersion"
+    // Resilience4J
+    api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
+    api "io.github.resilience4j:resilience4j-prometheus:$resilience4jVersion"
 
-        // Prometheus
-        api "io.prometheus:simpleclient:$prometheusVersion"
-        api "io.prometheus:simpleclient_common:$prometheusVersion"
-        api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
-        api "io.prometheus:simpleclient_servlet:$prometheusVersion"
+    // Prometheus
+    api "io.prometheus:simpleclient:$prometheusVersion"
+    api "io.prometheus:simpleclient_common:$prometheusVersion"
+    api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
+    api "io.prometheus:simpleclient_servlet:$prometheusVersion"
 
-        // Swagger
-        api "io.openapitools.hal:swagger-hal:1.0.4"
-        api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.7"
-        api "io.swagger:swagger-annotations:$swaggerCoreVersion"
-        api "io.swagger:swagger-jaxrs:$swaggerCoreVersion"
+    // Swagger
+    api "io.openapitools.hal:swagger-hal:1.0.4"
+    api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.7"
+    api "io.swagger:swagger-annotations:$swaggerCoreVersion"
+    api "io.swagger:swagger-jaxrs:$swaggerCoreVersion"
 
-        api "javax.activation:activation:1.1.1"
-        api "javax.activation:javax.activation-api:1.2.0"
-        api "javax.annotation:javax.annotation-api:1.2"
-        api "javax.el:javax.el-api:3.0.0"
-        api "javax.enterprise:cdi-api:2.0"
-        api "javax.ws.rs:javax.ws.rs-api:2.1.1"
-        api "javax.xml.bind:jaxb-api:2.3.0"
+    api "javax.activation:activation:1.1.1"
+    api "javax.activation:javax.activation-api:1.2.0"
+    api "javax.annotation:javax.annotation-api:1.2"
+    api "javax.el:javax.el-api:3.0.0"
+    api "javax.enterprise:cdi-api:2.0"
+    api "javax.ws.rs:javax.ws.rs-api:2.1.1"
+    api "javax.xml.bind:jaxb-api:2.3.0"
 
-        api "net.sf.jopt-simple:jopt-simple:5.0.4"
+    api "net.sf.jopt-simple:jopt-simple:5.0.4"
 
-        api "org.apache.commons:commons-compress:1.19"
-        api "org.bouncycastle:bcpkix-jdk15on:1.64"
-        api "org.dbunit:dbunit:2.6.0"
-        api "org.flywaydb:flyway-core:6.2.0"
-        api "org.javassist:javassist:3.24.1-GA"
-        api "org.jboss.logging:jboss-logging:3.3.0.Final"
-        api "org.jboss.weld.se:weld-se-core:$weldVersion"
-        api "org.jboss.weld.servlet:weld-servlet-core:$weldVersion"
-        api "org.objenesis:objenesis:2.6" // not 3.x because we have a version conflict with Mockito
-        api "org.yaml:snakeyaml:1.25"
-        api "org.eclipse.jetty:jetty-security:$jettyVersion" // io.confluent:rest-utils uses old Jetty version
-        api "org.eclipse.jetty:jetty-jmx:$jettyVersion" // see above
+    api "org.apache.commons:commons-compress:1.19"
+    api "org.bouncycastle:bcpkix-jdk15on:1.64"
+    api "org.dbunit:dbunit:2.6.0"
+    api "org.flywaydb:flyway-core:6.2.0"
+    api "org.javassist:javassist:3.24.1-GA"
+    api "org.jboss.logging:jboss-logging:3.3.0.Final"
+    api "org.jboss.weld.se:weld-se-core:$weldVersion"
+    api "org.jboss.weld.servlet:weld-servlet-core:$weldVersion"
+    api "org.objenesis:objenesis:2.6" // not 3.x because we have a version conflict with Mockito
+    api "org.yaml:snakeyaml:1.25"
+    api "org.eclipse.jetty:jetty-security:$jettyVersion" // io.confluent:rest-utils uses old Jetty version
+    api "org.eclipse.jetty:jetty-jmx:$jettyVersion" // see above
 
-        // test dependencies
-        api "com.github.java-json-tools:json-schema-validator:2.2.10"
-        api "com.github.tomakehurst:wiremock-jre8:2.21.0"
-        api "org.ow2.asm:asm:7.0"
-        api "com.salesforce.kafka.test:kafka-junit4:3.0.1"
-        api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0"
-        api "io.findify:s3mock_2.12:0.2.5"
-        api "junit:junit:4.13"
-        api "net.javacrumbs.json-unit:json-unit-assertj:2.12.0"
-        api "org.assertj:assertj-core:3.14.0"
-        api "org.awaitility:awaitility:3.1.2"
-        api "org.mockito:mockito-core:2.24.0"
-        api "org.scala-lang:scala-library:2.12.4" // clash within io.findify:s3mock_2.12
-        api "com.typesafe:config:1.3.2" // clash within io.findify:s3mock_2.12
-    }
+    // test dependencies
+    api "com.github.java-json-tools:json-schema-validator:2.2.10"
+    api "com.github.tomakehurst:wiremock-jre8:2.21.0"
+    api "org.ow2.asm:asm:7.0"
+    api "com.salesforce.kafka.test:kafka-junit4:3.0.1"
+    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0"
+    api "io.findify:s3mock_2.12:0.2.5"
+    api "junit:junit:4.13"
+    api "net.javacrumbs.json-unit:json-unit-assertj:2.12.0"
+    api "org.assertj:assertj-core:3.14.0"
+    api "org.awaitility:awaitility:3.1.2"
+    api "org.mockito:mockito-core:2.24.0"
+    api "org.scala-lang:scala-library:2.12.4" // clash within io.findify:s3mock_2.12
+    api "com.typesafe:config:1.3.2" // clash within io.findify:s3mock_2.12
+  }
 }
 
 publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.javaPlatform
-        }
+  publications {
+    maven(MavenPublication) {
+      from components.javaPlatform
     }
+  }
 }

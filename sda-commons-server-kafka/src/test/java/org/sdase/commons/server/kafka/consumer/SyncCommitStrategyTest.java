@@ -16,34 +16,35 @@ import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
 public class SyncCommitStrategyTest {
 
-   private MessageHandler<String, String> handler;
-   private ErrorHandler<String, String> errorHandler;
-   private KafkaConsumer<String, String> consumer;
-   private ConsumerTopicMessageHistogram histogram;
+  private MessageHandler<String, String> handler;
+  private ErrorHandler<String, String> errorHandler;
+  private KafkaConsumer<String, String> consumer;
+  private ConsumerTopicMessageHistogram histogram;
 
-   @SuppressWarnings("unchecked")
-   @Before
-   public void setup() {
-      consumer = Mockito.mock(KafkaConsumer.class);
-      handler = Mockito.mock(MessageHandler.class);
-      errorHandler = Mockito.mock(ErrorHandler.class);
-      histogram = Mockito.mock(ConsumerTopicMessageHistogram.class);
-   }
+  @SuppressWarnings("unchecked")
+  @Before
+  public void setup() {
+    consumer = Mockito.mock(KafkaConsumer.class);
+    handler = Mockito.mock(MessageHandler.class);
+    errorHandler = Mockito.mock(ErrorHandler.class);
+    histogram = Mockito.mock(ConsumerTopicMessageHistogram.class);
+  }
 
-   @Test
-   public void shouldInvokeCommitAfterEachChunkOfRecords() {
-      SyncCommitMLS<String, String> strategy = new SyncCommitMLS<>(handler, errorHandler);
-      strategy.init(histogram);
+  @Test
+  public void shouldInvokeCommitAfterEachChunkOfRecords() {
+    SyncCommitMLS<String, String> strategy = new SyncCommitMLS<>(handler, errorHandler);
+    strategy.init(histogram);
 
-      strategy.processRecords(TestHelper.createConsumerRecords(5, "topic"), consumer);
-      Mockito.verify(consumer, timeout(100).times(1)).commitSync();
-      Mockito.verify(histogram, timeout(100).times(5)).observe(anyDouble(), anyString(), anyString());
+    strategy.processRecords(TestHelper.createConsumerRecords(5, "topic"), consumer);
+    Mockito.verify(consumer, timeout(100).times(1)).commitSync();
+    Mockito.verify(histogram, timeout(100).times(5)).observe(anyDouble(), anyString(), anyString());
 
-      // second chunk commits again
-      strategy.processRecords(TestHelper.createConsumerRecords(5, "topic"), consumer);
-      Mockito.verify(consumer, timeout(100).times(2)).commitSync();
-      Mockito.verify(histogram, timeout(100).times(10)).observe(anyDouble(), anyString(), anyString());
-   }
+    // second chunk commits again
+    strategy.processRecords(TestHelper.createConsumerRecords(5, "topic"), consumer);
+    Mockito.verify(consumer, timeout(100).times(2)).commitSync();
+    Mockito.verify(histogram, timeout(100).times(10))
+        .observe(anyDouble(), anyString(), anyString());
+  }
 
   @Test
   public void shouldInvokeErrorHandlerWhenException() {
@@ -57,7 +58,5 @@ public class SyncCommitStrategyTest {
     Mockito.verify(consumer, timeout(100).times(1)).commitSync();
     Mockito.verify(handler, timeout(100).times(5)).handle(any());
     Mockito.verify(errorHandler, timeout(100).times(5)).handleError(any(), any(), any());
-
   }
-
 }

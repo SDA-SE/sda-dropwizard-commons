@@ -21,89 +21,89 @@ import org.sdase.commons.server.auth.error.JwtAuthException;
 import org.sdase.commons.server.auth.filter.JwtAuthFilter.Builder;
 
 public class JwtAuthFilterTest {
-   @Mock
-   ContainerRequestContext requestContext;
-   @Mock
-   Authenticator<Optional<String>, JwtPrincipal> authenticator;
+  @Mock ContainerRequestContext requestContext;
+  @Mock Authenticator<Optional<String>, JwtPrincipal> authenticator;
 
-   @Captor
-   ArgumentCaptor<Optional<String>> credentialsCaptor;
+  @Captor ArgumentCaptor<Optional<String>> credentialsCaptor;
 
-   @Rule
-   public MockitoRule mockitoRule = MockitoJUnit.rule();
+  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-   @Test(expected = JwtAuthException.class)
-   public void throwsOnDefaultEmpty() throws AuthenticationException {
-      // given
-      MultivaluedStringMap headers = new MultivaluedStringMap();
+  @Test(expected = JwtAuthException.class)
+  public void throwsOnDefaultEmpty() throws AuthenticationException {
+    // given
+    MultivaluedStringMap headers = new MultivaluedStringMap();
 
-      when(requestContext.getHeaders()).thenReturn(headers);
-      when(authenticator.authenticate(credentialsCaptor.capture())).thenReturn(Optional.empty());
+    when(requestContext.getHeaders()).thenReturn(headers);
+    when(authenticator.authenticate(credentialsCaptor.capture())).thenReturn(Optional.empty());
 
-      JwtAuthFilter authFilter = new Builder<JwtPrincipal>().setAuthenticator(authenticator).buildAuthFilter();
+    JwtAuthFilter authFilter =
+        new Builder<JwtPrincipal>().setAuthenticator(authenticator).buildAuthFilter();
 
-      // when
-      authFilter.filter(requestContext);
-   }
+    // when
+    authFilter.filter(requestContext);
+  }
 
-   @Test
-   public void shouldAcceptOnDefaultPayload() throws AuthenticationException {
-      // given
-      MultivaluedStringMap headers = new MultivaluedStringMap();
-      headers.add(HttpHeaders.AUTHORIZATION, "Bearer MY_JWT");
+  @Test
+  public void shouldAcceptOnDefaultPayload() throws AuthenticationException {
+    // given
+    MultivaluedStringMap headers = new MultivaluedStringMap();
+    headers.add(HttpHeaders.AUTHORIZATION, "Bearer MY_JWT");
 
-      when(requestContext.getHeaders()).thenReturn(headers);
-      when(authenticator.authenticate(credentialsCaptor.capture()))
-            .thenReturn(Optional.of(JwtPrincipal.emptyPrincipal()));
+    when(requestContext.getHeaders()).thenReturn(headers);
+    when(authenticator.authenticate(credentialsCaptor.capture()))
+        .thenReturn(Optional.of(JwtPrincipal.emptyPrincipal()));
 
-      JwtAuthFilter authFilter = new Builder<JwtPrincipal>().setAuthenticator(authenticator).buildAuthFilter();
+    JwtAuthFilter authFilter =
+        new Builder<JwtPrincipal>().setAuthenticator(authenticator).buildAuthFilter();
 
-      // when
-      authFilter.filter(requestContext);
+    // when
+    authFilter.filter(requestContext);
 
-      // then
-      assertThat(credentialsCaptor.getValue()).contains("MY_JWT");
-   }
+    // then
+    assertThat(credentialsCaptor.getValue()).contains("MY_JWT");
+  }
 
-   @Test
-   public void shouldAcceptOnAnonymousEmpty() throws AuthenticationException {
-      // given
-      MultivaluedStringMap headers = new MultivaluedStringMap();
+  @Test
+  public void shouldAcceptOnAnonymousEmpty() throws AuthenticationException {
+    // given
+    MultivaluedStringMap headers = new MultivaluedStringMap();
 
-      when(requestContext.getHeaders()).thenReturn(headers);
-      when(authenticator.authenticate(credentialsCaptor.capture())).thenReturn(Optional.empty());
+    when(requestContext.getHeaders()).thenReturn(headers);
+    when(authenticator.authenticate(credentialsCaptor.capture())).thenReturn(Optional.empty());
 
-      JwtAuthFilter authFilter = new Builder<JwtPrincipal>()
+    JwtAuthFilter authFilter =
+        new Builder<JwtPrincipal>()
             .setAcceptAnonymous(true)
             .setAuthenticator(authenticator)
             .buildAuthFilter();
 
-      // when
-      authFilter.filter(requestContext);
+    // when
+    authFilter.filter(requestContext);
 
-      // then
-      assertThat(credentialsCaptor.getValue()).isEmpty();
-   }
+    // then
+    assertThat(credentialsCaptor.getValue()).isEmpty();
+  }
 
-   @Test
-   public void shouldAcceptOnAnonymousPayload() throws AuthenticationException {
-      // given
-      MultivaluedStringMap headers = new MultivaluedStringMap();
-      headers.add(HttpHeaders.AUTHORIZATION, "Bearer MY_JWT");
+  @Test
+  public void shouldAcceptOnAnonymousPayload() throws AuthenticationException {
+    // given
+    MultivaluedStringMap headers = new MultivaluedStringMap();
+    headers.add(HttpHeaders.AUTHORIZATION, "Bearer MY_JWT");
 
-      when(requestContext.getHeaders()).thenReturn(headers);
-      when(authenticator.authenticate(credentialsCaptor.capture()))
-            .thenReturn(Optional.of(JwtPrincipal.emptyPrincipal()));
+    when(requestContext.getHeaders()).thenReturn(headers);
+    when(authenticator.authenticate(credentialsCaptor.capture()))
+        .thenReturn(Optional.of(JwtPrincipal.emptyPrincipal()));
 
-      JwtAuthFilter authFilter = new Builder<JwtPrincipal>()
+    JwtAuthFilter authFilter =
+        new Builder<JwtPrincipal>()
             .setAcceptAnonymous(true)
             .setAuthenticator(authenticator)
             .buildAuthFilter();
 
-      // when
-      authFilter.filter(requestContext);
+    // when
+    authFilter.filter(requestContext);
 
-      // then
-      assertThat(credentialsCaptor.getValue()).contains("MY_JWT");
-   }
+    // then
+    assertThat(credentialsCaptor.getValue()).contains("MY_JWT");
+  }
 }

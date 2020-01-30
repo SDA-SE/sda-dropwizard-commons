@@ -15,7 +15,7 @@ class TestHelper {
     // no instance
   }
 
-  static ConsumerRecords<String, String> createConsumerRecords(int noMessages, String ... topics) {
+  static ConsumerRecords<String, String> createConsumerRecords(int noMessages, String... topics) {
     Map<TopicPartition, List<ConsumerRecord<String, String>>> payload = new HashMap<>();
 
     for (String topic : topics) {
@@ -23,7 +23,8 @@ class TestHelper {
 
       List<ConsumerRecord<String, String>> messages = new ArrayList<>();
       for (int i = 0; i < noMessages; i++) {
-        ConsumerRecord<String, String> cr = new ConsumerRecord<>(topic, 0, 0, topic, UUID.randomUUID().toString());
+        ConsumerRecord<String, String> cr =
+            new ConsumerRecord<>(topic, 0, 0, topic, UUID.randomUUID().toString());
 
         messages.add(cr);
       }
@@ -32,6 +33,5 @@ class TestHelper {
     }
 
     return new ConsumerRecords<>(payload);
-
   }
 }

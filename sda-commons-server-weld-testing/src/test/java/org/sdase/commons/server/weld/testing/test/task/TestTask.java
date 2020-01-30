@@ -1,35 +1,32 @@
 package org.sdase.commons.server.weld.testing.test.task;
 
 import com.google.common.collect.ImmutableMultimap;
-import org.sdase.commons.server.weld.testing.test.util.BarSupplier;
 import io.dropwizard.servlets.tasks.Task;
-
-import javax.inject.Inject;
 import java.io.PrintWriter;
+import javax.inject.Inject;
+import org.sdase.commons.server.weld.testing.test.util.BarSupplier;
 
 public class TestTask extends Task {
 
-   @Inject
-   BarSupplier supplier;
+  @Inject BarSupplier supplier;
 
-   BarSupplier result;
+  BarSupplier result;
 
-   public TestTask() {
-      super("runTestTask");
-   }
+  public TestTask() {
+    super("runTestTask");
+  }
 
-   @Override
-   public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
-      result = supplier;
+  @Override
+  public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output)
+      throws Exception {
+    result = supplier;
+  }
 
-   }
+  public BarSupplier getSupplier() {
+    return supplier;
+  }
 
-   public BarSupplier getSupplier() {
-      return supplier;
-   }
-
-   public String getResult() {
-      return result.get();
-   }
-
+  public String getResult() {
+    return result.get();
+  }
 }

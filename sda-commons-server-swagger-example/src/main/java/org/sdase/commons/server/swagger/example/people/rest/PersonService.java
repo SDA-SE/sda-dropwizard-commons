@@ -31,55 +31,67 @@ import org.sdase.commons.shared.api.error.ApiError;
 //
 // Requires both a Authorization and a Consumer-Token. All requests inside are tagged as "People",
 // tags help to group the documentation for better navigation.
-@Api(authorizations = {@Authorization(BEARER_TOKEN), @Authorization(CONSUMER_TOKEN)}, tags = "People")
+@Api(
+    authorizations = {@Authorization(BEARER_TOKEN), @Authorization(CONSUMER_TOKEN)},
+    tags = "People")
 @Path("people") // define the base path of this endpoint
-@Produces({APPLICATION_JSON, "application/hal+json"}) // should be set to produce 406 for other accept headers
+@Produces({
+  APPLICATION_JSON,
+  "application/hal+json"
+}) // should be set to produce 406 for other accept headers
 @Consumes({APPLICATION_JSON}) // should be set to produce 406 for other accept headers
 public interface PersonService {
-   @GET
-   @ApiOperation(value = "Returns all people stored in this service.") // Set a description for the operation
-   @ApiResponses({
-         // Define all possible responses, with their status code and documentation text
-         @ApiResponse(code = HTTP_OK, message = "Returns the requested document.")})
-   List<PersonResource> findAllPeople();
+  @GET
+  @ApiOperation(
+      value = "Returns all people stored in this service.") // Set a description for the operation
+  @ApiResponses({
+    // Define all possible responses, with their status code and documentation text
+    @ApiResponse(code = HTTP_OK, message = "Returns the requested document.")
+  })
+  List<PersonResource> findAllPeople();
 
-   @POST
-   @ApiOperation(
-         value = "Creates a new person.",
-         notes = "The following default values are created on service start-up:\n\n"
-             + "| Firstname | Lastname   |\n"
-             + "|-----------|------------|\n"
-             + "| Max       | Mustermann |\n"
-             + "| John      | Doe        |\n\n"
-             + "You have **full** markdown support here!")
-   @ApiResponses(value = {
-         @ApiResponse(
-               code = HTTP_CREATED,
-               message = "The new person was created and the uri of the person is returned.",
-               // It is also possible to define the response headers for a given
-               // response
-               responseHeaders = {
-                     @ResponseHeader(
-                           name = "Location",
-                           description = "The location of the new person",
-                           response = String.class)
-         })})
-   Response createPerson(CreatePersonResource person);
+  @POST
+  @ApiOperation(
+      value = "Creates a new person.",
+      notes =
+          "The following default values are created on service start-up:\n\n"
+              + "| Firstname | Lastname   |\n"
+              + "|-----------|------------|\n"
+              + "| Max       | Mustermann |\n"
+              + "| John      | Doe        |\n\n"
+              + "You have **full** markdown support here!")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            code = HTTP_CREATED,
+            message = "The new person was created and the uri of the person is returned.",
+            // It is also possible to define the response headers for a given
+            // response
+            responseHeaders = {
+              @ResponseHeader(
+                  name = "Location",
+                  description = "The location of the new person",
+                  response = String.class)
+            })
+      })
+  Response createPerson(CreatePersonResource person);
 
-   @GET
-   @Path("{personId}")
-   @ApiOperation(value = "Returns a single person by id.")
-   @ApiResponses({
-         // It is also possible to define multiple responses that might occur:
-         @ApiResponse(
-             code = HTTP_OK,
-             message = "Returns the requested person.",
-             response = PersonResource.class),
-         @ApiResponse(
-             code = HTTP_NOT_FOUND,
-             message = "The requested person was not found.",
-             response = ApiError.class) })
-   PersonResource findPersonById(
-         @ApiParam(value = "The id of the person to request.", required = true) // Document path params
-         @PathParam("personId") int personId);
+  @GET
+  @Path("{personId}")
+  @ApiOperation(value = "Returns a single person by id.")
+  @ApiResponses({
+    // It is also possible to define multiple responses that might occur:
+    @ApiResponse(
+        code = HTTP_OK,
+        message = "Returns the requested person.",
+        response = PersonResource.class),
+    @ApiResponse(
+        code = HTTP_NOT_FOUND,
+        message = "The requested person was not found.",
+        response = ApiError.class)
+  })
+  PersonResource findPersonById(
+      @ApiParam(value = "The id of the person to request.", required = true) // Document path params
+          @PathParam("personId")
+          int personId);
 }

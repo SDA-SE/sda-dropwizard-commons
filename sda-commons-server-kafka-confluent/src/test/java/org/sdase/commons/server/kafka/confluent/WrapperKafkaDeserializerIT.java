@@ -38,98 +38,119 @@ import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 
-
 public class WrapperKafkaDeserializerIT {
 
-    private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource().withBrokers(2);
+  private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource().withBrokers(2);
 
-    private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE =
-        new KafkaBrokerEnvironmentRule(KAFKA);
+  private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE =
+      new KafkaBrokerEnvironmentRule(KAFKA);
 
-    private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
-        KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));
+  private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE =
+      new DropwizardAppRule<>(
+          KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));
 
-    private static final ConfluentSchemaRegistryRule SCHEMA_REGISTRY = ConfluentSchemaRegistryRule.builder()
-        .withKafkaProtocol(ProtocolType.PLAINTEXT.toString())
-        .withKafkaBrokerRule(KAFKA_BROKER_ENVIRONMENT_RULE)
-        .build();
+  private static final ConfluentSchemaRegistryRule SCHEMA_REGISTRY =
+      ConfluentSchemaRegistryRule.builder()
+          .withKafkaProtocol(ProtocolType.PLAINTEXT.toString())
+          .withKafkaBrokerRule(KAFKA_BROKER_ENVIRONMENT_RULE)
+          .build();
 
-    @ClassRule
-    public static final TestRule CHAIN = RuleChain.outerRule(SCHEMA_REGISTRY).around(DROPWIZARD_APP_RULE);
+  @ClassRule
+  public static final TestRule CHAIN =
+      RuleChain.outerRule(SCHEMA_REGISTRY).around(DROPWIZARD_APP_RULE);
 
+  private List<String> results = Collections.synchronizedList(new ArrayList<>());
 
-    private List<String> results = Collections.synchronizedList(new ArrayList<>());
+  private KafkaBundle<KafkaTestConfiguration> bundle;
 
+  @Before
+  public void setup() {
+    KafkaTestApplication application = DROPWIZARD_APP_RULE.getApplication();
+    //noinspection unchecked
+    bundle = application.kafkaBundle();
+    results.clear();
+  }
 
-    private KafkaBundle<KafkaTestConfiguration> bundle;
+  @Test
+  public void testWrappedAvroDeserializer() {
+    String topicName = "testWrappedAvroDeserializer";
+    KAFKA.getKafkaTestUtils().createTopic(topicName, 1, (short) 1);
 
-    @Before
-    public void setup() {
-      KafkaTestApplication application = DROPWIZARD_APP_RULE.getApplication();
-      //noinspection unchecked
-      bundle = application.kafkaBundle();
-      results.clear();
-    }
+    ConsumerConfig config = new ConsumerConfig();
+    config.getConfig().put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
+    config
+        .getConfig()
+        .put(
+            KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG,
+            SCHEMA_REGISTRY.getConnectionString());
 
-    @Test
-    public void testWrappedAvroDeserializer()  {
-      String topicName = "testWrappedAvroDeserializer";
-      KAFKA.getKafkaTestUtils().createTopic(topicName, 1, (short) 1);
+    Deserializer<FullName> valueDeserializer =
+        WrappedAvroDeserializer.<FullName>builder()
+            .withClassType(FullName.class)
+            .withConfigProperties(config.getConfig())
+            .build(false);
 
-      ConsumerConfig config = new ConsumerConfig();
-      config.getConfig().put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
-      config.getConfig().put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY.getConnectionString());
+    List<MessageListener<String, FullName>> stringStringMessageListener =
+        bundle.registerMessageHandler(
+            MessageHandlerRegistration.<String, FullName>builder()
+                .withDefaultListenerConfig()
+                .forTopic(topicName)
+                .withConsumerConfig(config)
+                .withValueDeserializer(valueDeserializer)
+                .withHandler(
+                    record -> {
+                      if (record.value() != null) {
+                        results.add(record.value().getFirst());
+                      }
+                    })
+                .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+                .build());
 
-      Deserializer<FullName> valueDeserializer = WrappedAvroDeserializer.<FullName>builder()
-          .withClassType(FullName.class)
-          .withConfigProperties(config.getConfig())
-          .build(false);
+    assertThat(stringStringMessageListener, is(notNullValue()));
 
-      List<MessageListener<String, FullName>> stringStringMessageListener = bundle
-          .registerMessageHandler(MessageHandlerRegistration
-              .<String, FullName> builder()
-              .withDefaultListenerConfig()
-              .forTopic(topicName)
-              .withConsumerConfig(config)
-              .withValueDeserializer(valueDeserializer)
-              .withHandler(
-                  record -> {
-                    if (record.value() != null) {
-                      results.add(record.value().getFirst());
-                    }
-                  }
-              )
-              .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
-              .build());
+    ProducerConfig pConfigAvro = new ProducerConfig();
+    pConfigAvro
+        .getConfig()
+        .put(
+            org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+            KafkaAvroSerializer.class.getName());
+    pConfigAvro
+        .getConfig()
+        .put(
+            KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG,
+            SCHEMA_REGISTRY.getConnectionString());
 
-      assertThat(stringStringMessageListener, is(notNullValue()));
+    MessageProducer<String, FullName> producerAvro =
+        bundle.registerProducer(
+            ProducerRegistration.<String, FullName>builder()
+                .forTopic(topicName)
+                .withProducerConfig(pConfigAvro)
+                .build());
+    producerAvro.send("test", new FullName("first", "last"));
 
-      ProducerConfig pConfigAvro = new ProducerConfig();
-      pConfigAvro.getConfig().put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
-      pConfigAvro.getConfig().put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY.getConnectionString());
+    ProducerConfig pConfigString = new ProducerConfig();
+    pConfigString
+        .getConfig()
+        .put(
+            org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+            StringSerializer.class.getName());
+    pConfigString
+        .getConfig()
+        .put(
+            KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG,
+            SCHEMA_REGISTRY.getConnectionString());
 
-      MessageProducer<String, FullName> producerAvro = bundle.registerProducer(ProducerRegistration.<String, FullName>builder()
-          .forTopic(topicName)
-          .withProducerConfig(pConfigAvro)
-          .build()
-      );
-      producerAvro.send("test", new FullName("first", "last"));
+    MessageProducer<String, String> producerString =
+        bundle.registerProducer(
+            ProducerRegistration.<String, String>builder()
+                .forTopic(topicName)
+                .withProducerConfig(pConfigString)
+                .build());
+    // send not avro conform record which get ignored
+    producerString.send("test", "{ not an avro conform record}");
 
-      ProducerConfig pConfigString = new ProducerConfig();
-      pConfigString.getConfig().put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-      pConfigString.getConfig().put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY.getConnectionString());
+    producerAvro.send("test", new FullName("second", "last"));
 
-      MessageProducer<String, String> producerString = bundle.registerProducer(ProducerRegistration.<String, String>builder()
-          .forTopic(topicName)
-          .withProducerConfig(pConfigString)
-          .build()
-      );
-      // send not avro conform record which get ignored
-      producerString.send("test", "{ not an avro conform record}");
-
-      producerAvro.send("test", new FullName("second", "last"));
-
-      await().atMost(5, TimeUnit.SECONDS).until(() -> results.size() == 2);
-    }
-
+    await().atMost(5, TimeUnit.SECONDS).until(() -> results.size() == 2);
+  }
 }

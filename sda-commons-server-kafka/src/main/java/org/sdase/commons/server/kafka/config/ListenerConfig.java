@@ -2,152 +2,144 @@ package org.sdase.commons.server.kafka.config;
 
 import javax.validation.constraints.NotNull;
 import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
-import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS.CommitType;
 import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS;
+import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS.CommitType;
 
 public class ListenerConfig {
 
-   private int instances = 1;
-   /**
-    * @deprecated depricated since configuration is not needed any longer if
-    *             {@link MessageListenerStrategy}
-    *             is used
-    */
-   @Deprecated
-   private CommitType commitType = LegacyMLS.CommitType.SYNC; // NOSONAR
+  private int instances = 1;
+  /**
+   * @deprecated depricated since configuration is not needed any longer if {@link
+   *     MessageListenerStrategy} is used
+   */
+  @Deprecated private CommitType commitType = LegacyMLS.CommitType.SYNC; // NOSONAR
 
-   /**
-    * @deprecated depricated since configuration is not needed any longer if
-    *             {@link MessageListenerStrategy}
-    *             is used
-    */
-   @Deprecated
-   private boolean useAutoCommitOnly = true;
-   private long topicMissingRetryMs = 0;
-   private long pollInterval = 100;
-   private ListenerConfig() {
-      // empty constructor for jackson
-   }
+  /**
+   * @deprecated depricated since configuration is not needed any longer if {@link
+   *     MessageListenerStrategy} is used
+   */
+  @Deprecated private boolean useAutoCommitOnly = true;
 
-   public static ListenerConfig getDefault() {
-      return new ListenerConfig();
-   }
+  private long topicMissingRetryMs = 0;
+  private long pollInterval = 100;
 
-   public static ListenerConfigBuilder builder() {
-      return new ListenerConfigBuilder();
-   }
+  private ListenerConfig() {
+    // empty constructor for jackson
+  }
 
-   public int getInstances() {
-      return instances;
-   }
+  public static ListenerConfig getDefault() {
+    return new ListenerConfig();
+  }
 
-   public void setInstances(int instances) {
-      this.instances = instances;
-   }
+  public static ListenerConfigBuilder builder() {
+    return new ListenerConfigBuilder();
+  }
 
-   /**
-    * @deprecated depricated since configuration is not needed any longer if
-    *             {@link MessageListenerStrategy}
-    *             is used
-    */
-   @Deprecated
-   public CommitType getCommitType() {
-      return commitType;
-   }
+  public int getInstances() {
+    return instances;
+  }
 
-   /**
-    * @deprecated depricated since configuration is not needed any longer if
-    *             {@link MessageListenerStrategy}
-    *             is used
-    */
-   @Deprecated
-   public void setCommitType(CommitType commitType) {
+  public void setInstances(int instances) {
+    this.instances = instances;
+  }
+
+  /**
+   * @deprecated depricated since configuration is not needed any longer if {@link
+   *     MessageListenerStrategy} is used
+   */
+  @Deprecated
+  public CommitType getCommitType() {
+    return commitType;
+  }
+
+  /**
+   * @deprecated depricated since configuration is not needed any longer if {@link
+   *     MessageListenerStrategy} is used
+   */
+  @Deprecated
+  public void setCommitType(CommitType commitType) {
+    this.commitType = commitType;
+  }
+
+  /**
+   * @deprecated depricated since configuration is not needed any longer if {@link
+   *     MessageListenerStrategy} is used
+   */
+  @Deprecated
+  public boolean isUseAutoCommitOnly() {
+    return useAutoCommitOnly;
+  }
+
+  /**
+   * @deprecated depricated since configuration is not needed any longer if {@link
+   *     MessageListenerStrategy} is used
+   */
+  @Deprecated
+  public void setUseAutoCommitOnly(boolean useAutoCommitOnly) {
+    this.useAutoCommitOnly = useAutoCommitOnly;
+  }
+
+  public long getTopicMissingRetryMs() {
+    return topicMissingRetryMs;
+  }
+
+  public void setTopicMissingRetryMs(long topicMissingRetryMs) {
+    this.topicMissingRetryMs = topicMissingRetryMs;
+  }
+
+  public long getPollInterval() {
+    return pollInterval;
+  }
+
+  public void setPollInterval(long pollInterval) {
+    this.pollInterval = pollInterval;
+  }
+
+  public static class ListenerConfigBuilder {
+
+    private CommitType commitType = LegacyMLS.CommitType.SYNC; // NOSONAR
+    private boolean useAutoCommitOnly = true;
+    private long topicMissingRetryMs = 0;
+    private long pollInterval = 100;
+
+    /**
+     * @deprecated depricated since configuration is not needed any longer if {@link
+     *     MessageListenerStrategy} is used
+     */
+    @Deprecated
+    public ListenerConfigBuilder withCommitType(@NotNull CommitType commitType) {
       this.commitType = commitType;
-   }
+      return this;
+    }
 
-   /**
-    * @deprecated depricated since configuration is not needed any longer if
-    *             {@link MessageListenerStrategy}
-    *             is used
-    */
-   @Deprecated
-   public boolean isUseAutoCommitOnly() {
-      return useAutoCommitOnly;
-   }
-
-   /**
-    * @deprecated depricated since configuration is not needed any longer if
-    *             {@link MessageListenerStrategy}
-    *             is used
-    */
-   @Deprecated
-   public void setUseAutoCommitOnly(boolean useAutoCommitOnly) {
+    /**
+     * @deprecated depricated since configuration is not needed any longer if {@link
+     *     MessageListenerStrategy} is used
+     */
+    @Deprecated
+    public ListenerConfigBuilder useAutoCommitOnly(@NotNull boolean useAutoCommitOnly) {
       this.useAutoCommitOnly = useAutoCommitOnly;
-   }
+      return this;
+    }
 
-   public long getTopicMissingRetryMs() {
-      return topicMissingRetryMs;
-   }
+    public ListenerConfigBuilder withTopicMissingRetryMs(@NotNull long ms) {
+      this.topicMissingRetryMs = ms;
+      return this;
+    }
 
-   public void setTopicMissingRetryMs(long topicMissingRetryMs) {
-      this.topicMissingRetryMs = topicMissingRetryMs;
-   }
+    public ListenerConfigBuilder withPollInterval(@NotNull long ms) {
+      this.pollInterval = ms;
+      return this;
+    }
 
-   public long getPollInterval() {
-      return pollInterval;
-   }
-
-   public void setPollInterval(long pollInterval) {
-      this.pollInterval = pollInterval;
-   }
-
-   public static class ListenerConfigBuilder {
-
-      private CommitType commitType = LegacyMLS.CommitType.SYNC; // NOSONAR
-      private boolean useAutoCommitOnly = true;
-      private long topicMissingRetryMs = 0;
-      private long pollInterval = 100;
-
-      /**
-       * @deprecated depricated since configuration is not needed any longer if
-       *             {@link MessageListenerStrategy}
-       *             is used
-       */
-      @Deprecated
-      public ListenerConfigBuilder withCommitType(@NotNull CommitType commitType) {
-         this.commitType = commitType;
-         return this;
-      }
-
-      /**
-       * @deprecated depricated since configuration is not needed any longer if
-       *             {@link MessageListenerStrategy}
-       *             is used
-       */
-      @Deprecated
-      public ListenerConfigBuilder useAutoCommitOnly(@NotNull boolean useAutoCommitOnly) {
-         this.useAutoCommitOnly = useAutoCommitOnly;
-         return this;
-      }
-
-      public ListenerConfigBuilder withTopicMissingRetryMs(@NotNull long ms) {
-         this.topicMissingRetryMs = ms;
-         return this;
-      }
-
-      public ListenerConfigBuilder withPollInterval(@NotNull long ms) {
-         this.pollInterval = ms;
-         return this;
-      }
-
-      public ListenerConfig build(@NotNull int numberInstances) {
-         ListenerConfig build = new ListenerConfig();
-         build.useAutoCommitOnly = useAutoCommitOnly; // NOSONAR
-         build.commitType = commitType; // NOSONAR
-         build.topicMissingRetryMs = topicMissingRetryMs;
-         build.pollInterval = pollInterval;
-         build.instances = numberInstances;
-         return build;
-      }
-   }
+    public ListenerConfig build(@NotNull int numberInstances) {
+      ListenerConfig build = new ListenerConfig();
+      build.useAutoCommitOnly = useAutoCommitOnly; // NOSONAR
+      build.commitType = commitType; // NOSONAR
+      build.topicMissingRetryMs = topicMissingRetryMs;
+      build.pollInterval = pollInterval;
+      build.instances = numberInstances;
+      return build;
+    }
+  }
 }

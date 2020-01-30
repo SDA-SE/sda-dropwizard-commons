@@ -4,5 +4,5 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 
 public interface OpenConnectionFunction {
-   HttpURLConnection call(String url) throws IOException;
+  HttpURLConnection call(String url) throws IOException;
 }

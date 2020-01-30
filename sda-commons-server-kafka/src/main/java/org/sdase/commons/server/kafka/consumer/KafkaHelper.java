@@ -17,7 +17,8 @@ public class KafkaHelper {
    * @return the name of the consumer as used in log messages that is hidden within the metrics
    */
   public static <K, V> String getClientId(KafkaConsumer<K, V> consumer) {
-    Entry<MetricName, ? extends Metric> entry = consumer.metrics().entrySet().stream().findFirst().orElse(null);
+    Entry<MetricName, ? extends Metric> entry =
+        consumer.metrics().entrySet().stream().findFirst().orElse(null);
     return entry != null ? entry.getKey().tags().get("client-id") : "";
   }
 
@@ -26,8 +27,8 @@ public class KafkaHelper {
    * @return the name of the producer as used in log messages that is hidden within the metrics
    */
   public static <K, V> String getClientId(KafkaProducer<K, V> producer) {
-    Entry<MetricName, ? extends Metric> entry = producer.metrics().entrySet().stream().findFirst().orElse(null);
+    Entry<MetricName, ? extends Metric> entry =
+        producer.metrics().entrySet().stream().findFirst().orElse(null);
     return entry != null ? entry.getKey().tags().get("client-id") : "";
   }
-
 }

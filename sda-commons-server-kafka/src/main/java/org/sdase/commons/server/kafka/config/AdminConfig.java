@@ -4,34 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminConfig {
-	
-   private int adminClientRequestTimeoutMs = 5000;
-	   
-   private List<String> adminEndpoint = new ArrayList<>();
-   
-   private Security adminSecurity = new Security();
 
-   public int getAdminClientRequestTimeoutMs() {
-      return adminClientRequestTimeoutMs;
-   }
+  private int adminClientRequestTimeoutMs = 5000;
 
-   public void setAdminClientRequestTimeoutMs(int adminClientRequestTimeoutMs) {
-      this.adminClientRequestTimeoutMs = adminClientRequestTimeoutMs;
-   }
+  private List<String> adminEndpoint = new ArrayList<>();
 
-   public List<String> getAdminEndpoint() {
-      return adminEndpoint;
-   }
+  private Security adminSecurity = new Security();
 
-   public void setAdminEndpoint(List<String> adminEndpoint) {
-      this.adminEndpoint = adminEndpoint;
-   }
+  public int getAdminClientRequestTimeoutMs() {
+    return adminClientRequestTimeoutMs;
+  }
 
-   public Security getAdminSecurity() {
-      return adminSecurity;
-   }
+  public void setAdminClientRequestTimeoutMs(int adminClientRequestTimeoutMs) {
+    this.adminClientRequestTimeoutMs = adminClientRequestTimeoutMs;
+  }
 
-   public void setAdminSecurity(Security adminSecurity) {
-      this.adminSecurity = adminSecurity;
-   }
+  public List<String> getAdminEndpoint() {
+    return adminEndpoint;
+  }
+
+  public void setAdminEndpoint(List<String> adminEndpoint) {
+    this.adminEndpoint = adminEndpoint;
+  }
+
+  public Security getAdminSecurity() {
+    return adminSecurity;
+  }
+
+  public void setAdminSecurity(Security adminSecurity) {
+    this.adminSecurity = adminSecurity;
+  }
 }

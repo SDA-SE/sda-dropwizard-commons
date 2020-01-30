@@ -17,28 +17,29 @@ import org.sdase.commons.server.dropwizard.bundles.test.LoggingTestApp;
 
 public class DefaultLoggingConfigurationBundleWithoutLoggingKeyTest {
 
-   @ClassRule
-   public static final DropwizardAppRule<Configuration> DW = new DropwizardAppRule<>(LoggingTestApp.class,
-         resourceFilePath("without-logging-key-config.yaml"));
+  @ClassRule
+  public static final DropwizardAppRule<Configuration> DW =
+      new DropwizardAppRule<>(
+          LoggingTestApp.class, resourceFilePath("without-logging-key-config.yaml"));
 
-   @Test()
-   public void shouldApplyConsoleAppender() {
-      LoggingTestApp app = DW.getApplication();
-      DefaultLoggingFactory defaultLoggingFactory = (DefaultLoggingFactory) app.getConfiguration().getLoggingFactory();
+  @Test()
+  public void shouldApplyConsoleAppender() {
+    LoggingTestApp app = DW.getApplication();
+    DefaultLoggingFactory defaultLoggingFactory =
+        (DefaultLoggingFactory) app.getConfiguration().getLoggingFactory();
 
-      List<AppenderFactory<ILoggingEvent>> consoleAppenderFactories = defaultLoggingFactory
-            .getAppenders()
-            .stream()
+    List<AppenderFactory<ILoggingEvent>> consoleAppenderFactories =
+        defaultLoggingFactory.getAppenders().stream()
             .filter(a -> a instanceof ConsoleAppenderFactory)
             .collect(Collectors.toList());
 
-      assertThat(consoleAppenderFactories.size()).isEqualTo(1);
+    assertThat(consoleAppenderFactories.size()).isEqualTo(1);
 
-      ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = (ConsoleAppenderFactory<ILoggingEvent>) consoleAppenderFactories
-            .get(0);
+    ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory =
+        (ConsoleAppenderFactory<ILoggingEvent>) consoleAppenderFactories.get(0);
 
-      assertThat(consoleAppenderFactory.getLogFormat())
-            .isEqualTo("[%d] [%-5level] [%X{Trace-Token}] %logger{36} - %msg%n");
-      assertThat(consoleAppenderFactory.getThreshold()).isEqualTo("INFO");
-   }
+    assertThat(consoleAppenderFactory.getLogFormat())
+        .isEqualTo("[%d] [%-5level] [%X{Trace-Token}] %logger{36} - %msg%n");
+    assertThat(consoleAppenderFactory.getThreshold()).isEqualTo("INFO");
+  }
 }
