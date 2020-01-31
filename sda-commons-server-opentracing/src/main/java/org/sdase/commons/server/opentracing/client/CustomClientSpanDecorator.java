@@ -1,4 +1,4 @@
-package org.sdase.commons.client.jersey.builder;
+package org.sdase.commons.server.opentracing.client;
 
 import static org.sdase.commons.server.opentracing.filter.TagUtils.HTTP_REQUEST_HEADERS;
 import static org.sdase.commons.server.opentracing.filter.TagUtils.HTTP_RESPONSE_HEADERS;

@@ -1,10 +1,14 @@
 package org.sdase.commons.server.opa.filter;
 
+import static io.opentracing.tag.Tags.COMPONENT;
 import static java.util.stream.Collectors.toList;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.opentracing.Scope;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
@@ -68,9 +72,14 @@ public class OpaAuthFilter implements ContainerRequestFilter {
   private final boolean isDisabled;
   private final List<Pattern> excludePatterns;
   private final ObjectMapper om;
+  private final Tracer tracer;
 
   public OpaAuthFilter(
-      WebTarget webTarget, OpaConfig config, List<String> excludePatterns, ObjectMapper om) {
+      WebTarget webTarget,
+      OpaConfig config,
+      List<String> excludePatterns,
+      ObjectMapper om,
+      Tracer tracer) {
     this.webTarget = webTarget;
     this.isDisabled = config.isDisableOpa();
     this.excludePatterns =
@@ -78,48 +87,59 @@ public class OpaAuthFilter implements ContainerRequestFilter {
             ? Collections.emptyList()
             : excludePatterns.stream().map(Pattern::compile).collect(toList());
     this.om = om;
+    this.tracer = tracer;
   }
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
+    Span span =
+        tracer
+            .buildSpan("authorizeUsingOpa")
+            .withTag("opa.allow", false)
+            .withTag(COMPONENT, "OpaAuthFilter")
+            .start();
 
-    // collect input parameters for Opa request
-    UriInfo uriInfo = requestContext.getUriInfo();
-    String method = requestContext.getMethod();
-    String trace = requestContext.getHeaderString(RequestTracing.TOKEN_HEADER);
-    String jwt = null;
-    // Headers are currently passed to OPA as read by the framework. There might be an issue
-    // with multivalued headers. The representation differs depending on how the client
-    // sends the headers. It might be a list with values, or one entry separated with a
-    // separator, for example ',' or a combination of both.
-    MultivaluedMap<String, String> headers = lowercaseHeaderNames(requestContext.getHeaders());
+    try (Scope ignored = tracer.scopeManager().activate(span)) {
+      // collect input parameters for Opa request
+      UriInfo uriInfo = requestContext.getUriInfo();
+      String method = requestContext.getMethod();
+      String trace = requestContext.getHeaderString(RequestTracing.TOKEN_HEADER);
+      String jwt = null;
+      // Headers are currently passed to OPA as read by the framework. There might be an issue
+      // with multivalued headers. The representation differs depending on how the client
+      // sends the headers. It might be a list with values, or one entry separated with a
+      // separator, for example ',' or a combination of both.
+      MultivaluedMap<String, String> headers = lowercaseHeaderNames(requestContext.getHeaders());
 
-    // if security context already exist and if it is a jwt security context,
-    // we include the jwt in the request
-    SecurityContext securityContext = requestContext.getSecurityContext();
-    Map<String, Claim> claims = null;
-    if (null != securityContext) {
-      JwtPrincipal jwtPrincipal = getJwtPrincipal(requestContext.getSecurityContext());
-      if (jwtPrincipal != null) {
-        // JWT principal found, this means that JWT has been validated by
-        // auth bundle
-        // and can be used within this bundle
-        jwt = jwtPrincipal.getJwt();
-        claims = jwtPrincipal.getClaims();
+      // if security context already exist and if it is a jwt security context,
+      // we include the jwt in the request
+      SecurityContext securityContext = requestContext.getSecurityContext();
+      Map<String, Claim> claims = null;
+      if (null != securityContext) {
+        JwtPrincipal jwtPrincipal = getJwtPrincipal(requestContext.getSecurityContext());
+        if (jwtPrincipal != null) {
+          // JWT principal found, this means that JWT has been validated by
+          // auth bundle
+          // and can be used within this bundle
+          jwt = jwtPrincipal.getJwt();
+          claims = jwtPrincipal.getClaims();
+        }
       }
-    }
 
-    JsonNode constraints = null;
-    if (!isDisabled && !isExcluded(uriInfo)) {
-      // process the actual request to the open policy agent server
-      String[] path =
-          uriInfo.getPathSegments().stream().map(PathSegment::getPath).toArray(String[]::new);
-      OpaRequest request = OpaRequest.request(jwt, path, method, trace, headers);
-      constraints = authorizeWithOpa(request);
-    }
+      JsonNode constraints = null;
+      if (!isDisabled && !isExcluded(uriInfo)) {
+        // process the actual request to the open policy agent server
+        String[] path =
+            uriInfo.getPathSegments().stream().map(PathSegment::getPath).toArray(String[]::new);
+        OpaRequest request = OpaRequest.request(jwt, path, method, trace, headers);
+        constraints = authorizeWithOpa(request, span);
+      }
 
-    OpaJwtPrincipal principal = OpaJwtPrincipal.create(jwt, claims, constraints, om);
-    replaceSecurityContext(requestContext, securityContext, principal);
+      OpaJwtPrincipal principal = OpaJwtPrincipal.create(jwt, claims, constraints, om);
+      replaceSecurityContext(requestContext, securityContext, principal);
+    } finally {
+      span.finish();
+    }
   }
 
   private boolean isExcluded(UriInfo uriInfo) {
@@ -181,7 +201,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
         });
   }
 
-  private JsonNode authorizeWithOpa(OpaRequest request) {
+  private JsonNode authorizeWithOpa(OpaRequest request, Span span) {
     OpaResponse resp = null;
     try {
       resp =
@@ -204,6 +224,9 @@ public class OpaAuthFilter implements ContainerRequestFilter {
           "Invalid response from OPA. Maybe the policy path or the response format is not correct");
       throw new ForbiddenException("Not authorized");
     }
+
+    span.setTag("opa.allow", resp.isAllow());
+
     if (!resp.isAllow()) {
       throw new ForbiddenException("Not authorized");
     }
