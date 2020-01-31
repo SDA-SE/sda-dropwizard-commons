@@ -74,7 +74,7 @@ dependencies {
     api "javax.el:javax.el-api:3.0.0"
     api "javax.enterprise:cdi-api:2.0"
     api "javax.ws.rs:javax.ws.rs-api:2.1.1"
-    api "javax.xml.bind:jaxb-api:2.3.0"
+    api "javax.xml.bind:jaxb-api:2.3.1"
 
     api "net.sf.jopt-simple:jopt-simple:5.0.4"
 
