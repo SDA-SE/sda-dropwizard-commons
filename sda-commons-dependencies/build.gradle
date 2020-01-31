@@ -26,7 +26,7 @@ dependencies {
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
     api "com.google.code.findbugs:jsr305:3.0.2"
     api "com.google.guava:guava:24.1.1-jre"
-    api "com.h2database:h2:1.4.197"
+    api "com.h2database:h2:1.4.200"
 
     api "commons-codec:commons-codec:1.11"
     // upgrade from 1.1.3 which comes with com.amazonaws:aws-java-sdk-core
