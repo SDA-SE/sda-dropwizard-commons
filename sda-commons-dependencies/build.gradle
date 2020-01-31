@@ -81,7 +81,7 @@ dependencies {
     api "org.apache.commons:commons-compress:1.19"
     api "org.bouncycastle:bcpkix-jdk15on:1.64"
     api "org.dbunit:dbunit:2.6.0"
-    api "org.flywaydb:flyway-core:6.2.0"
+    api "org.flywaydb:flyway-core:6.2.1"
     api "org.javassist:javassist:3.24.1-GA"
     api "org.jboss.logging:jboss-logging:3.3.0.Final"
     api "org.jboss.weld.se:weld-se-core:$weldVersion"
