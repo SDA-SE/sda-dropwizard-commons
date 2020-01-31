@@ -3,7 +3,7 @@
 This module provides the [`OpenTracingBundle`](./src/main/java/org/sdase/commons/server/opentracing/OpenTracingBundle.java) used to instrument using [OpenTracing](https://opentracing.io/).
 
 First, the module injects an external trace received via HTTP headers and continues new spans inside the existing trace.
-In addition, is instruments Jax-Rs with different spans, like HTTP requests after resource matching and entity serialisation.
+In addition, it instruments JAX-RS with different spans, like HTTP requests after resource matching and entity serialisation.
 
 This module doesn't work standalone, as it requires a collector to send traces to a central instance to view them.
 Therefore it is required to also include the [`JaegerBundle`](../sda-commons-server-jaeger/README.md) inside the application.

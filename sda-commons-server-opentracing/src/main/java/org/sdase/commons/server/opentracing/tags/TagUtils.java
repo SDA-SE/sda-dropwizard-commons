@@ -1,12 +1,14 @@
-package org.sdase.commons.server.opentracing.filter;
+package org.sdase.commons.server.opentracing.tags;
 
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static javax.ws.rs.core.HttpHeaders.COOKIE;
+import static javax.ws.rs.core.HttpHeaders.SET_COOKIE;
+import static org.apache.commons.lang3.StringUtils.join;
 
 import io.opentracing.tag.StringTag;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import org.apache.commons.lang3.StringUtils;
 
 public class TagUtils {
 
@@ -41,7 +43,7 @@ public class TagUtils {
       return sanitizedHeaders.entrySet().stream()
           .map(
               entry ->
-                  StringUtils.join(
+                  join(
                       "[",
                       entry.getKey(),
                       " = '",
@@ -59,12 +61,14 @@ public class TagUtils {
 
     headers.forEach(
         (key, value) -> {
-          if (key.equalsIgnoreCase(AUTHORIZATION)) {
+          if (AUTHORIZATION.equalsIgnoreCase(key)) {
             sanitizedHeaders.put(
                 key,
                 value.stream()
                     .map(h -> (T) sanitizeAuthorizationHeader(h.toString()))
                     .collect(Collectors.toList()));
+          } else if (SET_COOKIE.equalsIgnoreCase(key) || COOKIE.equalsIgnoreCase(key)) {
+            sanitizedHeaders.putSingle(key, (T) "…");
           } else {
             sanitizedHeaders.put(key, value);
           }
@@ -75,9 +79,9 @@ public class TagUtils {
 
   private static String sanitizeAuthorizationHeader(String header) {
     if (header.startsWith("Bearer ")) {
-      return "Bearer ...";
+      return "Bearer …";
     } else {
-      return "...";
+      return "…";
     }
   }
 }

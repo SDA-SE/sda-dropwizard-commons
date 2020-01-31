@@ -2,6 +2,7 @@ dependencies {
   compile project(':sda-commons-server-dropwizard')
 
   compile 'io.opentracing.contrib:opentracing-jaxrs2'
+  compile 'io.opentracing.contrib:opentracing-web-servlet-filter'
 
   testCompile project(':sda-commons-server-testing')
   testCompile 'io.opentracing:opentracing-mock'

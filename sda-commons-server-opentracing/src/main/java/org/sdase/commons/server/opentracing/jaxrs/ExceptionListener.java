@@ -1,5 +1,10 @@
-package org.sdase.commons.server.opentracing.filter;
+package org.sdase.commons.server.opentracing.jaxrs;
 
+import static io.opentracing.log.Fields.ERROR_KIND;
+import static io.opentracing.log.Fields.ERROR_OBJECT;
+import static io.opentracing.log.Fields.EVENT;
+import static io.opentracing.log.Fields.MESSAGE;
+import static io.opentracing.log.Fields.STACK;
 import static org.glassfish.jersey.server.monitoring.RequestEvent.Type.ON_EXCEPTION;
 
 import io.opentracing.Span;
@@ -49,11 +54,11 @@ public class ExceptionListener implements ApplicationEventListener {
 
     private Map<String, Object> mapExceptionToFields(Throwable throwable) {
       Map<String, Object> fields = new HashMap<>();
-      fields.put("event", "error");
-      fields.put("error.kind", "Exception");
-      fields.put("error.object", throwable);
-      fields.put("message", throwable.getMessage());
-      fields.put("stack", mapStackToString(throwable));
+      fields.put(EVENT, "error");
+      fields.put(ERROR_KIND, throwable.getClass().getName());
+      fields.put(ERROR_OBJECT, throwable);
+      fields.put(MESSAGE, throwable.getMessage());
+      fields.put(STACK, mapStackToString(throwable));
       return fields;
     }
 

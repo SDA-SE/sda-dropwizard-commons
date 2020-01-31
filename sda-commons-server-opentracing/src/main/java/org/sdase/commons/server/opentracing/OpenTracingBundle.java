@@ -1,5 +1,6 @@
 package org.sdase.commons.server.opentracing;
 
+import static java.util.Arrays.asList;
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
 import ch.qos.logback.classic.Logger;
@@ -11,15 +12,18 @@ import io.opentracing.Tracer;
 import io.opentracing.contrib.jaxrs2.server.ServerSpanDecorator;
 import io.opentracing.contrib.jaxrs2.server.ServerTracingDynamicFeature;
 import io.opentracing.contrib.jaxrs2.server.SpanFinishingFilter;
+import io.opentracing.contrib.web.servlet.filter.ServletFilterSpanDecorator;
+import io.opentracing.contrib.web.servlet.filter.TracingFilter;
 import io.opentracing.util.GlobalTracer;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
 import javax.servlet.FilterRegistration.Dynamic;
-import org.sdase.commons.server.opentracing.filter.CustomServerSpanDecorator;
-import org.sdase.commons.server.opentracing.filter.ExceptionListener;
+import org.sdase.commons.server.opentracing.jaxrs.CustomServerSpanDecorator;
+import org.sdase.commons.server.opentracing.jaxrs.ExceptionListener;
 import org.sdase.commons.server.opentracing.logging.SpanLogsAppender;
+import org.sdase.commons.server.opentracing.servlet.CustomServletSpanDecorator;
 import org.slf4j.LoggerFactory;
 
 public class OpenTracingBundle implements Bundle {
@@ -40,6 +44,7 @@ public class OpenTracingBundle implements Bundle {
     Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
 
     registerLogAppender(currentTracer);
+    registerServletFilter(currentTracer, environment);
     registerJerseyFilters(currentTracer, environment);
   }
 
@@ -52,10 +57,20 @@ public class OpenTracingBundle implements Bundle {
     rootLogger.addAppender(appender);
   }
 
+  private void registerServletFilter(Tracer currentTracer, Environment environment) {
+    List<ServletFilterSpanDecorator> decorators =
+        asList(ServletFilterSpanDecorator.STANDARD_TAGS, new CustomServletSpanDecorator());
+
+    TracingFilter filter = new TracingFilter(currentTracer, decorators, null);
+    FilterRegistration.Dynamic filterRegistration =
+        environment.servlets().addFilter("TracingFilter", filter);
+    filterRegistration.addMappingForUrlPatterns(
+        EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC), false, "*");
+  }
+
   private void registerJerseyFilters(Tracer currentTracer, Environment environment) {
-    List<ServerSpanDecorator> serverDecorators = new ArrayList<>();
-    serverDecorators.add(ServerSpanDecorator.STANDARD_TAGS);
-    serverDecorators.add(new CustomServerSpanDecorator());
+    List<ServerSpanDecorator> decorators =
+        asList(ServerSpanDecorator.STANDARD_TAGS, new CustomServerSpanDecorator());
 
     environment.jersey().register(new ExceptionListener(currentTracer));
     environment
@@ -63,13 +78,13 @@ public class OpenTracingBundle implements Bundle {
         .register(
             new ServerTracingDynamicFeature.Builder(currentTracer)
                 .withJoinExistingActiveSpan(true)
-                .withDecorators(serverDecorators)
+                .withDecorators(decorators)
                 .build());
     Dynamic filterRegistration =
         environment.servlets().addFilter("SpanFinishingFilter", SpanFinishingFilter.class);
     filterRegistration.setAsyncSupported(true);
     filterRegistration.addMappingForUrlPatterns(
-        EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC), false, "*");
+        EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC), true, "*");
   }
 
   public static FinalBuilder builder() {

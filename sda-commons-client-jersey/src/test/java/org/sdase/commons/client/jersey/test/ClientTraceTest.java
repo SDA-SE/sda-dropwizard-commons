@@ -13,7 +13,7 @@ import static io.opentracing.tag.Tags.HTTP_URL;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.sdase.commons.server.opentracing.filter.TagUtils.HTTP_REQUEST_HEADERS;
+import static org.sdase.commons.server.opentracing.tags.TagUtils.HTTP_REQUEST_HEADERS;
 
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;

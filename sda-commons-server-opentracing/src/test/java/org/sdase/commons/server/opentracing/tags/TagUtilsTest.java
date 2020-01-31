@@ -1,13 +1,15 @@
-package org.sdase.commons.server.opentracing.filter;
+package org.sdase.commons.server.opentracing.tags;
 
 import static com.google.common.net.HttpHeaders.TRANSFER_ENCODING;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static javax.ws.rs.core.HttpHeaders.COOKIE;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
+import static javax.ws.rs.core.HttpHeaders.SET_COOKIE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.sdase.commons.server.opentracing.filter.TagUtils.convertHeadersToString;
-import static org.sdase.commons.server.opentracing.filter.TagUtils.sanitizeHeaders;
+import static org.sdase.commons.server.opentracing.tags.TagUtils.convertHeadersToString;
+import static org.sdase.commons.server.opentracing.tags.TagUtils.sanitizeHeaders;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -63,12 +65,30 @@ public class TagUtilsTest {
   }
 
   @Test
+  public void shouldSanitizeSetCookieHeader() {
+    MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
+    headers.put(SET_COOKIE, singletonList("1234"));
+    MultivaluedMap<String, ?> sanitizedHeaders = sanitizeHeaders(headers);
+
+    assertThat(sanitizedHeaders.getFirst(SET_COOKIE)).isEqualTo("…");
+  }
+
+  @Test
+  public void shouldSanitizeCookieHeader() {
+    MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
+    headers.put(COOKIE, singletonList("1234"));
+    MultivaluedMap<String, ?> sanitizedHeaders = sanitizeHeaders(headers);
+
+    assertThat(sanitizedHeaders.getFirst(COOKIE)).isEqualTo("…");
+  }
+
+  @Test
   public void shouldSanitizeAuthorizationHeader() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
     headers.put(AUTHORIZATION, singletonList("1234"));
     MultivaluedMap<String, ?> sanitizedHeaders = sanitizeHeaders(headers);
 
-    assertThat(sanitizedHeaders.getFirst(AUTHORIZATION)).isEqualTo("...");
+    assertThat(sanitizedHeaders.getFirst(AUTHORIZATION)).isEqualTo("…");
   }
 
   @Test
@@ -77,6 +97,6 @@ public class TagUtilsTest {
     headers.put(AUTHORIZATION, singletonList("Bearer 1234"));
     MultivaluedMap<String, ?> sanitizedHeaders = sanitizeHeaders(headers);
 
-    assertThat(sanitizedHeaders.getFirst(AUTHORIZATION)).isEqualTo("Bearer ...");
+    assertThat(sanitizedHeaders.getFirst(AUTHORIZATION)).isEqualTo("Bearer …");
   }
 }

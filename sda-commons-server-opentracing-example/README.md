@@ -7,8 +7,8 @@ See the [`OpenTracingApplication`](./src/main/java/org/sdase/commons/server/open
 
 ## How to run the example
 
-Start the example app an pass `server config.yml` as command line arguments.
-You also have to start Jaeger from [local-infra](https://github.com/SDA-SE/local-infra).
+Start the example app and pass `server config.yml` as command line arguments.
+You also have to start Jaeger, for example using the [Jaeger all-in-one image](https://hub.docker.com/r/jaegertracing/all-in-one).
 Afterwards you can perform the following requests:
 
 - [http://localhost:8080/](http://localhost:8080/)

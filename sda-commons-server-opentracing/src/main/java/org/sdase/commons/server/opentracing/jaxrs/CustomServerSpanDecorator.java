@@ -1,8 +1,8 @@
-package org.sdase.commons.server.opentracing.filter;
+package org.sdase.commons.server.opentracing.jaxrs;
 
-import static org.sdase.commons.server.opentracing.filter.TagUtils.HTTP_REQUEST_HEADERS;
-import static org.sdase.commons.server.opentracing.filter.TagUtils.HTTP_RESPONSE_HEADERS;
-import static org.sdase.commons.server.opentracing.filter.TagUtils.convertHeadersToString;
+import static org.sdase.commons.server.opentracing.tags.TagUtils.HTTP_REQUEST_HEADERS;
+import static org.sdase.commons.server.opentracing.tags.TagUtils.HTTP_RESPONSE_HEADERS;
+import static org.sdase.commons.server.opentracing.tags.TagUtils.convertHeadersToString;
 
 import io.opentracing.Span;
 import io.opentracing.contrib.jaxrs2.server.ServerSpanDecorator;
