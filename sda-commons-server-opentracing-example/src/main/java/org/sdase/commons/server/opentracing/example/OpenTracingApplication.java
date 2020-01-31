@@ -49,7 +49,7 @@ public class OpenTracingApplication extends Application<Configuration> {
     bootstrap.addBundle(JaegerBundle.builder().build());
     // Initialize the OpenTracing instrumentation. This makes sure that trace
     // and span ids from upstream services are extracted and initialized. In
-    // addition it provides some instrumentation for Jax-Rs. The basic
+    // addition it provides some instrumentation for JAX-RS. The basic
     // instrumentation allows to observe HTTP calls and how they are matched
     // to class methods.
     //

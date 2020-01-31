@@ -173,8 +173,8 @@ to use the bundle within an application.
 
 ##### Open Tracing
 
-The module [`sda-commons-server-opentracing`](./sda-commons-server-opentracing/README.md) provides [OpenTracing](https://opentracing.io/) instrumentation for Jax-Rs. 
-Other bundles like `sda-commons-client-jersey`, `sda-commons-server-morphia` or `sda-commons-server-s3` come with build in instrumentation.
+The module [`sda-commons-server-opentracing`](./sda-commons-server-opentracing/README.md) provides [OpenTracing](https://opentracing.io/) instrumentation for JAX-RS. 
+Other bundles like `sda-commons-client-jersey`, `sda-commons-server-morphia` or `sda-commons-server-s3` come with built in instrumentation.
 
 Besides instrumentation it's also required to specify a collector, like [Jaeger](https://www.jaegertracing.io/).
 The module [`sda-commons-server-jaeger`](./sda-commons-server-jaeger/README.md) provides the Jaeger collector.

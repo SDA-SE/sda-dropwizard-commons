@@ -3,6 +3,7 @@ dependencies {
   compile 'javax.xml.bind:jaxb-api'
   compile 'com.amazonaws:aws-java-sdk-s3'
   compile 'io.opentracing.contrib:opentracing-aws-sdk-1'
+  compile 'io.opentracing:opentracing-util'
 
   testCompile project(':sda-commons-server-s3-testing')
   testCompile 'org.assertj:assertj-core'

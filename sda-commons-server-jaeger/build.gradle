@@ -3,7 +3,7 @@ dependencies {
 
   compile 'io.jaegertracing:jaeger-client'
 
-  // Sadly the required code is in a test dependency, but as an alternative we cloud also copy the class here.
+  // Sadly the required code is in a test dependency, but as an alternative we could also copy the class here.
   compile group: 'io.opentracing', name: 'opentracing-util', classifier: 'tests'
   compile 'io.prometheus:simpleclient'
 

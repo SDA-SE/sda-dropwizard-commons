@@ -26,11 +26,9 @@ Make sure that the `JaegerBundle` is initialized before other bundles that are u
 ## Configuration
 
 By default the `JaegerBundle` forwards traces to the Jaeger agent on `localhost`.
-In a production scenario such a Jaeger agent is deployed as a sidecar in every pod and therefore accessible at `localhost`. 
-
-However, in local testing scenarios it might be required to configure a different host for the agent.
+However, in production or local testing scenarios it might be required to configure a different host for the agent.
 Therefore the bundle can be configured using environment variables.
+Set the environment variable `JAEGER_AGENT_HOST` to your desired hostname.
 The full list of configuration variables is listed [here](https://github.com/jaegertracing/jaeger-client-java/blob/master/jaeger-core/README.md#configuration-via-environment).
 
-For local testing, a simple Jaeger instance (all-in-one image) is available in [local-infra](https://github.com/SDA-SE/local-infra).
-Set the environment variable `JAEGER_AGENT_HOST` to your desired hostname.
+For local testing, a simple Jaeger instance (the all-in-one image) is available at [Docker Hub](https://hub.docker.com/r/jaegertracing/all-in-one).

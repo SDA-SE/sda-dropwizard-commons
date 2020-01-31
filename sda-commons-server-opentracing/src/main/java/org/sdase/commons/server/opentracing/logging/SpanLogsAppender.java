@@ -16,6 +16,12 @@
  */
 package org.sdase.commons.server.opentracing.logging;
 
+import static io.opentracing.log.Fields.ERROR_KIND;
+import static io.opentracing.log.Fields.ERROR_OBJECT;
+import static io.opentracing.log.Fields.EVENT;
+import static io.opentracing.log.Fields.MESSAGE;
+import static io.opentracing.log.Fields.STACK;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
@@ -51,10 +57,10 @@ public class SpanLogsAppender extends UnsynchronizedAppenderBase<ILoggingEvent> 
       logs.put("logger", event.getLoggerName());
       logs.put("level", event.getLevel().toString());
       logs.put("thread", event.getThreadName());
-      logs.put("message", event.getFormattedMessage());
+      logs.put(MESSAGE, event.getFormattedMessage());
 
       if (event.getLevel().isGreaterOrEqual(Level.ERROR)) {
-        logs.put("event", Tags.ERROR.getKey());
+        logs.put(EVENT, Tags.ERROR.getKey());
       }
 
       IThrowableProxy throwableProxy = event.getThrowableProxy();
@@ -62,11 +68,11 @@ public class SpanLogsAppender extends UnsynchronizedAppenderBase<ILoggingEvent> 
         Throwable throwable = ((ThrowableProxy) throwableProxy).getThrowable();
         String stackTrace = ThrowableProxyUtil.asString(throwableProxy);
 
-        logs.put("stack", stackTrace);
+        logs.put(STACK, stackTrace);
 
         if (throwable != null) {
-          logs.put("error.object", throwable);
-          logs.put("error.kind", throwable.getClass().getName());
+          logs.put(ERROR_OBJECT, throwable);
+          logs.put(ERROR_KIND, throwable.getClass().getName());
         }
       }
       span.log(TimeUnit.MICROSECONDS.convert(event.getTimeStamp(), TimeUnit.MILLISECONDS), logs);
