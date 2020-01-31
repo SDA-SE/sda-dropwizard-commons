@@ -1,5 +1,7 @@
 package org.sdase.commons.server.opa;
 
+import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.registerTracing;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,6 +13,8 @@ import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.client.Client;
@@ -59,9 +63,11 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   private static final Logger LOG = LoggerFactory.getLogger(OpaBundle.class);
 
   private final OpaConfigProvider<T> configProvider;
+  private final Tracer tracer;
 
-  private OpaBundle(OpaConfigProvider<T> configProvider) {
+  private OpaBundle(OpaConfigProvider<T> configProvider, Tracer tracer) {
     this.configProvider = configProvider;
+    this.tracer = tracer;
   }
 
   //
@@ -84,12 +90,14 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
       LOG.warn("Authorization is disabled. This setting should NEVER be used in production.");
     }
 
+    Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
+
     // create own object mapper to be independent from changes in jackson
     // bundle
     ObjectMapper objectMapper = createObjectMapper();
 
     // disable GZIP format since OPA cannot handle GZIP
-    Client client = createClient(environment, config, objectMapper);
+    Client client = createClient(environment, config, objectMapper, currentTracer);
 
     WebTarget policyTarget = client.target(buildUrl(config));
 
@@ -102,7 +110,8 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     // register filter
     environment
         .jersey()
-        .register(new OpaAuthFilter(policyTarget, config, excludePattern, objectMapper));
+        .register(
+            new OpaAuthFilter(policyTarget, config, excludePattern, objectMapper, currentTracer));
 
     // register health check
     if (!config.isDisableOpa()) {
@@ -114,7 +123,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   }
 
   private Client createClient(
-      Environment environment, OpaConfig config, ObjectMapper objectMapper) {
+      Environment environment, OpaConfig config, ObjectMapper objectMapper, Tracer tracer) {
     JerseyClientConfiguration configurationWithoutGzip = new JerseyClientConfiguration();
     configurationWithoutGzip.setGzipEnabled(false);
     configurationWithoutGzip.setGzipEnabledForRequests(false);
@@ -127,6 +136,9 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
     // set read timeout if complex decisions are necessary
     client.property(ClientProperties.READ_TIMEOUT, config.getReadTimeout());
+
+    registerTracing(client, tracer);
+
     return client;
   }
 
@@ -175,12 +187,16 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   }
 
   public interface OpaBuilder<C extends Configuration> {
+
+    OpaBuilder<C> withTracer(Tracer tracer);
+
     OpaBundle<C> build();
   }
 
   public static class Builder<C extends Configuration> implements ProviderBuilder, OpaBuilder<C> {
 
     private OpaConfigProvider<C> opaConfigProvider;
+    private Tracer tracer;
 
     private Builder() {
       // private method to prevent external instantiation
@@ -191,8 +207,14 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     }
 
     @Override
+    public OpaBuilder<C> withTracer(Tracer tracer) {
+      this.tracer = tracer;
+      return this;
+    }
+
+    @Override
     public OpaBundle<C> build() {
-      return new OpaBundle<>(opaConfigProvider);
+      return new OpaBundle<>(opaConfigProvider, tracer);
     }
 
     @Override

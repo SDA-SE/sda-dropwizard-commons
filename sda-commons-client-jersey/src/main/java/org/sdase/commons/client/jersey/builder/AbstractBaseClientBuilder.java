@@ -1,9 +1,9 @@
 package org.sdase.commons.client.jersey.builder;
 
+import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.registerTracing;
+
 import io.dropwizard.client.JerseyClientBuilder;
 import io.opentracing.Tracer;
-import io.opentracing.contrib.jaxrs2.client.ClientSpanDecorator;
-import io.opentracing.contrib.jaxrs2.client.ClientTracingFeature;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +137,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
     client.property(ClientProperties.CONNECT_TIMEOUT, connectionTimeoutMillis);
     client.property(ClientProperties.READ_TIMEOUT, readTimeoutMillis);
     registerMultiPartIfAvailable(client);
-    registerTracing(client);
+    registerTracing(client, tracer);
     return client;
   }
 
@@ -180,22 +180,5 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
     } catch (Exception e) {
       LOG.warn("Failed to register MultiPartFeature for client.");
     }
-  }
-
-  private void registerTracing(Client client) {
-    List<ClientSpanDecorator> clientDecorators = new ArrayList<>();
-    clientDecorators.add(ClientSpanDecorator.STANDARD_TAGS);
-    clientDecorators.add(new CustomClientSpanDecorator());
-
-    // This registers both a filter that instruments request, but also injects
-    // the span and trace
-    // headers into the request. Passing the headers to an external service
-    // might not be desired.
-    //
-    // At the moment we can't have different behavior, without implementing
-    // more by our self. But on the other side, the headers do no harm. They
-    // neither expose secrets nor should they break server behavior.
-    client.register(
-        new ClientTracingFeature.Builder(tracer).withDecorators(clientDecorators).build());
   }
 }

@@ -1,11 +1,15 @@
 package org.sdase.commons.server.auth;
 
+import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.registerTracing;
+
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 import javax.ws.rs.client.Client;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
@@ -30,14 +34,17 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
   private AuthConfigProvider<T> configProvider;
   private boolean useAnnotatedAuthorization;
+  private final Tracer tracer;
 
   public static ProviderBuilder builder() {
     return new Builder();
   }
 
-  private AuthBundle(AuthConfigProvider<T> configProvider, boolean useAnnotatedAuthorization) {
+  private AuthBundle(
+      AuthConfigProvider<T> configProvider, boolean useAnnotatedAuthorization, Tracer tracer) {
     this.configProvider = configProvider;
     this.useAnnotatedAuthorization = useAnnotatedAuthorization;
+    this.tracer = tracer;
   }
 
   @Override
@@ -54,7 +61,9 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
       LOG.warn("Authentication is disabled. This setting should NEVER be used in production.");
     }
 
-    Client client = new JerseyClientBuilder(environment).build("keyLoader");
+    Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
+
+    Client client = createKeyLoaderClient(environment, currentTracer);
     RsaPublicKeyLoader keyLoader = new RsaPublicKeyLoader();
     config.getKeys().stream()
         .map(k -> this.createKeySources(k, client))
@@ -66,6 +75,7 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
     JwtAuthFilter<JwtPrincipal> authFilter =
         new JwtAuthFilter.Builder<JwtPrincipal>()
+            .withTracer(currentTracer)
             .setAcceptAnonymous(!useAnnotatedAuthorization)
             .setAuthenticator(authenticator)
             .buildAuthFilter();
@@ -81,6 +91,12 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
     environment.jersey().register(JwtAuthExceptionMapper.class);
     environment.jersey().register(ForbiddenExceptionMapper.class);
+  }
+
+  private Client createKeyLoaderClient(Environment environment, Tracer tracer) {
+    Client client = new JerseyClientBuilder(environment).build("keyLoader");
+    registerTracing(client, tracer);
+    return client;
   }
 
   private KeySource createKeySources(KeyLocation keyLocation, Client client) {
@@ -127,6 +143,9 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
   }
 
   public interface AuthBuilder<C extends Configuration> {
+
+    AuthBuilder<C> withTracer(Tracer tracer);
+
     AuthBundle<C> build();
   }
 
@@ -135,6 +154,7 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
     private AuthConfigProvider<C> authConfigProvider;
     private boolean useAnnotatedAuthorization = true;
+    private Tracer tracer;
 
     private Builder() {}
 
@@ -161,8 +181,14 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
     }
 
     @Override
+    public AuthBuilder<C> withTracer(Tracer tracer) {
+      this.tracer = tracer;
+      return this;
+    }
+
+    @Override
     public AuthBundle<C> build() {
-      return new AuthBundle<>(authConfigProvider, useAnnotatedAuthorization);
+      return new AuthBundle<>(authConfigProvider, useAnnotatedAuthorization, tracer);
     }
   }
 }

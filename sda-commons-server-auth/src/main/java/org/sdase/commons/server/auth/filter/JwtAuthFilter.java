@@ -1,7 +1,13 @@
 package org.sdase.commons.server.auth.filter;
 
+import static io.opentracing.tag.Tags.COMPONENT;
+
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
+import io.opentracing.Scope;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
+import io.opentracing.noop.NoopTracerFactory;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -27,22 +33,37 @@ import org.sdase.commons.server.auth.error.JwtAuthException;
 public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<String>, P> {
 
   private static final String AUTHENTICATION_SCHEME_BEARER = "Bearer";
+  private static final String AUTHENTICATED = "authenticated";
 
   private boolean acceptAnonymous;
+  private Tracer tracer;
 
   private JwtAuthFilter() {}
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    final MultivaluedMap<String, String> headers = requestContext.getHeaders();
-    final String jwt = extractAuthorizationToken(headers);
+    Span span =
+        tracer
+            .buildSpan("validateToken")
+            .withTag(COMPONENT, "JwtAuthFilter")
+            .withTag(AUTHENTICATED, false)
+            .start();
 
-    // validates the token and throws exception if invalid or expired
-    boolean authenticated =
-        authenticate(requestContext, Optional.ofNullable(jwt), SecurityContext.BASIC_AUTH);
+    try (Scope ignored = tracer.scopeManager().activate(span)) {
+      final MultivaluedMap<String, String> headers = requestContext.getHeaders();
+      final String jwt = extractAuthorizationToken(headers);
 
-    if (!acceptAnonymous && !authenticated) {
-      throw new JwtAuthException("Credentials are required to access this resource.");
+      // validates the token and throws exception if invalid or expired
+      boolean authenticated =
+          authenticate(requestContext, Optional.ofNullable(jwt), SecurityContext.BASIC_AUTH);
+
+      span.setTag(AUTHENTICATED, authenticated);
+
+      if (!acceptAnonymous && !authenticated) {
+        throw new JwtAuthException("Credentials are required to access this resource.");
+      }
+    } finally {
+      span.finish();
     }
   }
 
@@ -59,6 +80,7 @@ public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<Stri
       extends AuthFilterBuilder<Optional<String>, P, JwtAuthFilter<P>> {
 
     private boolean acceptAnonymous;
+    private Tracer tracer = NoopTracerFactory.create();
 
     @Override
     protected JwtAuthFilter<P> newInstance() {
@@ -70,11 +92,17 @@ public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<Stri
       return this;
     }
 
+    public Builder<P> withTracer(Tracer tracer) {
+      this.tracer = tracer;
+      return this;
+    }
+
     @Override
     public JwtAuthFilter<P> buildAuthFilter() {
       JwtAuthFilter<P> jwtAuthFilter = super.buildAuthFilter();
 
       jwtAuthFilter.acceptAnonymous = acceptAnonymous;
+      jwtAuthFilter.tracer = tracer;
 
       return jwtAuthFilter;
     }
