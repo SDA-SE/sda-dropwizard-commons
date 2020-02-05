@@ -45,7 +45,7 @@ public class OpenTracingBundle implements Bundle {
 
     registerLogAppender(currentTracer);
     registerServletFilter(currentTracer, environment);
-    registerJerseyFilters(currentTracer, environment);
+    registerJaxRsFilters(currentTracer, environment);
   }
 
   private void registerLogAppender(Tracer currentTracer) {
@@ -66,9 +66,17 @@ public class OpenTracingBundle implements Bundle {
         environment.servlets().addFilter("TracingFilter", filter);
     filterRegistration.addMappingForUrlPatterns(
         EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC), false, "*");
+
+    // The admin endpoint only has servlet support. Tracing this allows to filter health checks and
+    // metrics.
+    TracingFilter adminFilter = new TracingFilter(currentTracer, decorators, null);
+    FilterRegistration.Dynamic adminFilterRegistration =
+        environment.admin().addFilter("AdminTracingFilter", adminFilter);
+    adminFilterRegistration.addMappingForUrlPatterns(
+        EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC), false, "*");
   }
 
-  private void registerJerseyFilters(Tracer currentTracer, Environment environment) {
+  private void registerJaxRsFilters(Tracer currentTracer, Environment environment) {
     List<ServerSpanDecorator> decorators =
         asList(ServerSpanDecorator.STANDARD_TAGS, new CustomServerSpanDecorator());
 
