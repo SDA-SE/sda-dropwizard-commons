@@ -62,9 +62,10 @@ public class OpenTracingBundleTest {
 
     await()
         .untilAsserted(
-            () -> {
-              assertThat(tracer.finishedSpans()).flatExtracting(MockSpan::parentId).contains(1337L);
-            });
+            () ->
+                assertThat(tracer.finishedSpans())
+                    .flatExtracting(MockSpan::parentId)
+                    .contains(1337L));
   }
 
   @Test
@@ -78,12 +79,11 @@ public class OpenTracingBundleTest {
 
     await()
         .untilAsserted(
-            () -> {
-              assertThat(tracer.finishedSpans())
-                  .flatExtracting(MockSpan::tags)
-                  .extracting(COMPONENT.getKey())
-                  .contains("java-web-servlet");
-            });
+            () ->
+                assertThat(tracer.finishedSpans())
+                    .flatExtracting(MockSpan::tags)
+                    .extracting(COMPONENT.getKey())
+                    .contains("java-web-servlet"));
   }
 
   @Test
@@ -97,12 +97,11 @@ public class OpenTracingBundleTest {
 
     await()
         .untilAsserted(
-            () -> {
-              assertThat(tracer.finishedSpans())
-                  .flatExtracting(MockSpan::tags)
-                  .extracting(COMPONENT.getKey())
-                  .contains("jaxrs");
-            });
+            () ->
+                assertThat(tracer.finishedSpans())
+                    .flatExtracting(MockSpan::tags)
+                    .extracting(COMPONENT.getKey())
+                    .contains("jaxrs"));
   }
 
   @Test
@@ -259,7 +258,29 @@ public class OpenTracingBundleTest {
             });
   }
 
+  @Test
+  public void shouldInstrumentAdminServlets() {
+    Response r = createAdminClient().path("healthcheck").request().get();
+
+    // Make sure to wait till the request is completed:
+    r.readEntity(String.class);
+
+    assertThat(r.getStatus()).isEqualTo(SC_OK);
+
+    await()
+        .untilAsserted(
+            () ->
+                assertThat(tracer.finishedSpans())
+                    .flatExtracting(MockSpan::tags)
+                    .extracting(COMPONENT.getKey())
+                    .contains("java-web-servlet"));
+  }
+
   private WebTarget createClient() {
     return dw.client().target("http://localhost:" + dw.getLocalPort());
+  }
+
+  private WebTarget createAdminClient() {
+    return dw.client().target("http://localhost:" + dw.getAdminPort());
   }
 }
