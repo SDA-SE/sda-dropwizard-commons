@@ -23,6 +23,7 @@ import javax.servlet.FilterRegistration.Dynamic;
 import org.sdase.commons.server.opentracing.jaxrs.CustomServerSpanDecorator;
 import org.sdase.commons.server.opentracing.jaxrs.ExceptionListener;
 import org.sdase.commons.server.opentracing.logging.SpanLogsAppender;
+import org.sdase.commons.server.opentracing.servlet.AdminServletSpanDecorator;
 import org.sdase.commons.server.opentracing.servlet.CustomServletSpanDecorator;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +61,6 @@ public class OpenTracingBundle implements Bundle {
   private void registerServletFilter(Tracer currentTracer, Environment environment) {
     List<ServletFilterSpanDecorator> decorators =
         asList(ServletFilterSpanDecorator.STANDARD_TAGS, new CustomServletSpanDecorator());
-
     TracingFilter filter = new TracingFilter(currentTracer, decorators, null);
     FilterRegistration.Dynamic filterRegistration =
         environment.servlets().addFilter("TracingFilter", filter);
@@ -69,7 +69,12 @@ public class OpenTracingBundle implements Bundle {
 
     // The admin endpoint only has servlet support. Tracing this allows to filter health checks and
     // metrics.
-    TracingFilter adminFilter = new TracingFilter(currentTracer, decorators, null);
+    List<ServletFilterSpanDecorator> adminDecorators =
+        asList(
+            ServletFilterSpanDecorator.STANDARD_TAGS,
+            new CustomServletSpanDecorator(),
+            new AdminServletSpanDecorator());
+    TracingFilter adminFilter = new TracingFilter(currentTracer, adminDecorators, null);
     FilterRegistration.Dynamic adminFilterRegistration =
         environment.admin().addFilter("AdminTracingFilter", adminFilter);
     adminFilterRegistration.addMappingForUrlPatterns(

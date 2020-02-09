@@ -8,6 +8,7 @@ import static io.opentracing.log.Fields.MESSAGE;
 import static io.opentracing.log.Fields.STACK;
 import static io.opentracing.tag.Tags.COMPONENT;
 import static io.opentracing.tag.Tags.HTTP_URL;
+import static io.opentracing.tag.Tags.SAMPLING_PRIORITY;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -259,7 +260,7 @@ public class OpenTracingBundleTest {
   }
 
   @Test
-  public void shouldInstrumentAdminServlets() {
+  public void shouldInstrumentAdminServletsButAvoidSampling() {
     Response r = createAdminClient().path("healthcheck").request().get();
 
     // Make sure to wait till the request is completed:
@@ -269,11 +270,40 @@ public class OpenTracingBundleTest {
 
     await()
         .untilAsserted(
-            () ->
-                assertThat(tracer.finishedSpans())
-                    .flatExtracting(MockSpan::tags)
-                    .extracting(COMPONENT.getKey())
-                    .contains("java-web-servlet"));
+            () -> {
+              MockSpan span =
+                  tracer.finishedSpans().stream()
+                      .findFirst()
+                      .orElseThrow(IllegalStateException::new);
+              Map<String, Object> tags = span.tags();
+
+              assertThat(tags.get(COMPONENT.getKey())).isEqualTo("java-web-servlet");
+              assertThat(tags.get(SAMPLING_PRIORITY.getKey())).isEqualTo(0);
+            });
+  }
+
+  @Test
+  public void shouldInstrumentAdminServletsAndSampleIfDebug() {
+    Response r =
+        createAdminClient().path("healthcheck").request().header("jaeger-debug-id", "test").get();
+
+    // Make sure to wait till the request is completed:
+    r.readEntity(String.class);
+
+    assertThat(r.getStatus()).isEqualTo(SC_OK);
+
+    await()
+        .untilAsserted(
+            () -> {
+              MockSpan span =
+                  tracer.finishedSpans().stream()
+                      .findFirst()
+                      .orElseThrow(IllegalStateException::new);
+              Map<String, Object> tags = span.tags();
+
+              assertThat(tags.get(COMPONENT.getKey())).isEqualTo("java-web-servlet");
+              assertThat(tags.get(SAMPLING_PRIORITY.getKey())).isNull();
+            });
   }
 
   private WebTarget createClient() {
