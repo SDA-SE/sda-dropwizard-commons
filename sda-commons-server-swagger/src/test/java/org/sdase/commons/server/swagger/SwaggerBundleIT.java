@@ -119,7 +119,10 @@ public class SwaggerBundleIT {
   public void shouldIncludePaths() {
     String response = getJsonRequest().get(String.class);
 
-    assertThatJson(response).inPath("$.paths").isObject().containsOnlyKeys("/jdoe", "/house");
+    assertThatJson(response)
+        .inPath("$.paths")
+        .isObject()
+        .containsOnlyKeys("/jdoe", "/house", "/houses");
 
     assertThatJson(response)
         .inPath("$.paths./jdoe")
@@ -127,6 +130,8 @@ public class SwaggerBundleIT {
         .containsOnlyKeys("get", "post", "delete");
 
     assertThatJson(response).inPath("$.paths./house").isObject().containsOnlyKeys("get");
+
+    assertThatJson(response).inPath("$.paths./houses").isObject().containsOnlyKeys("get");
   }
 
   @Test
@@ -184,6 +189,16 @@ public class SwaggerBundleIT {
 
     assertThatJson(response)
         .inPath("$.paths./house.get.parameters[0].items.enum")
+        .isArray()
+        .containsOnly("animals", "partners");
+  }
+
+  @Test
+  public void shouldIncludeEmbedParameterForNestedProperty() {
+    String response = getJsonRequest().get(String.class);
+
+    assertThatJson(response)
+        .inPath("$.paths./houses.get.parameters[0].items.enum")
         .isArray()
         .containsOnly("animals", "partners");
   }

@@ -3,10 +3,17 @@ package org.sdase.commons.optional.server.swagger.parameter.embed;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.ReaderListener;
-import io.swagger.models.*;
+import io.swagger.models.ComposedModel;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.Operation;
+import io.swagger.models.RefModel;
+import io.swagger.models.Swagger;
 import io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +22,7 @@ import java.util.stream.Collectors;
 /** Adds the embeddable resources as query parameter such that they can be selected in swagger. */
 @SwaggerDefinition
 public class EmbedParameterModifier implements ReaderListener {
+  private static final String EMBEDDED_PROPERTY = "_embedded";
 
   @Override
   public void beforeScan(Reader reader, Swagger swagger) {
@@ -49,6 +57,12 @@ public class EmbedParameterModifier implements ReaderListener {
               Model modelDefinition = getModelDefinition(definitions, responseModelName);
               if (modelDefinition == null) {
                 return;
+              }
+
+              // In a search endpoint, the resource that supports embedding might be in a
+              // list-property.
+              if (!modelDefinition.getProperties().containsKey(EMBEDDED_PROPERTY)) {
+                modelDefinition = getResolvedModelDefinition(definitions, modelDefinition);
               }
 
               ObjectProperty embedded = getEmbeddedObjectProperty(modelDefinition);
@@ -88,9 +102,33 @@ public class EmbedParameterModifier implements ReaderListener {
     return null;
   }
 
+  private Model getResolvedModelDefinition(Map<String, Model> definitions, Model definition) {
+    List<String> nestedRefs =
+        definition.getProperties().values().stream()
+            // should be an array
+            .filter(es -> es instanceof ArrayProperty)
+
+            // should have an item that is a reference to a definition
+            .map(es -> ((ArrayProperty) es).getItems())
+            .filter(p -> p instanceof RefProperty)
+
+            // get the model reference name
+            .map(p -> ((RefProperty) p).getOriginalRef())
+            .collect(Collectors.toList());
+
+    // only when there is a single list entry that supports embedding
+    if (nestedRefs.size() == 1) {
+      // get the model definition from the array
+      return getModelDefinition(definitions, nestedRefs.get(0));
+    }
+
+    return definition;
+  }
+
   private ObjectProperty getEmbeddedObjectProperty(Model definition) {
-    if (definition.getProperties() != null && definition.getProperties().containsKey("_embedded")) {
-      Property embedded = definition.getProperties().get("_embedded");
+    if (definition.getProperties() != null
+        && definition.getProperties().containsKey(EMBEDDED_PROPERTY)) {
+      Property embedded = definition.getProperties().get(EMBEDDED_PROPERTY);
 
       if (embedded instanceof ObjectProperty) {
         return (ObjectProperty) embedded;
