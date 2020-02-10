@@ -97,4 +97,12 @@ public class SwaggerBundleTestApp extends Application<Configuration> {
     return new HouseResource(
         Collections.emptyList(), Collections.emptyList(), new HALLink.Builder(self).build());
   }
+
+  @GET
+  @Path("/houses")
+  @Produces(APPLICATION_JSON)
+  @ApiResponses(@ApiResponse(code = 200, message = "get", response = HouseSearchResource.class))
+  public HouseSearchResource searchHouse() {
+    return new HouseSearchResource(Collections.emptyList(), 0);
+  }
 }
