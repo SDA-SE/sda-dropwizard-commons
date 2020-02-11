@@ -35,15 +35,15 @@ import org.slf4j.LoggerFactory;
  * separate topic. It allows a configurable number of retries for a failed message until it will be
  * pushed to a third topic (dead letter topic).
  *
- * Messages can be manually copied from the dead letter topic back to the original topic using the
- * {@link DeadLetterTriggerTask dead letter admin task} which will be automatically registered in
- * your application.
+ * <p>Messages can be manually copied from the dead letter topic back to the original topic using
+ * the {@link DeadLetterTriggerTask dead letter admin task} which will be automatically registered
+ * in your application.
  *
- * To use the strategy the {@link NoSerializationErrorDeserializer} needs to be used as a wrapper
+ * <p>To use the strategy the {@link NoSerializationErrorDeserializer} needs to be used as a wrapper
  * for key and value deserializer
  */
-public class DeadLetterMLS<K extends Serializable, V extends Serializable> extends
-    MessageListenerStrategy<DeserializerResult<K>, DeserializerResult<V>> {
+public class DeadLetterMLS<K extends Serializable, V extends Serializable>
+    extends MessageListenerStrategy<DeserializerResult<K>, DeserializerResult<V>> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DeadLetterMLS.class);
   private static final String EXCEPTION = "Exception";
@@ -59,30 +59,33 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable> exten
 
   private final int maxNumberOfRetries;
   private String consumerName;
-  private List<MessageListener<byte [], byte []>> retryListener;
+  private List<MessageListener<byte[], byte[]>> retryListener;
 
   /**
    * @param environment environment of the dropwizard app that will be used to create an admin task
    * @param handler handler that processes the message and dead letter topic.
    * @param maxNumberOfRetries number of automated retries before the message will end in dead
-   * letter queue
+   *     letter queue
    */
-  public DeadLetterMLS(Environment environment, MessageHandler<K, V> handler,
-      KafkaClientManager kafkaClientManager, int maxNumberOfRetries,
+  public DeadLetterMLS(
+      Environment environment,
+      MessageHandler<K, V> handler,
+      KafkaClientManager kafkaClientManager,
+      int maxNumberOfRetries,
       int retryIntervalMS) {
-    this(environment, handler, null, kafkaClientManager,
-        maxNumberOfRetries, retryIntervalMS);
+    this(environment, handler, null, kafkaClientManager, maxNumberOfRetries, retryIntervalMS);
   }
 
   /**
    * @param environment environment of the dropwizard app that will be used to create an admin task
    * @param handler handler that processes the message
    * @param errorHandler error handler that will be used if the handler throws an exception and dead
-   * letter topic.
+   *     letter topic.
    * @param maxNumberOfRetries number of automated retries before the message will end in dead
-   * letter queue
+   *     letter queue
    */
-  public DeadLetterMLS(Environment environment,  //NOSONAR
+  public DeadLetterMLS(
+      Environment environment, // NOSONAR
       MessageHandler<K, V> handler,
       ErrorHandler<K, V> errorHandler,
       KafkaClientManager kafkaClientManager,
@@ -98,16 +101,13 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable> exten
     this.maxNumberOfRetries = maxNumberOfRetries;
 
     // Init the retry mechanism
-    final RetryHandler retryHandler = new RetryHandler(
-        kafkaClientManager.createRetryToMainTopicProducer(), retryIntervalMS);
+    final RetryHandler retryHandler =
+        new RetryHandler(kafkaClientManager.createRetryToMainTopicProducer(), retryIntervalMS);
     this.retryListener = kafkaClientManager.createConsumerForRetryTopic(retryHandler);
 
     // init the task to copy messages from dead letter topic back to source topic
-    environment
-        .admin()
-        .addTask(new DeadLetterTriggerTask(kafkaClientManager));
+    environment.admin().addTask(new DeadLetterTriggerTask(kafkaClientManager));
   }
-
 
   @Override
   public void processRecords( // NOSONAR
@@ -122,7 +122,8 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable> exten
       try {
         handleRecord(record, kvRecord);
       } catch (RuntimeException e) {
-        // something goes wrong during serialization or in business logic. Try compensation with error handler
+        // something goes wrong during serialization or in business logic. Try compensation with
+        // error handler
         boolean shouldContinue = true;
         RuntimeException deadLetterCause = null;
         if (errorHandler != null && isDeserializedCorrectly(record)) {
@@ -138,23 +139,24 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable> exten
           deadLetterCause = e;
         }
         if (!shouldContinue) {
-          throw new StopListenerException(new RuntimeException(  //NOSONAR
-              "Listener Stopped because error handler returned false"));
+          throw new StopListenerException(
+              new RuntimeException( // NOSONAR
+                  "Listener Stopped because error handler returned false"));
         }
         if (deadLetterCause != null) {
           deadLetterHandling(
-              (record.key() == null)? null: record.key().getByteValue(),
-              (record.value() == null)? null: record.value().getByteValue(),
+              (record.key() == null) ? null : record.key().getByteValue(),
+              (record.value() == null) ? null : record.value().getByteValue(),
               record.headers(),
-              deadLetterCause
-          );
+              deadLetterCause);
         }
       }
     }
     consumer.commitSync();
   }
 
-  private void handleRecord(ConsumerRecord<DeserializerResult<K>, DeserializerResult<V>> record,
+  private void handleRecord(
+      ConsumerRecord<DeserializerResult<K>, DeserializerResult<V>> record,
       ConsumerRecord<K, V> kvRecord) {
     if (isDeserializedCorrectly(record)) {
       // record is ok, key and value has been deserialized successfully.
@@ -167,10 +169,9 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable> exten
 
   /**
    * Processing of a single record.
-   * <p>
-   * If the record has serialization exceptions and therewith no valid values, the serialization
+   *
+   * <p>If the record has serialization exceptions and therewith no valid values, the serialization
    * exception is thrown again and therewith the message is pushed to exception handling.
-   * </p>
    *
    * @param record the record to be processed
    */
@@ -187,12 +188,13 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable> exten
     consumerProcessedMsgHistogram.observe(elapsedSeconds, consumerName, record.topic());
 
     if (LOGGER.isTraceEnabled()) {
-      LOGGER
-          .trace("calculated duration {} for message consumed by {} from {}", elapsedSeconds,
-              consumerName, record.topic());
+      LOGGER.trace(
+          "calculated duration {} for message consumed by {} from {}",
+          elapsedSeconds,
+          consumerName,
+          record.topic());
     }
   }
-
 
   /**
    * @param record the record to check
@@ -200,21 +202,22 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable> exten
    */
   private boolean isDeserializedCorrectly(
       ConsumerRecord<DeserializerResult<K>, DeserializerResult<V>> record) {
-    return (record.key() == null || record.key().parsedSuccessful()) && (record.value() == null || record.value().parsedSuccessful());
+    return (record.key() == null || record.key().parsedSuccessful())
+        && (record.value() == null || record.value().parsedSuccessful());
   }
 
-  /**
-   * Throws the deserialization exception, that has been caught during deserialization before
-   */
+  /** Throws the deserialization exception, that has been caught during deserialization before */
   private void rethrowDeserializationException(
       ConsumerRecord<DeserializerResult<K>, DeserializerResult<V>> record) {
     if (record.key() != null && record.key().hasError()) {
       throw record.key().getError();
-    } else if (record.value() != null && record.value().hasError()){
+    } else if (record.value() != null && record.value().hasError()) {
       throw record.value().getError();
     }
-    LOGGER.error("Method should only be invoked if either key or value has deserialization issues.");
-    throw new IllegalStateException("Method should only be invoked if either key or value has deserialization issues.");
+    LOGGER.error(
+        "Method should only be invoked if either key or value has deserialization issues.");
+    throw new IllegalStateException(
+        "Method should only be invoked if either key or value has deserialization issues.");
   }
 
   /**
@@ -224,15 +227,12 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable> exten
    * @param e exception that has been thrown during business processing
    * @return true if processing should stop
    */
-  private boolean handleErrorWithErrorHandler(
-      ConsumerRecord<K, V> record,
-      RuntimeException e) {
+  private boolean handleErrorWithErrorHandler(ConsumerRecord<K, V> record, RuntimeException e) {
 
     // use default error handling, if not explicit error handler is given
     // Caution, error handler is null here - already considers deprecation
     return errorHandler.handleError(record, e, null);
   }
-
 
   /**
    * Processing of dead letter handling. The message is inserted into the retry topic if maximum
@@ -253,8 +253,7 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable> exten
   }
 
   @Override
-  public void commitOnClose(
-      KafkaConsumer<DeserializerResult<K>, DeserializerResult<V>> consumer) {
+  public void commitOnClose(KafkaConsumer<DeserializerResult<K>, DeserializerResult<V>> consumer) {
     try {
       consumer.commitSync();
     } catch (CommitFailedException e) {
@@ -285,14 +284,26 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable> exten
   @SuppressWarnings("deprecation") // record.checksum() is deprecated as of Kafka 0.11.0
   private ConsumerRecord<K, V> createKvRecord(
       ConsumerRecord<DeserializerResult<K>, DeserializerResult<V>> record) {
-    final K recordVKey = (record.key() != null && record.key().parsedSuccessful()) ? record.key().getParsedValue() : null;
-    final V recordValue = (record.value() != null && record.value().parsedSuccessful()) ? record.value().getParsedValue() : null;
+    final K recordVKey =
+        (record.key() != null && record.key().parsedSuccessful())
+            ? record.key().getParsedValue()
+            : null;
+    final V recordValue =
+        (record.value() != null && record.value().parsedSuccessful())
+            ? record.value().getParsedValue()
+            : null;
     return new ConsumerRecord<>(
-        record.topic(), record.partition(), record.offset(),
-        record.timestamp(), record.timestampType(), record.checksum(), // NOSONAR
+        record.topic(),
+        record.partition(),
+        record.offset(),
+        record.timestamp(),
+        record.timestampType(),
+        record.checksum(), // NOSONAR
         record.serializedKeySize(),
         record.serializedValueSize(),
-        recordVKey, recordValue, record.headers());
+        recordVKey,
+        recordValue,
+        record.headers());
   }
 
   @Override

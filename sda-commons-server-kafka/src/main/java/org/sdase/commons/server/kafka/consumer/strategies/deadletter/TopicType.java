@@ -1,8 +1,9 @@
 package org.sdase.commons.server.kafka.consumer.strategies.deadletter;
 
 public enum TopicType {
-
-  DEAD_LETTER("deadLetter"), RETRY("retry"), MAIN("");
+  DEAD_LETTER("deadLetter"),
+  RETRY("retry"),
+  MAIN("");
 
   private String value;
 
@@ -14,5 +15,4 @@ public enum TopicType {
   public String toString() {
     return value;
   }
-
 }
