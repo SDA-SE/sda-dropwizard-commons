@@ -130,12 +130,12 @@ public class MessageListener<K, V> implements Runnable {
   public void stopConsumer() {
     shouldStop.set(true);
 
-      if (consumer != null) {
-         consumer.wakeup();
-      }
+    if (consumer != null) {
+      consumer.wakeup();
+    }
 
-      strategy.close();
-   }
+    strategy.close();
+  }
 
   public KafkaConsumer<K, V> getConsumer() {
     return consumer;

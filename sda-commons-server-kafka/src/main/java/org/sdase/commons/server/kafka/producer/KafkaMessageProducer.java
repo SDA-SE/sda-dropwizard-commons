@@ -43,7 +43,7 @@ public class KafkaMessageProducer<K, V> implements MessageProducer<K, V> {
   }
 
   @Override
-   public void close() {
-      producer.close();
-   }
+  public void close() {
+    producer.close();
+  }
 }

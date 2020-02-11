@@ -295,17 +295,17 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
           return null;
         }
 
-            @Override
-            public Future<RecordMetadata> send(K key, V value, Headers headers) {
-               return null;
-            }
+        @Override
+        public Future<RecordMetadata> send(K key, V value, Headers headers) {
+          return null;
+        }
 
-            @Override
-            public void close() {
-               // dummy
-            }
-         };
-      }
+        @Override
+        public void close() {
+          // dummy
+        }
+      };
+    }
 
     checkInit();
 

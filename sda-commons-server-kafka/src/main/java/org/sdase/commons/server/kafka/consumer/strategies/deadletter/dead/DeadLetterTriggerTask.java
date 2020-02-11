@@ -20,8 +20,7 @@ public class DeadLetterTriggerTask extends Task {
 
   private final KafkaClientManager kafkaClientManager;
 
-  private static final Logger LOG = LoggerFactory.getLogger( DeadLetterTriggerTask.class );
-
+  private static final Logger LOG = LoggerFactory.getLogger(DeadLetterTriggerTask.class);
 
   public DeadLetterTriggerTask(KafkaClientManager kafkaClientManager) {
     super("deadLetterResend/" + kafkaClientManager.getDeadLetterTopicName());
@@ -34,8 +33,10 @@ public class DeadLetterTriggerTask extends Task {
     boolean continueReading = true;
     AtomicInteger reinserted = new AtomicInteger(0);
 
-    try (KafkaConsumer<byte[], byte[]> consumer = kafkaClientManager.createConsumerForDeadLetterTask()) {
-      try (MessageProducer<byte[], byte[]> sourceProducer = kafkaClientManager.createDeadLetterToMainTopicProducer()) {
+    try (KafkaConsumer<byte[], byte[]> consumer =
+        kafkaClientManager.createConsumerForDeadLetterTask()) {
+      try (MessageProducer<byte[], byte[]> sourceProducer =
+          kafkaClientManager.createDeadLetterToMainTopicProducer()) {
         consumer.subscribe(Collections.singletonList(kafkaClientManager.getDeadLetterTopicName()));
 
         while (continueReading) {
@@ -45,12 +46,16 @@ public class DeadLetterTriggerTask extends Task {
             continueReading = false;
           }
 
-          LOG.info("Read {} records from {} topic for main topic insertion", records.count(), kafkaClientManager.getDeadLetterTopicName());
-          //notice: header will be removed since retry information is not interesting any longer
-          records.forEach(record -> {
-            sourceProducer.send(record.key(), record.value());
-            reinserted.getAndIncrement();
-          });
+          LOG.info(
+              "Read {} records from {} topic for main topic insertion",
+              records.count(),
+              kafkaClientManager.getDeadLetterTopicName());
+          // notice: header will be removed since retry information is not interesting any longer
+          records.forEach(
+              record -> {
+                sourceProducer.send(record.key(), record.value());
+                reinserted.getAndIncrement();
+              });
         }
         printWriter.println(String.format("reinserted %s messages", reinserted.get()));
       }
