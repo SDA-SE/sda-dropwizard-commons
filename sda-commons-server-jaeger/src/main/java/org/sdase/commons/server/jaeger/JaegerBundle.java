@@ -23,6 +23,8 @@ import org.sdase.commons.server.jaeger.metrics.PrometheusMetricsFactory;
  */
 public class JaegerBundle implements Bundle {
 
+  private static final String JAEGER_SERVICE_NAME = "JAEGER_SERVICE_NAME";
+
   private JaegerBundle() {}
 
   public static Builder builder() {
@@ -48,7 +50,13 @@ public class JaegerBundle implements Bundle {
         CodecConfiguration.fromEnv()
             .withPropagation(Propagation.B3)
             .withPropagation(Propagation.JAEGER);
-    String serviceName = environment.getName();
+
+    String serviceName = getProperty(JAEGER_SERVICE_NAME);
+
+    if (serviceName == null) {
+      // If no service name is provided via env, use the applications name
+      serviceName = environment.getName();
+    }
 
     Configuration config =
         io.jaegertracing.Configuration.fromEnv(serviceName)
@@ -81,5 +89,9 @@ public class JaegerBundle implements Bundle {
     public JaegerBundle build() {
       return new JaegerBundle();
     }
+  }
+
+  private static String getProperty(String name) {
+    return System.getProperty(name, System.getenv(name));
   }
 }
