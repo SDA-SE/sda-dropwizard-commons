@@ -12,6 +12,7 @@ import com.mongodb.MongoException;
 import com.mongodb.WriteConcern;
 import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
+import io.opentracing.contrib.mongo.common.ExcludedCommand;
 import io.opentracing.contrib.mongo.common.SpanDecorator;
 import io.opentracing.contrib.mongo.common.TracingCommandListener;
 import io.opentracing.util.GlobalTracer;
@@ -21,8 +22,11 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Collections;
+import java.util.List;
 import javax.net.ssl.SSLContext;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.BsonString;
 import org.sdase.commons.server.morphia.MongoConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,8 +93,11 @@ public class MongoClientBuilder {
 
     // Initialize a tracer that traces all calls to the MongoDB server.
     Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
+    List<ExcludedCommand> excludedCommands =
+        Collections.singletonList(new ExcludedCommand("ping", new BsonString("1")));
     TracingCommandListener listener =
         new TracingCommandListener.Builder(currentTracer)
+            .withExcludedCommands(excludedCommands)
             .withSpanDecorators(asList(SpanDecorator.DEFAULT, new NoStatementSpanDecorator()))
             .build();
     mongoClientOptionsBuilder.addCommandListener(listener);

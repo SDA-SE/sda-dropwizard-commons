@@ -1,7 +1,10 @@
 package org.sdase.commons.server.morphia;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+import static org.sdase.commons.server.mongo.testing.MongoDbRule.Builder.DEFAULT_DATABASE;
 
+import com.mongodb.BasicDBObject;
 import dev.morphia.Datastore;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -11,6 +14,7 @@ import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
 import io.opentracing.tag.Tags;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -39,24 +43,43 @@ public class MorphiaBundleTracingIT {
 
   @Test
   public void shouldHaveInstrumentation() {
-    Datastore datastore = getDatastore();
+    Datastore datastore = getMorphiaBundle().datastore();
     Person person = new Person().setAge(18).setName("Max");
     datastore.save(person);
 
     MockTracer tracer = getMockTracer();
-    assertThat(tracer.finishedSpans())
-        .extracting(MockSpan::operationName)
-        .contains("createIndexes", "insert");
-    assertThat(
-            tracer.finishedSpans().stream()
-                .map(s -> s.tags().keySet())
-                .flatMap(Set::stream)
-                .noneMatch(Tags.DB_STATEMENT::equals))
-        .isTrue();
+    await()
+        .untilAsserted(
+            () -> {
+              assertThat(tracer.finishedSpans())
+                  .extracting(MockSpan::operationName)
+                  .contains("createIndexes", "insert");
+              assertThat(
+                      tracer.finishedSpans().stream()
+                          .map(s -> s.tags().keySet())
+                          .flatMap(Set::stream)
+                          .noneMatch(Tags.DB_STATEMENT::equals))
+                  .isTrue();
+            });
   }
 
-  private Datastore getDatastore() {
-    return ((MorphiaTestApp) DW.getRule().getApplication()).getMorphiaBundle().datastore();
+  @Test
+  public void shouldExcludePingCommand() {
+    BasicDBObject ping = new BasicDBObject("ping", "1");
+    getMorphiaBundle().mongoClient().getDatabase(DEFAULT_DATABASE).runCommand(ping);
+
+    MockTracer tracer = getMockTracer();
+    await()
+        .pollDelay(1, TimeUnit.SECONDS)
+        .untilAsserted(
+            () ->
+                assertThat(tracer.finishedSpans())
+                    .extracting(MockSpan::operationName)
+                    .doesNotContain("ping"));
+  }
+
+  private MorphiaBundle<Config> getMorphiaBundle() {
+    return ((MorphiaTestApp) DW.getRule().getApplication()).getMorphiaBundle();
   }
 
   private MockTracer getMockTracer() {

@@ -11,4 +11,5 @@ dependencies {
   testCompile 'commons-io:commons-io'
   testCompile 'org.assertj:assertj-core'
   testCompile 'io.opentracing:opentracing-mock'
+  testCompile 'org.awaitility:awaitility'
 }
