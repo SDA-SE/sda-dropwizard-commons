@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.SerializationUtils.serialize;
 import io.dropwizard.setup.Environment;
 import io.prometheus.client.SimpleTimer;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.CommitFailedException;
@@ -309,5 +310,12 @@ public class DeadLetterMLS<K extends Serializable, V extends Serializable>
   @Override
   public void close() {
     retryListener.forEach(MessageListener::stopConsumer);
+  }
+
+  @Override
+  public Map<String, String> forcedConfigToApply() {
+    HashMap<String, String> config = new HashMap<>();
+    config.put("enable.auto.commit", "false");
+    return config;
   }
 }

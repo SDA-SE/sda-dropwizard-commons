@@ -10,12 +10,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -107,7 +102,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    * Provides a {@link ExpectedTopicConfiguration} that is generated from the values within the
    * configuration yaml
    *
-   * @param name the name of the topic
+   * @param name the name of the topic configuration
    * @return the configured topic configuration
    * @throws ConfigurationException if no such topic exists in the configuration
    */

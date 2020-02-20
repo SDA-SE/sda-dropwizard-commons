@@ -347,9 +347,9 @@ Instead of providing a self-implemented error-handler you can simply don't provi
 
 #### Dead Letter Handling MessageListenerStrategy
 This strategy offers a way to retry the processing of failed records, without blocking the running process.
-The strategy requires to extra topics for each main topic, one for temporary storing messages for
-retry and one for parking messages if retry fails (dead letter).
-The message is copied to the retry topic, when the message handler and if existing the error handler also throws an exception.
+The strategy requires to extra topics for each main topic, one for temporary storing retry messages
+and one for parking messages if retry fails (dead letter).
+The message is copied to the retry topic, when the message handler and, if existing, the error handler also throws an exception.
 
 Messages in the retry topic are copied back to the main topic after a configurable interval for a configurable number of reties.
 If retry also fails, the  message is copied to the dead letter topic. From the dead letter topic a process needs to be manually triggered
@@ -357,7 +357,8 @@ to put messages from the dead letter topics back to the main topics by a develop
 
 This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the strategy.
 
-The strategy requires `enable.auto.commit` set to `false` and the underlying consumer commits the records. 
+The strategy requires `enable.auto.commit` set to `false` and the underlying consumer commits the records. This is enforced in the strategy and
+must not be configured explicitly in the consumer. 
 
 In case of processing errors the handler must throw any `RuntimeException` which is then delegated to the `ErrorHandler` where finally can be decided if
 * the processing should be stopped (handleError returns `false`). In case the handleError returns `false` the offset is not being commited and the listener will be stopped.
@@ -374,14 +375,23 @@ When adding a message to the retry topic, additional information is being added 
 ##### Example for setting it up in your Application:
 
 ```
-MessageListenerRegistration.<Pair<String, String>, CareApplication> builder()
-            .withDefaultListenerConfig()
-            .forTopicConfigs(Collections.singletonList((this.kafkaBundle.getTopicConfiguration("sourceTopicConfigName"))))
-            .withConsumerConfig("mainTopicConfigName")
-            .withKeyDeserializer(new DeadLetterNoSerializationErrorDeserializer(new SDADeserializer<>((Class<Pair<String, String>>)(Object)Pair.class)))
-            .withValueDeserializer(new DeadLetterNoSerializationErrorDeserializer(new SDAFormFieldStringPairDeserializer<>(CareApplication.class)))
-            .withListenerStrategy(new DeadLetterMLS(environment, careApplicationService, kafkaBundle, "sourceTopicConsumerConfigName", "sourceTopicConsumerConfigName", 5, 5_000))
-            .build();
+    List<MessageListener> listener =
+        bundle.createMessageListener(
+            MessageListenerRegistration.<String, Integer>builder()
+                .withDefaultListenerConfig()
+                .forTopic(topics[0])
+                .withConsumerConfig(getConsumerConfig())
+                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
+                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
+                .withListenerStrategy(
+                    new DeadLetterMLS(
+                        environment,
+                        handler,
+                        new KafkaClientManager(
+                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
+                        4,
+                        1000))
+                .build());
 ```
 
 ##### Dead Letter Resend Admin Task  
@@ -390,47 +400,35 @@ a separate admin task will be created to handle multiple strategy usages within 
 e.g. curl -X POST http://localhost:8082/tasks/"Task Name"
 
 ##### Naming Conventions for Topic and Consumer/Producer Configurations
-All required topics/consumers/producers configuration names are deducted from the source topic name for that the dead-letter strategy is applied.
+The topic configurations for the main, retry, and dead letter topic can be added explicitly to the strategy by using the `TopicConfigurationHolder`.
+If only the main topic configuration is given, the rety and dead letter topics will be created with 
+the same number of partitions and replications than the main topic. 
 
-* TopicConfigurationNames
-  * `<main-topic>`  The original topic from that the service normally consumes messages
-  * `<main-topic>-retry` The topic where the strategy temporary parks messages until the next retry
-  * `<main-topic>-deadLetter` The topic where finally the messages are stored if retry fails
-Note, if no configuration for retry and dead letter topics are given, the  convention assumes the following names:
+Topic names are then deducted from the main topic name with the following convention:
   * `<main-topic>.retry` for retry topic
   * `<main-topic>.deadLetter` for dead letter topic
 
-* ConsumerConfigurationNames
-  * `<main-topic>` The consumer that reads messages from `<main-topic>`. The is the consumer in the message listener that uses the DeadLetter strategy
+The strategy creates new consumers for the retry and dead letter topic. This are default consumers without and additional configuration. The naming convention is as follows:
   * `<main-topic>-retry` The consumer that reads messages from the `<main-topic>-retry` topic. This consumer uses the SyncCommit strategy to reinsert messages top the `<main-topic>`
   * `<main-topic>-deadLetter` The consumer that reads messages from the `<main-topic>.deadLetter` topic. This consumer is used in the `DeadLetterTriggerTask` to reinsert parked messages
   
-* ProducerConfigurationNames
+The strategy creates new producers to insert messages into the different topics. This are default producers. The naming convention is as follows.
   * `<main-topic>` The producer that writes messages to the `<main-topic>` topic.
   * `<main-topic>-retry` The producer that writes messages with processing errors to the `<main-topic>.retry` topic.
   * `<main-topic>-deadLetter` The producer that writes messages to `<main-topic>.deadLetter` topic.
+  
+Producers will create the topic if missing. 
   
 Example: Original topic is `myTopic`
 ```yaml
 kafka:
   topics:
-    myTopic:
+    topicConfig:
       name: myTopic-name
-    myTopic-retry:
+    topicConfig-retry:
       name: myTopic-name.retry
-    myTopic-deadLetter:
+    topicConfig-deadLetter:
       name: myTopic-name.deadLetter
-  consumers:
-    myTopic:
-      group: defaultConsumer
-    myTopic-retry:
-      group: defaultRetryConsumer
-    myTopic-deadLetter:
-      group: defaultDeadLetterConsumer
-  producers:
-    myTopic-error:
-    myTopic-retry:
-    myTopic-reinsert:            
 ```
 
 

@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.startsWith;
 
+import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import com.salesforce.kafka.test.KafkaBroker;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -52,6 +53,7 @@ import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.consumer.strategies.deadletter.DeadLetterMLS;
 import org.sdase.commons.server.kafka.consumer.strategies.deadletter.KafkaClientManager;
+import org.sdase.commons.server.kafka.consumer.strategies.deadletter.TopicConfigurationHolder;
 import org.sdase.commons.server.kafka.consumer.strategies.deadletter.helper.NoSerializationErrorDeserializer;
 import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.ProcessingErrorRetryException;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
@@ -110,11 +112,14 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
 
     kafka
         .getTopics()
-        .put(topicNames[0] + "-retry", TopicConfig.builder().name(topicNames[1]).build());
+        .put(topicNames[0] + "-dummy-retry", TopicConfig.builder().name(topicNames[1]).build());
     kafka
         .getTopics()
-        .put(topicNames[0] + "-deadLetter", TopicConfig.builder().name(topicNames[2]).build());
-    kafka.getTopics().put(topicNames[0], TopicConfig.builder().name(topicNames[0]).build());
+        .put(
+            topicNames[0] + "-dummy-deadLetter", TopicConfig.builder().name(topicNames[2]).build());
+    kafka
+        .getTopics()
+        .put(topicNames[0] + "-dummy", TopicConfig.builder().name(topicNames[0]).build());
   }
 
   private static Object deserialize(byte[] obj) {
@@ -176,7 +181,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
                     new DeadLetterMLS(
                         DROPWIZARD_APP_RULE.getRule().getEnvironment(),
                         (record) -> {},
-                        new KafkaClientManager(bundle, topics[0]),
+                        new KafkaClientManager(
+                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
                         4,
                         1000))
                 .build());
@@ -238,7 +244,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
                         DROPWIZARD_APP_RULE.getRule().getEnvironment(),
                         handler,
                         errorHandler,
-                        new KafkaClientManager(bundle, topics[0]),
+                        new KafkaClientManager(
+                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
                         4,
                         1000))
                 .build());
@@ -271,6 +278,13 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
             });
 
     listener.forEach(MessageListener::stopConsumer);
+  }
+
+  private ExpectedTopicConfiguration getTopicConfig(String topic) {
+    return new ExpectedTopicConfiguration.ExpectedTopicConfigurationBuilder(topic)
+        .withPartitionCount(1)
+        .withReplicationFactor(1)
+        .build();
   }
 
   @Test
@@ -358,7 +372,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
                 new DeadLetterMLS(
                     DROPWIZARD_APP_RULE.getRule().getEnvironment(),
                     handler,
-                    new KafkaClientManager(bundle, topic),
+                    new KafkaClientManager(
+                        bundle, TopicConfigurationHolder.create(getTopicConfig(topic))),
                     4,
                     1000))
             .build());
@@ -397,7 +412,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
                         DROPWIZARD_APP_RULE.getRule().getEnvironment(),
                         handler,
                         errorHandler,
-                        new KafkaClientManager(bundle, topics[0]),
+                        new KafkaClientManager(
+                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
                         4,
                         3000))
                 .build());
@@ -479,7 +495,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
                         DROPWIZARD_APP_RULE.getRule().getEnvironment(),
                         handler,
                         errorHandler,
-                        new KafkaClientManager(bundle, topics[0]),
+                        new KafkaClientManager(
+                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
                         4,
                         1000))
                 .build());
@@ -538,7 +555,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
                     new DeadLetterMLS(
                         DROPWIZARD_APP_RULE.getRule().getEnvironment(),
                         handler,
-                        new KafkaClientManager(bundle, topics[0]),
+                        new KafkaClientManager(
+                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
                         4,
                         1000))
                 .build());
@@ -639,7 +657,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
                     new DeadLetterMLS(
                         DROPWIZARD_APP_RULE.getRule().getEnvironment(),
                         record -> {},
-                        new KafkaClientManager(bundle, topics[0]),
+                        new KafkaClientManager(
+                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
                         4,
                         1000))
                 .build());
@@ -700,7 +719,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
                         DROPWIZARD_APP_RULE.getRule().getEnvironment(),
                         handler,
                         errorHandler,
-                        new KafkaClientManager(bundle, topics[0]),
+                        new KafkaClientManager(
+                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
                         4,
                         1000))
                 .build());
@@ -766,7 +786,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
                         DROPWIZARD_APP_RULE.getRule().getEnvironment(),
                         handler,
                         errorHandler,
-                        new KafkaClientManager(bundle, topics[0]),
+                        new KafkaClientManager(
+                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
                         4,
                         1000))
                 .build());
@@ -835,7 +856,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
                         DROPWIZARD_APP_RULE.getRule().getEnvironment(),
                         handler,
                         errorHandler,
-                        new KafkaClientManager(bundle, topics[0]),
+                        new KafkaClientManager(
+                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
                         4,
                         500))
                 .build());
