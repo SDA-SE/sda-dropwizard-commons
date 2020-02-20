@@ -1,8 +1,6 @@
 package org.sdase.commons.server.kafka.consumer.strategies.deadletter;
 
-import static org.sdase.commons.server.kafka.consumer.strategies.deadletter.TopicType.DEAD_LETTER;
-import static org.sdase.commons.server.kafka.consumer.strategies.deadletter.TopicType.MAIN;
-import static org.sdase.commons.server.kafka.consumer.strategies.deadletter.TopicType.RETRY;
+import static org.sdase.commons.server.kafka.consumer.strategies.deadletter.TopicConfigurationHolder.TopicType.*;
 
 import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import io.dropwizard.Configuration;
@@ -18,7 +16,6 @@ import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.consumer.strategies.deadletter.retry.RetryHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
-import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 
 /**
@@ -42,31 +39,26 @@ import org.sdase.commons.server.kafka.producer.MessageProducer;
  */
 public class KafkaClientManager {
 
-  private final String mainTopicName;
   private final KafkaBundle<? extends Configuration> bundle;
-  private final ExpectedTopicConfiguration mainTopicConfiguration;
+  private final TopicConfigurationHolder topicsHolder;
 
-  public KafkaClientManager(KafkaBundle<? extends Configuration> bundle, String mainTopicName) {
+  public KafkaClientManager(
+      KafkaBundle<? extends Configuration> bundle, TopicConfigurationHolder topicsHolder) {
     this.bundle = bundle;
-    this.mainTopicConfiguration = bundle.getTopicConfiguration(mainTopicName);
-    this.mainTopicName = mainTopicName;
+    this.topicsHolder = topicsHolder;
   }
 
   /** @return the producer to insert messages in the retry topic */
   MessageProducer<byte[], byte[]> createMainToRetryTopicProducer() {
     final ExpectedTopicConfiguration retryTopicConfiguration =
-        getOrCreateDefaultTopicConfiguration(RETRY);
+        topicsHolder.getTopicConfiguration(RETRY);
 
-    final ProducerConfig retryProducerConfig =
-        ProducerConfig.builder()
-            .withClientId(retryTopicConfiguration.getTopicName() + "-Producer")
-            .build();
+    final ProducerConfig retryProducerConfig = createProducerConfig(RETRY, "From-Main-Producer");
 
     return bundle.registerProducer(
         ProducerRegistration.<byte[], byte[]>builder()
             .forTopic(retryTopicConfiguration)
             .createTopicIfMissing()
-            .checkTopicConfiguration()
             .withProducerConfig(retryProducerConfig)
             .withKeySerializer(new ByteArraySerializer())
             .withValueSerializer(new ByteArraySerializer())
@@ -98,16 +90,14 @@ public class KafkaClientManager {
    * @return a message producer that writes messages to the main topic
    */
   private MessageProducer<byte[], byte[]> createMainTopicProducer(String suffix) {
-    final ProducerConfig retryProducerConfig =
-        ProducerConfig.builder()
-            .withClientId(String.format("%s - %s", mainTopicName, suffix))
-            .build();
+    String topicName = topicsHolder.getTopicConfiguration(MAIN).getTopicName();
+
+    final ProducerConfig retryProducerConfig = createProducerConfig(MAIN, suffix);
 
     return bundle.registerProducer(
         ProducerRegistration.<byte[], byte[]>builder()
-            .forTopic(mainTopicName)
+            .forTopic(topicName)
             .createTopicIfMissing()
-            .checkTopicConfiguration()
             .withProducerConfig(retryProducerConfig)
             .withKeySerializer(new ByteArraySerializer())
             .withValueSerializer(new ByteArraySerializer())
@@ -121,19 +111,17 @@ public class KafkaClientManager {
    * @return the producer that inserts messages in the dead letter topic
    */
   MessageProducer<byte[], byte[]> createDeadLetterProducer() {
+
     final ExpectedTopicConfiguration deadLetterTopicConfiguration =
-        getOrCreateDefaultTopicConfiguration(DEAD_LETTER);
+        topicsHolder.getTopicConfiguration(DEAD_LETTER);
 
     final ProducerConfig deadLetterProducerConfig =
-        ProducerConfig.builder()
-            .withClientId(deadLetterTopicConfiguration.getTopicName() + "-Producer")
-            .build();
+        createProducerConfig(DEAD_LETTER, "-from-retry");
 
     return bundle.registerProducer(
         ProducerRegistration.<byte[], byte[]>builder()
             .forTopic(deadLetterTopicConfiguration)
             .createTopicIfMissing()
-            .checkTopicConfiguration()
             .withProducerConfig(deadLetterProducerConfig)
             .withKeySerializer(new ByteArraySerializer())
             .withValueSerializer(new ByteArraySerializer())
@@ -155,8 +143,8 @@ public class KafkaClientManager {
     return bundle.createMessageListener(
         MessageListenerRegistration.<byte[], byte[]>builder()
             .withDefaultListenerConfig()
-            .forTopic(getOrCreateDefaultTopicConfiguration(RETRY).getTopicName())
-            .withConsumerConfig(getOrCreateConsumerConfig(RETRY))
+            .forTopic(topicsHolder.getTopicName(RETRY))
+            .withConsumerConfig(createConsumerConfig(RETRY))
             .withKeyDeserializer(new ByteArrayDeserializer())
             .withValueDeserializer(new ByteArrayDeserializer())
             .withListenerStrategy(new SyncCommitMLS<>(handler, handler))
@@ -172,77 +160,41 @@ public class KafkaClientManager {
     return bundle.createConsumer(
         new ByteArrayDeserializer(), // NOSONAR closed when consumer is closed
         new ByteArrayDeserializer(), // NOSONAR closed when consumer is closed
-        getOrCreateConsumerConfig(DEAD_LETTER),
+        createConsumerConfig(DEAD_LETTER),
         1);
   }
 
   /**
-   * Returns or calculate the {@link ExpectedTopicConfiguration} for one of the topics in the dead
-   * letter strategy, given by convention.
-   *
-   * <p>If a topic configuration in the {@link org.sdase.commons.server.kafka.KafkaConfiguration}
-   * exists this config is returned. Otherwise, a default configuration is created. Partition and
-   * replication count is taken from the main topic configuration.
-   *
-   * @param topicType defines the kind of topic
-   * @return TopicConfiguration for the topic type.
-   */
-  private ExpectedTopicConfiguration getOrCreateDefaultTopicConfiguration(TopicType topicType) {
-    try {
-      if (topicType == MAIN) {
-        return mainTopicConfiguration;
-      } else {
-        final String configName = mainTopicName + "-" + topicType;
-        return bundle.getTopicConfiguration(configName);
-      }
-    } catch (ConfigurationException e) {
-      // No topic configuration has been found in the application config
-      // a default one is created based on the main topic configuration
-      return new ExpectedTopicConfiguration.ExpectedTopicConfigurationBuilder(
-              createTopicName(topicType))
-          .withPartitionCount(mainTopicConfiguration.getPartitions().count())
-          .withReplicationFactor(mainTopicConfiguration.getReplicationFactor().count())
-          .build();
-    }
-  }
-
-  /**
-   * Creates a consumer config. If the consumer config is defined in the {@link
-   * org.sdase.commons.server.kafka.KafkaConfiguration}, it is taken into account (convention:
-   * &lt;mainTopic&gt;-&lt;topicType&gt;, for example 'mainTopic-retry')
+   * Creates a default consumer for retry or dead letter topics
    *
    * @param topicType topic type for that the consumer config should be retrieved
-   * @return a consumer topic for the given topicType
+   * @return consumer config
    */
-  private ConsumerConfig getOrCreateConsumerConfig(TopicType topicType) {
-    try {
-      final String configName = mainTopicName + "-" + topicType.toString();
-      return bundle.getConsumerConfiguration(configName);
-
-    } catch (ConfigurationException e) {
-      return ConsumerConfig.builder()
-          .withGroup(topicType.toString())
-          .withClientId(createTopicName(topicType))
-          .build();
-    }
-  }
-
-  /** @return the name of the dead letter topic according to the convention */
-  public String getDeadLetterTopicName() {
-    return getOrCreateDefaultTopicConfiguration(DEAD_LETTER).getTopicName();
+  private ConsumerConfig createConsumerConfig(TopicConfigurationHolder.TopicType topicType) {
+    return ConsumerConfig.builder()
+        .withGroup(topicType.toString())
+        .withClientId(topicsHolder.getTopicName(topicType) + "Consumer")
+        .build();
   }
 
   /**
-   * Convention for topic naming: retry and dead letter topic must end with suffix
-   * '<b>.&lt;topicType&gt;</b>.
+   * Creates a default producer to insert message in the given topic type
    *
-   * @param topicType type of the topic for that the name is calculated
-   * @return name of the topic defined by the topic type
+   * @param targetTopicType target topic
+   * @param nameSuffix additional suffix for the producer to distinguish two producers that write to
+   *     the same target topic
+   * @return producer config
    */
-  private String createTopicName(TopicType topicType) {
-    if (topicType == MAIN) {
-      return mainTopicName;
-    }
-    return mainTopicName + "." + topicType.toString();
+  private ProducerConfig createProducerConfig(
+      TopicConfigurationHolder.TopicType targetTopicType, String nameSuffix) {
+
+    return ProducerConfig.builder()
+        .withClientId(
+            String.format("%s-%s", topicsHolder.getTopicName(targetTopicType), nameSuffix))
+        .build();
+  }
+
+  public String getDeadLetterTopicName() {
+    return topicsHolder.getTopicName(DEAD_LETTER);
   }
 }
