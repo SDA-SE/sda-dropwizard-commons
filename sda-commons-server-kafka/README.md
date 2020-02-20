@@ -375,23 +375,23 @@ When adding a message to the retry topic, additional information is being added 
 ##### Example for setting it up in your Application:
 
 ```
-    List<MessageListener> listener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.<String, Integer>builder()
-                .withDefaultListenerConfig()
-                .forTopic(topics[0])
-                .withConsumerConfig(getConsumerConfig())
-                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-                .withListenerStrategy(
-                    new DeadLetterMLS(
-                        environment,
-                        handler,
-                        new KafkaClientManager(
-                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
-                        4,
-                        1000))
-                .build());
+bundle.createMessageListener(
+        MessageListenerRegistration.<DeserializerResult<String>, DeserializerResult<Integer>>builder()
+            .withDefaultListenerConfig()
+            .forTopic(topic)
+            .withConsumerConfig(getConsumerConfig())
+            .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
+            .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
+            .withListenerStrategy(
+                new DeadLetterMLS<>(
+                    DROPWIZARD_APP_RULE.getRule().getEnvironment(),
+                    handler,
+                    errorHandler,
+                    new KafkaClientManager(
+                        bundle, TopicConfigurationHolder.create(getTopicConfig(topic))),
+                    4,
+                    300))
+            .build());
 ```
 
 ##### Dead Letter Resend Admin Task  
@@ -405,7 +405,7 @@ If only the main topic configuration is given, the rety and dead letter topics w
 the same number of partitions and replications than the main topic. 
 
 Topic names are then deducted from the main topic name with the following convention:
-  * `<main-topic>.retry` for retry topic
+  * `<main-topic>.retry` for retry topic    
   * `<main-topic>.deadLetter` for dead letter topic
 
 The strategy creates new consumers for the retry and dead letter topic. This are default consumers without and additional configuration. The naming convention is as follows:

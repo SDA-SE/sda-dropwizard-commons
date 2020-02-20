@@ -41,6 +41,7 @@ import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.glassfish.jersey.client.ClientProperties;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -54,6 +55,7 @@ import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.consumer.strategies.deadletter.DeadLetterMLS;
 import org.sdase.commons.server.kafka.consumer.strategies.deadletter.KafkaClientManager;
 import org.sdase.commons.server.kafka.consumer.strategies.deadletter.TopicConfigurationHolder;
+import org.sdase.commons.server.kafka.consumer.strategies.deadletter.helper.DeserializerResult;
 import org.sdase.commons.server.kafka.consumer.strategies.deadletter.helper.NoSerializationErrorDeserializer;
 import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.ProcessingErrorRetryException;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
@@ -61,7 +63,6 @@ import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.LazyRule;
 
-@SuppressWarnings("unchecked")
 public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
 
   private static final SharedKafkaTestResource KAFKA =
@@ -104,8 +105,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
 
   private KafkaBundle<KafkaTestConfiguration> bundle =
       ((KafkaTestApplication) DROPWIZARD_APP_RULE.getRule().getApplication()).kafkaBundle();
-  private Deserializer keyDeserializer = new StringDeserializer();
-  private Deserializer valueDeserializer = new IntegerDeserializer();
+  private Deserializer<String> keyDeserializer = new StringDeserializer();
+  private Deserializer<Integer> valueDeserializer = new IntegerDeserializer();
 
   private static void addTopicConfigForTestcase(KafkaConfiguration kafka, int testcaseNo) {
     String[] topicNames = calcTopicNames(testcaseNo);
@@ -162,6 +163,13 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
     KAFKA.getKafkaTestUtils().createTopic(topicNames[2], 1, (short) 1);
   }
 
+  List<Object> testResults;
+
+  @Before
+  public void before() {
+    testResults = Collections.synchronizedList(new ArrayList<>());
+  }
+
   @Test
   public void shouldCreateTopicsAndConsumerIfOnlyMainTopicIsInConfig() {
     String[] topics = calcTopicNames(99);
@@ -169,23 +177,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
     // create only main topic
     KAFKA.getKafkaTestUtils().createTopic(topics[0], 1, (short) 1);
 
-    List<MessageListener> listener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.<String, Integer>builder()
-                .withDefaultListenerConfig()
-                .forTopic(topics[0])
-                .withConsumerConfig(getConsumerConfig())
-                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-                .withListenerStrategy(
-                    new DeadLetterMLS(
-                        DROPWIZARD_APP_RULE.getRule().getEnvironment(),
-                        (record) -> {},
-                        new KafkaClientManager(
-                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
-                        4,
-                        1000))
-                .build());
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], (record) -> {}, null);
 
     KAFKA.getKafkaTestUtils().produceRecords(2, topics[2], 0);
 
@@ -231,24 +224,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
           throw new ProcessingErrorRetryException("seems that exception cannot be handled");
         };
 
-    List<MessageListener> listener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.<String, Integer>builder()
-                .withDefaultListenerConfig()
-                .forTopic(topics[0])
-                .withConsumerConfig(getConsumerConfig())
-                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-                .withListenerStrategy(
-                    new DeadLetterMLS(
-                        DROPWIZARD_APP_RULE.getRule().getEnvironment(),
-                        handler,
-                        errorHandler,
-                        new KafkaClientManager(
-                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
-                        4,
-                        1000))
-                .build());
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], handler, errorHandler);
 
     try (KafkaProducer<String, Integer> producer = getKafkaProducer()) {
       IntStream.range(1, 4)
@@ -280,6 +257,31 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
     listener.forEach(MessageListener::stopConsumer);
   }
 
+  private List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>>
+      getDefaultMessageListener(
+          String topic,
+          MessageHandler<String, Integer> handler,
+          ErrorHandler<String, Integer> errorHandler) {
+    return bundle.createMessageListener(
+        MessageListenerRegistration
+            .<DeserializerResult<String>, DeserializerResult<Integer>>builder()
+            .withDefaultListenerConfig()
+            .forTopic(topic)
+            .withConsumerConfig(getConsumerConfig())
+            .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
+            .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
+            .withListenerStrategy(
+                new DeadLetterMLS<>(
+                    DROPWIZARD_APP_RULE.getRule().getEnvironment(),
+                    handler,
+                    errorHandler,
+                    new KafkaClientManager(
+                        bundle, TopicConfigurationHolder.create(getTopicConfig(topic))),
+                    4,
+                    300))
+            .build());
+  }
+
   private ExpectedTopicConfiguration getTopicConfig(String topic) {
     return new ExpectedTopicConfiguration.ExpectedTopicConfigurationBuilder(topic)
         .withPartitionCount(1)
@@ -292,9 +294,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
     String[] topics = calcTopicNames(9);
     createTopics(topics);
 
-    List<Object> testResults = Collections.synchronizedList(new ArrayList<>());
-
-    List<MessageListener> listener = initDefaultTestMessageListener(testResults, topics[0]);
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], record -> testResults.add(record.value()), null);
 
     // null key, ok value
     try (KafkaProducer<String, Integer> producer = getKafkaProducer()) {
@@ -328,7 +329,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
 
     List<Object> testResults = Collections.synchronizedList(new ArrayList<>());
 
-    List<MessageListener> listener = initDefaultTestMessageListener(testResults, topics[0]);
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], record -> testResults.add(record.value()), null);
 
     // null key, faulty value
     try (KafkaProducer<byte[], String> producer =
@@ -357,28 +359,6 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
     listener.forEach(MessageListener::stopConsumer);
   }
 
-  private List<MessageListener> initDefaultTestMessageListener(
-      List<Object> testResults, String topic) {
-    MessageHandler<String, Integer> handler = record -> testResults.add(record.value());
-
-    return bundle.createMessageListener(
-        MessageListenerRegistration.<String, Integer>builder()
-            .withDefaultListenerConfig()
-            .forTopic(topic)
-            .withConsumerConfig(getConsumerConfig())
-            .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-            .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-            .withListenerStrategy(
-                new DeadLetterMLS(
-                    DROPWIZARD_APP_RULE.getRule().getEnvironment(),
-                    handler,
-                    new KafkaClientManager(
-                        bundle, TopicConfigurationHolder.create(getTopicConfig(topic))),
-                    4,
-                    1000))
-            .build());
-  }
-
   @Test
   public void deadLetterMessagesShouldContainHeaders() {
     String[] topics = calcTopicNames(2);
@@ -399,24 +379,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
           throw new ProcessingErrorRetryException("seems that exception cannot be handled");
         };
 
-    List<MessageListener> listener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.<String, Integer>builder()
-                .withDefaultListenerConfig()
-                .forTopic(topics[0])
-                .withConsumerConfig(getConsumerConfig())
-                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-                .withListenerStrategy(
-                    new DeadLetterMLS(
-                        DROPWIZARD_APP_RULE.getRule().getEnvironment(),
-                        handler,
-                        errorHandler,
-                        new KafkaClientManager(
-                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
-                        4,
-                        3000))
-                .build());
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], handler, errorHandler);
 
     try (KafkaProducer<String, Integer> producer = getKafkaProducer()) {
       producer.send(new ProducerRecord<>(topics[0], UUID.randomUUID().toString(), 1));
@@ -482,24 +446,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
           throw new ProcessingErrorRetryException("seems that exception cannot be handled");
         };
 
-    List<MessageListener> listener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.<String, Integer>builder()
-                .withDefaultListenerConfig()
-                .forTopic(topics[0])
-                .withConsumerConfig(getConsumerConfig().setClientId("test-consumer"))
-                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-                .withListenerStrategy(
-                    new DeadLetterMLS(
-                        DROPWIZARD_APP_RULE.getRule().getEnvironment(),
-                        handler,
-                        errorHandler,
-                        new KafkaClientManager(
-                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
-                        4,
-                        1000))
-                .build());
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], handler, errorHandler);
 
     try (KafkaProducer<String, Integer> producer = getKafkaProducer()) {
       producer.send(new ProducerRecord<>(topics[0], UUID.randomUUID().toString(), 1));
@@ -543,23 +491,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
           testResults.add(value);
         };
 
-    List<MessageListener> listener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.<String, Integer>builder()
-                .withDefaultListenerConfig()
-                .forTopic(topics[0])
-                .withConsumerConfig(getConsumerConfig())
-                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-                .withListenerStrategy(
-                    new DeadLetterMLS(
-                        DROPWIZARD_APP_RULE.getRule().getEnvironment(),
-                        handler,
-                        new KafkaClientManager(
-                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
-                        4,
-                        1000))
-                .build());
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], handler, null);
 
     try (KafkaProducer<String, Integer> producer = getKafkaProducer()) {
       IntStream.range(1, 21)
@@ -645,23 +578,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
     createTopics(topics);
 
     // register handler to initialize task
-    List<MessageListener> listener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.<String, Integer>builder()
-                .withDefaultListenerConfig()
-                .forTopic(topics[0])
-                .withConsumerConfig(getConsumerConfig())
-                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-                .withListenerStrategy(
-                    new DeadLetterMLS(
-                        DROPWIZARD_APP_RULE.getRule().getEnvironment(),
-                        record -> {},
-                        new KafkaClientManager(
-                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
-                        4,
-                        1000))
-                .build());
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], record -> {}, null);
 
     // insert 2 messages to dead letter
     KAFKA.getKafkaTestUtils().produceRecords(2, topics[2], 0);
@@ -706,24 +624,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
 
     ErrorHandler<String, Integer> errorHandler = (record, e, consumer) -> false;
 
-    List<MessageListener> listener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.<String, Integer>builder()
-                .withDefaultListenerConfig()
-                .forTopic(topics[0])
-                .withConsumerConfig(getConsumerConfig())
-                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-                .withListenerStrategy(
-                    new DeadLetterMLS(
-                        DROPWIZARD_APP_RULE.getRule().getEnvironment(),
-                        handler,
-                        errorHandler,
-                        new KafkaClientManager(
-                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
-                        4,
-                        1000))
-                .build());
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], handler, errorHandler);
 
     try (KafkaProducer<String, Integer> producer = getKafkaProducer()) {
       producer.send(new ProducerRecord<>(topics[0], UUID.randomUUID().toString(), 1));
@@ -773,24 +675,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
 
     ErrorHandler<String, Integer> errorHandler = (record, e, consumer) -> true;
 
-    List<MessageListener> listener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.<String, Integer>builder()
-                .withDefaultListenerConfig()
-                .forTopic(topics[0])
-                .withConsumerConfig(getConsumerConfig())
-                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-                .withListenerStrategy(
-                    new DeadLetterMLS(
-                        DROPWIZARD_APP_RULE.getRule().getEnvironment(),
-                        handler,
-                        errorHandler,
-                        new KafkaClientManager(
-                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
-                        4,
-                        1000))
-                .build());
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], handler, errorHandler);
 
     try (KafkaProducer<String, Integer> producer = getKafkaProducer()) {
       IntStream.range(1, 21)
@@ -843,24 +729,8 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
           throw new ProcessingErrorRetryException("seems that exception cannot be handled");
         };
 
-    List<MessageListener> listener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.<String, Integer>builder()
-                .withDefaultListenerConfig()
-                .forTopic(topics[0])
-                .withConsumerConfig(getConsumerConfig())
-                .withValueDeserializer(new NoSerializationErrorDeserializer<>(valueDeserializer))
-                .withKeyDeserializer(new NoSerializationErrorDeserializer<>(keyDeserializer))
-                .withListenerStrategy(
-                    new DeadLetterMLS(
-                        DROPWIZARD_APP_RULE.getRule().getEnvironment(),
-                        handler,
-                        errorHandler,
-                        new KafkaClientManager(
-                            bundle, TopicConfigurationHolder.create(getTopicConfig(topics[0]))),
-                        4,
-                        500))
-                .build());
+    List<MessageListener<DeserializerResult<String>, DeserializerResult<Integer>>> listener =
+        getDefaultMessageListener(topics[0], handler, errorHandler);
 
     try (KafkaProducer<String, String> producer =
         KAFKA
