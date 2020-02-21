@@ -90,13 +90,13 @@ public class KafkaClientManager {
    * @return a message producer that writes messages to the main topic
    */
   private MessageProducer<byte[], byte[]> createMainTopicProducer(String suffix) {
-    String topicName = topicsHolder.getTopicConfiguration(MAIN).getTopicName();
+    ExpectedTopicConfiguration topic = topicsHolder.getTopicConfiguration(MAIN);
 
     final ProducerConfig retryProducerConfig = createProducerConfig(MAIN, suffix);
 
     return bundle.registerProducer(
         ProducerRegistration.<byte[], byte[]>builder()
-            .forTopic(topicName)
+            .forTopic(topic)
             .createTopicIfMissing()
             .withProducerConfig(retryProducerConfig)
             .withKeySerializer(new ByteArraySerializer())

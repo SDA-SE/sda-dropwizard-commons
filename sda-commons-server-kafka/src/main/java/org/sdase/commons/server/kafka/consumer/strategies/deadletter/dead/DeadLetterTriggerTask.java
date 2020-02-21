@@ -55,7 +55,7 @@ public class DeadLetterTriggerTask extends Task {
                     .map(
                         tp ->
                             String.format(
-                                "[Topic: %s, Partition:%s, Offset: %s:]",
+                                "[Topic: %s, Partition:%s, Offset: %s]",
                                 tp.topic(),
                                 tp.partition(),
                                 consumer.committed(tp) != null
