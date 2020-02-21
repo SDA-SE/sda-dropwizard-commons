@@ -5,6 +5,7 @@ import io.dropwizard.servlets.tasks.Task;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.sdase.commons.server.kafka.consumer.strategies.deadletter.KafkaClientManager;
@@ -46,10 +47,22 @@ public class DeadLetterTriggerTask extends Task {
             continueReading = false;
           }
 
-          LOG.info(
-              "Read {} records from {} topic for main topic insertion",
-              records.count(),
-              kafkaClientManager.getDeadLetterTopicName());
+          if (LOG.isInfoEnabled()) {
+            LOG.info(
+                "Read {} records  for main topic insertion. Consumer Status before commit: {} ",
+                records.count(),
+                consumer.assignment().stream()
+                    .map(
+                        tp ->
+                            String.format(
+                                "[Topic: %s, Partition:%s, Offset: %s:]",
+                                tp.topic(),
+                                tp.partition(),
+                                consumer.committed(tp) != null
+                                    ? consumer.committed(tp).offset()
+                                    : "unknown"))
+                    .collect(Collectors.joining(",")));
+          }
           // notice: header will be removed since retry information is not interesting any longer
           records.forEach(
               record -> {
