@@ -34,6 +34,8 @@ public class DeadLetterTriggerTask extends Task {
     boolean continueReading = true;
     AtomicInteger reinserted = new AtomicInteger(0);
 
+    int round = 0;
+
     try (KafkaConsumer<byte[], byte[]> consumer =
         kafkaClientManager.createConsumerForDeadLetterTask()) {
       try (MessageProducer<byte[], byte[]> sourceProducer =
@@ -41,9 +43,11 @@ public class DeadLetterTriggerTask extends Task {
         consumer.subscribe(Collections.singletonList(kafkaClientManager.getDeadLetterTopicName()));
 
         while (continueReading) {
+          round++;
+          LOG.info("round: {}", round);
           final ConsumerRecords<byte[], byte[]> records = consumer.poll(100);
 
-          if (records.isEmpty()) {
+          if (records.isEmpty() && round > 1000) {
             continueReading = false;
           }
 
