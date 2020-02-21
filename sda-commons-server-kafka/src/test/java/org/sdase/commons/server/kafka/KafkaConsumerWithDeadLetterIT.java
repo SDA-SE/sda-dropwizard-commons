@@ -742,7 +742,7 @@ public class KafkaConsumerWithDeadLetterIT extends KafkaBundleConsts {
     }
 
     await()
-        .atMost(60, SECONDS)
+        .atMost(15, SECONDS)
         .pollInterval(1, SECONDS)
         .untilAsserted(
             () -> {
