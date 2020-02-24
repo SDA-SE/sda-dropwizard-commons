@@ -39,6 +39,7 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import org.apache.commons.lang3.SystemUtils;
 import org.bson.Document;
@@ -253,7 +254,7 @@ public class MongoDbRule extends ExternalResource {
 
   @Override
   protected void before() {
-    startMongo();
+    initializeMongoDb();
   }
 
   @Override
@@ -261,7 +262,7 @@ public class MongoDbRule extends ExternalResource {
     stopMongo();
   }
 
-  private void startMongo() {
+  private void initializeMongoDb() {
     if (started) {
       return;
     }
@@ -279,9 +280,7 @@ public class MongoDbRule extends ExternalResource {
       }
 
       mongodConfig = mongodConfigBuilder.build();
-
-      mongodExecutable = ensureMongodStarter().prepare(mongodConfig);
-      mongodExecutable.start();
+      startMongoDb();
 
       final CountDownLatch countDownLatch = new CountDownLatch(1);
 
@@ -326,6 +325,36 @@ public class MongoDbRule extends ExternalResource {
 
     // safety net
     getRuntime().addShutdownHook(new Thread(this::stopMongo, "shutdown mongo"));
+  }
+
+  private void startMongoDb() throws IOException, InterruptedException {
+    // download, receive, and start the mongod executable. When tests are run in parallel
+    // the download of the embeddedmongo might collide so we catch all errors here and retry.
+
+    // The maximal number of retries if the download or start failed
+    int maxRetries = 10;
+
+    int downloadRetries = 0;
+    while (mongodExecutable == null) {
+      try {
+        // When tests are run in parallel the downloads might collide so we catch all errors here
+        mongodExecutable = ensureMongodStarter().prepare(mongodConfig);
+        LOG.debug("Downloaded mongo correctly after {} retries", downloadRetries);
+        mongodExecutable.start();
+        LOG.debug("Started mongod correctly after {} retries", downloadRetries);
+      } catch (Exception ex) {
+        // throw the exception if the download fails more than maxRetries times
+        if (++downloadRetries > maxRetries) {
+          LOG.error("Failed to download and start mongod, throwing exceptions");
+          throw ex;
+        }
+
+        LOG.warn("Downloading mongodb threw an exception. Trying again...", ex);
+
+        // wait for a time between 100 and 200 milliseconds to let the parallel process to finish
+        Thread.sleep(new Random().nextInt(200) + 100L);
+      }
+    }
   }
 
   private void stopMongo() {
