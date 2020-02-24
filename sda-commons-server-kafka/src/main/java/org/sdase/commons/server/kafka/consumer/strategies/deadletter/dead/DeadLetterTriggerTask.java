@@ -4,10 +4,12 @@ import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.servlets.tasks.Task;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 import org.sdase.commons.server.kafka.consumer.strategies.deadletter.KafkaClientManager;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.slf4j.Logger;
@@ -43,13 +45,22 @@ public class DeadLetterTriggerTask extends Task {
         while (continueReading) {
           final ConsumerRecords<byte[], byte[]> records = consumer.poll(100);
 
-          if (records.isEmpty()) {
-            continueReading = false;
+          // check if there must be another round of reading messages from the dead letter topic
+          // should continue as long as there is a position smaller than the end offset of a topic
+          // partition
+          try {
+            Map<TopicPartition, Long> endOffsets = consumer.endOffsets(consumer.assignment());
+            continueReading =
+                endOffsets.entrySet().stream()
+                    .anyMatch(e -> consumer.position(e.getKey()) < e.getValue());
+          } catch (Exception e) {
+            LOG.warn("Exception while checking continue reading criteria.", e);
           }
 
+          // debug the current status.
           if (LOG.isInfoEnabled()) {
             LOG.info(
-                "Read {} records  for main topic insertion. Consumer Status before commit: {} ",
+                "Read {} records for main topic insertion. Consumer Status before commit: {} ",
                 records.count(),
                 consumer.assignment().stream()
                     .map(
@@ -63,7 +74,9 @@ public class DeadLetterTriggerTask extends Task {
                                     : "unknown"))
                     .collect(Collectors.joining(",")));
           }
-          // notice: header will be removed since retry information is not interesting any longer
+
+          // copy the actual entry
+          // header will be removed since retry information is not interesting any longer
           records.forEach(
               record -> {
                 sourceProducer.send(record.key(), record.value());
