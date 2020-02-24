@@ -6,4 +6,5 @@ dependencies {
   // Morphia.
   compile 'org.mongodb:mongodb-driver-legacy:4.0.3'
   compile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+  compile 'io.github.resilience4j:resilience4j-retry'
 }

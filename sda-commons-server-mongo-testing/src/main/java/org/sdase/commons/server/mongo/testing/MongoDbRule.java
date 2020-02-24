@@ -34,7 +34,9 @@ import de.flapdoodle.embed.process.config.store.SameDownloadPathForEveryDistribu
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.embed.process.store.ExtractedArtifactStore;
 import de.flapdoodle.embed.process.store.ImmutableExtractedArtifactStore;
-import java.io.IOException;
+import io.github.resilience4j.core.IntervalFunction;
+import io.github.resilience4j.retry.RetryConfig;
+import io.github.resilience4j.retry.RetryRegistry;
 import java.lang.invoke.MethodHandles;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
@@ -68,6 +70,12 @@ import org.slf4j.LoggerFactory;
  */
 public class MongoDbRule extends ExternalResource {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final RetryRegistry downloadMongoRetryRegistry =
+      RetryRegistry.of(
+          RetryConfig.custom()
+              .maxAttempts(10)
+              .intervalFunction(IntervalFunction.ofRandomized())
+              .build());
 
   // Initialization-on-demand holder idiom
   private static class LazyHolder {
@@ -277,8 +285,17 @@ public class MongoDbRule extends ExternalResource {
 
       mongodConfig = mongodConfigBuilder.build();
 
-      mongodExecutable = ensureMongodStarter().prepare(mongodConfig);
-      mongodExecutable.start();
+      downloadMongoRetryRegistry
+          .retry("downloadMongo")
+          .executeCallable(
+              () -> {
+                // download, receive, and start the mongod executable. When tests are run in
+                // parallel the download of the embeddedmongo might collide so we catch all errors
+                // here and retry.
+                mongodExecutable = ensureMongodStarter().prepare(mongodConfig);
+                mongodExecutable.start();
+                return null;
+              });
 
       final CountDownLatch countDownLatch = new CountDownLatch(1);
 
@@ -313,10 +330,8 @@ public class MongoDbRule extends ExternalResource {
         // Create the database user for the test context
         createDatabaseUser(mongoClient);
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new IllegalStateException(e);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
     }
 
     started = true;
