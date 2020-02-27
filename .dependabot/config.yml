@@ -7,4 +7,17 @@ update_configs:
       prefix: "fix"
       prefix_development: "chore"
       include_scope: true
- 
+    ignored_updates:
+      - match:
+          dependency_name: "com.amazonaws:aws-java-sdk-bom"
+  # Send updates for AWS Java SDK less often (critical fixes would still be updated asap)
+  - package_manager: "java:gradle"
+    directory: "/"
+    update_schedule: "weekly"
+    commit_message:
+      prefix: "fix"
+      prefix_development: "chore"
+      include_scope: true
+    allowed_updates:
+      - match:
+          dependency_name: "com.amazonaws:aws-java-sdk-bom"
