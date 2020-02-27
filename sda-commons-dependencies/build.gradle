@@ -11,7 +11,7 @@ ext {
   prometheusVersion = '0.8.1'
   resilience4jVersion = '0.15.0'
   swaggerCoreVersion = '1.6.0'
-  jettyVersion = '9.4.18.v20190429'
+  jettyVersion = '9.4.26.v20200117'
   weldVersion = '3.0.4.Final'
   openTracingUtilVersion = '0.33.0'
 }
