@@ -7,4 +7,11 @@ update_configs:
       prefix: "fix"
       prefix_development: "chore"
       include_scope: true
+  - package_manager: "github_actions"
+    directory: "/"
+    update_schedule: "weekly"
+    commit_message:
+      prefix: "chore"
+      prefix_development: "chore"
+      include_scope: true
  
