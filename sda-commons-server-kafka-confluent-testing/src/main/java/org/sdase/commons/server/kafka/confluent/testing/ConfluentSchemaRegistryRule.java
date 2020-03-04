@@ -5,6 +5,7 @@ import io.confluent.kafka.schemaregistry.exceptions.SchemaRegistryException;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryConfig;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryRestApplication;
 import io.confluent.rest.Application;
+import io.confluent.rest.RestConfig;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
@@ -70,7 +71,7 @@ public class ConfluentSchemaRegistryRule implements TestRule {
             .map(s -> String.format("%s://%s", protocolType, s))
             .collect(Collectors.joining(","));
 
-    schemaRegistryProps.put(SchemaRegistryConfig.LISTENERS_CONFIG, "http://0.0.0.0:" + port);
+    schemaRegistryProps.put(RestConfig.LISTENERS_CONFIG, "http://0.0.0.0:" + port);
     schemaRegistryProps.put(SchemaRegistryConfig.HOST_NAME_CONFIG, hostname);
     schemaRegistryProps.put(
         SchemaRegistryConfig.KAFKASTORE_BOOTSTRAP_SERVERS_CONFIG, bootstrapServerConfig);
@@ -94,8 +95,8 @@ public class ConfluentSchemaRegistryRule implements TestRule {
   }
 
   private void deactivateLoggingBecauseOfVersionConflicts() {
-    Slf4jRequestLog requestLog =
-        (Slf4jRequestLog)
+    Slf4jRequestLog requestLog = // NOSONAR
+        (Slf4jRequestLog) // NOSONAR
             Stream.of(Application.class.getDeclaredFields())
                 .filter(f -> "requestLog".equals(f.getName()))
                 .findFirst()
@@ -113,7 +114,7 @@ public class ConfluentSchemaRegistryRule implements TestRule {
                     })
                 .orElse(null);
 
-    Stream.of(Slf4jRequestLog.class.getDeclaredFields())
+    Stream.of(Slf4jRequestLog.class.getDeclaredFields()) // NOSONAR
         .filter(f -> f.getName().equals("logger"))
         .findFirst()
         .ifPresent(
