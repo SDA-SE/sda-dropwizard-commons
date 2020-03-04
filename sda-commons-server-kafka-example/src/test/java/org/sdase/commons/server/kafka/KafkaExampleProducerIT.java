@@ -18,7 +18,7 @@ import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRu
 import org.sdase.commons.server.kafka.model.Key;
 import org.sdase.commons.server.kafka.model.Value;
 
-public class KafkaExampleProcuderIT {
+public class KafkaExampleProducerIT {
 
   private static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
