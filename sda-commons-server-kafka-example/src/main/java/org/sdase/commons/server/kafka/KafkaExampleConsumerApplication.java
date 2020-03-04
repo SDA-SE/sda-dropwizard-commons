@@ -9,8 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
-import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
+import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
+import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.model.Key;
 import org.sdase.commons.server.kafka.model.Value;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
@@ -41,7 +42,7 @@ public class KafkaExampleConsumerApplication extends Application<KafkaExampleCon
 
   /**
    * Example1: create a new simple message listener with a simple handler that just stores the
-   * record values within a list It uses *
+   * record values within {@link #receivedMessages}. *
    *
    * <ul>
    *   *
@@ -54,21 +55,23 @@ public class KafkaExampleConsumerApplication extends Application<KafkaExampleCon
    * @param configuredObjectMapper Object mapper for deserializing JSON
    */
   private void createExampleMessageListener(ObjectMapper configuredObjectMapper) {
-    kafka.registerMessageHandler(
-        MessageHandlerRegistration.<Key, Value>builder()
+    kafka.createMessageListener(
+        MessageListenerRegistration.<Key, Value>builder()
             .withDefaultListenerConfig()
             .forTopicConfigs(Collections.singletonList(kafka.getTopicConfiguration("example0")))
             .withDefaultConsumer()
             .withKeyDeserializer(new KafkaJsonDeserializer<>(configuredObjectMapper, Key.class))
             .withValueDeserializer(new KafkaJsonDeserializer<>(configuredObjectMapper, Value.class))
-            .withHandler(record -> receivedMessages.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new AutocommitMLS<>(
+                    record -> receivedMessages.add(record.value()),
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
   }
 
   /**
    * Example2: create a new message listener with a simple handler that just stores the record
-   * values within a list It uses
+   * values within {@link #receivedLongs}
    *
    * <ul>
    *   <li>a customized listener that polls every second configured within the yaml
@@ -78,15 +81,17 @@ public class KafkaExampleConsumerApplication extends Application<KafkaExampleCon
    * </ul>
    */
   private void createExampleMessageListenerWithConfiguration() {
-    kafka.registerMessageHandler(
-        MessageHandlerRegistration.<Long, Long>builder()
+    kafka.createMessageListener(
+        MessageListenerRegistration.<Long, Long>builder()
             .withListenerConfig("example1")
             .forTopicConfigs(Collections.singletonList(kafka.getTopicConfiguration("example1")))
             .withConsumerConfig("consumerConfigExample")
             .withKeyDeserializer(new LongDeserializer())
             .withValueDeserializer(new LongDeserializer())
-            .withHandler(record -> receivedLongs.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new AutocommitMLS<>(
+                    record -> receivedLongs.add(record.value()),
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
   }
 
