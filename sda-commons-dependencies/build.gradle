@@ -22,6 +22,7 @@ ext {
 dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-bom:1.3.23")
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.11.800")
+  api enforcedPlatform("org.eclipse.jetty:jetty-bom:$jettyVersion")
   // add dropwizard-dependencies for Dropwizard 2.x.y
 
   constraints {
@@ -106,10 +107,6 @@ dependencies {
     api "org.jboss.weld.servlet:weld-servlet-core:$weldVersion"
     api "org.objenesis:objenesis:3.1" // not 3.x because we have a version conflict with Mockito
     api "org.yaml:snakeyaml:1.26"
-    api "org.eclipse.jetty:jetty-security:$jettyVersion" // io.confluent:rest-utils uses old Jetty version
-    api "org.eclipse.jetty:jetty-jmx:$jettyVersion" // see above
-    api "org.eclipse.jetty:jetty-io:$jettyVersion" // see above
-    api "org.eclipse.jetty:jetty-xml:$jettyVersion" // see above
     api "com.kjetland:mbknor-jackson-jsonschema_2.12:1.0.39"
 
     api "org.glassfish.hk2:hk2-api:2.5.0-b42"
