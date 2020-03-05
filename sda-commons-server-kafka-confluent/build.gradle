@@ -3,7 +3,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'com.commercehub.gradle.plugin:gradle-avro-plugin:0.10.0'
+    classpath 'com.commercehub.gradle.plugin:gradle-avro-plugin:0.18.0' // built using Avro 1.9.1
   }
 }
 
