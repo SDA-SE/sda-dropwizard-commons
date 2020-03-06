@@ -45,11 +45,6 @@ subprojects {
         }
     }
 
-    // TODO: reenable this setting on a new ci environment
-    // tasks.withType(Test) {
-    //     maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
-    // }
-
     version = System.getenv('SEMANTIC_VERSION')
 
     publishing {
@@ -148,6 +143,17 @@ configure(subprojects.findAll {
             rename ".*", "pom.xml"
         }
     }
+}
+
+/**
+ * Enable parallel test execution for most modules.
+ */
+configure(subprojects.findAll {
+  !Arrays.asList("sda-commons-server-mongo-testing", "sda-commons-server-morphia", "sda-commons-server-morphia-example").contains(it.name) }
+) {
+  tasks.withType(Test) {
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+  }
 }
 
 // Reconfigure the testReport task to display the results of all modules into a single report
