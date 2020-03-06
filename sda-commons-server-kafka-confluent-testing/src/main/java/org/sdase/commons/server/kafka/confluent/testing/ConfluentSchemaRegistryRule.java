@@ -4,22 +4,17 @@ import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.exceptions.SchemaRegistryException;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryConfig;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryRestApplication;
-import io.confluent.rest.Application;
 import io.confluent.rest.RestConfig;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.curator.test.InstanceSpec;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.Slf4jRequestLog;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Rule for starting a Confluent Schema Registry for integration testing issues.
@@ -39,8 +34,6 @@ public class ConfluentSchemaRegistryRule implements TestRule {
   private String hostname;
   private KafkaBrokerRule rule;
   private boolean started = false;
-
-  private static final Logger LOG = LoggerFactory.getLogger(ConfluentSchemaRegistryRule.class);
 
   private ConfluentSchemaRegistryRule() {}
 
@@ -80,7 +73,6 @@ public class ConfluentSchemaRegistryRule implements TestRule {
     Server server = application.createServer();
     server.start();
     started = true;
-    deactivateLoggingBecauseOfVersionConflicts();
   }
 
   public int getPort() {
@@ -92,42 +84,6 @@ public class ConfluentSchemaRegistryRule implements TestRule {
       throw new IllegalStateException("Cannot access before application is started");
     }
     return String.format(Locale.ROOT, "http://%s:%s", "localhost", port);
-  }
-
-  private void deactivateLoggingBecauseOfVersionConflicts() {
-    Slf4jRequestLog requestLog = // NOSONAR
-        (Slf4jRequestLog) // NOSONAR
-            Stream.of(Application.class.getDeclaredFields())
-                .filter(f -> "requestLog".equals(f.getName()))
-                .findFirst()
-                .map(
-                    f -> {
-                      try {
-                        f.setAccessible(true);
-                        return f.get(application);
-                      } catch (IllegalAccessException e) {
-                        LOG.warn(
-                            "Error when trying to remove logger for request log. Maybe the application will fail with NoSuchMethodException when logger is still active",
-                            e);
-                      }
-                      return null;
-                    })
-                .orElse(null);
-
-    Stream.of(Slf4jRequestLog.class.getDeclaredFields()) // NOSONAR
-        .filter(f -> f.getName().equals("logger"))
-        .findFirst()
-        .ifPresent(
-            f -> {
-              try {
-                f.setAccessible(true);
-                f.set(requestLog, null);
-              } catch (IllegalAccessException e) {
-                LOG.warn(
-                    "Error when trying to remove logger for request log. Maybe the application will fail with NoSuchMethodException when logger is still active",
-                    e);
-              }
-            });
   }
 
   protected void after() {
