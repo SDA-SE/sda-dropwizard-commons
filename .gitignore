@@ -128,3 +128,4 @@ classes/
 
 ### JRebel ###
 rebel.xml
+.envrc

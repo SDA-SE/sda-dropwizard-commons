@@ -6,6 +6,7 @@ buildscript {
 
 plugins {
     id 'java'
+    id 'signing'
     id 'maven-publish'
     id 'jacoco'
     id 'org.sonarqube' version '2.8'
@@ -15,6 +16,10 @@ plugins {
 allprojects {
     apply plugin: 'idea'
     idea.module.inheritOutputDirs = true
+    tasks.withType(Javadoc) {
+        failOnError false
+        options.addStringOption("-quiet")
+    }
 }
 
 // we need a repository for the combination of jacoco and sonarcloud
@@ -23,6 +28,7 @@ repositories {
 }
 
 subprojects {
+    apply plugin: 'signing'
     apply plugin: 'maven-publish'
     apply plugin: 'com.diffplug.gradle.spotless'
 
@@ -51,18 +57,29 @@ subprojects {
     // }
 
     version = System.getenv('SEMANTIC_VERSION')
+    ext.isReleaseVersion = !version.endsWith('-SNAPSHOT')
 
-    publishing {
-        repositories {
-            maven {
-                def releasesRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-releases/"
-                def snapshotsRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
-                url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+    publishing.repositories {
+        maven {
+            name 'sdaIntern'
+            def releasesRepoUrl = "https://nexus.sda-se.io/repository/sda-se-releases"
+            def snapshotsRepoUrl = "https://nexus.sda-se.io/repository/sda-se-snapshots"
+            url = isReleaseVersion ? releasesRepoUrl : snapshotsRepoUrl 
 
-                credentials {
-                    username System.getenv('SDA_NEXUS_USER')
-                    password System.getenv('SDA_NEXUS_PASSWORD')
-                }
+            credentials {
+                username System.getenv('SDA_NEXUS_USER')
+                password System.getenv('SDA_NEXUS_PASSWORD')
+            }
+        }
+        maven {
+            name 'mavenCentral'
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = isReleaseVersion ? releasesRepoUrl : snapshotsRepoUrl
+
+            credentials {
+                username System.getenv('SDA_SONATYPE_USER')
+                password System.getenv('SDA_SONATYPE_PASSWORD')
             }
         }
     }
@@ -123,21 +140,92 @@ configure(subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-c
  * - example modules and dependency-check should not be published at all
  */
 List<String> unpublishedModules = Arrays.asList("sda-commons-bom", "sda-commons-dependencies", "sda-commons-dependency-check")
-configure(subprojects.findAll {
-    !unpublishedModules.contains(it.name) && !it.name.endsWith("-example")
-}) {
+configure(subprojects.findAll { !unpublishedModules.contains(it.name) && !it.name.endsWith("-example") }) {
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         archiveClassifier = 'sources'
         from sourceSets.main.allJava
     }
 
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        archiveClassifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives jar
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    signing {
+        def signingKey = findProperty("signingKey")
+        def signingPassword = findProperty("signingPassword")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign configurations.archives
+    }
+
+    tasks.withType(Sign) {
+        onlyIf { gradle.taskGraph.hasTask(publishMavenPublicationToMavenCentralRepository) }
+    }
+
     publishing {
         publications {
             maven(MavenPublication) {
-                from components.java
+                // create a custom "Project Object Model"
+                pom {
+                    name = project.group + ":" + project.name
+                    description = 'A libraries to bootstrap services easily that follow the patterns and specifications promoted by the SDA SE'
+                    url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/master/LICENSE'
+                        }
+                    }
+                    organization {
+                        name = 'SDA SE Open Industry Solutions'
+                        url = 'https://sdase.org'
+                    }
+                    issueManagement {
+                        system = 'GitHub'
+                        url = 'https://github.com/SDA-SE/sda-dropwizard-commons/issues'
+                    }
+                    developers {
+                        developer {
+                            id = 'maintainer'
+                            name = 'SDA SE Open Industry Solutions Maintainer'
+                            email = 'sda-dropwizard-commons@sda.se'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
+                        developerConnection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
+                        url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
+                    }
+                }
 
-                artifact sourcesJar
+                from components.java
+                
+                artifact(sourcesJar) {
+                    classifier = 'sources'
+                }
+                
+                artifact(javadocJar) {
+                    classifier = 'javadoc'
+                }
+
+                project.tasks.signArchives.signatureFiles.each {
+                    artifact(it) {
+                        def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                        if (matcher.find()) {
+                            classifier = matcher.group(1)
+                        } else {
+                            classifier = null
+                        }
+                        extension = 'jar.asc'
+                    }
+                }
             }
         }
     }
@@ -147,6 +235,17 @@ configure(subprojects.findAll {
             from { generatePomFileForMavenPublication }
             rename ".*", "pom.xml"
         }
+    }
+    // some shortcut tasks
+    task publishSdaIntern {
+        dependsOn 'publishMavenPublicationToSdaInternRepository'   
+    }
+
+    task publishMavenCentral {
+        dependsOn 'signArchives'
+        dependsOn 'publishMavenPublicationToMavenCentralRepository'
+        
+        publishMavenPublicationToMavenCentralRepository.shouldRunAfter signArchives
     }
 }
 
