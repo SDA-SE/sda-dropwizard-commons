@@ -30,7 +30,7 @@ jobs:
           java-version: ${{ matrix.java_version }}
 
       - name: Test with Gradle
-        run: ./gradlew --parallel --continue check
+        run: ./gradlew --parallel --continue javadoc check
 
       - name: Generate Test Report
         if: always()
