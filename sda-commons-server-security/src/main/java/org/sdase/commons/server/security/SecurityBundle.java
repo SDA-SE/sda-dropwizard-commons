@@ -15,8 +15,8 @@ import org.sdase.commons.server.security.validation.ServerFactorySecurityAdvice;
 /**
  * A {@link io.dropwizard.Bundle} that enforces common rules for secure REST applications.
  *
- * <p>This bundle helps to avoid risks identified in the security guide <quote>"Dropwizard
- * Härtungsmaßnahmen"</quote> by <em>Timo Pagel</em>. Risk management is delegated to other classes,
+ * <p>This bundle helps to avoid risks identified in the security guide <cite>"Dropwizard
+ * Härtungsmaßnahmen"</cite> by <em>Timo Pagel</em>. Risk management is delegated to other classes,
  * that are initialized or invoked from this bundle:
  *
  * <ul>

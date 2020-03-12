@@ -23,7 +23,7 @@ import org.sdase.commons.server.auth.error.JwtAuthException;
  * A dropwizard authentication filter using JSON Web Token (JWT). The filter checks if JWT (Json Web
  * Token) sent by the user is a valid signed JWT to access a protected route or resource, the user
  * agent should send the JWT, typically in the Authorization header using the Bearer schema. The
- * content of the header should look like the following: Authorization: Bearer <token> If
+ * content of the header should look like the following: {@code Authorization: Bearer <token>}. If
  * acceptAnonymous is true, the auth filter accepts non-existing tokens and skips the initial
  * authorization.
  *

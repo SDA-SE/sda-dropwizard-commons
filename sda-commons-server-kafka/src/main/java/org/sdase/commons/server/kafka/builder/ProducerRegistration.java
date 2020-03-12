@@ -124,6 +124,8 @@ public class ProducerRegistration<K, V> {
   /**
    * creates a new builder
    *
+   * @param <K> the type of the Key
+   * @param <V> the type of the Value
    * @return builder
    */
   public static <K, V> TopicBuilder<K, V> builder() {

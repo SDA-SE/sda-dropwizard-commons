@@ -12,12 +12,11 @@ import org.junit.runners.model.Statement;
  *
  * <p>Example:
  *
- * <pre>{@code
- * class MyTest {
- *   @ClassRule public static final ENV = new EnvironmentRule().setEnv("DISABLE_JWT", "true");
- * }
- *
- * }</pre>
+ * <pre>
+ *   class MyTest {
+ *     &#64;ClassRule public static final ENV = new EnvironmentRule().setEnv("DISABLE_JWT", "true");
+ *   }
+ * </pre>
  */
 public class EnvironmentRule implements TestRule {
 

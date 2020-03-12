@@ -35,14 +35,13 @@ import org.slf4j.LoggerFactory;
  * <p>To activate the bundle, there is a {@link #builder()} to be used in the {@link
  * io.dropwizard.Application#initialize(Bootstrap) initialize} method:
  *
- * <pre>
- *    <code>public void initialize(final Bootstrap<AppConfig> bootstrap) {
- *       // ...
- *       bootstrap.addBundle(PrometheusBundle.builder().withPrometheusConfigProvider(AppConfig::getPrometheus).build());
- *       // ...
- *    }
- *    </code>
- * </pre>
+ * <pre>{@code
+ * public void initialize(final Bootstrap<AppConfig> bootstrap) {
+ *   // ...
+ *   bootstrap.addBundle(PrometheusBundle.builder().withPrometheusConfigProvider(AppConfig::getPrometheus).build());
+ *   // ...
+ * }
+ * }</pre>
  */
 public class PrometheusBundle implements Bundle, DynamicFeature {
 

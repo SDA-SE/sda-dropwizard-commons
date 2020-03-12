@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * <h4>Minimal</h4>
  *
- * <pre><code>
+ * <pre>
  *  public class ExampleApplication extends Application&lt;Configuration&gt; {
  *
  *    // ...
@@ -56,11 +56,11 @@ import org.slf4j.LoggerFactory;
  *          .build());
  *    }
  *  }
- * </code></pre>
+ * </pre>
  *
  * <h4>All Customizations</h4>
  *
- * <pre><code>
+ * <pre>
  *  public class ExampleApplication extends Application&lt;Configuration&gt; {
  *
  *    // ...
@@ -81,7 +81,7 @@ import org.slf4j.LoggerFactory;
  *          .build());
  *    }
  *  }
- * </code></pre>
+ * </pre>
  */
 public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
 

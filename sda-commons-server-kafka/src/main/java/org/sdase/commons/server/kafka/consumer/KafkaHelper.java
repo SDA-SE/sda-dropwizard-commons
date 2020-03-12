@@ -14,6 +14,8 @@ public class KafkaHelper {
 
   /**
    * @param consumer the Kafka consumer
+   * @param <K> the type of the Key
+   * @param <V> the type of the Value
    * @return the name of the consumer as used in log messages that is hidden within the metrics
    */
   public static <K, V> String getClientId(KafkaConsumer<K, V> consumer) {
@@ -24,6 +26,8 @@ public class KafkaHelper {
 
   /**
    * @param producer the Kafka producer
+   * @param <K> the type of the Key
+   * @param <V> the type of the Value
    * @return the name of the producer as used in log messages that is hidden within the metrics
    */
   public static <K, V> String getClientId(KafkaProducer<K, V> producer) {

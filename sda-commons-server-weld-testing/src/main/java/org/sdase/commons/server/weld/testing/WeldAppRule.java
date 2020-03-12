@@ -12,11 +12,9 @@ import javax.annotation.Nullable;
  * <p>Example usage:
  *
  * <pre>
- *    <code>
- *     &#64;ClassRule
- *     public static final WeldAppRule<AppConfiguration> RULE = new WeldAppRule<>(
- *         Application.class, ResourceHelpers.resourceFilePath("config.yml"));
- *    </code>
+ *   &#64;ClassRule
+ *   public static final WeldAppRule&lt;AppConfiguration&gt; RULE =
+ *       new WeldAppRule&lt;&gt;(Application.class, ResourceHelpers.resourceFilePath("config.yml"));
  * </pre>
  */
 public class WeldAppRule<C extends Configuration> extends DropwizardAppRule<C> {

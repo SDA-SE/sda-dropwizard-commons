@@ -20,12 +20,13 @@ public class SdaPlatformConfiguration extends Configuration {
    * if it is explicitly added using {@link
    * org.sdase.commons.server.starter.builder.CustomConfigurationProviders.ConsumerTokenConfigBuilder#withConsumerTokenConfigProvider(ConsumerTokenBundle.ConsumerTokenConfigProvider)}:
    *
-   * <pre>
-   *    <code>      SdaPlatformBundle<SdaPlatformConfiguration> bundle = SdaPlatformBundle.builder()
-   *             .usingSdaPlatformConfiguration()
-   *             .withConsumerTokenConfigProvider(SdaPlatformConfiguration::getConsumerToken)
-   *             // ...</code>
-   * </pre>
+   * <pre>{@code
+   * SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+   *     SdaPlatformBundle.builder()
+   *         .usingSdaPlatformConfiguration()
+   *         .withConsumerTokenConfigProvider(SdaPlatformConfiguration::getConsumerToken)
+   *         // ...
+   * }</pre>
    */
   private ConsumerTokenConfig consumerToken = new ConsumerTokenConfig();
 

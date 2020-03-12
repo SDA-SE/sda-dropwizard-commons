@@ -13,16 +13,17 @@ import javax.ws.rs.client.ClientRequestFilter;
  * add. This implementations may be anonymous. Example:
  *
  * <pre>
- *    <code>ClientRequestFilter filter = new AddRequestHeaderFilter() {
- *         {@literal @Override}
- *          public String getHeaderName() {
- *             return ConsumerTracing.TOKEN_HEADER;
- *          }
- *         {@literal @Override}
- *          public Optional<String> getHeaderValue() {
- *             return consumerTokenSupplier.get();
- *          }
- *    };</code>
+ *   ClientRequestFilter filter = new AddRequestHeaderFilter() {
+ *      &#64;Override
+ *      public String getHeaderName() {
+ *         return ConsumerTracing.TOKEN_HEADER;
+ *      }
+ *
+ *      &#64;Override
+ *      public Optional&#60;String&#62; getHeaderValue() {
+ *         return consumerTokenSupplier.get();
+ *      }
+ *   };
  * </pre>
  */
 public interface AddRequestHeaderFilter extends ClientRequestFilter {

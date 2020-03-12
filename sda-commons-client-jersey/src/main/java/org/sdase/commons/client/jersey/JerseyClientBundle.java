@@ -71,6 +71,7 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
      *     each client request configured with {@link PlatformClientBuilder#enableConsumerToken()}.
      *     If no such provider is configured, {@link PlatformClientBuilder#enableConsumerToken()}
      *     will fail.
+     * @param <C1> the type of the applications configuration class
      * @return a builder instance for further configuration
      */
     <C1 extends Configuration> FinalBuilder<C1> withConsumerTokenProvider(
