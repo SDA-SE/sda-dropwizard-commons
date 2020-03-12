@@ -79,6 +79,7 @@ public class JaegerBundle implements Bundle {
     // It's not perfect that GlobalTracerTestUtil comes from a test-jar, but
     // we could also copy the code into this project.
     environment.lifecycle().manage(onShutdown(GlobalTracerTestUtil::resetGlobalTracer));
+    environment.lifecycle().manage(onShutdown(tracer::close));
     environment.lifecycle().manage(prometheusMetricsFactory);
   }
 
