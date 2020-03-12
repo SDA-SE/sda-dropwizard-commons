@@ -15,27 +15,24 @@ import org.sdase.commons.server.jackson.filter.JacksonFieldFilterModule;
  * <p>If an annotated resource has three properties:
  *
  * <pre>
- *    <code>
- *    &#64;EnableFieldFilter
- *    public class Person {
- *      private String firstName;
- *      private String surName;
- *      private String nickName;
- *      // ...
- *    }
- *    </code>
+ *   &#64;EnableFieldFilter
+ *   public class Person {
+ *     private String firstName;
+ *     private String surName;
+ *     private String nickName;
+ *     // ...
+ *   }
  * </pre>
  *
  * <p>And the client requests {@code GET /person/ID?fields=firstName,surName} or {@code GET
  * /person/ID?fields=firstName&fields=surName}, the returned Json will be:
  *
- * <pre>{@code
- * {
- *    "firstName": "John",
- *    "surName": "Doe"
- * }
- *
- * }</pre>
+ * <pre>
+ *   {
+ *     "firstName": "John",
+ *     "surName": "Doe"
+ *   }
+ * </pre>
  *
  * <p>The {@link JacksonFieldFilterModule} has to be registered after the {@link JacksonHALModule}
  * is added to the {@link com.fasterxml.jackson.databind.ObjectMapper}. Both can be accomplished in

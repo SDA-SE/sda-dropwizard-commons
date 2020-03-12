@@ -14,7 +14,6 @@ import java.lang.annotation.Target;
  * <p>In case you have a flaky test, you can retry a test multiple times:
  *
  * <pre>
- * <code>
  *    &#64;Rule
  *    public final RetryRule retryRule = new RetryRule();
  *
@@ -23,7 +22,6 @@ import java.lang.annotation.Target;
  *    public void aFlakyTest() {
  *       ...
  *    }
- * </code>
  * </pre>
  *
  * <p>Please note that the retry rule must be used as {@code @Rule} and not as {@code @ClassRule}

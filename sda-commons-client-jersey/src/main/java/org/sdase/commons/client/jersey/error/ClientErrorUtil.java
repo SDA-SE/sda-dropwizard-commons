@@ -205,15 +205,18 @@ public class ClientErrorUtil {
    * clients} from interfaces. They do this conversion automatically.
    *
    * @param request the request lambda that is executing the request, e.g.
-   *     <pre>
-   * <code> WebTarget carsTarget = clientBuilder.buildGenericClient("cars").target(CARS_TARGET)<br/>
-   * Car car = ClientErrorUtil.convertExceptions(<br/>
-   *         () -> carsTarget.path("api").path("cars").path("123")<br/>
-   *                 .request(MediaType.APPLICATION_JSON)<br/>
-   *                 .get(Car.class)<br/>
-   *   );
-   * </code>
-   * </pre>
+   *     <pre>{@code
+   * WebTarget carsTarget = clientBuilder.buildGenericClient("cars").target(CARS_TARGET);
+   * Car car =
+   *   ClientErrorUtil.convertExceptions(
+   *       () ->
+   *           carsTarget
+   *               .path("api")
+   *               .path("cars")
+   *               .path("123")
+   *               .request(MediaType.APPLICATION_JSON)
+   *               .get(Car.class));
+   * }</pre>
    *
    * @param <T> the expected return type of the request body
    * @return the response body converted to the desired type

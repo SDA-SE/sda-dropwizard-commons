@@ -12,16 +12,13 @@ import org.slf4j.LoggerFactory;
  * implementation may be:
  *
  * <pre>
- *    <code>public class DbMigrationCommand extends ConfiguredCommand&lt;MyAppConfig&gt; {
+ *    public class DbMigrationCommand extends ConfiguredCommand&lt;MyAppConfig&gt; {
  *        &#x40;Override
  *        protected void run(Bootstrap&lt;MyAppConfig&gt; bootstrap, Namespace namespace, MyAppConfig configuration) {
  *           new DbMigrationService(configuration.getDatabase()).migrateDatabase();
  *        }
  *    }
- *    </code>
  * </pre>
- *
- * <p>
  */
 public class DbMigrationService {
 

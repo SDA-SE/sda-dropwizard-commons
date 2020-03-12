@@ -14,10 +14,9 @@ public interface ManagedShutdownListener extends Managed {
    * io.dropwizard.lifecycle.setup.LifecycleEnvironment#manage(Managed) manage} to avoid casting.
    *
    * <ul>
-   *   <li><code>environment.lifecycle().manage(onShutdown(myResource::close));</code>
-   *   <li><code>
-   *       environment.lifecycle().manage(onShutdown(() -> {resourceA.close(); resourceB.close;}));
-   *       </code>
+   *   <li>{@code environment.lifecycle().manage(onShutdown(myResource::close));}
+   *   <li>{@code environment.lifecycle().manage(onShutdown(() -> {resourceA.close();
+   *       resourceB.close;}));}
    * </ul>
    *
    * @param managedShutdownListener the consumer to call on application shutdown after no more

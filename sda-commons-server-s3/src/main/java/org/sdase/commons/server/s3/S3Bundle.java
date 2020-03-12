@@ -84,6 +84,8 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     /**
      * @param configurationProvider the method reference that provides the @{@link S3Configuration}
      *     from the applications configurations class
+     * @param <C> the type of the applications configuration class
+     * @return the same builder
      */
     <C extends Configuration> FinalBuilder<C> withConfigurationProvider(
         @NotNull S3ConfigurationProvider<C> configurationProvider);

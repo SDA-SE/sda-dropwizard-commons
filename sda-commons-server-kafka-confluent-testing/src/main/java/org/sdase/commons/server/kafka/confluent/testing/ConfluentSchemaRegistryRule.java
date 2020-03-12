@@ -144,7 +144,7 @@ public class ConfluentSchemaRegistryRule implements TestRule {
     return application.schemaRegistry().getAllVersions(subject, false);
   }
 
-  /** @returnA builder for the ConfluentSchemaRegistryRule */
+  /** @return A builder for the ConfluentSchemaRegistryRule */
   public static OptionalBuilder builder() {
     return new Builder();
   }

@@ -444,6 +444,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    *     default * {@link org.apache.kafka.common.serialization.StringDeserializer} * will be used
    * @param consumerConfig config of the consumer. If null a consumer with default config values is
    *     created.
+   * @param instanceId the id of the consumer that is appended to the client ID
    * @param <K> Key object type
    * @param <V> Value object type
    * @return a new kafka consumer
@@ -689,6 +690,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     /**
      * @param configurationProvider the method reference that provides the @{@link
      *     KafkaConfiguration} from the applications configurations class
+     * @param <C> the type of the applications configuration class
+     * @return the same builder instance
      */
     <C extends Configuration> FinalBuilder<C> withConfigurationProvider(
         @NotNull KafkaConfigurationProvider<C> configurationProvider);

@@ -27,7 +27,7 @@ import org.sdase.commons.server.jackson.EnableFieldFilter;
  * <ol>
  *   <li>The property is returned if no field filter is set
  *   <li>The property is <b>not</b> returned if the field (at the top level) is <b>not</b> part of
- *       the set of filtered fields (&fields= parameter)
+ *       the set of filtered fields ({@code &fields=} parameter)
  *   <li>The property is returned if it is part of a nested or embedded object
  * </ol>
  */

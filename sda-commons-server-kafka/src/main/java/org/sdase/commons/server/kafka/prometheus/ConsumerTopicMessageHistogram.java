@@ -47,9 +47,9 @@ public class ConsumerTopicMessageHistogram {
   /**
    * Observes the given message duration and adds the defined labels.
    *
-   * @param durationSeconds
-   * @param producerName
-   * @param topicName
+   * @param durationSeconds the duration to add
+   * @param producerName the name of the producer
+   * @param topicName the name of the topic
    */
   public void observe(double durationSeconds, String producerName, String topicName) {
     String[] labelValues = createLabelValuesForCurrentMessage(producerName, topicName);
@@ -59,8 +59,8 @@ public class ConsumerTopicMessageHistogram {
   /**
    * Creates all values for the labels required by the histogram in appropriate order.
    *
-   * @param producerName
-   * @param topicName
+   * @param producerName the name of the producer
+   * @param topicName the name of the topic
    * @return all values for the labels in the order they are registered in the histogram
    */
   @SuppressWarnings("static-method")

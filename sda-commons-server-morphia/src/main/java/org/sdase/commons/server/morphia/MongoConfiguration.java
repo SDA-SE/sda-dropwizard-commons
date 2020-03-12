@@ -64,7 +64,7 @@ public class MongoConfiguration {
    * javax.net.ssl.TrustManager}s to verify the connection. The string represents the content of a
    * regular PEM file, e.g.:
    *
-   * <pre><code>
+   * <pre>
    * -----BEGIN CERTIFICATE-----
    * MIIEkjCCA3qgAwIBAgIQCgFBQgAAAVOFc2oLheynCDANBgkqhkiG9w0BAQsFADA/
    * MSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT
@@ -73,7 +73,7 @@ public class MongoConfiguration {
    * PfZ+G6Z6h7mjem0Y+iWlkYcV4PIWL1iwBi8saCbGS5jN2p8M+X+Q7UNKEkROb3N6
    * KOqkqm57TH2H3eDJAkSnh6/DNFu0Qg==
    * -----END CERTIFICATE-----
-   * </code></pre>
+   * </pre>
    */
   private String caCertificate;
 

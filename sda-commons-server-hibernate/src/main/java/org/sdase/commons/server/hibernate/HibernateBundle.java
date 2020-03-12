@@ -104,6 +104,8 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
     /**
      * @param configurationProvider the method reference that provides the {@link DataSourceFactory}
      *     from the applications configuration class
+     * @param <T> Type of the Dropwizard configuration.
+     * @return the same builder instance
      */
     <T extends Configuration> ScanPackageBuilder<T> withConfigurationProvider(
         @NotNull DatabaseConfigurationProvider<T> configurationProvider);
@@ -112,16 +114,21 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
   public interface ScanPackageBuilder<T extends Configuration> {
     /**
      * @param packageToScanForEntities The package that should be scanned for entities recursively.
+     * @return the same builder instance
      */
     FinalBuilder<T> withEntityScanPackage(@NotNull String packageToScanForEntities);
 
     /**
      * @param markerClass A class or interface that defines the base package for recursive entity
      *     scanning. The class may be a marker interface or a specific entity class.
+     * @return the same builder instance
      */
     FinalBuilder<T> withEntityScanPackageClass(@NotNull Class<?> markerClass);
 
-    /** @param entityClasses The entity classes */
+    /**
+     * @param entityClasses The entity classes
+     * @return the same builder instance
+     */
     FinalBuilder<T> withEntityClasses(@NotNull Class<?>... entityClasses);
   }
 

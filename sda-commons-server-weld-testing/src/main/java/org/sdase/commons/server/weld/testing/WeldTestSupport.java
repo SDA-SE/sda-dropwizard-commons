@@ -14,11 +14,9 @@ import org.sdase.commons.server.weld.internal.WeldSupport;
  * <p>Example usage:
  *
  * <pre>
- *    <code>
- *     &#64;ClassRule
- *     public static final DropwizardAppRule<AppConfiguration> RULE = new DropwizardAppRule<>(
- *         new WeldTestSupport<>(Application.class, ResourceHelpers.resourceFilePath("config.yml")));
- *    </code>
+ *   &#64;ClassRule
+ *   public static final DropwizardAppRule&lt;AppConfiguration&gt; RULE = new DropwizardAppRule&lt;&gt;(
+ *       new WeldTestSupport&lt;&gt;(Application.class, ResourceHelpers.resourceFilePath("config.yml")));
  * </pre>
  */
 public class WeldTestSupport<C extends Configuration> extends DropwizardTestSupport<C> {

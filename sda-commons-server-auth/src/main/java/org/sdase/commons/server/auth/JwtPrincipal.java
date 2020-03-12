@@ -34,6 +34,7 @@ public class JwtPrincipal implements Principal {
    * @param jwt The token this Principal is created from. May be required to pass it to other
    *     services.
    * @param claims The claims in the verified {@code jwt}.
+   * @return an existing and verified principal with token and claims.
    */
   public static JwtPrincipal verifiedPrincipal(String jwt, Map<String, Claim> claims) {
     return new JwtPrincipal(DEFAULT_NAME, jwt, claims);
