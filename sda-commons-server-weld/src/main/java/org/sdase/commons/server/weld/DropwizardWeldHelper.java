@@ -13,11 +13,9 @@ import org.sdase.commons.server.weld.internal.WeldSupport;
  * <p>Example usage:
  *
  * <pre>
- *     <code>
- *     public static void main(final String[]args) throws Exception {
- *         DropwizardWeldHelper.run(Application.class, args);
- *     }
- *     </code>
+ *   public static void main(final String[] args) throws Exception {
+ *     DropwizardWeldHelper.run(Application.class, args);
+ *   }
  * </pre>
  */
 public class DropwizardWeldHelper {

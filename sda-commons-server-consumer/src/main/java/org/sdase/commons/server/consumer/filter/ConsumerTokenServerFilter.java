@@ -22,7 +22,10 @@ public class ConsumerTokenServerFilter implements ContainerRequestFilter {
   private final boolean requireIdentifiedConsumer;
   private final List<Pattern> excludePatterns;
 
-  /** @param requireIdentifiedConsumer if an identified customer is required to fulfill requests */
+  /**
+   * @param requireIdentifiedConsumer if an identified customer is required to fulfill requests
+   * @param excludeRegex a list of regex pattern for paths that are excluded from the filter
+   */
   public ConsumerTokenServerFilter(boolean requireIdentifiedConsumer, List<String> excludeRegex) {
     this.requireIdentifiedConsumer = requireIdentifiedConsumer;
     this.excludePatterns =

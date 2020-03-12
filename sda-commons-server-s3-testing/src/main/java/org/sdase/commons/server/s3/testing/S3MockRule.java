@@ -26,10 +26,8 @@ import org.slf4j.LoggerFactory;
  * <p>Example usage:
  *
  * <pre>
- *     <code>
- *         &#64;ClassRule
- *         public static final S3MockRule S3_MOCK = S3MockRule.builder().build();
- *     </code>
+ *   &#64;ClassRule
+ *   public static final S3MockRule S3_MOCK = S3MockRule.builder().build();
  * </pre>
  */
 public class S3MockRule extends ExternalResource {
@@ -108,7 +106,7 @@ public class S3MockRule extends ExternalResource {
   /**
    * Creates a client to manipulate the object storage during tests.
    *
-   * @return
+   * @return get the client from the AWS SDK
    */
   public AmazonS3 getClient() {
     return AmazonS3ClientBuilder.standard()
@@ -157,7 +155,7 @@ public class S3MockRule extends ExternalResource {
     /**
      * Create a bucket on the S3 service for use during testing.
      *
-     * @param bucketName
+     * @param bucketName the name of the bucket
      * @return The builder.
      */
     public S3MockRule.Builder createBucket(String bucketName) {
@@ -169,10 +167,10 @@ public class S3MockRule extends ExternalResource {
      * Put a file as an object in the S3 service for use during testing. Automatically creates a
      * bucket.
      *
-     * @param bucketName
-     * @param key
-     * @param file
-     * @return
+     * @param bucketName the name of the bucket
+     * @param key the key to store the file in
+     * @param file the content to store as file
+     * @return The builder.
      */
     public S3MockRule.Builder putObject(String bucketName, String key, File file) {
       createBucket(bucketName);
@@ -184,9 +182,9 @@ public class S3MockRule extends ExternalResource {
      * Put a string as an object in the S3 service for use during testing. Automatically creates a
      * bucket.
      *
-     * @param bucketName
-     * @param key
-     * @param content
+     * @param bucketName the name of the bucket
+     * @param key the key to store the file in
+     * @param content the content to store as string
      * @return The builder.
      */
     public S3MockRule.Builder putObject(String bucketName, String key, String content) {
@@ -199,9 +197,9 @@ public class S3MockRule extends ExternalResource {
      * Put an input stream as an object in the S3 service for use during testing. Automatically
      * creates a bucket.
      *
-     * @param bucketName
-     * @param key
-     * @param stream
+     * @param bucketName the name of the bucket
+     * @param key the key to store the file in
+     * @param stream the content to store as stream
      * @return The builder
      */
     public S3MockRule.Builder putObject(String bucketName, String key, InputStream stream) {

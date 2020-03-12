@@ -12,60 +12,44 @@ public class HttpClientConfiguration {
   // the same headers as the POST request.
   private boolean gzipEnabledForRequests = false;
 
-  /**
-   * Returns if the http client should use chunked encoding, disabled by default.
-   *
-   * @return
-   */
+  /** @return if the http client should use chunked encoding, disabled by default. */
   public boolean isChunkedEncodingEnabled() {
     return chunkedEncodingEnabled;
   }
 
   /**
-   * Configures if the http client should use chunked encoding.
-   *
-   * @param chunkedEncodingEnabled
-   * @return
+   * @param chunkedEncodingEnabled if true, the http client should use chunked encoding.
+   * @return the configuration to enable chained configurations
    */
   public HttpClientConfiguration setChunkedEncodingEnabled(boolean chunkedEncodingEnabled) {
     this.chunkedEncodingEnabled = chunkedEncodingEnabled;
     return this;
   }
 
-  /**
-   * Returns if the http client should accept gzipped responses, enabled by default.
-   *
-   * @return
-   */
+  /** @return if the http client should accept gzipped responses, enabled by default. */
   public boolean isGzipEnabled() {
     return gzipEnabled;
   }
 
   /**
-   * Configure if the http client should accept gzipped responses.
+   * Configure
    *
-   * @param gzipEnabled
-   * @return
+   * @param gzipEnabled if true, the http client should accept gzipped responses.
+   * @return the configuration to enable chained configurations
    */
   public HttpClientConfiguration setGzipEnabled(boolean gzipEnabled) {
     this.gzipEnabled = gzipEnabled;
     return this;
   }
 
-  /**
-   * Returns if the http client should gzip request bodies, disabled by default.
-   *
-   * @return
-   */
+  /** @return if the http client should gzip request bodies, disabled by default. */
   public boolean isGzipEnabledForRequests() {
     return gzipEnabledForRequests;
   }
 
   /**
-   * Configure if the http client should gzip request bodies.
-   *
-   * @param gzipEnabledForRequests
-   * @return
+   * @param gzipEnabledForRequests if true, the http client should gzip request bodies.
+   * @return the configuration to enable chained configurations
    */
   public HttpClientConfiguration setGzipEnabledForRequests(boolean gzipEnabledForRequests) {
     this.gzipEnabledForRequests = gzipEnabledForRequests;

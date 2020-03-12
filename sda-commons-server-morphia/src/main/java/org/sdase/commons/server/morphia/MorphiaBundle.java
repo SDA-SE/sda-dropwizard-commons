@@ -160,6 +160,8 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     /**
      * @param configurationProvider the method reference that provides the @{@link
      *     MongoConfiguration} from the applications configurations class
+     * @param <C> the type of the applications configuration class
+     * @return a builder instance for further configuration
      */
     <C extends Configuration> ScanPackageBuilder<C> withConfigurationProvider(
         @NotNull MongoConfigurationProvider<C> configurationProvider);
@@ -170,6 +172,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     /**
      * @param entityClass A model class that represents an entity. Using explicit classes instead of
      *     scanning packages boosts application startup.
+     * @return a builder instance for further configuration
      */
     default DisableConverterBuilder<C> withEntity(Class<?> entityClass) {
       return withEntities(entityClass);
@@ -178,6 +181,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     /**
      * @param entityClasses Model classes that represent entities. Using explicit classes instead of
      *     scanning packages boosts application startup.
+     * @return a builder instance for further configuration
      */
     default DisableConverterBuilder<C> withEntities(Class<?>... entityClasses) {
       return withEntities(asList(entityClasses));
@@ -186,17 +190,20 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     /**
      * @param entityClasses Model classes that represent entities. Using explicit classes instead of
      *     scanning packages boosts application startup.
+     * @return a builder instance for further configuration
      */
     DisableConverterBuilder<C> withEntities(@NotNull Iterable<Class<?>> entityClasses);
 
     /**
      * @param packageToScanForEntities The package that should be scanned for entities recursively.
+     * @return a builder instance for further configuration
      */
     DisableConverterBuilder<C> withEntityScanPackage(@NotNull String packageToScanForEntities);
 
     /**
      * @param markerClass A class or interface that defines the base package for recursive entity
      *     scanning. The class may be a marker interface or a specific entity class.
+     * @return a builder instance for further configuration
      */
     default DisableConverterBuilder<C> withEntityScanPackageClass(Class markerClass) {
       return withEntityScanPackage(markerClass.getPackage().getName());
@@ -209,6 +216,8 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     /**
      * Disables the default {@link TypeConverter}s defined in {@link
      * MorphiaBundle#DEFAULT_CONVERTERS}.
+     *
+     * @return a builder instance for further configuration
      */
     CustomConverterBuilder<C> disableDefaultTypeConverters();
   }
@@ -221,6 +230,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
      * dev.morphia.converters.Converters#addConverter(TypeConverter)}
      *
      * @param typeConverters the converters to add
+     * @return a builder instance for further configuration
      */
     CustomConverterBuilder<C> addCustomTypeConverters(Iterable<TypeConverter> typeConverters);
 
@@ -229,6 +239,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
      * dev.morphia.converters.Converters#addConverter(TypeConverter)}
      *
      * @param typeConverters the converters to add
+     * @return a builder instance for further configuration
      */
     default CustomConverterBuilder<C> addCustomTypeConverters(TypeConverter... typeConverters) {
       return addCustomTypeConverters(asList(typeConverters));
@@ -239,6 +250,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
      * dev.morphia.converters.Converters#addConverter(TypeConverter)}
      *
      * @param typeConverter the converter to add
+     * @return a builder instance for further configuration
      */
     default CustomConverterBuilder<C> addCustomTypeConverter(TypeConverter typeConverter) {
       return addCustomTypeConverters(singletonList(typeConverter));
@@ -253,6 +265,8 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
      * modified.
      *
      * <p><strong>This is the default option.</strong>
+     *
+     * @return a builder instance for further configuration
      */
     FinalBuilder<C> ensureIndexes();
 
@@ -261,22 +275,34 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
      * has to call {@link Datastore#ensureIndexes()} manually to create indexes for the entity
      * collections. This may be necessary if existing indexes are modified and need to be dropped
      * before recreating them.
+     *
+     * @return a builder instance for further configuration
      */
     FinalBuilder<C> skipEnsureIndexes();
 
     /**
      * Executes {@link Datastore#ensureIndexes()} after connecting to let Morphia create all
      * annotated indexes. If existing indexes are modified all indexes are dropped and recreated.
+     *
+     * @return a builder instance for further configuration
      */
     FinalBuilder<C> forceEnsureIndexes();
   }
 
   public interface FinalBuilder<C extends Configuration> extends ScanPackageBuilder<C> {
 
-    /** Enable JSR303 validation for entities. */
+    /**
+     * Enable JSR303 validation for entities.
+     *
+     * @return a builder instance for further configuration
+     */
     FinalBuilder<C> withValidation();
 
-    /** Disable JSR303 validation for entities. */
+    /**
+     * Disable JSR303 validation for entities.
+     *
+     * @return a builder instance for further configuration
+     */
     FinalBuilder<C> withoutValidation();
 
     /**

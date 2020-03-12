@@ -8,18 +8,16 @@ import org.jboss.weld.environment.servlet.Listener;
 /**
  * Dropwizard Bundle that adds a listener for using Injection inside of servlets.
  *
- * <p>The use of the Bundle is optional, but the use of the <code>DropwizardWeldHelper</code> is
+ * <p>The use of the Bundle is optional, but the use of the {@link DropwizardWeldHelper} is
  * required.
  *
  * <p>Example usage:
  *
- * <pre>
- *     <code>
- *     public void initialize(final Bootstrap<AppConfiguration> bootstrap) {
- *         bootstrap.addBundle(new WeldBundle());
- *     }
- *     </code>
- * </pre>
+ * <pre>{@code
+ * public void initialize(final Bootstrap<AppConfiguration> bootstrap) {
+ *   bootstrap.addBundle(new WeldBundle());
+ * }
+ * }</pre>
  */
 public class WeldBundle implements Bundle {
   @Override

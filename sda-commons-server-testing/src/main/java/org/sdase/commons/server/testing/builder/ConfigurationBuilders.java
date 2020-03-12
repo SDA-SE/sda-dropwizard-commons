@@ -20,9 +20,10 @@ public interface ConfigurationBuilders {
      * Sets the {@link io.dropwizard.server.DefaultServerFactory#setJerseyRootPath(String) jersey
      * root path}, referenced in the {@code config.yaml} as
      *
-     * <pre><code>
-     *    server:
-     *      rootPath: /*</code></pre>
+     * <pre>
+     *   server:
+     *     rootPath: /*
+     * </pre>
      *
      * @param rootPath the path to set as root of the API
      * @return the builder instance

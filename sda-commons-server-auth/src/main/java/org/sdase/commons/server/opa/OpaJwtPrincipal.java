@@ -33,7 +33,9 @@ public class OpaJwtPrincipal implements Principal {
    * @param jwt The token this Principal is created from. May be required to pass it to other
    *     services.
    * @param claims The claims in the verified {@code jwt}.
+   * @param om The Object Mapper to use to decode the constraints.
    * @param constraints Authorization details used within the service for limiting result data
+   * @return the principal that contains a jwt token, claims, and constraings that can be decoded
    */
   public static OpaJwtPrincipal create(
       String jwt, Map<String, Claim> claims, JsonNode constraints, ObjectMapper om) {

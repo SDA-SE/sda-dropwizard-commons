@@ -7,7 +7,7 @@ import org.sdase.commons.server.starter.SdaPlatformBundle;
 /**
  * The final builder that is able to configure all the optional settings.
  *
- * @param <C>
+ * @param <C> the type of the applications configuration class
  */
 public interface PlatformBundleBuilder<C extends Configuration>
     extends CorsCustomizer<C>, SecurityCustomizer<C>, JacksonCustomizer<C> {

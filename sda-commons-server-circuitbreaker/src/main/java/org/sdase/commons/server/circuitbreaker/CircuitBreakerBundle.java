@@ -113,6 +113,7 @@ public class CircuitBreakerBundle<T extends Configuration> implements Configured
      * Provide a custom default configuration for circuit breakers created using the bundle.
      *
      * @param config The circuit breaker configuration.
+     * @param <T> Type of the Dropwizard configuration.
      * @return the same builder instance
      */
     <T extends Configuration> ExceptionBuilder<T> withCustomConfig(
@@ -133,6 +134,7 @@ public class CircuitBreakerBundle<T extends Configuration> implements Configured
     /**
      * Use the default configuration for circuit breakers created using the bundle.
      *
+     * @param <T> Type of the Dropwizard configuration.
      * @return the same builder instance
      */
     <T extends Configuration> ExceptionBuilder<T> withDefaultConfig();

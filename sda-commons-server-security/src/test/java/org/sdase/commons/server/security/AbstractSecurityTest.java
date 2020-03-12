@@ -24,21 +24,23 @@ import org.junit.Test;
  * Test that checks the application with a given config for vulnerabilities. This test may be Used
  * as a template to check other applications for security risks. Usage:
  *
- * <pre><code>   public class MyAppIsSecureIT extends AbstractSecurityTest<Configuration> {
+ * <pre>
+ *   public class MyAppIsSecureIT extends AbstractSecurityTest<Configuration> {
  *
- *   {@literal @ClassRule}
- *    public static final DropwizardAppRule<Configuration> DW = new DropwizardAppRule<>(
- *          MyApp.class,
- *          ResourceHelpers.resourceFilePath("default-config.yaml")
- *    );
+ *     &#64;ClassRule
+ *     public static final DropwizardAppRule<Configuration> DW = new DropwizardAppRule<>(
+ *         MyApp.class,
+ *         ResourceHelpers.resourceFilePath("default-config.yaml")
+ *     );
  *
- *   {@literal @Override}
- *    DropwizardAppRule<Configuration> getAppRule() {
+ *     &#64;Override
+ *     DropwizardAppRule<Configuration> getAppRule() {
  *       return DW;
- *    }
+ *     }
  *
- *    // add custom security checks here if needed
- * }</code></pre>
+ *     // add custom security checks here if needed
+ *   }
+ * }</pre>
  */
 public abstract class AbstractSecurityTest<C extends Configuration> {
 

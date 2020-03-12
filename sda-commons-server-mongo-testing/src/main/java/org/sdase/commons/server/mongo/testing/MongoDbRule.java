@@ -54,15 +54,13 @@ import org.slf4j.LoggerFactory;
  * <p>Example usage:
  *
  * <pre>
- *     <code>
- *         &#64;ClassRule
- *         public static final MongoDbRule RULE = MongoDbRule
- *               .builder()
- *               .withDatabase("my_db")
- *               .withUsername("my_user")
- *               .withPassword("my_s3cr3t")
- *               .build();
- *     </code>
+ * &#64;ClassRule
+ * public static final MongoDbRule RULE = MongoDbRule
+ *     .builder()
+ *     .withDatabase("my_db")
+ *     .withUsername("my_user")
+ *     .withPassword("my_s3cr3t")
+ *     .build();
  * </pre>
  */
 public class MongoDbRule extends ExternalResource {
@@ -77,8 +75,7 @@ public class MongoDbRule extends ExternalResource {
           new ExtractedArtifactStoreBuilder()
               .defaults(Command.MongoD)
               .download(createDownloadConfig());
-      // avoid recurring firewall requests on mac,
-      // see
+      // avoid recurring firewall requests on mac, see
       // https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues/40#issuecomment-14969151
       if (SystemUtils.IS_OS_MAC_OSX) {
         artifactStoreBuilder.executableNaming((prefix, postfix) -> "mongod");
@@ -371,6 +368,9 @@ public class MongoDbRule extends ExternalResource {
     /**
      * Configure the username that can be used to connect to the MongoDB instance, the default user
      * is "dbuser" ({@link #DEFAULT_USER}).
+     *
+     * @param username the username
+     * @return a builder instance for further configuration
      */
     public Builder withUsername(String username) {
       this.username = username;
@@ -380,6 +380,9 @@ public class MongoDbRule extends ExternalResource {
     /**
      * Configure the password that can be used to connect to the MongoDB instance, the default
      * password is "sda123" ({@link #DEFAULT_PASSWORD}).
+     *
+     * @param password the password
+     * @return a builder instance for further configuration
      */
     public Builder withPassword(String password) {
       this.password = password;
@@ -389,6 +392,9 @@ public class MongoDbRule extends ExternalResource {
     /**
      * Configure the database that can be used to connect to the MongoDB instance, the default
      * database is "default_db" ({@link #DEFAULT_DATABASE}).
+     *
+     * @param database the database
+     * @return a builder instance for further configuration
      */
     public Builder withDatabase(String database) {
       this.database = database;
@@ -398,6 +404,9 @@ public class MongoDbRule extends ExternalResource {
     /**
      * Configure the MongoDB version to start, by default the latest production version is used
      * ({@link #DEFAULT_VERSION}).
+     *
+     * @param version the version
+     * @return a builder instance for further configuration
      */
     public Builder withVersion(IFeatureAwareVersion version) {
       this.version = version;
@@ -407,6 +416,9 @@ public class MongoDbRule extends ExternalResource {
     /**
      * Configures the timeout for database startup, the default value is one minute ({@link
      * #DEFAULT_TIMEOUT_MS}).
+     *
+     * @param timeoutInMillis the timeout in milliseconds
+     * @return a builder instance for further configuration
      */
     public Builder withTimeoutInMillis(long timeoutInMillis) {
       this.timeoutInMillis = timeoutInMillis;
@@ -416,6 +428,8 @@ public class MongoDbRule extends ExternalResource {
     /**
      * Allows to enable scripting using JavaScript, which is disabled by default. Avoid this option,
      * as it expose your application to security risks.
+     *
+     * @return a builder instance for further configuration
      */
     public Builder enableScripting() {
       this.scripting = true;

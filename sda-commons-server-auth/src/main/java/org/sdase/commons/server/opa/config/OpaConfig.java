@@ -15,8 +15,8 @@ public class OpaConfig {
   /**
    * dot-separated package name as defined in the policy
    *
-   * <p>The package name is reformatted as part of the URL. Test <code>my.policy</code> becomes
-   * <code>my/policy</code>
+   * <p>The package name is reformatted as part of the URL. Test {@code my.policy} becomes {@code
+   * my/policy}
    */
   @NotNull private String policyPackage = "";
 

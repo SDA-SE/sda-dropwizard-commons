@@ -11,23 +11,25 @@ import org.junit.runners.model.Statement;
  * only available once another rule is completely initialized. This is often required if one rule
  * opens a random port that the other rule want to connect to.
  *
- * <p>The wrapped rule can be accessed via {@link LazyRule::getRule()}
+ * <p>The wrapped rule can be accessed via {@link LazyRule#getRule()}
  *
  * <p>Example:
  *
- * <pre>{@code
- * class MyTest {
- *    private static final WireMockClassRule WIRE = new WireMockClassRule(wireMockConfig().dynamicPort());
- *    private static final LazyRule<DropwizardAppRule<AppConfiguration>> DW = new LazyRule<>(
- *          () -> new DropwizardAppRule<>(
- *                TestApplication.class,
- *                ResourceHelpers.resourceFilePath("test-config.yml"),
- *                ConfigOverride.config("url", WIRE.baseUrl())));
+ * <pre>
+ *   class MyTest {
+ *     private static final WireMockClassRule WIRE =
+ *         new WireMockClassRule(wireMockConfig().dynamicPort());
+ *     private static final LazyRule&#60;DropwizardAppRule&#60;AppConfiguration&#62;&#62; DW =
+ *         new LazyRule&#60;&#62;(
+ *             () -&#62;
+ *                 new DropwizardAppRule&#60;&#62;(
+ *                     TestApplication.class,
+ *                     ResourceHelpers.resourceFilePath("test-config.yml"),
+ *                     ConfigOverride.config("url", WIRE.baseUrl())));
  *
- *    @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(WIRE).around(DW);
- * }
- *
- * }</pre>
+ *     &#64;ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(WIRE).around(DW);
+ *   }
+ * </pre>
  */
 public class LazyRule<T extends TestRule> implements TestRule {
   private Supplier<T> ruleSupplier;

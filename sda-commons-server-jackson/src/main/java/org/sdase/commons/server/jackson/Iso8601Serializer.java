@@ -21,14 +21,15 @@ import java.time.format.DateTimeFormatter;
  *
  * <p>Use the serializer at {@code ZonedDateTime} properties to activate it:
  *
- * <pre><code>   class MyResource {
- *   {@literal @JsonSerialize(using = Iso8601Serializer.class)}
- *    private ZonedDateTime createdAt;
- *    // writes json as {"createdAt": "2018-11-21T13:16:47Z"} for UTC
- *    // or {"createdAt": "2018-11-21T13:16:47+01:00"} for CET
- *
- *    // ...
- * }</code></pre>
+ * <pre>
+ *   class MyResource {
+ *     &#64;JsonSerialize(using = Iso8601Serializer.class)
+ *     private ZonedDateTime createdAt;
+ *     // writes json as {"createdAt": "2018-11-21T13:16:47Z"} for UTC
+ *     // or {"createdAt": "2018-11-21T13:16:47+01:00"} for CET
+ *     // ...
+ *   }
+ * }</pre>
  *
  * <p>Note that there is a subclass to write including milli seconds: {@link
  * Iso8601Serializer.WithMillis}
@@ -77,14 +78,15 @@ public class Iso8601Serializer extends StdSerializer<ZonedDateTime> {
    *
    * <p>Use the serializer at {@code ZonedDateTime} properties to activate it:
    *
-   * <pre><code>   class MyResource {
-   *   {@literal @JsonSerialize(using = Iso8601Serializer.WithMillis.class)}
-   *    private ZonedDateTime createdAt;
-   *    // writes json as {"createdAt": "2018-11-21T13:16:47.123Z"} for UTC
-   *    // or {"createdAt": "2018-11-21T13:16:47.123+01:00"} for CET
-   *
-   *    // ...
-   * }</code></pre>
+   * <pre>
+   *   class MyResource {
+   *     &#64;JsonSerialize(using = Iso8601Serializer.WithMillis.class)
+   *     private ZonedDateTime createdAt;
+   *     // writes json as {"createdAt": "2018-11-21T13:16:47.123Z"} for UTC
+   *     // or {"createdAt": "2018-11-21T13:16:47.123+01:00"} for CET
+   *     // ...
+   *   }
+   * }</pre>
    */
   public static class WithMillis extends Iso8601Serializer {
 

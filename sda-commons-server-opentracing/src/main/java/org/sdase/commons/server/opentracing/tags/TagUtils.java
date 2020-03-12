@@ -33,8 +33,8 @@ public class TagUtils {
    * 'value1']; [key1 = 'value2']; ...
    *
    * @param headers The {@link MultivaluedMap} with {@link String} keys
-   * @return Formatted {@link String} of header keys and values or <code>null</code>, if <code>null
-   *     </code> was passed as parameter.
+   * @return Formatted {@link String} of header keys and values or {@code null}, if {@code null} was
+   *     passed as parameter.
    */
   public static String convertHeadersToString(MultivaluedMap<String, ?> headers) {
     if (headers != null) {

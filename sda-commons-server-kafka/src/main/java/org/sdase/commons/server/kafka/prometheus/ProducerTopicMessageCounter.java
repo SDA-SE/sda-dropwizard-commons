@@ -46,6 +46,8 @@ public class ProducerTopicMessageCounter {
   /**
    * Increases the counter by 1.
    *
+   * @param producerName the producer name
+   * @param topicName the topic name
    * @see io.prometheus.client.Counter.Child#inc
    */
   public void increase(String producerName, String topicName) {

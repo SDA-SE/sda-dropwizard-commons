@@ -15,11 +15,13 @@ import javax.ws.rs.core.UriInfo;
 
 /**
  * Helper utility that can be registered in the Jersey environment to be injected into services. It
- * supports checking if the client requested to embed a linked resource. Usage: <code>
+ * supports checking if the client requested to embed a linked resource. Usage:
+ *
+ * <pre>
  *   if (embedHelper.isEmbeddingOfRelationRequested("owner")) {
- *    carResource.setOwner(createPerson(ownerId));
+ *     carResource.setOwner(createPerson(ownerId));
  *   }
- * </code>
+ * </pre>
  *
  * <p>Clients may request to resolve a link as an embedded resource by appending the query param
  * {@code embed} to the request uri containing all the named relations they want to embed. {@code
@@ -27,8 +29,8 @@ import javax.ws.rs.core.UriInfo;
  * relation names separated by comma, e.g.:
  *
  * <ul>
- *   <li>GET /api/cars?embed=drivers&embed=owner
- *   <li>GET /api/cars?embed=drivers,owner
+ *   <li>{@code GET /api/cars?embed=drivers&embed=owner}
+ *   <li>{@code GET /api/cars?embed=drivers,owner}
  * </ul>
  */
 public class EmbedHelper implements Feature {
@@ -48,8 +50,8 @@ public class EmbedHelper implements Feature {
   }
 
   /**
-   * @param relationName the name of the relation, e.g. {@code project} in <code>
-   *     {@literal { "_links": {"project": {"href": "http..."}}}}</code>
+   * @param relationName the name of the relation, e.g. {@code project} in @{code { "_links":
+   *     {"project": {"href": "http..."}}}}
    * @return if the client requested to embed the resource referenced in the link with the given
    *     relation name
    */
