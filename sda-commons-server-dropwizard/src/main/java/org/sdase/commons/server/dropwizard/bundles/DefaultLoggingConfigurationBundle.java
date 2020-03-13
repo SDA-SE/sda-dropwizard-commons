@@ -7,7 +7,8 @@ import org.sdase.commons.server.dropwizard.logging.ConsoleAppenderInjectorSource
 
 /**
  * The {@code DefaultLoggingConfigurationBundle} allows to configure the console logger with the
- * settings desired by the SDA.
+ * settings desired by the SDA. Requires that the environment variable {@code ENABLE_JSON_LOGGING}
+ * is set to {@code "true"}.
  */
 public class DefaultLoggingConfigurationBundle implements Bundle {
   public static Builder builder() {
