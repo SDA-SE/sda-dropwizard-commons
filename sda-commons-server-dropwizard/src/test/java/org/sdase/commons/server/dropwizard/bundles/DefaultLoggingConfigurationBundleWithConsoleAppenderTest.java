@@ -40,5 +40,6 @@ public class DefaultLoggingConfigurationBundleWithConsoleAppenderTest {
 
     assertThat(consoleAppenderFactory.getLogFormat()).isEqualTo("%-5level %logger{36} - %msg%n");
     assertThat(consoleAppenderFactory.getThreshold()).isEqualTo("DEBUG");
+    assertThat(consoleAppenderFactory.getLayout()).isNull();
   }
 }

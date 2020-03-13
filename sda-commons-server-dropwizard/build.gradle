@@ -1,10 +1,12 @@
 dependencies {
   compile 'io.dropwizard:dropwizard-core'
+  compile 'io.dropwizard:dropwizard-json-logging'
 
   // should not be needed in Dropwizard 2 (https://github.com/dropwizard/dropwizard/issues/2318#issuecomment-485385183)
   compile 'javax.activation:javax.activation-api'
   compile 'javax.xml.bind:jaxb-api'
 
+  testCompile project(':sda-commons-server-testing')
   testCompile 'junit:junit'
   testCompile 'org.assertj:assertj-core'
   testCompile 'io.dropwizard:dropwizard-testing'

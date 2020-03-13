@@ -41,5 +41,6 @@ public class DefaultLoggingConfigurationBundleWithUnconfiguredConsoleAppenderTes
     assertThat(consoleAppenderFactory.getLogFormat())
         .isEqualTo("[%d] [%-5level] [%X{Trace-Token}] %logger{36} - %msg%n");
     assertThat(consoleAppenderFactory.getThreshold()).isEqualTo("INFO");
+    assertThat(consoleAppenderFactory.getLayout()).isNull();
   }
 }
