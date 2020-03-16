@@ -115,7 +115,7 @@ dependencies {
     api "net.javacrumbs.json-unit:json-unit-assertj:2.14.0"
     api "org.assertj:assertj-core:3.15.0"
     api "org.awaitility:awaitility:3.1.2"
-    api "org.mockito:mockito-core:3.3.0"
+    api "org.mockito:mockito-core:3.3.3"
     api "org.scala-lang:scala-library:2.12.4" // clash within io.findify:s3mock_2.12
     api "com.typesafe:config:1.3.2" // clash within io.findify:s3mock_2.12
     api "io.opentracing:opentracing-mock:0.33.0"
