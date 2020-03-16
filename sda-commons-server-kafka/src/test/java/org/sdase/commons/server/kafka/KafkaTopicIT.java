@@ -286,7 +286,7 @@ public class KafkaTopicIT {
     try (AdminClient admin = KAFKA.getKafkaTestUtils().getAdminClient()) {
       NewTopic newTopic = new NewTopic(topicName, 2, (short) 2).configs(properties);
       KafkaFuture<Void> result = admin.createTopics(Collections.singletonList(newTopic)).all();
-      await().atMost(5, TimeUnit.SECONDS).until(result::isDone);
+      await().until(result::isDone);
     }
   }
 
