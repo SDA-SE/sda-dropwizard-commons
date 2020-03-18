@@ -26,7 +26,7 @@ dependencies {
     api "com.github.database-rider:rider-core:1.2.9" // latest version that supports Parameterized tests: https://github.com/database-rider/database-rider/issues/104
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
     api "com.google.code.findbugs:jsr305:3.0.2"
-    api "com.google.guava:guava:24.1.1-jre"
+    api "com.google.guava:guava:28.2-jre"
     api "com.h2database:h2:1.4.200"
 
     api "commons-codec:commons-codec:1.14"
