@@ -50,7 +50,6 @@ import org.assertj.core.util.Lists;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -85,9 +84,11 @@ public class ApiClientTest {
 
   private ClientTestApp app;
 
-  @BeforeClass
-  public static void initWires() throws JsonProcessingException {
-    WIRE.start();
+  @Before
+  public void before() throws JsonProcessingException {
+    WIRE.resetAll();
+    app = dw.getApplication();
+
     WIRE.stubFor(
         get("/api/cars") // NOSONAR
             .withHeader("Accept", equalTo("application/json")) // NOSONAR
@@ -127,12 +128,6 @@ public class ApiClientTest {
                     .withStatus(200)
                     .withHeader("Content-type", "application/json")
                     .withBody(OM.writeValueAsBytes(LIGHT_BLUE_CAR))));
-  }
-
-  @Before
-  public void resetRequests() {
-    WIRE.resetRequests();
-    app = dw.getApplication();
   }
 
   @Test
@@ -421,6 +416,14 @@ public class ApiClientTest {
 
   @Test
   public void demonstrateToCloseException() {
+    WIRE.stubFor(
+        get("/api/cars/HH%20AA%204444")
+            .willReturn(
+                aResponse()
+                    .withStatus(404)
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .withBody("{ 'message': 'car is unknown' }")));
+
     try {
       createMockApiClient().getCar("HH AA 4444");
     } catch (ClientRequestException e) {
