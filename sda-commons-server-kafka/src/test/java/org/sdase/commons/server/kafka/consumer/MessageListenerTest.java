@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
-import org.awaitility.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -177,7 +176,7 @@ public class MessageListenerTest {
             });
 
     startListenerThread();
-    await().pollInterval(new Duration(1, MILLISECONDS)).until(() -> count.get() >= 1);
+    await().pollInterval(1, MILLISECONDS).until(() -> count.get() >= 1);
     Mockito.verify(consumer, Mockito.never()).close();
   }
 
