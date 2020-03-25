@@ -8,7 +8,6 @@ import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 import dev.morphia.ValidationExtension;
-import dev.morphia.converters.LocalDateConverter;
 import dev.morphia.converters.LocalDateTimeConverter;
 import dev.morphia.converters.TypeConverter;
 import io.dropwizard.Configuration;
@@ -23,6 +22,7 @@ import java.util.Set;
 import java.util.function.Function;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.Validate;
+import org.sdase.commons.server.morphia.converter.LocalDateConverter;
 import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
 import org.sdase.commons.server.morphia.health.MongoHealthCheck;
 import org.sdase.commons.server.morphia.internal.MongoClientBuilder;
@@ -36,17 +36,21 @@ import org.sdase.commons.server.morphia.internal.MongoClientBuilder;
 public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
   /**
-   * {@link LocalDateConverter} and {@link LocalDateTimeConverter} are already included in Morphia's
-   * {@link dev.morphia.converters.DefaultConverters}.
+   * {@link LocalDateTimeConverter} is already included in Morphia's {@link
+   * dev.morphia.converters.DefaultConverters}. We do not use {@link
+   * dev.morphia.converters.LocalDateConverter} because it actually stores a date time.
    */
   private static final Set<TypeConverter> DEFAULT_CONVERTERS =
-      new LinkedHashSet<>(singletonList(new ZonedDateTimeConverter()));
+      new LinkedHashSet<>(asList(new ZonedDateTimeConverter(), new LocalDateConverter()));
 
   private final Function<C, MongoConfiguration> configurationProvider;
 
   private final Set<TypeConverter> customConverters = new LinkedHashSet<>();
   private final Set<String> packagesToScan = new HashSet<>();
+
+  @SuppressWarnings("rawtypes") // same type as in Morphia
   private final Set<Class> entityClasses = new HashSet<>();
+
   private final boolean ensureIndexes;
   private final boolean forceEnsureIndexes;
   private final Tracer tracer;
@@ -60,7 +64,8 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   private MorphiaBundle( // NOSONAR: Methods should not have too many parameters
       MongoConfigurationProvider<C> configProvider,
       Set<String> packagesToScan,
-      Set<Class> entityClasses,
+      @SuppressWarnings("rawtypes") // same type as in Morphia
+          Set<Class> entityClasses,
       Set<TypeConverter> customConverters,
       boolean ensureIndexes,
       boolean forceEnsureIndexes,
@@ -152,7 +157,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   // Builder
   //
   public static InitialBuilder builder() {
-    return new Builder();
+    return new Builder<>();
   }
 
   public interface InitialBuilder {
@@ -205,7 +210,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
      *     scanning. The class may be a marker interface or a specific entity class.
      * @return a builder instance for further configuration
      */
-    default DisableConverterBuilder<C> withEntityScanPackageClass(Class markerClass) {
+    default DisableConverterBuilder<C> withEntityScanPackageClass(Class<?> markerClass) {
       return withEntityScanPackage(markerClass.getPackage().getName());
     }
   }
@@ -224,6 +229,17 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
   public interface CustomConverterBuilder<C extends Configuration>
       extends EnsureIndexesConfigBuilder<C> {
+
+    /**
+     * Disables the SDA {@link LocalDateConverter}. This is only for backward compatibility and
+     * should only be set if SDA Commons is upgraded in a service that uses {@link
+     * java.time.LocalDate} in entity classes.
+     *
+     * @return a builder instance for further configuration
+     * @deprecated only added for backward compatibility
+     */
+    @Deprecated
+    CustomConverterBuilder<C> withoutLocalDateConverter(); // NOSONAR intended deprecation
 
     /**
      * Adds a custom {@link TypeConverter}s, see {@link
@@ -333,7 +349,10 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     private final MongoConfigurationProvider<T> configProvider;
     private final Set<TypeConverter> customConverters = new LinkedHashSet<>(DEFAULT_CONVERTERS);
     private final Set<String> packagesToScan = new HashSet<>();
+
+    @SuppressWarnings("rawtypes") // same type as in Morphia
     private final Set<Class> entityClasses = new HashSet<>();
+
     private boolean ensureIndexes = true;
     private boolean forceEnsureIndexes = false;
     private boolean activateValidation = false;
@@ -368,6 +387,12 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     @Override
     public CustomConverterBuilder<T> disableDefaultTypeConverters() {
       this.customConverters.clear();
+      return this;
+    }
+
+    @Override
+    public CustomConverterBuilder<T> withoutLocalDateConverter() {
+      this.customConverters.removeIf(c -> LocalDateConverter.class.equals(c.getClass()));
       return this;
     }
 
