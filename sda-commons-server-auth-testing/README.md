@@ -148,11 +148,13 @@ public class OpaRuleProgrammaticIT {
 To control the OPA mock behavior, the following API is provided
 ```java
  // allow access to a given httpMethod/path combination
- OPA_RULE.mock(onRequest(httpMethod, path).allow());
+ OPA_RULE.mock(onRequest().withHttpMethod(httpMethod).withPath(path).allow());
+ // allow access to a given httpMethod/path/jwt combination
+ OPA_RULE.mock(onRequest().withHttpMethod(httpMethod).withPath(path).withJwt(jwt).allow());
  // deny access to a given httpMethod/path combination
- OPA_RULE.mock(onRequest(httpMethod, path).deny());
+ OPA_RULE.mock(onRequest().withHttpMethod(httpMethod).withPath(path).deny());
  // allow access to a given httpMethod/path combination with constraint
- OPA_RULE.mock(onRequest(httpMethod, path).allow().withConstraint(new ConstraintModel(...)));
+ OPA_RULE.mock(onRequest().withHttpMethod(httpMethod).withPath(path).allow().withConstraint(new ConstraintModel(...)));
  // the response is returned for all requests, if no more specific mock is configured
  OPA_RULE.mock(onAnyRequest().answer(new OpaResponse(...)));
  
@@ -162,7 +164,9 @@ To control the OPA mock behavior, the following API is provided
  
  // It is possible to verify of the OPA has been invoked with parameters for the resource 
  // defined by the path and the httpMethod
- verify(int count, String httpMethod, String path) {
+ verify(int count, String httpMethod, String path)
+ // it is also possible to check against a builder instance
+ OPA_RULE.verify(1, onRequest().withHttpMethod(httpMethod).withPath(path).withJwt(jwt));
 ```
 
 Examples can be found in the [test source branch](./src/test) of this module. There is

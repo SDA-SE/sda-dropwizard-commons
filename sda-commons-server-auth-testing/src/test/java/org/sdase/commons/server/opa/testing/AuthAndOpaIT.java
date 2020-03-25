@@ -6,6 +6,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.util.Lists.newArrayList;
+import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -67,8 +68,6 @@ public class AuthAndOpaIT {
   @Test
   @Retry(5)
   public void shouldNotAccessSimpleWithInvalidToken() {
-    OPA_RULE.mock(onRequest(method, path).allow());
-
     Response response =
         getResources(
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
@@ -78,12 +77,13 @@ public class AuthAndOpaIT {
     assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
     assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
         .containsKeys("title", "invalidParams");
+    OPA_RULE.verify(0, onAnyRequest());
   }
 
   @Test
   @Retry(5)
   public void shouldAllowAccessSimple() {
-    OPA_RULE.mock(onRequest(method, path).allow());
+    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
 
     Response response = getResources(true);
 
@@ -98,7 +98,10 @@ public class AuthAndOpaIT {
   @Retry(5)
   public void shouldAllowAccessConstraints() {
     OPA_RULE.mock(
-        onRequest(method, path)
+        onRequest()
+            .withHttpMethod(method)
+            .withPath(path)
+            .withJwt(jwt)
             .allow()
             .withConstraint(
                 new ConstraintModel().setFullAccess(true).addConstraint("customer_ids", "1")));
@@ -116,7 +119,7 @@ public class AuthAndOpaIT {
   @Test
   @Retry(5)
   public void shouldAllowAccessWithoutTokenSimple() {
-    OPA_RULE.mock(onRequest(method, path).allow());
+    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(null).allow());
 
     Response response = getResources(false);
 
@@ -131,7 +134,10 @@ public class AuthAndOpaIT {
   @Retry(5)
   public void shouldAllowAccessWithoutTokenConstraints() {
     OPA_RULE.mock(
-        onRequest(method, path)
+        onRequest()
+            .withHttpMethod(method)
+            .withPath(path)
+            .withJwt(null)
             .allow()
             .withConstraint(
                 new ConstraintModel().setFullAccess(true).addConstraint("customer_ids", "1")));

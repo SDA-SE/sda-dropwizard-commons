@@ -29,6 +29,7 @@ public class OpaRuleIT {
 
   private String path = "resources";
   private String method = "GET";
+  private String jwt = "aaaa.bbbb.cccc";
 
   @Before
   public void before() {
@@ -37,7 +38,7 @@ public class OpaRuleIT {
 
   @Test
   @Retry(5)
-  public void shouldReturnResponseOnMatch() {
+  public void shouldReturnResponseOnMatchWithLegacyOnRequest() {
     // given
     OPA_RULE.mock(onRequest(method, path).allow());
     // when
@@ -50,21 +51,30 @@ public class OpaRuleIT {
 
   @Test
   @Retry(5)
-  public void shouldReturnResponseOnMatchOpaRequest() {
+  public void shouldReturnResponseOnMatch() {
     // given
-    OPA_RULE.mock(onRequest(method, path).allow());
+    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
     // when
-    Response response = requestMock(request(method, path));
+    Response response = requestMock(requestWithJwt(jwt, method, path));
     // then
     assertThat(response.getStatus()).isEqualTo(SC_OK);
-    OpaResponse opaResponse = response.readEntity(OpaResponse.class);
-    assertThat(opaResponse.isAllow()).isTrue();
-    OPA_RULE.verify(1, method, path);
+    assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
+    OPA_RULE.verify(1, onRequest().withHttpMethod(method).withPath(path).withJwt(jwt));
   }
 
   @Test(expected = VerificationException.class)
   public void shouldThrowExceptionIfNotVerified() {
     OPA_RULE.verify(1, method, path);
+  }
+
+  @Test(expected = VerificationException.class)
+  public void shouldThrowExceptionIfUnexpectedToken() {
+    // given
+    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
+    // when
+    requestMock(requestWithJwt("INVALID", method, path));
+    // then
+    OPA_RULE.verify(1, onRequest().withHttpMethod(method).withPath(path).withJwt(jwt));
   }
 
   @Test
@@ -94,7 +104,20 @@ public class OpaRuleIT {
   @Retry(5)
   public void shouldMockLongPathSuccessfully() {
     // given
-    OPA_RULE.mock(onRequest("GET", "/p1/p2").allow());
+    OPA_RULE.mock(onRequest().withHttpMethod("GET").withPath("/p1/p2").allow());
+
+    // when
+    Response response = requestMock(request("GET", "p1", "p2"));
+    // then
+    assertThat(response.getStatus()).isEqualTo(SC_OK);
+    assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
+  }
+
+  @Test
+  @Retry(5)
+  public void shouldMockLongPathWithTrailingSlashSuccessfully() {
+    // given
+    OPA_RULE.mock(onRequest().withHttpMethod("GET").withPath("/p1/p2//").allow());
 
     // when
     Response response = requestMock(request("GET", "p1", "p2"));
@@ -110,9 +133,19 @@ public class OpaRuleIT {
     ConstraintModel constraintModel = new ConstraintModel().addConstraint("key", "A", "B");
     OPA_RULE.mock(onRequest("GET", "pathA").allow().withConstraint(constraintModel));
     OPA_RULE.mock(onRequest("POST", "pathB").deny());
+    OPA_RULE.mock(
+        onRequest()
+            .withHttpMethod("POST")
+            .withPath("pathC")
+            .withJwt(jwt)
+            .allow()
+            .withConstraint(constraintModel));
+    OPA_RULE.mock(onRequest().withHttpMethod("POST").withPath("pathD").withJwt(null).deny());
     // when
     Response response = requestMock(request("GET", "pathA"));
     Response response2 = requestMock(request("POST", "pathB"));
+    Response response3 = requestMock(requestWithJwt(jwt, "POST", "pathC"));
+    Response response4 = requestMock(request("POST", "pathD"));
     // then
     assertThat(response.getStatus()).isEqualTo(SC_OK);
     assertThat(response2.getStatus()).isEqualTo(SC_OK);
@@ -120,6 +153,21 @@ public class OpaRuleIT {
     assertThat(opaResponse.isAllow()).isTrue();
     OpaResponse opaResponse2 = response2.readEntity(OpaResponse.class);
     assertThat(opaResponse2.isAllow()).isFalse();
+    OpaResponse opaResponse3 = response3.readEntity(OpaResponse.class);
+    assertThat(opaResponse3.isAllow()).isTrue();
+    OpaResponse opaResponse4 = response4.readEntity(OpaResponse.class);
+    assertThat(opaResponse4.isAllow()).isFalse();
+    OPA_RULE.verify(1, onRequest().withHttpMethod("POST").withPath("pathC").withJwt(jwt));
+    OPA_RULE.verify(1, onRequest().withHttpMethod("POST").withPath("pathD").withJwt(null));
+  }
+
+  @Test()
+  public void shouldSplitPath() {
+    assertThat(OpaRule.StubBuilder.splitPath("a")).containsExactly("a");
+    assertThat(OpaRule.StubBuilder.splitPath("b/c")).containsExactly("b", "c");
+    assertThat(OpaRule.StubBuilder.splitPath("/d")).containsExactly("d");
+    assertThat(OpaRule.StubBuilder.splitPath("/e/f/")).containsExactly("e", "f");
+    assertThat(OpaRule.StubBuilder.splitPath("/g/h/i/j////")).containsExactly("g", "h", "i", "j");
   }
 
   private Response requestMock(OpaRequest request) {
@@ -131,7 +179,11 @@ public class OpaRuleIT {
   }
 
   private OpaRequest request(String method, String... path) {
+    return requestWithJwt(null, method, path);
+  }
+
+  private OpaRequest requestWithJwt(String jwt, String method, String... path) {
     return new OpaRequest()
-        .setInput(new OpaInput().setJwt(null).setHttpMethod(method).setPath(path).setHeaders(null));
+        .setInput(new OpaInput().setJwt(jwt).setHttpMethod(method).setPath(path).setHeaders(null));
   }
 }
