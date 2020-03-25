@@ -205,6 +205,11 @@ public class MongoDbRule extends ExternalResource {
     return mongodConfig.net().getBindIp() + ":" + mongodConfig.net().getPort();
   }
 
+  /** @return the initialized database */
+  public String getDatabase() {
+    return database;
+  }
+
   /** @return the version of the MongoDB instance which is associated with this MongoDbRule */
   public IFeatureAwareVersion getVersion() {
     return version;
