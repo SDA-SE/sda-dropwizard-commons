@@ -35,7 +35,7 @@ public class MorphiaBundleDefinedClassIT {
                       c ->
                           c.getMongo()
                               .setHosts(MONGODB.getHost())
-                              .setDatabase(MongoDbRule.Builder.DEFAULT_DATABASE))
+                              .setDatabase(MONGODB.getDatabase()))
                   .build());
 
   @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);

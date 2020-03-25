@@ -39,7 +39,10 @@ public class MorphiaBundleCustomConverterIT {
                   .withConfigFrom(Config::new)
                   .withRandomPorts()
                   .withConfigurationModifier(
-                      c -> c.getMongo().setHosts(MONGODB.getHost()).setDatabase("testPeople"))
+                      c ->
+                          c.getMongo()
+                              .setHosts(MONGODB.getHost())
+                              .setDatabase(MONGODB.getDatabase()))
                   .build());
 
   @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);

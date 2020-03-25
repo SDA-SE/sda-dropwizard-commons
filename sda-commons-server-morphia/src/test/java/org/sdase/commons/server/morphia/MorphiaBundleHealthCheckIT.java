@@ -29,7 +29,10 @@ public class MorphiaBundleHealthCheckIT {
                   .withConfigFrom(Config::new)
                   .withRandomPorts()
                   .withConfigurationModifier(
-                      c -> c.getMongo().setHosts(MONGODB.getHost()).setDatabase("testHC"))
+                      c ->
+                          c.getMongo()
+                              .setHosts(MONGODB.getHost())
+                              .setDatabase(MONGODB.getDatabase()))
                   .build());
 
   @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
