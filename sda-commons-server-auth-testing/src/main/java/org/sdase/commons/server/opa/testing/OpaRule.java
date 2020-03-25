@@ -29,8 +29,26 @@ public class OpaRule extends ExternalResource {
 
   private final WireMockClassRule wire = new WireMockClassRule(wireMockConfig().dynamicPort());
 
+  /**
+   * Create a builder to match a request.
+   *
+   * @return the builder
+   */
+  public static RequestMethodBuilder onRequest() {
+    return new StubBuilder();
+  }
+
+  /**
+   * Create a builder to match a request for a method and path
+   *
+   * @param method the method of the request
+   * @param path the path of the request
+   * @return the builder
+   * @deprecated use {@code onRequest().withMethod(method).withPath(path)} instead
+   */
+  @Deprecated
   public static AllowBuilder onRequest(String method, String path) {
-    return new StubBuilder(method, path);
+    return onRequest().withHttpMethod(method).withPath(path);
   }
 
   private static String getJson(String[] paths) {
@@ -42,14 +60,7 @@ public class OpaRule extends ExternalResource {
   }
 
   public static AllowBuilder onAnyRequest() {
-    return new StubBuilder();
-  }
-
-  private static String[] splitPath(String path) {
-    if (path.startsWith("/")) {
-      path = path.substring(1);
-    }
-    return path.split("/");
+    return new StubBuilder().onAnyRequest();
   }
 
   @Override
@@ -75,18 +86,59 @@ public class OpaRule extends ExternalResource {
     wire.stop();
   }
 
-  public void verify(int count, String httpMethod, String paths) {
-    wire.verify(count, matchForVerify(httpMethod, splitPath(paths)));
+  /**
+   * Verify if the policy was called for the method/path
+   *
+   * <p>Please prefer to use {@code verify(count,
+   * onRequest().withHttpMethod(httpMethod).withPath(path))} instead.
+   *
+   * @param count the expected count of calls
+   * @param httpMethod the HTTP method to check
+   * @param path the path to check
+   */
+  public void verify(int count, String httpMethod, String path) {
+    verify(count, onRequest().withHttpMethod(httpMethod).withPath(path));
+  }
+
+  public void verify(int count, AllowBuilder allowBuilder) {
+    verify(count, (StubBuilder) allowBuilder);
+  }
+
+  private void verify(int count, StubBuilder builder) {
+    RequestPatternBuilder requestPattern;
+
+    if (builder.onAnyRequest) {
+      requestPattern =
+          RequestPatternBuilder.newRequestPattern(RequestMethod.POST, urlMatching("/.*"));
+    } else {
+      requestPattern =
+          RequestPatternBuilder.newRequestPattern(RequestMethod.POST, urlMatching("/.*"))
+              .withRequestBody(matchingJsonPath("$.input.httpMethod", equalTo(builder.httpMethod)))
+              .withRequestBody(
+                  matchingJsonPath("$.input.path", equalToJson(getJson(builder.paths))));
+
+      if (builder.matchJWT) {
+        requestPattern.withRequestBody(matchingJsonPath("$.input.jwt", equalTo(builder.jwt)));
+      }
+    }
+
+    wire.verify(count, requestPattern);
   }
 
   public void mock(BuildBuilder builder) {
     builder.build(wire);
   }
 
-  private RequestPatternBuilder matchForVerify(String httpMethod, String[] paths) {
-    return RequestPatternBuilder.newRequestPattern(RequestMethod.POST, urlMatching("/.*"))
-        .withRequestBody(matchingJsonPath("$.input.httpMethod", equalTo(httpMethod)))
-        .withRequestBody(matchingJsonPath("$.input.path", equalToJson(getJson(paths))));
+  public interface RequestMethodBuilder {
+    RequestPathBuilder withHttpMethod(String httpMethod);
+  }
+
+  public interface RequestPathBuilder {
+    RequestExtraBuilder withPath(String path);
+  }
+
+  public interface RequestExtraBuilder extends AllowBuilder {
+    RequestExtraBuilder withJwt(String jwt);
   }
 
   public interface AllowBuilder {
@@ -110,25 +162,24 @@ public class OpaRule extends ExternalResource {
     void build(WireMockClassRule wire);
   }
 
-  public static class StubBuilder implements AllowBuilder, FinalBuilder, BuildBuilder {
+  public static class StubBuilder
+      implements RequestMethodBuilder,
+          RequestPathBuilder,
+          RequestExtraBuilder,
+          AllowBuilder,
+          FinalBuilder,
+          BuildBuilder {
 
     private String httpMethod;
     private String[] paths;
+    private boolean matchJWT;
+    private String jwt;
     private boolean allow;
     private boolean onAnyRequest = false;
     private boolean errorResponse = false;
     private boolean emptyResponse = false;
     private OpaResponse answer;
     private Object constraint;
-
-    public StubBuilder() {
-      onAnyRequest = true;
-    }
-
-    public StubBuilder(String method, String path) {
-      this.httpMethod = method;
-      this.paths = splitPath(path);
-    }
 
     private static ResponseDefinitionBuilder getResponse(OpaResponse response) {
       try {
@@ -139,6 +190,27 @@ public class OpaRule extends ExternalResource {
       } catch (JsonProcessingException exception) {
         throw new IllegalStateException("Mock initialization failed");
       }
+    }
+
+    private StubBuilder onAnyRequest() {
+      onAnyRequest = true;
+      return this;
+    }
+
+    public RequestPathBuilder withHttpMethod(String httpMethod) {
+      this.httpMethod = httpMethod;
+      return this;
+    }
+
+    public RequestExtraBuilder withPath(String path) {
+      this.paths = splitPath(path);
+      return this;
+    }
+
+    public RequestExtraBuilder withJwt(String jwt) {
+      matchJWT = true;
+      this.jwt = jwt;
+      return this;
     }
 
     public StubBuilder allow() {
@@ -182,6 +254,10 @@ public class OpaRule extends ExternalResource {
         mappingBuilder = matchAnyPostUrl();
       } else {
         mappingBuilder = matchInput(httpMethod, paths);
+
+        if (matchJWT) {
+          mappingBuilder.withRequestBody(matchingJsonPath("$.input.jwt", equalTo(jwt)));
+        }
       }
 
       if (errorResponse) {
@@ -219,6 +295,13 @@ public class OpaRule extends ExternalResource {
       return matchAnyPostUrl()
           .withRequestBody(matchingJsonPath("$.input.httpMethod", equalTo(httpMethod)))
           .withRequestBody(matchingJsonPath("$.input.path", equalToJson(getJson(paths))));
+    }
+
+    static String[] splitPath(String path) {
+      if (path.startsWith("/")) {
+        path = path.substring(1);
+      }
+      return path.split("/");
     }
   }
 }
