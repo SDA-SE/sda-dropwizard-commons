@@ -49,8 +49,6 @@ dependencies {
     exclude group: 'io.confluent', module: 'common-config'
   }
 
-  // When changing the jetty version, be aware of the hack within ConfluentSchemaRegistryRule to remove the logging
-  // that currently forces a NoSuchMethodException
   compile 'org.eclipse.jetty:jetty-server'
   compile 'org.eclipse.jetty:jetty-jmx'
   compile 'org.slf4j:slf4j-api'
