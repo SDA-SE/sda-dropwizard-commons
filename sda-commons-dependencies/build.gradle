@@ -12,7 +12,7 @@ ext {
   resilience4jVersion = '0.15.0'
   swaggerCoreVersion = '1.6.0'
   jettyVersion = '9.4.27.v20200227'
-  weldVersion = '3.1.3.Final'
+  weldVersion = '3.1.4.Final'
   openTracingUtilVersion = '0.33.0'
 }
 
