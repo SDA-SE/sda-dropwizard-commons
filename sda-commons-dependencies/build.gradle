@@ -107,7 +107,7 @@ dependencies {
     // test dependencies
     api "com.github.java-json-tools:json-schema-validator:2.2.10"
     api "com.github.tomakehurst:wiremock-jre8:2.21.0"
-    api "org.ow2.asm:asm:7.3.1"
+    api "org.ow2.asm:asm:8.0"
     api "com.salesforce.kafka.test:kafka-junit4:3.0.1"
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0"
     api "io.findify:s3mock_2.12:0.2.5"
