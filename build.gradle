@@ -5,7 +5,6 @@ buildscript {
 }
 
 plugins {
-    id 'java'
     id 'maven-publish'
     id 'jacoco'
     id 'org.sonarqube' version '2.8'
@@ -22,6 +21,21 @@ repositories {
     mavenCentral()
 }
 
+/**
+ * Some modules must use the 'java-platform'. Since you can't apply plugins 'java' and 'java-platform'
+ * at the same time, they are excluded in some steps.
+ */
+List<String> javaPlatformModules = Arrays.asList("sda-commons-bom", "sda-commons-dependencies")
+
+/**
+ * There are some additional modules that are excluded from publishing
+ */
+List<String> unpublishedModules = javaPlatformModules + Arrays.asList("sda-commons-dependency-check")
+project.ext.unpublishedModules = unpublishedModules
+
+/**
+ * Settings for all modules
+ */
 subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'com.diffplug.gradle.spotless'
@@ -34,7 +48,7 @@ subprojects {
     }
 
     spotless {
-        if (project.name != 'sda-commons-bom' && project.name != 'sda-commons-dependencies') {
+        if (!javaPlatformModules.contains(project.name)) {
             java {
                 googleJavaFormat()
             }
@@ -45,23 +59,18 @@ subprojects {
         }
     }
 
-    // TODO: reenable this setting on a new ci environment
-    // tasks.withType(Test) {
-    //     maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
-    // }
-
     version = System.getenv('SEMANTIC_VERSION')
 
     publishing {
         repositories {
             maven {
-                def releasesRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-releases/"
-                def snapshotsRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
+                def releasesRepoUrl = "http://localhost:8081/repository/sda-se-releases/"
+                def snapshotsRepoUrl = "http://localhost:8081/repository/sda-se-snapshots/"
                 url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
                 credentials {
-                    username System.getenv('SDA_NEXUS_USER')
-                    password System.getenv('SDA_NEXUS_PASSWORD')
+                    username 'admin'
+                    password 'admin'
                 }
             }
         }
@@ -69,15 +78,15 @@ subprojects {
 }
 
 /**
- * Configure all regular submodules (all except the bom module)
+ * Configure all regular submodules (all except the bom and dependency module)
  *
  * Problem is: You can't apply plugins 'java' and 'java-platform' at the same time.
  */
-configure(subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-commons-dependencies'}) {
+configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     apply plugin: 'java'
     apply plugin: 'jacoco'
 
-    sourceCompatibility = 1.8
+    sourceCompatibility = JavaVersion.VERSION_1_8
 
     // Configure JaCoCo to export the reports in XML format
     jacocoTestReport {
@@ -119,14 +128,12 @@ configure(subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-c
  * Add publishing configuration for Java modules.
  *
  * More Infos:
- * - sda-commons-bom uses own publishing because it's just a BOM
+ * - sda-commons-bom and sda-commons-dependencies uses own publishing because it's just a BOM
  * - example modules and dependency-check should not be published at all
  */
-List<String> unpublishedModules = Arrays.asList("sda-commons-bom", "sda-commons-dependencies", "sda-commons-dependency-check")
 configure(subprojects.findAll {
     !unpublishedModules.contains(it.name) && !it.name.endsWith("-example")
 }) {
-
     task sourcesJar(type: Jar, dependsOn: classes) {
         archiveClassifier = 'sources'
         from sourceSets.main.allJava
@@ -150,18 +157,33 @@ configure(subprojects.findAll {
     }
 }
 
+/**
+ * Add publishing configuration for Java platforms.
+ */
+configure(subprojects.findAll { javaPlatformModules.contains(it.name) }) {
+    apply plugin: 'java-platform'
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.javaPlatform
+            }
+        }
+    }
+}
+
 // Reconfigure the testReport task to display the results of all modules into a single report
 task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/allTests")
     // Include the results from the `test` task in all subprojects
-    reportOn subprojects.findAll {it.name != 'sda-commons-bom' && it.name != 'sda-commons-dependencies'}*.test
+    reportOn subprojects.findAll { !javaPlatformModules.contains(it.name) }*.test
 }
 
 // Create a combined XML report of all modules in the root project
 task codeCoverageReport(type: JacocoReport) {
     executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
 
-    subprojects.each {
+    subprojects.findAll { !unpublishedModules.contains(it.name) }.each {
         // noinspection GroovyAssignabilityCheck
         sourceSets it.sourceSets.main
     }
