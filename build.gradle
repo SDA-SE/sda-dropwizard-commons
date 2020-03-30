@@ -1,24 +1,24 @@
 buildscript {
-    repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
-    }
+  repositories {
+    maven { url "https://plugins.gradle.org/m2/" }
+  }
 }
 
 plugins {
-    id 'maven-publish'
-    id 'jacoco'
-    id 'org.sonarqube' version '2.8'
-    id 'com.diffplug.gradle.spotless' version '3.28.0'
+  id 'maven-publish'
+  id 'jacoco'
+  id 'org.sonarqube' version '2.8'
+  id 'com.diffplug.gradle.spotless' version '3.28.0'
 }
 
 allprojects {
-    apply plugin: 'idea'
-    idea.module.inheritOutputDirs = true
+  apply plugin: 'idea'
+  idea.module.inheritOutputDirs = true
 }
 
 // we need a repository for the combination of jacoco and sonarcloud
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 /**
@@ -33,48 +33,55 @@ List<String> javaPlatformModules = Arrays.asList("sda-commons-bom", "sda-commons
 List<String> unpublishedModules = javaPlatformModules + Arrays.asList("sda-commons-dependency-check")
 project.ext.unpublishedModules = unpublishedModules
 
+spotless {
+  groovyGradle {
+    greclipse()
+    indentWithSpaces(2)
+  }
+}
+
 /**
  * Settings for all modules
  */
 subprojects {
-    apply plugin: 'maven-publish'
-    apply plugin: 'com.diffplug.gradle.spotless'
+  apply plugin: 'maven-publish'
+  apply plugin: 'com.diffplug.gradle.spotless'
 
-    group 'org.sdase.commons'
+  group 'org.sdase.commons'
 
+  repositories {
+    mavenCentral()
+    maven { url "http://packages.confluent.io/maven/" } // for sda-commons-server-kafka-confluent-testing only
+  }
+
+  spotless {
+    if (!javaPlatformModules.contains(project.name)) {
+      java {
+        googleJavaFormat()
+      }
+    }
+    groovyGradle {
+      greclipse()
+      indentWithSpaces(2)
+    }
+  }
+
+  version = System.getenv('SEMANTIC_VERSION')
+
+  publishing {
     repositories {
-        mavenCentral()
-        maven { url "http://packages.confluent.io/maven/" } // for sda-commons-server-kafka-confluent-testing only
-    }
+      maven {
+        def releasesRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-releases/"
+        def snapshotsRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
+        url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
-    spotless {
-        if (!javaPlatformModules.contains(project.name)) {
-            java {
-                googleJavaFormat()
-            }
+        credentials {
+          username System.getenv('SDA_NEXUS_USER')
+          password System.getenv('SDA_NEXUS_PASSWORD')
         }
-        groovyGradle {
-            greclipse()
-            indentWithSpaces(2)
-        }
+      }
     }
-
-    version = System.getenv('SEMANTIC_VERSION')
-
-    publishing {
-        repositories {
-            maven {
-                def releasesRepoUrl = "http://localhost:8081/repository/sda-se-releases/"
-                def snapshotsRepoUrl = "http://localhost:8081/repository/sda-se-snapshots/"
-                url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-
-                credentials {
-                    username 'admin'
-                    password 'admin'
-                }
-            }
-        }
-    }
+  }
 }
 
 /**
@@ -83,45 +90,45 @@ subprojects {
  * Problem is: You can't apply plugins 'java' and 'java-platform' at the same time.
  */
 configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
-    apply plugin: 'java'
-    apply plugin: 'jacoco'
+  apply plugin: 'java'
+  apply plugin: 'jacoco'
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
+  sourceCompatibility = JavaVersion.VERSION_1_8
 
-    // Configure JaCoCo to export the reports in XML format
-    jacocoTestReport {
-        reports {
-            xml.enabled true
-        }
+  // Configure JaCoCo to export the reports in XML format
+  jacocoTestReport {
+    reports {
+      xml.enabled true
     }
+  }
 
-    // Configure sonar to use the aggregated global report file
-    sonarqube {
-        properties {
-            property "sonar.coverage.jacoco.xmlReportPaths", '../build/reports/jacoco/report.xml'
-        }
+  // Configure sonar to use the aggregated global report file
+  sonarqube {
+    properties {
+      property "sonar.coverage.jacoco.xmlReportPaths", '../build/reports/jacoco/report.xml'
     }
+  }
 
-    dependencies {
-        compile enforcedPlatform(project(':sda-commons-dependencies'))
-    }
+  dependencies {
+    compile enforcedPlatform(project(':sda-commons-dependencies'))
+  }
 
-    sourceSets {
-        main {
-            output.resourcesDir = output.classesDirs.singleFile
-        }
-        test {
-            output.resourcesDir = output.classesDirs.singleFile
-        }
+  sourceSets {
+    main {
+      output.resourcesDir = output.classesDirs.singleFile
     }
+    test {
+      output.resourcesDir = output.classesDirs.singleFile
+    }
+  }
 
-    configurations.all {
-        resolutionStrategy {
-            // fail eagerly on version conflict (includes transitive dependencies)
-            // e.g. multiple different versions of the same dependency (group and name are equal)
-            failOnVersionConflict()
-        }
+  configurations.all {
+    resolutionStrategy {
+      // fail eagerly on version conflict (includes transitive dependencies)
+      // e.g. multiple different versions of the same dependency (group and name are equal)
+      failOnVersionConflict()
     }
+  }
 }
 
 /**
@@ -132,80 +139,80 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
  * - example modules and dependency-check should not be published at all
  */
 configure(subprojects.findAll {
-    !unpublishedModules.contains(it.name) && !it.name.endsWith("-example")
+  !unpublishedModules.contains(it.name) && !it.name.endsWith("-example")
 }) {
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        archiveClassifier = 'sources'
-        from sourceSets.main.allJava
-    }
+  task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+  }
 
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                from components.java
+  publishing {
+    publications {
+      maven(MavenPublication) {
+        from components.java
 
-                artifact sourcesJar
-            }
-        }
+        artifact sourcesJar
+      }
     }
+  }
 
-    jar {
-        into("META-INF/maven/$project.group/$project.name") {
-            from { generatePomFileForMavenPublication }
-            rename ".*", "pom.xml"
-        }
+  jar {
+    into("META-INF/maven/$project.group/$project.name") {
+      from { generatePomFileForMavenPublication }
+      rename ".*", "pom.xml"
     }
+  }
 }
 
 /**
  * Add publishing configuration for Java platforms.
  */
 configure(subprojects.findAll { javaPlatformModules.contains(it.name) }) {
-    apply plugin: 'java-platform'
+  apply plugin: 'java-platform'
 
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                from components.javaPlatform
-            }
-        }
+  publishing {
+    publications {
+      maven(MavenPublication) {
+        from components.javaPlatform
+      }
     }
+  }
 }
 
 // Reconfigure the testReport task to display the results of all modules into a single report
 task testReport(type: TestReport) {
-    destinationDir = file("$buildDir/reports/allTests")
-    // Include the results from the `test` task in all subprojects
-    reportOn subprojects.findAll { !javaPlatformModules.contains(it.name) }*.test
+  destinationDir = file("$buildDir/reports/allTests")
+  // Include the results from the `test` task in all subprojects
+  reportOn subprojects.findAll { !javaPlatformModules.contains(it.name) }*.test
 }
 
 // Create a combined XML report of all modules in the root project
 task codeCoverageReport(type: JacocoReport) {
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+  executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
 
-    subprojects.findAll { !unpublishedModules.contains(it.name) }.each {
-        // noinspection GroovyAssignabilityCheck
-        sourceSets it.sourceSets.main
-    }
+  subprojects.findAll { !unpublishedModules.contains(it.name) }.each {
+    // noinspection GroovyAssignabilityCheck
+    sourceSets it.sourceSets.main
+  }
 
-    reports {
-        xml.enabled = true
-        xml.destination file("${buildDir}/reports/jacoco/report.xml")
-    }
+  reports {
+    xml.enabled = true
+    xml.destination file("${buildDir}/reports/jacoco/report.xml")
+  }
 }
 
 sonarqube {
-    properties {
-        property 'sonar.projectKey', 'SDA-SE_sda-dropwizard-commons'
-        property 'sonar.organization', 'sda-se'
-        property 'sonar.host.url', 'https://sonarcloud.io'
-        property 'sonar.login', System.getenv('SONAR_LOGIN_TOKEN')
+  properties {
+    property 'sonar.projectKey', 'SDA-SE_sda-dropwizard-commons'
+    property 'sonar.organization', 'sda-se'
+    property 'sonar.host.url', 'https://sonarcloud.io'
+    property 'sonar.login', System.getenv('SONAR_LOGIN_TOKEN')
 
-        property 'sonar.pullrequest.provider', 'GitHub'
-        property 'sonar.pullrequest.github.repository', System.getenv('GITHUB_REPOSITORY')
+    property 'sonar.pullrequest.provider', 'GitHub'
+    property 'sonar.pullrequest.github.repository', System.getenv('GITHUB_REPOSITORY')
 
-        if (System.getenv('GITHUB_PR') != null) {
-            property 'sonar.pullrequest.key', System.getenv('GITHUB_PR')
-        }
+    if (System.getenv('GITHUB_PR') != null) {
+      property 'sonar.pullrequest.key', System.getenv('GITHUB_PR')
     }
+  }
 }
