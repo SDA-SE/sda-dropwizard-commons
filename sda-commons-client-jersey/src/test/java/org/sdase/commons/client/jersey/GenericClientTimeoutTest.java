@@ -4,7 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.awaitility.Awaitility.await;
 import static org.sdase.commons.client.jersey.error.ClientErrorUtil.convertExceptions;
@@ -59,8 +59,7 @@ public class GenericClientTimeoutTest {
         app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("test");
 
     await()
-        .between(400, MILLISECONDS, 600, MILLISECONDS)
-        .pollDelay(20, MILLISECONDS)
+        .atMost(1, SECONDS)
         .untilAsserted(
             () ->
                 assertThatExceptionOfType(ClientRequestException.class)
@@ -86,12 +85,11 @@ public class GenericClientTimeoutTest {
         app.getJerseyClientBundle()
             .getClientFactory()
             .externalClient()
-            .withConnectionTimeout(Duration.ofMillis(10))
+            .withConnectionTimeout(Duration.ofSeconds(2))
             .buildGenericClient("test");
 
     await()
-        .between(5, MILLISECONDS, 150, MILLISECONDS)
-        .pollDelay(2, MILLISECONDS)
+        .between(1, SECONDS, 3, SECONDS)
         .untilAsserted(
             () ->
                 assertThatExceptionOfType(ClientRequestException.class)
@@ -120,8 +118,7 @@ public class GenericClientTimeoutTest {
         app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("test");
 
     await()
-        .between(1900, MILLISECONDS, 2200, MILLISECONDS)
-        .pollDelay(20, MILLISECONDS)
+        .between(1, SECONDS, 3, SECONDS)
         .untilAsserted(
             () ->
                 assertThatExceptionOfType(ClientRequestException.class)
@@ -137,21 +134,20 @@ public class GenericClientTimeoutTest {
 
   @Test
   @Retry(5)
-  public void runIntoConfiguredReadTimeoutOf100Millis() {
+  public void runIntoConfiguredReadTimeout() {
 
     WIRE.stubFor(
-        get("/timeout").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(200)));
+        get("/timeout").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(5000)));
 
     Client client =
         app.getJerseyClientBundle()
             .getClientFactory()
             .externalClient()
-            .withReadTimeout(Duration.ofMillis(100))
+            .withReadTimeout(Duration.ofSeconds(4))
             .buildGenericClient("test");
 
     await()
-        .between(40, MILLISECONDS, 500, MILLISECONDS)
-        .pollDelay(2, MILLISECONDS)
+        .between(3, SECONDS, 5, SECONDS)
         .untilAsserted(
             () ->
                 assertThatExceptionOfType(ClientRequestException.class)
