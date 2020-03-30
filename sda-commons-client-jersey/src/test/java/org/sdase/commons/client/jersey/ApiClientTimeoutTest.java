@@ -4,7 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.awaitility.Awaitility.await;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.connectTimeoutError;
@@ -63,8 +63,7 @@ public class ApiClientTimeoutTest {
             .atTarget("http://192.168.123.123");
 
     await()
-        .between(400, MILLISECONDS, 600, MILLISECONDS)
-        .pollDelay(20, MILLISECONDS)
+        .atMost(1, SECONDS)
         .untilAsserted(
             () ->
                 assertThatExceptionOfType(ClientRequestException.class)
@@ -80,13 +79,12 @@ public class ApiClientTimeoutTest {
         app.getJerseyClientBundle()
             .getClientFactory()
             .externalClient()
-            .withConnectionTimeout(Duration.ofMillis(10))
+            .withConnectionTimeout(Duration.ofSeconds(2))
             .api(MockApiClient.class)
             .atTarget("http://192.168.123.123");
 
     await()
-        .between(5, MILLISECONDS, 150, MILLISECONDS)
-        .pollDelay(2, MILLISECONDS)
+        .between(1, SECONDS, 3, SECONDS)
         .untilAsserted(
             () ->
                 assertThatExceptionOfType(ClientRequestException.class)
@@ -110,8 +108,7 @@ public class ApiClientTimeoutTest {
             .atTarget(WIRE.baseUrl());
 
     await()
-        .between(1900, MILLISECONDS, 2200, MILLISECONDS)
-        .pollDelay(20, MILLISECONDS)
+        .between(1, SECONDS, 3, SECONDS)
         .untilAsserted(
             () ->
                 assertThatExceptionOfType(ClientRequestException.class)
@@ -122,23 +119,22 @@ public class ApiClientTimeoutTest {
 
   @Test
   @Retry(5)
-  public void runIntoConfiguredReadTimeoutOf100Millis() {
+  public void runIntoConfiguredReadTimeout() {
 
     WIRE.stubFor(
-        get("/api/cars").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(300)));
+        get("/api/cars").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(5000)));
 
     MockApiClient client =
         app.getJerseyClientBundle()
             .getClientFactory()
             .externalClient()
-            .withReadTimeout(Duration.ofMillis(100))
+            .withReadTimeout(Duration.ofSeconds(4))
             .api(MockApiClient.class)
             .atTarget(WIRE.baseUrl());
 
     // the proxy seems to handle timeouts slower than the generic client
     await()
-        .between(40, MILLISECONDS, 900, MILLISECONDS)
-        .pollDelay(2, MILLISECONDS)
+        .between(3, SECONDS, 5, SECONDS)
         .untilAsserted(
             () ->
                 assertThatExceptionOfType(ClientRequestException.class)
