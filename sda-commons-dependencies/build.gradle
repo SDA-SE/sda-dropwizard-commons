@@ -121,11 +121,3 @@ dependencies {
     api "io.opentracing:opentracing-mock:0.33.0"
   }
 }
-
-publishing {
-  publications {
-    maven(MavenPublication) {
-      from components.javaPlatform
-    }
-  }
-}
