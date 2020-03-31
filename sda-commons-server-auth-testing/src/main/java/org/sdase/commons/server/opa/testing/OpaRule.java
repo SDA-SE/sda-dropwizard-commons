@@ -16,14 +16,21 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
+import java.util.List;
+import java.util.Objects;
+import javax.ws.rs.core.MultivaluedMap;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.RuleChain;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("WeakerAccess")
 public class OpaRule extends ExternalResource {
+
+  private static final Logger LOG = LoggerFactory.getLogger(OpaRule.class);
 
   private static final ObjectMapper OM = new ObjectMapper();
 
@@ -139,6 +146,37 @@ public class OpaRule extends ExternalResource {
 
   public interface RequestExtraBuilder extends AllowBuilder {
     RequestExtraBuilder withJwt(String jwt);
+
+    default RequestExtraBuilder withJwtFromHeaderValue(String jwtWithBearerPrefix) {
+      if (jwtWithBearerPrefix == null || !jwtWithBearerPrefix.toLowerCase().startsWith("bearer ")) {
+        LOG.warn(
+            "Requested to mock OPA request from header value but no Bearer prefix found in {}",
+            jwtWithBearerPrefix);
+        return this;
+      }
+      return withJwt(jwtWithBearerPrefix.substring("bearer".length()).trim());
+    }
+
+    default RequestExtraBuilder withJwtFromHeaders(MultivaluedMap<String, Object> headers) {
+      String jwt =
+          headers.keySet().stream()
+              .filter(Objects::nonNull)
+              .filter("Authorization"::equalsIgnoreCase)
+              .map(headers::get)
+              .flatMap(List::stream)
+              .filter(Objects::nonNull)
+              .map(Object::toString)
+              .filter(authValue -> authValue.toLowerCase().startsWith("bearer "))
+              .map(authValueWithBearer -> authValueWithBearer.substring("bearer".length()).trim())
+              .findFirst()
+              .orElse(null);
+      if (jwt != null) {
+        return withJwt(jwt);
+      } else {
+        LOG.warn("Requested to mock OPA with JWT from headers but no JWT was found in {}", headers);
+      }
+      return this;
+    }
   }
 
   public interface AllowBuilder {
