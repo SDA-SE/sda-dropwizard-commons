@@ -8,4 +8,5 @@ dependencies {
   compile 'com.auth0:java-jwt'
 
   testCompile project(':sda-commons-server-testing')
+  testCompile project(':sda-commons-client-jersey-wiremock-testing')
 }

@@ -157,12 +157,15 @@ The OPA bundle requests the policy decision providing the following inputs
  * HTTP method as String
  * validated JWT (if available) 
  * all request headers 
- 
+
 _Remark to HTTP request headers:_  
 The bundle normalizes  header names to lower case to simplify handling in OPA since HTTP specification defines header names as case insensitive.
 Multivalued headers are not normalized with respect to the representation as list or single string with separator char.
 They are forwarded as parsed by the framework. 
-  
+
+_Security note:_
+Please be aware that while a service might only consider one value of a specific header, the OPA is able to authorize on a array of those.
+Consider this in your policy when you want to make sure that you authorize on the same value that a service might use to evaluate the output.
 
 These inputs can be accessed inside a policy `.rego`-file in this way:
 ```
@@ -186,7 +189,7 @@ allow {
     token.payload.claim
 
     # allow if a request header 'HttpRequestHeaderName' has a certain value 
-    input.headers["httprequestheadername"][_] == "certain-value" 
+    input.headers["httprequestheadername"][_] == "certain-value"
 }
 ```
 
@@ -306,3 +309,52 @@ opa:
 
 [`sda-commons-server-auth-testing`](../sda-commons-server-auth-testing/README.md) provides support for testing
 applications with authentication.
+
+## Input Extensions
+
+The Bundle offers the option to register extensions that send custom data to the Open Policy Agent to be accessed during policy execution.
+Such extensions implement the [`OpaInputExtension`](.src/main/java/org/sdase/commons/server/opa/extension/OpaInputExtension.java) interface and are registered in a dedicated namespace.
+The extension is called in the `OpaAuthFilter` and is able to access the current `RequestContext` to for example extract additional data from the request.
+_Overriding existing input properties (`path`, `jwt`, `httpMethod`) is not possible._
+
+This extension option should only be used if the normal authorization via constraints is not powerful enough.
+In general, a custom extension should not be necessary for most use cases.
+
+_Remark on accessing the request body in an input extension:_
+The extension gets the `ContainerRequestContext` as input to access information about the request.
+Please be aware to not access the request entity since this might break your service.
+A test that shows the erroneous behavior can be found in [`OpaBundleBodyInputExtensionTest.java`](./src/test/java/org/sdase/commons/server/opa/OpaBundleBodyInputExtensionTest.java)
+
+_Security note:_
+When creating new extensions, be aware that you might access properties of a request that are not yet validated in the method interface.
+This is especially important if your service expects single values that might be accessible as array value to the OPA.
+While the service (e.g. in case of query parameters) only considers the first value, make sure to not authorize on other values in the OPA.  
+
+The following listing shows an example extension that adds a fixed boolean entry:
+```java
+public class ExampleOpaInputExtension implements OpaInputExtension<Boolean> {
+  @Override
+  public Boolean createAdditionalInputContent(ContainerRequestContext requestContext) {
+    return true;
+  }
+}
+```
+
+Register the extension during the `OpaBundle` creation:
+```java
+OpaBundle.builder()
+    .withOpaConfigProvider(YourConfiguration::getOpa)
+    .withInputExtension("myExtension", new ExampleOpaInputExtension())
+    .build();
+```
+
+Access the additional input inside a policy `.rego`-file in this way:
+```rego
+exampleExtensionWorks {
+    # check if path match '/contracts' 
+    input.path = ["contracts"]
+
+    # check if the custom input has a certain value 
+    input.myExtension == true 
+}
+```

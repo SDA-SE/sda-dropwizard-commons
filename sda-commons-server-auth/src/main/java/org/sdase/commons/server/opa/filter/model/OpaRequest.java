@@ -1,34 +1,29 @@
 package org.sdase.commons.server.opa.filter.model;
 
-import javax.ws.rs.core.MultivaluedMap;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class OpaRequest {
 
-  private OpaInput input;
+  private JsonNode input;
 
   public OpaRequest() {
     // nothing here
   }
 
-  private OpaRequest(OpaInput input) {
+  private OpaRequest(JsonNode input) {
     this.input = input;
   }
 
-  public OpaInput getInput() {
+  public JsonNode getInput() {
     return input;
   }
 
-  public OpaRequest setInput(OpaInput input) {
+  public OpaRequest setInput(JsonNode input) {
     this.input = input;
     return this;
   }
 
-  public static OpaRequest request(
-      String jwt,
-      String[] path,
-      String method,
-      String traceToken,
-      MultivaluedMap<String, String> headers) {
-    return new OpaRequest(new OpaInput(jwt, path, method, traceToken, headers));
+  public static OpaRequest request(JsonNode input) {
+    return new OpaRequest(input);
   }
 }

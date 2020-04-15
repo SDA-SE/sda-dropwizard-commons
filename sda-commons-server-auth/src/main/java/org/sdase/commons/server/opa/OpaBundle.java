@@ -5,6 +5,7 @@ import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.regi
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
@@ -16,13 +17,19 @@ import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.config.OpaConfigProvider;
+import org.sdase.commons.server.opa.extension.OpaInputExtension;
+import org.sdase.commons.server.opa.extension.OpaInputHeadersExtension;
 import org.sdase.commons.server.opa.filter.OpaAuthFilter;
+import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,10 +70,15 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   private static final Logger LOG = LoggerFactory.getLogger(OpaBundle.class);
 
   private final OpaConfigProvider<T> configProvider;
+  private final Map<String, OpaInputExtension<?>> inputExtensions;
   private final Tracer tracer;
 
-  private OpaBundle(OpaConfigProvider<T> configProvider, Tracer tracer) {
+  private OpaBundle(
+      OpaConfigProvider<T> configProvider,
+      Map<String, OpaInputExtension<?>> inputExtensions,
+      Tracer tracer) {
     this.configProvider = configProvider;
+    this.inputExtensions = inputExtensions;
     this.tracer = tracer;
   }
 
@@ -75,6 +87,12 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   //
   public static ProviderBuilder builder() {
     return new Builder<>();
+  }
+
+  @VisibleForTesting
+  @SuppressWarnings("java:S1452") // allow generic wildcard type
+  public Map<String, OpaInputExtension<?>> getInputExtensions() {
+    return inputExtensions;
   }
 
   @Override
@@ -111,7 +129,13 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     environment
         .jersey()
         .register(
-            new OpaAuthFilter(policyTarget, config, excludePattern, objectMapper, currentTracer));
+            new OpaAuthFilter(
+                policyTarget,
+                config,
+                excludePattern,
+                objectMapper,
+                inputExtensions,
+                currentTracer));
 
     // register health check
     if (!config.isDisableOpa()) {
@@ -172,10 +196,10 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   }
 
   /**
-   * builds the URL to the policiy
+   * builds the URL to the policy
    *
    * @param config OPA configuration
-   * @return The complete policiy url
+   * @return The complete policy url
    */
   private String buildUrl(OpaConfig config) {
     return String.format("%s/v1/data/%s", config.getBaseUrl(), config.getPolicyPackagePath());
@@ -188,6 +212,27 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
   public interface OpaBuilder<C extends Configuration> {
 
+    /**
+     * Register a custom {@link OpaInputExtension} that enriches the default {@link OpaInput} with
+     * custom properties that are sent to the Open Policy Agent. Prefer authorization based on the
+     * {@link OpaJwtPrincipal#getConstraintsAsEntity(Class) constraints} that are returned after
+     * policy execution.
+     *
+     * <p>Please note that it is prohibited to override properties that are already set in the
+     * original {@link org.sdase.commons.server.opa.filter.model.OpaInput}.
+     *
+     * @param namespace the namespace is used as property name that the input should be accessible
+     *     as in the OPA policy
+     * @param extension the extension to register
+     * @param <T> the type of data that is added to the input
+     * @throws HiddenOriginalPropertyException thrown if the namespace of an input extension
+     *     interferes with a property name of the original {@link OpaInput}.
+     * @throws DuplicatePropertyException thrown if a namespace interferes with an already
+     *     registered extension.
+     * @return the builder
+     */
+    <T> OpaBuilder<C> withInputExtension(String namespace, OpaInputExtension<T> extension);
+
     OpaBuilder<C> withTracer(Tracer tracer);
 
     OpaBundle<C> build();
@@ -197,6 +242,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
     private OpaConfigProvider<C> opaConfigProvider;
     private Tracer tracer;
+    private final Map<String, OpaInputExtension<?>> inputExtensions = new HashMap<>();
 
     private Builder() {
       // private method to prevent external instantiation
@@ -213,6 +259,23 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     }
 
     @Override
+    public <T> OpaBuilder<C> withInputExtension(String namespace, OpaInputExtension<T> extension) {
+      // Check if the namespace of an extension would override any original field of the OpaInput.
+      if (Arrays.stream(OpaInput.class.getDeclaredFields())
+          .anyMatch(f -> f.getName().equals(namespace))) {
+        throw new HiddenOriginalPropertyException(namespace, extension);
+      }
+
+      // Check if the namespace has already been registered before
+      if (inputExtensions.containsKey(namespace)) {
+        throw new DuplicatePropertyException(namespace, extension, inputExtensions.get(namespace));
+      }
+
+      this.inputExtensions.put(namespace, extension);
+      return this;
+    }
+
+    @Override
     public OpaBuilder<C> withTracer(Tracer tracer) {
       this.tracer = tracer;
       return this;
@@ -220,7 +283,32 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
     @Override
     public OpaBundle<C> build() {
-      return new OpaBundle<>(opaConfigProvider, tracer);
+      withInputExtension("headers", OpaInputHeadersExtension.builder().build());
+
+      return new OpaBundle<>(opaConfigProvider, inputExtensions, tracer);
+    }
+  }
+
+  public static class HiddenOriginalPropertyException extends RuntimeException {
+    public HiddenOriginalPropertyException(String namespace, OpaInputExtension<?> extension) {
+      super(
+          String.format(
+              "The extension \"%s\" would override the original field \"%s\" of the OpaInput. This is not allowed!",
+              extension.getClass().getName(), namespace));
+    }
+  }
+
+  public static class DuplicatePropertyException extends RuntimeException {
+    public DuplicatePropertyException(
+        String namespace,
+        OpaInputExtension<?> extension,
+        OpaInputExtension<?> alreadyRegisteredExtension) {
+      super(
+          String.format(
+              "There is already an extension \"%s\" registered for the field \"%s\". The extension \"%s\" would override this field.",
+              alreadyRegisteredExtension.getClass().getName(),
+              namespace,
+              extension.getClass().getName()));
     }
   }
 }

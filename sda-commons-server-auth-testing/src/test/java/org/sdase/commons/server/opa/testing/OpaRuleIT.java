@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.VerificationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -183,7 +184,10 @@ public class OpaRuleIT {
   }
 
   private OpaRequest requestWithJwt(String jwt, String method, String... path) {
+    ObjectMapper objectMapper = new ObjectMapper();
     return new OpaRequest()
-        .setInput(new OpaInput().setJwt(jwt).setHttpMethod(method).setPath(path).setHeaders(null));
+        .setInput(
+            objectMapper.valueToTree(
+                new OpaInput().setJwt(jwt).setHttpMethod(method).setPath(path)));
   }
 }

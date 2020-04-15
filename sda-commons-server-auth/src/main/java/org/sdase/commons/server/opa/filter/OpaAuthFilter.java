@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
@@ -24,8 +25,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -34,6 +33,8 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.sdase.commons.server.auth.JwtPrincipal;
 import org.sdase.commons.server.opa.OpaJwtPrincipal;
 import org.sdase.commons.server.opa.config.OpaConfig;
+import org.sdase.commons.server.opa.extension.OpaInputExtension;
+import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.filter.model.OpaRequest;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.sdase.commons.shared.tracing.RequestTracing;
@@ -72,6 +73,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
   private final boolean isDisabled;
   private final List<Pattern> excludePatterns;
   private final ObjectMapper om;
+  private final Map<String, OpaInputExtension<?>> inputExtensions;
   private final Tracer tracer;
 
   public OpaAuthFilter(
@@ -79,6 +81,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
       OpaConfig config,
       List<String> excludePatterns,
       ObjectMapper om,
+      Map<String, OpaInputExtension<?>> inputExtensions,
       Tracer tracer) {
     this.webTarget = webTarget;
     this.isDisabled = config.isDisableOpa();
@@ -87,6 +90,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
             ? Collections.emptyList()
             : excludePatterns.stream().map(Pattern::compile).collect(toList());
     this.om = om;
+    this.inputExtensions = inputExtensions;
     this.tracer = tracer;
   }
 
@@ -105,11 +109,6 @@ public class OpaAuthFilter implements ContainerRequestFilter {
       String method = requestContext.getMethod();
       String trace = requestContext.getHeaderString(RequestTracing.TOKEN_HEADER);
       String jwt = null;
-      // Headers are currently passed to OPA as read by the framework. There might be an issue
-      // with multivalued headers. The representation differs depending on how the client
-      // sends the headers. It might be a list with values, or one entry separated with a
-      // separator, for example ',' or a combination of both.
-      MultivaluedMap<String, String> headers = lowercaseHeaderNames(requestContext.getHeaders());
 
       // if security context already exist and if it is a jwt security context,
       // we include the jwt in the request
@@ -131,7 +130,17 @@ public class OpaAuthFilter implements ContainerRequestFilter {
         // process the actual request to the open policy agent server
         String[] path =
             uriInfo.getPathSegments().stream().map(PathSegment::getPath).toArray(String[]::new);
-        OpaRequest request = OpaRequest.request(jwt, path, method, trace, headers);
+        OpaInput opaInput = new OpaInput(jwt, path, method, trace);
+        ObjectNode objectNode = om.convertValue(opaInput, ObjectNode.class);
+
+        // append the input extensions to the input object
+        inputExtensions.forEach(
+            (namespace, extension) ->
+                objectNode.set(
+                    namespace,
+                    om.valueToTree(extension.createAdditionalInputContent(requestContext))));
+
+        OpaRequest request = OpaRequest.request(objectNode);
         constraints = authorizeWithOpa(request, span);
       }
 
@@ -144,20 +153,6 @@ public class OpaAuthFilter implements ContainerRequestFilter {
 
   private boolean isExcluded(UriInfo uriInfo) {
     return excludePatterns.stream().anyMatch(p -> p.matcher(uriInfo.getPath()).matches());
-  }
-
-  /**
-   * Lowercase header names. In HTTP RFC, the header names are defined as case-insensitive, so a
-   * normalization is needed to define how the headers are named in OPA
-   *
-   * @param headers request headers
-   * @return Map with normalized header names
-   */
-  private MultivaluedMap<String, String> lowercaseHeaderNames(
-      MultivaluedMap<String, String> headers) {
-    MultivaluedMap<String, String> result = new MultivaluedHashMap<>();
-    headers.forEach((key, value) -> result.addAll(key.toLowerCase(), value));
-    return result;
   }
 
   /**
