@@ -207,6 +207,12 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     }
 
     @Override
+    public <T extends Configuration> OpaBuilder<T> withOpaConfigProvider(
+        OpaConfigProvider<T> opaConfigProvider) {
+      return new Builder<>(opaConfigProvider);
+    }
+
+    @Override
     public OpaBuilder<C> withTracer(Tracer tracer) {
       this.tracer = tracer;
       return this;
@@ -215,12 +221,6 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     @Override
     public OpaBundle<C> build() {
       return new OpaBundle<>(opaConfigProvider, tracer);
-    }
-
-    @Override
-    public <T extends Configuration> OpaBuilder<T> withOpaConfigProvider(
-        OpaConfigProvider<T> opaConfigProvider) {
-      return new Builder<>(opaConfigProvider);
     }
   }
 }
