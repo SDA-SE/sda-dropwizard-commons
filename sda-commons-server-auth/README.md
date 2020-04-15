@@ -156,7 +156,7 @@ The OPA bundle requests the policy decision providing the following inputs
  * HTTP path as Array
  * HTTP method as String
  * validated JWT (if available) 
- * all request headers 
+ * all request headers (can be disabled in the [`OpaBundle`](./src/main/java/org/sdase/commons/server/opa/OpaBundle.java) builder)
 
 _Remark to HTTP request headers:_  
 The bundle normalizes  header names to lower case to simplify handling in OPA since HTTP specification defines header names as case insensitive.

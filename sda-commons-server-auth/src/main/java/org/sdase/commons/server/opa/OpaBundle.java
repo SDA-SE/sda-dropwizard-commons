@@ -206,8 +206,18 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   }
 
   public interface ProviderBuilder {
-    <C extends Configuration> OpaBuilder<C> withOpaConfigProvider(
+    <C extends Configuration> OpaExtensionsBuilder<C> withOpaConfigProvider(
         OpaConfigProvider<C> opaConfigProvider);
+  }
+
+  public interface OpaExtensionsBuilder<C extends Configuration> extends OpaBuilder<C> {
+    /**
+     * Disable the {@link OpaInputHeadersExtension} to <i>not</i> forward any headers to the Open
+     * Policy Agent.
+     *
+     * @return the buider
+     */
+    OpaExtensionsBuilder<C> withoutHeadersExtension();
   }
 
   public interface OpaBuilder<C extends Configuration> {
@@ -238,11 +248,13 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     OpaBundle<C> build();
   }
 
-  public static class Builder<C extends Configuration> implements ProviderBuilder, OpaBuilder<C> {
+  public static class Builder<C extends Configuration>
+      implements ProviderBuilder, OpaExtensionsBuilder<C>, OpaBuilder<C> {
 
     private OpaConfigProvider<C> opaConfigProvider;
     private Tracer tracer;
     private final Map<String, OpaInputExtension<?>> inputExtensions = new HashMap<>();
+    private boolean addHeadersExtension = true; // on by default
 
     private Builder() {
       // private method to prevent external instantiation
@@ -253,9 +265,15 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     }
 
     @Override
-    public <T extends Configuration> OpaBuilder<T> withOpaConfigProvider(
+    public <T extends Configuration> OpaExtensionsBuilder<T> withOpaConfigProvider(
         OpaConfigProvider<T> opaConfigProvider) {
       return new Builder<>(opaConfigProvider);
+    }
+
+    @Override
+    public OpaExtensionsBuilder<C> withoutHeadersExtension() {
+      this.addHeadersExtension = false;
+      return this;
     }
 
     @Override
@@ -283,7 +301,9 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
     @Override
     public OpaBundle<C> build() {
-      withInputExtension("headers", OpaInputHeadersExtension.builder().build());
+      if (addHeadersExtension) {
+        withInputExtension("headers", OpaInputHeadersExtension.builder().build());
+      }
 
       return new OpaBundle<>(opaConfigProvider, inputExtensions, tracer);
     }
