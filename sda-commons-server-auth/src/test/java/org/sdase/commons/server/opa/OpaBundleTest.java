@@ -49,6 +49,18 @@ public class OpaBundleTest {
             "headers", ex -> assertThat(ex).isOfAnyClassIn(OpaInputHeadersExtension.class));
   }
 
+  @Test
+  public void shouldNotActivateHeadersExtensionWhenDisabled() {
+    OpaBundle<TestConfiguration> bundle =
+        OpaBundle.builder()
+            .withOpaConfigProvider(TestConfiguration::getOpa)
+            .withoutHeadersExtension()
+            .build();
+
+    assertThat(bundle.getInputExtensions().values())
+        .noneMatch(ex -> OpaInputHeadersExtension.class.equals(ex.getClass()));
+  }
+
   static class NullInputExtension implements OpaInputExtension<Boolean> {
     @Override
     public Boolean createAdditionalInputContent(ContainerRequestContext requestContext) {
