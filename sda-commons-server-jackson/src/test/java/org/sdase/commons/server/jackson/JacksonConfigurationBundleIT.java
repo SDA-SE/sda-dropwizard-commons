@@ -20,6 +20,7 @@ import org.assertj.core.groups.Tuple;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.jackson.test.JacksonConfigurationTestApp;
+import org.sdase.commons.server.jackson.test.NameSearchFilterResource;
 import org.sdase.commons.server.jackson.test.PersonResource;
 import org.sdase.commons.server.jackson.test.PersonWithChildrenResource;
 import org.sdase.commons.server.jackson.test.ValidationResource;
@@ -215,6 +216,26 @@ public class JacksonConfigurationBundleIT {
             new Tuple("name", "First name and last name must be different.", "CHECK_NAME_REPEATED"),
             new Tuple(
                 "lastName", "First name and last name must be different.", "CHECK_NAME_REPEATED"));
+  }
+
+  @Test
+  public void shouldGetValidationExceptionWithInvalidFieldOfExtendingResource() {
+    NameSearchFilterResource emptyNameSearchFilterResource = new NameSearchFilterResource();
+
+    Response response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("searchValidation")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(emptyNameSearchFilterResource));
+
+    ApiError apiError = response.readEntity(ApiError.class);
+    assertThat(response.getStatus()).isEqualTo(422);
+    assertThat(apiError.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
+    assertThat(apiError.getInvalidParams().size()).isEqualTo(1);
+    assertThat(apiError.getInvalidParams())
+        .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
+        .containsExactlyInAnyOrder(new Tuple("name", "NOT_NULL"));
   }
 
   @Test
