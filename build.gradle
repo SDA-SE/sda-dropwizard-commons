@@ -68,57 +68,60 @@ subprojects {
 
   version = System.getenv('SEMANTIC_VERSION')
 
-  publishing {
-    publications {
-      maven(MavenPublication) {
-        pom {
-          name = project.group + ":" + project.name
-          description = 'A libraries to bootstrap services easily that follow the patterns and specifications promoted by the SDA SE'
-          url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
-
-          licenses {
-            license {
-              name = 'MIT License'
-              url = 'https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/master/LICENSE'
-            }
-          }
-
-          organization {
-            name = 'SDA SE Open Industry Solutions'
-            url = 'https://sda.se'
-          }
-
-          issueManagement {
-            system = 'GitHub'
-            url = 'https://github.com/SDA-SE/sda-dropwizard-commons/issues'
-          }
-
-          developers {
-            developer {
-              id = 'maintainer'
-              name = 'SDA SE Open Industry Solutions Maintainer'
-              email = 'sda-dropwizard-commons@sda.se'
-            }
-          }
-
-          scm {
-            connection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
-            developerConnection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
+  // Don't configure publishing for the example projects
+  if (!it.name.endsWith("-example")) {
+    publishing {
+      publications {
+        maven(MavenPublication) {
+          pom {
+            name = project.group + ":" + project.name
+            description = 'A libraries to bootstrap services easily that follow the patterns and specifications promoted by the SDA SE'
             url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
+
+            licenses {
+              license {
+                name = 'MIT License'
+                url = 'https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/master/LICENSE'
+              }
+            }
+
+            organization {
+              name = 'SDA SE Open Industry Solutions'
+              url = 'https://sda.se'
+            }
+
+            issueManagement {
+              system = 'GitHub'
+              url = 'https://github.com/SDA-SE/sda-dropwizard-commons/issues'
+            }
+
+            developers {
+              developer {
+                id = 'maintainer'
+                name = 'SDA SE Open Industry Solutions Maintainer'
+                email = 'sda-dropwizard-commons@sda.se'
+              }
+            }
+
+            scm {
+              connection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
+              developerConnection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
+              url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
+            }
           }
         }
       }
-    }
 
-    repositories {
-      maven {
-        def releasesRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-releases/"
-        def snapshotsRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
-        url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+      repositories {
+        maven {
+          def releasesRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-releases/"
+          def snapshotsRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
+          url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
-        credentials {
-          username System.getenv('SDA_NEXUS_USER')
-          password System.getenv('SDA_NEXUS_PASSWORD')
+          credentials {
+            username System.getenv('SDA_NEXUS_USER')
+            password System.getenv('SDA_NEXUS_PASSWORD')
+          }
         }
       }
     }
