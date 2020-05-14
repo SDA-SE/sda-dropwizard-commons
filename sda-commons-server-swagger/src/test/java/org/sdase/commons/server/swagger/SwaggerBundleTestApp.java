@@ -24,10 +24,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 
 @Api
 @Path("")
-public class SwaggerBundleTestApp extends Application<Configuration> {
+public class SwaggerBundleTestApp extends Application<Configuration>
+    implements ContextAwareEndpoint {
 
   private static final String JOHN_DOE_PATH = "/jdoe";
   private static final String HOUSE_PATH = "/house";
