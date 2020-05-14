@@ -12,10 +12,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
+import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 
 @Path("")
-public class JacksonConfigurationNoFieldFilterTestApp extends Application<Configuration> {
+public class JacksonConfigurationNoFieldFilterTestApp extends Application<Configuration>
+    implements ContextAwareEndpoint {
 
   @Context private UriInfo uriInfo;
 
