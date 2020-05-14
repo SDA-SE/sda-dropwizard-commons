@@ -13,13 +13,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 import org.sdase.commons.server.hibernate.example.db.manager.PersonManager;
 import org.sdase.commons.server.hibernate.example.db.model.PersonEntity;
 import org.sdase.commons.server.hibernate.example.rest.model.PersonResource;
 
 /** Sample service endpoint to create and read person entities from hibernate */
 @Path("/persons")
-public class PersonsEndPoint {
+public class PersonsEndPoint implements ContextAwareEndpoint {
 
   /** DAO for accessing persons in the database */
   private final PersonManager personManager;
