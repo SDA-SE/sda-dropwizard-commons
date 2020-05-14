@@ -12,11 +12,12 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 
 /** Example endpoint for getting information about people. */
 @PermitAll // Require authentication for this endpoint. Take care the annotation is applied to the
 // class, not the service interface!
-public class PersonEndpoint implements PersonService {
+public class PersonEndpoint implements PersonService, ContextAwareEndpoint {
 
   private final Map<Integer, CreatePersonResource> people =
       Collections.synchronizedMap(new LinkedHashMap<>());

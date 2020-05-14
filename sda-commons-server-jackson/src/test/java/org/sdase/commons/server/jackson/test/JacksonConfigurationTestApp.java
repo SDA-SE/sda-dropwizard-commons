@@ -31,11 +31,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.assertj.core.util.Lists;
+import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.shared.api.error.ApiException;
 
 @Path("")
-public class JacksonConfigurationTestApp extends Application<Configuration> {
+public class JacksonConfigurationTestApp extends Application<Configuration>
+    implements ContextAwareEndpoint {
 
   @Context private UriInfo uriInfo;
 
