@@ -12,10 +12,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.hibernate.SessionFactory;
+import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 import org.sdase.commons.server.hibernate.test.model.Person;
 
 @Path("/persons")
-public class PersonEndPoint extends AbstractDAO<Person> {
+public class PersonEndPoint extends AbstractDAO<Person> implements ContextAwareEndpoint {
 
   @Context private UriInfo uriInfo;
 

@@ -16,6 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 import org.sdase.commons.server.starter.example.people.db.PersonEntity;
 import org.sdase.commons.server.starter.example.people.db.PersonManager;
 
@@ -29,7 +30,7 @@ import org.sdase.commons.server.starter.example.people.db.PersonManager;
 }) // should be set to produce 406 for other accept headers
 @Consumes({APPLICATION_JSON}) // should be set to produce 406 for other accept headers
 @PermitAll // Require authentication for this endpoint
-public class PersonEndpoint {
+public class PersonEndpoint implements ContextAwareEndpoint {
 
   /**
    * Information about the requested URI. Jersey will inject a Proxy of {@code UriInfo} that is

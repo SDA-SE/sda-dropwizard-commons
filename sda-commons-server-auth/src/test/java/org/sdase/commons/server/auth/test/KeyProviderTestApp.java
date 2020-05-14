@@ -18,10 +18,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 
 /** A test application that provides endpoints for key sources to test loading over Http. */
 @Path("/")
-public class KeyProviderTestApp extends Application<Configuration> {
+public class KeyProviderTestApp extends Application<Configuration> implements ContextAwareEndpoint {
 
   private ObjectMapper objectMapper;
 
