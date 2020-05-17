@@ -16,19 +16,7 @@ dependencies {
     exclude group: 'org.apache.kafka', module: 'kafka-clients'
   }
 
-  compile "org.apache.kafka:kafka-clients", {
-    exclude group: 'io.confluent', module: 'common-config'
-  }
-
-  compile "io.confluent:common-config", {
-    exclude group: 'io.confluent', module: 'common-utils'
-    exclude group: 'org.slf4j', module: 'slf4j-api'
-  }
-
-  compile "io.confluent:common-utils", {
-    exclude group: 'org.apache.zookeeper', module: 'zookeeper'
-    exclude group: 'com.101tec', module: 'zkclient'
-  }
+  compile "org.apache.kafka:kafka-clients"
 
   compile "com.101tec:zkclient", {
     exclude group: 'org.apache.zookeeper', module: 'zookeeper'
