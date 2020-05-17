@@ -2,7 +2,7 @@
 # Created by https://www.gitignore.io/api/java,eclipse,osx,gradle
 derby.log
 target/
-gradle.properties
+#gradle.properties
 
 ### Java ###
 *.class

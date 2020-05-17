@@ -86,3 +86,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SDA_NEXUS_USER: ${{ secrets.NEXUS_LOGIN_USER }}
           SDA_NEXUS_PASSWORD: ${{ secrets.NEXUS_LOGIN_PASSWORD }}
+          SDA_SONATYPE_USER: ${{ secrets.SDA_SONATYPE_USER }}
+          SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
