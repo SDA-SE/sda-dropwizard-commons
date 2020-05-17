@@ -1,5 +1,7 @@
 # SDA Commons Server Jaeger
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-jaeger/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-jaeger)
+
 This module provides the [`JaegerBundle`](./src/main/java/org/sdase/commons/server/jaeger/JaegerBundle.java) used to collect [OpenTracing](https://opentracing.io/) traces to [Jaeger](https://www.jaegertracing.io/).
 When traces are generated, the `JaegerBundle` forwards the traces to the Jaeger agent.
 The Jaeger collector is registered in the `GlobalTracer`.

@@ -1,5 +1,7 @@
 # SDA Commons Shared YAML
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-shared-yaml/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-shared-yaml)
+
 This module contains a class [`YamlUtil`](./src/main/java/org/sdase/commons/shared/yaml/YamlUtil.java)
 providing static methods for YAML-file handling.
 

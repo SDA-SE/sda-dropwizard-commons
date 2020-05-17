@@ -1,5 +1,7 @@
 # SDA Commons Server Auth
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-auth/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-auth)
+
 This module provides an [`AuthBundle`](./src/main/java/org/sdase/commons/server/auth/AuthBundle.java) to authenticate
 users based on JSON Web Tokens and an [`OpaBundle`](./src/main/java/org/sdase/commons/server/opa/OpaBundle.java) to
 authorize the request with help of the [`Open Policy Agent`](http://www.openpolicyagent.org).

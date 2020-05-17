@@ -1,5 +1,7 @@
 # SDA Commons BOM
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-bom/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-bom)
+
 The module `sda-commons-bom` defines the versions of sda-commons modules.
 
 ## Usage

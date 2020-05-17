@@ -1,4 +1,7 @@
 # kafka-common
+
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka)
+
 This module provides a [`KafkaBundle`](./src/main/java/org/sdase/commons/server/kafka/KafkaBundle.java) adds convenient 
 functionality to create Kafka consumers, producers, and topics via configuration or Java DSL. 
 

@@ -1,5 +1,7 @@
 # SDA Commons Server Circuit Breaker
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-circuitbreaker/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-circuitbreaker)
+
 This module provides the [`CircuitBreakerBundle`](src/main/java/org/sdase/commons/server/circuitbreaker/CircuitBreakerBundle.java), 
 a Dropwizard bundle that is used to inject circuit breakers into service calls.
 

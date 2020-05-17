@@ -1,5 +1,7 @@
 # SDA Commons Server CORS
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-cors/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-cors)
+
 The CORS bundle adds a [CORS](https://www.w3.org/TR/cors/) filter to the servlet to allow cross-origin resource sharing 
 for this service. By doing so, UIs from other origins are allowed to access the service.  
 

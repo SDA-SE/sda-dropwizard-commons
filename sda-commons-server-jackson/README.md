@@ -1,5 +1,7 @@
 # SDA Commons Server Jackson
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-jackson/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-jackson)
+
 The module `sda-commons-server-jackson` is used to configure the `ObjectMapper` with the recommended default settings 
 of SDA SE services. It also provides support for linking resources with HAL and adds the ability to filter fields on 
 client request.

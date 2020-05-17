@@ -1,5 +1,7 @@
 # SDA Commons Swagger
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-swagger/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-swagger)
+
 The module `sda-commons-server-swagger` is the base module to add
 [Swagger](https://github.com/swagger-api/swagger-core) support for applications in the
 SDA SE infrastructure.

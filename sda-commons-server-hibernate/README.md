@@ -1,5 +1,7 @@
 # SDA Commons Server Hibernate
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-hibernate/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-hibernate)
+
 The module `sda-commons-server-hibernate` provides access to relational databases with hibernate. It is primarily
 designed to use PostgreSQL in production and H2 in memory in tests. 
 

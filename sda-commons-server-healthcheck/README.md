@@ -1,5 +1,7 @@
 # SDA Commons Server Health Check
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-healthcheck/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-healthcheck)
+
 In a Microservice architecture pattern sometimes a service instance can be incapable of handling
 requests but is still running. For example, it might have ran out of database connections.
 When this occurs, the monitoring system should generate an alert.

@@ -1,5 +1,7 @@
 # SDA Commons Server Dropwizard
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-dropwizard/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-dropwizard)
+
 `sda-commons-server-dropwizard` is an aggregator module that provides `io.dropwizard:dropwizard-core` with convergent
 dependencies and some common Dropwizard bundles for easier configuration that are not dependent on other technology
 than Dropwizard.

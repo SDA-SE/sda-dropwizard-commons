@@ -1,5 +1,7 @@
 # SDA Commons Server Testing
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-testing)
+
 The module `sda-commons-server-testing` is the base module to add unit and integrations test for applications in the 
 SDA SE infrastructure.
 

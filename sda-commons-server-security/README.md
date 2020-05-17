@@ -1,5 +1,7 @@
 # SDA Commons Server Security
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-security/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-security)
+
 The module `sda-commons-server-security` helps to configure a secure Dropwizard application according to the 
 recommendations "Härtungsmaßnahmen Dropwizard" available at the internal wiki entry
 by Timo Pagel.

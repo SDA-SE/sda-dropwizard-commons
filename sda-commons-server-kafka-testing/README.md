@@ -1,5 +1,7 @@
 # SDA Commons Server Kafka Testing
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka-testing)
+
 The module `sda-commons-server-kafka-testing` is the base module to add unit and integrations test for kafka broker usage.
 
 It includes the dependencies to [sda-commons-server-testing](../sda-commons-server-testing/README.md) module.

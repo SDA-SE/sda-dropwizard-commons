@@ -1,5 +1,7 @@
 # SDA Commons Server S3 Testing
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-s3-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-s3-testing)
+
 This module provides the [`S3MockRule`](src/main/java/org/sdase/commons/server/s3/testing/S3MockRule.java), 
 a JUnit test rule that is used to automatically bootstrap an AWS S3-compatible object storage instance
 for integration tests.
