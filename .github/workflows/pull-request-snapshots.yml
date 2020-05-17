@@ -17,8 +17,10 @@ jobs:
           java-version: 1.8
 
       - name: Build and Publish Snapshot
-        run: ./gradlew publish
+        run: ./gradlew publishMavenPublicationToSdaInternRepository
         env:
           SEMANTIC_VERSION: PR-${{ github.event.number }}-SNAPSHOT
           SDA_NEXUS_USER: ${{ secrets.NEXUS_LOGIN_USER }}
           SDA_NEXUS_PASSWORD: ${{ secrets.NEXUS_LOGIN_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}

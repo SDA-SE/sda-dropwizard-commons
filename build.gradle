@@ -7,8 +7,10 @@ buildscript {
 plugins {
   id 'maven-publish'
   id 'jacoco'
+  id 'signing'
   id 'org.sonarqube' version '2.8'
   id 'com.diffplug.gradle.spotless' version '3.30.0'
+  id 'io.codearte.nexus-staging' version '0.21.2'
 }
 
 allprojects {
@@ -46,12 +48,18 @@ spotless {
 subprojects {
   apply plugin: 'maven-publish'
   apply plugin: 'com.diffplug.gradle.spotless'
+  apply plugin: 'signing'
 
   group 'org.sdase.commons'
 
   repositories {
     mavenCentral()
     maven { url "http://packages.confluent.io/maven/" } // for sda-commons-server-kafka-confluent-testing only
+  }
+
+  // Disable publication of Gradle Module Metadata
+  tasks.withType(GenerateModuleMetadata) {
+    enabled = false
   }
 
   spotless {
@@ -70,6 +78,18 @@ subprojects {
 
   // Don't configure publishing for the example projects
   if (!it.name.endsWith("-example")) {
+    signing {
+      def signingKey = findProperty("signingKey")
+      def signingPassword = findProperty("signingPassword")
+      useInMemoryPgpKeys(signingKey, signingPassword)
+      sign publishing.publications
+    }
+
+    tasks.withType(Sign) {
+      // skip signing a publication to maven local
+      onlyIf { !gradle.taskGraph.hasTask(publishMavenPublicationToMavenLocal) }
+    }
+
     publishing {
       publications {
         maven(MavenPublication) {
@@ -114,6 +134,7 @@ subprojects {
 
       repositories {
         maven {
+          name = "sdaIntern"
           def releasesRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-releases/"
           def snapshotsRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
           url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
@@ -121,6 +142,17 @@ subprojects {
           credentials {
             username System.getenv('SDA_NEXUS_USER')
             password System.getenv('SDA_NEXUS_PASSWORD')
+          }
+        }
+        maven {
+          name 'mavenCentral'
+          def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+          def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+          url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+          credentials {
+            username System.getenv('SDA_SONATYPE_USER')
+            password System.getenv('SDA_SONATYPE_PASSWORD')
           }
         }
       }
@@ -260,6 +292,16 @@ task codeCoverageReport(type: JacocoReport) {
     xml.enabled = true
     xml.destination file("${buildDir}/reports/jacoco/report.xml")
   }
+}
+
+// Automatically close and release the staging repository that gets created
+// during the upload to maven central.
+nexusStaging {
+  username System.getenv('SDA_SONATYPE_USER')
+  password System.getenv('SDA_SONATYPE_PASSWORD')
+  packageGroup "org.sdase.commons"
+  // wait for max. 10 minutes
+  numberOfRetries 300
 }
 
 sonarqube {

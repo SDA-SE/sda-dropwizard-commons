@@ -262,22 +262,7 @@ The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) ad
 
 ## Usage
 
-Up till now, compiled releases aren't available publicly. 
-In case you have access to our internal Nexus repository, add `https://nexus.intern.sda-se.online/repository/sda-se-public/` to your `build.gradle`:
-
-```gradle
-    repositories {
-      ...
-      maven {
-        url "https://nexus.intern.sda-se.online/repository/sda-se-public/"
-        credentials {
-          username sdaNexusUser
-          password sdaNexusPassword
-        }
-      }
-      ...
-    }
-```
+The compiled releases are publicly available via [maven central](https://search.maven.org/search?q=org.sdase.commons).
 
 Include `sda-commons-bom` and `sda-commons-dependencies` as platform constraints. You will inherit 
 all versions defined there and won't have to specify versions for them yourself.
