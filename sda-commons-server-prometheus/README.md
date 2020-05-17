@@ -1,5 +1,7 @@
 # SDA Commons Server Prometheus
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-prometheus/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-prometheus)
+
 The module `sda-commons-server-prometheus` provides 
 
 - an admin endpoint to serve metrics in a format that Prometheus can read. The endpoint is available at the applications 

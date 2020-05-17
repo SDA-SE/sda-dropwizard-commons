@@ -1,5 +1,7 @@
 # SDA Commons Server Open Tracing
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-opentracing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-opentracing)
+
 This module provides the [`OpenTracingBundle`](./src/main/java/org/sdase/commons/server/opentracing/OpenTracingBundle.java) used to instrument using [OpenTracing](https://opentracing.io/).
 
 First, the module injects an external trace received via HTTP headers and continues new spans inside the existing trace.

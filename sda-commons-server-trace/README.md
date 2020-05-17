@@ -1,5 +1,7 @@
 # SDA Commons Server Trace
-  
+
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-trace/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-trace)
+
 The module `sda-commons-server-trace` adds support to track or create a trace token. The trace token is used to
 correlate a set of service invocations that belongs to the same logically cohesive call of a higher level service offered by 
 the SDA platform, e.g. interaction service. 

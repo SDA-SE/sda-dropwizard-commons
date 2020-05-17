@@ -1,5 +1,7 @@
 # SDA Commons Server Mongo Testing
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-mongo-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-mongo-testing)
+
 This module provides the [`MongoDbRule`](src/main/java/org/sdase/commons/server/mongo/testing/MongoDbRule.java), 
 a JUnit test rule that is used to automatically bootstrap a MongoDB instance for integration tests.
 

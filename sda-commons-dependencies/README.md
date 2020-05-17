@@ -1,5 +1,7 @@
 # SDA Commons dependencies
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-dependencies/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-dependencies)
+
 The module `sda-commons-dependencies` defines the versions of sda-commons' dependencies. This 
 concept is mostly known as either [platform](https://docs.gradle.org/current/userguide/java_platform_plugin.html) 
 or "bill of materials". 

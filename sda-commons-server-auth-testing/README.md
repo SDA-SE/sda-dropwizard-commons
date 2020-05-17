@@ -1,5 +1,7 @@
 # SDA Commons Server Auth Testing
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-auth-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-auth-testing)
+
 This module provides support for testing applications that are secured with 
 [`sda-commons-server-auth`](../sda-commons-server-auth/README.md). To use the support, this module has to be added as
 dependency:

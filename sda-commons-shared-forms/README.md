@@ -1,5 +1,7 @@
 # SDA Commons Shared Forms
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-shared-forms/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-shared-forms)
+
 The module `sda-commons-shared-forms` adds all required dependencies to support `multipart/*` in Dropwizard
 applications.
 

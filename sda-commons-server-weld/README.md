@@ -1,5 +1,7 @@
 # SDA Commons Server Weld
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-weld/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-weld)
+
 `sda-commons-server-weld` is used to bootstrap Dropwizard applications inside a Weld-SE container and provides CDI 
 support for servlets, listeners and resources.
 

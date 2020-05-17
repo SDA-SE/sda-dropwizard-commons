@@ -1,5 +1,7 @@
 # SDA Commons Server S3
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-s3/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-s3)
+
 This module provides the [`S3Bundle`](src/main/java/org/sdase/commons/server/s3/S3Bundle.java), 
 a Dropwizard bundle that is used to perform operations on an object storage.
 

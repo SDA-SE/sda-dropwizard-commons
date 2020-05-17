@@ -1,5 +1,7 @@
 # SDA Commons Server Kafka Confluent
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka-confluent/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka-confluent)
+
 The module `sda-commons-server-kafka-confluent` is the base module to add Avro specific support to Kafka.
 
 [Apache Avro™](https://avro.apache.org/) is a serialization system and is often used in larger systems in the context of Kafka. 

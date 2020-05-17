@@ -1,5 +1,7 @@
 # SDA Commons Server Morphia
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-morphia/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-morphia)
+
 The module [`sda-commons-server-morphia`](./README.md) is used to work
 with MongoDB using [Morphia](https://github.com/MorphiaOrg).
 

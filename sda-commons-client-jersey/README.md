@@ -1,5 +1,7 @@
 # SDA Commons Client Jersey
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-client-jersey/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-client-jersey)
+
 The module `sda-commons-client-jersey` provides support for using Jersey clients within the dropwizard application.
 
 

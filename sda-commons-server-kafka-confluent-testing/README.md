@@ -1,5 +1,7 @@
 # SDA Commons Server Kafka Confluent Testing
 
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka-confluent-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka-confluent-testing)
+
 This module adds support for testing with a Confluent Schema Registry. It provides a `ConfluentSchemaRegistryRule`
 that will start a confluent schema registry connecting to a kafka broker. With this registry, you can use Confluent 
 `KafkaAvroSerializer` and `KafkaAvroDeserilizer` (that are not included). Please use the same version for these serializers

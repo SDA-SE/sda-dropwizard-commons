@@ -1,5 +1,7 @@
 # SDA Commons Server Consumer
-  
+
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-consumer/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-consumer)
+
 The module `sda-commons-server-consumer` adds support to track or require a consumer token identifying the calling 
 application.
 
