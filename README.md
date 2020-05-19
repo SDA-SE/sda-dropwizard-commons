@@ -1,4 +1,5 @@
 [![Latest Release](https://img.shields.io/github/v/release/sda-se/sda-dropwizard-commons?label=latest)](https://github.com/SDA-SE/sda-dropwizard-commons/releases/latest)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sdase.commons/sda-commons-server-starter/badge.svg)](https://search.maven.org/search?q=org.sdase.commons)
 [![Java CI](https://github.com/SDA-SE/sda-dropwizard-commons/workflows/Java%20CI/badge.svg)](https://github.com/SDA-SE/sda-dropwizard-commons/actions?query=branch%3Amaster+workflow%3A%22Java+CI%22)
 [![FOSSA Status](https://app.fossa.com/api/projects/custom%2B8463%2Fsda-dropwizard-commons.svg?type=shield)](https://app.fossa.com/reports/2d8b4a40-db62-4c73-a978-588e252aa6e8)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SDA-SE_sda-dropwizard-commons&metric=alert_status)](https://sonarcloud.io/dashboard?id=SDA-SE_sda-dropwizard-commons)
