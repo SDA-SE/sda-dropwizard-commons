@@ -14,6 +14,7 @@ ext {
   jettyVersion = '9.4.29.v20200521'
   weldVersion = '3.1.4.Final'
   openTracingUtilVersion = '0.33.0'
+  scalaVersion = '2.12.11'
 }
 
 dependencies {
@@ -53,6 +54,7 @@ dependencies {
     api "com.101tec:zkclient:0.10"
     api "org.apache.curator:curator-test:2.12.0"
     api "org.xerial.snappy:snappy-java:1.1.7.1" // clash between kafka-clients and avro
+    api "com.typesafe.scala-logging:scala-logging_2.12:3.9.2" // clash within io.findify:s3mock_2.12
 
     // Resilience4J
     api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
@@ -110,14 +112,14 @@ dependencies {
     api "org.ow2.asm:asm:8.0.1"
     api "com.salesforce.kafka.test:kafka-junit4:3.0.1"
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0"
-    api "io.findify:s3mock_2.12:0.2.5"
+    api "io.findify:s3mock_2.12:0.2.6"
     api "junit:junit:4.13"
     api "net.javacrumbs.json-unit:json-unit-assertj:2.17.0"
     api "org.assertj:assertj-core:3.16.1"
     api "org.awaitility:awaitility:4.0.3"
     api "org.mockito:mockito-core:3.3.3"
-    api "org.scala-lang:scala-library:2.12.4" // clash within io.findify:s3mock_2.12
-    api "com.typesafe:config:1.4.0" // clash within io.findify:s3mock_2.12
+    api "org.scala-lang:scala-library:$scalaVersion" // clash within io.findify:s3mock_2.12
+    api "org.scala-lang:scala-reflect:$scalaVersion" // clash within io.findify:s3mock_2.12
     api "io.opentracing:opentracing-mock:0.33.0"
   }
 }
