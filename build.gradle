@@ -222,6 +222,10 @@ configure(subprojects.findAll {
     from sourceSets.main.allJava
   }
 
+  javadoc {
+    options.addStringOption('encoding', 'UTF-8')
+  }
+
   task javadocJar(type: Jar, dependsOn: javadoc) {
     archiveClassifier = 'javadoc'
     from javadoc.destinationDir
