@@ -1,0 +1,23 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+title: Address
+oneOf:
+  - $ref: "#/definitions/Address"
+    title: Address
+
+definitions:
+  Address:
+    type: object
+    properties:
+      streetAddress:
+        type: string
+      country:
+        $ref: "#/customDefinitions/Country"
+    required: ["streetAddress"]
+customDefinitions:
+  Country:
+    type: object
+    properties:
+      name:
+        type: string
+    required: ["name"]
