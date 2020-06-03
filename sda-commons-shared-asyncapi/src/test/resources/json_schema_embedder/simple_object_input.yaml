@@ -1,0 +1,18 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+title: PersonOrError
+oneOf:
+- $ref: "#/definitions/Person"
+  title: Person
+- $ref: "simple_object_simple_referenced.yaml#"
+  title: Error
+
+definitions:
+  Person:
+    type: object
+    properties:
+      name:
+        type: string
+      address:
+        $ref: "simple_object_complex_referenced.yaml#/definitions/Address"
+    required: ["name", "address"]

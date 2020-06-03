@@ -1,0 +1,32 @@
+asyncapi: '2.0.0'
+id: 'urn:org:sdase:example:cars'
+defaultContentType: application/json
+
+info:
+  title: Cars Example
+  description: This example demonstrates how to define events around *cars*.
+  version: '1.0.0'
+
+channels:
+  'car-events':
+    publish:
+      operationId: publishCarEvents
+      summary: Car related events
+      description: These are all events that are related to a car
+      message:
+        oneOf:
+          - $ref: '#/components/messages/CarManufactured'
+          - $ref: '#/components/messages/CarScrapped'
+
+components:
+  messages:
+    CarManufactured:
+      title: Car Manufactured
+      description: An event that represents when a new car is manufactured
+      payload:
+        $ref: './schema.json#/definitions/CarManufactured'
+    CarScrapped:
+      title: Car Scrapped
+      description: An event that represents when a car is scrapped
+      payload:
+        $ref: './schema.json#/definitions/CarScrapped'

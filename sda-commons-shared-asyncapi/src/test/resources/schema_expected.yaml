@@ -1,0 +1,136 @@
+---
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Base Event"
+oneOf:
+- $ref: "#/definitions/CarManufactured"
+  title: "Car manufactured"
+- $ref: "#/definitions/CarScrapped"
+  title: "Car scrapped"
+definitions:
+  CarManufactured:
+    type: "object"
+    additionalProperties: false
+    description: "A new car was manufactured"
+    title: "CAR_MANUFACTURED"
+    properties:
+      type:
+        type: "string"
+        enum:
+        - "CAR_MANUFACTURED"
+        default: "CAR_MANUFACTURED"
+      vehicleRegistration:
+        type: "string"
+        examples:
+        - "BB324A81"
+        - "BFCB7DF1"
+        description: "The registration of the vehicle"
+      date:
+        type: "string"
+        format: "date-time"
+        description: "The time of manufacturing"
+      model:
+        oneOf:
+        - $ref: "#/definitions/Electrical"
+          title: "Electrical engine"
+        - $ref: "#/definitions/Combustion"
+          title: "Combustion engine"
+        description: "The model of the car"
+      id:
+        type: "string"
+        examples:
+        - "626A0F21-D940-4B44-BD36-23F0F567B0D0"
+        - "A6E6928D-EF92-4BE8-9DFA-76C935EF3446"
+        description: "The id of the message"
+    required:
+    - "type"
+    - "vehicleRegistration"
+    - "date"
+    - "model"
+    - "id"
+  Electrical:
+    type: "object"
+    additionalProperties: false
+    description: "An car model with an electrical engine"
+    title: "ELECTRICAL"
+    properties:
+      engineType:
+        type: "string"
+        enum:
+        - "ELECTRICAL"
+        default: "ELECTRICAL"
+      name:
+        type: "string"
+        examples:
+        - "Tesla Roadster"
+        - "Hummer H1"
+        description: "The name of the car model"
+      batteryCapacity:
+        type: "integer"
+        examples:
+        - "200"
+        description: "The capacity of the battery in kwH"
+    required:
+    - "engineType"
+    - "batteryCapacity"
+  Combustion:
+    type: "object"
+    additionalProperties: false
+    description: "An car model with a combustion engine"
+    title: "COMBUSTION"
+    properties:
+      engineType:
+        type: "string"
+        enum:
+        - "COMBUSTION"
+        default: "COMBUSTION"
+      name:
+        type: "string"
+        examples:
+        - "Tesla Roadster"
+        - "Hummer H1"
+        description: "The name of the car model"
+      tankVolume:
+        type: "integer"
+        examples:
+        - "95"
+        description: "The capacity of the tank in liter"
+    required:
+    - "engineType"
+    - "tankVolume"
+  CarScrapped:
+    type: "object"
+    additionalProperties: false
+    description: "A car was scrapped"
+    title: "CAR_SCRAPPED"
+    properties:
+      type:
+        type: "string"
+        enum:
+        - "CAR_SCRAPPED"
+        default: "CAR_SCRAPPED"
+      vehicleRegistration:
+        type: "string"
+        examples:
+        - "BB324A81"
+        - "BFCB7DF1"
+        description: "The registration of the vehicle"
+      date:
+        type: "string"
+        format: "date-time"
+        description: "The time of scrapping"
+      location:
+        type: "string"
+        examples:
+        - "Hamburg"
+        description: "The location where the car was scrapped"
+      id:
+        type: "string"
+        examples:
+        - "626A0F21-D940-4B44-BD36-23F0F567B0D0"
+        - "A6E6928D-EF92-4BE8-9DFA-76C935EF3446"
+        description: "The id of the message"
+    required:
+    - "type"
+    - "vehicleRegistration"
+    - "date"
+    - "id"

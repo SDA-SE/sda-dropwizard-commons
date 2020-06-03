@@ -39,6 +39,7 @@ dependencies {
     api "dev.morphia.morphia:core:$morphiaVersion"
     api "dev.morphia.morphia:validation:$morphiaVersion"
     api "org.mongodb:mongo-java-driver:3.10.1"
+    api "io.github.classgraph:classgraph:4.8.47"
 
     // Kafka
     api "org.apache.avro:avro:1.8.2"
@@ -105,6 +106,7 @@ dependencies {
     api "org.yaml:snakeyaml:1.26"
     api "org.eclipse.jetty:jetty-security:$jettyVersion" // io.confluent:rest-utils uses old Jetty version
     api "org.eclipse.jetty:jetty-jmx:$jettyVersion" // see above
+    api "com.kjetland:mbknor-jackson-jsonschema_2.12:1.0.39"
 
     // test dependencies
     api "com.github.java-json-tools:json-schema-validator:2.2.10"

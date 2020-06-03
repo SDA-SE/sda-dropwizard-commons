@@ -5,8 +5,8 @@ dependencies {
   compile 'io.openapitools.jackson.dataformat:jackson-dataformat-hal'
 
   testCompile project(':sda-commons-server-testing')
-  testCompile 'com.kjetland:mbknor-jackson-jsonschema_2.12:1.0.39', {
-    exclude group: 'com.fasterxml.jackson.core', module:'jackson-databind'
+  testCompile 'com.kjetland:mbknor-jackson-jsonschema_2.12', {
+    exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
     exclude group: 'javax.validation', module: 'validation-api'
     exclude group: 'org.slf4j', module: 'slf4j-api'
   }
