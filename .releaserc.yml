@@ -6,7 +6,3 @@ plugins:
   - "@semantic-release/release-notes-generator"
   - "@semantic-release/git"
   - "@semantic-release/github"
-
-  # use the publish hook of semantic-release to publish the modules to the nexus
-  - - "@semantic-release/exec"
-    - publishCmd: "export SEMANTIC_VERSION=${nextRelease.version} && ./gradlew publishMavenPublicationToMavenCentralRepository closeAndReleaseRepository publishMavenPublicationToSdaInternRepository"

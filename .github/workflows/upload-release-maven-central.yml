@@ -1,0 +1,32 @@
+# This workflow uploads the releases to the Maven Central Repository
+name: Publish Release to Maven Central
+
+on:
+  release:
+    types: [released]
+
+env:
+  SEMANTIC_VERSION: ${{ github.event.release.tag_name }}
+
+jobs:
+  upload-maven-central:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Build and Sign packages
+        run: ./gradlew --parallel signMavenPublication
+        env:
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
+
+      - name: Upload to Maven Central
+        run: ./gradlew -x signMavenPublication publishMavenPublicationToMavenCentralRepository closeAndReleaseRepository
+        env:
+          SDA_SONATYPE_USER: ${{ secrets.SDA_SONATYPE_USER }}
+          SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
