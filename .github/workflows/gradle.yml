@@ -77,16 +77,9 @@ jobs:
             semantic-release@15.13.31 \
             @semantic-release/git@7.0.18 \
             @semantic-release/release-notes-generator@7.3.5 \
-            @semantic-release/exec@3.3.8 \
             @semantic-release/github@5.5.6
 
       - name: Release and Publish
         run: semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SDA_NEXUS_USER: ${{ secrets.NEXUS_LOGIN_USER }}
-          SDA_NEXUS_PASSWORD: ${{ secrets.NEXUS_LOGIN_PASSWORD }}
-          SDA_SONATYPE_USER: ${{ secrets.SDA_SONATYPE_USER }}
-          SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.NEXUS_LOGIN_TOKEN }}

@@ -2,6 +2,8 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sdase.commons/sda-commons-server-starter/badge.svg)](https://search.maven.org/search?q=org.sdase.commons)
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-bom/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/)
 [![Java CI](https://github.com/SDA-SE/sda-dropwizard-commons/workflows/Java%20CI/badge.svg)](https://github.com/SDA-SE/sda-dropwizard-commons/actions?query=branch%3Amaster+workflow%3A%22Java+CI%22)
+[![Publish Release to Maven Central](https://github.com/SDA-SE/sda-dropwizard-commons/workflows/Publish%20Release%20to%20Maven%20Central/badge.svg)](https://github.com/SDA-SE/sda-dropwizard-commons/actions?query=workflow%3A%Publish+Release+to+Maven+Central%22)
+[![Publish Release to SDA](https://github.com/SDA-SE/sda-dropwizard-commons/workflows/Publish%20Release%20to%20SDA/badge.svg)](https://github.com/SDA-SE/sda-dropwizard-commons/actions?query=workflow%3A%Publish+Release+to+SDA%22)
 [![FOSSA Status](https://app.fossa.com/api/projects/custom%2B8463%2Fsda-dropwizard-commons.svg?type=shield)](https://app.fossa.com/reports/2d8b4a40-db62-4c73-a978-588e252aa6e8)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SDA-SE_sda-dropwizard-commons&metric=alert_status)](https://sonarcloud.io/dashboard?id=SDA-SE_sda-dropwizard-commons)
 [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=SDA-SE_sda-dropwizard-commons&metric=coverage)](https://sonarcloud.io/dashboard?id=SDA-SE_sda-dropwizard-commons)
