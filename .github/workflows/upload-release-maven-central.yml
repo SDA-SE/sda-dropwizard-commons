@@ -7,6 +7,7 @@ on:
 
 env:
   SEMANTIC_VERSION: ${{ github.event.release.tag_name }}
+  SONATYPE_PROFILE_ID: 33839da457341f
 
 jobs:
   upload-maven-central:
@@ -25,8 +26,24 @@ jobs:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
 
+      - name: Create Staging Repository
+        id: create-staging-repo
+        run: |
+          ID=`echo "<promoteRequest><data><description>Created from GitHub Action for version $SEMANTIC_VERSION</description></data></promoteRequest>" \
+              | curl -X POST \
+                  -d @- \
+                  -u $SDA_SONATYPE_USER:$SDA_SONATYPE_PASSWORD \
+                  -H "Content-Type:application/xml" \
+                  https://oss.sonatype.org/service/local/staging/profiles/$SONATYPE_PROFILE_ID/start \
+              | sed -n 's:.*<stagedRepositoryId>\(.*\)</stagedRepositoryId>.*:\1:p'`
+          Write-Output "::set-output name=STAGING_PROFILE_ID::$ID"
+        env:
+          SDA_SONATYPE_USER: ${{ secrets.SDA_SONATYPE_USER }}
+          SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
+
       - name: Upload to Maven Central
         run: ./gradlew -x signMavenPublication publishMavenPublicationToMavenCentralRepository closeAndReleaseRepository
         env:
           SDA_SONATYPE_USER: ${{ secrets.SDA_SONATYPE_USER }}
           SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
+          SONATYPE_STAGING_REPOSITORY_ID: ${{ steps.create-staging-repo.output.STAGING_PROFILE_ID }}

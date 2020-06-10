@@ -146,7 +146,10 @@ subprojects {
         }
         maven {
           name 'mavenCentral'
-          def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+          def releasesRepoUrl =
+              System.getenv('SONATYPE_STAGING_REPOSITORY_ID')
+              ? "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/${System.getenv('SONATYPE_STAGING_REPOSITORY_ID')}"
+              : "https://oss.sonatype.org/service/local/staging/deploy/maven2"
           def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
           url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
@@ -306,6 +309,8 @@ nexusStaging {
   packageGroup "org.sdase.commons"
   // wait for max. 10 minutes
   numberOfRetries 300
+  // Read the stagingRepositoryId from the environment
+  stagingRepositoryId.set(System.getenv('SONATYPE_STAGING_REPOSITORY_ID'))
 }
 
 sonarqube {
