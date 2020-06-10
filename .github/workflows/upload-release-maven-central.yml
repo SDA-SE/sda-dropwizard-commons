@@ -36,7 +36,7 @@ jobs:
                   -H "Content-Type:application/xml" \
                   https://oss.sonatype.org/service/local/staging/profiles/$SONATYPE_PROFILE_ID/start \
               | sed -n 's:.*<stagedRepositoryId>\(.*\)</stagedRepositoryId>.*:\1:p'`
-          Write-Output "::set-output name=STAGING_PROFILE_ID::$ID"
+          echo "::set-output name=STAGING_PROFILE_ID::$ID"
         env:
           SDA_SONATYPE_USER: ${{ secrets.SDA_SONATYPE_USER }}
           SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
