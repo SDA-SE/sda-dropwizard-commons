@@ -46,4 +46,4 @@ jobs:
         env:
           SDA_SONATYPE_USER: ${{ secrets.SDA_SONATYPE_USER }}
           SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
-          SONATYPE_STAGING_REPOSITORY_ID: ${{ steps.create-staging-repo.output.STAGING_PROFILE_ID }}
+          SONATYPE_STAGING_REPOSITORY_ID: ${{ steps.create-staging-repo.outputs.STAGING_PROFILE_ID }}
