@@ -1,5 +1,8 @@
 # SDA Commons Server Kafka Confluent
 
+> **_DEPRECATION WARNING_** Please note that this module is no longer supported and will be removed 
+> in the future.
+
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka-confluent/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka-confluent)
 
 The module `sda-commons-server-kafka-confluent` is the base module to add Avro specific support to Kafka.

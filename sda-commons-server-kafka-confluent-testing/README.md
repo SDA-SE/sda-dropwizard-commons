@@ -1,5 +1,8 @@
 # SDA Commons Server Kafka Confluent Testing
 
+> **_DEPRECATION WARNING_** Please note that this module is no longer supported and will be removed 
+> in the future.
+
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka-confluent-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka-confluent-testing)
 
 This module adds support for testing with a Confluent Schema Registry. It provides a `ConfluentSchemaRegistryRule`
@@ -15,7 +18,7 @@ repositories {
 ```
 
 ## Usage
-A running broker is mandatory for a Schema registry. The folloging snippet shows how to start a Kafka broker and the schema registry. 
+A running broker is mandatory for a Schema registry. The following snippet shows how to start a Kafka broker and the schema registry. 
 
 ```
    private static SharedKafkaTestResource kafkaTestResource = new SharedKafkaTestResource().withBrokers(2);
