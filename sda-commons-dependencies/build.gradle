@@ -39,7 +39,7 @@ dependencies {
     api "dev.morphia.morphia:core:$morphiaVersion"
     api "dev.morphia.morphia:validation:$morphiaVersion"
     api "org.mongodb:mongo-java-driver:3.10.1"
-    api "io.github.classgraph:classgraph:4.8.47"
+    api "io.github.classgraph:classgraph:4.8.86"
 
     // Kafka
     api "org.apache.avro:avro:1.8.2"
