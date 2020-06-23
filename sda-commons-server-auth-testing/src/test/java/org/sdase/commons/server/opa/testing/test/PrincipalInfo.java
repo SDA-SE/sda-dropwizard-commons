@@ -6,6 +6,8 @@ public class PrincipalInfo {
   private String name;
   private String jwt;
   private ConstraintModel constraints;
+  private String constraintsJson;
+  private String sub;
 
   public String getName() {
     return name;
@@ -31,6 +33,24 @@ public class PrincipalInfo {
 
   public PrincipalInfo setConstraints(ConstraintModel constraints) {
     this.constraints = constraints;
+    return this;
+  }
+
+  public String getConstraintsJson() {
+    return constraintsJson;
+  }
+
+  public PrincipalInfo setConstraintsJson(String constraintsJson) {
+    this.constraintsJson = constraintsJson;
+    return this;
+  }
+
+  public String getSub() {
+    return sub;
+  }
+
+  public PrincipalInfo setSub(String sub) {
+    this.sub = sub;
     return this;
   }
 }
