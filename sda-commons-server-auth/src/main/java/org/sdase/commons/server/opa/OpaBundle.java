@@ -23,7 +23,9 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.process.internal.RequestScoped;
 import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.config.OpaConfigProvider;
 import org.sdase.commons.server.opa.extension.OpaInputExtension;
@@ -31,6 +33,7 @@ import org.sdase.commons.server.opa.extension.OpaInputHeadersExtension;
 import org.sdase.commons.server.opa.filter.OpaAuthFilter;
 import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
+import org.sdase.commons.server.opa.internal.OpaJwtPrincipalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,6 +147,20 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
           .register(
               PolicyExistsHealthCheck.DEFAULT_NAME, new PolicyExistsHealthCheck(policyTarget));
     }
+
+    environment
+        .jersey()
+        .register(
+            new AbstractBinder() {
+              @Override
+              protected void configure() {
+                bindFactory(OpaJwtPrincipalFactory.class)
+                    .to(OpaJwtPrincipal.class)
+                    .proxy(true)
+                    .proxyForSameScope(true)
+                    .in(RequestScoped.class);
+              }
+            });
   }
 
   private Client createClient(
