@@ -211,10 +211,16 @@ with a list of string values.
 }
 ```
 
-The bundle creates a [`OpaJwtPrincipal`](./src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) for each 
-request. Data from an [`JwtPrincipal`](./src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java) is copied to the new principal if existing.
-Beside the JWT, the constraints are included in this principal. The `OpaJwtPrincipal` includes a method to parse the constraints JSON string to
-a Java object.
+The bundle creates a [`OpaJwtPrincipal`](./src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) 
+for each request.
+Data from an [`JwtPrincipal`](./src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java) is 
+copied to the new principal if existing.
+Beside the JWT, the constraints are included in this principal. The `OpaJwtPrincipal` includes a 
+method to parse the constraints JSON string to a Java object.
+The [`OpaJwtPrincipal`](./src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) can be 
+injected as field using `@Context` in 
+[request scoped beans like endpoint implementations](../sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaJwtPrincipalEndpoint.java).
+
 
 The following listing shows a corresponding model class to the example above.
 ```java

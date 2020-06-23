@@ -9,6 +9,10 @@ import java.util.Map;
 /**
  * Principal for @{@link javax.ws.rs.core.SecurityContext} that optionally contains a JWT and a set
  * of constraints as JSON object string.
+ *
+ * <p>The {@code OpaJwtPrincipal} can be injected as field in endpoint implementations using {@link
+ * javax.ws.rs.core.Context} when the {@link OpaBundle} is used to setup the open policy agent
+ * configuration.
  */
 public class OpaJwtPrincipal implements Principal {
 
@@ -19,6 +23,11 @@ public class OpaJwtPrincipal implements Principal {
   private Map<String, Claim> claims;
   private JsonNode constraints;
   private ObjectMapper om;
+
+  @SuppressWarnings("unused")
+  OpaJwtPrincipal() {
+    // for proxy
+  }
 
   private OpaJwtPrincipal(
       String name, String jwt, Map<String, Claim> claims, JsonNode constraints, ObjectMapper om) {
