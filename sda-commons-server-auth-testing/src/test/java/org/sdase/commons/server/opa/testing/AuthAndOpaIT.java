@@ -110,10 +110,13 @@ public class AuthAndOpaIT {
 
     assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
     PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+    assertThat(principalInfo.getName()).isEqualTo("OpaJwtPrincipal");
     assertThat(principalInfo.getJwt()).isNotNull();
     assertThat(principalInfo.getConstraints().isFullAccess()).isTrue();
     assertThat(principalInfo.getConstraints().getConstraint())
         .contains(entry("customer_ids", newArrayList("1")));
+    assertThat(principalInfo.getConstraintsJson()).contains("\"customer_ids\":").contains("\"1\"");
+    assertThat(principalInfo.getSub()).isEqualTo("test");
   }
 
   @Test

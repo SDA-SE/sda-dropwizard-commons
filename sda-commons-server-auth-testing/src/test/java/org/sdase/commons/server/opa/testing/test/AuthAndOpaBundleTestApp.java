@@ -3,7 +3,6 @@ package org.sdase.commons.server.opa.testing.test;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import java.io.IOException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -43,14 +42,19 @@ public class AuthAndOpaBundleTestApp extends Application<AuthAndOpaBundeTestAppC
 
     @GET
     @Path("resources")
-    public Response get() throws IOException {
+    public Response get() {
       OpaJwtPrincipal principal = (OpaJwtPrincipal) securityContext.getUserPrincipal();
 
       PrincipalInfo result =
           new PrincipalInfo()
               .setName(principal.getName())
               .setJwt(principal.getJwt())
-              .setConstraints(principal.getConstraintsAsEntity(ConstraintModel.class));
+              .setSub(
+                  principal.getClaims() == null
+                      ? null
+                      : principal.getClaims().get("sub").asString())
+              .setConstraints(principal.getConstraintsAsEntity(ConstraintModel.class))
+              .setConstraintsJson(principal.getConstraints());
 
       return Response.ok(result, MediaType.APPLICATION_JSON_TYPE).build();
     }
