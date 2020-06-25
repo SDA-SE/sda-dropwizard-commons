@@ -16,7 +16,7 @@ ext {
   scalaVersion = '2.12.11'
   kafkaVersion = '2.2.1'
   confluentVersion = '5.2.3'
-  jettyVersion = '9.4.18.v20190429' // '9.4.30.v20200611'
+  jettyVersion = '9.4.29.v20200521' // '9.4.30.v20200611' does not work!
   hk2Version = '2.5.0-b42'
   scalaVersion = '2.12.8'
 }
