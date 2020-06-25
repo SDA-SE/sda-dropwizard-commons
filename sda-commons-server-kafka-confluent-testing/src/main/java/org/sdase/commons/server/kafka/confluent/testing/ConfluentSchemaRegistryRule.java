@@ -4,7 +4,6 @@ import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.exceptions.SchemaRegistryException;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryConfig;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryRestApplication;
-import io.confluent.rest.RestConfig;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
@@ -64,7 +63,7 @@ public class ConfluentSchemaRegistryRule implements TestRule {
             .map(s -> String.format("%s://%s", protocolType, s))
             .collect(Collectors.joining(","));
 
-    schemaRegistryProps.put(RestConfig.LISTENERS_CONFIG, "http://0.0.0.0:" + port);
+    schemaRegistryProps.put("listeners", "http://0.0.0.0:" + port);
     schemaRegistryProps.put(SchemaRegistryConfig.HOST_NAME_CONFIG, hostname);
     schemaRegistryProps.put(
         SchemaRegistryConfig.KAFKASTORE_BOOTSTRAP_SERVERS_CONFIG, bootstrapServerConfig);
