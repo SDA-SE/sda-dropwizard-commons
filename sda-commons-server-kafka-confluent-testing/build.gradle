@@ -10,14 +10,12 @@ dependencies {
     exclude group: 'org.apache.avro', module: 'avro'
     exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     exclude group: 'io.confluent', module: 'kafka-schema-registry-client'
-    exclude group: 'io.confluent', module: 'rest-utils'
     exclude group: 'io.confluent', module: 'common-config'
     exclude group: 'io.confluent', module: 'common-utils'
   }
   compile 'io.confluent:kafka-schema-registry-client', {
     exclude group: 'io.confluent', module: 'common-config'
     exclude group: 'io.confluent', module: 'common-utils'
-    exclude group: 'io.confluent', module: 'rest-utils'
     exclude group: 'org.apache.kafka', module: 'kafka-clients'
   }
   compile "org.apache.kafka:kafka-clients", {
@@ -43,15 +41,8 @@ dependencies {
   }
   compile 'org.apache.avro:avro'
   compile 'org.apache.commons:commons-compress'
-  compile 'org.slf4j:slf4j-api'
-  compile 'io.confluent:rest-utils', {
-    exclude group: 'io.confluent', module: 'common-utils'
-    exclude group: 'io.confluent', module: 'common-config'
-  }
 
-  compile 'org.eclipse.jetty:jetty-server'
-  compile 'org.eclipse.jetty:jetty-jmx'
-  compile 'org.slf4j:slf4j-api'
+
   compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider'
   compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base'
   compile 'com.fasterxml.jackson.core:jackson-databind'
