@@ -14,8 +14,8 @@ ext {
   weldVersion = '3.1.4.Final'
   openTracingUtilVersion = '0.33.0'
   scalaVersion = '2.12.11'
-  kafkaVersion = '2.2.1'
-  confluentVersion = '5.2.3'
+  kafkaVersion = '2.2.1' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
+  confluentVersion = '5.2.3' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
   jettyVersion = '9.4.29.v20200521' // '9.4.30.v20200611' does not work!
   hk2Version = '2.5.0-b42'
   scalaVersion = '2.12.8'
