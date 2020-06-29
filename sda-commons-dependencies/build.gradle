@@ -50,7 +50,7 @@ dependencies {
     api "io.github.classgraph:classgraph:4.8.87"
 
     // Kafka
-    api "org.apache.avro:avro:1.9.2"
+    api "org.apache.avro:avro:1.10.0"
     api "org.apache.kafka:kafka_2.12:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
     api "org.apache.zookeeper:zookeeper:3.4.10"
