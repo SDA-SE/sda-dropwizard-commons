@@ -22,10 +22,14 @@ ext {
 }
 
 dependencies {
-  // Import jetty-bom before dropwizard-bom to enforce our jettyVersion!
-  // We need to add jetty-bom because dropwizard only defines version of some jetty components
-  api enforcedPlatform("org.eclipse.jetty:jetty-bom:$jettyVersion")
-  api enforcedPlatform("org.glassfish.hk2:hk2-bom:$hk2Version")
+  api enforcedPlatform("org.eclipse.jetty:jetty-bom:$jettyVersion") {
+    because "Import jetty-bom before dropwizard-bom to enforce our jettyVersion! We need to add " +
+        "jetty-bom because dropwizard only defines version of some jetty components"
+  }
+  api enforcedPlatform("org.glassfish.hk2:hk2-bom:$hk2Version") {
+    because "Jersey uses different versions of hk2. Jersey is managed by Dropwizard. " +
+        "Update hk2 manually according to greatest transitive dependency from Jersey."
+  }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:1.3.23")
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.11.800")
   // add dropwizard-dependencies for Dropwizard 2.x.y
