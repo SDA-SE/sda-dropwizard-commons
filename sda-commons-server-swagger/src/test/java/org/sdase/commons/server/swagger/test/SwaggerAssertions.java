@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.fail;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.load.configuration.LoadingConfiguration;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.jsonschema.main.JsonValidator;
@@ -66,7 +67,15 @@ public final class SwaggerAssertions {
     static final JsonValidator jsonValidator = createJsonValidator();
 
     private static JsonValidator createJsonValidator() {
-      return JsonSchemaFactory.byDefault().getValidator();
+      // Preload the Swagger schema. By default, the validator tries to download it from the id
+      // field of the schema file (=http://swagger.io/v2/schema.json).
+      return JsonSchemaFactory.newBuilder()
+          .setLoadingConfiguration(
+              LoadingConfiguration.newBuilder()
+                  .preloadSchema(SwaggerSchemaHolder.swagger2Schema)
+                  .freeze())
+          .freeze()
+          .getValidator();
     }
   }
 
