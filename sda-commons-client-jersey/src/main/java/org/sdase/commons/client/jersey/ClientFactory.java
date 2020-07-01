@@ -60,7 +60,7 @@ public class ClientFactory {
    * @param disableGzipCompression if gzip compression of requests should be disabled. This may be
    *     needed if the server can not communicate with gzip enabled
    * @return a builder to configure the client
-   * @deprecated Use {@link #externalClient(HttpClientConfiguration)} instead.
+   * @deprecated Use {@link #platformClient(HttpClientConfiguration)} instead.
    */
   @Deprecated
   public PlatformClientBuilder platformClient(boolean disableGzipCompression) {
