@@ -10,7 +10,7 @@ ext {
   morphiaVersion = '1.5.8'
   prometheusVersion = '0.9.0'
   resilience4jVersion = '0.15.0'
-  swaggerCoreVersion = '1.6.1'
+  swaggerCoreVersion = '1.6.2'
   weldVersion = '3.1.4.Final'
   openTracingUtilVersion = '0.33.0'
   scalaVersion = '2.12.11'
