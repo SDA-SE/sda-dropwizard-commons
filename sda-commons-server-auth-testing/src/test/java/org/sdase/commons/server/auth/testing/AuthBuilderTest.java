@@ -41,7 +41,7 @@ public class AuthBuilderTest {
   public void shouldAddBooleanClaim() {
     String token = authBuilder.addClaim("testKey", true).buildToken();
     Claim claim = JWT.decode(token).getClaim("testKey");
-    assertThat(claim.asBoolean()).isEqualTo(true);
+    assertThat(claim.asBoolean()).isTrue();
   }
 
   @Test
@@ -99,7 +99,7 @@ public class AuthBuilderTest {
     assertThat(jwt.getClaims().get("i").asInt()).isEqualTo(42);
     assertThat(jwt.getClaims().get("l").asLong()).isEqualTo(2147483649L);
     assertThat(jwt.getClaims().get("d").asDouble()).isEqualTo(3.141D);
-    assertThat(jwt.getClaims().get("b").asBoolean()).isEqualTo(true);
+    assertThat(jwt.getClaims().get("b").asBoolean()).isTrue();
     assertThat(jwt.getClaims().get("s[]").asList(String.class)).containsExactly("Hello", "World");
     assertThat(jwt.getClaims().get("i[]").asList(Integer.class)).containsExactly(1, 2);
     assertThat(jwt.getClaims().get("l[]").asList(Long.class)).containsExactly(1L, 2L);

@@ -61,7 +61,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
             .withCredentials(new AWSStaticCredentialsProvider(credentials))
             .build();
 
-    environment.lifecycle().manage(onShutdown(() -> s3Client.shutdown()));
+    environment.lifecycle().manage(onShutdown(s3Client::shutdown));
   }
 
   public AmazonS3 getClient() {

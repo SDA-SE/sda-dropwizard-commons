@@ -32,7 +32,7 @@ public class MongoDbRuleWithScriptingTest {
               .getCollection("test")
               .find(new Document("$where", "this.name == 5"))
               .into(new ArrayList<Document>());
-      assertThat(results).hasSize(0);
+      assertThat(results).isEmpty();
     }
   }
 }

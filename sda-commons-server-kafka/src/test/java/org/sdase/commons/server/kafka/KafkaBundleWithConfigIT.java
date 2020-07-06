@@ -506,8 +506,9 @@ public class KafkaBundleWithConfigIT {
               return receivedMessages.size() == messages.size();
             });
 
-    assertThat(receivedMessages).hasSize(KafkaBundleConsts.N_MESSAGES);
-    assertThat(receivedMessages).containsExactlyInAnyOrderElementsOf(messages);
+    assertThat(receivedMessages)
+        .hasSize(KafkaBundleConsts.N_MESSAGES)
+        .containsExactlyInAnyOrderElementsOf(messages);
   }
 
   @Test

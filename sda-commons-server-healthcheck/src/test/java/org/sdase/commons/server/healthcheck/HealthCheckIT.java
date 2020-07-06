@@ -35,8 +35,9 @@ public class HealthCheckIT {
   public void testAllHealthChecks() {
     Response response = healthCheckGet("/healthcheck");
     String metrics = response.readEntity(String.class);
-    assertThat(metrics).contains(HealthApplication.DUMMY_EXTERNAL);
-    assertThat(metrics).contains(HealthApplication.DUMMY_INTERNAL);
+    assertThat(metrics)
+        .contains(HealthApplication.DUMMY_EXTERNAL)
+        .contains(HealthApplication.DUMMY_INTERNAL);
   }
 
   @Test
@@ -46,8 +47,9 @@ public class HealthCheckIT {
     String metrics = response.readEntity(String.class);
     LOGGER.info("Prometheus metrics: {}", metrics);
 
-    assertThat(metrics).doesNotContain(HealthApplication.DUMMY_EXTERNAL);
-    assertThat(metrics).contains(HealthApplication.DUMMY_INTERNAL);
+    assertThat(metrics)
+        .doesNotContain(HealthApplication.DUMMY_EXTERNAL)
+        .contains(HealthApplication.DUMMY_INTERNAL);
   }
 
   @Test
@@ -57,8 +59,9 @@ public class HealthCheckIT {
     assertThat(response.getStatus()).isNotEqualTo(SC_OK);
 
     String metrics = response.readEntity(String.class);
-    assertThat(metrics).contains(HealthApplication.DUMMY_EXTERNAL);
-    assertThat(metrics).contains(HealthApplication.DUMMY_INTERNAL);
+    assertThat(metrics)
+        .contains(HealthApplication.DUMMY_EXTERNAL)
+        .contains(HealthApplication.DUMMY_INTERNAL);
   }
 
   @Test
@@ -68,8 +71,9 @@ public class HealthCheckIT {
     assertThat(response.getStatus()).isNotEqualTo(SC_OK);
 
     String metrics = response.readEntity(String.class);
-    assertThat(metrics).doesNotContain(HealthApplication.DUMMY_EXTERNAL);
-    assertThat(metrics).contains(HealthApplication.DUMMY_INTERNAL);
+    assertThat(metrics)
+        .doesNotContain(HealthApplication.DUMMY_EXTERNAL)
+        .contains(HealthApplication.DUMMY_INTERNAL);
   }
 
   @Test

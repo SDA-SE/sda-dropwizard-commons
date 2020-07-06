@@ -45,7 +45,7 @@ public class MongoDbRuleTest {
       assertThat(mongoClient.getCredential()).isNotNull();
       assertThat(mongoClient.getCredential().getUserName()).isEqualTo(DATABASE_USERNAME);
       long documentCount = mongoClient.getDatabase("my_db").getCollection("test").countDocuments();
-      assertThat(documentCount).isEqualTo(0);
+      assertThat(documentCount).isZero();
     }
   }
 
@@ -68,7 +68,7 @@ public class MongoDbRuleTest {
             ServerAddressHelper.createServerAddress(RULE.getHost()),
             MongoClientOptions.builder().build())) {
       long documentCount = mongoClient.getDatabase("my_db").getCollection("test").countDocuments();
-      assertThat(documentCount).isEqualTo(0);
+      assertThat(documentCount).isZero();
     }
   }
 
@@ -76,7 +76,7 @@ public class MongoDbRuleTest {
   public void shouldProvideClientForTesting() {
     try (MongoClient mongoClient = RULE.createClient()) {
       long documentCount = mongoClient.getDatabase("my_db").getCollection("test").countDocuments();
-      assertThat(documentCount).isEqualTo(0);
+      assertThat(documentCount).isZero();
     }
   }
 
@@ -112,7 +112,7 @@ public class MongoDbRuleTest {
 
       assertThat(db.listCollectionNames()).contains("clearCollectionsTest");
       assertThat(collection.listIndexes()).isNotEmpty();
-      assertThat(collection.countDocuments()).isEqualTo(0);
+      assertThat(collection.countDocuments()).isZero();
     }
   }
 
