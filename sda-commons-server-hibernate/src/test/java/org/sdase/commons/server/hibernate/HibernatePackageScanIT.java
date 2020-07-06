@@ -53,7 +53,7 @@ public class HibernatePackageScanIT {
   public void shouldAccessEmptyDb() {
     Person[] people = client().path("/api/persons").request(APPLICATION_JSON).get(Person[].class);
 
-    assertThat(people).hasSize(0);
+    assertThat(people).isEmpty();
   }
 
   @Test

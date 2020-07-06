@@ -95,7 +95,7 @@ public class DateFormatObjectMapperTest {
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
 
     assertThat(date).isEqualTo("2018-11-21T13:16:47+00:00");
-    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isEqualTo(0);
+    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isZero();
   }
 
   @Test
@@ -113,8 +113,7 @@ public class DateFormatObjectMapperTest {
 
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
 
-    assertThat(date).isEqualTo("2018-01-09T00:00:00+01:00");
-    assertThat(date).isEqualTo("2018-01-08T23:00:00+00:00");
+    assertThat(date).isEqualTo("2018-01-09T00:00:00+01:00").isEqualTo("2018-01-08T23:00:00+00:00");
   }
 
   @Test
@@ -124,7 +123,7 @@ public class DateFormatObjectMapperTest {
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
 
     assertThat(date).isEqualTo("2018-11-21T13:16:47.647+00:00");
-    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isEqualTo(0);
+    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isZero();
   }
 
   @Test
@@ -134,7 +133,7 @@ public class DateFormatObjectMapperTest {
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
 
     assertThat(date).isEqualTo("2018-11-21T13:16:47+00:00");
-    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isEqualTo(0);
+    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isZero();
   }
 
   @Test
@@ -144,7 +143,7 @@ public class DateFormatObjectMapperTest {
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
 
     assertThat(date).isEqualTo("2018-11-21T13:16:47+00:00");
-    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isEqualTo(0);
+    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isZero();
   }
 
   @Test
@@ -155,7 +154,7 @@ public class DateFormatObjectMapperTest {
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
 
     assertThat(date).isEqualTo("2018-11-21T13:16:47+00:00");
-    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isEqualTo(0);
+    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isZero();
   }
 
   @Test
@@ -174,7 +173,7 @@ public class DateFormatObjectMapperTest {
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
 
     assertThat(date).isEqualTo("2018-11-21T13:16:47.9650003+00:00");
-    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isEqualTo(0);
+    assertThat(date.get(ChronoField.OFFSET_SECONDS)).isZero();
   }
 
   @Test

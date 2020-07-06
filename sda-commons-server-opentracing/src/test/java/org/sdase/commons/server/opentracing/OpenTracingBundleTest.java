@@ -173,7 +173,7 @@ public class OpenTracingBundleTest {
                           HTTP_URL.getKey(),
                           "http://localhost:" + dw.getLocalPort() + "/respond/test"),
                       entry(HTTP_RESPONSE_HEADERS.getKey(), "[Content-Type = 'text/html']"));
-              assertThat(tags.containsKey(HTTP_REQUEST_HEADERS.getKey())).isTrue();
+              assertThat(tags).containsKey(HTTP_REQUEST_HEADERS.getKey());
             });
   }
 
@@ -203,8 +203,8 @@ public class OpenTracingBundleTest {
                       entry(
                           HTTP_URL.getKey(),
                           "http://localhost:" + dw.getLocalPort() + "/respond/test"));
-              assertThat(tags.containsKey(HTTP_REQUEST_HEADERS.getKey())).isTrue();
-              assertThat(tags.containsKey(HTTP_RESPONSE_HEADERS.getKey())).isTrue();
+              assertThat(tags).containsKey(HTTP_REQUEST_HEADERS.getKey());
+              assertThat(tags).containsKey(HTTP_RESPONSE_HEADERS.getKey());
             });
   }
 
@@ -226,9 +226,9 @@ public class OpenTracingBundleTest {
                       .findAny()
                       .orElseThrow(IllegalStateException::new);
 
-              Map<String, ?> fields = span.logEntries().get(0).fields();
-              assertThat(fields.get("level")).isEqualTo("INFO");
-              assertThat(fields.get(MESSAGE)).isEqualTo("Hello World");
+              Map<String, Object> fields = (Map<String, Object>) span.logEntries().get(0).fields();
+              assertThat(fields).containsEntry("level", "INFO");
+              assertThat(fields).containsEntry(MESSAGE, "Hello World");
             });
   }
 
@@ -249,12 +249,12 @@ public class OpenTracingBundleTest {
                       .filter(s -> s.operationName().startsWith("GET:"))
                       .findAny()
                       .orElseThrow(IllegalStateException::new);
-              Map<String, ?> fields = span.logEntries().get(0).fields();
-              assertThat(fields.get("level")).isEqualTo("ERROR");
-              assertThat(fields.get(EVENT)).isEqualTo("error");
-              assertThat(fields.get(MESSAGE)).isEqualTo("Something went wrong");
+              Map<String, Object> fields = (Map<String, Object>) span.logEntries().get(0).fields();
+              assertThat(fields).containsEntry("level", "ERROR");
+              assertThat(fields).containsEntry(EVENT, "error");
+              assertThat(fields).containsEntry(MESSAGE, "Something went wrong");
               assertThat(fields.get(STACK)).isNotNull();
-              assertThat(fields.get(ERROR_KIND)).isEqualTo("java.lang.IllegalStateException");
+              assertThat(fields).containsEntry(ERROR_KIND, "java.lang.IllegalStateException");
               assertThat(fields.get(ERROR_OBJECT)).isNotNull();
             });
   }
@@ -277,8 +277,8 @@ public class OpenTracingBundleTest {
                       .orElseThrow(IllegalStateException::new);
               Map<String, Object> tags = span.tags();
 
-              assertThat(tags.get(COMPONENT.getKey())).isEqualTo("java-web-servlet");
-              assertThat(tags.get(SAMPLING_PRIORITY.getKey())).isEqualTo(0);
+              assertThat(tags).containsEntry(COMPONENT.getKey(), "java-web-servlet");
+              assertThat(tags).containsEntry(SAMPLING_PRIORITY.getKey(), 0);
             });
   }
 
@@ -301,7 +301,7 @@ public class OpenTracingBundleTest {
                       .orElseThrow(IllegalStateException::new);
               Map<String, Object> tags = span.tags();
 
-              assertThat(tags.get(COMPONENT.getKey())).isEqualTo("java-web-servlet");
+              assertThat(tags).containsEntry(COMPONENT.getKey(), "java-web-servlet");
               assertThat(tags.get(SAMPLING_PRIORITY.getKey())).isNull();
             });
   }

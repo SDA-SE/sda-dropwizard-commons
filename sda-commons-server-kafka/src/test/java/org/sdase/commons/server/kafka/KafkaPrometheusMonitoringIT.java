@@ -154,7 +154,7 @@ public class KafkaPrometheusMonitoringIT {
 
     list.forEach(
         mfs -> {
-          assertThat(mfs.samples.size()).isGreaterThan(0);
+          assertThat(mfs.samples.size()).isPositive();
           for (Collector.MetricFamilySamples.Sample sample : mfs.samples) {
             LOGGER.info(
                 "Sample: name={}, value={}, labelNames={}, labelValues={}",

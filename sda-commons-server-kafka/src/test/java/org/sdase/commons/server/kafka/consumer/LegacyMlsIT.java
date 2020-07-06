@@ -150,8 +150,10 @@ public class LegacyMlsIT extends KafkaBundleConsts {
     assertThat(numberExceptionThrown)
         .withFailMessage("Still only one exception is thrown")
         .isEqualTo(1);
-    assertThat(results).withFailMessage("handler has reread message").hasSize(1);
-    assertThat(results).containsExactlyInAnyOrder(uuid);
+    assertThat(results)
+        .withFailMessage("handler has reread message")
+        .hasSize(1)
+        .containsExactlyInAnyOrder(uuid);
   }
 
   @Test

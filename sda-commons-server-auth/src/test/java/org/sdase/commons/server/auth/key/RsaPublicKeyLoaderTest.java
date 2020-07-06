@@ -160,7 +160,7 @@ public class RsaPublicKeyLoaderTest {
           }
         };
 
-    assertThat(keyLoader.getTotalNumberOfKeySources()).isEqualTo(0);
+    assertThat(keyLoader.getTotalNumberOfKeySources()).isZero();
 
     keyLoader.addKeySource(keySource);
     keyLoader.getKeysWithoutId();
@@ -182,7 +182,7 @@ public class RsaPublicKeyLoaderTest {
           }
         };
 
-    assertThat(keyLoader.getTotalNumberOfKeys()).isEqualTo(0);
+    assertThat(keyLoader.getTotalNumberOfKeys()).isZero();
 
     keyLoader.addKeySource(keySource);
     keyLoader.getKeysWithoutId();
