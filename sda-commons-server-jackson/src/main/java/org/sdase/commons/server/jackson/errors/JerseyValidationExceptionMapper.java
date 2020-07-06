@@ -40,7 +40,8 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
     e.getConstraintViolations()
         .forEach(
             cv -> {
-              String propertyPath = getCorrectedPropertyPath(cv.getPropertyPath());
+              String propertyPath =
+                  getCorrectedPropertyPath(cv.getPropertyPath(), cv.getLeafBean());
               String annotation =
                   cv.getConstraintDescriptor().getAnnotation().annotationType().toString();
 
@@ -58,7 +59,7 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
     return Response.status(422).type(MediaType.APPLICATION_JSON_TYPE).entity(apiError).build();
   }
 
-  private String getCorrectedPropertyPath(Path propertyPath) {
+  private String getCorrectedPropertyPath(Path propertyPath, Object leafBean) {
     List<String> propertyPathStrings = new ArrayList<>();
     Iterator<Path.Node> iterator = propertyPath.iterator();
     Path.MethodNode method = null;
@@ -91,6 +92,14 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
                   .findFirst();
           includingClass = first.orElse(null);
         }
+
+        // The leaf bean (i.e. the bean instance the constraint is applied on) might be a subclass
+        // of includingClass. This happens when using an abstract base class and the @JsonSubTypes
+        // annotation. If it matches, we use the original class instead of the abstract base class.
+        if (includingClass != null && includingClass.isInstance(leafBean)) {
+          includingClass = leafBean.getClass();
+        }
+
         Optional<String> first = getPropertyName(propertyNode, includingClass);
         propertyPathStrings.add(first.orElse("N/A"));
         lastNode = propertyNode;
