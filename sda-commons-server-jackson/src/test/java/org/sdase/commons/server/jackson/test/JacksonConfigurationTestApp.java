@@ -167,4 +167,20 @@ public class JacksonConfigurationTestApp extends Application<Configuration> {
                 .build())
         .build();
   }
+
+  @POST
+  @Valid
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON) // in case of validation error
+  @Path("/searchValidation")
+  public Response createExtendedValidationResource(@Valid SearchFilterResource searchFilter) {
+    return Response.created(
+            uriInfo
+                .getBaseUriBuilder()
+                .path(JacksonConfigurationTestApp.class)
+                .path(JacksonConfigurationTestApp.class, "searchValidation")
+                .path("1")
+                .build())
+        .build();
+  }
 }
