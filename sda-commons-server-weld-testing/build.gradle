@@ -4,5 +4,4 @@ dependencies {
 
   testCompile project(':sda-commons-server-jackson')
   testCompile 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0'
-  testCompile 'org.hamcrest:hamcrest-all:1.3'
 }

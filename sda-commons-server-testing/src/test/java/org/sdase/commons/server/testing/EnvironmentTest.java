@@ -1,7 +1,6 @@
 package org.sdase.commons.server.testing;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ public class EnvironmentTest {
   public void testSetEnv() {
     Environment.setEnv(TEST_VAR, TEST_VAL);
 
-    assertThat(System.getenv(TEST_VAR), equalTo(TEST_VAL));
+    assertThat(System.getenv(TEST_VAR)).isEqualTo(TEST_VAL);
   }
 
   @SuppressWarnings("static-method")
@@ -24,6 +23,6 @@ public class EnvironmentTest {
     Environment.setEnv(TEST_VAR, TEST_VAL);
     Environment.unsetEnv(TEST_VAR);
 
-    assertThat(System.getenv(TEST_VAR), equalTo(null));
+    assertThat(System.getenv(TEST_VAR)).isNull();
   }
 }
