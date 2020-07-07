@@ -48,11 +48,9 @@ public class HttpConnectorSecurityAdvice {
   }
 
   private void forceUseForwardedHeaders(HttpConnectorFactory httpConnectorFactory) {
-    if (!httpConnectorFactory.isUseForwardedHeaders()) {
-      throw new InsecureConfigurationException(
-          "Connector is not configured to use forwarded headers. "
-              + "Check the configuration for useForwardedHeaders: false");
-    }
+    // we expect that our services run behind a load balancer and
+    // always need to interpret the X-Forwarded-* headers.
+    httpConnectorFactory.setUseForwardedHeaders(true);
   }
 
   private void forceNoServerHeader(HttpConnectorFactory httpConnectorFactory) {
