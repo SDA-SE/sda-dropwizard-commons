@@ -7,7 +7,7 @@ javaPlatform {
 }
 
 ext {
-  morphiaVersion = '1.5.8'
+  morphiaVersion = '1.6.0'
   prometheusVersion = '0.9.0'
   resilience4jVersion = '0.15.0'
   swaggerCoreVersion = '1.6.2'
