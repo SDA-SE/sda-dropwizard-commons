@@ -1,7 +1,6 @@
 package org.sdase.commons.server.weld.testing;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sdase.commons.server.testing.DropwizardConfigurationHelper.configFrom;
@@ -15,7 +14,6 @@ import java.util.Optional;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.hamcrest.core.IsNull;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.weld.testing.test.AppConfiguration;
@@ -35,20 +33,19 @@ public class WeldBundleProgrammaticConfigTest {
   public void testResource() {
     String response =
         RULE.client().target(LOCALHOST + 4567 + "/api/dummy").request().get(String.class);
-    assertThat(response, IsNull.notNullValue());
-    assertThat(response, equalTo("hello foo"));
+    assertThat(response).isNotNull().isEqualTo("hello foo");
   }
 
   @Test
   public void testServlet() {
     Response response =
         RULE.client().target(LOCALHOST + RULE.getLocalPort() + "/foo").request().get();
-    assertThat(response, IsNull.notNullValue());
-    assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
+    assertThat(response).isNotNull();
+    assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
   }
 
   @Test
-  public void testCommand() throws Exception {
+  public void testCommand() {
     ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
     ByteArrayOutputStream stdErr = new ByteArrayOutputStream();
     WeldExampleApplication app = RULE.getApplication();
@@ -61,9 +58,9 @@ public class WeldBundleProgrammaticConfigTest {
 
     Cli cli = new Cli(location, bootstrap, stdOut, stdErr);
 
-    assertThat(cli.run("testDW").isPresent(), equalTo(Boolean.FALSE));
+    assertThat(cli.run("testDW")).isEmpty();
 
-    assertThat(app.getTestCommand().getResult(), equalTo("foo"));
+    assertThat(app.getTestCommand().getResult()).isEqualTo("foo");
   }
 
   @Test
@@ -75,7 +72,7 @@ public class WeldBundleProgrammaticConfigTest {
             .target(LOCALHOST + RULE.getAdminPort() + "/tasks/runTestTask")
             .request()
             .post(Entity.entity("", MediaType.TEXT_PLAIN));
-    assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
-    assertThat(app.getTestJobResult(), equalTo("foo"));
+    assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+    assertThat(app.getTestJobResult()).isEqualTo("foo");
   }
 }
