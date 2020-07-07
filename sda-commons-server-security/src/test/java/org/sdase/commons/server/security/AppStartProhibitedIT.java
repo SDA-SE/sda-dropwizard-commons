@@ -49,12 +49,6 @@ public class AppStartProhibitedIT {
           "ALLOWED_METHODS", "[\"GET\", \"TRACE\"]", InsecureConfigurationException.class, null
         },
         new Object[] {"START_AS_ROOT", "true", InsecureConfigurationException.class, null},
-        new Object[] {
-          "USE_FORWARDED_HEADERS_APP", "false", InsecureConfigurationException.class, null
-        },
-        new Object[] {
-          "USE_FORWARDED_HEADERS_ADMIN", "false", InsecureConfigurationException.class, null
-        },
         new Object[] {"USE_SERVER_HEADER_APP", "true", InsecureConfigurationException.class, null},
         new Object[] {
           "USE_SERVER_HEADER_ADMIN", "true", InsecureConfigurationException.class, null
