@@ -10,7 +10,6 @@ ext {
   dropwizardVersion = '2.0.11'
   morphiaVersion = '1.5.8'
   prometheusVersion = '0.9.0'
-  resilience4jVersion = '0.15.0'
   swaggerCoreVersion = '1.6.2'
   weldVersion = '3.1.4.Final'
   openTracingUtilVersion = '0.33.0'
@@ -30,6 +29,8 @@ dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion")
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.11.800")
+  api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.5.0")
+
 
   constraints {
     api "com.auth0:java-jwt:3.10.3"
@@ -65,10 +66,6 @@ dependencies {
     api "org.apache.curator:curator-test:2.12.0"
     api "org.xerial.snappy:snappy-java:1.1.7.1" // clash between kafka-clients and avro
     api "com.typesafe.scala-logging:scala-logging_2.12:3.9.2" // clash within io.findify:s3mock_2.12
-
-    // Resilience4J
-    api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
-    api "io.github.resilience4j:resilience4j-prometheus:$resilience4jVersion"
 
     // Prometheus
     api "io.prometheus:simpleclient:$prometheusVersion"

@@ -55,8 +55,8 @@ public class CircuitBreakerBundleTestIT {
     assertThat(circuitBreaker.getCircuitBreakerConfig())
         .extracting(
             CircuitBreakerConfig::getFailureRateThreshold,
-            CircuitBreakerConfig::getRingBufferSizeInClosedState,
-            CircuitBreakerConfig::getRingBufferSizeInHalfOpenState,
+            CircuitBreakerConfig::getSlidingWindowSize,
+            CircuitBreakerConfig::getPermittedNumberOfCallsInHalfOpenState,
             CircuitBreakerConfig::getWaitDurationInOpenState)
         .containsExactly(51.0f, 100, 10, Duration.of(1, MINUTES));
     assertThat(
@@ -84,8 +84,8 @@ public class CircuitBreakerBundleTestIT {
     assertThat(circuitBreaker.getCircuitBreakerConfig())
         .extracting(
             CircuitBreakerConfig::getFailureRateThreshold,
-            CircuitBreakerConfig::getRingBufferSizeInClosedState,
-            CircuitBreakerConfig::getRingBufferSizeInHalfOpenState,
+            CircuitBreakerConfig::getSlidingWindowSize,
+            CircuitBreakerConfig::getPermittedNumberOfCallsInHalfOpenState,
             CircuitBreakerConfig::getWaitDurationInOpenState)
         .containsExactly(75.0f, 50, 5, Duration.of(30, SECONDS));
     assertThat(
