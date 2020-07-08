@@ -1,7 +1,6 @@
 package org.sdase.commons.server.opa.health;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.fasterxml.jackson.databind.node.NullNode;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
@@ -29,7 +28,9 @@ public class PolicyExistsHealthCheck extends HealthCheck {
       // If there is an exception, the check will be unhealthy
       OpaResponse opaResponse = client.request().post(Entity.json(null), OpaResponse.class);
 
-      if (opaResponse == null || opaResponse.getResult() instanceof NullNode) {
+      if (opaResponse == null
+          || opaResponse.getResult() == null
+          || opaResponse.getResult().isNull()) {
         LOGGER.warn("The policy response seems not to be SDA guideline compliant");
         return Result.unhealthy("The policy response seems not to be SDA guideline compliant");
       }
