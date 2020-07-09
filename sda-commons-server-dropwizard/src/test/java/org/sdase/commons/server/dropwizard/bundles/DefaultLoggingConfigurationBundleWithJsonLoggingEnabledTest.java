@@ -68,7 +68,7 @@ public class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
     LogbackAccessRequestLogFactory requestLogFactory =
         (LogbackAccessRequestLogFactory) serverFactory.getRequestLogFactory();
     ConsoleAppenderFactory consoleAppenderFactory =
-        (ConsoleAppenderFactory) requestLogFactory.getAppenders().asList().get(0);
+        (ConsoleAppenderFactory) requestLogFactory.getAppenders().get(0);
 
     assertThat(consoleAppenderFactory.getLayout()).isInstanceOf(AccessJsonLayoutBaseFactory.class);
     AccessJsonLayoutBaseFactory accessJsonLayoutBaseFactory =
