@@ -32,7 +32,8 @@ public class FilterPriorityTest {
             .get();
 
     assertThat(response.getStatus()).isEqualTo(OK_200);
-    assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
+    assertThat(response.getMetadata().getFirst("Access-Control-Allow-Origin"))
+        .isEqualTo("example.com");
   }
 
   @Test
@@ -47,7 +48,7 @@ public class FilterPriorityTest {
             .header("Trace-Token", "MyTraceToken")
             .get();
 
-    assertThat(response.getHeaderString("Trace-Token")).isEqualTo("MyTraceToken");
+    assertThat(response.getMetadata().getFirst("Trace-Token")).isEqualTo("MyTraceToken");
   }
 
   @Test

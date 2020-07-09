@@ -3,7 +3,6 @@ package org.sdase.commons.server.starter.test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.atLeastOnce;
 
-import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -20,30 +19,23 @@ import org.sdase.commons.server.starter.SdaPlatformBundle;
  */
 public class BundleAssertion<C extends Configuration> {
 
-  private Bootstrap<C> bootstrapMock;
+  private final Bootstrap<C> bootstrapMock;
 
-  private ArgumentCaptor<Bundle> bundlesCaptor;
   private ArgumentCaptor<ConfiguredBundle> configuredBundlesCaptor;
 
   private boolean verified;
 
   public BundleAssertion() {
-    bundlesCaptor = ArgumentCaptor.forClass(Bundle.class);
     configuredBundlesCaptor = ArgumentCaptor.forClass(ConfiguredBundle.class);
     //noinspection unchecked
     bootstrapMock = Mockito.mock(Bootstrap.class);
   }
 
   public void assertBundleConfiguredByPlatformBundle(
-      SdaPlatformBundle<C> actual, Bundle expectedBundle) {
-    assertThat(getBundleOfType(actual, expectedBundle.getClass()))
-        .isEqualToComparingFieldByFieldRecursively(expectedBundle);
-  }
-
-  public void assertBundleConfiguredByPlatformBundle(
       SdaPlatformBundle<C> actual, ConfiguredBundle<?> expectedBundle) {
     assertThat(getBundleOfType(actual, expectedBundle.getClass()))
-        .isEqualToComparingFieldByFieldRecursively(expectedBundle);
+        .usingRecursiveComparison()
+        .isEqualTo(expectedBundle);
   }
 
   public void assertBundleNotConfiguredByPlatformBundle(
@@ -53,25 +45,17 @@ public class BundleAssertion<C extends Configuration> {
 
   public int countAddedBundles(SdaPlatformBundle<C> platformBundle) {
     gatherBundles(platformBundle);
-    return bundlesCaptor.getAllValues().size() + configuredBundlesCaptor.getAllValues().size();
+    return configuredBundlesCaptor.getAllValues().size();
   }
 
   public <T> T getBundleOfType(SdaPlatformBundle<C> platformBundle, Class<T> bundleClass) {
     gatherBundles(platformBundle);
     //noinspection unchecked
-    return bundlesCaptor.getAllValues().stream()
-        .filter(b -> bundleClass.isAssignableFrom(b.getClass()))
-        .findFirst()
-        .map(bundle -> (T) bundle)
-        .orElseGet(
-            () ->
-                (T)
-                    configuredBundlesCaptor.getAllValues().stream()
-                        .filter(
-                            configuredBundle ->
-                                bundleClass.isAssignableFrom(configuredBundle.getClass()))
-                        .findFirst()
-                        .orElse(null));
+    return (T)
+        configuredBundlesCaptor.getAllValues().stream()
+            .filter(configuredBundle -> bundleClass.isAssignableFrom(configuredBundle.getClass()))
+            .findFirst()
+            .orElse(null);
   }
 
   private synchronized void gatherBundles(SdaPlatformBundle<C> platformBundle) {
@@ -79,7 +63,6 @@ public class BundleAssertion<C extends Configuration> {
       return;
     }
     platformBundle.initialize(bootstrapMock);
-    Mockito.verify(bootstrapMock, atLeastOnce()).addBundle(bundlesCaptor.capture());
     //noinspection unchecked
     Mockito.verify(bootstrapMock, atLeastOnce()).addBundle(configuredBundlesCaptor.capture());
     verified = true;

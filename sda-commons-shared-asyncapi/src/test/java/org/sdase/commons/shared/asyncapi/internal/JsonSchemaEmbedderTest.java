@@ -23,6 +23,7 @@ public class JsonSchemaEmbedderTest {
     JsonNode result = embedder.resolve(input);
 
     assertThat(result.at("/definitions").fieldNames())
+        .toIterable()
         .containsExactlyInAnyOrder(
             "Person", "Address", "Country", "simpleobjectsimplereferencedyaml");
     assertThat(result.at("/definitions/Person/properties/address/$ref").asText())

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.jersey.ServiceLocatorProvider;
+import org.glassfish.jersey.InjectionManagerProvider;
+import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 
 public class JacksonFieldFilterModule extends SimpleModule implements Feature {
@@ -25,8 +25,8 @@ public class JacksonFieldFilterModule extends SimpleModule implements Feature {
 
   @Override
   public boolean configure(FeatureContext context) {
-    ServiceLocator serviceLocator = ServiceLocatorProvider.getServiceLocator(context);
-    serviceLocator.inject(this.fieldFilterSerializerModifier);
+    InjectionManager injectionManager = InjectionManagerProvider.getInjectionManager(context);
+    injectionManager.inject(this.fieldFilterSerializerModifier);
     return true;
   }
 }
