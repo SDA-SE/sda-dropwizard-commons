@@ -3,7 +3,6 @@ dependencies {
   compile 'io.dropwizard:dropwizard-hibernate'
   compile 'org.postgresql:postgresql'
   compile 'org.flywaydb:flyway-core'
-  compile 'javax.xml.bind:jaxb-api'
 
   testCompile project(':sda-commons-server-hibernate-testing')
   testCompile 'org.assertj:assertj-core'

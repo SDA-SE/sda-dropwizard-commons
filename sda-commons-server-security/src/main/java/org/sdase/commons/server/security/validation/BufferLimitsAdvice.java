@@ -3,7 +3,7 @@ package org.sdase.commons.server.security.validation;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.ServerFactory;
-import io.dropwizard.util.Size;
+import io.dropwizard.util.DataSize;
 import java.util.List;
 import java.util.Objects;
 import org.sdase.commons.server.security.exception.InsecureConfigurationException;
@@ -27,14 +27,14 @@ public class BufferLimitsAdvice {
    * The max values we allow for the corresponding configuration in {@link HttpConnectorFactory}.
    */
   private static class Max {
-    private static final Size HEADER_CACHE_SIZE = Size.bytes(512);
-    private static final Size OUTPUT_BUFFER_SIZE = Size.kilobytes(32);
-    private static final Size MAX_REQUEST_HEADER_SIZE = Size.kilobytes(8);
-    private static final Size MAX_RESPONSE_HEADER_SIZE = Size.kilobytes(8);
-    private static final Size INPUT_BUFFER_SIZE = Size.kilobytes(8);
-    private static final Size MIN_BUFFER_POOL_SIZE = Size.bytes(64);
-    private static final Size BUFFER_POOL_INCREMENT = Size.kilobytes(1);
-    private static final Size MAX_BUFFER_POOL_SIZE = Size.kilobytes(64);
+    private static final DataSize HEADER_CACHE_SIZE = DataSize.bytes(512);
+    private static final DataSize OUTPUT_BUFFER_SIZE = DataSize.kibibytes(32);
+    private static final DataSize MAX_REQUEST_HEADER_SIZE = DataSize.kibibytes(8);
+    private static final DataSize MAX_RESPONSE_HEADER_SIZE = DataSize.kibibytes(8);
+    private static final DataSize INPUT_BUFFER_SIZE = DataSize.kibibytes(8);
+    private static final DataSize MIN_BUFFER_POOL_SIZE = DataSize.bytes(64);
+    private static final DataSize BUFFER_POOL_INCREMENT = DataSize.kibibytes(1);
+    private static final DataSize MAX_BUFFER_POOL_SIZE = DataSize.kibibytes(64);
   }
 
   private List<ConnectorFactory> connectorFactories;
@@ -83,13 +83,13 @@ public class BufferLimitsAdvice {
     }
   }
 
-  private void check(String paramName, Size actual, Size maxAllowed) {
+  private void check(String paramName, DataSize actual, DataSize maxAllowed) {
     if (actual.toBytes() > maxAllowed.toBytes()) {
       trackViolation(paramName, actual, maxAllowed);
     }
   }
 
-  private void trackViolation(String param, Size actual, Size maxAllowed) {
+  private void trackViolation(String param, DataSize actual, DataSize maxAllowed) {
     if (onlyLogOnViolation) {
       LOG.warn(
           "{} in HTTP connector is configured to {} exceeding the max allowed value of {}",

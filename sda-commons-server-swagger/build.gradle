@@ -22,11 +22,12 @@ dependencies {
   }
   compile 'io.openapitools.jackson.dataformat:jackson-dataformat-hal'
 
-  compile 'javax.xml.bind:jaxb-api'
   compile 'org.slf4j:slf4j-api'
 
   testCompile project(':sda-commons-server-testing')
-  testCompile 'net.javacrumbs.json-unit:json-unit-assertj'
+  testCompile 'net.javacrumbs.json-unit:json-unit-assertj', {
+    exclude group: 'org.hamcrest',  module: 'hamcrest-core'
+  }
   testCompile 'com.github.java-json-tools:json-schema-validator'
 }
 
