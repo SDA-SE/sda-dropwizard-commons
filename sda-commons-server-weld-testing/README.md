@@ -5,6 +5,14 @@
 `sda-commons-server-weld-testing` is used to bootstrap Dropwizard applications inside a Weld-SE container using the
 `DropwizardAppRule` during testing and provides CDI support for Servlets, listeners and resources.
 
+**Info:**
+We at SDA SE do not use CDI in our microservices any more.
+We believe that dependency injection is not helpful for small services.
+Therefore this module is not actively maintained by SDA SE developers.
+Automated security upgrades are enabled.
+Contributions of new features and bug fixes are welcome.
+
+
 ## Usage
 
 ### Testing
