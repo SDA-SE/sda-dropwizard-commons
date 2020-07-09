@@ -61,7 +61,7 @@ public class WeldBundleProgrammaticConfigTest {
 
     Cli cli = new Cli(location, bootstrap, stdOut, stdErr);
 
-    assertThat(cli.run("testDW"), equalTo(Boolean.TRUE));
+    assertThat(cli.run("testDW").isPresent(), equalTo(Boolean.FALSE));
 
     assertThat(app.getTestCommand().getResult(), equalTo("foo"));
   }
