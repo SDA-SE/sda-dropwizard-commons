@@ -166,10 +166,10 @@ Multivalued headers are not normalized with respect to the representation as lis
 They are forwarded as parsed by the framework. 
 
 _Security note:_
-Please be aware that while a service might only consider one value of a specific header, the OPA is able to authorize on a array of those.
-Consider this in your policy when you want to make sure that you authorize on the same value that a service might use to evaluate the output.
+Please be aware while a service might only consider one value of a specific header, the OPA is able to authorize on a array of those.
+Consider this in your policy when you want to make sure you authorize on the same value that a service might use to evaluate the output.
 
-These inputs can be accessed inside a policy `.rego`-file in this way:
+These [inputs](./src/main/java/org/sdase/commons/server/opa/filter/model/OpaInput.java) can be accessed inside a policy `.rego`-file in this way:
 ```
 # decode the JWT as new variable 'token'
 token = {"payload": payload} {
@@ -193,6 +193,10 @@ allow {
     # allow if a request header 'HttpRequestHeaderName' has a certain value 
     input.headers["httprequestheadername"][_] == "certain-value"
 }
+
+# set some example constraints 
+constraint1 := true
+constraint2 := [ "v2.1", "v2.2" ]
 ```
 
 The response consists of two parts, the overall `allow` decision and optional rules that represent constraints to limit data access
@@ -211,8 +215,19 @@ with a list of string values.
 }
 ```
 
+The following listing shows a corresponding model class to the example above:
+```java
+public class ConstraintModel {
+
+  private boolean constraint1;
+
+  private List<String> constraint2;
+
+}
+```
+
 The bundle creates a [`OpaJwtPrincipal`](./src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) 
-for each request.
+for each request. You can retrieve the constraint model's data from the principal by invoking `OpaJwtPrincipal#getConstraintsAsEntity`.
 Data from an [`JwtPrincipal`](./src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java) is 
 copied to the new principal if existing.
 Beside the JWT, the constraints are included in this principal. The `OpaJwtPrincipal` includes a 
@@ -220,17 +235,6 @@ method to parse the constraints JSON string to a Java object.
 The [`OpaJwtPrincipal`](./src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) can be 
 injected as field using `@Context` in 
 [request scoped beans like endpoint implementations](../sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaJwtPrincipalEndpoint.java).
-
-
-The following listing shows a corresponding model class to the example above.
-```java
-public class ConstraintModel {
-  
-  private boolean constraint1;
-  private List<String> constraint2;
-  
-}
-```
 
 The principal can be accessed from the `SecurityContext`.
 
