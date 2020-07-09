@@ -4,10 +4,15 @@
 
 `sda-commons-server-weld` is used to bootstrap Dropwizard applications inside a Weld-SE container and provides CDI 
 support for servlets, listeners and resources.
+It allows to inject the application class or instances produced by the application class.
 
-Compared to our old [`WeldBundle`](https://github.com/SDA-SE/rest-common), the new module is creating the Weld context 
-outside of the application and therefore allows to inject the application class or instances produced by the application 
-class. 
+**Info:**
+We at SDA SE do not use CDI in our microservices any more.
+We believe that dependency injection is not helpful for small services.
+Therefore this module is not actively maintained by SDA SE developers.
+Automated security upgrades are enabled.
+Contributions of new features and bug fixes are welcome.
+
 
 ## Usage
 
