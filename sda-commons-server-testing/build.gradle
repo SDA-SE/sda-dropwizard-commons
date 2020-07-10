@@ -1,7 +1,9 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
+
+  compile 'io.dropwizard:dropwizard-testing'
   compile 'junit:junit'
+  compile 'org.hamcrest:hamcrest'
   compile 'org.mockito:mockito-core'
   compile 'org.assertj:assertj-core'
-  compile 'io.dropwizard:dropwizard-testing'
 }

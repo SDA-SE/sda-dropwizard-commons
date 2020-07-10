@@ -135,6 +135,12 @@ dependencies {
 
     // sda-commons-server-testing
     api "junit:junit:4.13"
+    api "org.hamcrest:hamcrest:2.2"
+    // hamcrest-core is deprecated and overlaps with hamcrest, in hamcrest-core 2.2 is only one
+    // class named HamcrestCoreIsDeprecated. We force this version to avoid complex exclude and
+    // dependency substitution configuration as there is no conflict with hamcrest in the code base.
+    // Please do not upgrade hamcrest-core.
+    api "org.hamcrest:hamcrest-core:2.2"
     api "org.assertj:assertj-core:3.16.1"
     api "org.mockito:mockito-core:3.3.3"
 
