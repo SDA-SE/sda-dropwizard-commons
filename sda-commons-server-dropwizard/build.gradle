@@ -3,7 +3,4 @@ dependencies {
   compile 'io.dropwizard:dropwizard-json-logging'
 
   testCompile project(':sda-commons-server-testing')
-  testCompile 'junit:junit'
-  testCompile 'org.assertj:assertj-core'
-  testCompile 'io.dropwizard:dropwizard-testing'
 }

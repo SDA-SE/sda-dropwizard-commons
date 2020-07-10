@@ -1,9 +1,7 @@
-package org.sdase.commons.server.kafka.confluent;
+package org.sdase.commons.server.kafka.confluent.dropwizard;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
@@ -28,8 +26,6 @@ import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.config.ProtocolType;
-import org.sdase.commons.server.kafka.confluent.dropwizard.KafkaTestApplication;
-import org.sdase.commons.server.kafka.confluent.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.confluent.testing.ConfluentSchemaRegistryRule;
 import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
@@ -64,7 +60,6 @@ public class KafkaAvroIT {
   @Before
   public void setup() {
     KafkaTestApplication application = DROPWIZARD_APP_RULE.getApplication();
-    //noinspection unchecked
     bundle = application.kafkaBundle();
     results.clear();
   }
@@ -97,7 +92,7 @@ public class KafkaAvroIT {
                 .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                 .build());
 
-    assertThat(stringStringMessageListener, is(notNullValue()));
+    assertThat(stringStringMessageListener).isNotNull();
 
     ProducerConfig pConfig = new ProducerConfig();
     pConfig
