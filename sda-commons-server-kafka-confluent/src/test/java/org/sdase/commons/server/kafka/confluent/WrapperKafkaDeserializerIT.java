@@ -1,9 +1,7 @@
 package org.sdase.commons.server.kafka.confluent;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
@@ -66,7 +64,6 @@ public class WrapperKafkaDeserializerIT {
   @Before
   public void setup() {
     KafkaTestApplication application = DROPWIZARD_APP_RULE.getApplication();
-    //noinspection unchecked
     bundle = application.kafkaBundle();
     results.clear();
   }
@@ -106,7 +103,7 @@ public class WrapperKafkaDeserializerIT {
                 .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
                 .build());
 
-    assertThat(stringStringMessageListener, is(notNullValue()));
+    assertThat(stringStringMessageListener).isNotNull();
 
     ProducerConfig pConfigAvro = new ProducerConfig();
     pConfigAvro
