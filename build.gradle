@@ -9,7 +9,7 @@ plugins {
   id 'jacoco'
   id 'signing'
   id 'org.sonarqube' version '3.0'
-  id 'com.diffplug.gradle.spotless' version '4.5.1'
+  id 'com.diffplug.spotless' version '5.1.0'
   id 'io.codearte.nexus-staging' version '0.21.2'
 }
 
@@ -47,7 +47,7 @@ spotless {
  */
 subprojects {
   apply plugin: 'maven-publish'
-  apply plugin: 'com.diffplug.gradle.spotless'
+  apply plugin: 'com.diffplug.spotless'
   apply plugin: 'signing'
 
   group 'org.sdase.commons'
