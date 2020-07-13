@@ -82,7 +82,6 @@ dependencies {
     api "org.dbunit:dbunit:2.7.0", {
       because "rider in 1.2.9 only provides 2.5.3 from 2016, see http://dbunit.sourceforge.net/changes-report.html"
     }
-    api "com.h2database:h2:1.4.200"
 
     // sda-commons-server-jaeger
     api "io.jaegertracing:jaeger-client:1.3.1"
