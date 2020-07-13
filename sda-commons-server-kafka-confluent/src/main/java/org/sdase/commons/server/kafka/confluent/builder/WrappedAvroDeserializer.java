@@ -7,8 +7,11 @@ import org.sdase.commons.server.kafka.confluent.serializers.WrappedNoSerializati
 /**
  * Helper to create a @{@link WrappedNoSerializationErrorAvroDeserializer} specific for Avro
  * deserializer
+ *
+ * @deprecated Arvo support will be removed in the next major version
  */
-public class WrappedAvroDeserializer {
+@Deprecated
+public class WrappedAvroDeserializer { // NOSONAR intended deprecation
 
   public interface ClassTypeBuilder<T> {
     ConfigBuilder<T> withClassType(Class<T> clazz);

@@ -10,8 +10,11 @@ import org.junit.runners.model.Statement;
 
 /**
  * wraps a @{@link SharedKafkaTestResource} so to implement the @{@link KafkaBrokerRule} interface
+ *
+ * @deprecated Arvo support will be removed in the next major version
  */
-public class WrappedSharedKafkaRule implements KafkaBrokerRule {
+@Deprecated
+public class WrappedSharedKafkaRule implements KafkaBrokerRule { // NOSONAR intended deprecation
 
   private final SharedKafkaTestResource brokeRule;
 

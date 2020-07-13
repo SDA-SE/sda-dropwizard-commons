@@ -11,8 +11,12 @@ import org.slf4j.LoggerFactory;
  * wrap a @{@link KafkaAvroDeserializer} and avoids a @{@link SerializationException}. This can be
  * used to workaround a Kafka problem and ignore invalid records, key/value have to be checked if
  * null.
+ *
+ * @deprecated Arvo support will be removed in the next major version
  */
-public class WrappedNoSerializationErrorAvroDeserializer<T> implements Deserializer<T> {
+@Deprecated
+public class WrappedNoSerializationErrorAvroDeserializer<T> // NOSONAR intended deprecation
+    implements Deserializer<T> {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(WrappedNoSerializationErrorAvroDeserializer.class);
 

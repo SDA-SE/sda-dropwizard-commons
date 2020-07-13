@@ -23,8 +23,11 @@ import org.junit.runners.model.Statement;
  *
  * <p>The schema registry is published on localhost with the defined port. If no port is defined, a
  * randomized one is used.
+ *
+ * @deprecated Arvo support will be removed in the next major version
  */
-public class ConfluentSchemaRegistryRule implements TestRule {
+@Deprecated
+public class ConfluentSchemaRegistryRule implements TestRule { // NOSONAR intended deprecation
 
   private SchemaRegistryRestApplication application;
 
