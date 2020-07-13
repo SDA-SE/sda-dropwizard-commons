@@ -27,10 +27,7 @@ dependencies {
 
   constraints {
     // TODO: do we need that?
-    // api "javax.activation:activation:1.1.1"
-    // api "javax.activation:javax.activation-api:1.2.0"
     // api "org.dbunit:dbunit:2.7.0"
-    // api "javax.xml.bind:jaxb-api:2.3.1"
     // api "com.typesafe:config:1.4.0" // clash within io.findify:s3mock_2.12
 
     // overall conflicts
@@ -40,7 +37,9 @@ dependencies {
     api "io.github.classgraph:classgraph:4.8.87", {
       because "conflict between com.kjetland:mbknor-jackson-jsonschema_2.12 and dev.morphia.morphia:core"
     }
-    api "javax.xml.bind:jaxb-api:2.3.1"
+    api "javax.xml.bind:jaxb-api:2.3.1", {
+      because "from confluent rest utils in 2.3.0, from io.findify:s3mock_2.12 in 2.3.1, may be removed when avro is removed"
+    }
     api "net.sf.jopt-simple:jopt-simple:5.0.4", {
       because "conflict between org.apache.kafka:kafka_2.12 and com.github.tomakehurst:wiremock-jre8"
     }
