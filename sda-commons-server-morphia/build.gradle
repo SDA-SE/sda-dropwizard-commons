@@ -2,7 +2,14 @@ dependencies {
   compile project(':sda-commons-server-dropwizard')
 
   compile 'dev.morphia.morphia:core'
-  compile 'dev.morphia.morphia:validation'
+  compile 'dev.morphia.morphia:validation', {
+    /**
+     * Dropwizard comes with jakarta.validation instead of javax-validation.
+     * Both contain the same classes.
+     */
+    exclude group: 'javax.validation', module: 'validation-api'
+  }
+  compile 'jakarta.validation:jakarta.validation-api'
 
   compile 'org.bouncycastle:bcpkix-jdk15on'
   compile 'io.opentracing.contrib:opentracing-mongo-driver'
