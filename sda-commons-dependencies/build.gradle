@@ -27,7 +27,7 @@ dependencies {
 
   constraints {
     // TODO: do we need that?
-    // api "org.dbunit:dbunit:2.7.0"
+
     // api "com.typesafe:config:1.4.0" // clash within io.findify:s3mock_2.12
 
     // overall conflicts
@@ -86,6 +86,9 @@ dependencies {
     // sda-commons-server-hibernate-testing
     api "com.github.database-rider:rider-core:1.2.9", {
       because "latest version that supports Parameterized tests: https://github.com/database-rider/database-rider/issues/104"
+    }
+    api "org.dbunit:dbunit:2.7.0", {
+      because "rider in 1.2.9 only provides 2.5.3 from 2016, see http://dbunit.sourceforge.net/changes-report.html"
     }
     api "com.h2database:h2:1.4.200"
 
