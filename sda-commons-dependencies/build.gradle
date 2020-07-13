@@ -54,9 +54,6 @@ dependencies {
       because "conflict between com.github.ftrossbach:club-topicana-core and com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
     }
 
-    // at least server-morphia. also needed by more?
-    api "javax.validation:validation-api:2.0.1.Final"
-
     // overall testing dependencies
     api "org.awaitility:awaitility:4.0.3"
 
