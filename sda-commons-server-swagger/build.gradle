@@ -14,8 +14,14 @@ dependencies {
      * It conflicts with our 'javax.ws.rs:javax.ws.rs-api' which was added for Java 11.
      */
     exclude group: 'javax.ws.rs', module: 'jsr311-api'
+    /**
+     * Dropwizard comes with jakarta.validation instead of javax-validation.
+     * Both contain the same classes.
+     */
+    exclude group: 'javax.validation', module: 'validation-api'
   }
   compile 'javax.ws.rs:javax.ws.rs-api'
+  compile 'jakarta.validation:jakarta.validation-api'
 
   compile 'io.openapitools.hal:swagger-hal', {
     exclude group: 'io.swagger', module: 'swagger-jaxrs'
