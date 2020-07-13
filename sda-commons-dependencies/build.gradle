@@ -70,7 +70,6 @@ dependencies {
 
     // sda-commons-server-circuitbreaker
     api "org.objenesis:objenesis:3.1"
-    api "org.javassist:javassist:3.27.0-GA"
 
     // sda-commons-server-hibernate
     api "org.postgresql:postgresql:42.2.5"
