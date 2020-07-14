@@ -4,7 +4,6 @@ import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
-import javax.validation.constraints.NotNull;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
@@ -66,39 +65,38 @@ public class MessageListenerRegistration<K, V> {
     return listenerConfig;
   }
 
-  public interface ListenerBuilder<K, V> {
+  public interface ListenerBuilder {
 
-    TopicBuilder<K, V> withListenerConfig(String name);
+    TopicBuilder withListenerConfig(String name);
 
-    TopicBuilder<K, V> withListenerConfig(ListenerConfig config);
+    TopicBuilder withListenerConfig(ListenerConfig config);
 
-    TopicBuilder<K, V> withDefaultListenerConfig();
+    TopicBuilder withDefaultListenerConfig();
   }
 
-  public interface TopicBuilder<K, V> {
+  public interface TopicBuilder {
 
     /**
      * @param topic configure the topic to consume
      * @return builder
      */
-    ConsumerBuilder<K, V> forTopic(String topic);
+    ConsumerBuilder forTopic(String topic);
 
     /**
      * @param topics Collection of topics to consume
      * @return builder
      */
-    ConsumerBuilder<K, V> forTopics(Collection<String> topics);
+    ConsumerBuilder forTopics(Collection<String> topics);
 
     /**
      * @param topicConfiguration topic to consume given as topic configuration, e.g. predefined in
      *     config This is necessary if you want to check the topic configuration during startup
      * @return builder
      */
-    ConsumerBuilder<K, V> forTopicConfigs(
-        Collection<ExpectedTopicConfiguration> topicConfiguration);
+    ConsumerBuilder forTopicConfigs(Collection<ExpectedTopicConfiguration> topicConfiguration);
   }
 
-  public interface ConsumerBuilder<K, V> {
+  public interface ConsumerBuilder {
 
     /**
      * Define optional step to process a configuration check of the topic. If the topic differs,
@@ -107,29 +105,29 @@ public class MessageListenerRegistration<K, V> {
      *
      * @return builder
      */
-    ConsumerBuilder<K, V> checkTopicConfiguration();
+    ConsumerBuilder checkTopicConfiguration();
 
     /**
      * @param name name of a consumer config given in the configuration yaml.
      * @return builder
      */
-    HandlerBuilder<K, V> withConsumerConfig(String name);
+    KeyDeserializerBuilder withConsumerConfig(String name);
 
     /**
      * @param consumerConfig configuration for a consumer
      * @return builder
      */
-    HandlerBuilder<K, V> withConsumerConfig(ConsumerConfig consumerConfig);
+    KeyDeserializerBuilder withConsumerConfig(ConsumerConfig consumerConfig);
 
     /**
      * use the default configuration (1 instance, sync commit...)
      *
      * @return builder
      */
-    HandlerBuilder<K, V> withDefaultConsumer();
+    KeyDeserializerBuilder withDefaultConsumer();
   }
 
-  public interface HandlerBuilder<K, V> {
+  public interface KeyDeserializerBuilder {
 
     /**
      * Define key deserializer. This overwrites configuration from ConsumerConfig
@@ -137,7 +135,8 @@ public class MessageListenerRegistration<K, V> {
      * @param keyDeserializer the serializer
      * @return builder
      */
-    HandlerBuilder<K, V> withKeyDeserializer(Deserializer<K> keyDeserializer);
+    <K2> ValueDeserializerForDefinedKeyTypeBuilder<K2> withKeyDeserializer(
+        Deserializer<K2> keyDeserializer);
 
     /**
      * Define the value deserializer. This overwrites configuration from ConsumerConfig
@@ -145,28 +144,57 @@ public class MessageListenerRegistration<K, V> {
      * @param valueDeserializer the serializer
      * @return builder
      */
-    HandlerBuilder<K, V> withValueDeserializer(Deserializer<V> valueDeserializer);
+    <V2> ListenerStrategyForDefinedValueTypeBuilder<V2> withValueDeserializer(
+        Deserializer<V2> valueDeserializer);
 
-    FinalBuilder<K, V> withListenerStrategy(MessageListenerStrategy<K, V> stratgey);
+    /**
+     * @param strategy the strategy how consumed messages are handled.
+     * @param <K2> the type of the message key
+     * @param <V2> the type of the message value
+     * @return builder
+     */
+    <K2, V2> FinalBuilder<K2, V2> withListenerStrategy(MessageListenerStrategy<K2, V2> strategy);
   }
 
-  public interface FinalBuilder<K, V> {
-    MessageListenerRegistration<K, V> build();
+  public interface ListenerStrategyForDefinedValueTypeBuilder<V> {
+
+    /**
+     * @param strategy the strategy how consumed messages are handled.
+     * @param <K2> The type of the message key
+     * @return builder
+     */
+    <K2> FinalBuilder<K2, V> withListenerStrategy(MessageListenerStrategy<K2, V> strategy);
   }
 
-  public static <K, V> ListenerBuilder<K, V> builder() {
-    return new Builder<>();
+  public interface ValueDeserializerForDefinedKeyTypeBuilder<K> {
+
+    /**
+     * Define the value deserializer. This overwrites configuration from ConsumerConfig
+     *
+     * @param valueDeserializer the serializer
+     * @return builder
+     */
+    <V2> ListenerStrategyBuilder<K, V2> withValueDeserializer(Deserializer<V2> valueDeserializer);
+
+    /**
+     * @param strategy the strategy how consumed messages are handled.
+     * @param <V2> the type of the message value
+     * @return builder
+     */
+    <V2> FinalBuilder<K, V2> withListenerStrategy(MessageListenerStrategy<K, V2> strategy);
   }
 
-  private static class Builder<K, V>
-      implements ConsumerBuilder<K, V>,
-          TopicBuilder<K, V>,
-          HandlerBuilder<K, V>,
-          FinalBuilder<K, V>,
-          ListenerBuilder<K, V> {
+  public interface ListenerStrategyBuilder<K, V> {
+    FinalBuilder<K, V> withListenerStrategy(MessageListenerStrategy<K, V> strategy);
+  }
 
-    private Deserializer<?> keyDeserializer;
-    private Deserializer<?> valueDeserializer;
+  public static ListenerBuilder builder() {
+    return new InitialBuilder();
+  }
+
+  private static class InitialBuilder
+      implements ListenerBuilder, TopicBuilder, ConsumerBuilder, KeyDeserializerBuilder {
+
     private Collection<ExpectedTopicConfiguration> topics;
 
     private boolean topicExistCheck = false;
@@ -174,18 +202,33 @@ public class MessageListenerRegistration<K, V> {
     private ListenerConfig listenerConfig;
     private String consumerName;
     private String listenerName;
-    private MessageListenerStrategy strategy;
-
-    private Builder() {}
 
     @Override
-    public ConsumerBuilder<K, V> forTopic(@NotNull String topic) {
+    public TopicBuilder withListenerConfig(String name) {
+      this.listenerName = name;
+      return this;
+    }
+
+    @Override
+    public TopicBuilder withListenerConfig(ListenerConfig config) {
+      this.listenerConfig = config;
+      return this;
+    }
+
+    @Override
+    public TopicBuilder withDefaultListenerConfig() {
+      this.listenerConfig = ListenerConfig.getDefault();
+      return this;
+    }
+
+    @Override
+    public ConsumerBuilder forTopic(String topic) {
       this.topics = Collections.singletonList(TopicConfigurationBuilder.builder(topic).build());
       return this;
     }
 
     @Override
-    public ConsumerBuilder<K, V> forTopics(@NotNull Collection<String> topics) {
+    public ConsumerBuilder forTopics(Collection<String> topics) {
       this.topics =
           topics.stream()
               .map(t -> TopicConfigurationBuilder.builder(t).build())
@@ -194,87 +237,150 @@ public class MessageListenerRegistration<K, V> {
     }
 
     @Override
-    public ConsumerBuilder<K, V> forTopicConfigs(
+    public ConsumerBuilder forTopicConfigs(
         Collection<ExpectedTopicConfiguration> topicConfiguration) {
       this.topics = topicConfiguration;
       return this;
     }
 
     @Override
-    public ConsumerBuilder<K, V> checkTopicConfiguration() {
+    public ConsumerBuilder checkTopicConfiguration() {
       this.topicExistCheck = true;
       return this;
     }
 
     @Override
-    public HandlerBuilder<K, V> withConsumerConfig(String name) {
+    public KeyDeserializerBuilder withConsumerConfig(String name) {
       this.consumerName = name;
       return this;
     }
 
     @Override
-    public HandlerBuilder<K, V> withKeyDeserializer(@NotNull Deserializer<K> keyDeserializer) {
-      this.keyDeserializer = keyDeserializer;
-      return this;
-    }
-
-    @Override
-    public HandlerBuilder<K, V> withValueDeserializer(@NotNull Deserializer<V> valueDeserializer) {
-      this.valueDeserializer = valueDeserializer;
-      return this;
-    }
-
-    @Override
-    public FinalBuilder<K, V> withListenerStrategy(
-        @NotNull MessageListenerStrategy<K, V> strategy) {
-      this.strategy = strategy;
-      return this;
-    }
-
-    @Override
-    public HandlerBuilder<K, V> withConsumerConfig(@NotNull ConsumerConfig consumerConfig) {
+    public KeyDeserializerBuilder withConsumerConfig(ConsumerConfig consumerConfig) {
       this.consumerConfig = consumerConfig;
       return this;
     }
 
     @Override
-    public HandlerBuilder<K, V> withDefaultConsumer() {
+    public KeyDeserializerBuilder withDefaultConsumer() {
       this.consumerConfig = null;
       return this;
     }
 
     @Override
-    public TopicBuilder<K, V> withListenerConfig(String name) {
-      this.listenerName = name;
-      return this;
+    public <K2> ValueDeserializerForDefinedKeyTypeBuilder<K2> withKeyDeserializer(
+        Deserializer<K2> keyDeserializer) {
+      return new PreselectedKeyTypeValueDeserializerBuilder<>(this, keyDeserializer);
     }
 
     @Override
-    public TopicBuilder<K, V> withListenerConfig(ListenerConfig config) {
-      this.listenerConfig = config;
-      return this;
+    public <V2> ListenerStrategyForDefinedValueTypeBuilder<V2> withValueDeserializer(
+        Deserializer<V2> valueDeserializer) {
+      return new PreselectedValueTypeListenerStrategyBuilder<>(this, valueDeserializer);
     }
 
     @Override
-    public TopicBuilder<K, V> withDefaultListenerConfig() {
-      this.listenerConfig = ListenerConfig.getDefault();
-      return this;
+    public <K2, V2> FinalBuilder<K2, V2> withListenerStrategy(
+        MessageListenerStrategy<K2, V2> strategy) {
+      return new FinalBuilder<>(this, null, null, strategy);
+    }
+  }
+
+  private static class PreselectedKeyTypeValueDeserializerBuilder<K>
+      implements ValueDeserializerForDefinedKeyTypeBuilder<K> {
+
+    private InitialBuilder initialBuilder;
+    private Deserializer<K> keyDeserializer;
+
+    private PreselectedKeyTypeValueDeserializerBuilder(
+        InitialBuilder initialBuilder, Deserializer<K> keyDeserializer) {
+      this.initialBuilder = initialBuilder;
+      this.keyDeserializer = keyDeserializer;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    public <V2> ListenerStrategyBuilder<K, V2> withValueDeserializer(
+        Deserializer<V2> valueDeserializer) {
+      return new PreselectedTypesListenerStrategyBuilder<>(
+          initialBuilder, keyDeserializer, valueDeserializer);
+    }
+
+    @Override
+    public <V2> FinalBuilder<K, V2> withListenerStrategy(MessageListenerStrategy<K, V2> strategy) {
+      return new FinalBuilder<>(initialBuilder, keyDeserializer, null, strategy);
+    }
+  }
+
+  private static class PreselectedValueTypeListenerStrategyBuilder<V>
+      implements ListenerStrategyForDefinedValueTypeBuilder<V> {
+
+    private InitialBuilder initialBuilder;
+    private Deserializer<V> valueDeserializer;
+
+    private PreselectedValueTypeListenerStrategyBuilder(
+        InitialBuilder initialBuilder, Deserializer<V> valueDeserializer) {
+      this.initialBuilder = initialBuilder;
+      this.valueDeserializer = valueDeserializer;
+    }
+
+    @Override
+    public <K2> FinalBuilder<K2, V> withListenerStrategy(MessageListenerStrategy<K2, V> strategy) {
+      return new FinalBuilder<>(initialBuilder, null, valueDeserializer, strategy);
+    }
+  }
+
+  private static class PreselectedTypesListenerStrategyBuilder<K, V>
+      implements ListenerStrategyBuilder<K, V> {
+
+    private InitialBuilder initialBuilder;
+    private Deserializer<K> keyDeserializer;
+    private Deserializer<V> valueDeserializer;
+
+    private PreselectedTypesListenerStrategyBuilder(
+        InitialBuilder initialBuilder,
+        Deserializer<K> keyDeserializer,
+        Deserializer<V> valueDeserializer) {
+      this.initialBuilder = initialBuilder;
+      this.keyDeserializer = keyDeserializer;
+      this.valueDeserializer = valueDeserializer;
+    }
+
+    @Override
+    public FinalBuilder<K, V> withListenerStrategy(MessageListenerStrategy<K, V> strategy) {
+      return new FinalBuilder<>(initialBuilder, keyDeserializer, valueDeserializer, strategy);
+    }
+  }
+
+  public static class FinalBuilder<K, V> {
+
+    private InitialBuilder initialBuilder;
+    private Deserializer<K> keyDeserializer;
+    private Deserializer<V> valueDeserializer;
+    private MessageListenerStrategy<K, V> messageListenerStrategy;
+
+    private FinalBuilder(
+        InitialBuilder initialBuilder,
+        Deserializer<K> keyDeserializer,
+        Deserializer<V> valueDeserializer,
+        MessageListenerStrategy<K, V> messageListenerStrategy) {
+      this.initialBuilder = initialBuilder;
+      this.keyDeserializer = keyDeserializer;
+      this.valueDeserializer = valueDeserializer;
+      this.messageListenerStrategy = messageListenerStrategy;
+    }
+
     public MessageListenerRegistration<K, V> build() {
       MessageListenerRegistration<K, V> build = new MessageListenerRegistration<>();
 
-      build.keyDeserializer = (Deserializer<K>) keyDeserializer;
-      build.valueDeserializer = (Deserializer<V>) valueDeserializer;
-      build.topics = topics;
-      build.checkTopicConfiguration = topicExistCheck;
-      build.consumerConfig = consumerConfig;
-      build.consumerConfigName = consumerName;
-      build.listenerConfig = listenerConfig;
-      build.listenerConfigName = listenerName;
-      build.strategy = strategy;
+      build.keyDeserializer = keyDeserializer;
+      build.valueDeserializer = valueDeserializer;
+      build.topics = initialBuilder.topics;
+      build.checkTopicConfiguration = initialBuilder.topicExistCheck;
+      build.consumerConfig = initialBuilder.consumerConfig;
+      build.consumerConfigName = initialBuilder.consumerName;
+      build.listenerConfig = initialBuilder.listenerConfig;
+      build.listenerConfigName = initialBuilder.listenerName;
+      build.strategy = messageListenerStrategy;
 
       return build;
     }

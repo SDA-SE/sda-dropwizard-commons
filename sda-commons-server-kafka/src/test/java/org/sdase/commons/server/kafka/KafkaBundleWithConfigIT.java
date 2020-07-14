@@ -18,8 +18,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
@@ -34,7 +34,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
-import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.AdminConfig;
@@ -47,9 +46,9 @@ import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.KafkaHelper;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
+import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
-import org.sdase.commons.server.kafka.consumer.strategies.legacy.CallbackMessageHandler;
-import org.sdase.commons.server.kafka.consumer.strategies.legacy.LegacyMLS;
+import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
@@ -136,11 +135,7 @@ public class KafkaBundleWithConfigIT {
                             .getListenerConfig()
                             .put(
                                 LISTENER_CONFIG_ASYNC,
-                                ListenerConfig.builder()
-                                    .withCommitType(LegacyMLS.CommitType.ASYNC) // NOSONAR
-                                    .useAutoCommitOnly(false) // NOSONAR
-                                    .withTopicMissingRetryMs(60000)
-                                    .build(1));
+                                ListenerConfig.builder().withTopicMissingRetryMs(60000).build(1));
 
                         kafka
                             .getTopics()
@@ -216,10 +211,11 @@ public class KafkaBundleWithConfigIT {
   public void createProducerWithTopic() {
     MessageProducer<String, String> topicName2 =
         kafkaBundle.registerProducer(
-            ProducerRegistration.<String, String>builder()
+            ProducerRegistration.builder()
                 .forTopic(kafkaBundle.getTopicConfiguration("topicId2"))
                 .createTopicIfMissing()
                 .withDefaultProducer()
+                .withKeySerializer(new StringSerializer())
                 .withValueSerializer(new StringSerializer())
                 .build());
     assertThat(topicName2).isNotNull();
@@ -244,7 +240,7 @@ public class KafkaBundleWithConfigIT {
         };
 
     kafkaBundle.createMessageListener(
-        MessageListenerRegistration.<String, String>builder() // NOSONAR
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withConsumerConfig(
@@ -344,14 +340,14 @@ public class KafkaBundleWithConfigIT {
     String topic = "testConsumerCanReadMessages";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration // NOSONAR
-            .<Long, Long>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withConsumerConfig(CONSUMER_1)
-            .withHandler(record -> results.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new SyncCommitMLS<Long, Long>(
+                    record -> results.add(record.value()), new IgnoreAndProceedErrorHandler<>()))
             .build());
 
     MessageProducer<Long, Long> producer =
@@ -374,14 +370,15 @@ public class KafkaBundleWithConfigIT {
     String topic = "testConsumerCanReadMessagesNamed";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration // NOSONAR
-            .<String, String>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withConsumerConfig(CONSUMER_2)
-            .withHandler(record -> resultsString.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new SyncCommitMLS<String, String>(
+                    record -> resultsString.add(record.value()),
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
 
     MessageProducer<String, String> producer =
@@ -407,14 +404,15 @@ public class KafkaBundleWithConfigIT {
     String topic = "defaultConProdShouldHaveStringSerializer";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration // NOSONAR
-            .<String, String>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withDefaultConsumer()
-            .withHandler(record -> resultsString.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new SyncCommitMLS<String, String>(
+                    record -> resultsString.add(record.value()),
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
 
     MessageProducer<String, String> producer =
@@ -444,16 +442,17 @@ public class KafkaBundleWithConfigIT {
 
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration // NOSONAR
-            .<String, String>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withDefaultConsumer()
             .withKeyDeserializer(new StringDeserializer())
             .withValueDeserializer(new StringDeserializer())
-            .withHandler(record -> resultsString.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new SyncCommitMLS<>(
+                    record -> resultsString.add(record.value()),
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
 
     // pass in messages
@@ -476,9 +475,10 @@ public class KafkaBundleWithConfigIT {
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
     MessageProducer<String, String> producer =
         kafkaBundle.registerProducer(
-            ProducerRegistration.<String, String>builder()
+            ProducerRegistration.builder()
                 .forTopic(topic)
                 .withDefaultProducer()
+                .withKeySerializer(new StringSerializer())
                 .withValueSerializer(new StringSerializer())
                 .build());
 
@@ -518,16 +518,17 @@ public class KafkaBundleWithConfigIT {
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
     StringDeserializer deserializer = new StringDeserializer();
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration // NOSONAR
-            .<String, String>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withDefaultConsumer()
             .withKeyDeserializer(deserializer)
             .withValueDeserializer(deserializer)
-            .withHandler(record -> resultsString.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new SyncCommitMLS<>(
+                    record -> resultsString.add(record.value()),
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
 
     // empty topic before test
@@ -558,9 +559,8 @@ public class KafkaBundleWithConfigIT {
     // register adhoc implementations
     assertThat(kafkaBundle).isNotNull();
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration // NOSONAR
-            .<String, String>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withListenerConfig(LISTENER_CONFIG_ASYNC)
             .forTopic(topic)
             .withConsumerConfig(
@@ -570,20 +570,23 @@ public class KafkaBundleWithConfigIT {
                     .build())
             .withKeyDeserializer(deserializer)
             .withValueDeserializer(deserializer)
-            .withHandler(
-                new CallbackMessageHandler<String, String>() {
+            .withListenerStrategy(
+                new MessageListenerStrategy<String, String>() {
                   @Override
-                  public void handleCommitCallback(
-                      Map<TopicPartition, OffsetAndMetadata> offsets, Exception exception) {
+                  public void processRecords(
+                      ConsumerRecords<String, String> records,
+                      KafkaConsumer<String, String> consumer) {
+                    records.forEach(r -> resultsString.add(r.value()));
+                    consumer.commitSync();
                     callbackCount++;
                   }
 
                   @Override
-                  public void handle(ConsumerRecord<String, String> record) {
-                    resultsString.add(record.value());
-                  }
+                  public void commitOnClose(KafkaConsumer<String, String> consumer) {}
+
+                  @Override
+                  public void verifyConsumerConfig(Map<String, String> config) {}
                 })
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
             .build());
 
     List<String> checkMessages = new ArrayList<>();
@@ -612,25 +615,27 @@ public class KafkaBundleWithConfigIT {
     KAFKA.getKafkaTestUtils().createTopic(TOPIC_CREATE, 1, (short) 1);
     KAFKA.getKafkaTestUtils().createTopic(TOPIC_DELETE, 1, (short) 1);
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration // NOSONAR
-            .<Long, String>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(TOPIC_CREATE)
             .withDefaultConsumer()
             .withKeyDeserializer(new LongDeserializer())
-            .withHandler(record -> resultsString.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new SyncCommitMLS<Long, String>(
+                    record -> resultsString.add(record.value()),
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration // NOSONAR
-            .<String, String>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(TOPIC_DELETE)
             .withDefaultConsumer()
-            .withHandler(record -> resultsString.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new SyncCommitMLS<String, String>(
+                    record -> resultsString.add(record.value()),
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
 
     MessageProducer<Long, String> createProducer =
@@ -663,23 +668,25 @@ public class KafkaBundleWithConfigIT {
     String topic = "testJsonSerializer";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration.<String, SimpleEntity>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withDefaultConsumer()
             .withValueDeserializer(
                 new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class))
-            .withHandler(x -> resultsString.add(x.value().getName()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new SyncCommitMLS<>(
+                    x -> resultsString.add(x.value().getName()),
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
 
-    MessageProducer<String, SimpleEntity> prod =
+    MessageProducer<Object, SimpleEntity> prod =
         kafkaBundle.registerProducer(
-            ProducerRegistration.<String, SimpleEntity>builder()
+            ProducerRegistration.builder()
                 .forTopic(topic)
                 .withDefaultProducer()
-                .withValueSerializer(new KafkaJsonSerializer<>(new ObjectMapper()))
+                .withValueSerializer(new KafkaJsonSerializer<SimpleEntity>(new ObjectMapper()))
                 .build());
 
     SimpleEntity a = new SimpleEntity();
@@ -703,21 +710,22 @@ public class KafkaBundleWithConfigIT {
     String topic = "testWrappedNoSerializationErrorDeserializer";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration.<String, SimpleEntity>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withDefaultConsumer()
             .withValueDeserializer(
                 new WrappedNoSerializationErrorDeserializer<>(
                     new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
-            .withHandler(
-                x -> {
-                  if (x.value() != null) {
-                    resultsString.add(x.value().getName());
-                  }
-                })
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new SyncCommitMLS<>(
+                    x -> {
+                      if (x.value() != null) {
+                        resultsString.add(x.value().getName());
+                      }
+                    },
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
 
     try (KafkaProducer<String, String> producer =
@@ -745,21 +753,22 @@ public class KafkaBundleWithConfigIT {
     String topic = "testKeyWrappedNoSerializationErrorDeserializer";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
-    kafkaBundle.registerMessageHandler(
-        MessageHandlerRegistration.<SimpleEntity, String>builder()
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withDefaultConsumer()
             .withKeyDeserializer(
                 new WrappedNoSerializationErrorDeserializer<>(
                     new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
-            .withHandler(
-                x -> {
-                  if (x.key() != null && x.value() != null) {
-                    resultsString.add(x.value());
-                  }
-                })
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new SyncCommitMLS<SimpleEntity, String>(
+                    x -> {
+                      if (x.key() != null && x.value() != null) {
+                        resultsString.add(x.value());
+                      }
+                    },
+                    new IgnoreAndProceedErrorHandler<>()))
             .build());
 
     try (KafkaProducer<String, String> producer =
@@ -786,21 +795,22 @@ public class KafkaBundleWithConfigIT {
     String topic = "shouldCreateSeveralInstancesOfConsumer";
     // when
     List<MessageListener<SimpleEntity, String>> listener =
-        kafkaBundle.registerMessageHandler(
-            MessageHandlerRegistration.<SimpleEntity, String>builder()
+        kafkaBundle.createMessageListener(
+            MessageListenerRegistration.builder()
                 .withListenerConfig(ListenerConfig.builder().build(2))
                 .forTopic(topic)
                 .withConsumerConfig(ConsumerConfig.builder().withClientId("myclient").build())
                 .withKeyDeserializer(
                     new WrappedNoSerializationErrorDeserializer<>(
                         new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
-                .withHandler(
-                    x -> {
-                      if (x.key() != null && x.value() != null) {
-                        resultsString.add(x.value());
-                      }
-                    })
-                .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+                .withListenerStrategy(
+                    new SyncCommitMLS<SimpleEntity, String>(
+                        x -> {
+                          if (x.key() != null && x.value() != null) {
+                            resultsString.add(x.value());
+                          }
+                        },
+                        new IgnoreAndProceedErrorHandler<>()))
                 .build());
 
     // then
@@ -870,7 +880,7 @@ public class KafkaBundleWithConfigIT {
     }
   }
 
-  public class ProcessingRecordException extends RuntimeException {
+  public static class ProcessingRecordException extends RuntimeException {
 
     ProcessingRecordException(String message) {
       super(message);

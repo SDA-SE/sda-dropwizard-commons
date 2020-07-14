@@ -119,7 +119,7 @@ public class KafkaPrometheusMonitoringIT {
             record -> resultsLong.add(record.value()), new IgnoreAndProceedErrorHandler<>());
 
     kafkaBundle.createMessageListener(
-        MessageListenerRegistration.<Long, Long>builder()
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withConsumerConfig(CONSUMER_1)
