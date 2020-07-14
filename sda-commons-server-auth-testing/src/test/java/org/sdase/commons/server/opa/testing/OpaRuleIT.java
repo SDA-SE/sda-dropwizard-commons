@@ -41,7 +41,7 @@ public class OpaRuleIT {
   @Retry(5)
   public void shouldReturnResponseOnMatchWithLegacyOnRequest() {
     // given
-    OPA_RULE.mock(onRequest(method, path).allow());
+    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).allow());
     // when
     Response response = requestMock(request(method, path));
     // then
@@ -132,8 +132,13 @@ public class OpaRuleIT {
   public void shouldReturnDifferentResponsesInOneTest() {
     // given
     ConstraintModel constraintModel = new ConstraintModel().addConstraint("key", "A", "B");
-    OPA_RULE.mock(onRequest("GET", "pathA").allow().withConstraint(constraintModel));
-    OPA_RULE.mock(onRequest("POST", "pathB").deny());
+    OPA_RULE.mock(
+        onRequest()
+            .withHttpMethod("GET")
+            .withPath("pathA")
+            .allow()
+            .withConstraint(constraintModel));
+    OPA_RULE.mock(onRequest().withHttpMethod("POST").withPath("pathB").deny());
     OPA_RULE.mock(
         onRequest()
             .withHttpMethod("POST")

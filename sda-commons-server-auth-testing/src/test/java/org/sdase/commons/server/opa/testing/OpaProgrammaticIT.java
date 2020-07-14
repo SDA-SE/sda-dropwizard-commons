@@ -39,7 +39,7 @@ public class OpaProgrammaticIT {
   @Retry(5)
   public void shouldAllowAccess() {
     // given
-    OPA_RULE.mock(onRequest("GET", "resources").allow());
+    OPA_RULE.mock(onRequest().withHttpMethod("GET").withPath("resources").allow());
 
     // when
     Response response =
