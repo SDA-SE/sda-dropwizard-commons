@@ -52,22 +52,6 @@ public class ClientFactory {
   }
 
   /**
-   * Starts creation of a client that calls APIs within the SDA SE Platform. This clients
-   * automatically send a {@code Trace-Token} from the incoming request or a new {@code Trace-Token}
-   * to the API resources and can optionally send a {@code Consumer-Token} or pass through the
-   * {@code Authorization} header from the incoming request.
-   *
-   * @param disableGzipCompression if gzip compression of requests should be disabled. This may be
-   *     needed if the server can not communicate with gzip enabled
-   * @return a builder to configure the client
-   * @deprecated Use {@link #platformClient(HttpClientConfiguration)} instead.
-   */
-  @Deprecated
-  public PlatformClientBuilder platformClient(boolean disableGzipCompression) {
-    return platformClient(new HttpClientConfiguration().setGzipEnabled(!disableGzipCompression));
-  }
-
-  /**
    * Starts creation of a client that calls APIs outside of the SDA SE Platform. This clients does
    * no header magic.
    *
@@ -88,20 +72,6 @@ public class ClientFactory {
    */
   public ExternalClientBuilder externalClient(HttpClientConfiguration httpClientConfiguration) {
     return new ExternalClientBuilder(createClientBuilder(httpClientConfiguration), tracer);
-  }
-
-  /**
-   * Starts creation of a client that calls APIs outside of the SDA SE Platform. This clients does
-   * no header magic.
-   *
-   * @param disableGzipCompression if gzip compression of requests should be disabled. This may be
-   *     needed if the server can not communicate with gzip enabled
-   * @return a builder to configure the client
-   * @deprecated Use {@link #externalClient(HttpClientConfiguration)} instead.
-   */
-  @Deprecated
-  public ExternalClientBuilder externalClient(boolean disableGzipCompression) {
-    return externalClient(new HttpClientConfiguration().setGzipEnabled(!disableGzipCompression));
   }
 
   private JerseyClientBuilder createClientBuilder(HttpClientConfiguration httpClientConfiguration) {
