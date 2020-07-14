@@ -79,9 +79,6 @@ Some modules have a more specialized testing module, e.g. the
 [`sda-commons-server-hibernate-testing`](./sda-commons-server-hibernate-testing/README.md) module, providing further
 support.
 
-The module [`sda-commons-server-kafka-confluent-testing`](./sda-commons-server-kafka-confluent-testing/README.md),
-provides support to start a confluent schema registry needed if you use Avro with the confluent serializers. 
-
 
 #### Additional Server Modules
 
@@ -159,9 +156,6 @@ messages from a Kafka topic.
 
 The module [`sda-commons-server-kafka-example`](./sda-commons-server-kafka-example/README.md) includes 
 applications, one with consumer and one with producer examples.   
-
-The module [`sda-commons-server-kafka-confluent`](./sda-commons-server-kafka-confluent/README.md) is 
-the base module to add Avro specific support to Kafka.
 
 
 ##### MongoDB
