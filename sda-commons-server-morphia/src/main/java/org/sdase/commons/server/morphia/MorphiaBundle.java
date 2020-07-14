@@ -231,17 +231,6 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       extends EnsureIndexesConfigBuilder<C> {
 
     /**
-     * Disables the SDA {@link LocalDateConverter}. This is only for backward compatibility and
-     * should only be set if SDA Commons is upgraded in a service that uses {@link
-     * java.time.LocalDate} in entity classes.
-     *
-     * @return a builder instance for further configuration
-     * @deprecated only added for backward compatibility
-     */
-    @Deprecated
-    CustomConverterBuilder<C> withoutLocalDateConverter(); // NOSONAR intended deprecation
-
-    /**
      * Adds a custom {@link TypeConverter}s, see {@link
      * dev.morphia.converters.Converters#addConverter(TypeConverter)}
      *
@@ -387,12 +376,6 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     @Override
     public CustomConverterBuilder<T> disableDefaultTypeConverters() {
       this.customConverters.clear();
-      return this;
-    }
-
-    @Override
-    public CustomConverterBuilder<T> withoutLocalDateConverter() {
-      this.customConverters.removeIf(c -> LocalDateConverter.class.equals(c.getClass()));
       return this;
     }
 
