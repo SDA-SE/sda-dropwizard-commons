@@ -14,8 +14,6 @@ dependencies {
   compile project(':sda-commons-server-jackson')
   compile project(':sda-commons-server-jaeger')
   compile project(':sda-commons-server-kafka')
-  compile project(':sda-commons-server-kafka-confluent')
-  compile project(':sda-commons-server-kafka-confluent-testing')
   compile project(':sda-commons-server-kafka-testing')
   compile project(':sda-commons-server-mongo-testing')
   compile project(':sda-commons-server-morphia')

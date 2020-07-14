@@ -54,7 +54,6 @@ subprojects {
 
   repositories {
     mavenCentral()
-    maven { url "https://packages.confluent.io/maven/" } // for sda-commons-server-kafka-confluent-testing only
   }
 
   // Disable publication of Gradle Module Metadata
