@@ -27,10 +27,11 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
-import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
+import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
+import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.exception.TopicCreationException;
@@ -85,15 +86,17 @@ public class KafkaTopicIT {
     String topicName = "checkTopicSuccessful";
     KAFKA.getKafkaTestUtils().createTopic(topicName, 1, (short) 1);
     List<MessageListener<String, String>> stringStringMessageListener =
-        bundle.registerMessageHandler(
-            MessageHandlerRegistration.<String, String>builder()
+        bundle.createMessageListener(
+            MessageListenerRegistration.builder()
                 .withDefaultListenerConfig()
                 .forTopic(topicName)
                 .checkTopicConfiguration()
                 .withDefaultConsumer()
                 .withValueDeserializer(new StringDeserializer())
-                .withHandler(record -> results.add(record.value()))
-                .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+                .withListenerStrategy(
+                    new AutocommitMLS<String, String>(
+                        record -> results.add(record.value()),
+                        new IgnoreAndProceedErrorHandler<>()))
                 .build());
 
     assertThat(stringStringMessageListener).isNotNull();
@@ -104,8 +107,8 @@ public class KafkaTopicIT {
     String topicName = "checkTopicSuccessfulComplex";
     KAFKA.getKafkaTestUtils().createTopic(topicName, 2, (short) 1);
     List<MessageListener<String, String>> stringStringMessageListener =
-        bundle.registerMessageHandler(
-            MessageHandlerRegistration.<String, String>builder()
+        bundle.createMessageListener(
+            MessageListenerRegistration.builder()
                 .withDefaultListenerConfig()
                 .forTopicConfigs(
                     Collections.singletonList(
@@ -116,8 +119,10 @@ public class KafkaTopicIT {
                 .checkTopicConfiguration()
                 .withDefaultConsumer()
                 .withValueDeserializer(new StringDeserializer())
-                .withHandler(record -> results.add(record.value()))
-                .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+                .withListenerStrategy(
+                    new AutocommitMLS<String, String>(
+                        record -> results.add(record.value()),
+                        new IgnoreAndProceedErrorHandler<>()))
                 .build());
 
     assertThat(stringStringMessageListener).isNotNull();
@@ -127,15 +132,17 @@ public class KafkaTopicIT {
   public void checkTopicFails() {
 
     List<MessageListener<String, String>> stringStringMessageListener =
-        bundle.registerMessageHandler(
-            MessageHandlerRegistration.<String, String>builder()
+        bundle.createMessageListener(
+            MessageListenerRegistration.builder()
                 .withDefaultListenerConfig()
                 .forTopic("SomeNotExisting")
                 .checkTopicConfiguration()
                 .withDefaultConsumer()
                 .withValueDeserializer(new StringDeserializer())
-                .withHandler(record -> results.add(record.value()))
-                .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+                .withListenerStrategy(
+                    new AutocommitMLS<String, String>(
+                        record -> results.add(record.value()),
+                        new IgnoreAndProceedErrorHandler<>()))
                 .build());
 
     assertThat(stringStringMessageListener).isNotNull();

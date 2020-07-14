@@ -16,7 +16,7 @@ public class ProducerRegistrationTest {
   public void defaultBuilderHasStringSerializer() {
 
     ProducerRegistration<String, String> producerRegistration =
-        ProducerRegistration.<String, String>builder()
+        ProducerRegistration.builder()
             .forTopic("TOPIC")
             .withDefaultProducer()
             .withKeySerializer(new StringSerializer())
@@ -33,7 +33,7 @@ public class ProducerRegistrationTest {
   public void serializerShouldBeSetCorrectly() {
 
     ProducerRegistration<Long, Integer> producerRegistration =
-        ProducerRegistration.<Long, Integer>builder()
+        ProducerRegistration.builder()
             .forTopic("TOPIC")
             .withDefaultProducer()
             .withKeySerializer(new LongSerializer())

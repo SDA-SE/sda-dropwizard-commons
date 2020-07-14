@@ -10,9 +10,10 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
+import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
+import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
@@ -35,7 +36,6 @@ public class AppWithoutKafkaServerIT {
   @Before
   public void before() {
     KafkaTestApplication app = DW.getApplication();
-    //noinspection unchecked
     bundle = app.kafkaBundle();
     results.clear();
   }
@@ -43,15 +43,16 @@ public class AppWithoutKafkaServerIT {
   @Test(expected = TimeoutException.class)
   public void checkMessageListenerCreationThrowsException() {
     String topicName = "checkMessageListenerCreationSuccessful";
-    bundle.registerMessageHandler(
-        MessageHandlerRegistration.<String, String>builder()
+    bundle.createMessageListener(
+        MessageListenerRegistration.builder()
             .withListenerConfig("lc1")
             .forTopic(topicName)
             .checkTopicConfiguration()
             .withDefaultConsumer()
             .withValueDeserializer(new StringDeserializer())
-            .withHandler(record -> results.add(record.value()))
-            .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+            .withListenerStrategy(
+                new AutocommitMLS<>(
+                    record -> results.add(record.value()), new IgnoreAndProceedErrorHandler<>()))
             .build());
   }
 

@@ -47,12 +47,12 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
    */
   private MessageProducer<Key, Value> createProducer(ObjectMapper configuredObjectMapper) {
     return kafka.registerProducer(
-        ProducerRegistration.<Key, Value>builder()
+        ProducerRegistration.builder()
             .forTopic(kafka.getTopicConfiguration("example0"))
             .createTopicIfMissing()
             .withDefaultProducer()
-            .withKeySerializer(new KafkaJsonSerializer<>(configuredObjectMapper))
-            .withValueSerializer(new KafkaJsonSerializer<>(configuredObjectMapper))
+            .withKeySerializer(new KafkaJsonSerializer<Key>(configuredObjectMapper))
+            .withValueSerializer(new KafkaJsonSerializer<Value>(configuredObjectMapper))
             .build());
   }
 
@@ -63,7 +63,7 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
    */
   private MessageProducer<Long, Long> createProducerWithConfig() {
     return kafka.registerProducer(
-        ProducerRegistration.<Long, Long>builder()
+        ProducerRegistration.builder()
             .forTopic(kafka.getTopicConfiguration("example1"))
             .createTopicIfMissing()
             .withDefaultProducer()

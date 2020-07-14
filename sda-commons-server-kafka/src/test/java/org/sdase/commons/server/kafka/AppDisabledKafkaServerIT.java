@@ -11,10 +11,11 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.sdase.commons.server.kafka.builder.MessageHandlerRegistration;
+import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
+import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
@@ -34,7 +35,7 @@ public class AppDisabledKafkaServerIT {
 
   private List<String> results = Collections.synchronizedList(new ArrayList<>());
 
-  private KafkaBundle bundle;
+  private KafkaBundle<KafkaTestConfiguration> bundle;
 
   @Before
   public void before() {
@@ -45,17 +46,18 @@ public class AppDisabledKafkaServerIT {
 
   @Test
   public void checkRegisterMessageHandler() {
-    @SuppressWarnings("unchecked")
-    List<MessageListener<String, String>> lc1 =
-        bundle.registerMessageHandler(
-            MessageHandlerRegistration.<String, String>builder()
+    List<MessageListener<Object, String>> lc1 =
+        bundle.createMessageListener(
+            MessageListenerRegistration.builder()
                 .withListenerConfig("lc1")
                 .forTopic("topic")
                 .checkTopicConfiguration()
                 .withDefaultConsumer()
                 .withValueDeserializer(new StringDeserializer())
-                .withHandler(record -> results.add(record.value()))
-                .withErrorHandler(new IgnoreAndProceedErrorHandler<>())
+                .withListenerStrategy(
+                    new SyncCommitMLS<>(
+                        record -> results.add(record.value()),
+                        new IgnoreAndProceedErrorHandler<>()))
                 .build());
 
     assertTrue(lc1.isEmpty());
@@ -63,7 +65,6 @@ public class AppDisabledKafkaServerIT {
 
   @Test
   public void checkRegisterProducerReturnsDummy() {
-    @SuppressWarnings("unchecked")
     MessageProducer<Object, Object> producer =
         bundle.registerProducer(
             ProducerRegistration.builder()

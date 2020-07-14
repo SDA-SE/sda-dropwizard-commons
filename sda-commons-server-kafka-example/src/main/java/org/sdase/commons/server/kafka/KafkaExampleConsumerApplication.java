@@ -56,7 +56,7 @@ public class KafkaExampleConsumerApplication extends Application<KafkaExampleCon
    */
   private void createExampleMessageListener(ObjectMapper configuredObjectMapper) {
     kafka.createMessageListener(
-        MessageListenerRegistration.<Key, Value>builder()
+        MessageListenerRegistration.builder()
             .withDefaultListenerConfig()
             .forTopicConfigs(Collections.singletonList(kafka.getTopicConfiguration("example0")))
             .withDefaultConsumer()
@@ -82,7 +82,7 @@ public class KafkaExampleConsumerApplication extends Application<KafkaExampleCon
    */
   private void createExampleMessageListenerWithConfiguration() {
     kafka.createMessageListener(
-        MessageListenerRegistration.<Long, Long>builder()
+        MessageListenerRegistration.builder()
             .withListenerConfig("example1")
             .forTopicConfigs(Collections.singletonList(kafka.getTopicConfiguration("example1")))
             .withConsumerConfig("consumerConfigExample")

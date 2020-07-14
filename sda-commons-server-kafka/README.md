@@ -90,7 +90,7 @@ public class DemoApplication {
       ErrorHandler<Sting, SimpleEntity> errorHandler = new IgnoreAndProceedErrorHandler<>()
             
       List<MessageListener> jsonListener = kafkaBundle
-            .createMessageListener(MessageListenerRegistration.<String, SimpleEntity >builder()
+            .createMessageListener(MessageListenerRegistration.builder()
                   .withDefaultListenerConfig()
                   .forTopic(topic)
                   .withDefaultConsumer()
@@ -100,9 +100,10 @@ public class DemoApplication {
             );
 
       MessageProducer<String, SimpleEntity> jsonProducer = kafkaBundle.registerProducer(ProducerRegistration
-            .<String, SimpleEntity>builder()
+            .builder()
             .forTopic(topic)
             .withDefaultProducer()
+            .withKeySerializer(new StringSerializer())
             .withValueSerializer(new KafkaJsonSerializer<>(new ObjectMapper())).build());
             
       // plain consumer where the user has full control and take over responsibility to close te consumer
@@ -155,7 +156,7 @@ public class DemoApplication {
       
       // JSON Example with wrapped Deserializer to avoid DeseriliazationException, see Note below
       List<MessageListener> jsonListener = kafkaBundle.registerMessageHandler(MessageHandlerRegistration
-            .<String, SimpleEntity >builder()
+            .builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
             .withDefaultConsumer()

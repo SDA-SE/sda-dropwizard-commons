@@ -56,7 +56,9 @@ public class ProducerRegistration<K, V> {
      * @param topic the topic for that messages will be produced
      * @return builder
      */
-    ProducerBuilder<K, V> forTopic(String topic);
+    default ProducerBuilder<K, V> forTopic(String topic) {
+      return forTopic(TopicConfigurationBuilder.builder(topic).build());
+    }
 
     /**
      * @param topic detailed definition of the topic for that messages will be produced. This
@@ -71,7 +73,7 @@ public class ProducerRegistration<K, V> {
 
     /**
      * defines that the topic configuration should be checked. If the name is given only, just topic
-     * existance is checked.
+     * existence is checked.
      *
      * @return builder
      */
@@ -89,66 +91,111 @@ public class ProducerRegistration<K, V> {
      *
      * @return builder
      */
-    FinalBuilder<K, V> withDefaultProducer();
+    KeySerializerBuilder<K, V> withDefaultProducer();
 
     /**
      * @param config configuration used for KafkaProducer creation
      * @return builder
      */
-    FinalBuilder<K, V> withProducerConfig(ProducerConfig config);
+    KeySerializerBuilder<K, V> withProducerConfig(ProducerConfig config);
 
     /**
      * @param name name of the ProducerConfig that is defined in the coniguration yaml
      * @return builder
      */
-    FinalBuilder<K, V> withProducerConfig(String name);
+    KeySerializerBuilder<K, V> withProducerConfig(String name);
   }
 
-  public interface FinalBuilder<K, V> {
+  public interface KeySerializerBuilder<K, V> {
 
     /**
      * @param keySerializer define a new key serializer
      * @return builder
      */
-    FinalBuilder<K, V> withKeySerializer(Serializer<K> keySerializer);
+    <K2> ValueSerializerBuilder<K2, V> withKeySerializer(Serializer<K2> keySerializer);
 
     /**
      * @param valueSerializer define a new value serializer
      * @return builder
      */
-    FinalBuilder<K, V> withValueSerializer(Serializer<V> valueSerializer);
+    <V2> FinalBuilder<K, V2> withValueSerializer(Serializer<V2> valueSerializer);
 
     ProducerRegistration<K, V> build();
+  }
+
+  public static class ValueSerializerBuilder<K, V> {
+
+    private InitialBuilder<K, V> initialBuilder;
+    private Serializer<K> keySerializer;
+
+    private ValueSerializerBuilder(
+        InitialBuilder<K, V> initialBuilder, Serializer<K> keySerializer) {
+      this.initialBuilder = initialBuilder;
+      this.keySerializer = keySerializer;
+    }
+
+    /**
+     * @param valueSerializer define a new value serializer
+     * @return builder
+     */
+    public <V2> FinalBuilder<K, V2> withValueSerializer(Serializer<V2> valueSerializer) {
+      return new FinalBuilder<>(
+          InitialBuilder.clone(initialBuilder), keySerializer, valueSerializer);
+    }
+
+    public ProducerRegistration<K, V> build() {
+      return ProducerRegistration.build(initialBuilder, keySerializer, null);
+    }
+  }
+
+  public static class FinalBuilder<K, V> {
+
+    private InitialBuilder<K, V> initialBuilder;
+    private Serializer<K> keySerializer;
+    private Serializer<V> valueSerializer;
+
+    private FinalBuilder(
+        InitialBuilder<K, V> initialBuilder,
+        Serializer<K> keySerializer,
+        Serializer<V> valueSerializer) {
+      this.initialBuilder = initialBuilder;
+      this.keySerializer = keySerializer;
+      this.valueSerializer = valueSerializer;
+    }
+
+    public ProducerRegistration<K, V> build() {
+      return ProducerRegistration.build(initialBuilder, keySerializer, valueSerializer);
+    }
   }
 
   /**
    * creates a new builder
    *
-   * @param <K> the type of the Key
-   * @param <V> the type of the Value
    * @return builder
    */
   public static <K, V> TopicBuilder<K, V> builder() {
-    return new Builder<>();
+    return new InitialBuilder<>();
   }
 
-  private static class Builder<K, V>
-      implements TopicBuilder<K, V>, ProducerBuilder<K, V>, FinalBuilder<K, V> {
+  private static class InitialBuilder<K, V>
+      implements TopicBuilder<K, V>, ProducerBuilder<K, V>, KeySerializerBuilder<K, V> {
 
-    private Serializer<?> keySerializer = null;
-    private Serializer<?> valueSerializer = null;
     private ExpectedTopicConfiguration topic;
     private boolean checkTopicConfiguration = false;
     private boolean createTopicIfMissing = false;
     private ProducerConfig producerConfig;
     private String producerName = null;
 
-    private Builder() {}
+    private InitialBuilder() {}
 
-    @Override
-    public ProducerBuilder<K, V> forTopic(@NotNull String topic) {
-      this.topic = TopicConfigurationBuilder.builder(topic).build();
-      return this;
+    static <K, V, K2, V2> InitialBuilder<K2, V2> clone(InitialBuilder<K, V> source) {
+      InitialBuilder<K2, V2> target = new InitialBuilder<>();
+      target.checkTopicConfiguration = source.checkTopicConfiguration;
+      target.createTopicIfMissing = source.createTopicIfMissing;
+      target.topic = source.topic;
+      target.producerConfig = source.producerConfig;
+      target.producerName = source.producerName;
+      return target;
     }
 
     @Override
@@ -158,15 +205,13 @@ public class ProducerRegistration<K, V> {
     }
 
     @Override
-    public FinalBuilder<K, V> withKeySerializer(@NotNull Serializer<K> keySerializer) {
-      this.keySerializer = keySerializer;
-      return this;
+    public <K1> ValueSerializerBuilder<K1, V> withKeySerializer(Serializer<K1> keySerializer) {
+      return new ValueSerializerBuilder<>(InitialBuilder.clone(this), keySerializer);
     }
 
     @Override
-    public FinalBuilder<K, V> withValueSerializer(@NotNull Serializer<V> valueDeserializer) {
-      this.valueSerializer = valueDeserializer;
-      return this;
+    public <V1> FinalBuilder<K, V1> withValueSerializer(Serializer<V1> valueSerializer) {
+      return new FinalBuilder<>(InitialBuilder.clone(this), null, valueSerializer);
     }
 
     @Override
@@ -182,37 +227,43 @@ public class ProducerRegistration<K, V> {
     }
 
     @Override
-    public FinalBuilder<K, V> withDefaultProducer() {
+    public KeySerializerBuilder<K, V> withDefaultProducer() {
       this.producerConfig = null;
       this.producerName = null;
       return this;
     }
 
     @Override
-    public FinalBuilder<K, V> withProducerConfig(ProducerConfig config) {
+    public KeySerializerBuilder<K, V> withProducerConfig(ProducerConfig config) {
       this.producerConfig = config;
       return this;
     }
 
     @Override
-    public FinalBuilder<K, V> withProducerConfig(String name) {
+    public KeySerializerBuilder<K, V> withProducerConfig(String name) {
       this.producerName = name;
       return this;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public ProducerRegistration<K, V> build() {
-      ProducerRegistration<K, V> build = new ProducerRegistration<>();
-      build.keySerializer = (Serializer<K>) keySerializer;
-      build.valueSerializer = (Serializer<V>) valueSerializer;
-      build.topic = topic;
-      build.checkTopicConfiguration = checkTopicConfiguration;
-      build.createTopicIfMissing = createTopicIfMissing;
-      build.producerConfig = producerConfig;
-      build.producerName = producerName;
-
-      return build;
+      return ProducerRegistration.build(this, null, null);
     }
+  }
+
+  private static <K, V> ProducerRegistration<K, V> build(
+      InitialBuilder<K, V> initialBuilder,
+      Serializer<K> keySerializer,
+      Serializer<V> valueSerializer) {
+    ProducerRegistration<K, V> build = new ProducerRegistration<>();
+    build.keySerializer = keySerializer;
+    build.valueSerializer = valueSerializer;
+    build.topic = initialBuilder.topic;
+    build.checkTopicConfiguration = initialBuilder.checkTopicConfiguration;
+    build.createTopicIfMissing = initialBuilder.createTopicIfMissing;
+    build.producerConfig = initialBuilder.producerConfig;
+    build.producerName = initialBuilder.producerName;
+
+    return build;
   }
 }
