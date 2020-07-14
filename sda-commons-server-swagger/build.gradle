@@ -20,7 +20,7 @@ dependencies {
      */
     exclude group: 'javax.validation', module: 'validation-api'
   }
-  compile 'javax.ws.rs:javax.ws.rs-api'
+  compile 'jakarta.ws.rs:jakarta.ws.rs-api'
   compile 'jakarta.validation:jakarta.validation-api'
 
   compile 'io.openapitools.hal:swagger-hal', {
