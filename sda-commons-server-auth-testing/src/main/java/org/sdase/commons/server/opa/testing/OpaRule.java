@@ -45,19 +45,6 @@ public class OpaRule extends ExternalResource {
     return new StubBuilder();
   }
 
-  /**
-   * Create a builder to match a request for a method and path
-   *
-   * @param method the method of the request
-   * @param path the path of the request
-   * @return the builder
-   * @deprecated use {@code onRequest().withMethod(method).withPath(path)} instead
-   */
-  @Deprecated
-  public static AllowBuilder onRequest(String method, String path) {
-    return onRequest().withHttpMethod(method).withPath(path);
-  }
-
   private static String getJson(String[] paths) {
     try {
       return OM.writeValueAsString(paths);

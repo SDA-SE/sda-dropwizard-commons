@@ -56,7 +56,7 @@ public class OpaIT {
   @Retry(5)
   public void shouldAllowAccess() {
     // given
-    OPA_RULE.mock(onRequest(method, path).allow());
+    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).allow());
     // when
     Response response = doGetRequest();
     // then
@@ -72,7 +72,9 @@ public class OpaIT {
   public void shouldAllowAccessWithConstraints() {
     // given
     OPA_RULE.mock(
-        onRequest(method, path)
+        onRequest()
+            .withHttpMethod(method)
+            .withPath(path)
             .allow()
             .withConstraint(
                 new ConstraintModel()
@@ -97,7 +99,7 @@ public class OpaIT {
   @Retry(5)
   public void shouldDenyAccess() {
     // given
-    OPA_RULE.mock(onRequest(method, path).deny());
+    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).deny());
     // when
     Response response = doGetRequest();
     // then
@@ -109,7 +111,9 @@ public class OpaIT {
   public void shouldDenyAccessWithConstraints() {
     // given
     OPA_RULE.mock(
-        onRequest(method, path)
+        onRequest()
+            .withHttpMethod(method)
+            .withPath(path)
             .deny()
             .withConstraint(new ConstraintModel().addConstraint("customer_is", "1")));
     // when
@@ -145,7 +149,7 @@ public class OpaIT {
   public void shouldAllowAccessForLongerPathAndPost() {
     // given
     String longerPath = "resources/actions";
-    OPA_RULE.mock(onRequest("POST", longerPath).allow());
+    OPA_RULE.mock(onRequest().withHttpMethod("POST").withPath(longerPath).allow());
     // when
     Response response = doPostRequest(longerPath);
     // then
@@ -158,7 +162,7 @@ public class OpaIT {
   public void shouldNotInvokeSwaggerUrls() {
     // given
     String excludedPath = "swagger.json";
-    OPA_RULE.mock(onRequest("GET", excludedPath).allow());
+    OPA_RULE.mock(onRequest().withHttpMethod("GET").withPath(excludedPath).allow());
     // when
     Response response = doGetRequest(excludedPath);
     // then
