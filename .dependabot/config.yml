@@ -1,17 +1,34 @@
 version: 1
 update_configs:
   - package_manager: "java:gradle"
+    target_branch: "master"
     directory: "/"
     update_schedule: "daily"
     commit_message:
       prefix: "fix"
       prefix_development: "chore"
       include_scope: true
+  - package_manager: "java:gradle"
+    target_branch: "release/1.x.x"
+    directory: "/"
+    update_schedule: "weekly"
+    commit_message:
+      prefix: "fix"
+      prefix_development: "chore"
+      include_scope: true
   - package_manager: "github_actions"
+    target_branch: "master"
     directory: "/"
     update_schedule: "weekly"
     commit_message:
       prefix: "chore"
       prefix_development: "chore"
       include_scope: true
- 
+  - package_manager: "github_actions"
+    target_branch: "release/1.x.x"
+    directory: "/"
+    update_schedule: "monthly"
+    commit_message:
+      prefix: "chore"
+      prefix_development: "chore"
+      include_scope: true

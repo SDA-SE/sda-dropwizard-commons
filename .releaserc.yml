@@ -6,3 +6,8 @@ plugins:
   - "@semantic-release/release-notes-generator"
   - "@semantic-release/git"
   - "@semantic-release/github"
+branches:
+  - name: 'release/1.x.x'
+    range: '1.x.x'
+    channel: '1.x.x'
+  - name: 'master'
