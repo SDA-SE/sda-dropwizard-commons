@@ -57,7 +57,7 @@ dependencies {
     api "org.apache.avro:avro:1.9.2"
     api "org.apache.kafka:kafka_2.12:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.4.10"
+    api "org.apache.zookeeper:zookeeper:3.6.1"
     api "io.confluent:kafka-avro-serializer:$confluentVersion"
     api "io.confluent:kafka-schema-registry:$confluentVersion"
     api "io.confluent:kafka-schema-registry-client:$confluentVersion"
