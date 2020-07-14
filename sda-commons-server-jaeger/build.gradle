@@ -1,7 +1,15 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
 
-  compile 'io.jaegertracing:jaeger-client'
+  compile 'io.jaegertracing:jaeger-client', {
+    /**
+     * Dropwizard comes with jakarta.annotation-api instead of javax.annotation-api.
+     * Both contain the same classes.
+     */
+    exclude group: "javax.annotation", module: "javax.annotation-api"
+  }
+  compile 'jakarta.annotation:jakarta.annotation-api'
+
 
   // Sadly the required code is in a test dependency, but as an alternative we could also copy the class here.
   compile group: 'io.opentracing', name: 'opentracing-util', classifier: 'tests'

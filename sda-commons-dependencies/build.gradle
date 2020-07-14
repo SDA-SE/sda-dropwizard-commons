@@ -35,9 +35,6 @@ dependencies {
     api "net.sf.jopt-simple:jopt-simple:5.0.4", {
       because "conflict between org.apache.kafka:kafka_2.12 and com.github.tomakehurst:wiremock-jre8"
     }
-    api "javax.annotation:javax.annotation-api:1.3.2", {
-      because "conflict between io.jaegertracing:jaeger-client and org.eclipse.jetty:jetty-annotations"
-    }
     api "org.jboss.logging:jboss-logging:3.4.1.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
     }
@@ -86,6 +83,9 @@ dependencies {
     api "dev.morphia.morphia:core:$morphiaVersion"
     api "dev.morphia.morphia:validation:$morphiaVersion"
     api "org.bouncycastle:bcpkix-jdk15on:1.66"
+    api "jakarta.inject:jakarta.inject-api:1.0", {
+      because "the jakarta.inject-api comes with dropwizard but seems not to be managed by dropwizard-dependencies"
+    }
 
     // sda-commons-server-swagger
     api "io.openapitools.hal:swagger-hal:1.0.4"
@@ -113,7 +113,6 @@ dependencies {
     api "io.findify:s3mock_2.12:0.2.6"
 
     // sda-commons-server-swagger
-    api "javax.ws.rs:javax.ws.rs-api:2.1.1"
     api "com.github.java-json-tools:json-schema-validator:2.2.10"
     api "net.javacrumbs.json-unit:json-unit-assertj:2.18.1"
 
@@ -131,8 +130,6 @@ dependencies {
     }
 
     // sda-commons-server-weld
-    api "javax.el:javax.el-api:3.0.0"
-    api "javax.enterprise:cdi-api:2.0"
     api "org.jboss.weld.se:weld-se-core:$weldVersion"
     api "org.jboss.weld.servlet:weld-servlet-core:$weldVersion"
 
