@@ -1,6 +1,8 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
-  compile 'io.dropwizard:dropwizard-hibernate'
+  compile 'io.dropwizard:dropwizard-hibernate', {
+    exclude group: 'javax.servlet', module: 'javax.servlet-api'
+  }
   compile 'org.postgresql:postgresql'
   compile 'org.flywaydb:flyway-core'
 

@@ -1,7 +1,11 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
 
-  compile 'io.dropwizard:dropwizard-testing'
+  compile 'io.dropwizard:dropwizard-testing', {
+    exclude group: 'javax.servlet', module: 'javax.servlet-api'
+  }
+  compile 'jakarta.servlet:jakarta.servlet-api'
+
   compile 'junit:junit'
   compile 'org.hamcrest:hamcrest'
   compile 'org.mockito:mockito-core'

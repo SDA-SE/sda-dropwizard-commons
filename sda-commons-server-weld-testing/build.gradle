@@ -3,5 +3,7 @@ dependencies {
   compile project(':sda-commons-server-weld')
 
   testCompile project(':sda-commons-server-jackson')
-  testCompile 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0'
+  testCompile 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0', {
+    exclude group: 'javax.servlet', module: 'javax.servlet-api'
+  }
 }
