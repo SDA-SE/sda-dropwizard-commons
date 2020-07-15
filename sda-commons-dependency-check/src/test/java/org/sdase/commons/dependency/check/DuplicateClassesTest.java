@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
 public class DuplicateClassesTest {
 
   /**
-   * Number of duplicates seen in the GitHub action build. This number may be lower in other
+   * Number of duplicates seen in the GitHub action build. This number may be different in other
    * environments for unknown reasons.
    */
-  private static final int LAST_SEEN_NUMBER_OF_DUPLICATES = 109;
+  private static final int LAST_SEEN_NUMBER_OF_DUPLICATES = 108;
 
   private static final Logger LOG = LoggerFactory.getLogger(DuplicateClassesTest.class);
 
@@ -42,6 +42,9 @@ public class DuplicateClassesTest {
             .filter(resource -> !resource.getURL().toString().contains("/.gradle/wrapper/"))
             .classFilesOnly();
     for (Map.Entry<String, ResourceList> duplicate : classFilesInClasspath.findDuplicatePaths()) {
+      if ("module-info.class".equals(duplicate.getKey())) {
+        continue;
+      }
       LOG.warn("Class files path: {}", duplicate.getKey()); // Classfile path
       numberOfDuplicates++;
       for (Resource res : duplicate.getValue()) {
