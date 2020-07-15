@@ -15,6 +15,7 @@ ext {
   openTracingUtilVersion = '0.33.0'
   scalaVersion = '2.12.8' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
   kafkaVersion = '2.2.1' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
+  victoolsJsonSchemaGeneratorVersion = '4.13.0'
 }
 
 dependencies {
@@ -55,7 +56,9 @@ dependencies {
     }
 
     // sda-commons-server-asyncapi
-    api "com.kjetland:mbknor-jackson-jsonschema_2.12:1.0.39"
+    api "com.github.victools:jsonschema-generator:$victoolsJsonSchemaGeneratorVersion"
+    api "com.github.victools:jsonschema-module-jackson:$victoolsJsonSchemaGeneratorVersion"
+    api "com.github.victools:jsonschema-module-javax-validation:$victoolsJsonSchemaGeneratorVersion"
 
     // sda-commons-server-auth
     api "com.auth0:java-jwt:3.10.3"

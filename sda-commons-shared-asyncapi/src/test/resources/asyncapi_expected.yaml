@@ -19,21 +19,19 @@ channels:
 components:
   messages:
     CarManufactured:
-      title: "Car Manufactured"
+      title: Car Manufactured
       description: "An event that represents when a new car is manufactured"
       payload:
         $ref: "#/components/schemas/CarManufactured"
     CarScrapped:
-      title: "Car Scrapped"
+      title: Car Scrapped
       description: "An event that represents when a car is scrapped"
       payload:
         $ref: "#/components/schemas/CarScrapped"
   schemas:
     Electrical:
       type: "object"
-      additionalProperties: true
       description: "An car model with an electrical engine"
-      title: "ELECTRICAL"
       properties:
         engineType:
           type: "string"
@@ -49,16 +47,13 @@ components:
         batteryCapacity:
           type: "integer"
           examples:
-          - "200"
+          - 200
           description: "The capacity of the battery in kwH"
       required:
-      - "engineType"
       - "batteryCapacity"
     Combustion:
       type: "object"
-      additionalProperties: true
       description: "An car model with a combustion engine"
-      title: "COMBUSTION"
       properties:
         engineType:
           type: "string"
@@ -74,16 +69,13 @@ components:
         tankVolume:
           type: "integer"
           examples:
-          - "95"
+          - 95
           description: "The capacity of the tank in liter"
       required:
-      - "engineType"
       - "tankVolume"
     CarManufactured:
       type: "object"
-      additionalProperties: true
       description: "A new car was manufactured"
-      title: "CAR_MANUFACTURED"
       properties:
         type:
           type: "string"
@@ -103,9 +95,7 @@ components:
         model:
           oneOf:
           - $ref: "#/components/schemas/Electrical"
-            title: "Electrical engine"
           - $ref: "#/components/schemas/Combustion"
-            title: "Combustion engine"
           description: "The model of the car"
         id:
           type: "string"
@@ -114,16 +104,13 @@ components:
           - "A6E6928D-EF92-4BE8-9DFA-76C935EF3446"
           description: "The id of the message"
       required:
-      - "type"
       - "vehicleRegistration"
       - "date"
       - "model"
       - "id"
     CarScrapped:
       type: "object"
-      additionalProperties: true
       description: "A car was scrapped"
-      title: "CAR_SCRAPPED"
       properties:
         type:
           type: "string"
@@ -152,7 +139,6 @@ components:
           - "A6E6928D-EF92-4BE8-9DFA-76C935EF3446"
           description: "The id of the message"
       required:
-      - "type"
       - "vehicleRegistration"
       - "date"
       - "id"

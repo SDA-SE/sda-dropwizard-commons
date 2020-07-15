@@ -1,17 +1,15 @@
 ---
 $schema: "http://json-schema.org/draft-07/schema#"
-title: "Base Event"
-oneOf:
-- $ref: "#/definitions/CarManufactured"
-  title: "Car manufactured"
-- $ref: "#/definitions/CarScrapped"
-  title: "Car scrapped"
+$ref: "#/definitions/BaseEvent"
 definitions:
+  BaseEvent:
+    anyOf:
+    - $ref: "#/definitions/CarManufactured"
+    - $ref: "#/definitions/CarScrapped"
   CarManufactured:
     type: "object"
     additionalProperties: false
     description: "A new car was manufactured"
-    title: "CAR_MANUFACTURED"
     properties:
       type:
         type: "string"
@@ -31,9 +29,7 @@ definitions:
       model:
         oneOf:
         - $ref: "#/definitions/Electrical"
-          title: "Electrical engine"
         - $ref: "#/definitions/Combustion"
-          title: "Combustion engine"
         description: "The model of the car"
       id:
         type: "string"
@@ -42,7 +38,6 @@ definitions:
         - "A6E6928D-EF92-4BE8-9DFA-76C935EF3446"
         description: "The id of the message"
     required:
-    - "type"
     - "vehicleRegistration"
     - "date"
     - "model"
@@ -51,7 +46,6 @@ definitions:
     type: "object"
     additionalProperties: false
     description: "An car model with an electrical engine"
-    title: "ELECTRICAL"
     properties:
       engineType:
         type: "string"
@@ -67,16 +61,14 @@ definitions:
       batteryCapacity:
         type: "integer"
         examples:
-        - "200"
+        - 200
         description: "The capacity of the battery in kwH"
     required:
-    - "engineType"
     - "batteryCapacity"
   Combustion:
     type: "object"
     additionalProperties: false
     description: "An car model with a combustion engine"
-    title: "COMBUSTION"
     properties:
       engineType:
         type: "string"
@@ -92,16 +84,14 @@ definitions:
       tankVolume:
         type: "integer"
         examples:
-        - "95"
+        - 95
         description: "The capacity of the tank in liter"
     required:
-    - "engineType"
     - "tankVolume"
   CarScrapped:
     type: "object"
     additionalProperties: false
     description: "A car was scrapped"
-    title: "CAR_SCRAPPED"
     properties:
       type:
         type: "string"
@@ -130,7 +120,6 @@ definitions:
         - "A6E6928D-EF92-4BE8-9DFA-76C935EF3446"
         description: "The id of the message"
     required:
-    - "type"
     - "vehicleRegistration"
     - "date"
     - "id"

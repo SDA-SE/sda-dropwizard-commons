@@ -1,15 +1,13 @@
 package org.sdase.commons.shared.asyncapi.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaDescription;
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaExamples;
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaTitle;
 import java.time.Instant;
 import javax.validation.constraints.NotNull;
+import org.sdase.commons.shared.asyncapi.schema.JsonSchemaExamples;
 
-@JsonSchemaTitle("Car manufactured")
-@JsonSchemaDescription("A new car was manufactured")
+@JsonClassDescription("A new car was manufactured")
 public class CarManufactured extends BaseEvent {
 
   @JsonProperty(required = true)

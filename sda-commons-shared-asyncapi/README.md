@@ -125,6 +125,8 @@ String expected = JsonSchemaGenerator
 
 ## Document Models
 
+// TODO: Update docs! mention new annotations and reference the library!
+
 You can document the models using annotations like `JsonPropertyDescription` from Jackson or
 `JsonSchemaExamples` from [`mbknor-jackson-jsonSchema`](https://github.com/mbknor/mbknor-jackson-jsonSchema).
 See the tests of this module for [example model classes](./src/test/java/org/sdase/commons/shared/asyncapi/models).

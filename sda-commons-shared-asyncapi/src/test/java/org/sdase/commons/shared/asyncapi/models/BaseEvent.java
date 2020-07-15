@@ -5,14 +5,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaExamples;
+import org.sdase.commons.shared.asyncapi.schema.JsonSchemaExamples;
 
 @JsonTypeInfo(
     use = Id.NAME,
     property = "type",
     visible = true,
-    include = JsonTypeInfo.As.EXISTING_PROPERTY)
+    include = As.EXISTING_PROPERTY)
 @JsonSubTypes({
   @Type(value = CarManufactured.class, name = "CAR_MANUFACTURED"),
   @Type(value = CarScrapped.class, name = "CAR_SCRAPPED"),

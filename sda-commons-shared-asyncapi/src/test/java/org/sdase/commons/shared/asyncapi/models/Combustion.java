@@ -1,13 +1,11 @@
 package org.sdase.commons.shared.asyncapi.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaDescription;
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaExamples;
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaTitle;
 import javax.validation.constraints.NotNull;
+import org.sdase.commons.shared.asyncapi.schema.JsonSchemaExamples;
 
-@JsonSchemaTitle("Combustion engine")
-@JsonSchemaDescription("An car model with a combustion engine")
+@JsonClassDescription("An car model with a combustion engine")
 public class Combustion extends CarModel {
 
   @JsonPropertyDescription("The capacity of the tank in liter")

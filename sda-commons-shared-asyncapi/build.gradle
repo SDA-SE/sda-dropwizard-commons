@@ -1,11 +1,9 @@
 dependencies {
   compile project(':sda-commons-server-jackson')
   compile project(':sda-commons-shared-yaml')
-  compile 'com.kjetland:mbknor-jackson-jsonschema_2.12', {
-    exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-    exclude group: 'javax.validation', module: 'validation-api'
-    exclude group: 'org.slf4j', module: 'slf4j-api'
-  }
+  compile "com.github.victools:jsonschema-generator"
+  compile "com.github.victools:jsonschema-module-jackson"
+  compile "com.github.victools:jsonschema-module-javax-validation"
 
   testCompile project(':sda-commons-server-testing')
 }
