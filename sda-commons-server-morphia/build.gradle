@@ -4,7 +4,8 @@ dependencies {
   compile 'dev.morphia.morphia:core'
   compile 'dev.morphia.morphia:validation', {
     /**
-     * Dropwizard comes with jakarta.inject-api instead of javax.inject.
+     * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
+     * javax.inject.
      * Both contain the same classes.
      */
     exclude group: 'javax.inject', module: 'javax.inject'
@@ -15,7 +16,7 @@ dependencies {
      */
     exclude group: 'javax.validation', module: 'validation-api'
   }
-  compile 'jakarta.inject:jakarta.inject-api'
+  compile 'org.glassfish.hk2.external:jakarta.inject'
   compile 'jakarta.validation:jakarta.validation-api'
 
   compile 'org.bouncycastle:bcpkix-jdk15on'
