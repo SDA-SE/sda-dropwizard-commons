@@ -17,7 +17,7 @@ public class DuplicateClassesTest {
    * Number of duplicates seen in the GitHub action build. This number may be different in other
    * environments for unknown reasons.
    */
-  private static final int LAST_SEEN_NUMBER_OF_DUPLICATES = 108;
+  private static final int LAST_SEEN_NUMBER_OF_DUPLICATES = 44;
 
   private static final Logger LOG = LoggerFactory.getLogger(DuplicateClassesTest.class);
 

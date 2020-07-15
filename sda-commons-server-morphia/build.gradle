@@ -15,9 +15,15 @@ dependencies {
      * Both contain the same classes.
      */
     exclude group: 'javax.validation', module: 'validation-api'
+
+    /**
+     * Dropwizard comes with the repackaged version from Glassfish.
+     */
+    exclude group: 'aopalliance', module: 'aopalliance'
   }
   compile 'org.glassfish.hk2.external:jakarta.inject'
   compile 'jakarta.validation:jakarta.validation-api'
+  compile 'org.glassfish.hk2.external:aopalliance-repackaged'
 
   compile 'org.bouncycastle:bcpkix-jdk15on'
   compile 'io.opentracing.contrib:opentracing-mongo-driver'

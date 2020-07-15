@@ -10,9 +10,19 @@ dependencies {
      * Both contain the same classes.
      */
     exclude group: 'jakarta.inject', module: 'jakarta.inject-api'
+    /**
+     * Dropwizard manages jakarta.el from Glassfish
+     */
+    exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
+    exclude group: 'jakarta.el', module: 'jakarta.el-api'
   }
   compile 'org.jboss.weld.servlet:weld-servlet-core', {
+    /**
+     * Dropwizard manages jakarta.el from Glassfish
+     */
     exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
+    exclude group: 'jakarta.el', module: 'jakarta.el-api'
+
     exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
@@ -22,9 +32,7 @@ dependencies {
     exclude group: 'jakarta.inject', module: 'jakarta.inject-api'
   }
   compile 'org.glassfish.hk2.external:jakarta.inject'
-  compile 'jakarta.el:jakarta.el-api', {
-    exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
-  }
+  compile 'org.glassfish:jakarta.el'
 
   compile 'jakarta.enterprise:jakarta.enterprise.cdi-api', {
     exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
@@ -34,6 +42,10 @@ dependencies {
      * Both contain the same classes.
      */
     exclude group: 'jakarta.inject', module: 'jakarta.inject-api'
+    /**
+     * Dropwizard manages jakarta.el from Glassfish
+     */
+    exclude group: 'jakarta.el', module: 'jakarta.el-api'
   }
   compile 'javax.transaction:javax.transaction-api'
   compile 'org.glassfish.jersey.ext.cdi:jersey-cdi1x'
