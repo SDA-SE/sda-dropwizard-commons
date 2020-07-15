@@ -34,7 +34,14 @@ dependencies {
   testCompile 'net.javacrumbs.json-unit:json-unit-assertj', {
     exclude group: 'org.hamcrest',  module: 'hamcrest-core'
   }
-  testCompile 'com.github.java-json-tools:json-schema-validator'
+  testCompile 'com.github.java-json-tools:json-schema-validator', {
+    /**
+     * Dropwizard comes with jakarta.activation instead of javax.activation.
+     * Both contain the same classes.
+     */
+    exclude group: 'javax.activation', module: 'activation'
+  }
+  testCompile 'jakarta.activation:jakarta.activation-api'
 }
 
 test {
