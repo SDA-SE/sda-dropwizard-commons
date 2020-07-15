@@ -1,6 +1,10 @@
 dependencies {
 
   compile "com.github.tomakehurst:wiremock-jre8", {
+    /**
+     * Dropwizard comes with jakarta.servlet instead of javax.servlet.
+     * Both contain the same classes.
+     */
     exclude group: 'javax.servlet', module: 'javax.servlet-api'
   }
 

@@ -1,8 +1,13 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
   compile 'io.dropwizard:dropwizard-hibernate', {
+    /**
+     * Dropwizard comes with jakarta.servlet instead of javax.servlet.
+     * Both contain the same classes.
+     */
     exclude group: 'javax.servlet', module: 'javax.servlet-api'
   }
+  compile 'jakarta.servlet:jakarta.servlet-api'
   compile 'org.postgresql:postgresql'
   compile 'org.flywaydb:flyway-core'
 
