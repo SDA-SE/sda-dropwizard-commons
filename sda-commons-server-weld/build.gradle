@@ -25,6 +25,12 @@ dependencies {
      * still in place.
      */
     exclude group: 'org.jboss.spec.javax.interceptor', module: 'jboss-interceptors-api_1.2_spec'
+    /**
+     * Dropwizard manages jakarta.annotation:jakarta.annotation-api while Weld brings
+     * org.jboss.spec.javax.annotation:jboss-annotations-api_1.3_spec. Both have identical contents.
+     * We keep the version managed by Dropwizard.
+     */
+    exclude group: 'org.jboss.spec.javax.annotation', module: 'jboss-annotations-api_1.3_spec'
   }
   compile 'org.jboss.weld.servlet:weld-servlet-core', {
     /**
@@ -49,9 +55,16 @@ dependencies {
      * still in place.
      */
     exclude group: 'org.jboss.spec.javax.interceptor', module: 'jboss-interceptors-api_1.2_spec'
+    /**
+     * Dropwizard manages jakarta.annotation:jakarta.annotation-api while Weld brings
+     * org.jboss.spec.javax.annotation:jboss-annotations-api_1.3_spec. Both have identical contents.
+     * We keep the version managed by Dropwizard.
+     */
+    exclude group: 'org.jboss.spec.javax.annotation', module: 'jboss-annotations-api_1.3_spec'
   }
   compile 'org.glassfish.hk2.external:jakarta.inject'
   compile 'org.glassfish:jakarta.el'
+  compile 'jakarta.annotation:jakarta.annotation-api'
 
   compile 'jakarta.enterprise:jakarta.enterprise.cdi-api', {
     exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
