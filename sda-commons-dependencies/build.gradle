@@ -83,9 +83,6 @@ dependencies {
     api "dev.morphia.morphia:core:$morphiaVersion"
     api "dev.morphia.morphia:validation:$morphiaVersion"
     api "org.bouncycastle:bcpkix-jdk15on:1.66"
-    api "jakarta.inject:jakarta.inject-api:1.0", {
-      because "the jakarta.inject-api comes with dropwizard but seems not to be managed by dropwizard-dependencies"
-    }
 
     // sda-commons-server-swagger
     api "io.openapitools.hal:swagger-hal:1.0.4"
