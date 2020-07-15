@@ -17,7 +17,7 @@ public class DuplicateClassesTest {
    * Number of duplicates seen in the GitHub action build. This number may be lower in other
    * environments for unknown reasons.
    */
-  private static final int LAST_SEEN_NUMBER_OF_DUPLICATES = 432;
+  private static final int LAST_SEEN_NUMBER_OF_DUPLICATES = 109;
 
   private static final Logger LOG = LoggerFactory.getLogger(DuplicateClassesTest.class);
 
@@ -37,7 +37,10 @@ public class DuplicateClassesTest {
   public void checkForDuplicateClasses() {
     int numberOfDuplicates = 0;
     ResourceList allResourcesInClasspath = new ClassGraph().scan().getAllResources();
-    ResourceList classFilesInClasspath = allResourcesInClasspath.classFilesOnly();
+    ResourceList classFilesInClasspath =
+        allResourcesInClasspath
+            .filter(resource -> !resource.getURL().toString().contains("/.gradle/wrapper/"))
+            .classFilesOnly();
     for (Map.Entry<String, ResourceList> duplicate : classFilesInClasspath.findDuplicatePaths()) {
       LOG.warn("Class files path: {}", duplicate.getKey()); // Classfile path
       numberOfDuplicates++;
@@ -45,6 +48,7 @@ public class DuplicateClassesTest {
         LOG.warn(" -> {}", res.getURL()); // Resource URL, showing classpath element
       }
     }
+    LOG.warn("Found {} duplicates.", numberOfDuplicates);
     assertThat(numberOfDuplicates)
         .describedAs(
             "already saw only %s duplicate classes but now there are %s",
