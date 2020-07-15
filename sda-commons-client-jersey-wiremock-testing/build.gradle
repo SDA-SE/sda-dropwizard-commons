@@ -1,7 +1,10 @@
 dependencies {
 
-  compile "com.github.tomakehurst:wiremock-jre8"
+  compile "com.github.tomakehurst:wiremock-jre8", {
+    exclude group: 'javax.servlet', module: 'javax.servlet-api'
+  }
 
   compile 'org.glassfish.jersey.core:jersey-client'
   compile 'org.glassfish.jersey.ext:jersey-proxy-client'
+  compile 'jakarta.servlet:jakarta.servlet-api'
 }

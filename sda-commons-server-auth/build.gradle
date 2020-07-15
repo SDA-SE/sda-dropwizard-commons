@@ -4,7 +4,11 @@ dependencies {
   compile project(':sda-commons-server-opentracing')
   compile project(':sda-commons-shared-tracing')
   compile 'io.dropwizard:dropwizard-auth'
-  compile 'io.dropwizard:dropwizard-client'
+  compile 'io.dropwizard:dropwizard-client', {
+    exclude group: 'javax.servlet', module: 'javax.servlet-api'
+  }
+  compile 'jakarta.servlet:jakarta.servlet-api'
+
   compile 'com.auth0:java-jwt'
 
   testCompile project(':sda-commons-server-testing')

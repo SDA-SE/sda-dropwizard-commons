@@ -1,5 +1,8 @@
 dependencies {
-  compile 'io.dropwizard:dropwizard-core'
+  compile 'io.dropwizard:dropwizard-core', {
+    exclude group: 'javax.servlet', module: 'javax.servlet-api'
+  }
+  compile 'jakarta.servlet:jakarta.servlet-api'
   compile 'io.dropwizard:dropwizard-json-logging'
 
   testCompile project(':sda-commons-server-testing')

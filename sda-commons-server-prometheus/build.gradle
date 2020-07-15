@@ -2,7 +2,11 @@ dependencies {
 
   compile project(':sda-commons-server-dropwizard')
   compile project(':sda-commons-shared-tracing')
-  compile 'io.dropwizard:dropwizard-client'
+  compile 'io.dropwizard:dropwizard-client', {
+    exclude group: 'javax.servlet', module: 'javax.servlet-api'
+  }
+  compile 'jakarta.servlet:jakarta.servlet-api'
+
 
   compile 'io.prometheus:simpleclient'
   compile 'io.prometheus:simpleclient_dropwizard'
