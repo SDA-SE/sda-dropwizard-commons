@@ -1,6 +1,12 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
-  compile 'com.amazonaws:aws-java-sdk-s3'
+  compile 'com.amazonaws:aws-java-sdk-s3', {
+    /**
+     * As we use SLF4J for logging, we need the Bridge, not commons-logging itself
+     */
+    exclude group: 'commons-logging', module: 'commons-logging'
+  }
+  compile 'org.slf4j:jcl-over-slf4j'
   compile 'io.opentracing.contrib:opentracing-aws-sdk-1'
   compile 'io.opentracing:opentracing-util'
 
