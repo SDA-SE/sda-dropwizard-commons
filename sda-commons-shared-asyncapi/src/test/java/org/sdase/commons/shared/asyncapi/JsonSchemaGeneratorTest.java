@@ -22,6 +22,6 @@ public class JsonSchemaGeneratorTest {
     Map<String, Object> actualJson =
         YamlUtil.load(actual, new TypeReference<Map<String, Object>>() {});
 
-    assertThat(actualJson).isEqualToComparingFieldByFieldRecursively(expectedJson);
+    assertThat(actualJson).usingRecursiveComparison().isEqualTo(expectedJson);
   }
 }
