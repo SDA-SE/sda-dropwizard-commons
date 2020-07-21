@@ -110,12 +110,14 @@ public class ProducerRegistration<K, V> {
 
     /**
      * @param keySerializer define a new key serializer
+     * @param <K2> the Java type of the message key
      * @return builder
      */
     <K2> ValueSerializerBuilder<K2, V> withKeySerializer(Serializer<K2> keySerializer);
 
     /**
      * @param valueSerializer define a new value serializer
+     * @param <V2> the Java type of the message value
      * @return builder
      */
     <V2> FinalBuilder<K, V2> withValueSerializer(Serializer<V2> valueSerializer);
@@ -136,6 +138,7 @@ public class ProducerRegistration<K, V> {
 
     /**
      * @param valueSerializer define a new value serializer
+     * @param <V2> the Java type of the message value
      * @return builder
      */
     public <V2> FinalBuilder<K, V2> withValueSerializer(Serializer<V2> valueSerializer) {
@@ -171,6 +174,8 @@ public class ProducerRegistration<K, V> {
   /**
    * creates a new builder
    *
+   * @param <K> the Java type of the message key
+   * @param <V> the Java type of the message value
    * @return builder
    */
   public static <K, V> TopicBuilder<K, V> builder() {

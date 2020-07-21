@@ -133,6 +133,7 @@ public class MessageListenerRegistration<K, V> {
      * Define key deserializer. This overwrites configuration from ConsumerConfig
      *
      * @param keyDeserializer the serializer
+     * @param <K2> the Java type of the message key
      * @return builder
      */
     <K2> ValueDeserializerForDefinedKeyTypeBuilder<K2> withKeyDeserializer(
@@ -142,6 +143,7 @@ public class MessageListenerRegistration<K, V> {
      * Define the value deserializer. This overwrites configuration from ConsumerConfig
      *
      * @param valueDeserializer the serializer
+     * @param <V2> the Java type of the message value
      * @return builder
      */
     <V2> ListenerStrategyForDefinedValueTypeBuilder<V2> withValueDeserializer(
@@ -149,8 +151,8 @@ public class MessageListenerRegistration<K, V> {
 
     /**
      * @param strategy the strategy how consumed messages are handled.
-     * @param <K2> the type of the message key
-     * @param <V2> the type of the message value
+     * @param <K2> the Java type of the message key
+     * @param <V2> the Java type of the message value
      * @return builder
      */
     <K2, V2> FinalBuilder<K2, V2> withListenerStrategy(MessageListenerStrategy<K2, V2> strategy);
@@ -172,6 +174,7 @@ public class MessageListenerRegistration<K, V> {
      * Define the value deserializer. This overwrites configuration from ConsumerConfig
      *
      * @param valueDeserializer the serializer
+     * @param <V2> the Java type of the message value
      * @return builder
      */
     <V2> ListenerStrategyBuilder<K, V2> withValueDeserializer(Deserializer<V2> valueDeserializer);
