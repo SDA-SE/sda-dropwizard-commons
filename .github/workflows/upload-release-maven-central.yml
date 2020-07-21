@@ -3,7 +3,9 @@ name: Publish Release to Maven Central
 
 on:
   release:
-    types: [released]
+    types:
+      - released
+      - prereleased
 
 env:
   SEMANTIC_VERSION: ${{ github.event.release.tag_name }}
