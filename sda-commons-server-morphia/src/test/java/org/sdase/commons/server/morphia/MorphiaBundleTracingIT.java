@@ -1,6 +1,7 @@
 package org.sdase.commons.server.morphia;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import dev.morphia.Datastore;
 import io.dropwizard.Application;
@@ -10,7 +11,10 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
 import io.opentracing.tag.Tags;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -50,12 +54,23 @@ public class MorphiaBundleTracingIT {
     assertThat(tracer.finishedSpans())
         .extracting(MockSpan::operationName)
         .contains("createIndexes", "insert");
-    assertThat(
-            tracer.finishedSpans().stream()
-                .map(s -> s.tags().keySet())
-                .flatMap(Set::stream)
-                .noneMatch(Tags.DB_STATEMENT::equals))
-        .isTrue();
+    List<Object> dbStatementTags =
+        tracer.finishedSpans().stream()
+            .map(MockSpan::tags)
+            .map(Map::entrySet)
+            .flatMap(Set::stream)
+            .filter(e -> Tags.DB_STATEMENT.getKey().equals(e.getKey()))
+            .map(Map.Entry::getValue)
+            .collect(Collectors.toList());
+    assertSoftly(
+        softly -> {
+          softly.assertThat(dbStatementTags).noneMatch(v -> v.toString().contains("\"age\": 18"));
+          softly
+              .assertThat(dbStatementTags)
+              .noneMatch(v -> v.toString().contains("\"name\": \"Max\""));
+          softly.assertThat(dbStatementTags).anyMatch(v -> v.toString().contains("\"name\":"));
+          softly.assertThat(dbStatementTags).anyMatch(v -> v.toString().contains("\"age\":"));
+        });
   }
 
   private Datastore getDatastore() {
