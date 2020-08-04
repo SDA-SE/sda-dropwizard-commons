@@ -50,7 +50,7 @@ dependencies {
     // MongoDB
     api "dev.morphia.morphia:core:$morphiaVersion"
     api "dev.morphia.morphia:validation:$morphiaVersion"
-    api "org.mongodb:mongo-java-driver:3.10.1"
+    api "org.mongodb:mongo-java-driver:3.12.7"
     api "io.github.classgraph:classgraph:4.8.87"
 
     // Kafka
