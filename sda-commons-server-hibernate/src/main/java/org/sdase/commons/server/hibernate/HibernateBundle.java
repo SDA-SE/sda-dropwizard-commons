@@ -78,7 +78,7 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
   }
 
   public static InitialBuilder builder() {
-    return new Builder();
+    return new Builder<>();
   }
 
   public SessionFactory sessionFactory() {
@@ -93,7 +93,6 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
   @Override
   public void run(C configuration, Environment environment) throws Exception {
     delegate.run(configuration, environment);
-    environment.jersey().register(this);
   }
 
   //
@@ -170,7 +169,7 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
     }
 
     @Override
-    public FinalBuilder<T> withEntityScanPackageClass(@NotNull Class markerClass) {
+    public FinalBuilder<T> withEntityScanPackageClass(@NotNull Class<?> markerClass) {
       return withEntityScanPackage(markerClass.getPackage().getName());
     }
 
