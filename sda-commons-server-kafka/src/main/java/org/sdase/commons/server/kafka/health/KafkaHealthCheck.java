@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 @Async(period = 30, scheduleType = Async.ScheduleType.FIXED_DELAY)
 public class KafkaHealthCheck extends HealthCheck {
 
+  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(KafkaHealthCheck.class);
+
   private final KafkaConfiguration config;
 
   public KafkaHealthCheck(KafkaConfiguration config) {
@@ -31,6 +33,7 @@ public class KafkaHealthCheck extends HealthCheck {
     try (AdminClient adminClient = AdminClient.create(KafkaProperties.forAdminClient(config))) {
       adminClient.listTopics().names().get(2, TimeUnit.SECONDS);
     } catch (Exception e) {
+      LOGGER.warn("Kafka health check failed", e);
       return Result.unhealthy("Connection to broker failed within 2 seconds");
     } finally {
       logger.setLevel(oldLevel);
