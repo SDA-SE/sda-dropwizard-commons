@@ -95,9 +95,10 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
   }
 
   private Client createKeyLoaderClient(Environment environment, Tracer tracer) {
-    Client client = new JerseyClientBuilder(environment)
-        .using(new HttpUrlConnectorProvider())
-        .build("keyLoader");
+    Client client =
+        new JerseyClientBuilder(environment)
+            .using(new HttpUrlConnectorProvider())
+            .build("keyLoader");
     registerTracing(client, tracer);
     return client;
   }
