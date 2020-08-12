@@ -11,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import javax.ws.rs.client.Client;
+import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
 import org.sdase.commons.server.auth.config.KeyLocation;
@@ -94,7 +95,9 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
   }
 
   private Client createKeyLoaderClient(Environment environment, Tracer tracer) {
-    Client client = new JerseyClientBuilder(environment).build("keyLoader");
+    Client client = new JerseyClientBuilder(environment)
+        .using(new HttpUrlConnectorProvider())
+        .build("keyLoader");
     registerTracing(client, tracer);
     return client;
   }
