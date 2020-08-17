@@ -1,5 +1,6 @@
 package org.sdase.commons.server.auth.testing;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -10,8 +11,10 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
+import com.auth0.jwt.impl.PublicClaims;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.util.Date;
 import java.util.Map;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
@@ -60,6 +63,27 @@ public class AuthRuleIT {
   }
 
   @Test
+  public void shouldBeUnauthorizedIfAccessedWithNonJwt() {
+    Response response =
+        createWebTarget()
+            .path("/secure") // NOSONAR
+            .request(APPLICATION_JSON)
+            .header(AUTHORIZATION, "Bearer .")
+            .get();
+
+    assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
+    assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer"); // NOSONAR
+    assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
+    Map<String, Object> stringObjectMap =
+        response.readEntity(new GenericType<Map<String, Object>>() {});
+
+    assertThat(stringObjectMap)
+        .containsOnly(
+            entry("title", "The token was expected to have 3 parts, but got 0."),
+            entry("invalidParams", emptyList()));
+  }
+
+  @Test
   public void shouldBeUnauthorizedIfAccessedWithTokenFromWrongIdp() {
     final String tokenWithUnknownKid =
         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImNHV1RlQUJwWnYyN3RfWDFnTW92NEVlRWhEOXRBMWVhcUgzVzFmMXE4Y28ifQ.eyJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0In0.nHN-k_uvKNl8Nh5lXctQkL8KrWKggGiBQ-jaR0xIq_TAWBbhz5zkGXQTiNZwjPFOIcjyuL1xMCqzLPAKiI0Jy0hwOa4xcqukrWr4UwhKC50dnJiFqUgpGM0xLyT1D8JKdSNiVtYL0k-E5XCcpDEqOjHOG3Gw03VoZ0iRNeU2X49Rko8646l5j2g4QbuuOSn1a5G4ICMCAY7C6Vb55dgJtG_WAvkhFdBd_ShQEp_XfWJh6uq0E95_8yfzBx4UuK1Q-TLuWrXKxOlYNCuCH90NYG-3oF9w0gFtdXtYOFzPIEVIkU0Ra6sk_s0IInrEMD_3Q4fgE2PqOzqpuVaD_lHdAA";
@@ -74,7 +98,9 @@ public class AuthRuleIT {
     assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer"); // NOSONAR
     assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
     assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
-        .containsKeys("title", "invalidParams"); // NOSONAR
+        .containsOnly(
+            entry("title", "Could not verify JWT with the requested kid."),
+            entry("invalidParams", emptyList()));
   }
 
   @Test
@@ -102,7 +128,9 @@ public class AuthRuleIT {
     assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer"); // NOSONAR
     assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
     assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
-        .containsKeys("title", "invalidParams"); // NOSONAR
+        .containsOnly(
+            entry("title", "Credentials are required to access this resource."),
+            entry("invalidParams", emptyList()));
   }
 
   @Test
@@ -120,7 +148,26 @@ public class AuthRuleIT {
     assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer");
     assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
     assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
-        .containsKeys("title", "invalidParams");
+        .containsOnly(
+            entry("title", "Could not verify JWT without kid."),
+            entry("invalidParams", emptyList()));
+  }
+
+  @Test
+  public void shouldNotAccessSecureEndPointWithExpiredToken() {
+    Response response =
+        createWebTarget()
+            .path("/secure") // NOSONAR
+            .request(APPLICATION_JSON)
+            .headers(AUTH.auth().addClaim(PublicClaims.EXPIRES_AT, new Date(0)).buildAuthHeader())
+            .get();
+
+    assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
+    assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer");
+    assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
+    assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
+        .containsOnly(
+            entry("title", "Verifying token failed"), entry("invalidParams", emptyList()));
   }
 
   @Test
