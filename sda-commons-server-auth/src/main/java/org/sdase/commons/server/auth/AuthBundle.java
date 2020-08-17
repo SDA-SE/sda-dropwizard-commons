@@ -10,7 +10,9 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
+import java.net.ProxySelector;
 import javax.ws.rs.client.Client;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
 import org.sdase.commons.server.auth.config.KeyLocation;
@@ -93,8 +95,14 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
     environment.jersey().register(ForbiddenExceptionMapper.class);
   }
 
-  private Client createKeyLoaderClient(Environment environment, Tracer tracer) {
-    Client client = new JerseyClientBuilder(environment).build("keyLoader");
+  private Client createKeyLoaderClient(Environment environment, AuthConfig config, Tracer tracer) {
+    JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
+
+    // register a route planner that uses the default proxy variables (e.g. http.proxyHost)
+    jerseyClientBuilder.using(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+
+    Client client = jerseyClientBuilder.build("keyLoader");
+
     registerTracing(client, tracer);
     return client;
   }
