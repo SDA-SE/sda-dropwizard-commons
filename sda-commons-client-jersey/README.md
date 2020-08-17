@@ -168,10 +168,50 @@ executorService.submit(transferRequestContext(() -> {
 })).get();
 ```
 
+## HTTP Client Configuration and Proxy Support
 
-## Proxy Settings
+Each client can be configured with the standard
+[Dropwizard configuration](https://www.dropwizard.io/en/latest/manual/configuration.html#man-configuration-clients-http).
+Please note that this requires that there is a property in your Application's `Configuration` class. 
 
-All clients consume the standard [proxy system properties](https://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html#Proxies).
+```java
+import org.sdase.commons.client.jersey.HttpClientConfiguration;
+
+public class MyConfiguration extends Configuration {
+   private HttpClientConfiguration myClient = new HttpClientConfiguration();
+
+   public HttpClientConfiguration getMyClient() {
+     return myClient;
+   }
+
+   public void setMyClient(HttpClientConfiguration myClient) {
+     this.myClient = myClient;
+   }
+}
+```
+
+```java
+Client client = clientFactory.platformClient(configuration.getMyClient()).buildGenericClient("test");
+```
+
+```yaml
+myClient:
+  timeout: 500ms
+  proxy:
+    host: 192.168.52.11
+    port: 8080
+    scheme : http
+```
+
+> Tip: There is no need to make all configuration properties available as environment variables.
+> Seldomly used properties can always be configured using [System Properties](https://www.dropwizard.io/en/latest/manual/core.html#man-core-configuration).
+
+This configuration can be used to configure a proxy server if needed.
+Use this if all clients should use individual proxy configurations.
+
+In addition, each client can consume the standard [proxy system properties](https://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html#Proxies).
+Please note that a specific proxy configuration in the `HttpClientConfiguration` disables the proxy system properties for the client using that configuration.
+This can be helpful when all clients in an Application should use the same proxy configuration (this includes the clients that are used by the [`sda-commons-server-auth` bundle](../sda-commons-server-auth).
 
 ## Tips and Tricks
 

@@ -2,14 +2,19 @@ package org.sdase.commons.client.jersey.builder;
 
 import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.registerTracing;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
+import java.net.ProxySelector;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientRequestFilter;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
+import org.sdase.commons.client.jersey.HttpClientConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,46 +26,39 @@ import org.slf4j.LoggerFactory;
 abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseClientBuilder.class);
-
-  /**
-   * The default timeout to wait for data in an established connection. 2 seconds is used as a trade
-   * between "fail fast" and "better return late than no result". The timeout may be changed
-   * according to the use case considering how long a user is willing to wait and how long backend
-   * operations need.
-   */
-  private static final int DEFAULT_READ_TIMEOUT_MS = 2_000;
-
-  /**
-   * The default timeout to wait until a connection is established. 500ms should be suitable for all
-   * communication in the platform. Clients that request information from external services may
-   * extend this timeout if foreign services are usually slow.
-   */
-  private static final int DEFAULT_CONNECTION_TIMEOUT_MS = 500;
-
   /**
    * As default, the client will follow redirects so that redirect status codes are automatically
    * resolved by the client.
    */
   private static final boolean DEFAULT_FOLLOW_REDIRECTS = true;
 
+  private HttpClientConfiguration httpClientConfiguration;
   private JerseyClientBuilder jerseyClientBuilder;
   private final Tracer tracer;
+  private final ObjectMapper objectMapper;
 
   private List<ClientRequestFilter> filters;
 
-  private int connectionTimeoutMillis;
+  private Integer connectionTimeoutMillis;
 
-  private int readTimeoutMillis;
+  private Integer readTimeoutMillis;
 
   private boolean followRedirects;
 
-  AbstractBaseClientBuilder(JerseyClientBuilder jerseyClientBuilder, Tracer tracer) {
-    this.jerseyClientBuilder = jerseyClientBuilder;
+  AbstractBaseClientBuilder(
+      Environment environment, HttpClientConfiguration httpClientConfiguration, Tracer tracer) {
+    this.httpClientConfiguration = httpClientConfiguration;
+    this.jerseyClientBuilder = new JerseyClientBuilder(environment);
     this.tracer = tracer;
+    this.objectMapper = environment.getObjectMapper();
     this.filters = new ArrayList<>();
-    this.readTimeoutMillis = DEFAULT_READ_TIMEOUT_MS;
-    this.connectionTimeoutMillis = DEFAULT_CONNECTION_TIMEOUT_MS;
     this.followRedirects = DEFAULT_FOLLOW_REDIRECTS;
+
+    // a specific proxy configuration always overrides the system proxy
+    if (httpClientConfiguration.getProxyConfiguration() == null) {
+      // register a route planner that uses the default proxy variables (e.g. http.proxyHost)
+      this.jerseyClientBuilder.using(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+    }
   }
 
   /**
@@ -78,7 +76,8 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
   /**
    * Sets the connection timeout for the clients that are built with this instance. The connection
    * timeout is the amount of time to wait until the connection to the server is established. The
-   * default is {@value #DEFAULT_CONNECTION_TIMEOUT_MS}ms.
+   * default is {@value
+   * org.sdase.commons.client.jersey.HttpClientConfiguration#DEFAULT_CONNECTION_TIMEOUT_MS}ms.
    *
    * <p>If the connection timeout is overdue a {@link javax.ws.rs.ProcessingException} wrapping a
    * {@link org.apache.http.conn.ConnectTimeoutException} is thrown by the client.
@@ -86,7 +85,10 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
    * @param connectionTimeout the time to wait until a connection to the remote service is
    *     established
    * @return this builder instance
+   * @deprecated The client is now configurable with the Dropwizard configuration. Please use {@link
+   *     HttpClientConfiguration#setConnectionTimeout} instead.
    */
+  @Deprecated
   public T withConnectionTimeout(Duration connectionTimeout) {
     this.connectionTimeoutMillis = (int) connectionTimeout.toMillis();
     //noinspection unchecked
@@ -98,16 +100,20 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
    * the timeout to wait for data in an established connection. Usually this timeout is violated
    * when the client has sent the request and is waiting for the first byte of the response while
    * the server is doing calculations, accessing a database or delegating to other services. The
-   * default is {@value #DEFAULT_READ_TIMEOUT_MS}ms. The read timeout should be set wisely according
-   * to the use case considering how long a user is willing to wait and how long backend operations
-   * need.
+   * default is {@value
+   * org.sdase.commons.client.jersey.HttpClientConfiguration#DEFAULT_TIMEOUT_MS}ms. The read timeout
+   * should be set wisely according to the use case considering how long a user is willing to wait
+   * and how long backend operations need.
    *
    * <p>If the connection timeout is overdue a {@link javax.ws.rs.ProcessingException} wrapping a
    * {@link java.net.SocketTimeoutException} is thrown by the client.
    *
    * @param readTimeout the time to wait for content in an established connection
    * @return this builder instance
+   * @deprecated The client is now configurable with the Dropwizard configuration. Please use {@link
+   *     HttpClientConfiguration#setTimeout} instead.
    */
+  @Deprecated
   public T withReadTimeout(Duration readTimeout) {
     this.readTimeoutMillis = (int) readTimeout.toMillis();
     //noinspection unchecked
@@ -131,11 +137,25 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
    * @return the client instance
    */
   public Client buildGenericClient(String name) {
-    Client client = jerseyClientBuilder.build(name);
+    // Create a copy of the configuration
+    final HttpClientConfiguration configuration =
+        objectMapper.convertValue(httpClientConfiguration, httpClientConfiguration.getClass());
+
+    // This is a legacy option that should be removed if the connectionTimeout is no longer
+    // configurable directly.
+    if (connectionTimeoutMillis != null) {
+      configuration.setConnectionTimeout(
+          io.dropwizard.util.Duration.milliseconds(connectionTimeoutMillis));
+    }
+    // This is a legacy option that should be removed if the readTimeout is no longer configurable
+    // directly.
+    if (readTimeoutMillis != null) {
+      configuration.setTimeout(io.dropwizard.util.Duration.milliseconds(readTimeoutMillis));
+    }
+
+    Client client = jerseyClientBuilder.using(configuration).build(name);
     filters.forEach(client::register);
     client.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
-    client.property(ClientProperties.CONNECT_TIMEOUT, connectionTimeoutMillis);
-    client.property(ClientProperties.READ_TIMEOUT, readTimeoutMillis);
     registerMultiPartIfAvailable(client);
     registerTracing(client, tracer);
     return client;
