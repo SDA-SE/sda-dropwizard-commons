@@ -18,6 +18,6 @@ public class JwtAuthException extends RuntimeException {
   }
 
   public JwtAuthException(Throwable cause) {
-    super(cause);
+    this(cause.getMessage(), cause);
   }
 }
