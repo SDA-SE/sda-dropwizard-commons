@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.util.Duration;
 import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -49,10 +50,13 @@ public class ApiClientConfigurationTest {
 
   @Test
   public void disableGzip() {
+    HttpClientConfiguration config = new HttpClientConfiguration();
+    config.setGzipEnabled(false);
+
     MockApiClient client =
         app.getJerseyClientBundle()
             .getClientFactory()
-            .externalClient(new HttpClientConfiguration().setGzipEnabled(false))
+            .externalClient(config)
             .api(MockApiClient.class)
             .atTarget(WIRE.baseUrl());
 
@@ -66,10 +70,13 @@ public class ApiClientConfigurationTest {
 
   @Test
   public void enableGzipForRequests() {
+    HttpClientConfiguration config = new HttpClientConfiguration();
+    config.setGzipEnabledForRequests(true);
+
     MockApiClient client =
         app.getJerseyClientBundle()
             .getClientFactory()
-            .externalClient(new HttpClientConfiguration().setGzipEnabledForRequests(true))
+            .externalClient(config)
             .api(MockApiClient.class)
             .atTarget(WIRE.baseUrl());
 
@@ -85,10 +92,13 @@ public class ApiClientConfigurationTest {
 
   @Test
   public void enableChunkedEncoding() {
+    HttpClientConfiguration config = new HttpClientConfiguration();
+    config.setChunkedEncodingEnabled(true);
+
     MockApiClient client =
         app.getJerseyClientBundle()
             .getClientFactory()
-            .externalClient(new HttpClientConfiguration().setChunkedEncodingEnabled(true))
+            .externalClient(config)
             .api(MockApiClient.class)
             .atTarget(WIRE.baseUrl());
 
@@ -100,5 +110,23 @@ public class ApiClientConfigurationTest {
     assertThat(client.createCar(new Car().setSign("HH UV 42")))
         .extracting(Response::getStatus)
         .isEqualTo(SC_CREATED);
+  }
+
+  @Test
+  public void shouldNotModifyExistingConfiguration() {
+    HttpClientConfiguration config = new HttpClientConfiguration();
+    config.setTimeout(Duration.milliseconds(50));
+    config.setConnectionTimeout(Duration.milliseconds(50));
+
+    app.getJerseyClientBundle()
+        .getClientFactory()
+        .externalClient(config)
+        .withConnectionTimeout(java.time.Duration.ofDays(1))
+        .withReadTimeout(java.time.Duration.ofDays(1))
+        .api(MockApiClient.class)
+        .atTarget(WIRE.baseUrl());
+
+    assertThat(config.getTimeout()).isEqualTo(Duration.milliseconds(50));
+    assertThat(config.getConnectionTimeout()).isEqualTo(Duration.milliseconds(50));
   }
 }

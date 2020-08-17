@@ -1,11 +1,7 @@
 package org.sdase.commons.client.jersey;
 
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
-import java.net.ProxySelector;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.sdase.commons.client.jersey.builder.ExternalClientBuilder;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
 
@@ -49,8 +45,7 @@ public class ClientFactory {
    * @return a builder to configure the client
    */
   public PlatformClientBuilder platformClient(HttpClientConfiguration httpClientConfiguration) {
-    return new PlatformClientBuilder(
-        createClientBuilder(httpClientConfiguration), tracer, consumerToken);
+    return new PlatformClientBuilder(environment, httpClientConfiguration, tracer, consumerToken);
   }
 
   /**
@@ -73,17 +68,6 @@ public class ClientFactory {
    * @return a builder to configure the client
    */
   public ExternalClientBuilder externalClient(HttpClientConfiguration httpClientConfiguration) {
-    return new ExternalClientBuilder(createClientBuilder(httpClientConfiguration), tracer);
-  }
-
-  private JerseyClientBuilder createClientBuilder(HttpClientConfiguration httpClientConfiguration) {
-    JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-    configuration.setChunkedEncodingEnabled(httpClientConfiguration.isChunkedEncodingEnabled());
-    configuration.setGzipEnabled(httpClientConfiguration.isGzipEnabled());
-    configuration.setGzipEnabledForRequests(httpClientConfiguration.isGzipEnabledForRequests());
-    return new JerseyClientBuilder(environment)
-        // register a route planner that uses the default proxy variables (e.g. http.proxyHost)
-        .using(new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
-        .using(configuration);
+    return new ExternalClientBuilder(environment, httpClientConfiguration, tracer);
   }
 }

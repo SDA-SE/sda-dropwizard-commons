@@ -1,58 +1,39 @@
 package org.sdase.commons.client.jersey;
 
-public class HttpClientConfiguration {
-  // Chunked encoding is disabled by default, because in combination with the
-  // underlying Apache Http Client it breaks support for multipart/form-data
-  private boolean chunkedEncodingEnabled = false;
-  private boolean gzipEnabled = true;
-  // Gzip for request is disabled by default, because it breaks with some
-  // server implementations in combination with the Content-Encoding: gzip
-  // header if supplied accidentally to a GET request. This happen after
-  // calling a POST and receiving a SEE_OTHER response that is executed with
-  // the same headers as the POST request.
-  private boolean gzipEnabledForRequests = false;
+import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.util.Duration;
 
-  /** @return if the http client should use chunked encoding, disabled by default. */
-  public boolean isChunkedEncodingEnabled() {
-    return chunkedEncodingEnabled;
-  }
+/** A class that overrides some defaults */
+public class HttpClientConfiguration extends JerseyClientConfiguration {
+  /**
+   * The default (read) timeout to wait for data in an established connection. 2 seconds is used as
+   * a trade between "fail fast" and "better return late than no result". The timeout may be changed
+   * according to the use case considering how long a user is willing to wait and how long backend
+   * operations need.
+   */
+  public static final int DEFAULT_TIMEOUT_MS = 2_000;
 
   /**
-   * @param chunkedEncodingEnabled if true, the http client should use chunked encoding.
-   * @return the configuration to enable chained configurations
+   * The default timeout to wait until a connection is established. 500ms should be suitable for all
+   * communication in the platform. Clients that request information from external services may
+   * extend this timeout if foreign services are usually slow.
    */
-  public HttpClientConfiguration setChunkedEncodingEnabled(boolean chunkedEncodingEnabled) {
-    this.chunkedEncodingEnabled = chunkedEncodingEnabled;
-    return this;
-  }
+  public static final int DEFAULT_CONNECTION_TIMEOUT_MS = 500;
 
-  /** @return if the http client should accept gzipped responses, enabled by default. */
-  public boolean isGzipEnabled() {
-    return gzipEnabled;
-  }
+  public HttpClientConfiguration() {
+    // Chunked encoding is disabled by default, because in combination with the
+    // underlying Apache Http Client it breaks support for multipart/form-data
+    setChunkedEncodingEnabled(false);
 
-  /**
-   * Configure
-   *
-   * @param gzipEnabled if true, the http client should accept gzipped responses.
-   * @return the configuration to enable chained configurations
-   */
-  public HttpClientConfiguration setGzipEnabled(boolean gzipEnabled) {
-    this.gzipEnabled = gzipEnabled;
-    return this;
-  }
+    // Gzip for request is disabled by default, because it breaks with some
+    // server implementations in combination with the Content-Encoding: gzip
+    // header if supplied accidentally to a GET request. This happen after
+    // calling a POST and receiving a SEE_OTHER response that is executed with
+    // the same headers as the POST request.
+    setGzipEnabledForRequests(false);
 
-  /** @return if the http client should gzip request bodies, disabled by default. */
-  public boolean isGzipEnabledForRequests() {
-    return gzipEnabledForRequests;
-  }
-
-  /**
-   * @param gzipEnabledForRequests if true, the http client should gzip request bodies.
-   * @return the configuration to enable chained configurations
-   */
-  public HttpClientConfiguration setGzipEnabledForRequests(boolean gzipEnabledForRequests) {
-    this.gzipEnabledForRequests = gzipEnabledForRequests;
-    return this;
+    // override the default timeouts
+    setTimeout(Duration.milliseconds(DEFAULT_TIMEOUT_MS));
+    setConnectionTimeout(Duration.milliseconds(DEFAULT_CONNECTION_TIMEOUT_MS));
   }
 }
