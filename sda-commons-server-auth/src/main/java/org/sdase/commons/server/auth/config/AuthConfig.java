@@ -1,10 +1,14 @@
 package org.sdase.commons.server.auth.config;
 
+import io.dropwizard.client.JerseyClientConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
 /** Configuration for authentication using JWT. */
 public class AuthConfig {
+
+  /** The client configuration of the HTTP client that is used for the key loader. */
+  private JerseyClientConfiguration keyLoaderClient;
 
   /** Keys that are allowed to sign tokens. */
   private List<KeyLocation> keys = new ArrayList<>();
@@ -20,6 +24,15 @@ public class AuthConfig {
    * production.
    */
   private boolean disableAuth;
+
+  public JerseyClientConfiguration getKeyLoaderClient() {
+    return keyLoaderClient;
+  }
+
+  public AuthConfig setKeyLoaderClient(JerseyClientConfiguration keyLoaderClient) {
+    this.keyLoaderClient = keyLoaderClient;
+    return this;
+  }
 
   public List<KeyLocation> getKeys() {
     return keys;

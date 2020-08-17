@@ -65,7 +65,7 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
     Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
 
-    Client client = createKeyLoaderClient(environment, currentTracer);
+    Client client = createKeyLoaderClient(environment, config, currentTracer);
     RsaPublicKeyLoader keyLoader = new RsaPublicKeyLoader();
     config.getKeys().stream()
         .map(k -> this.createKeySources(k, client))
@@ -98,8 +98,16 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
   private Client createKeyLoaderClient(Environment environment, AuthConfig config, Tracer tracer) {
     JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
 
-    // register a route planner that uses the default proxy variables (e.g. http.proxyHost)
-    jerseyClientBuilder.using(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+    // a specific proxy configuration always overrides the system proxy
+    if (config.getKeyLoaderClient() == null
+        || config.getKeyLoaderClient().getProxyConfiguration() == null) {
+      // register a route planner that uses the default proxy variables (e.g. http.proxyHost)
+      jerseyClientBuilder.using(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+    }
+
+    if (config.getKeyLoaderClient() != null) {
+      jerseyClientBuilder.using(config.getKeyLoaderClient());
+    }
 
     Client client = jerseyClientBuilder.build("keyLoader");
 
