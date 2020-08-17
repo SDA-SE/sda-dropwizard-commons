@@ -13,7 +13,7 @@ import org.sdase.commons.server.trace.TraceTokenBundle;
 public class ClientTestApp extends Application<ClientTestConfig> {
 
   private final MockTracer tracer = new MockTracer();
-  private JerseyClientBundle<ClientTestConfig> jerseyClientBundle =
+  private final JerseyClientBundle<ClientTestConfig> jerseyClientBundle =
       JerseyClientBundle.builder()
           .withConsumerTokenProvider(ClientTestConfig::getConsumerToken)
           .withTracer(tracer)
@@ -42,7 +42,7 @@ public class ClientTestApp extends Application<ClientTestConfig> {
                 jerseyClientBundle.getClientFactory(), configuration.getMockBaseUrl()));
   }
 
-  public JerseyClientBundle getJerseyClientBundle() {
+  public JerseyClientBundle<ClientTestConfig> getJerseyClientBundle() {
     return jerseyClientBundle;
   }
 

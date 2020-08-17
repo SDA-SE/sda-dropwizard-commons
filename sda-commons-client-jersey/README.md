@@ -169,6 +169,10 @@ executorService.submit(transferRequestContext(() -> {
 ```
 
 
+## Proxy Settings
+
+All clients consume the standard [proxy system properties](https://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html#Proxies).
+
 ## Tips and Tricks
 
 ### 3rd Party `javax.ws.rs-api` Client Implementations in Classpath
