@@ -147,6 +147,10 @@ In this case, the `AUTH_KEYS` variable should contain a JSON array of
 ]
 ```
 
+### Proxy Support
+The client consumes the standard [proxy system properties](https://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html#Proxies).
+This can be helpful when all clients in an Application should use the same proxy configuration (this includes all clients that are created by the [`sda-commons-client-jersey` bundle](../sda-commons-client-jersey).
+
 ## OPA Bundle
 
 Details about the authorization with Open Policy Agent are documented within the authorization concept (see Confluence). 
