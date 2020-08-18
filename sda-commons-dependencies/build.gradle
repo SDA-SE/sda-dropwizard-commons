@@ -11,7 +11,7 @@ ext {
   prometheusVersion = '0.9.0'
   resilience4jVersion = '0.15.0'
   swaggerCoreVersion = '1.6.2'
-  weldVersion = '3.1.4.Final'
+  weldVersion = '3.1.5.Final'
   openTracingUtilVersion = '0.33.0'
   scalaVersion = '2.13.3'
   kafkaVersion = '2.2.1' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
