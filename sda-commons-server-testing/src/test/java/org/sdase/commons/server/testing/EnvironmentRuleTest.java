@@ -31,6 +31,7 @@ public class EnvironmentRuleTest {
   @AfterClass
   public static void assertVariableIsNotSetAfterTest() {
     Assertions.assertThat(System.getenv("envForTesting")).isNull();
+    Assertions.assertThat(System.getenv("envNotForTesting")).isEqualTo("envNotForTestingValue");
     Environment.unsetEnv("envNotForTesting");
   }
 }
