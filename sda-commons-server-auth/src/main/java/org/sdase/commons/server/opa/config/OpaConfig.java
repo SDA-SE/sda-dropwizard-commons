@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 /** Configuration for requesting OPA PDP. */
 @SuppressWarnings("UnusedReturnValue")
 public class OpaConfig {
+  /** The client configuration of the HTTP client that is used to call the Open Policy Agent. */
+  private OpaClientConfiguration opaClient;
 
   /** flag if OPA is disabled (for testing) */
   private boolean disableOpa;
@@ -20,8 +22,27 @@ public class OpaConfig {
    */
   @NotNull private String policyPackage = "";
 
-  /** readTimeout for opa requests in milliseconds */
-  private int readTimeout = 500;
+  /**
+   * readTimeout for opa requests in milliseconds
+   *
+   * @deprecated The client that is used to call the OPA is now configurable. Prefer to configure
+   *     {@code opaClient.timeout} instead:
+   *     <pre>{@code
+   * opa:
+   *   opaClient:
+   *     timeout: 500ms
+   * }</pre>
+   */
+  @Deprecated private Integer readTimeout;
+
+  public OpaClientConfiguration getOpaClient() {
+    return opaClient;
+  }
+
+  public OpaConfig setOpaClient(OpaClientConfiguration opaClient) {
+    this.opaClient = opaClient;
+    return this;
+  }
 
   public boolean isDisableOpa() {
     return disableOpa;
@@ -50,11 +71,32 @@ public class OpaConfig {
     return this;
   }
 
-  public int getReadTimeout() {
+  /**
+   * @deprecated The client that is used to call the OPA is now configurable. Prefer to configure
+   *     {@code opaClient.timeout} instead:
+   *     <pre>{@code
+   * opa:
+   *   opaClient:
+   *     timeout: 500ms
+   * }</pre>
+   */
+  @Deprecated
+  public Integer getReadTimeout() {
     return readTimeout;
   }
 
-  public OpaConfig setReadTimeout(int readTimeout) {
+  /**
+   * @param readTimeout the read timeout
+   * @deprecated The client that is used to call the OPA is now configurable. Prefer to configure
+   *     {@code opaClient.timeout} instead:
+   *     <pre>{@code
+   * opa:
+   *   opaClient:
+   *     timeout: 500ms
+   * }</pre>
+   */
+  @Deprecated
+  public OpaConfig setReadTimeout(Integer readTimeout) {
     this.readTimeout = readTimeout;
     return this;
   }
