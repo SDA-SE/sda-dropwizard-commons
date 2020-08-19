@@ -21,6 +21,7 @@ public class JerseyClientExampleApplication extends Application<JerseyClientExam
   private Client platformClient;
   private ApiA apiClient;
   private String apiABaseUrl;
+  private Client configuredExternalClient;
 
   public static void main(String[] args) throws Exception {
     new JerseyClientExampleApplication().run(args);
@@ -60,10 +61,18 @@ public class JerseyClientExampleApplication extends Application<JerseyClientExam
             .externalClient()
             .api(ApiA.class)
             .atTarget(apiABaseUrl);
+
+    // Example 4:
+    // create an external client that can be configured
+    configuredExternalClient =
+        jerseyClientBundle
+            .getClientFactory()
+            .externalClient(configuration.getConfiguredClient())
+            .buildGenericClient("configuredExternalClient");
   }
 
   /**
-   * Method oly for testing platform client. Should not be implemented in real applications.
+   * Method only for testing platform client. Should not be implemented in real applications.
    *
    * @return the http status of the response
    */
@@ -78,7 +87,7 @@ public class JerseyClientExampleApplication extends Application<JerseyClientExam
   }
 
   /**
-   * Method oly for testing external client. Should not be implemented in real applications.
+   * Method only for testing external client. Should not be implemented in real applications.
    *
    * @return the http status of the response
    */
@@ -93,7 +102,23 @@ public class JerseyClientExampleApplication extends Application<JerseyClientExam
   }
 
   /**
-   * Method oly for testing api client. Should not be implemented in real applications.
+   * Method only for testing the configured external client. Should not be implemented in real
+   * applications.
+   *
+   * @return the http status of the response
+   */
+  @SuppressWarnings("WeakerAccess")
+  public int useConfiguredExternalClient() {
+    return configuredExternalClient
+        .target(apiABaseUrl)
+        .path("/cars")
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .get()
+        .getStatus();
+  }
+
+  /**
+   * Method only for testing api client. Should not be implemented in real applications.
    *
    * @return list of cars that is the result of the service invocation
    */

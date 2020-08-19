@@ -1,6 +1,10 @@
 package org.sdase.commons.client.jersey;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
@@ -8,8 +12,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -56,7 +63,6 @@ public class JerseyClientExampleIT {
 
   @BeforeClass
   public static void initWires() throws JsonProcessingException {
-    WIRE.start();
     WIRE.stubFor(
         get("/api/cars") // NOSONAR
             .withHeader("Accept", equalTo("application/json")) // NOSONAR
@@ -91,6 +97,14 @@ public class JerseyClientExampleIT {
   @Test
   public void shouldUseExternalClient() {
     assertThat(app.useExternalClient()).isEqualTo(200);
+  }
+
+  @Test
+  public void shouldUseConfiguredExternalClient() {
+    assertThat(app.useConfiguredExternalClient()).isEqualTo(200);
+    WIRE.verify(
+        RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("configured-client")));
   }
 
   @Test
