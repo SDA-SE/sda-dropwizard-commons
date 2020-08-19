@@ -10,10 +10,10 @@ import com.google.common.collect.Lists;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import java.util.ArrayList;
@@ -24,8 +24,8 @@ import java.util.Map;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.process.internal.RequestScoped;
+import org.sdase.commons.server.opa.config.OpaClientConfiguration;
 import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.config.OpaConfigProvider;
 import org.sdase.commons.server.opa.extension.OpaInputExtension;
@@ -165,18 +165,20 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
   private Client createClient(
       Environment environment, OpaConfig config, ObjectMapper objectMapper, Tracer tracer) {
-    JerseyClientConfiguration configurationWithoutGzip = new JerseyClientConfiguration();
-    configurationWithoutGzip.setGzipEnabled(false);
-    configurationWithoutGzip.setGzipEnabledForRequests(false);
+    OpaClientConfiguration clientConfig =
+        config.getOpaClient() == null ? new OpaClientConfiguration() : config.getOpaClient();
+
+    // set read timeout if complex decisions are necessary. This is a legacy option that should be
+    // removed if the readTimeout is no longer configurable directly.
+    if (config.getReadTimeout() != null) {
+      clientConfig.setTimeout(Duration.milliseconds(config.getReadTimeout()));
+    }
 
     Client client =
         new JerseyClientBuilder(environment)
-            .using(configurationWithoutGzip)
+            .using(clientConfig)
             .using(objectMapper)
             .build("opaClient");
-
-    // set read timeout if complex decisions are necessary
-    client.property(ClientProperties.READ_TIMEOUT, config.getReadTimeout());
 
     registerTracing(client, tracer);
 

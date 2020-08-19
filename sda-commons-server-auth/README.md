@@ -327,8 +327,10 @@ opa:
   # Package name of the policy file that should be evaluated for authorization decision
   # The package name is used to resolve the full path
   policyPackage: http.authz
-  # readTimeout for OPA requests in millis, default 500
-  readTimeout: 500
+  # Advanced configuration of the HTTP client that is used to call the Open Policy Agent
+  opaClient:
+    # timeout for OPA requests, default 500ms
+    timeout: 500ms
 ```
 
 The config may be filled from environment variables if the
@@ -341,6 +343,25 @@ opa:
   baseUrl: ${OPA_URL:-http://localhost:8181}
   policyPackage: ${OPA_POLICY_PACKAGE}
 ```
+
+### HTTP Client Configuration and Proxy Support
+
+The client that calls the Open Policy Agent is configurable with the standard
+[Dropwizard configuration](https://www.dropwizard.io/en/latest/manual/configuration.html#man-configuration-clients-http).
+
+> Tip: There is no need to make all configuration properties available as environment variables.
+> Seldomly used properties can always be configured using [System Properties](https://www.dropwizard.io/en/latest/manual/core.html#man-core-configuration).
+> 
+```yaml
+opa:
+  opaClient:
+    timeout: 500ms
+```
+
+This configuration can be used to configure a proxy server if needed.
+
+*Please note that this client __does not__ consume the standard proxy system properties but needs to be configured manually! 
+The OPA should be deployed as near to the service as possible, so we don't expect the need for universal proxy settings.*
 
 ## Testing
 
