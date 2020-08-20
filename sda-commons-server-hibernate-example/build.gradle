@@ -1,5 +1,6 @@
 dependencies {
   compile project(':sda-commons-server-hibernate')
+  compile project(':sda-commons-server-jackson')
 
   testCompile project(':sda-commons-server-hibernate-testing')
   testCompile 'org.assertj:assertj-core'

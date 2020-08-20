@@ -14,6 +14,7 @@ import java.util.Set;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.morphia.test.Config;
 import org.sdase.commons.server.morphia.test.model.Person;
@@ -79,6 +80,7 @@ public class MorphiaBundleTracingIT {
 
     @Override
     public void initialize(Bootstrap<Config> bootstrap) {
+      bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
       bootstrap.addBundle(morphiaBundle);
     }
 

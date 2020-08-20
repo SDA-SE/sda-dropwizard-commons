@@ -8,6 +8,7 @@ import org.sdase.commons.server.hibernate.example.db.DbMigrationCommand;
 import org.sdase.commons.server.hibernate.example.db.manager.PersonManager;
 import org.sdase.commons.server.hibernate.example.db.model.PersonEntity;
 import org.sdase.commons.server.hibernate.example.rest.PersonsEndPoint;
+import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 
 /** Example application to show how to initialize and use the Hibernate Bundle */
 public class HibernateExampleApplication extends Application<HibernateExampleConfiguration> {
@@ -26,6 +27,7 @@ public class HibernateExampleApplication extends Application<HibernateExampleCon
 
   @Override
   public void initialize(Bootstrap<HibernateExampleConfiguration> bootstrap) {
+    bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
     // Db Migration command should be implemented to allow flyway database
     // migration
     bootstrap.addCommand(new DbMigrationCommand());

@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.morphia.test.Config;
 import org.sdase.commons.server.morphia.test.model.Person;
@@ -27,7 +28,7 @@ public class MorphiaBundleLocalDateConvertersIT {
 
   private static final MongoDbRule MONGODB = MongoDbRule.builder().build();
 
-  private static final LazyRule<DropwizardAppRule<Config>> DW =
+  private static final LazyRule<DropwizardAppRule<Config>> DW_SDA =
       new LazyRule<>(
           () ->
               DropwizardRuleHelper.dropwizardTestAppFrom(MorphiaTestApp.class)
@@ -40,7 +41,22 @@ public class MorphiaBundleLocalDateConvertersIT {
                               .setDatabase(MONGODB.getDatabase()))
                   .build());
 
-  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
+  private static final LazyRule<DropwizardAppRule<Config>> DW_PLAIN =
+      new LazyRule<>(
+          () ->
+              DropwizardRuleHelper.dropwizardTestAppFrom(MorphiaPlainTestApp.class)
+                  .withConfigFrom(Config::new)
+                  .withRandomPorts()
+                  .withConfigurationModifier(
+                      c ->
+                          c.getMongo()
+                              .setHosts(MONGODB.getHost())
+                              .setDatabase(MONGODB.getDatabase()))
+                  .build());
+
+  @ClassRule
+  public static final RuleChain CHAIN =
+      RuleChain.outerRule(MONGODB).around(DW_SDA).around(DW_PLAIN);
 
   @Before
   public void cleanCollection() {
@@ -103,13 +119,13 @@ public class MorphiaBundleLocalDateConvertersIT {
   }
 
   private Datastore getSdaDatastore() {
-    return ((MorphiaTestApp) DW.getRule().getApplication())
+    return ((MorphiaTestApp) DW_SDA.getRule().getApplication())
         .getMorphiaBundleWithSdaConverter()
         .datastore();
   }
 
   private Datastore getPlainMorphiaDatastore() {
-    return ((MorphiaTestApp) DW.getRule().getApplication())
+    return ((MorphiaPlainTestApp) DW_PLAIN.getRule().getApplication())
         .getMorphiaBundleWithPlainMorphia()
         .datastore();
   }
@@ -122,17 +138,10 @@ public class MorphiaBundleLocalDateConvertersIT {
             .withEntity(Person.class)
             .build();
 
-    private MorphiaBundle<Config> morphiaBundleWithPlainMorphia =
-        MorphiaBundle.builder()
-            .withConfigurationProvider(Config::getMongo)
-            .withEntity(Person.class)
-            .disableDefaultTypeConverters()
-            .build();
-
     @Override
     public void initialize(Bootstrap<Config> bootstrap) {
+      bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
       bootstrap.addBundle(morphiaBundleWithSdaConverter);
-      bootstrap.addBundle(morphiaBundleWithPlainMorphia);
     }
 
     @Override
@@ -142,6 +151,27 @@ public class MorphiaBundleLocalDateConvertersIT {
 
     MorphiaBundle<Config> getMorphiaBundleWithSdaConverter() {
       return morphiaBundleWithSdaConverter;
+    }
+  }
+
+  public static class MorphiaPlainTestApp extends Application<Config> {
+
+    private MorphiaBundle<Config> morphiaBundleWithPlainMorphia =
+        MorphiaBundle.builder()
+            .withConfigurationProvider(Config::getMongo)
+            .withEntity(Person.class)
+            .disableDefaultTypeConverters()
+            .build();
+
+    @Override
+    public void initialize(Bootstrap<Config> bootstrap) {
+      bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
+      bootstrap.addBundle(morphiaBundleWithPlainMorphia);
+    }
+
+    @Override
+    public void run(Config configuration, Environment environment) {
+      // nothing to run
     }
 
     MorphiaBundle<Config> getMorphiaBundleWithPlainMorphia() {
