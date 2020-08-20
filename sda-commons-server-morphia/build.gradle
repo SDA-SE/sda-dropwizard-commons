@@ -8,6 +8,7 @@ dependencies {
   compile 'io.opentracing.contrib:opentracing-mongo-driver'
 
   testCompile project(':sda-commons-server-mongo-testing')
+  testCompile project(':sda-commons-server-jackson')
   testCompile 'commons-io:commons-io'
   testCompile 'org.assertj:assertj-core'
   testCompile 'io.opentracing:opentracing-mock'

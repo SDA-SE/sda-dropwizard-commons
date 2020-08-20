@@ -59,7 +59,7 @@ public class MorphiaApplicationIT {
   public void shouldStoreCarEntity() {
     addData();
     assertThat(datastore.createQuery(Car.class).count()).isEqualTo(2);
-    assertThat(datastore.createQuery(Car.class).find())
+    assertThat(datastore.createQuery(Car.class).find().toList())
         .usingFieldByFieldElementComparator()
         .contains(WL, HH);
   }
