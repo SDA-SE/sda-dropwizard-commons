@@ -13,7 +13,7 @@ ext {
   swaggerCoreVersion = '1.6.2'
   weldVersion = '3.1.5.Final'
   openTracingUtilVersion = '0.33.0'
-  scalaVersion = '2.12.8' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
+  scalaVersion = '2.13.3' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
   kafkaVersion = '2.2.1' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
 }
 
