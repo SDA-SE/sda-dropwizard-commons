@@ -306,8 +306,6 @@ nexusStaging {
   username System.getenv('SDA_SONATYPE_USER')
   password System.getenv('SDA_SONATYPE_PASSWORD')
   packageGroup "org.sdase.commons"
-  // wait for max. 10 minutes
-  numberOfRetries 300
   // Read the stagingRepositoryId from the environment
   stagingRepositoryId.set(System.getenv('SONATYPE_STAGING_REPOSITORY_ID'))
 }
