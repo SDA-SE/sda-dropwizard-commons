@@ -139,7 +139,7 @@ dependencies {
     api "org.apache.kafka:kafka_2.12:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
     api "org.apache.zookeeper:zookeeper:3.4.10"
-    api "com.101tec:zkclient:0.10"
+    api "com.101tec:zkclient:0.11"
     api "org.apache.curator:curator-test:2.12.0"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
     api "com.salesforce.kafka.test:kafka-junit4:3.2.2"
