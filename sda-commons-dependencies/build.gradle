@@ -37,7 +37,7 @@ dependencies {
   constraints {
     api "com.auth0:java-jwt:3.10.3"
     api "com.github.database-rider:rider-core:1.2.9" // latest version that supports Parameterized tests: https://github.com/database-rider/database-rider/issues/104
-    api "org.postgresql:postgresql:42.2.5"
+    api "org.postgresql:postgresql:42.2.16"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
     api "com.google.code.findbugs:jsr305:3.0.2"
     api "com.google.guava:guava:29.0-jre"
