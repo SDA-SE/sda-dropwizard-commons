@@ -12,6 +12,9 @@ update_configs:
     target_branch: "release/1.x.x"
     directory: "/"
     update_schedule: "weekly"
+    default_labels:
+      - "dependencies"
+      - "release-1.x.x"
     commit_message:
       prefix: "fix"
       prefix_development: "chore"
@@ -28,6 +31,9 @@ update_configs:
     target_branch: "release/1.x.x"
     directory: "/"
     update_schedule: "monthly"
+    default_labels:
+      - "dependencies"
+      - "release-1.x.x"
     commit_message:
       prefix: "chore"
       prefix_development: "chore"
