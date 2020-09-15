@@ -8,6 +8,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.time.ZonedDateTime;
 import java.util.function.Consumer;
+import org.sda.commons.server.jackson.hal.HalLinkProvider;
 import org.sdase.commons.server.jackson.errors.ApiExceptionMapper;
 import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
 import org.sdase.commons.server.jackson.errors.JerseyValidationExceptionMapper;
@@ -86,6 +87,9 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
       objectMapper.registerModule(jacksonFieldFilterModule);
       environment.jersey().register(jacksonFieldFilterModule);
     }
+
+    // register singleton HalLinkProvider
+    environment.jersey().register(HalLinkProvider.getInstance());
 
     // register Exception Mapper
     environment.jersey().register(ApiExceptionMapper.class);
