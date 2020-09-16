@@ -102,13 +102,7 @@ public class MessageListener<K, V> implements Runnable {
     // call floods log file with warnings
     // see https://issues.apache.org/jira/browse/KAFKA-4164
     if (topicMissingRetryMs > 0) {
-      while (!shouldStop.get()
-          && topics.stream()
-              .map(consumer::partitionsFor)
-              .flatMap(Collection::stream)
-              .filter(Objects::nonNull)
-              .collect(Collectors.toSet())
-              .isEmpty()) {
+      while (!shouldStop.get() && !topicsReady()) {
         LOGGER.warn(
             "Topics {} are not ready yet. Waiting {} ms for retry",
             joinedTopics,
@@ -121,6 +115,16 @@ public class MessageListener<K, V> implements Runnable {
         }
       }
     }
+  }
+
+  boolean topicsReady() {
+    return !topics.stream()
+        .map(consumer::partitionsFor)
+        .filter(Objects::nonNull)
+        .flatMap(Collection::stream)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toSet())
+        .isEmpty();
   }
 
   /**
