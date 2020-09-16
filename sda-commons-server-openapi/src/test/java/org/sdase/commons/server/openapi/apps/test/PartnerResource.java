@@ -2,9 +2,12 @@ package org.sdase.commons.server.openapi.apps.test;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.openapitools.jackson.dataformat.hal.annotation.EmbeddedResource;
+import io.openapitools.jackson.dataformat.hal.annotation.Resource;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
+@Resource
 @Schema(name = "Partner")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
 @JsonSubTypes({@JsonSubTypes.Type(value = NaturalPersonResource.class, name = "naturalPerson")})
@@ -17,7 +20,7 @@ public abstract class PartnerResource {
       example = "naturalPerson")
   private String type;
 
-  private List<String> options;
+  @EmbeddedResource private List<String> options;
 
   public String getType() {
     return type;

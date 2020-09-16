@@ -21,6 +21,7 @@ public class OpenApiBundleIT {
 
   private static final String NATURAL_PERSON_DEFINITION = "NaturalPerson";
   private static final String PARTNER_DEFINITION = "Partner";
+  private static final String HOUSE_DEFINITION = "House";
 
   @ClassRule
   public static final DropwizardAppRule<Configuration> DW =
@@ -120,7 +121,10 @@ public class OpenApiBundleIT {
   public void shouldIncludePaths() {
     String response = getJsonRequest().get(String.class);
 
-    assertThatJson(response).inPath("$.paths").isObject().containsOnlyKeys("/jdoe", "/house");
+    assertThatJson(response)
+        .inPath("$.paths")
+        .isObject()
+        .containsOnlyKeys("/jdoe", "/house", "/houses");
 
     assertThatJson(response)
         .inPath("$.paths./jdoe")
@@ -128,6 +132,8 @@ public class OpenApiBundleIT {
         .containsOnlyKeys("get", "post", "delete");
 
     assertThatJson(response).inPath("$.paths./house").isObject().containsOnlyKeys("get");
+
+    assertThatJson(response).inPath("$.paths./houses").isObject().containsOnlyKeys("get");
   }
 
   @Test
@@ -137,17 +143,23 @@ public class OpenApiBundleIT {
     assertThatJson(response)
         .inPath("$.components.schemas")
         .isObject()
-        .containsOnlyKeys(NATURAL_PERSON_DEFINITION, PARTNER_DEFINITION, "Animal", "House");
+        .containsOnlyKeys(
+            NATURAL_PERSON_DEFINITION,
+            PARTNER_DEFINITION,
+            "HALLink",
+            "Animal",
+            "House",
+            "HouseSearchResource");
 
     assertThatJson(response)
         .inPath("$.components.schemas." + PARTNER_DEFINITION + ".properties") // NOSONAR
         .isObject()
-        .containsOnlyKeys("type", "options");
+        .containsOnlyKeys("type", "_embedded");
 
     assertThatJson(response)
         .inPath("$.components.schemas." + NATURAL_PERSON_DEFINITION + ".allOf[1].properties")
         .isObject()
-        .containsOnlyKeys("firstName", "lastName", "traits");
+        .containsOnlyKeys("firstName", "lastName", "traits", "_links", "_embedded");
   }
 
   @Test
@@ -166,5 +178,39 @@ public class OpenApiBundleIT {
         .inPath("$.components.schemas." + PARTNER_DEFINITION + ".properties.type.example")
         .isString()
         .isEqualTo("naturalPerson");
+  }
+
+  @Test
+  public void shouldIncludeHALSelfLink() {
+    String response = getJsonRequest().get(String.class);
+
+    assertThatJson(response)
+        .inPath(
+            "$.components.schemas."
+                + NATURAL_PERSON_DEFINITION
+                + ".allOf[1].properties._links.properties")
+        .isObject()
+        .containsOnlyKeys("self");
+
+    assertThatJson(response)
+        .inPath("$.components.schemas." + HOUSE_DEFINITION + ".properties._links.properties")
+        .isObject()
+        .containsOnlyKeys("self", "partners", "animals");
+  }
+
+  @Test
+  public void shouldNotUsePropertyDescriptionAsComponentDescription() {
+    String response = getJsonRequest().get(String.class);
+
+    assertThatJson(response).inPath("$.components.schemas.Partner.description").isAbsent();
+  }
+
+  @Test
+  public void shouldHaveCustomDescriptionInHALLink() {
+    String response = getJsonRequest().get(String.class);
+
+    assertThatJson(response)
+        .inPath("$.components.schemas.HALLink.description")
+        .isEqualTo("Representation of a link as defined in HAL");
   }
 }
