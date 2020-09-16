@@ -7,6 +7,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.openapitools.jackson.dataformat.hal.HALLink;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.net.URI;
 import java.util.Collections;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -62,7 +64,8 @@ public class OpenApiBundleTestApp extends Application<Configuration>
               mediaType = APPLICATION_JSON,
               schema = @Schema(implementation = PartnerResource.class)))
   public PartnerResource getJohnDoe() {
-    return new NaturalPersonResource("John", "Doe", emptyList());
+    URI self = uriInfo.getBaseUriBuilder().path(OpenApiBundleTestApp.class, "getJohnDoe").build();
+    return new NaturalPersonResource("John", "Doe", emptyList(), new HALLink.Builder(self).build());
   }
 
   @POST
@@ -96,6 +99,23 @@ public class OpenApiBundleTestApp extends Application<Configuration>
               mediaType = APPLICATION_JSON,
               schema = @Schema(implementation = HouseResource.class)))
   public HouseResource getHouse() {
-    return new HouseResource(Collections.emptyList(), Collections.emptyList());
+    URI self = uriInfo.getBaseUriBuilder().path(OpenApiBundleTestApp.class, "getHouse").build();
+    return new HouseResource(
+        Collections.emptyList(), Collections.emptyList(), new HALLink.Builder(self).build());
+  }
+
+  @GET
+  @Path("/houses")
+  @Produces(APPLICATION_JSON)
+  @Operation()
+  @ApiResponse(
+      responseCode = "200",
+      description = "get",
+      content =
+          @Content(
+              mediaType = APPLICATION_JSON,
+              schema = @Schema(implementation = HouseSearchResource.class)))
+  public HouseSearchResource searchHouse() {
+    return new HouseSearchResource(Collections.emptyList(), 0);
   }
 }

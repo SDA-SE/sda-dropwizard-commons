@@ -10,6 +10,7 @@ import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import java.lang.invoke.MethodHandles;
@@ -22,6 +23,8 @@ import javax.servlet.FilterRegistration;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.sdase.commons.server.openapi.filter.OpenAPISpecFilterSet;
 import org.sdase.commons.server.openapi.filter.ServerUrlFilter;
+import org.sdase.commons.server.openapi.hal.HALModelResolver;
+import org.sdase.commons.server.openapi.hal.HalLinkDescriptionModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +87,13 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
     environment.jersey().register(serverUrlFilter);
     OpenAPISpecFilterSet.register(serverUrlFilter);
     environment.lifecycle().manage(onShutdown(OpenAPISpecFilterSet::clear));
+
+    // Add HAL support
+    HALModelResolver halModelResolver = new HALModelResolver(environment.getObjectMapper());
+    ModelConverters.getInstance().addConverter(halModelResolver);
+    environment
+        .lifecycle()
+        .manage(onShutdown(() -> ModelConverters.getInstance().removeConverter(halModelResolver)));
 
     // Configure the OpenAPIConfiguration
     SwaggerConfiguration oasConfig =
@@ -174,6 +184,7 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
 
     Builder() {
       resourcePackages = new LinkedHashSet<>();
+      addResourcePackageClass(HalLinkDescriptionModifier.class);
     }
 
     @Override
