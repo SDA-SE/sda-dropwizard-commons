@@ -54,6 +54,13 @@ public class ConsumerTokenTestApp extends Application<ConsumerTokenTestConfig> {
   }
 
   @GET
+  @Path("/openapi.json")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getOpenApi(@Context ContainerRequestContext requestContext) {
+    return Response.ok(requestContext.getProperty(ConsumerTracing.NAME_ATTRIBUTE)).build();
+  }
+
+  @GET
   @Path("/token")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getConsumerToken(@Context ContainerRequestContext requestContext) {

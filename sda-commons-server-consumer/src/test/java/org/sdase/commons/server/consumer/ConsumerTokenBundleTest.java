@@ -63,11 +63,22 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldNotRejectRequestWithoutConsumerTokenExcluded() {
+  public void shouldNotRejectRequestWithoutConsumerTokenExcludedSwagger() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/api/swagger.json")
+            .request(APPLICATION_JSON)
+            .get();
+    assertThat(response.getStatus()).isEqualTo(200);
+  }
+
+  @Test
+  public void shouldNotRejectRequestWithoutConsumerTokenExcludedOpenApi() {
+    Response response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("/api/openapi.json")
             .request(APPLICATION_JSON)
             .get();
     assertThat(response.getStatus()).isEqualTo(200);
@@ -121,12 +132,24 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldNotRejectRequestWithoutConsumerTokenExcludedFixedConfig() {
+  public void shouldNotRejectRequestWithoutConsumerTokenExcludedFixedConfigSwagger() {
     Response response =
         DW_REQUIRED
             .client()
             .target("http://localhost:" + DW_REQUIRED.getLocalPort())
             .path("/api/swagger.json")
+            .request(APPLICATION_JSON)
+            .get();
+    assertThat(response.getStatus()).isEqualTo(200);
+  }
+
+  @Test
+  public void shouldNotRejectRequestWithoutConsumerTokenExcludedFixedConfigOpenApi() {
+    Response response =
+        DW_REQUIRED
+            .client()
+            .target("http://localhost:" + DW_REQUIRED.getLocalPort())
+            .path("/api/openapi.json")
             .request(APPLICATION_JSON)
             .get();
     assertThat(response.getStatus()).isEqualTo(200);
