@@ -22,6 +22,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.sdase.commons.optional.server.openapi.parameter.embed.EmbedParameterModifier;
+import org.sdase.commons.optional.server.openapi.sort.OpenAPISorter;
 import org.sdase.commons.server.openapi.filter.OpenAPISpecFilterSet;
 import org.sdase.commons.server.openapi.filter.ServerUrlFilter;
 import org.sdase.commons.server.openapi.hal.HALModelResolver;
@@ -195,6 +196,7 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
       resourcePackages = new LinkedHashSet<>();
       addResourcePackageClass(HalLinkDescriptionModifier.class);
       addResourcePackageClass(EmbedParameterModifier.class);
+      addResourcePackageClass(OpenAPISorter.class);
     }
 
     @Override
