@@ -127,6 +127,9 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     if (excludeSwagger()) {
       excludePattern.addAll(getSwaggerExcludePatterns());
     }
+    if (excludeOpenApi()) {
+      excludePattern.addAll(getOpenApiExcludePatterns());
+    }
 
     // register filter
     environment
@@ -205,6 +208,22 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   private boolean excludeSwagger() {
     try {
       if (getClass().getClassLoader().loadClass("org.sdase.commons.server.swagger.SwaggerBundle")
+          != null) {
+        return true;
+      }
+    } catch (ClassNotFoundException e) {
+      // silently ignored
+    }
+    return false;
+  }
+
+  private List<String> getOpenApiExcludePatterns() {
+    return Lists.newArrayList("openapi\\.(json|yaml)");
+  }
+
+  private boolean excludeOpenApi() {
+    try {
+      if (getClass().getClassLoader().loadClass("org.sdase.commons.server.openapi.OpenApiBundle")
           != null) {
         return true;
       }

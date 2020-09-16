@@ -5,4 +5,5 @@ dependencies {
   compile 'com.auth0:java-jwt'
   compile project(':sda-commons-client-jersey-wiremock-testing')
   testCompile project(':sda-commons-server-swagger')
+  testCompile project(':sda-commons-server-openapi')
 }
