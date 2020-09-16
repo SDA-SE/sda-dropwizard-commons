@@ -2,13 +2,18 @@ package org.sdase.commons.shared.api.error;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /** Invalid parameter information within an {@link ApiError} */
 @ApiModel(description = "Defines a validation error for a parameter or field.")
+@Schema(description = "Defines a validation error for a parameter or field.")
 public class ApiInvalidParam {
 
   @ApiModelProperty(
       value = "The name or path of the invalid field or parameter.",
+      example = "manufacture")
+  @Schema(
+      description = "The name or path of the invalid field or parameter.",
       example = "manufacture")
   private String field;
 
@@ -17,10 +22,19 @@ public class ApiInvalidParam {
           "Gives a hint why the value is not valid. This is the error message of the validation. "
               + "The reason might be in different language due to internationalization.",
       example = "Audi has no Golf GTI model (not found)")
+  @Schema(
+      description =
+          "Gives a hint why the value is not valid. This is the error message of the validation. "
+              + "The reason might be in different language due to internationalization.",
+      example = "Audi has no Golf GTI model (not found)")
   private String reason;
 
   @ApiModelProperty(
       value = "The name of the validation annotation given in uppercase, underscore notation.",
+      example = "FIELD_CORRELATION_ERROR")
+  @Schema(
+      description =
+          "The name of the validation annotation given in uppercase, underscore notation.",
       example = "FIELD_CORRELATION_ERROR")
   private String errorCode;
 
