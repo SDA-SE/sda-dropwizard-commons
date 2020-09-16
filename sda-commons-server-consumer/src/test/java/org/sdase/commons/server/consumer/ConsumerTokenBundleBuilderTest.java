@@ -9,18 +9,18 @@ import org.mockito.Mockito;
 public class ConsumerTokenBundleBuilderTest {
 
   @Test
-  public void shouldAddAutoExcludeForSwagger() {
+  public void shouldAddAutoExcludeForSwaggerAndOpenApi() {
 
     ConsumerTokenConfig config = new ConsumerTokenConfig();
 
-    ConsumerTokenBundle bundle =
+    ConsumerTokenBundle<Configuration> bundle =
         ConsumerTokenBundle.builder().withConfigProvider(c -> config).build();
 
-    //noinspection unchecked
     bundle.run(
         Mockito.mock(Configuration.class),
         Mockito.mock(Environment.class, Mockito.RETURNS_DEEP_STUBS));
 
-    Assertions.assertThat(config.getExcludePatterns()).containsExactly("swagger\\.(json|yaml)");
+    Assertions.assertThat(config.getExcludePatterns())
+        .containsExactly("swagger\\.(json|yaml)", "openapi\\.(json|yaml)");
   }
 }

@@ -140,6 +140,9 @@ public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredB
       if (excludeSwaggerJson()) {
         configProvider = configProvider.andThen(this::addSwaggerConfigExclude);
       }
+      if (excludeOpenApi()) {
+        configProvider = configProvider.andThen(this::addOpenApiConfigExclude);
+      }
       return new ConsumerTokenBundle<>(configProvider);
     }
 
@@ -153,6 +156,25 @@ public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredB
     private boolean excludeSwaggerJson() {
       try {
         if (getClass().getClassLoader().loadClass("org.sdase.commons.server.swagger.SwaggerBundle")
+            != null) {
+          return true;
+        }
+      } catch (ClassNotFoundException e) {
+        // silently ignored
+      }
+      return false;
+    }
+
+    private ConsumerTokenConfig addOpenApiConfigExclude(ConsumerTokenConfig consumerTokenConfig) {
+      ArrayList<String> patterns = new ArrayList<>(consumerTokenConfig.getExcludePatterns());
+      patterns.add("openapi\\.(json|yaml)");
+      consumerTokenConfig.setExcludePatterns(patterns);
+      return consumerTokenConfig;
+    }
+
+    private boolean excludeOpenApi() {
+      try {
+        if (getClass().getClassLoader().loadClass("org.sdase.commons.server.openapi.OpenApiBundle")
             != null) {
           return true;
         }

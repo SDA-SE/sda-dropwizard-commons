@@ -26,7 +26,7 @@ public class ConsumerTokenRequiredTestApp extends Application<ConsumerTokenTestC
     bootstrap.addBundle(
         ConsumerTokenBundle.builder()
             .withRequiredConsumerToken()
-            .withExcludePatterns("swagger\\.(json|yaml)")
+            .withExcludePatterns("swagger\\.(json|yaml)", "openapi\\.(json|yaml)")
             .build());
   }
 
@@ -51,6 +51,13 @@ public class ConsumerTokenRequiredTestApp extends Application<ConsumerTokenTestC
   @Path("/swagger.json")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getSwagger(@Context ContainerRequestContext requestContext) {
+    return Response.ok(requestContext.getProperty(ConsumerTracing.NAME_ATTRIBUTE)).build();
+  }
+
+  @GET
+  @Path("/openapi.json")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getOpenApi(@Context ContainerRequestContext requestContext) {
     return Response.ok(requestContext.getProperty(ConsumerTracing.NAME_ATTRIBUTE)).build();
   }
 

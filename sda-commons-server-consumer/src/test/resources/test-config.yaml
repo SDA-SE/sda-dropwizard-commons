@@ -10,4 +10,4 @@ server:
 
 consumerToken:
   optional: ${CONSUMER_TOKEN_OPTIONAL:-false}
-  excludePatterns: ${CONSUMER_TOKEN_EXCLUDE:-["swagger\\.(json|yaml)"]}
+  excludePatterns: ${CONSUMER_TOKEN_EXCLUDE:-["swagger\\.(json|yaml)", "openapi\\.(json|yaml)"]}
