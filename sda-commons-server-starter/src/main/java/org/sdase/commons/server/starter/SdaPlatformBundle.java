@@ -93,7 +93,9 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     List<ConfiguredBundle<? super C>> configuredBundles = new ArrayList<>();
     configuredBundles.add(jacksonConfigurationBundleBuilder.build());
     configuredBundles.add(securityBundleBuilder.build());
-    configuredBundles.add(swaggerBundleBuilder.build());
+    if (swaggerBundleBuilder != null) {
+      configuredBundles.add(swaggerBundleBuilder.build());
+    }
     if (authBundleBuilder != null) {
       configuredBundles.add(authBundleBuilder.build());
     }
@@ -138,6 +140,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     private boolean swaggerDisableEmbedParameter = false;
     private boolean swaggerDisableJsonExamples = false;
     private List<String> swaggerResourcePackages = new ArrayList<>();
+    private boolean withoutSwaggerBundle = false;
 
     private Builder() {}
 
@@ -152,7 +155,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
           opaBundleBuilder,
           corsBundleBuilder,
           consumerTokenBundleBuilder,
-          createSwaggerBundleBuilder());
+          withoutSwaggerBundle ? null : createSwaggerBundleBuilder());
     }
 
     // InitialBuilder
@@ -248,6 +251,12 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
             "ConsumerToken support can't be configured because it is disabled.");
       }
       this.consumerTokenConfig.getExcludePatterns().addAll(Arrays.asList(regex));
+      return this;
+    }
+
+    @Override
+    public PlatformBundleBuilder<C> withoutSwagger() {
+      this.withoutSwaggerBundle = true;
       return this;
     }
 
