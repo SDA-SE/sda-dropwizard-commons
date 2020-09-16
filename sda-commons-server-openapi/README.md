@@ -216,4 +216,52 @@ If the value isn't JSON the value is interpreted as a string.
 If the example is supplied like ```example = "{\"key\": false}"``` the swagger definition will 
 contain the example as ```example: {"key": false}```. 
 
+### Use an existing OpenAPI file
+
+When working with the API first approach, it is possible to serve an existing OpenAPI file instead
+of generating it using Annotations. It is also possible to combine pre-existing and generated results
+into one file.
+
+_[`custom-openapi.yaml`](./src/test/resources/custom-openapi.yaml)_
+
+```yaml
+openapi: 3.0.1
+info:
+  title: A manually written OpenAPI file
+  description: This is an example file that was written by hand
+  contact:
+    email: info@sda.se
+  version: '1.1'
+paths:
+  /house:
+    # this path will be added
+    put:
+      summary: Update a house
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/House'
+      responses:
+        "201":
+          description: The house has been updated
+...
+```
+
+_`MyApplication.java`_
+
+```java
+bootstrap.addBundle(
+    OpenApiBundle.builder()
+        // optionally configure other resource packages. Note that the values from annotations will
+        // override the settings from the imported openapi file.
+        .addResourcePackageClass(getClass())
+        // provide the path to the existing openapi file (yaml or json) in the classpath
+        .withExistingOpenAPIFromClasspathResource("/custom-openapi.yaml")
+        .build());
+```
+
+> Note: Annotations such as [`@OpenAPIDefinition`](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#OpenAPIDefinition)
+>       will override the contents of the provided OpenAPI file if they are found in a configured
+>       resource package. 
 

@@ -3,6 +3,7 @@ dependencies {
 
   compile 'io.swagger.core.v3:swagger-jaxrs2'
   compile 'io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2'
+  compile 'io.swagger.parser.v3:swagger-parser-v3'
 
   compile 'io.openapitools.jackson.dataformat:jackson-dataformat-hal', {
     exclude group: 'org.slf4j', module: 'slf4j-api'
@@ -10,7 +11,6 @@ dependencies {
   compile 'org.slf4j:slf4j-api'
 
   testCompile project(':sda-commons-server-testing')
-  testCompile 'io.swagger.parser.v3:swagger-parser-v3:2.0.21'
   testCompile 'net.javacrumbs.json-unit:json-unit-assertj'
 }
 

@@ -13,9 +13,12 @@ import io.dropwizard.setup.Environment;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.DispatcherType;
@@ -31,8 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A bundle used to generate and serve code-first OpenAPI 3 files at the {@code openapi.yaml} or
- * {@code openapi.json} HTTP resources.
+ * A bundle used to generate and serve API-first or code-first OpenAPI 3 files at the {@code
+ * openapi.yaml} or {@code openapi.json} HTTP resources.
  *
  * <h3>Example Usage</h3>
  *
@@ -63,13 +66,15 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
   private static final String DROPWIZARD_DEFAULT_ROOT_PATH = "/*";
 
   private final Set<String> resourcePackages;
+  private final OpenAPI existingOpenAPI;
 
   public static InitialBuilder builder() {
     return new Builder();
   }
 
-  public OpenApiBundle(Set<String> resourcePackages) {
+  public OpenApiBundle(Set<String> resourcePackages, OpenAPI existingOpenAPI) {
     this.resourcePackages = resourcePackages;
+    this.existingOpenAPI = existingOpenAPI;
   }
 
   @Override
@@ -100,7 +105,7 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
     // Configure the OpenAPIConfiguration
     SwaggerConfiguration oasConfig =
         new SwaggerConfiguration()
-            .openAPI(new OpenAPI())
+            .openAPI(existingOpenAPI != null ? existingOpenAPI : new OpenAPI())
             .prettyPrint(true)
             .resourcePackages(resourcePackages)
             .readAllResources(false)
@@ -151,6 +156,39 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
   public interface InitialBuilder {
 
     /**
+     * Use an existing OpenAPI 3 specification as base for the generation.
+     *
+     * <p>Note that the OpenAPI annotations always override values from the files if classes are
+     * registered with {@link #addResourcePackage(String)} or {@link
+     * #addResourcePackageClass(Class)}.
+     *
+     * <p>The postprocessing will also be done for these files, including sorting, embed parameter,
+     * and server baseurl.
+     *
+     * @param openApiJsonOrYaml the OpenAPI 3 specification as json or yaml
+     * @return the builder
+     * @see EmbedParameterModifier
+     * @see org.sdase.commons.optional.server.openapi.sort.SorterModifier
+     * @see ServerUrlFilter
+     */
+    FinalBuilder withExistingOpenAPI(String openApiJsonOrYaml);
+
+    /**
+     * Reads an existing OpenAPI 3 specification from the given classpath resource and provide it to
+     * {@link #withExistingOpenAPI(String)}
+     *
+     * @param path the path to an OpenAPI 3 YAML or JSON file in the classpath.
+     * @return the builder
+     * @see #withExistingOpenAPI(String)
+     */
+    default FinalBuilder withExistingOpenAPIFromClasspathResource(String path) {
+      try (Scanner scanner =
+          new Scanner(getClass().getResourceAsStream(path), StandardCharsets.UTF_8.name())) {
+        return this.withExistingOpenAPI(scanner.useDelimiter("\\A").next());
+      }
+    }
+
+    /**
      * Adds a package to the packages Swagger should scan to pick up resources.
      *
      * @param resourcePackage the package to be scanned; not null
@@ -192,6 +230,8 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
 
     private final Set<String> resourcePackages;
 
+    private OpenAPI existingOpenAPI;
+
     Builder() {
       resourcePackages = new LinkedHashSet<>();
       addResourcePackageClass(HalLinkDescriptionModifier.class);
@@ -219,8 +259,15 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
     }
 
     @Override
+    public Builder withExistingOpenAPI(String openApiJsonOrYaml) {
+      OpenAPIV3Parser openAPIV3Parser = new OpenAPIV3Parser();
+      existingOpenAPI = openAPIV3Parser.readContents(openApiJsonOrYaml).getOpenAPI().servers(null);
+      return this;
+    }
+
+    @Override
     public OpenApiBundle build() {
-      return new OpenApiBundle(resourcePackages);
+      return new OpenApiBundle(resourcePackages, existingOpenAPI);
     }
 
     private String getResourcePackage(Class<?> resourcePackageClass) {

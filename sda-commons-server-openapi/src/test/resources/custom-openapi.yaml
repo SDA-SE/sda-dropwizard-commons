@@ -1,0 +1,104 @@
+openapi: 3.0.1
+info:
+  title: A manually written OpenAPI file
+  description: This is an example file that was written by hand
+  contact:
+    email: info@sda.se
+  version: '1.1'
+paths:
+  /house:
+    # this path will be added
+    put:
+      summary: Update a house
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/House'
+      responses:
+        "201":
+          description: The house has been updated
+    # this block will be replaced by the scanner output
+    get:
+      responses:
+        "200":
+          description: A successful response for the house
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+        "500":
+          description: An unexpected internal error
+  # this path will be added
+  /embed:
+    get:
+      responses:
+        "200":
+          description: A response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Embedded'
+  # this path will be added
+  /embedAllOf:
+    get:
+      responses:
+        "200":
+          description: A response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmbeddedAllOf'
+  # this path will be added
+  /embedAnyOf:
+    get:
+      responses:
+        "200":
+          description: A response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmbeddedAnyOf'
+components:
+  schemas:
+    # this schema will be replaced by the scanner output
+    House:
+      description: A House description
+    # this schema will be added
+    Embedded:
+      description: An item that has embedded properties
+      properties:
+        _embedded:
+          properties:
+            one:
+              type: string
+            two:
+              type: string
+    # this schema will be added
+    EmbeddedAllOf:
+      description: An item that has embedded properties in multiple of allOf
+      allOf:
+        - properties:
+            _embedded:
+              properties:
+                three:
+                  type: string
+        - properties:
+            _embedded:
+              properties:
+                four:
+                  type: string
+    # this schema will be added
+    EmbeddedAnyOf:
+      description: An item that has embedded properties in multiple of anyOf
+      anyOf:
+        - properties:
+            _embedded:
+              properties:
+                three:
+                  type: string
+        - properties:
+            _embedded:
+              properties:
+                four:
+                  type: string
