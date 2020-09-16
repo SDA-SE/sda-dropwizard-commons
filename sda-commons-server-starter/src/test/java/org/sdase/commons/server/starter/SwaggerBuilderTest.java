@@ -15,6 +15,19 @@ public class SwaggerBuilderTest {
   }
 
   @Test
+  public void disabled() {
+
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
+            .usingSdaPlatformConfiguration()
+            .withRequiredConsumerToken()
+            .withoutSwagger()
+            .build();
+
+    bundleAssertion.assertBundleNotConfiguredByPlatformBundle(bundle, SwaggerBundle.class);
+  }
+
+  @Test
   public void simplestConfig() {
 
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =

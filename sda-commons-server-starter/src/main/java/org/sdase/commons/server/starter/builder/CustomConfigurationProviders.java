@@ -117,6 +117,15 @@ public interface CustomConfigurationProviders {
   interface SwaggerTitleBuilder<C extends Configuration> {
 
     /**
+     * Disables the Swagger support for this application. This is useful if the {@link
+     * org.sdase.commons.server.swagger.SwaggerBundle} should be configured manually of if the
+     * OpenApiBundle is used instead.
+     *
+     * @return the builder
+     */
+    PlatformBundleBuilder<C> withoutSwagger();
+
+    /**
      * Sets the title of the API in the swagger documentation.
      *
      * @param title the title; not null or empty
