@@ -213,4 +213,26 @@ public class OpenApiBundleIT {
         .inPath("$.components.schemas.HALLink.description")
         .isEqualTo("Representation of a link as defined in HAL");
   }
+
+  @Test
+  public void shouldIncludeEmbedParameter() {
+    String response = getJsonRequest().get(String.class);
+
+    assertThatJson(response).inPath("$.paths./house.get.parameters").isArray().isNotEmpty();
+
+    assertThatJson(response)
+        .inPath("$.paths./house.get.parameters[0].schema.items.enum")
+        .isArray()
+        .containsOnly("animals", "partners");
+  }
+
+  @Test
+  public void shouldIncludeEmbedParameterForNestedProperty() {
+    String response = getJsonRequest().get(String.class);
+
+    assertThatJson(response)
+        .inPath("$.paths./houses.get.parameters[0].schema.items.enum")
+        .isArray()
+        .containsOnly("animals", "partners");
+  }
 }
