@@ -10,13 +10,13 @@ import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import java.lang.invoke.MethodHandles;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final AtomicInteger UNIQUE_ID_COUNTER = new AtomicInteger();
 
   // https://www.dropwizard.io/en/release-2.0.x/manual/configuration.html
   private static final String DROPWIZARD_DEFAULT_ROOT_PATH = "/*";
@@ -73,6 +74,10 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
 
   @Override
   public void run(Configuration configuration, Environment environment) {
+    // Get a new ID to register the openapi file in a unique context that is
+    // not reused by another instance of this class. The context is registered on the first request
+    // to {@link OpenApiResource} (or {@link DelegatingOpenApiResource}).
+    String instanceId = Integer.toString(UNIQUE_ID_COUNTER.incrementAndGet());
 
     // Register a filter that adds a correct server url
     ServerUrlFilter serverUrlFilter = new ServerUrlFilter();
@@ -89,7 +94,10 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
             .readAllResources(false)
             .filterClass(OpenAPISpecFilterSet.class.getName());
 
-    environment.jersey().register(new OpenApiResource().openApiConfiguration(oasConfig));
+    // Register the resource that handles the openapi.{json|yaml} requests
+    environment
+        .jersey()
+        .register(new DelegatingOpenApiResource(instanceId).openApiConfiguration(oasConfig));
 
     // Allow CORS to access (via wildcard) from Swagger UI/editor
     String basePath = determineBasePath(configuration);
