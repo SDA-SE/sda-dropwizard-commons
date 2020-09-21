@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.sdase.commons.optional.server.openapi.parameter.embed.EmbedParameterModifier;
 import org.sdase.commons.server.openapi.filter.OpenAPISpecFilterSet;
 import org.sdase.commons.server.openapi.filter.ServerUrlFilter;
 import org.sdase.commons.server.openapi.hal.HALModelResolver;
@@ -175,6 +176,14 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
   }
 
   public interface FinalBuilder extends InitialBuilder {
+    /**
+     * Disables automatic addition of the embed query parameter if embeddable resources are
+     * discovered.
+     *
+     * @return the builder.
+     */
+    FinalBuilder disableEmbedParameter();
+
     OpenApiBundle build();
   }
 
@@ -185,6 +194,13 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
     Builder() {
       resourcePackages = new LinkedHashSet<>();
       addResourcePackageClass(HalLinkDescriptionModifier.class);
+      addResourcePackageClass(EmbedParameterModifier.class);
+    }
+
+    @Override
+    public FinalBuilder disableEmbedParameter() {
+      this.resourcePackages.remove(getResourcePackage(EmbedParameterModifier.class));
+      return this;
     }
 
     @Override
