@@ -54,8 +54,8 @@ public class MorphiaBundleTracingIT {
             tracer.finishedSpans().stream()
                 .map(s -> s.tags().keySet())
                 .flatMap(Set::stream)
-                .noneMatch(Tags.DB_STATEMENT::equals))
-        .isTrue();
+                .filter(Tags.DB_STATEMENT.getKey()::equals))
+        .isNotEmpty();
   }
 
   private Datastore getDatastore() {
