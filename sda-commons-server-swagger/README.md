@@ -5,6 +5,7 @@
 The module `sda-commons-server-swagger` is the base module to add
 [Swagger](https://github.com/swagger-api/swagger-core) support for applications in the
 SDA SE infrastructure.
+This package produces [Swagger 2.0 (or OpenApi 2.0)](https://swagger.io/docs/specification/2-0/basic-structure/) definitions.
 
 ## Usage
 

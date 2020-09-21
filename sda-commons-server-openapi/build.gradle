@@ -1,0 +1,15 @@
+dependencies {
+  compile project(':sda-commons-server-dropwizard')
+
+  compile 'io.swagger.core.v3:swagger-jaxrs2'
+  compile 'io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2'
+
+  testCompile project(':sda-commons-server-testing')
+  testCompile 'io.swagger.parser.v3:swagger-parser-v3:2.0.21'
+  testCompile 'net.javacrumbs.json-unit:json-unit-assertj'
+}
+
+test {
+  // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
+  systemProperty "sun.net.http.allowRestrictedHeaders", "true"
+}
