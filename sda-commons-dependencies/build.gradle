@@ -11,6 +11,7 @@ ext {
   morphiaVersion = '1.6.0'
   prometheusVersion = '0.9.0'
   swaggerCoreVersion = '1.6.2'
+  swaggerCoreV3Version = '2.1.4'
   weldVersion = '3.1.5.Final'
   openTracingUtilVersion = '0.33.0'
   scalaVersion = '2.12.8' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
@@ -95,6 +96,11 @@ dependencies {
     api "io.opentracing.contrib:opentracing-jaxrs2:1.0.0"
     api "io.opentracing.contrib:opentracing-concurrent:0.4.0"
     api "io.opentracing.contrib:opentracing-web-servlet-filter:0.4.1"
+
+    // sda-commons-server-openapi
+    api "io.swagger.core.v3:swagger-jaxrs2:$swaggerCoreV3Version"
+    api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2:$swaggerCoreV3Version"
+    api "io.swagger.core.v3:swagger-annotations:$swaggerCoreV3Version"
 
     // sda-commons-server-prometheus
     api "io.prometheus:simpleclient:$prometheusVersion"

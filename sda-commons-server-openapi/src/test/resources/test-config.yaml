@@ -1,0 +1,16 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+  rootPath: "/api/*"
+
+logging:
+  loggers:
+    org.reflections: WARN
+    org.eclipse.jetty: WARN
+    io.dropwizard: WARN
+    io.dropwizard.setup.AdminEnvironment: 'OFF'
+    org.sdase.commons.server.openapi.OpenApiBundle: WARN
