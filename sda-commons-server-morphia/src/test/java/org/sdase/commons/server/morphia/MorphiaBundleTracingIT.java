@@ -10,7 +10,10 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
 import io.opentracing.tag.Tags;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -56,6 +59,32 @@ public class MorphiaBundleTracingIT {
                 .flatMap(Set::stream)
                 .filter(Tags.DB_STATEMENT.getKey()::equals))
         .isNotEmpty();
+  }
+
+  @Test
+  public void shouldNotTracePersonalData() {
+    Datastore datastore = getDatastore();
+    Person person = new Person().setAge(18).setName("Max");
+    datastore.save(person);
+
+    MockTracer tracer = getMockTracer();
+    assertThat(tracer.finishedSpans())
+        .extracting(MockSpan::operationName)
+        .contains("createIndexes", "insert");
+    List<String> dbStatements =
+        tracer.finishedSpans().stream()
+            .map(MockSpan::tags)
+            .map(Map::entrySet)
+            .flatMap(Set::stream)
+            .filter(e -> Tags.DB_STATEMENT.getKey().equals(e.getKey()))
+            .map(Map.Entry::getValue)
+            .map(Object::toString)
+            .collect(Collectors.toList());
+    assertThat(dbStatements)
+        .anyMatch(v -> v.contains("\"name\": \"…\""))
+        .anyMatch(v -> v.contains("\"age\": \"…\""))
+        .noneMatch(v -> v.contains("\"age\": 18"))
+        .noneMatch(v -> v.contains("\"name\": \"Max\""));
   }
 
   private Datastore getDatastore() {
