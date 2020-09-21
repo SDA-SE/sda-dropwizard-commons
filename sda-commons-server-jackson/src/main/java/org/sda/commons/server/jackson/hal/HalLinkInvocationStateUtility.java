@@ -104,11 +104,17 @@ public class HalLinkInvocationStateUtility {
             paramValue);
       } else {
         final QueryParam queryParam = annotatedParams.get(i).getAnnotation(QueryParam.class);
-        methodInvocationState.getQueryParams().put(queryParam.value(), paramValue);
-        LOG.debug(
-            "Saved QueryParam: '{}' with value: '{}' to current invocation state",
-            queryParam.value(),
-            paramValue);
+        if (paramValue != null) {
+          methodInvocationState.getQueryParams().put(queryParam.value(), paramValue);
+          LOG.debug(
+              "Saved QueryParam: '{}' with value: '{}' to current invocation state",
+              queryParam.value(),
+              paramValue);
+        } else {
+          LOG.debug(
+              "Ignoring QueryParam: '{}' with null-value. Won't be used for building the Link.",
+              queryParam.value());
+        }
       }
     }
   }

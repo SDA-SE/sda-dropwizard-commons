@@ -41,6 +41,13 @@ public class HalLinkProviderTest {
   }
 
   @Test
+  public void shouldProvideHalLinkForDetailedAndIgnoreQueryParamWithNullValue() {
+    final LinkResult linkResult =
+        linkTo(methodOn(TestApi.class).testMethodDetail("TEST", null, "testTheQuery"));
+    assertLinkResult(linkResult, "/testPath/TEST/detail/testTheQuery");
+  }
+
+  @Test
   public void shouldFailWithoutAnnotation() {
     assertThatThrownBy(
             () -> linkTo(methodOn(TestApi.class).testMethodWithoutPathParamAnnotation("FAIL")))
@@ -84,7 +91,7 @@ interface TestApi {
   @GET
   String testMethodDetail(
       @PathParam("testArg") String testArg,
-      @QueryParam("query") int testArgTwo,
+      @QueryParam("query") Integer testArgTwo,
       @PathParam("testArg2") String query);
 
   @Path("/testPath")
