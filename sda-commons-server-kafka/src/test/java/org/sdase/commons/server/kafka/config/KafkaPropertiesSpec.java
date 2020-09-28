@@ -1,6 +1,7 @@
 package org.sdase.commons.server.kafka.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Properties;
 import org.junit.Test;
@@ -93,5 +94,40 @@ public class KafkaPropertiesSpec {
     assertThat(props.getProperty("custom.property")).isEqualTo("custom.property.value");
     assertThat(props.getProperty("sasl.jaas.config")).isEqualTo("custom.sasl.jaas.config");
     assertThat(props.getProperty("sasl.mechanism")).isEqualTo("SCRAM-SHA-512");
+  }
+
+  @Test
+  public void itShouldBuildSaslStringCorrectlyForSCRAM() {
+    KafkaConfiguration config = new KafkaConfiguration();
+
+    Security sec = new Security();
+    sec.setPassword("password");
+    sec.setUser("user");
+    sec.setSaslMechanism("SCRAM-SHA-512");
+
+    config.setSecurity(sec);
+
+    Properties props = KafkaProperties.forProducer(config);
+
+    final String saslJaasConfig =
+        "org.apache.kafka.common.security.scram.ScramLoginModule required username='user' password='password';";
+    assertThat(props.getProperty("sasl.jaas.config")).isEqualTo(saslJaasConfig);
+  }
+
+  @Test
+  public void itShouldThrowForUnknownSaslMechanism() {
+    KafkaConfiguration config = new KafkaConfiguration();
+
+    Security sec = new Security();
+    sec.setPassword("password");
+    sec.setUser("user");
+    sec.setProtocol(ProtocolType.SASL_SSL);
+    sec.setSaslMechanism("OAUTHBEARER");
+
+    config.setSecurity(sec);
+
+    assertThatThrownBy(() -> KafkaProperties.forProducer(config))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Unsupported SASL mechanism OAUTHBEARER");
   }
 }
