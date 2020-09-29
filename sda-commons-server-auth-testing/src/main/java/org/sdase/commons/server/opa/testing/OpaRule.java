@@ -1,6 +1,7 @@
 package org.sdase.commons.server.opa.testing;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.absent;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
@@ -112,7 +113,8 @@ public class OpaRule extends ExternalResource {
                   matchingJsonPath("$.input.path", equalToJson(getJson(builder.paths))));
 
       if (builder.matchJWT) {
-        requestPattern.withRequestBody(matchingJsonPath("$.input.jwt", equalTo(builder.jwt)));
+        requestPattern.withRequestBody(
+            matchingJsonPath("$.input.jwt", builder.jwt != null ? equalTo(builder.jwt) : absent()));
       }
     }
 
@@ -281,7 +283,8 @@ public class OpaRule extends ExternalResource {
         mappingBuilder = matchInput(httpMethod, paths);
 
         if (matchJWT) {
-          mappingBuilder.withRequestBody(matchingJsonPath("$.input.jwt", equalTo(jwt)));
+          mappingBuilder.withRequestBody(
+              matchingJsonPath("$.input.jwt", jwt != null ? equalTo(jwt) : absent()));
         }
       }
 
