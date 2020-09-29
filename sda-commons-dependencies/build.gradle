@@ -46,10 +46,7 @@ dependencies {
     api "org.awaitility:awaitility:4.0.3"
 
     // sda-commons-client-jersey-wiremock-testing
-    api "com.github.tomakehurst:wiremock-jre8:2.21.0"
-    api "org.ow2.asm:asm:8.0.1", {
-      because "internal conflict in wiremock-jre8"
-    }
+    api "com.github.tomakehurst:wiremock-jre8:2.27.2"
 
     // sda-commons-server-asyncapi
     api "com.kjetland:mbknor-jackson-jsonschema_2.12:1.0.39"
