@@ -35,7 +35,7 @@ dependencies {
   // add dropwizard-dependencies for Dropwizard 2.x.y
 
   constraints {
-    api "com.auth0:java-jwt:3.10.3"
+    api "com.auth0:java-jwt:3.11.0"
     api "com.github.database-rider:rider-core:1.2.9" // latest version that supports Parameterized tests: https://github.com/database-rider/database-rider/issues/104
     api "org.postgresql:postgresql:42.2.5"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
