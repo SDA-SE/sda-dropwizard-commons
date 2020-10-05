@@ -12,17 +12,22 @@ dependencies {
 
   compile 'org.apache.kafka:kafka_2.12', {
     exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    exclude group: 'org.slf4j', module: 'slf4j-api'
     exclude group: 'com.101tec', module: 'zkclient'
   }
 
   compile 'com.101tec:zkclient', {
     exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    exclude group: 'org.slf4j', module: 'slf4j-api'
   }
 
   compile "org.apache.zookeeper:zookeeper", {
+    exclude group: 'org.slf4j', module: 'slf4j-api'
     exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     exclude group: 'log4j', module: 'log4j'
   }
+
+  compile 'org.slf4j:slf4j-api'
 
   compile 'org.awaitility:awaitility'
 

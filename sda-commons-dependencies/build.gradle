@@ -15,8 +15,8 @@ ext {
   weldVersion = '3.1.5.Final'
   openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.21.0'
-  scalaVersion = '2.12.8' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
-  kafkaVersion = '2.2.1' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
+  scalaVersion = '2.12.11' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
+  kafkaVersion = '2.6.0'
 }
 
 dependencies {
@@ -39,6 +39,9 @@ dependencies {
     }
     api "org.jboss.logging:jboss-logging:3.4.1.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
+    }
+    api "org.scala-lang.modules:scala-java8-compat_2.12:0.9.1", {
+      because "conflict between org.apache.kafka:kafka_2.12 and io.findify:s3mock_2.12"
     }
     api "org.yaml:snakeyaml:1.26", {
       because "conflict between com.github.ftrossbach:club-topicana-core and com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
@@ -146,7 +149,7 @@ dependencies {
     // Kafka
     api "org.apache.kafka:kafka_2.12:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.4.10"
+    api "org.apache.zookeeper:zookeeper:3.6.2"
     api "com.101tec:zkclient:0.11"
     api "org.apache.curator:curator-test:2.12.0"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
