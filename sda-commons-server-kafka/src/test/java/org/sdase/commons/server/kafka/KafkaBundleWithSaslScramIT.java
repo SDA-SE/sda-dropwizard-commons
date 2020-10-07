@@ -6,8 +6,9 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
+import com.salesforce.kafka.test.SharedKafkaTestResourceScram;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
-import com.salesforce.kafka.test.listeners.SaslPlainListener;
+import com.salesforce.kafka.test.listeners.SaslScramListener;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,19 +28,19 @@ import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.testing.SystemPropertyRule;
 
-public class KafkaBundleWithSaslPlainIT {
+public class KafkaBundleWithSaslScramIT {
   private static final CleanupJaasConfigurationRule CLEANUP = new CleanupJaasConfigurationRule();
 
   private static final SystemPropertyRule PROP =
       new SystemPropertyRule()
           .setProperty(
               JaasUtils.JAVA_LOGIN_CONFIG_PARAM,
-              KafkaBundleWithSaslPlainIT.class.getResource("/sasl-jaas.conf").getFile());
+              KafkaBundleWithSaslScramIT.class.getResource("/sasl-scram-jaas.conf").getFile());
 
   private static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResource()
+      new SharedKafkaTestResourceScram()
           .registerListener(
-              new SaslPlainListener().withUsername("kafkaclient").withPassword("client-secret"));
+              new SaslScramListener().withUsername("kafkaclient").withPassword("client-secret"));
 
   private static final DropwizardAppRule<KafkaTestConfiguration> DW =
       new DropwizardAppRule<>(
@@ -48,7 +49,8 @@ public class KafkaBundleWithSaslPlainIT {
           config("kafka.brokers", KAFKA::getKafkaConnectString),
           config("kafka.security.user", "kafkaclient"),
           config("kafka.security.password", "client-secret"),
-          config("kafka.security.protocol", "SASL_PLAINTEXT"));
+          config("kafka.security.protocol", "SASL_PLAINTEXT"),
+          config("kafka.security.saslMechanism", "SCRAM-SHA-512"));
 
   @ClassRule
   public static final TestRule CHAIN =
