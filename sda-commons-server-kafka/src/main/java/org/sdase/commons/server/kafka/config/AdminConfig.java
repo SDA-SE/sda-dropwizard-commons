@@ -1,7 +1,9 @@
 package org.sdase.commons.server.kafka.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdminConfig {
 
@@ -10,6 +12,8 @@ public class AdminConfig {
   private List<String> adminEndpoint = new ArrayList<>();
 
   private Security adminSecurity = new Security();
+
+  private Map<String, String> config = new HashMap<>();
 
   public int getAdminClientRequestTimeoutMs() {
     return adminClientRequestTimeoutMs;
@@ -33,5 +37,13 @@ public class AdminConfig {
 
   public void setAdminSecurity(Security adminSecurity) {
     this.adminSecurity = adminSecurity;
+  }
+
+  public Map<String, String> getConfig() {
+    return config;
+  }
+
+  public void setConfig(Map<String, String> config) {
+    this.config = config;
   }
 }
