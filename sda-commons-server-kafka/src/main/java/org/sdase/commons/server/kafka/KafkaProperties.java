@@ -86,6 +86,7 @@ public class KafkaProperties extends Properties {
     props.put(
         AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG,
         configuration.getAdminConfig().getAdminClientRequestTimeoutMs());
+    props.putAll(configuration.getAdminConfig().getConfig());
     return props;
   }
 
