@@ -6,4 +6,4 @@ server:
   - type: http
     port: 0
 kafka:
-  brokers: ${BROKER_CONNECTION_STRING}
+  brokers: ${BROKER_CONNECTION_STRING:-[]}
