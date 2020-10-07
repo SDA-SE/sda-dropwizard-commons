@@ -1,5 +1,6 @@
 package org.sdase.commons.server.openapi;
 
+import static io.swagger.v3.oas.integration.api.OpenApiContext.OPENAPI_CONTEXT_ID_PREFIX;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.Validate.notBlank;
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
@@ -86,7 +87,7 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
   public void run(Configuration configuration, Environment environment) {
     // Get a new ID to register the openapi file in a unique context that is
     // not reused by another instance of this class. The context is registered on the first request
-    // to {@link OpenApiResource} (or {@link DelegatingOpenApiResource}).
+    // to {@link OpenApiResource} (or {@link ContextIdOpenApiResource}).
     String instanceId = Integer.toString(UNIQUE_ID_COUNTER.incrementAndGet());
 
     // Register a filter that adds a correct server url
@@ -114,7 +115,10 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
     // Register the resource that handles the openapi.{json|yaml} requests
     environment
         .jersey()
-        .register(new DelegatingOpenApiResource(instanceId).openApiConfiguration(oasConfig));
+        .register(
+            new ContextIdOpenApiResource()
+                .contextId(OPENAPI_CONTEXT_ID_PREFIX + instanceId)
+                .openApiConfiguration(oasConfig));
 
     // Allow CORS to access (via wildcard) from Swagger UI/editor
     String basePath = determineBasePath(configuration);
