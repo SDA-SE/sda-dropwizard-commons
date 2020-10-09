@@ -31,7 +31,10 @@ public class KafkaHealthCheck extends HealthCheck {
     logger.setLevel(Level.WARN);
 
     try (AdminClient adminClient = AdminClient.create(KafkaProperties.forAdminClient(config))) {
-      adminClient.listTopics().names().get(2, TimeUnit.SECONDS);
+      adminClient
+          .listTopics()
+          .names()
+          .get(config.getHealthCheck().getTimeoutInSeconds(), TimeUnit.SECONDS);
     } catch (Exception e) {
       LOGGER.warn("Kafka health check failed", e);
       return Result.unhealthy("Connection to broker failed within 2 seconds");

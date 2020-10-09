@@ -1,4 +1,4 @@
-package org.sdase.commons.server.kafka;
+package org.sdase.commons.server.kafka.health;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,7 +8,7 @@ import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import java.util.stream.Collectors;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.sdase.commons.server.kafka.health.KafkaHealthCheck;
+import org.sdase.commons.server.kafka.KafkaConfiguration;
 
 public class KafkaHealthCheckIT {
 
@@ -30,6 +30,7 @@ public class KafkaHealthCheckIT {
         KAFKA.getKafkaBrokers().stream()
             .map(KafkaBroker::getConnectString)
             .collect(Collectors.toList()));
+    config.getHealthCheck().setTimeoutInSeconds(5);
 
     KafkaHealthCheck check = new KafkaHealthCheck(config);
     HealthCheck.Result result = check.execute();
