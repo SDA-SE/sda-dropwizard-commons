@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Map;
 import org.sdase.commons.server.kafka.config.AdminConfig;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
+import org.sdase.commons.server.kafka.config.HealthCheckConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.config.Security;
 import org.sdase.commons.server.kafka.config.TopicConfig;
 
-/** Subclass of Dropwizard Configuration class to hold any values necessary to connect to Kafka */
+/** Class to hold any values necessary to connect to Kafka */
 public class KafkaConfiguration {
 
   private boolean disabled = false;
@@ -29,6 +30,8 @@ public class KafkaConfiguration {
   private Security security = new Security();
 
   private AdminConfig adminConfig = new AdminConfig();
+
+  private HealthCheckConfig healthCheck = new HealthCheckConfig();
 
   public List<String> getBrokers() {
     return brokers;
@@ -92,5 +95,14 @@ public class KafkaConfiguration {
 
   public void setAdminConfig(AdminConfig adminConfig) {
     this.adminConfig = adminConfig;
+  }
+
+  public HealthCheckConfig getHealthCheck() {
+    return healthCheck;
+  }
+
+  public KafkaConfiguration setHealthCheck(HealthCheckConfig healthCheck) {
+    this.healthCheck = healthCheck;
+    return this;
   }
 }
