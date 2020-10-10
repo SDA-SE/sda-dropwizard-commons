@@ -38,12 +38,12 @@ jobs:
         if: always()
         run: ./gradlew -x test testReport
 
-      # TODO: add retention policy when it is supported (https://github.com/actions/upload-artifact/issues/34)
       - uses: actions/upload-artifact@v1
         if: always()
         with:
           name: ${{ matrix.os }}-${{ matrix.java_version }}-test-results
           path: build/reports/allTests
+          retention-days: 7
 
       - name: Sonarcloud
         # do not execute for PRs that origin from forks since we are missing the secrets for the scan
