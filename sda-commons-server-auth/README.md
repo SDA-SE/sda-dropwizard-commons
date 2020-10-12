@@ -195,7 +195,10 @@ Please be aware while a service might only consider one value of a specific head
 Consider this in your policy when you want to make sure you authorize on the same value that a service might use to evaluate the output.
 
 These [inputs](./src/main/java/org/sdase/commons/server/opa/filter/model/OpaInput.java) can be accessed inside a policy `.rego`-file in this way:
-```
+```rego
+# each policy lies in a package that is referenced in the configuration of the OpaBundle
+package example
+
 # decode the JWT as new variable 'token'
 token = {"payload": payload} {
     not input.jwt == null
@@ -206,8 +209,8 @@ token = {"payload": payload} {
 default allow = false
 
 allow {
-    # allow if path match '/contracts' 
-    input.path = ["contracts"]
+    # allow if path match '/contracts/:anyid' 
+    input.path = ["contracts", _]
 
     # allow if request method 'GET' is used
     input.httpMethod == "GET"
@@ -220,22 +223,26 @@ allow {
 }
 
 # set some example constraints 
-constraint1 := true
-constraint2 := [ "v2.1", "v2.2" ]
+constraint1 := true                # always true
+constraint2 := [ "v2.1", "v2.2" ]  # always an array of "v2.1" and "v2.2"
+constraint3[token.payload.sub].    # always a set that contains the 'sub' claim from the token
+                                   # or is empty if no token is present
+
 ```
 
-The response consists of two parts, the overall `allow` decision and optional rules that represent constraints to limit data access
-within the service. The constraints are fully service dependent and MUST be applied when querying the database or
-filtering received data. 
+The response consists of two parts: The overall `allow` decision, and optional rules that represent _constraints_ to limit data access
+within the service. These constraints are fully service dependent and MUST be applied when querying the database or
+filtering received data.
 
 The following listing presents a sample OPA result with a positive allow decision and two constraints, the first with boolean value and second
 with a list of string values.
-```
+```json
 {
   "result": {
     "allow": true,
     "constraint1": true,
-    "constraint2": [ "v2.1", "v2.2" ]
+    "constraint2": [ "v2.1", "v2.2" ],
+    "constraint3": ["my-sub"]
   }
 }
 ```
@@ -247,6 +254,9 @@ public class ConstraintModel {
   private boolean constraint1;
 
   private List<String> constraint2;
+  
+  // could also be a Set<String>
+  private List<String> constraint3;
 
 }
 ```
@@ -259,20 +269,17 @@ Beside the JWT, the constraints are included in this principal. The `OpaJwtPrinc
 method to parse the constraints JSON string to a Java object.
 The [`OpaJwtPrincipal`](./src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) can be 
 injected as field using `@Context` in 
-[request scoped beans like endpoint implementations](../sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaJwtPrincipalEndpoint.java).
-
-The principal can be accessed from the `SecurityContext`.
+[request scoped beans like endpoint implementations](../sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaJwtPrincipalEndpoint.java) or accessed from the `SecurityContext`.
 
 ```java
 @Path("/secure")
 public class SecureEndPoint {
 
    @Context
-   private SecurityContext securityContext;
+   private OpaJwtPrincipal opaJwtPrincipal;
 
    @GET
    public Response getSomethingSecure() {
-      OpaJwtPrincipal opaJwtPrincipal = (OpaJwtPrincipal) securityContext.getUserPrincipal();
       // ...
    }
 }
@@ -280,6 +287,8 @@ public class SecureEndPoint {
 
 To activate the OPA integration in an application, the bundle has to be added to the application. The Kubernetes file of the 
 service must also be adjusted to start OPA as sidecar.
+
+> If you use the SdaPlatformBundle, there is a [more convenient way to enable OPA support](../sda-commons-server-starter).
 
 ```java
 public class MyApplication extends Application<MyConfiguration> {
