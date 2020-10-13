@@ -2,10 +2,6 @@ package org.sdase.commons.server.kafka;
 
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
-import com.github.ftrossbach.club_topicana.core.ComparisonResult;
-import com.github.ftrossbach.club_topicana.core.EvaluationException;
-import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
-import com.github.ftrossbach.club_topicana.core.MismatchedTopicConfigException;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -49,6 +45,10 @@ import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 import org.sdase.commons.server.kafka.prometheus.KafkaConsumerMetrics;
 import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
+import org.sdase.commons.server.kafka.topicana.ComparisonResult;
+import org.sdase.commons.server.kafka.topicana.EvaluationException;
+import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
+import org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException;
 import org.sdase.commons.server.kafka.topicana.TopicComparer;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 import org.slf4j.Logger;

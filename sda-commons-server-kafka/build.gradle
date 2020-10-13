@@ -8,24 +8,7 @@ buildscript {
 dependencies {
   compile project(':sda-commons-server-dropwizard')
 
-  compile ('com.github.ftrossbach:club-topicana-core') {
-    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-    exclude group: 'org.apache.zookeeper', module: 'zookeeper'
-    exclude group: 'org.apache.kafka', module: 'kafka_2.12'
-    exclude group: 'org.apache.kafka', module: 'kafka_2.11'
-    exclude group: 'org.apache.kafka', module: 'kafka-clients'
-  }
-
   compile "org.apache.kafka:kafka-clients"
-
-  compile "com.101tec:zkclient", {
-    exclude group: 'org.apache.zookeeper', module: 'zookeeper'
-  }
-
-  compile "org.apache.zookeeper:zookeeper", {
-    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-    exclude group: 'log4j', module: 'log4j'
-  }
 
   compile 'io.prometheus:simpleclient'
 
