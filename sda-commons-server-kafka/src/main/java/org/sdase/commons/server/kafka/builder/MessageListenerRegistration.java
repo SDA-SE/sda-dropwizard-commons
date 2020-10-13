@@ -1,6 +1,5 @@
 package org.sdase.commons.server.kafka.builder;
 
-import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -8,6 +7,7 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
+import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
 public class MessageListenerRegistration<K, V> {
@@ -100,7 +100,7 @@ public class MessageListenerRegistration<K, V> {
 
     /**
      * Define optional step to process a configuration check of the topic. If the topic differs,
-     * a @{@link com.github.ftrossbach.club_topicana.core.MismatchedTopicConfigException} will be
+     * a @{@link org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException} will be
      * thrown.
      *
      * @return builder

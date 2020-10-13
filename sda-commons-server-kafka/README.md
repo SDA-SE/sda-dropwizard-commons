@@ -15,13 +15,6 @@ Add the following dependency:
 compile 'org.sdase.commons:sda-commons-server-kafka:<current-version>'
 ```
 
-**Dependencies**
-
-| Group                        | Name                    | Version     | Description                  |
-|------------------------------|-------------------------|-------------|------------------------------|
-| `org.apache.kafka`           | `kafka-clients`         | 1.1.1       | Client API for Apache Kafka  |
-| `com.github.ftrossbach`      | `club-topicana-core`    | 0.1.0       | Helper for Topic description | 
-
 **Bootstrap**
 
 The bundle got enhanced to allow more control and flexibility how Kafka messages are consumed and which commit strategy is used. How to use

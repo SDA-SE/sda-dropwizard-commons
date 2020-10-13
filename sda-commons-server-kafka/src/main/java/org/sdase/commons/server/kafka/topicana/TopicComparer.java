@@ -16,9 +16,6 @@ package org.sdase.commons.server.kafka.topicana;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-import com.github.ftrossbach.club_topicana.core.ComparisonResult;
-import com.github.ftrossbach.club_topicana.core.EvaluationException;
-import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +33,7 @@ import org.sdase.commons.server.kafka.KafkaConfiguration;
 import org.sdase.commons.server.kafka.KafkaProperties;
 
 /**
- * This is a copy of the original {@link com.github.ftrossbach.club_topicana.core.TopicComparer}
+ * This is a copy of the original {@code com.github.ftrossbach.club_topicana.core.TopicComparer}
  *
  * <p>Changes made:
  *
