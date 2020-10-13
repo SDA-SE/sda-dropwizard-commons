@@ -38,7 +38,7 @@ jobs:
         if: always()
         run: ./gradlew -x test testReport
 
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2.2.0
         if: always()
         with:
           name: ${{ matrix.os }}-${{ matrix.java_version }}-test-results
