@@ -80,6 +80,7 @@ public void initialize(Bootstrap<Configuration> bootstrap) {
 }
 ```
 
+### JSON Logging
 To enable [JSON logging](https://www.dropwizard.io/en/latest/manual/core.html#logging), set the environment variable `ENABLE_JSON_LOGGING` to `"true"`.
 We recommend JSON logging in production as they are better parsable by tools.
 However they are hard to read for human beings, so better deactivate them when working with a service locally.

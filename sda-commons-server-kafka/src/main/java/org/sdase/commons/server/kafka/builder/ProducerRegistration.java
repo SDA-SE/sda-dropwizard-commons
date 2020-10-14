@@ -1,10 +1,10 @@
 package org.sdase.commons.server.kafka.builder;
 
-import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
 import javax.validation.constraints.NotNull;
 import org.apache.kafka.common.serialization.Serializer;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.exception.TopicMissingException;
+import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
 public class ProducerRegistration<K, V> {

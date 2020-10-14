@@ -1,7 +1,5 @@
 package org.sdase.commons.server.kafka.topicana;
 
-import com.github.ftrossbach.club_topicana.core.ExpectedTopicConfiguration;
-
 public class TopicConfigurationBuilder {
 
   private TopicConfigurationBuilder() {
