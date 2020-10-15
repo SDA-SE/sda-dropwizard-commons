@@ -124,7 +124,7 @@ dependencies {
     api "com.salesforce.kafka.test:kafka-junit4:3.0.1"
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0"
     api "io.findify:s3mock_2.12:0.2.6"
-    api "junit:junit:4.13"
+    api "junit:junit:4.13.1"
     api "net.javacrumbs.json-unit:json-unit-assertj:2.18.1"
     api "org.assertj:assertj-core:3.16.1"
     api "org.awaitility:awaitility:4.0.3"
