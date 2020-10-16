@@ -38,6 +38,7 @@ public class KafkaExampleConsumerApplication extends Application<KafkaExampleCon
 
     createExampleMessageListener(configuredObjectMapper);
     createExampleMessageListenerWithConfiguration();
+    createExampleMessageListenerWithClasses();
   }
 
   /**
@@ -91,6 +92,22 @@ public class KafkaExampleConsumerApplication extends Application<KafkaExampleCon
             .withListenerStrategy(
                 new AutocommitMLS<>(
                     record -> receivedLongs.add(record.value()),
+                    new IgnoreAndProceedErrorHandler<>()))
+            .build());
+  }
+
+  /** Example3: */
+  private void createExampleMessageListenerWithClasses() {
+    kafka.createMessageListener(
+        MessageListenerRegistration.builder()
+            .withDefaultListenerConfig()
+            .forTopicConfigs(Collections.singletonList(kafka.getTopicConfiguration("example0")))
+            .withDefaultConsumer()
+            .withKeyClass(Key.class)
+            .withValueClass(Value.class)
+            .withListenerStrategy(
+                new AutocommitMLS<>(
+                    record -> receivedMessages.add(record.value()),
                     new IgnoreAndProceedErrorHandler<>()))
             .build());
   }

@@ -1,9 +1,12 @@
 package org.sdase.commons.server.kafka.builder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.validation.constraints.NotNull;
 import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.exception.TopicMissingException;
+import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
@@ -104,6 +107,8 @@ public class ProducerRegistration<K, V> {
      * @return builder
      */
     KeySerializerBuilder<K, V> withProducerConfig(String name);
+
+    KeySerializerBuilder<K, V> withObjectMapper(ObjectMapper objectMapper);
   }
 
   public interface KeySerializerBuilder<K, V> {
@@ -115,6 +120,8 @@ public class ProducerRegistration<K, V> {
      */
     <K2> ValueSerializerBuilder<K2, V> withKeySerializer(Serializer<K2> keySerializer);
 
+    <K2> ValueSerializerBuilder<K2, V> withKeyClass(Class<K2> keyClass);
+
     /**
      * @param valueSerializer define a new value serializer
      * @param <V2> the Java type of the message value
@@ -122,13 +129,15 @@ public class ProducerRegistration<K, V> {
      */
     <V2> FinalBuilder<K, V2> withValueSerializer(Serializer<V2> valueSerializer);
 
+    <V2> FinalBuilder<K, V2> withValueClass(Class<V2> valueClass);
+
     ProducerRegistration<K, V> build();
   }
 
   public static class ValueSerializerBuilder<K, V> {
 
-    private InitialBuilder<K, V> initialBuilder;
-    private Serializer<K> keySerializer;
+    private final InitialBuilder<K, V> initialBuilder;
+    private final Serializer<K> keySerializer;
 
     private ValueSerializerBuilder(
         InitialBuilder<K, V> initialBuilder, Serializer<K> keySerializer) {
@@ -146,6 +155,14 @@ public class ProducerRegistration<K, V> {
           InitialBuilder.clone(initialBuilder), keySerializer, valueSerializer);
     }
 
+    @SuppressWarnings("unchecked")
+    public <V2> FinalBuilder<K, V2> withValueClass(Class<V2> valueClass) {
+      return new FinalBuilder<>(
+          InitialBuilder.clone(initialBuilder),
+          keySerializer,
+          (Serializer<V2>) getSerializer(valueClass, initialBuilder.objectMapper));
+    }
+
     public ProducerRegistration<K, V> build() {
       return ProducerRegistration.build(initialBuilder, keySerializer, null);
     }
@@ -153,9 +170,9 @@ public class ProducerRegistration<K, V> {
 
   public static class FinalBuilder<K, V> {
 
-    private InitialBuilder<K, V> initialBuilder;
-    private Serializer<K> keySerializer;
-    private Serializer<V> valueSerializer;
+    private final InitialBuilder<K, V> initialBuilder;
+    private final Serializer<K> keySerializer;
+    private final Serializer<V> valueSerializer;
 
     private FinalBuilder(
         InitialBuilder<K, V> initialBuilder,
@@ -190,6 +207,7 @@ public class ProducerRegistration<K, V> {
     private boolean createTopicIfMissing = false;
     private ProducerConfig producerConfig;
     private String producerName = null;
+    private ObjectMapper objectMapper;
 
     private InitialBuilder() {}
 
@@ -215,8 +233,21 @@ public class ProducerRegistration<K, V> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public <K2> ValueSerializerBuilder<K2, V> withKeyClass(Class<K2> keyClass) {
+      return (ValueSerializerBuilder<K2, V>)
+          withKeySerializer(getSerializer(keyClass, objectMapper));
+    }
+
+    @Override
     public <V1> FinalBuilder<K, V1> withValueSerializer(Serializer<V1> valueSerializer) {
       return new FinalBuilder<>(InitialBuilder.clone(this), null, valueSerializer);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <V2> FinalBuilder<K, V2> withValueClass(Class<V2> valueClass) {
+      return (FinalBuilder<K, V2>) withValueSerializer(getSerializer(valueClass, objectMapper));
     }
 
     @Override
@@ -253,6 +284,20 @@ public class ProducerRegistration<K, V> {
     @Override
     public ProducerRegistration<K, V> build() {
       return ProducerRegistration.build(this, null, null);
+    }
+
+    @Override
+    public KeySerializerBuilder<K, V> withObjectMapper(ObjectMapper objectMapper) {
+      this.objectMapper = objectMapper;
+      return this;
+    }
+  }
+
+  private static Serializer<?> getSerializer(Class<?> clazz, ObjectMapper objectMapper) {
+    if (clazz.isAssignableFrom(String.class)) {
+      return new StringSerializer();
+    } else {
+      return new KafkaJsonSerializer<>(objectMapper);
     }
   }
 

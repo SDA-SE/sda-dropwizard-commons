@@ -2,16 +2,12 @@ package org.sdase.commons.server.kafka;
 
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -30,6 +26,8 @@ import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
@@ -45,12 +43,9 @@ import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 import org.sdase.commons.server.kafka.prometheus.KafkaConsumerMetrics;
 import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
-import org.sdase.commons.server.kafka.topicana.ComparisonResult;
-import org.sdase.commons.server.kafka.topicana.EvaluationException;
-import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
-import org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException;
-import org.sdase.commons.server.kafka.topicana.TopicComparer;
-import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
+import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
+import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
+import org.sdase.commons.server.kafka.topicana.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -529,6 +524,22 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       newConfig.put(key, newValue);
     }
     consumerConfig.setConfig(newConfig);
+  }
+
+  private static Serializer<?> getSerializer(Class<?> clazz, ObjectMapper objectMapper) {
+    if (clazz.isAssignableFrom(String.class)) {
+      return new StringSerializer();
+    } else {
+      return new KafkaJsonSerializer<>(objectMapper);
+    }
+  }
+
+  private static Deserializer<?> getDeserializer(Class<?> clazz, ObjectMapper objectMapper) {
+    if (clazz.isAssignableFrom(String.class)) {
+      return new StringDeserializer();
+    } else {
+      return new KafkaJsonDeserializer<>(objectMapper, clazz);
+    }
   }
 
   /** Initial checks. Configuration mus be initialized */

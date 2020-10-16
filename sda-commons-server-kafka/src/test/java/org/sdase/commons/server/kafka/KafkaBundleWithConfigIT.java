@@ -821,6 +821,35 @@ public class KafkaBundleWithConfigIT {
   }
 
   @Test
+  public void shouldCreateSeveralInstancesOfConsumerWithClass() {
+    String topic = "shouldCreateSeveralInstancesOfConsumer";
+    // when
+    List<MessageListener<SimpleEntity, String>> listener =
+        kafkaBundle.createMessageListener(
+            MessageListenerRegistration.builder()
+                .withListenerConfig(ListenerConfig.builder().build(2))
+                .forTopic(topic)
+                .withConsumerConfig(ConsumerConfig.builder().withClientId("myclient").build())
+                .withKeyClass(SimpleEntity.class)
+                .withValueClass(String.class)
+                .withListenerStrategy(
+                    new SyncCommitMLS<>(
+                        x -> {
+                          if (x.key() != null && x.value() != null) {
+                            resultsString.add(x.value());
+                          }
+                        },
+                        new IgnoreAndProceedErrorHandler<>()))
+                .build());
+
+    // then
+    Set<String> clientIds = new HashSet<>();
+    clientIds.add(KafkaHelper.getClientId(listener.get(0).getConsumer()));
+    clientIds.add(KafkaHelper.getClientId(listener.get(1).getConsumer()));
+    assertThat(clientIds).containsExactlyInAnyOrder("myclient-0", "myclient-1");
+  }
+
+  @Test
   public void shouldSetProducerNameCorrectlyWithProducerConfig() {
     try (KafkaProducer<String, String> p1 =
         kafkaBundle.createProducer(

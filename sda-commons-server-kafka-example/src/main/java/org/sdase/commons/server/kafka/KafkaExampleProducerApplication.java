@@ -22,6 +22,7 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
    */
   private MessageProducer<Key, Value> messageProducer;
   private MessageProducer<Long, Long> messageProducerWithConfig;
+  private MessageProducer<Key, Value> messageProducerWithConfig2;
 
   @Override
   public void initialize(Bootstrap<KafkaExampleConfiguration> bootstrap) {
@@ -37,6 +38,7 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
 
     messageProducer = createProducer(configuredObjectMapper);
     messageProducerWithConfig = createProducerWithConfig();
+    messageProducerWithConfig2 = createAndRegisterProducerWithConfig(configuredObjectMapper);
   }
 
   /**
@@ -69,6 +71,23 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
             .withDefaultProducer()
             .withKeySerializer(new LongSerializer())
             .withValueSerializer(new LongSerializer())
+            .build());
+  }
+
+  /**
+   * Example 3: creates a new producer with configured topic with less boiler plate
+   *
+   * @param configuredObjectMapper
+   * @return
+   */
+  private MessageProducer<Key, Value> createAndRegisterProducerWithConfig(
+      ObjectMapper configuredObjectMapper) {
+    return kafka.registerProducer(
+        ProducerRegistration.builder()
+            .forTopic(kafka.getTopicConfiguration("example1"))
+            .withDefaultProducer()
+            .withKeyClass(Key.class)
+            .withValueClass(Value.class)
             .build());
   }
 

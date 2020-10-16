@@ -1,12 +1,15 @@
 package org.sdase.commons.server.kafka.builder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
+import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
@@ -139,6 +142,8 @@ public class MessageListenerRegistration<K, V> {
     <K2> ValueDeserializerForDefinedKeyTypeBuilder<K2> withKeyDeserializer(
         Deserializer<K2> keyDeserializer);
 
+    <K2> ValueDeserializerForDefinedKeyTypeBuilder<K2> withKeyClass(Class<K2> keyClass);
+
     /**
      * Define the value deserializer. This overwrites configuration from ConsumerConfig
      *
@@ -149,6 +154,8 @@ public class MessageListenerRegistration<K, V> {
     <V2> ListenerStrategyForDefinedValueTypeBuilder<V2> withValueDeserializer(
         Deserializer<V2> valueDeserializer);
 
+    <V2> ListenerStrategyForDefinedValueTypeBuilder<V2> withValueClass(Class<V2> valueClass);
+
     /**
      * @param strategy the strategy how consumed messages are handled.
      * @param <K2> the Java type of the message key
@@ -156,6 +163,8 @@ public class MessageListenerRegistration<K, V> {
      * @return builder
      */
     <K2, V2> FinalBuilder<K2, V2> withListenerStrategy(MessageListenerStrategy<K2, V2> strategy);
+
+    KeyDeserializerBuilder withObjectMapper(ObjectMapper objectMapper);
   }
 
   public interface ListenerStrategyForDefinedValueTypeBuilder<V> {
@@ -179,6 +188,8 @@ public class MessageListenerRegistration<K, V> {
      */
     <V2> ListenerStrategyBuilder<K, V2> withValueDeserializer(Deserializer<V2> valueDeserializer);
 
+    <V2> ListenerStrategyBuilder<K, V2> withValueClass(Class<V2> valueClass);
+
     /**
      * @param strategy the strategy how consumed messages are handled.
      * @param <V2> the type of the message value
@@ -189,6 +200,11 @@ public class MessageListenerRegistration<K, V> {
 
   public interface ListenerStrategyBuilder<K, V> {
     FinalBuilder<K, V> withListenerStrategy(MessageListenerStrategy<K, V> strategy);
+  }
+
+  public interface ObjectMapperBuilder<K, V> {
+
+    ListenerStrategyBuilder<K, V> withObjectMapper(ObjectMapper configuredObjectMapper);
   }
 
   public static ListenerBuilder builder() {
@@ -205,6 +221,7 @@ public class MessageListenerRegistration<K, V> {
     private ListenerConfig listenerConfig;
     private String consumerName;
     private String listenerName;
+    private ObjectMapper objectMapper;
 
     @Override
     public TopicBuilder withListenerConfig(String name) {
@@ -277,15 +294,34 @@ public class MessageListenerRegistration<K, V> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public <K2> ValueDeserializerForDefinedKeyTypeBuilder<K2> withKeyClass(Class<K2> keyClass) {
+      return new PreselectedKeyTypeValueDeserializerBuilder<>(
+          this, (Deserializer<K2>) getDeserializer(keyClass, objectMapper));
+    }
+
+    @Override
     public <V2> ListenerStrategyForDefinedValueTypeBuilder<V2> withValueDeserializer(
         Deserializer<V2> valueDeserializer) {
       return new PreselectedValueTypeListenerStrategyBuilder<>(this, valueDeserializer);
     }
 
     @Override
+    public <V2> ListenerStrategyForDefinedValueTypeBuilder<V2> withValueClass(
+        Class<V2> valueClass) {
+      return null;
+    }
+
+    @Override
     public <K2, V2> FinalBuilder<K2, V2> withListenerStrategy(
         MessageListenerStrategy<K2, V2> strategy) {
       return new FinalBuilder<>(this, null, null, strategy);
+    }
+
+    @Override
+    public KeyDeserializerBuilder withObjectMapper(ObjectMapper objectMapper) {
+      this.objectMapper = objectMapper;
+      return this;
     }
   }
 
@@ -306,6 +342,13 @@ public class MessageListenerRegistration<K, V> {
         Deserializer<V2> valueDeserializer) {
       return new PreselectedTypesListenerStrategyBuilder<>(
           initialBuilder, keyDeserializer, valueDeserializer);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <V2> ListenerStrategyBuilder<K, V2> withValueClass(Class<V2> valueClass) {
+      return withValueDeserializer(
+          (Deserializer<V2>) getDeserializer(valueClass, initialBuilder.objectMapper));
     }
 
     @Override
@@ -386,6 +429,14 @@ public class MessageListenerRegistration<K, V> {
       build.strategy = messageListenerStrategy;
 
       return build;
+    }
+  }
+
+  private static Deserializer<?> getDeserializer(Class<?> clazz, ObjectMapper objectMapper) {
+    if (clazz.isAssignableFrom(String.class)) {
+      return new StringDeserializer();
+    } else {
+      return new KafkaJsonDeserializer<>(objectMapper, clazz);
     }
   }
 }
