@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 import org.sdase.commons.server.kafka.KafkaProperties;
 
-public class KafkaPropertiesSpec {
+public class KafkaPropertiesTest {
   @Test
   public void itShouldUseGlobalConfig() {
     KafkaConfiguration config = new KafkaConfiguration();
