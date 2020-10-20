@@ -469,6 +469,39 @@ OR
       sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
 ```
 
+#### Custom Certificate Authority and Client Certificates
+
+`SSL` or `SASL_SSL` can also use Kafka brokers that have a self-signed or private-CA certificate. 
+Use the Java-default system properties `javax.net.ssl.trustStore` and `javax.net.ssl.trustStorePassword` to provide the certificates (see [`KafkaBundleWithSslTruststoreIT`](./src/test/java/org/sdase/commons/server/kafka/KafkaBundleWithSslTruststoreIT.java)).
+
+For more control, configure the truststore only for the Kafka bundle and not for the complete JVM (see [`KafkaBundleWithSslIT`](./src/test/java/org/sdase/commons/server/kafka/KafkaBundleWithSslIT.java)): 
+
+```yaml
+  security :
+    protocol: SSL
+
+  config:
+    ssl.truststore.location: /your/truststore/location.jks
+    ssl.truststore.password: truststore-password
+```
+
+This configuration option also supports providing client certificates in a custom keystore:
+
+```yaml
+  security :
+    protocol: SSL
+
+  config:
+    # configure the truststore
+    ssl.truststore.location: /your/truststore/location.jks
+    ssl.truststore.password: truststore-password
+
+    # configure the keystore with client-certificates
+    ssl.keystore.location: /your/keystore/location.jks
+    ssl.keystore.password: keystore-password
+    ssl.key.password: cert-key-password
+```
+
 ### Configuration value defaults (extending/changing the Kafka defaults)
 This are only the defaults that are explicitly set within the code of the bundle. All other properties depends on the actual broker configuration or the Kafka defaults are used.
 
