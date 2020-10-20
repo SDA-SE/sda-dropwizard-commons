@@ -41,6 +41,10 @@ public class KafkaProperties extends Properties {
       props.put("security.protocol", configuration.getSecurity().getProtocol().name());
     }
 
+    if (configuration.getConfig() != null) {
+      props.putAll(configuration.getConfig());
+    }
+
     return props;
   }
 

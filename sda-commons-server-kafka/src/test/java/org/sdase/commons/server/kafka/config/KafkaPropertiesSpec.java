@@ -8,6 +8,31 @@ import org.sdase.commons.server.kafka.KafkaConfiguration;
 import org.sdase.commons.server.kafka.KafkaProperties;
 
 public class KafkaPropertiesSpec {
+  @Test
+  public void itShouldUseGlobalConfig() {
+    KafkaConfiguration config = new KafkaConfiguration();
+
+    config.getConfig().put("setting", "from.global");
+
+    KafkaProperties.forProducer(config).get("from.global");
+    KafkaProperties.forConsumer(config).get("from.global");
+    KafkaProperties.forAdminClient(config).get("from.global");
+  }
+
+  @Test
+  public void itShouldUseAdminConfigOverGlobalConfig() {
+    KafkaConfiguration config = new KafkaConfiguration();
+
+    AdminConfig adminConfig = new AdminConfig();
+    adminConfig.getConfig().put("setting", "from.admin");
+    config.setAdminConfig(adminConfig);
+
+    config.getConfig().put("setting", "from.global");
+
+    KafkaProperties.forProducer(config).get("from.global");
+    KafkaProperties.forConsumer(config).get("from.global");
+    KafkaProperties.forAdminClient(config).get("from.admin");
+  }
 
   @Test
   public void itShouldBuildSaslStringCorrectly() {

@@ -195,6 +195,12 @@ kafka:
     user: user
     password: password
     protocol: SASL_SSL
+
+  # Additional configuration properties that are added to all consumers, producers, and the admin client
+  # configuration key -> values as defined in the kafka documentation
+  config:
+    ssl.truststore.location: /my/truststore/location.jks
+
   # Map with consumer configurations. The key is used as name/id to address the configuration within the code. 
   consumers:
     # id/name of the consumer configuration
