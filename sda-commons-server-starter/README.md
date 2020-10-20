@@ -9,6 +9,7 @@ Apps built with the [`SdaPlatformBundle`](./src/main/java/org/sdase/commons/serv
 automatically contain
 
 - [Support for environment variables in configuration files and default console appender configuration](../sda-commons-server-dropwizard/README.md)
+- [Support for config overrides via environment variables as an alternative to system properties](../sda-commons-server-dropwizard/README.md)
 - [Trace Token support](../sda-commons-server-trace/README.md)
 - [a tolerant `ObjectMapper`, HAL support and a field filter](../sda-commons-server-jackson/README.md)
 - [Security checks on startup](../sda-commons-server-security/README.md)

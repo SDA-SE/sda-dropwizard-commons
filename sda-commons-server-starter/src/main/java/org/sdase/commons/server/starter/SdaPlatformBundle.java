@@ -21,6 +21,7 @@ import org.sdase.commons.server.cors.CorsBundle;
 import org.sdase.commons.server.cors.CorsConfigProvider;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
+import org.sdase.commons.server.dropwizard.bundles.EnvironmentVariableConfigurationBundle;
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.jaeger.JaegerBundle;
@@ -81,6 +82,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
   public void initialize(Bootstrap<?> bootstrap) {
 
     // add normal bundles
+    bootstrap.addBundle(EnvironmentVariableConfigurationBundle.builder().build());
     bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
     bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
     bootstrap.addBundle(InternalHealthCheckEndpointBundle.builder().build());

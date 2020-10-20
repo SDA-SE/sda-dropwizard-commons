@@ -74,7 +74,7 @@ The bundle sets the log threshold for the console appender to `INFO` and uses th
 Make sure to add the bundle **after the `ConfigurationSubstitutionBundle`** if it's present.
 Logging related configuration is not required by this bundle. 
 
-```
+```java
 public void initialize(Bootstrap<Configuration> bootstrap) {
     bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
 }
@@ -84,3 +84,30 @@ public void initialize(Bootstrap<Configuration> bootstrap) {
 To enable [JSON logging](https://www.dropwizard.io/en/latest/manual/core.html#logging), set the environment variable `ENABLE_JSON_LOGGING` to `"true"`.
 We recommend JSON logging in production as they are better parsable by tools.
 However they are hard to read for human beings, so better deactivate them when working with a service locally.
+
+### EnvironmentVariableConfigurationBundle
+
+The [`EnvironmentVariableConfigurationBundle`](./src/main/java/org/sdase/commons/server/dropwizard/bundles/EnvironmentVariableConfigurationBundle.java)
+allows to override configuration values with environment variables, without the need for placeholders as in ConfigurationSubstitutionBundle.
+The syntax equals the behavior of overriding configuration values with [System Properties](https://www.dropwizard.io/en/latest/manual/core.html#configuration).
+
+> Don't use this to set properties for everyday use but only for special settings that are rarely used.
+> This includes Proxy Settings or custom trust- or keystores.
+
+Example Config:
+```yaml
+database:
+  driverClass: org.postgresql.Driver
+  user: dev
+  password: s3cr3t
+  url: localhost:12345
+```
+
+Example override
+```env
+dw.database.user=prod
+dw.database.password="s3cr3t++"
+```
+
+> Note that these kinds of environment variables might not be supported in any environment, but it
+> should be usable in Docker or Kubernetes environments.
