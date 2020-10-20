@@ -21,6 +21,7 @@ public class EnvironmentRuleTest {
   @Test
   public void shouldBeSetInTest() {
     Assertions.assertThat(System.getenv("envForTesting")).isEqualTo("envForTestingValue");
+    Assertions.assertThat(System.getenv()).containsKeys("envForTesting");
   }
 
   @Test
