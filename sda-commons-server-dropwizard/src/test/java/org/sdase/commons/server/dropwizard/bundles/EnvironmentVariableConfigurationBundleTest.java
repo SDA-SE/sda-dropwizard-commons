@@ -16,6 +16,7 @@ public class EnvironmentVariableConfigurationBundleTest {
       new EnvironmentRule()
           .setEnv("dw.metrics.frequency", "5d")
           .setEnv("dw.config.my\\.property\\.value", "a")
+          .setEnv("dw.config.with..dots..property", "b")
           .setEnv("dw.arrayConfig", "one.property,two.property");
 
   public static final DropwizardAppRule<EnvTestApp.EnvConfiguration> DW =
@@ -29,7 +30,8 @@ public class EnvironmentVariableConfigurationBundleTest {
 
     assertThat(configuration.getMetricsFactory().getFrequency().toSeconds())
         .isEqualTo(5L * 24 * 60 * 60);
-    assertThat(configuration.getConfig()).containsExactly(entry("my.property.value", "a"));
+    assertThat(configuration.getConfig())
+        .containsExactly(entry("my.property.value", "a"), entry("with.dots.property", "b"));
     assertThat(configuration.getArrayConfig()).containsExactly("one.property", "two.property");
   }
 }

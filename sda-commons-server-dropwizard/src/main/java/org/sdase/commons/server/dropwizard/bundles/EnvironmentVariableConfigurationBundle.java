@@ -105,7 +105,7 @@ public class EnvironmentVariableConfigurationBundle implements ConfiguredBundle<
         final String prefName = pref.getKey();
         if (prefName.startsWith(propertyPrefix)) {
           final String configName = prefName.substring(propertyPrefix.length());
-          addOverride(node, configName, System.getenv(prefName));
+          addOverride(node, configName.replace("..", "\\."), System.getenv(prefName));
         }
       }
 
