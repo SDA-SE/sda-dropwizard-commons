@@ -11,19 +11,18 @@ implements a polling loop for Kafka consumers. The user of this bundle must only
 
 ## Usage
 Add the following dependency:
-```
+```groovy
 compile 'org.sdase.commons:sda-commons-server-kafka:<current-version>'
 ```
 
 **Bootstrap**
 
-The bundle got enhanced to allow more control and flexibility how Kafka messages are consumed and which commit strategy is used. How to use
-the old and now deprecated `KafkaBundle::registerMessageHandler` approach is documented [here](docs/deprecated.md).
+The bundle got enhanced to allow more control and flexibility how Kafka messages are consumed and which commit strategy is used.
      
 The bundle should be added as field to the application since it provides methods for the creation of `MessageProducer` and `MessageListener`.
 The Builders for `MessageListenerRegistration` and `ProducerRegistration` supports the user in the creation of these complex configurable objects. 
  
-```
+```java
 public class DemoApplication {
    private final KafkaBundle<AppConfiguration> kafkaBundle = KafkaBundle.builder().withConfigurationProvider(AppConfiguration::getKafka).build();
    private final MessageProducer<String, ProductBundle> producer;
@@ -133,7 +132,7 @@ But be aware that the `key` or `value` can be `null` in this case in both `Messa
 Another alternative is to implement your own Deserializer to have even more control and where you can potentially apply any fallback deserialization
 strategy. 
 
-```
+```java
 public class DemoApplication {
    private final KafkaBundle<AppConfiguration> kafkaBundle = KafkaBundle.builder().withConfigurationProvider(AppConfiguration::getKafka).build();
    private final MessageProducer<String, ProductBundle> producer;
@@ -184,7 +183,7 @@ kafka:
       user: user
       password: password
       protocol: SASL_SSL
-    
+
   # List of brokers to bootstrap consumer and provider connection
   brokers:
     - kafka-broker-1:9092 
@@ -195,6 +194,13 @@ kafka:
     user: user
     password: password
     protocol: SASL_SSL
+    saslMechanism: PLAIN
+
+  # Additional configuration properties that are added to all consumers, producers, and the admin client
+  # configuration key -> values as defined in the kafka documentation
+  config:
+    ssl.truststore.location: /my/truststore/location.jks
+
   # Map with consumer configurations. The key is used as name/id to address the configuration within the code. 
   consumers:
     # id/name of the consumer configuration
@@ -249,6 +255,95 @@ kafka:
       topicMissingRetryMs: 60000
       # Milliseconds to sleep between two poll intervals if no messages are available
       pollInterval: 200
+```
+
+### Security Settings
+
+There are different configuration options to connect to a Kafka Broker.
+
+#### PLAINTEXT
+
+The server uses an unencrypted connection with no authentication. 
+
+```yaml
+  security :
+    protocol: PLAINTEXT # can be omitted, default value
+```
+
+#### SSL
+
+The server uses an encrypted connection with no authentication. 
+
+```yaml
+  security :
+    protocol: SSL
+```
+
+#### SASL_PLAINTEXT
+
+The server uses an unencrypted connection with `PLAIN` authentication. 
+
+```yaml
+  security :
+    protocol: SASL_PLAINTEXT
+    saslMechanism: PLAIN # can be omitted, default value when username and password are specified
+    user: user
+    password: password
+```
+
+#### SASL_SSL
+
+The server uses an encrypted connection with `PLAIN` authentication. 
+
+```yaml
+  security :
+    protocol: SASL_SSL
+    saslMechanism: PLAIN # can be omitted, default value when username and password are specified
+    user: user
+    password: password
+```
+
+#### Other SASL mechanisms
+
+Beside `sasl.mechanism: PLAIN`, the bundle also supports `SCRAM-SHA-256` and `SCRAM-SHA-512`.
+All mechanisms can be used with both `SASL_PLAINTEXT` and `SASL_SSL`.
+
+```yaml
+  security :
+    protocol: SASL_PLAINTEXT # or SASL_SSL
+    saslMechanism: SCRAM-SHA-512 # or SCRAM-SHA-256
+    user: user
+    password: password
+```
+
+Other mechanisms can be configured by overriding the config properties.
+Note that the properties can also be configured individually for each consumer, each producer, and the admin client.
+
+```yaml
+  config:
+    sasl.mechanism: OTHER-VALUE
+    sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
+```
+
+OR
+
+```yaml
+  consumers:
+    yourConsumer:
+      config:
+        sasl.mechanism: OTHER-VALUE
+        sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
+
+  producers:
+    yourProducer:
+      config:
+        sasl.mechanism: OTHER-VALUE
+        sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
+
+  adminConfig:
+    config:
+      sasl.mechanism: OTHER-VALUE
+      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
 ```
 
 ### Configuration value defaults (extending/changing the Kafka defaults)

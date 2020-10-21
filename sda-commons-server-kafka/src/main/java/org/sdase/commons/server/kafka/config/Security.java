@@ -8,6 +8,8 @@ public class Security {
 
   private ProtocolType protocol;
 
+  private String saslMechanism = "PLAIN";
+
   public String getUser() {
     return user;
   }
@@ -30,5 +32,13 @@ public class Security {
 
   public void setProtocol(ProtocolType protocol) {
     this.protocol = protocol;
+  }
+
+  public String getSaslMechanism() {
+    return saslMechanism;
+  }
+
+  public void setSaslMechanism(String saslMechanism) {
+    this.saslMechanism = saslMechanism;
   }
 }

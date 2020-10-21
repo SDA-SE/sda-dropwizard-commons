@@ -6,8 +6,11 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.security.plain.PlainLoginModule;
+import org.apache.kafka.common.security.scram.ScramLoginModule;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.sdase.commons.server.kafka.config.Security;
 
 public class KafkaProperties extends Properties {
 
@@ -16,6 +19,31 @@ public class KafkaProperties extends Properties {
 
   private KafkaProperties() {
     //
+  }
+
+  private static Properties configureSecurity(Security security) {
+    KafkaProperties props = new KafkaProperties();
+
+    if (security == null) {
+      return props;
+    }
+
+    if (security.getProtocol() != null) {
+      props.put("security.protocol", security.getProtocol().name());
+    }
+
+    if (security.getPassword() != null && security.getUser() != null) {
+      props.put("sasl.mechanism", security.getSaslMechanism());
+      props.put(
+          "sasl.jaas.config",
+          String.format(
+              "%s required username='%s' password='%s';",
+              getLoginModule(security.getSaslMechanism()).getName(),
+              security.getUser(),
+              security.getPassword()));
+    }
+
+    return props;
   }
 
   private static KafkaProperties baseProperties(KafkaConfiguration configuration) {
@@ -27,18 +55,10 @@ public class KafkaProperties extends Properties {
           CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG,
           String.join(",", configuration.getBrokers()));
     }
-    if (configuration.getSecurity().getPassword() != null
-        && configuration.getSecurity().getUser() != null
-        && configuration.getSecurity().getProtocol() != null) {
-      props.put("sasl.mechanism", "PLAIN");
-      props.put(
-          "sasl.jaas.config",
-          "org.apache.kafka.common.security.plain.PlainLoginModule required username='"
-              .concat(configuration.getSecurity().getUser())
-              .concat("' password='")
-              .concat(configuration.getSecurity().getPassword())
-              .concat("';"));
-      props.put("security.protocol", configuration.getSecurity().getProtocol().name());
+    props.putAll(configureSecurity(configuration.getSecurity()));
+
+    if (configuration.getConfig() != null) {
+      props.putAll(configuration.getConfig());
     }
 
     return props;
@@ -62,21 +82,7 @@ public class KafkaProperties extends Properties {
         CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG,
         String.join(",", configuration.getAdminConfig().getAdminEndpoint()));
 
-    if (configuration.getAdminConfig().getAdminSecurity().getPassword() != null
-        && configuration.getAdminConfig().getAdminSecurity().getUser() != null
-        && configuration.getAdminConfig().getAdminSecurity().getProtocol() != null) {
-      props.put("sasl.mechanism", "PLAIN");
-      props.put(
-          "sasl.jaas.config",
-          "org.apache.kafka.common.security.plain.PlainLoginModule required username='"
-              .concat(configuration.getAdminConfig().getAdminSecurity().getUser())
-              .concat("' password='")
-              .concat(configuration.getAdminConfig().getAdminSecurity().getPassword())
-              .concat("';"));
-      props.put(
-          "security.protocol",
-          configuration.getAdminConfig().getAdminSecurity().getProtocol().name());
-    }
+    props.putAll(configureSecurity(configuration.getAdminConfig().getAdminSecurity()));
 
     return props;
   }
@@ -86,6 +92,7 @@ public class KafkaProperties extends Properties {
     props.put(
         AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG,
         configuration.getAdminConfig().getAdminClientRequestTimeoutMs());
+    props.putAll(configuration.getAdminConfig().getConfig());
     return props;
   }
 
@@ -104,6 +111,7 @@ public class KafkaProperties extends Properties {
 
   public static KafkaProperties forProducer(KafkaConfiguration configuration) {
     KafkaProperties props = baseProperties(configuration);
+
     props.put(ProducerConfig.ACKS_CONFIG, "all");
     props.put(ProducerConfig.RETRIES_CONFIG, "0");
     props.put(ProducerConfig.LINGER_MS_CONFIG, "0");
@@ -111,5 +119,17 @@ public class KafkaProperties extends Properties {
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
     return props;
+  }
+
+  private static Class<?> getLoginModule(String saslMechanism) {
+    switch (saslMechanism.toUpperCase()) {
+      case "PLAIN":
+        return PlainLoginModule.class;
+      case "SCRAM-SHA-256":
+      case "SCRAM-SHA-512":
+        return ScramLoginModule.class;
+      default:
+        throw new IllegalArgumentException("Unsupported SASL mechanism " + saslMechanism);
+    }
   }
 }

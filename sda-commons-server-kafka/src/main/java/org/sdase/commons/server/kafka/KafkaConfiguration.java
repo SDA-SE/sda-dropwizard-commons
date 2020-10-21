@@ -19,6 +19,8 @@ public class KafkaConfiguration {
 
   private List<String> brokers = new ArrayList<>();
 
+  private Map<String, String> config = new HashMap<>();
+
   private Map<String, ProducerConfig> producers = new HashMap<>();
 
   private Map<String, ConsumerConfig> consumers = new HashMap<>();
@@ -39,6 +41,14 @@ public class KafkaConfiguration {
 
   public void setBrokers(List<String> brokers) {
     this.brokers = brokers;
+  }
+
+  public Map<String, String> getConfig() {
+    return config;
+  }
+
+  public void setConfig(Map<String, String> config) {
+    this.config = config;
   }
 
   public Security getSecurity() {
