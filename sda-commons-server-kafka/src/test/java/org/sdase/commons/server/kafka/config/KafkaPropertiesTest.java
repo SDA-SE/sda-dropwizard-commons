@@ -15,9 +15,9 @@ public class KafkaPropertiesTest {
 
     config.getConfig().put("setting", "from.global");
 
-    KafkaProperties.forProducer(config).get("from.global");
-    KafkaProperties.forConsumer(config).get("from.global");
-    KafkaProperties.forAdminClient(config).get("from.global");
+    assertThat(KafkaProperties.forProducer(config).get("setting")).isEqualTo("from.global");
+    assertThat(KafkaProperties.forConsumer(config).get("setting")).isEqualTo("from.global");
+    assertThat(KafkaProperties.forAdminClient(config).get("setting")).isEqualTo("from.global");
   }
 
   @Test
@@ -30,9 +30,9 @@ public class KafkaPropertiesTest {
 
     config.getConfig().put("setting", "from.global");
 
-    KafkaProperties.forProducer(config).get("from.global");
-    KafkaProperties.forConsumer(config).get("from.global");
-    KafkaProperties.forAdminClient(config).get("from.admin");
+    assertThat(KafkaProperties.forProducer(config).get("setting")).isEqualTo("from.global");
+    assertThat(KafkaProperties.forConsumer(config).get("setting")).isEqualTo("from.global");
+    assertThat(KafkaProperties.forAdminClient(config).get("setting")).isEqualTo("from.admin");
   }
 
   @Test
