@@ -13,6 +13,15 @@
 SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow the patterns and specifications promoted by
 the SDA SE.
 
+>
+> ##### ⚠️ ATTENTION: Please use SDA Dropwizard Commons version 2 and newer:
+>
+> New features can only be contributed in version 2.x.x.
+> Version 1.x.x only receives critical security updates.
+> Version 1.x.x will be discontinued at the same time Dropwizard version 1.3.x is discontinued. This is [announced for 31.12.2020](https://groups.google.com/g/dropwizard-user/c/6gpDMuSb4_Y).
+> Please make sure to upgrade to version 2 as soon as possible.
+>
+
 SDA Dropwizard Commons is separated in different modules that can be combined as needed. Most of the modules require the 
 technologies that are recommended for services in the SDA Platform. These technologies include
 
