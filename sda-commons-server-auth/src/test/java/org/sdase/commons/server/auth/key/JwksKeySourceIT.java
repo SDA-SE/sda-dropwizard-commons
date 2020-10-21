@@ -58,6 +58,7 @@ public class JwksKeySourceIT {
 
     assertThat(loadedPublicKeys)
         .extracting(LoadedPublicKey::getKid)
+        .isNotEmpty()
         .doesNotContain("tk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00");
   }
 
@@ -71,6 +72,7 @@ public class JwksKeySourceIT {
 
     assertThat(loadedPublicKeys)
         .extracting(LoadedPublicKey::getKid)
+        .isNotEmpty()
         .doesNotContain("pk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00");
   }
 
