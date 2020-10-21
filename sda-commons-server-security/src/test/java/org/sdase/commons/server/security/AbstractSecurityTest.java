@@ -68,7 +68,7 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
             .map(String::trim)
             .map(String::toLowerCase)
             .collect(Collectors.toSet());
-    assertThat(allowedMethods).doesNotContain("trace");
+    assertThat(allowedMethods).isNotEmpty().doesNotContain("trace");
   }
 
   @Test
