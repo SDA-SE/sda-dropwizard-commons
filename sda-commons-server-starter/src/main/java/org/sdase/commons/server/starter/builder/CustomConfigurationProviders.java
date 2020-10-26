@@ -126,6 +126,15 @@ public interface CustomConfigurationProviders {
     PlatformBundleBuilder<C> withoutSwagger();
 
     /**
+     * Disables the Jaeger support for this application. This is useful if the {@link
+     * org.sdase.commons.server.jaeger.JaegerBundle} should be configured manually or if the
+     * ICMP port is unreachable.
+     *
+     * @return the builder
+     */
+    PlatformBundleBuilder<C> withoutJaeger();
+
+    /**
      * Sets the title of the API in the swagger documentation.
      *
      * @param title the title; not null or empty

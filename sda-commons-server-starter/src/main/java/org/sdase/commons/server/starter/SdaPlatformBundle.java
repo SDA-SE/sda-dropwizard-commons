@@ -55,6 +55,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
   private CorsBundle.FinalBuilder<C> corsBundleBuilder;
   private ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder;
   private SwaggerBundle.FinalBuilder swaggerBundleBuilder;
+  private JaegerBundle.Builder jaegerBundleBuilder;
 
   private SdaPlatformBundle(
       SecurityBundle.Builder securityBundleBuilder,
@@ -63,7 +64,8 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
       OpaBundle.OpaBuilder<C> opaBundleBuilder,
       CorsBundle.FinalBuilder<C> corsBundleBuilder,
       ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder,
-      SwaggerBundle.FinalBuilder swaggerBundleBuilder) {
+      SwaggerBundle.FinalBuilder swaggerBundleBuilder,
+      JaegerBundle.Builder jaegerBundleBuilder) {
     this.securityBundleBuilder = securityBundleBuilder;
     this.jacksonConfigurationBundleBuilder = jacksonConfigurationBundleBuilder;
     this.authBundleBuilder = authBundleBuilder;
@@ -71,6 +73,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     this.corsBundleBuilder = corsBundleBuilder;
     this.consumerTokenBundleBuilder = consumerTokenBundleBuilder;
     this.swaggerBundleBuilder = swaggerBundleBuilder;
+    this.jaegerBundleBuilder = jaegerBundleBuilder;
   }
 
   public static InitialPlatformBundleBuilder builder() {
@@ -84,7 +87,6 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
     bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
     bootstrap.addBundle(InternalHealthCheckEndpointBundle.builder().build());
-    bootstrap.addBundle(JaegerBundle.builder().build());
     bootstrap.addBundle(OpenTracingBundle.builder().build());
     bootstrap.addBundle(PrometheusBundle.builder().build());
     bootstrap.addBundle(TraceTokenBundle.builder().build());
@@ -95,6 +97,9 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     configuredBundles.add(securityBundleBuilder.build());
     if (swaggerBundleBuilder != null) {
       configuredBundles.add(swaggerBundleBuilder.build());
+    }
+    if (jaegerBundleBuilder != null) {
+      configuredBundles.add(jaegerBundleBuilder.build());
     }
     if (authBundleBuilder != null) {
       configuredBundles.add(authBundleBuilder.build());
@@ -141,6 +146,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     private boolean swaggerDisableJsonExamples = false;
     private List<String> swaggerResourcePackages = new ArrayList<>();
     private boolean withoutSwaggerBundle = false;
+    private boolean withoutJaegerBundle = false;
 
     private Builder() {}
 
@@ -155,7 +161,9 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
           opaBundleBuilder,
           corsBundleBuilder,
           consumerTokenBundleBuilder,
-          withoutSwaggerBundle ? null : createSwaggerBundleBuilder());
+          withoutSwaggerBundle ? null : createSwaggerBundleBuilder(),
+          withoutJaegerBundle ? null : createJaegerBundleBuilder()
+      );
     }
 
     // InitialBuilder
@@ -257,6 +265,12 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     @Override
     public PlatformBundleBuilder<C> withoutSwagger() {
       this.withoutSwaggerBundle = true;
+      return this;
+    }
+
+    @Override
+    public PlatformBundleBuilder<C> withoutJaeger() {
+      this.withoutJaegerBundle = true;
       return this;
     }
 
@@ -398,6 +412,10 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
         finalBuilder = finalBuilder.disableJsonExamples();
       }
       return finalBuilder;
+    }
+
+    private JaegerBundle.Builder createJaegerBundleBuilder() {
+      return JaegerBundle.builder();
     }
 
     private SwaggerBundle.FinalBuilder applySwaggerInfo(SwaggerBundle.FinalBuilder finalBuilder) {
