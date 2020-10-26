@@ -65,3 +65,37 @@ To override it with a custom name for each deployment, pass the `JAEGER_SERVICE_
 By default, sampling is configured to sample every trace.
 This is fine for testing or development, but might be to much data for production.
 Therefore specify `JAEGER_SAMPLER_TYPE` and `JAEGER_SAMPLER_PARAM` in your deployments, see the [sampler types](https://www.jaegertracing.io/docs/1.16/sampling/#client-sampling-configuration) for more information.
+
+### Disabling Jaeger Tracing
+
+If you are running your service in an environment where Jaeger is unavailable, you might want to disable the Jaeger tracing.
+While it's not a problem if sampling data can't be reported to the Jaeger backend, you might get the following warning in your logs:
+
+```
+reporters.RemoteReporter - FlushCommand execution failed! Repeated errors of this command will not be logged.
+io.jaegertracing.internal.exceptions.SenderException: Failed to flush spans.
+	at io.jaegertracing.thrift.internal.senders.ThriftSender.flush(ThriftSender.java:115)
+	at io.jaegertracing.internal.reporters.RemoteReporter$FlushCommand.execute(RemoteReporter.java:160)
+	at io.jaegertracing.internal.reporters.RemoteReporter$QueueProcessor.run(RemoteReporter.java:182)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: io.jaegertracing.internal.exceptions.SenderException: Could not send 5 spans
+	at io.jaegertracing.thrift.internal.senders.UdpSender.send(UdpSender.java:85)
+	at io.jaegertracing.thrift.internal.senders.ThriftSender.flush(ThriftSender.java:113)
+	... 3 common frames omitted
+Caused by: org.apache.thrift.transport.TTransportException: Cannot flush closed transport
+	at io.jaegertracing.thrift.internal.reporters.protocols.ThriftUdpTransport.flush(ThriftUdpTransport.java:148)
+	at org.apache.thrift.TServiceClient.sendBase(TServiceClient.java:73)
+	at org.apache.thrift.TServiceClient.sendBaseOneway(TServiceClient.java:66)
+	at io.jaegertracing.agent.thrift.Agent$Client.send_emitBatch(Agent.java:70)
+	at io.jaegertracing.agent.thrift.Agent$Client.emitBatch(Agent.java:63)
+	at io.jaegertracing.thrift.internal.senders.UdpSender.send(UdpSender.java:83)
+	... 4 common frames omitted
+Caused by: java.net.PortUnreachableException: ICMP Port Unreachable
+	at java.base/java.net.PlainDatagramSocketImpl.send(Native Method)
+	at java.base/java.net.DatagramSocket.send(Unknown Source)
+	at io.jaegertracing.thrift.internal.reporters.protocols.ThriftUdpTransport.flush(ThriftUdpTransport.java:146)
+	... 9 common frames omitted
+```
+
+To disable tracing you have to configure it to sample no spans.
+This can be done by setting the combination of `JAEGER_SAMPLER_TYPE=const` and `JAEGER_SAMPLER_PARAM=0`.
