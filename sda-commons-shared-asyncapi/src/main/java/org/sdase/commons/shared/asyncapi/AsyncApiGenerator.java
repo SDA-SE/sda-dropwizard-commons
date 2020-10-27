@@ -1,5 +1,7 @@
 package org.sdase.commons.shared.asyncapi;
 
+import static org.sdase.commons.shared.asyncapi.internal.JsonNodeUtil.sortJsonNodeInPlace;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URL;
 import java.util.HashMap;
@@ -117,7 +119,9 @@ public class AsyncApiGenerator {
 
     @Override
     public JsonNode generate() {
-      return jsonSchemaEmbedder.resolve(asyncApiBaseTemplate);
+      JsonNode jsonNode = jsonSchemaEmbedder.resolve(asyncApiBaseTemplate);
+      sortJsonNodeInPlace(jsonNode.at("/components/schemas"));
+      return jsonNode;
     }
 
     @Override

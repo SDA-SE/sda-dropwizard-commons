@@ -3,8 +3,11 @@ package org.sdase.commons.shared.asyncapi;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import org.sdase.commons.shared.asyncapi.models.BaseEvent;
@@ -26,6 +29,20 @@ public class AsyncApiGeneratorTest {
     Map<String, Object> actualJson =
         YamlUtil.load(actual, new TypeReference<Map<String, Object>>() {});
 
-    assertThat(actualJson).isEqualToComparingFieldByFieldRecursively(expectedJson);
+    assertThat(actualJson).usingRecursiveComparison().isEqualTo(expectedJson);
+  }
+
+  @Test
+  public void shouldSortSchemas() {
+    JsonNode actual =
+        AsyncApiGenerator.builder()
+            .withAsyncApiBase(getClass().getResource("/asyncapi_template.yaml"))
+            .withSchema("./schema.json", BaseEvent.class)
+            .generate();
+    JsonNode schemas = actual.at("/components/schemas");
+    List<String> keys = new ArrayList<>();
+    schemas.fieldNames().forEachRemaining(keys::add);
+    // usingRecursiveComparison() is unable to compare the order, so we have to do it manually.
+    assertThat(keys).isSorted();
   }
 }

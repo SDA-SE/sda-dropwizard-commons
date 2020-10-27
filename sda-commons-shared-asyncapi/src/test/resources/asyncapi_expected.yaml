@@ -29,56 +29,6 @@ components:
       payload:
         $ref: "#/components/schemas/CarScrapped"
   schemas:
-    Electrical:
-      type: "object"
-      additionalProperties: true
-      description: "An car model with an electrical engine"
-      title: "ELECTRICAL"
-      properties:
-        engineType:
-          type: "string"
-          enum:
-          - "ELECTRICAL"
-          default: "ELECTRICAL"
-        name:
-          type: "string"
-          examples:
-          - "Tesla Roadster"
-          - "Hummer H1"
-          description: "The name of the car model"
-        batteryCapacity:
-          type: "integer"
-          examples:
-          - "200"
-          description: "The capacity of the battery in kwH"
-      required:
-      - "engineType"
-      - "batteryCapacity"
-    Combustion:
-      type: "object"
-      additionalProperties: true
-      description: "An car model with a combustion engine"
-      title: "COMBUSTION"
-      properties:
-        engineType:
-          type: "string"
-          enum:
-          - "COMBUSTION"
-          default: "COMBUSTION"
-        name:
-          type: "string"
-          examples:
-          - "Tesla Roadster"
-          - "Hummer H1"
-          description: "The name of the car model"
-        tankVolume:
-          type: "integer"
-          examples:
-          - "95"
-          description: "The capacity of the tank in liter"
-      required:
-      - "engineType"
-      - "tankVolume"
     CarManufactured:
       type: "object"
       additionalProperties: true
@@ -156,3 +106,53 @@ components:
       - "vehicleRegistration"
       - "date"
       - "id"
+    Combustion:
+      type: "object"
+      additionalProperties: true
+      description: "An car model with a combustion engine"
+      title: "COMBUSTION"
+      properties:
+        engineType:
+          type: "string"
+          enum:
+            - "COMBUSTION"
+          default: "COMBUSTION"
+        name:
+          type: "string"
+          examples:
+            - "Tesla Roadster"
+            - "Hummer H1"
+          description: "The name of the car model"
+        tankVolume:
+          type: "integer"
+          examples:
+            - "95"
+          description: "The capacity of the tank in liter"
+      required:
+        - "engineType"
+        - "tankVolume"
+    Electrical:
+      type: "object"
+      additionalProperties: true
+      description: "An car model with an electrical engine"
+      title: "ELECTRICAL"
+      properties:
+        engineType:
+          type: "string"
+          enum:
+            - "ELECTRICAL"
+          default: "ELECTRICAL"
+        name:
+          type: "string"
+          examples:
+            - "Tesla Roadster"
+            - "Hummer H1"
+          description: "The name of the car model"
+        batteryCapacity:
+          type: "integer"
+          examples:
+            - "200"
+          description: "The capacity of the battery in kwH"
+      required:
+        - "engineType"
+        - "batteryCapacity"
