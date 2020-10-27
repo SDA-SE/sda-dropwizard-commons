@@ -1,5 +1,7 @@
 package org.sdase.commons.shared.asyncapi;
 
+import static org.sdase.commons.shared.asyncapi.internal.JsonNodeUtil.sortJsonNodeInPlace;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kjetland.jackson.jsonSchema.JsonSchemaConfig;
@@ -86,8 +88,9 @@ public class JsonSchemaGenerator {
                   // https://www.asyncapi.com/docs/specifications/2.0.0/#a-name-messageobjectschemaformattable-a-schema-formats-table
                   .withJsonSchemaDraft(JsonSchemaDraft.DRAFT_07)
                   .withFailOnUnknownProperties(!allowAdditionalPropertiesEnabled));
-
-      return jsonSchemaGenerator.generateJsonSchema(clazz);
+      JsonNode jsonNode = jsonSchemaGenerator.generateJsonSchema(clazz);
+      sortJsonNodeInPlace(jsonNode.at("/definitions"));
+      return jsonNode;
     }
 
     @Override
