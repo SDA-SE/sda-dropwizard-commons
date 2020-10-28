@@ -2,43 +2,149 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka)
 
-This module provides a [`KafkaBundle`](./src/main/java/org/sdase/commons/server/kafka/KafkaBundle.java) adds convenient 
-functionality to create Kafka consumers, producers, and topics via configuration or Java DSL. 
+This module provides a [`KafkaBundle`](./src/main/java/org/sdase/commons/server/kafka/KafkaBundle.java) adds convenient
+functionality to create Kafka consumers, producers, and topics via configuration or Java DSL.
 
-It additionally provides a default [`MessageListener`](./src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java) that 
-implements a polling loop for Kafka consumers. The user of this bundle must only implement the functional logic. 
+It additionally provides a default [`MessageListener`](./src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java) that
+implements a polling loop for Kafka consumers. The user of this bundle must only implement the functional logic.
 
 
 ## Usage
+
 Add the following dependency:
 ```groovy
 compile 'org.sdase.commons:sda-commons-server-kafka:<current-version>'
 ```
 
+Add the Kafka Configuration to your configuration class:
+```java
+
+public class YourConfiguration extends SdaPlatformConfiguration {
+  // ...
+
+  @NotNull @Valid private KafkaConfiguration kafka = new KafkaConfiguration();
+
+  // ...
+}
+```
+
+Bootstrap the bundle (see below).
+
+**Configuration Summary**
+
+The following configuration can be used as base for a production-ready configuration.
+
+Not every service both _consumes_ and _produces_, so the properties for `producers`, `consumers`, or `listenerConfig` can be removed if they don't apply to the service.
+Other defaults can be added, if needed by the service.
+
+```yaml
+kafka:
+  # List of brokers to bootstrap consumer and provider connection.
+  brokers: ${KAFKA_BROKERS:-[]}
+
+  # Security information used for all consumers and providers to connect to kafka.
+  security:
+    user: "${KAFKA_SECURITY_USER}"
+    password: "${KAFKA_SECURITY_PASSWORD}"
+    protocol: ${KAFKA_SECURITY_PROTOCOL:-PLAINTEXT}
+    saslMechanism: ${KAFKA_SECURITY_SASL_MECHANISM:-PLAIN}
+
+  # Map with topic configurations. The key is the used as name to address the configuration within the code.
+  topics:
+    <your-topic-config-key>:
+      name: ${KAFKA_TOPICS_<YOUR_CONFIG>_NAME:-default}
+
+  # Map with producer configurations. The key is used as name to address the configuration within the code.
+  # Can be removed if no producers are used.
+  producers:
+    <your-producer-config-key>:
+      # Empty by default. Can be overridden by System Properties, so it must be part of this configuration.
+
+  # Map with consumer configurations. The key is used as name/id to address the configuration within the code.
+  # Can be removed if no consumers are used.
+  consumers:
+    <your-consumer-config-key>:
+      group: ${KAFKA_CONSUMERS_<YOUR_CONFIG>_GROUP:-default}
+
+  # Map with listener configurations that can be used within MessageListener creation.
+  listenerConfig:
+    <your-listener-config-key>:
+      # Empty by default. Can be overridden by System Properties, so it must be part of this configuration.
+```
+
+A possible documentation could look like this:
+
+```md
+## Environment Variables
+
+The following environment variables can be used to configure the Docker container:
+
+// ...
+
+### Kafka
+
+A short overview about what kind of messages the service consumes or produces.
+
+The following properties can be set:
+
+#### Broker connection
+
+* `KAFKA_BROKERS` _array_
+  * The list of Kafka brokers
+  * Example: `["kafka-broker1:9092", "kafka-broker2:9092"]`
+  * Default: `[]`
+* `KAFKA_SECURITY_USER` _string_
+  * The username used to connect to Kafka.
+  * Example: `""`
+* `KAFKA_SECURITY_PASSWORD` _string_
+  * The password used to connect to Kafka.
+  * Example: `""`
+* `KAFKA_SECURITY_PROTOCOL` _string_
+  * The security protocol used by Kafka.
+  * Example: `PLAINTEXT` or `SASL_SSL`
+  * Default: `PLAINTEXT`
+* `KAFKA_SECURITY_SASL_MECHANISM` _string_
+  * The SASL mechanism to use to connect to the Kafka.
+  * Example: `PLAIN, SCRAM-SHA-256, or SCRAM-SHA-512`
+  * Default: `PLAIN`
+
+#### Topics
+* `KAFKA_TOPICS_<YOUR_CONFIG>_NAME` _string_
+  * Topic name where to read medical record updates. It is checked that the topic is configured in "compact" mode.
+  * Example: `medicalRecordsTopic`
+  * Default: `default`
+
+#### Consumers
+* `KAFKA_CONSUMERS_<YOUR_CONFIG>_GROUP` _string_
+  * Consumer group name for the consumer `YOUR_CONFIG`.
+  * Example: `myConsumer`
+  * Default: `default`
+```
+
 **Bootstrap**
 
 The bundle got enhanced to allow more control and flexibility how Kafka messages are consumed and which commit strategy is used.
-     
+
 The bundle should be added as field to the application since it provides methods for the creation of `MessageProducer` and `MessageListener`.
-The Builders for `MessageListenerRegistration` and `ProducerRegistration` supports the user in the creation of these complex configurable objects. 
- 
+The Builders for `MessageListenerRegistration` and `ProducerRegistration` supports the user in the creation of these complex configurable objects.
+
 ```java
 public class DemoApplication {
    private final KafkaBundle<AppConfiguration> kafkaBundle = KafkaBundle.builder().withConfigurationProvider(AppConfiguration::getKafka).build();
    private final MessageProducer<String, ProductBundle> producer;
-      
+
    public void initialize(Bootstrap<AppConfiguration> bootstrap) {
       bootstrap.addBundle(kafkaBundle);
    }
-         
+
    public void run(AppConfiguration configuration, Environment environment) throws Exception {
       // register with default consumer and listener config
       // The handler implements the actual logic for the message processing
-      
+
       // replace with your handler implementation
       MessageHandler<String, String> handler = record -> results.add(record.value();
       ErrorHandler<Sting, String> errorHandler = new IgnoreAndProceedErrorHandler<>()
-      
+
       kafkaBundle.createMessageListener(MessageListenerRegistration.<String, String> builder()
                 .withDefaultListenerConfig()
                 .forTopic(topic) // replace topic with your topic name
@@ -46,7 +152,7 @@ public class DemoApplication {
                 .withValueDeserializer(new StringDeserializer())
                 .withListenerStrategy(new AutocommitMLS<String, String>(handler, errorHandler))
                 .build());
-      
+
       // register with custom consumer and listener configuration (e.g. 2 instances, poll every minute)
       // method returns list of listeners, one for each instance
       List<MessageListener> listener = kafkaBundle
@@ -55,16 +161,16 @@ public class DemoApplication {
                   .forTopic("topic") // replace topic with your topic name
                   .withConsumerConfig("consumer2") // use consumer config from config yaml
                   .withListenerStrategy(new AutocommitMLS<String, String>(handler, errorHandler))
-                  .build());      
-      
+                  .build());
+
       // Create message producer with default KafkaProducer
       MessageProducer<String, ProductBundle> producer = kafkaBundle
             .registerProducerForTopic(ProducerRegistration
                   .<String, String> builder()
-                  .forTopic("topic")         // simple topic definition (name only, partition and replication Factor 1) 
+                  .forTopic("topic")         // simple topic definition (name only, partition and replication Factor 1)
                   .withDefaultProducer()
                   .build());
-                  
+
       // Create message with a detailed topic specification that checks the topic
       MessageProducer<String, String> producerConfigured = kafkaBundle
             .registerProducer(ProducerRegistration.<String, String> builder()
@@ -76,11 +182,11 @@ public class DemoApplication {
                   .createTopicIfMissing()    // creates the topic if no topic has been found
                   .withProducerConfig("producer1") // use producer config from config yaml
                   .build());
-      
+
       // JSON Example
       MessageHandler<String, SimpleEntity> jsonHandler = record -> jsonResults.add(record.value();
       ErrorHandler<Sting, SimpleEntity> errorHandler = new IgnoreAndProceedErrorHandler<>()
-            
+
       List<MessageListener> jsonListener = kafkaBundle
             .createMessageListener(MessageListenerRegistration.builder()
                   .withDefaultListenerConfig()
@@ -97,22 +203,22 @@ public class DemoApplication {
             .withDefaultProducer()
             .withKeySerializer(new StringSerializer())
             .withValueSerializer(new KafkaJsonSerializer<>(new ObjectMapper())).build());
-            
+
       // plain consumer where the user has full control and take over responsibility to close te consumer
       // by name of a valid consumer configuration from config yaml
       KafkaConsumer<String, String> consumer = kafkaBundle.createConsumer(
             new StringDeserializer(), new StringDeserializer(), "consumer1");
-      
-      // by given consumer configuration      
+
+      // by given consumer configuration
       KafkaConsumer<String, String> consumer = kafkaBundle.createConsumer(
             new StringDeserializer(), new StringDeserializer(), ConsumerConfig.<String, String>builder()
                 .withGroup("test-consumer")
                 .addConfig("max.poll.records", "100")
                 .addConfig("enable.auto.commit", "false").build());
-                
-      // There are similar methods for producer creation                   
+
+      // There are similar methods for producer creation
    }
-   
+
    // Optional: make producer available via CDI @Produces annotation
    // Note: CDI is not included within the bundle.
    @Produces
@@ -124,28 +230,28 @@ public class DemoApplication {
 
 ### Known Kafka Problems
 
-There exists a known Kafka issue in the new consumer API [KAFAK-4740](https://issues.apache.org/jira/browse/KAFKA-4740) 
-that throws potentially a `org.apache.kafka.commons.errors.SerializationException` when a record key/value can't be deserialized depending on 
-deserializer implementation. This can result in an infinite loop because the poll is not committed and the next poll will throw this exception 
-again. The wrapped deserialization approach offers a workaround where this exception is prevented and the processing can continue. 
-But be aware that the `key` or `value` can be `null` in this case in both `MessageHandler.handle()` and `ErrorHandler.handleError()` methods. 
+There exists a known Kafka issue in the new consumer API [KAFAK-4740](https://issues.apache.org/jira/browse/KAFKA-4740)
+that throws potentially a `org.apache.kafka.commons.errors.SerializationException` when a record key/value can't be deserialized depending on
+deserializer implementation. This can result in an infinite loop because the poll is not committed and the next poll will throw this exception
+again. The wrapped deserialization approach offers a workaround where this exception is prevented and the processing can continue.
+But be aware that the `key` or `value` can be `null` in this case in both `MessageHandler.handle()` and `ErrorHandler.handleError()` methods.
 Another alternative is to implement your own Deserializer to have even more control and where you can potentially apply any fallback deserialization
-strategy. 
+strategy.
 
 ```java
 public class DemoApplication {
    private final KafkaBundle<AppConfiguration> kafkaBundle = KafkaBundle.builder().withConfigurationProvider(AppConfiguration::getKafka).build();
    private final MessageProducer<String, ProductBundle> producer;
-      
+
    public void initialize(Bootstrap<AppConfiguration> bootstrap) {
       bootstrap.addBundle(kafkaBundle);
    }
-         
+
    public void run(AppConfiguration configuration, Environment environment) throws Exception {
       // register with default consumer and listener config
       // The handler implements the actual logic for the message processing
       ...
-      
+
       // JSON Example with wrapped Deserializer to avoid DeseriliazationException, see Note below
       List<MessageListener> jsonListener = kafkaBundle.registerMessageHandler(MessageHandlerRegistration
             .builder()
@@ -165,19 +271,19 @@ public class DemoApplication {
 To configure KafkaBundle add the following `kafka` block to your Dropwizard config.yml. The following config snippet shows an example configuration with descriptive comments:
 ```YAML
 kafka:
-  # For testing without a kafka in integration tests, the bundle api can be disabled. No consumers and providers will be created 
+  # For testing without a kafka in integration tests, the bundle api can be disabled. No consumers and providers will be created
   disabled: false
-  
+
   # Admin client is used for checking and creating topics as well as for Health Checks
   adminConfig:
     # Timeout for request to the kafka admin url used by admin clients
     adminClientRequestTimeoutMs: 2000
-  
+
     # Admin Rest Api for accessing the accessing admin functionality
     adminEndpoint:
-      - kafka-admin-api-1:9092 
-      - kafka-admin-api-2:9092 
-  
+      - kafka-admin-api-1:9092
+      - kafka-admin-api-2:9092
+
     # Admin Security information used for all calls against the Admin Rest API
     adminSecurity :
       user: user
@@ -186,9 +292,9 @@ kafka:
 
   # List of brokers to bootstrap consumer and provider connection
   brokers:
-    - kafka-broker-1:9092 
+    - kafka-broker-1:9092
     - kafka-broker-2:9092
-    
+
   # Security information used for all consumers and providers to connect to kafka
   security :
     user: user
@@ -201,7 +307,7 @@ kafka:
   config:
     ssl.truststore.location: /my/truststore/location.jks
 
-  # Map with consumer configurations. The key is used as name/id to address the configuration within the code. 
+  # Map with consumer configurations. The key is used as name/id to address the configuration within the code.
   consumers:
     # id/name of the consumer configuration
     consumer1:
@@ -218,7 +324,7 @@ kafka:
          auto.offset.reset: latest
   # Map with producer configurations. The key is used as name to address the configuration within the code.
   producers:
-    # id/name of the producer config 
+    # id/name of the producer config
     producer1:
       # configuration key -> values as defined in the kafka documentation
       config:
@@ -226,9 +332,9 @@ kafka:
         key.serializer: org.apache.kafka.common.serialization.LongSerializer
         value.serializer: org.apache.kafka.common.serialization.LongSerializer
         acks: all
-        retries: 1000 
+        retries: 1000
   # Map with topic configurations. The key is the name of the topic and is also used to address the configuration within the code
-  # Topic descriptions can be used to validate the brokers topic configuration or to create new topics   
+  # Topic descriptions can be used to validate the brokers topic configuration or to create new topics
   topics:
     # id of the topic configuration
     topic1:
@@ -249,7 +355,7 @@ kafka:
     # id/name of the listener configuration
     listenerConfig1:
       # Number of listener instances that will be generated. If > 1, several KafkaConsumer are generated. Kafka assigns these consumers
-      # to different partitions of the consumed topic. Number instances should be smaller or equal to the number of partitions.  
+      # to different partitions of the consumed topic. Number instances should be smaller or equal to the number of partitions.
       instances: 1
       # If the topic check is configured within the DSL, the listener waits this amount of ms before checking topic existence again. 0 will disable existence check even when configured in DSL
       topicMissingRetryMs: 60000
@@ -263,7 +369,7 @@ There are different configuration options to connect to a Kafka Broker.
 
 #### PLAINTEXT
 
-The server uses an unencrypted connection with no authentication. 
+The server uses an unencrypted connection with no authentication.
 
 ```yaml
   security :
@@ -272,7 +378,7 @@ The server uses an unencrypted connection with no authentication.
 
 #### SSL
 
-The server uses an encrypted connection with no authentication. 
+The server uses an encrypted connection with no authentication.
 
 ```yaml
   security :
@@ -281,7 +387,7 @@ The server uses an encrypted connection with no authentication.
 
 #### SASL_PLAINTEXT
 
-The server uses an unencrypted connection with `PLAIN` authentication. 
+The server uses an unencrypted connection with `PLAIN` authentication.
 
 ```yaml
   security :
@@ -293,7 +399,7 @@ The server uses an unencrypted connection with `PLAIN` authentication.
 
 #### SASL_SSL
 
-The server uses an encrypted connection with `PLAIN` authentication. 
+The server uses an encrypted connection with `PLAIN` authentication.
 
 ```yaml
   security :
@@ -347,7 +453,7 @@ OR
 ```
 
 ### Configuration value defaults (extending/changing the Kafka defaults)
-This are only the defaults that are explicitly set within the code of the bundle. All other properties depends on the actual broker configuration or the Kafka defaults are used. 
+This are only the defaults that are explicitly set within the code of the bundle. All other properties depends on the actual broker configuration or the Kafka defaults are used.
 
 | Key | Value |
 |-----|-------|
@@ -402,27 +508,27 @@ A MessageListener [`MessageListener`](../sda-commons-server-kafka/src/main/java/
 is a default poll loop implementation that correctly subscribes for some topics and
 includes additional features such as a graceful shutdown when the application stops.
 
-The message listener hands over the received consumer records to a 
+The message listener hands over the received consumer records to a
 [`MessageListenerStrategy`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/MessageListenerStrategy.java)
-that defines the message handling and the commit behavior. A strategy should use a 
+that defines the message handling and the commit behavior. A strategy should use a
 [`MessageHandler`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageHandler.java) and
 a [`ErrorHandler`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/ErrorHandler.java)
-to separate business logic from commit logic as shown e.g. in [`AutocommitStrategy`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/autocommit/AutocommitMLS.java) 
+to separate business logic from commit logic as shown e.g. in [`AutocommitStrategy`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/autocommit/AutocommitMLS.java)
 to make the strategy reusable
- 
+
 ### Included MessageListenerStrategies
 The bundle provides some [`MessageListenerStrategy`](../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/MessageListenerStrategy.java)
 that can be reused in projects.
 
-A strategy is automatically inited with the Prometheus histogram class when using the builder methods. 
-You may need to do that explicitly if you use strategies, e.g. in tests. 
+A strategy is automatically inited with the Prometheus histogram class when using the builder methods.
+You may need to do that explicitly if you use strategies, e.g. in tests.
 
 #### Autocommit MessageListenerStrategy
-This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle. 
+This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle.
 
 The underlying consumer commits records periodically using the kafka config defaults. But, the `MessageListener` does not implement
 any extra logic in case of re-balancing. Therefore, the listener does not support an exactly once semantic. It might occur
-that messages are redelivered after re-balance activities. 
+that messages are redelivered after re-balance activities.
 
 #### SyncCommit MessageListenerStrategy
 This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle.
@@ -430,35 +536,35 @@ This strategy reads messages from the broker and passes the records to a message
 The strategy requires `enable.auto.commit` set to `false` and uses sync commit explicitly before polling a new chunk.
 
 #### Retry processing error MessageListenerStrategy
-This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle. 
+This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle.
 
-The strategy requires `enable.auto.commit` set to `false` and the underlying consumer commits records for each partition. In case of processing errors the 
+The strategy requires `enable.auto.commit` set to `false` and the underlying consumer commits records for each partition. In case of processing errors the
 handler should throw `ProcessingErrorRetryException` which is then delegated to the `ErrorHandler` where finally can be decided if the processing should be
-stopped or retried (handleError returns `false`). In case of retry the consumer set the offset on the failing record and interrupt the processing of further 
-records. The next poll will retry the records on this partition starting with the failing record.  
+stopped or retried (handleError returns `false`). In case of retry the consumer set the offset on the failing record and interrupt the processing of further
+records. The next poll will retry the records on this partition starting with the failing record.
 
 ## Create preconfigured consumers and producers
-To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config YAML or 
-by specifying a configuration in code. The user takes over the full responsibility and have to ensure that the consumer is closed when not 
-longer used.   
+To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config YAML or
+by specifying a configuration in code. The user takes over the full responsibility and have to ensure that the consumer is closed when not
+longer used.
 
 ## Migration information (from kafka-commons)
 
 **Compatibility with older broker versions**
 
-:exclamation: 
+:exclamation:
 **Newer versions than kafka-commons v0.19.0 assumes at least version 1.0.0 of the broker, since some admin client commands are not supported in earlier broker versions**
 
-If you use older versions of the broker, you MUST not use the options to check or create topics for MessageHandlers and MessageProducers.  
+If you use older versions of the broker, you MUST not use the options to check or create topics for MessageHandlers and MessageProducers.
 
 ----
 
-**Now each `MessageListener` uses exactly one thread to handle the incoming consumer records.** Commit is done after this thread returns from processing the implemented functional logic. 
-In former versions of this bundle, there was a shared ThreadPool used by all `MessageListener`s. The business logic was handled in an own thread executed within the thread pool. 
-Records has been committed directly after creating the threads and not after business logic execution. This hinder an ordered message processing as well as committing an offset after the 
-business logic processing.    
+**Now each `MessageListener` uses exactly one thread to handle the incoming consumer records.** Commit is done after this thread returns from processing the implemented functional logic.
+In former versions of this bundle, there was a shared ThreadPool used by all `MessageListener`s. The business logic was handled in an own thread executed within the thread pool.
+Records has been committed directly after creating the threads and not after business logic execution. This hinder an ordered message processing as well as committing an offset after the
+business logic processing.
 This implementation must be considered when migrating older implementations since it might affect the performance. If you prefer the old behavior, you should create a thread pool within your
-`MessageHandler` implementation.  
+`MessageHandler` implementation.
 
 
 ## Kafka Bundle with Managed Kafka
@@ -477,11 +583,11 @@ kafka:
         key.serializer: org.apache.kafka.common.serialization.LongSerializer
         value.serializer: org.apache.kafka.common.serialization.LongSerializer
         acks: all
-        ... 
+        ...
 ```
 _Note_: Do not use `;` in passwords, as this will crash your application.
 
-In this case, the `KAFKA_BROKERS` variable should contain a JSON array with a list of broker 
+In this case, the `KAFKA_BROKERS` variable should contain a JSON array with a list of broker
 
 ```json
 [
