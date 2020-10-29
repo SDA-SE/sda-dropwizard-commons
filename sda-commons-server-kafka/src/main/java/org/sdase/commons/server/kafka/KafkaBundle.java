@@ -59,8 +59,11 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaBundle.class);
 
+  public static final String HEALTHCHECK_NAME = "kafkaConnection";
+
   private final Function<C, KafkaConfiguration> configurationProvider;
   private KafkaConfiguration kafkaConfiguration;
+  private boolean healthCheckDisabled;
 
   private ProducerTopicMessageCounter topicProducerCounterSpec;
   private ConsumerTopicMessageHistogram topicConsumerHistogram;
@@ -71,8 +74,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
   private Map<String, ExpectedTopicConfiguration> topics = new HashMap<>();
 
-  private KafkaBundle(KafkaConfigurationProvider<C> configurationProvider) {
+  private KafkaBundle(
+      KafkaConfigurationProvider<C> configurationProvider, boolean healthCheckDisabled) {
     this.configurationProvider = configurationProvider;
+    this.healthCheckDisabled = healthCheckDisabled;
   }
 
   public static InitialBuilder builder() {
@@ -89,10 +94,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   public void run(C configuration, Environment environment) {
     kafkaConfiguration = configurationProvider.apply(configuration);
     kafkaConfiguration.getTopics().forEach((k, v) -> topics.put(k, createTopicDescription(v)));
-    if (!kafkaConfiguration.isDisabled()) {
+    if (!kafkaConfiguration.isDisabled() && !healthCheckDisabled) {
       environment
           .healthChecks()
-          .register("kafkaConnection", new KafkaHealthCheck(kafkaConfiguration));
+          .register(HEALTHCHECK_NAME, new KafkaHealthCheck(kafkaConfiguration));
     }
     topicProducerCounterSpec = new ProducerTopicMessageCounter();
     topicConsumerHistogram = new ConsumerTopicMessageHistogram();
@@ -593,12 +598,23 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   }
 
   public interface FinalBuilder<T extends Configuration> {
+
+    /**
+     * Disables the health check for Kafka. By disabling the health check the service can stay
+     * healthy even if the connection to Kafka is disrupted, if Kafka is not essential to the
+     * functionality.
+     *
+     * @return the same builder instance
+     */
+    FinalBuilder<T> withoutHealthCheck();
+
     KafkaBundle<T> build();
   }
 
   public static class Builder<T extends Configuration> implements InitialBuilder, FinalBuilder<T> {
 
     private KafkaConfigurationProvider<T> configurationProvider;
+    private boolean healthCheckDisabled = false;
 
     private Builder() {}
 
@@ -607,8 +623,14 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     }
 
     @Override
+    public FinalBuilder<T> withoutHealthCheck() {
+      healthCheckDisabled = true;
+      return this;
+    }
+
+    @Override
     public KafkaBundle<T> build() {
-      return new KafkaBundle<>(configurationProvider);
+      return new KafkaBundle<>(configurationProvider, healthCheckDisabled);
     }
 
     @Override
