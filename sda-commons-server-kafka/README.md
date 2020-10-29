@@ -363,6 +363,23 @@ kafka:
       pollInterval: 200
 ```
 
+You can disable the  health check manually if Kafka is not essential for the functionality of your service,
+e.g. it's only used to invalidate a cache, notify about updates or other minor tasks that could fail without
+affecting the service so much it's no longer providing a viable functionality.
+
+This way your service can stay healthy even if the connection to Kafka is disrupted.
+
+```java
+private KafkaBundle<KafkaTestConfiguration> bundle =
+  KafkaBundle.builder()
+    .withConfigurationProvider(KafkaTestConfiguration::getKafka)
+    .withoutHealthCheck() // disable kafkas health check
+    .build();
+```
+Keep in mind that in this case a producer might fail if the broker is not available, so depending on the
+use case the producer should do appropriate error handling e.g. storing unprocessed messages in a queue until the broker is available again.
+If no error handling is done you might be better off not disabling the health check.
+
 ### Security Settings
 
 There are different configuration options to connect to a Kafka Broker.
