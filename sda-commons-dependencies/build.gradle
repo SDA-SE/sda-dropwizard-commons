@@ -131,7 +131,7 @@ dependencies {
     api "org.mockito:mockito-core:3.4.0"
     api "org.scala-lang:scala-library:$scalaVersion" // version from org.apache.kafka:kafka_2.12
     api "org.scala-lang:scala-reflect:$scalaVersion" // version from org.apache.kafka:kafka_2.12
-    api "com.typesafe:config:1.4.0" // clash within io.findify:s3mock_2.12
+    api "com.typesafe:config:1.4.1" // clash within io.findify:s3mock_2.12
     api "com.typesafe.scala-logging:scala-logging_2.12:3.9.0"
     api "io.opentracing:opentracing-mock:0.33.0"
   }
