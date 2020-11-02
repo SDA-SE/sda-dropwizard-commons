@@ -19,13 +19,12 @@ public class NameNotRepeatedValidator
       context.disableDefaultConstraintViolation();
       context
           .buildConstraintViolationWithTemplate("First name and last name must be different.")
-          .addPropertyNode("firstName")
-          .addBeanNode()
+          // The property firstName is annotated with @JsonProperty("name")
+          .addPropertyNode("name")
           .addConstraintViolation();
       context
           .buildConstraintViolationWithTemplate("First name and last name must be different.")
           .addPropertyNode("lastName")
-          .addBeanNode()
           .addConstraintViolation();
       return false;
     }
