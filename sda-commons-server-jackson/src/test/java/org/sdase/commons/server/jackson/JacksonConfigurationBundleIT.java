@@ -21,6 +21,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.jackson.test.JacksonConfigurationTestApp;
 import org.sdase.commons.server.jackson.test.NameSearchFilterResource;
+import org.sdase.commons.server.jackson.test.NestedNestedResource;
+import org.sdase.commons.server.jackson.test.NestedResource;
 import org.sdase.commons.server.jackson.test.PersonResource;
 import org.sdase.commons.server.jackson.test.PersonWithChildrenResource;
 import org.sdase.commons.server.jackson.test.ValidationResource;
@@ -123,6 +125,8 @@ public class JacksonConfigurationBundleIT {
     HashMap<String, Object> message = new HashMap<>();
     message.put("name", "last");
     HashMap<String, Object> nested = new HashMap<>();
+    HashMap<String, Object> nestedNested = new HashMap<>();
+    nested.put("myNestedResource", nestedNested);
     message.put("myNestedResource", nested);
 
     Response response =
@@ -136,9 +140,11 @@ public class JacksonConfigurationBundleIT {
     assertThat(response.getStatus()).isEqualTo(422);
     assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
 
-    assertThat(error.getInvalidParams().get(0))
+    assertThat(error.getInvalidParams())
         .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
-        .containsExactly("myNestedResource.myNestedField", "NOT_EMPTY");
+        .containsExactlyInAnyOrder(
+            tuple("myNestedResource.myNestedField", "NOT_EMPTY"),
+            tuple("myNestedResource.myNestedResource.anotherNestedField", "NOT_EMPTY"));
   }
 
   @Test
@@ -221,6 +227,8 @@ public class JacksonConfigurationBundleIT {
   @Test
   public void shouldGetValidationExceptionWithInvalidFieldOfExtendingResource() {
     NameSearchFilterResource emptyNameSearchFilterResource = new NameSearchFilterResource();
+    emptyNameSearchFilterResource.setNestedResource(
+        new NestedResource().setAnotherNestedResource(new NestedNestedResource()));
 
     Response response =
         DW.client()
@@ -232,10 +240,12 @@ public class JacksonConfigurationBundleIT {
     ApiError apiError = response.readEntity(ApiError.class);
     assertThat(response.getStatus()).isEqualTo(422);
     assertThat(apiError.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
-    assertThat(apiError.getInvalidParams().size()).isEqualTo(1);
     assertThat(apiError.getInvalidParams())
         .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
-        .containsExactlyInAnyOrder(new Tuple("name", "NOT_NULL"));
+        .containsExactlyInAnyOrder(
+            tuple("name", "NOT_NULL"),
+            tuple("nestedResource.myNestedField", "NOT_EMPTY"),
+            tuple("nestedResource.myNestedResource.anotherNestedField", "NOT_EMPTY"));
   }
 
   @Test
