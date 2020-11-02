@@ -8,6 +8,8 @@ buildscript {
 dependencies {
   compile project(':sda-commons-server-dropwizard')
 
+  compile project(':sda-commons-server-healthcheck')
+
   compile "org.apache.kafka:kafka-clients"
 
   compile 'io.prometheus:simpleclient'

@@ -380,6 +380,10 @@ Keep in mind that in this case a producer might fail if the broker is not availa
 use case the producer should do appropriate error handling e.g. storing unprocessed messages in a queue until the broker is available again.
 If no error handling is done you might be better off not disabling the health check.
 
+Disabling the internal health check registers an external health check for monitoring purposes
+and to determine the fitness of the service. The connection to the broker can be monitored through
+Prometheus metrics without impacting the health of the service.
+
 ### Security Settings
 
 There are different configuration options to connect to a Kafka Broker.

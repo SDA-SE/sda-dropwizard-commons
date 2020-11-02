@@ -39,6 +39,7 @@ import org.sdase.commons.server.kafka.config.TopicConfig;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.exception.TopicCreationException;
+import org.sdase.commons.server.kafka.health.ExternalKafkaHealthCheck;
 import org.sdase.commons.server.kafka.health.KafkaHealthCheck;
 import org.sdase.commons.server.kafka.producer.KafkaMessageProducer;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
@@ -60,6 +61,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaBundle.class);
 
   public static final String HEALTHCHECK_NAME = "kafkaConnection";
+  public static final String EXTERNAL_HEALTHCHECK_NAME = "kafkaConnectionExternal";
 
   private final Function<C, KafkaConfiguration> configurationProvider;
   private KafkaConfiguration kafkaConfiguration;
@@ -94,10 +96,16 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   public void run(C configuration, Environment environment) {
     kafkaConfiguration = configurationProvider.apply(configuration);
     kafkaConfiguration.getTopics().forEach((k, v) -> topics.put(k, createTopicDescription(v)));
-    if (!kafkaConfiguration.isDisabled() && !healthCheckDisabled) {
-      environment
-          .healthChecks()
-          .register(HEALTHCHECK_NAME, new KafkaHealthCheck(kafkaConfiguration));
+    if (!kafkaConfiguration.isDisabled()) {
+      if (healthCheckDisabled) {
+        environment
+            .healthChecks()
+            .register(EXTERNAL_HEALTHCHECK_NAME, new ExternalKafkaHealthCheck(kafkaConfiguration));
+      } else {
+        environment
+            .healthChecks()
+            .register(HEALTHCHECK_NAME, new KafkaHealthCheck(kafkaConfiguration));
+      }
     }
     topicProducerCounterSpec = new ProducerTopicMessageCounter();
     topicConsumerHistogram = new ConsumerTopicMessageHistogram();
@@ -602,7 +610,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     /**
      * Disables the health check for Kafka. By disabling the health check the service can stay
      * healthy even if the connection to Kafka is disrupted, if Kafka is not essential to the
-     * functionality.
+     * functionality. However, disabling it still registers an external health check to be able to
+     * monitor the connection.
      *
      * @return the same builder instance
      */
