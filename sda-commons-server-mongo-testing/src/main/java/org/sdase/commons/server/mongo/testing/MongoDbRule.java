@@ -1,6 +1,7 @@
 package org.sdase.commons.server.mongo.testing;
 
-import static de.flapdoodle.embed.mongo.distribution.Version.Main.*;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V3_6;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V4_0;
 import static java.lang.Runtime.getRuntime;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -19,19 +20,20 @@ import com.mongodb.internal.connection.ServerAddressHelper;
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.ExtractedArtifactStoreBuilder;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.ImmutableMongodConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version.Main;
-import de.flapdoodle.embed.process.config.store.DownloadConfigBuilder;
+import de.flapdoodle.embed.process.config.store.DownloadConfig;
 import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
-import de.flapdoodle.embed.process.config.store.IDownloadConfig;
-import de.flapdoodle.embed.process.config.store.IProxyFactory;
-import de.flapdoodle.embed.process.config.store.NoProxyFactory;
+import de.flapdoodle.embed.process.config.store.ImmutableDownloadConfig;
+import de.flapdoodle.embed.process.config.store.ProxyFactory;
+import de.flapdoodle.embed.process.config.store.SameDownloadPathForEveryDistribution;
 import de.flapdoodle.embed.process.runtime.Network;
+import de.flapdoodle.embed.process.store.ExtractedArtifactStore;
+import de.flapdoodle.embed.process.store.ImmutableExtractedArtifactStore;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.Authenticator;
@@ -39,6 +41,7 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import org.apache.commons.lang3.SystemUtils;
 import org.bson.Document;
@@ -71,23 +74,18 @@ public class MongoDbRule extends ExternalResource {
     static final MongodStarter INSTANCE = getMongoStarter();
 
     private static MongodStarter getMongoStarter() {
-      de.flapdoodle.embed.process.store.ExtractedArtifactStoreBuilder artifactStoreBuilder =
-          new ExtractedArtifactStoreBuilder()
-              .defaults(Command.MongoD)
-              .download(createDownloadConfig());
-      // avoid recurring firewall requests on mac, see
-      // https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues/40#issuecomment-14969151
-      if (SystemUtils.IS_OS_MAC_OSX) {
-        artifactStoreBuilder.executableNaming((prefix, postfix) -> "mongod");
-      }
+      ImmutableExtractedArtifactStore.Builder artifactStoreBuilder =
+          ExtractedArtifactStore.builder()
+              .from(Defaults.extractedArtifactStoreFor(Command.MongoD))
+              .downloadConfig(createDownloadConfig());
+
       return MongodStarter.getInstance(
-          new RuntimeConfigBuilder()
-              .defaults(Command.MongoD)
-              .artifactStore(artifactStoreBuilder)
+          Defaults.runtimeConfigFor(Command.MongoD)
+              .artifactStore(artifactStoreBuilder.build())
               .build());
     }
 
-    private static IProxyFactory createProxyFactory() {
+    private static Optional<ProxyFactory> createProxyFactory() {
       String httpProxy = System.getenv("http_proxy");
       if (httpProxy != null) {
         try {
@@ -97,12 +95,12 @@ public class MongoDbRule extends ExternalResource {
             configureAuthentication(url);
           }
 
-          return new HttpProxyFactory(url.getHost(), url.getPort());
+          return Optional.of(new HttpProxyFactory(url.getHost(), url.getPort()));
         } catch (MalformedURLException exception) {
           LOG.error("http_proxy could not be parsed.");
         }
       }
-      return new NoProxyFactory();
+      return Optional.empty();
     }
 
     private static void configureAuthentication(URL url) {
@@ -137,11 +135,9 @@ public class MongoDbRule extends ExternalResource {
       }
     }
 
-    private static IDownloadConfig createDownloadConfig() {
-      DownloadConfigBuilder downloadConfigBuilder =
-          new de.flapdoodle.embed.mongo.config.DownloadConfigBuilder()
-              .defaultsForCommand(Command.MongoD)
-              .proxyFactory(createProxyFactory());
+    private static DownloadConfig createDownloadConfig() {
+      ImmutableDownloadConfig.Builder downloadConfigBuilder =
+          Defaults.downloadConfigFor(Command.MongoD).proxyFactory(createProxyFactory());
 
       // Normally the mongod executable is downloaded directly from the
       // mongodb web page, however sometimes this behavior is undesired. Some
@@ -153,7 +149,8 @@ public class MongoDbRule extends ExternalResource {
       String embeddedMongoDownloadPath = System.getenv("EMBEDDED_MONGO_DOWNLOAD_PATH");
 
       if (embeddedMongoDownloadPath != null) {
-        downloadConfigBuilder.downloadPath(embeddedMongoDownloadPath);
+        downloadConfigBuilder.downloadPath(
+            new SameDownloadPathForEveryDistribution(embeddedMongoDownloadPath));
       }
 
       return downloadConfigBuilder.build();
@@ -175,7 +172,7 @@ public class MongoDbRule extends ExternalResource {
   private final String password;
   private final String database;
 
-  private IMongodConfig mongodConfig;
+  private MongodConfig mongodConfig;
   private MongodExecutable mongodExecutable;
 
   private volatile boolean started;
@@ -267,15 +264,15 @@ public class MongoDbRule extends ExternalResource {
     }
 
     try {
-      MongodConfigBuilder mongodConfigBuilder =
-          new MongodConfigBuilder()
+      ImmutableMongodConfig.Builder mongodConfigBuilder =
+          MongodConfig.builder()
               .version(version)
               .net(
                   new Net(
                       Network.getLocalHost().getHostName(), Network.getFreeServerPort(), false));
 
       if (!enableScripting) {
-        mongodConfigBuilder = mongodConfigBuilder.withLaunchArgument("--noscripting");
+        mongodConfigBuilder.putArgs("--noscripting", "");
       }
 
       mongodConfig = mongodConfigBuilder.build();
