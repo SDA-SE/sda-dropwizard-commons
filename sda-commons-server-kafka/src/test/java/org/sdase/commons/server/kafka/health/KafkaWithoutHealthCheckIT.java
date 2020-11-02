@@ -7,6 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.SortedSet;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -35,15 +37,24 @@ public class KafkaWithoutHealthCheckIT {
   @ClassRule public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DW);
 
   private KafkaWithoutHealthCheckTestApplication app;
+  private static WebTarget adminTarget;
 
   @Before
   public void before() {
     app = DW.getApplication();
+    adminTarget = DW.client().target(String.format("http://localhost:%d/", DW.getAdminPort()));
   }
 
   @Test
   public void healthCheckShouldNotContainKafka() {
     SortedSet<String> checks = app.healthCheckRegistry().getNames();
     assertThat(checks).isNotEmpty().doesNotContain(KafkaBundle.HEALTHCHECK_NAME);
+  }
+
+  @Test
+  public void externalHealthCheckShouldContainKafka() {
+    Response response = adminTarget.path("healthcheck").request().get();
+    String healthChecks = response.readEntity(String.class);
+    assertThat(healthChecks).contains(KafkaBundle.EXTERNAL_HEALTHCHECK_NAME);
   }
 }
