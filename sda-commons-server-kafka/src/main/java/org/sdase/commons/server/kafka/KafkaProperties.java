@@ -10,6 +10,7 @@ import org.apache.kafka.common.security.plain.PlainLoginModule;
 import org.apache.kafka.common.security.scram.ScramLoginModule;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.sdase.commons.server.kafka.config.ProtocolType;
 import org.sdase.commons.server.kafka.config.Security;
 
 public class KafkaProperties extends Properties {
@@ -32,7 +33,9 @@ public class KafkaProperties extends Properties {
       props.put("security.protocol", security.getProtocol().name());
     }
 
-    if (security.getPassword() != null && security.getUser() != null) {
+    if (ProtocolType.isSasl(security.getProtocol())
+        && security.getPassword() != null
+        && security.getUser() != null) {
       props.put("sasl.mechanism", security.getSaslMechanism());
       props.put(
           "sasl.jaas.config",
