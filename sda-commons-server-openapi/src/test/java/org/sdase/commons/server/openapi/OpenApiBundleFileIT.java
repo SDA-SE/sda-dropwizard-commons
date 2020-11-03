@@ -13,9 +13,12 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.sdase.commons.server.openapi.apps.file.FromFileTestApp;
 import org.sdase.commons.server.openapi.test.OpenApiAssertions;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 public class OpenApiBundleFileIT {
   private static final String HOUSE_DEFINITION = "House";
@@ -23,6 +26,8 @@ public class OpenApiBundleFileIT {
   @ClassRule
   public static final DropwizardAppRule<Configuration> DW =
       new DropwizardAppRule<>(FromFileTestApp.class, resourceFilePath("test-config.yaml"));
+
+  @Rule public RetryRule retryRule = new RetryRule();
 
   private static Builder getJsonRequest() {
     return DW.client()
@@ -45,6 +50,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldProvideSchemaCompliantJson() {
     try (Response response = getJsonRequest().get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
@@ -55,6 +61,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldProvideValidYaml() {
     try (Response response = getYamlRequest().get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
@@ -65,6 +72,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldHaveCORSWildcardJson() {
     try (Response response = getJsonRequest().header("Origin", "example.com").get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
@@ -73,6 +81,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldHaveCORSWildcardYaml() {
     try (Response response = getYamlRequest().header("Origin", "example.com").get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
@@ -81,6 +90,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldNotHaveCORSWildcardOnOtherPath() {
     try (Response response =
         DW.client()
@@ -97,6 +107,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldIncludeInfo() {
     String response = getJsonRequest().get(String.class);
 
@@ -105,6 +116,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldIncludeServerUrl() {
     String response = getJsonRequest().get(String.class);
 
@@ -115,6 +127,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldIncludePaths() {
     String response = getJsonRequest().get(String.class);
 
@@ -127,6 +140,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldIncludeSchemas() {
     String response = getJsonRequest().get(String.class);
 
@@ -142,6 +156,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldUseDescriptionFromAnnotation() {
     String response = getJsonRequest().get(String.class);
 
@@ -151,6 +166,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldNotIncludeAdditionalReturnCode() {
     String response = getJsonRequest().get(String.class);
 
@@ -160,6 +176,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldIncludeEmbedParameterExistingEmbeddedProperty() {
     String response = getJsonRequest().get(String.class);
 
@@ -170,6 +187,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldIncludeEmbedParameterExistingEmbeddedAllOfProperty() {
     String response = getJsonRequest().get(String.class);
 
@@ -180,6 +198,7 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldNotIncludeEmbedParameterExistingEmbeddedAnyOfProperty() {
     String response = getJsonRequest().get(String.class);
 

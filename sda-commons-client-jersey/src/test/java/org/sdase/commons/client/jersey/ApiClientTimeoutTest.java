@@ -3,58 +3,65 @@ package org.sdase.commons.client.jersey;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.awaitility.Awaitility.await;
+import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.asClientRequestException;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.connectTimeoutError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.readTimeoutError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.timeoutError;
 
+import com.codahale.metrics.MetricFilter;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
-import org.sdase.commons.client.jersey.error.ClientRequestException;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 import org.sdase.commons.server.testing.Retry;
 import org.sdase.commons.server.testing.RetryRule;
 
 /** Test that timeouts are correctly mapped. */
 public class ApiClientTimeoutTest {
 
-  @ClassRule
   public static final WireMockClassRule WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
-  private final DropwizardAppRule<ClientTestConfig> dw =
-      new DropwizardAppRule<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
+  private static final DropwizardAppRule<ClientTestConfig> DW =
+      new DropwizardAppRule<>(
+          ClientTestApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("mockBaseUrl", WIRE::baseUrl));
 
-  @Rule
-  public final RuleChain rule =
-      RuleChain.outerRule(new RetryRule())
-          .around(new EnvironmentRule().setEnv("MOCK_BASE_URL", WIRE.baseUrl()))
-          .around(dw);
+  @ClassRule public static final RuleChain rule = RuleChain.outerRule(WIRE).around(DW);
+
+  @Rule public final RetryRule retryRule = new RetryRule();
 
   private ClientTestApp app;
 
   @Before
   public void resetRequests() {
     WIRE.resetRequests();
-    app = dw.getApplication();
+    app = DW.getApplication();
+
+    // reset the metrics since we don't use it in this test
+    DW.getEnvironment().metrics().removeMatching(MetricFilter.ALL);
   }
 
   @Test
   @Retry(5)
   public void runIntoDefaultConnectionTimeoutOf500Millis() {
-
     MockApiClient client =
         app.getJerseyClientBundle()
             .getClientFactory()
@@ -62,14 +69,16 @@ public class ApiClientTimeoutTest {
             .api(MockApiClient.class)
             .atTarget("http://192.168.123.123");
 
+    CompletableFuture<List<Car>> future = CompletableFuture.supplyAsync(client::getCars);
+
     await()
-        .atMost(1, SECONDS)
         .untilAsserted(
             () ->
-                assertThatExceptionOfType(ClientRequestException.class)
-                    .isThrownBy(client::getCars)
-                    .is(timeoutError())
-                    .is(connectTimeoutError()));
+                assertThatExceptionOfType(ExecutionException.class)
+                    .isThrownBy(future::get)
+                    .havingCause()
+                    .is(asClientRequestException(timeoutError()))
+                    .is(asClientRequestException(connectTimeoutError())));
   }
 
   @Test
@@ -83,20 +92,22 @@ public class ApiClientTimeoutTest {
             .api(MockApiClient.class)
             .atTarget("http://192.168.123.123");
 
+    CompletableFuture<List<Car>> future = CompletableFuture.supplyAsync(client::getCars);
+
     await()
-        .between(1, SECONDS, 3, SECONDS)
+        .atLeast(1, SECONDS)
         .untilAsserted(
             () ->
-                assertThatExceptionOfType(ClientRequestException.class)
-                    .isThrownBy(client::getCars)
-                    .is(timeoutError())
-                    .is(connectTimeoutError()));
+                assertThatExceptionOfType(ExecutionException.class)
+                    .isThrownBy(future::get)
+                    .havingCause()
+                    .is(asClientRequestException(timeoutError()))
+                    .is(asClientRequestException(connectTimeoutError())));
   }
 
   @Test
   @Retry(5)
   public void runIntoDefaultReadTimeoutOf2Seconds() {
-
     WIRE.stubFor(
         get("/api/cars").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(3000)));
 
@@ -107,20 +118,22 @@ public class ApiClientTimeoutTest {
             .api(MockApiClient.class)
             .atTarget(WIRE.baseUrl());
 
+    CompletableFuture<List<Car>> future = CompletableFuture.supplyAsync(client::getCars);
+
     await()
-        .between(1, SECONDS, 3, SECONDS)
+        .atLeast(1, SECONDS)
         .untilAsserted(
             () ->
-                assertThatExceptionOfType(ClientRequestException.class)
-                    .isThrownBy(client::getCars)
-                    .is(timeoutError())
-                    .is(readTimeoutError()));
+                assertThatExceptionOfType(ExecutionException.class)
+                    .isThrownBy(future::get)
+                    .havingCause()
+                    .is(asClientRequestException(timeoutError()))
+                    .is(asClientRequestException(readTimeoutError())));
   }
 
   @Test
   @Retry(5)
   public void runIntoConfiguredReadTimeout() {
-
     WIRE.stubFor(
         get("/api/cars").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(5000)));
 
@@ -132,14 +145,16 @@ public class ApiClientTimeoutTest {
             .api(MockApiClient.class)
             .atTarget(WIRE.baseUrl());
 
-    // the proxy seems to handle timeouts slower than the generic client
+    CompletableFuture<List<Car>> future = CompletableFuture.supplyAsync(client::getCars);
+
     await()
-        .between(3, SECONDS, 5, SECONDS)
+        .atLeast(3, SECONDS)
         .untilAsserted(
             () ->
-                assertThatExceptionOfType(ClientRequestException.class)
-                    .isThrownBy(client::getCars)
-                    .is(timeoutError())
-                    .is(readTimeoutError()));
+                assertThatExceptionOfType(ExecutionException.class)
+                    .isThrownBy(future::get)
+                    .havingCause()
+                    .is(asClientRequestException(timeoutError()))
+                    .is(asClientRequestException(readTimeoutError())));
   }
 }

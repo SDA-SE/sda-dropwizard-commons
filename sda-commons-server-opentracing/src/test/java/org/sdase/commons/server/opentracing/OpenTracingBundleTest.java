@@ -28,22 +28,23 @@ import java.util.Map;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.opentracing.test.TraceTestApp;
 
 public class OpenTracingBundleTest {
 
-  @Rule
-  public final DropwizardAppRule<Configuration> dw =
+  @ClassRule
+  public static final DropwizardAppRule<Configuration> DW =
       new DropwizardAppRule<>(TraceTestApp.class, resourceFilePath("test-config.yaml"));
 
   private MockTracer tracer;
 
   @Before
   public void setUp() {
-    TraceTestApp app = dw.getApplication();
+    TraceTestApp app = DW.getApplication();
     tracer = app.getTracer();
+    tracer.reset();
   }
 
   @Test
@@ -171,7 +172,7 @@ public class OpenTracingBundleTest {
                       entry(COMPONENT.getKey(), "jaxrs"),
                       entry(
                           HTTP_URL.getKey(),
-                          "http://localhost:" + dw.getLocalPort() + "/respond/test"),
+                          "http://localhost:" + DW.getLocalPort() + "/respond/test"),
                       entry(HTTP_RESPONSE_HEADERS.getKey(), "[Content-Type = 'text/html']"));
               assertThat(tags).containsKey(HTTP_REQUEST_HEADERS.getKey());
             });
@@ -202,7 +203,7 @@ public class OpenTracingBundleTest {
                       entry(COMPONENT.getKey(), "java-web-servlet"),
                       entry(
                           HTTP_URL.getKey(),
-                          "http://localhost:" + dw.getLocalPort() + "/respond/test"));
+                          "http://localhost:" + DW.getLocalPort() + "/respond/test"));
               assertThat(tags).containsKey(HTTP_REQUEST_HEADERS.getKey());
               assertThat(tags).containsKey(HTTP_RESPONSE_HEADERS.getKey());
             });
@@ -307,10 +308,10 @@ public class OpenTracingBundleTest {
   }
 
   private WebTarget createClient() {
-    return dw.client().target("http://localhost:" + dw.getLocalPort());
+    return DW.client().target("http://localhost:" + DW.getLocalPort());
   }
 
   private WebTarget createAdminClient() {
-    return dw.client().target("http://localhost:" + dw.getAdminPort());
+    return DW.client().target("http://localhost:" + DW.getAdminPort());
   }
 }

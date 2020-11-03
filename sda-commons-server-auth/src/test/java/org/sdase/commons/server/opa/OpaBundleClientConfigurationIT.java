@@ -30,9 +30,12 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.opa.config.OpaConfig;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaBundleClientConfigurationIT {
   public static final WireMockRule WIRE =
@@ -44,9 +47,14 @@ public class OpaBundleClientConfigurationIT {
           resourceFilePath("test-config-key-provider.yaml"),
           config("opa.baseUrl", WIRE::baseUrl),
           config("opa.policyPackage", "test"),
-          config("opa.opaClient.userAgent", "my-user-agent"));
+          config("opa.opaClient.userAgent", "my-user-agent"),
+
+          // relax the timeout to make tests more stable
+          config("opa.opaClient.timeout", "1s"));
 
   @ClassRule public static RuleChain RULE = RuleChain.outerRule(WIRE).around(DW);
+
+  @Rule public final RetryRule retryRule = new RetryRule();
 
   @BeforeClass
   public static void beforeClass() {
@@ -55,12 +63,9 @@ public class OpaBundleClientConfigurationIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldSendCustomUserAgentInTheOpaRequest() {
-    Response response =
-        createWebTarget()
-            .path("/") // NOSONAR
-            .request(APPLICATION_JSON)
-            .get();
+    Response response = createWebTarget().request(APPLICATION_JSON).get();
 
     assertThat(response.getStatus()).isEqualTo(SC_OK);
 

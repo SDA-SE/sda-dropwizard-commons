@@ -12,6 +12,12 @@ public class ClientRequestExceptionConditions {
 
   private ClientRequestExceptionConditions() {}
 
+  public static Condition<Throwable> asClientRequestException(Condition<ClientRequestException> c) {
+    return new Condition<>(
+        t -> t instanceof ClientRequestException && c.matches((ClientRequestException) t),
+        "asClientRequestException");
+  }
+
   public static Condition<ClientRequestException> clientError() {
     return new Condition<>(ClientRequestException::isClientError, "client error");
   }

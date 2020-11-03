@@ -13,6 +13,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.github.tomakehurst.wiremock.http.RequestMethod.GET;
+import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -26,6 +27,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 import static org.sdase.commons.client.jersey.error.ClientErrorUtil.convertExceptions;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.processingError;
 
+import com.codahale.metrics.MetricFilter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
@@ -51,7 +53,6 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.client.jersey.error.ClientErrorUtil;
@@ -60,12 +61,10 @@ import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
-import org.sdase.commons.server.testing.EnvironmentRule;
 import org.sdase.commons.shared.api.error.ApiException;
 
 public class ApiClientTest {
 
-  @ClassRule
   public static final WireMockClassRule WIRE =
       new WireMockClassRule(
           wireMockConfig().dynamicPort().httpServerFactory(new JettyHttpServerFactory()));
@@ -75,19 +74,23 @@ public class ApiClientTest {
   private static final ObjectMapper OM = new ObjectMapper();
   private static final Car BRIGHT_BLUE_CAR =
       new Car().setSign("HH XX 1234").setColor("bright blue"); // NOSONAR
-  private final DropwizardAppRule<ClientTestConfig> dw =
-      new DropwizardAppRule<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
+  private static final DropwizardAppRule<ClientTestConfig> DW =
+      new DropwizardAppRule<>(
+          ClientTestApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("mockBaseUrl", WIRE::baseUrl));
 
-  @Rule
-  public final RuleChain rule =
-      RuleChain.outerRule(new EnvironmentRule().setEnv("MOCK_BASE_URL", WIRE.baseUrl())).around(dw);
+  @ClassRule public static final RuleChain RULE = RuleChain.outerRule(WIRE).around(DW);
 
   private ClientTestApp app;
 
   @Before
   public void before() throws JsonProcessingException {
     WIRE.resetAll();
-    app = dw.getApplication();
+    app = DW.getApplication();
+
+    // reset the metrics since we don't use it in this test
+    DW.getEnvironment().metrics().removeMatching(MetricFilter.ALL);
 
     WIRE.stubFor(
         get("/api/cars") // NOSONAR
@@ -643,7 +646,7 @@ public class ApiClientTest {
   }
 
   private WebTarget dwClient() {
-    return dw.client().target("http://localhost:" + dw.getLocalPort());
+    return DW.client().target("http://localhost:" + DW.getLocalPort());
   }
 
   private StringValuePattern matchingUuid() {

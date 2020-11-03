@@ -17,7 +17,10 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.sdase.commons.server.hibernate.test.HibernateApp;
 import org.sdase.commons.server.hibernate.test.HibernateITestConfiguration;
 import org.sdase.commons.server.hibernate.test.model.Person;
@@ -32,7 +35,7 @@ public class HibernateIT {
       new DropwizardAppRule<>(
           HibernateApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-  @Rule public final DBUnitRule dbUnitRule = DBUnitRule.instance();
+  @ClassRule public static final DBUnitRule dbUnitRule = DBUnitRule.instance();
 
   @BeforeClass
   public static void initDb() {

@@ -7,11 +7,14 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.sdase.commons.server.auth.testing.AuthRule;
 import org.sdase.commons.server.openapi.example.OpenApiExampleApplication;
 import org.sdase.commons.server.starter.SdaPlatformConfiguration;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 // This is a simple integration test that checks whether the swagger documentation is produced at
 // the right path, however doesn't test the contents of the documentation.
@@ -34,7 +37,10 @@ public class OpenApiIT {
           .withConfigurationModifier(AUTH.applyConfig(SdaPlatformConfiguration::setAuth))
           .build();
 
+  @Rule public RetryRule retryRule = new RetryRule();
+
   @Test
+  @Retry(5)
   public void testAnswerOpenApiJson() {
     // given
 
@@ -46,6 +52,7 @@ public class OpenApiIT {
   }
 
   @Test
+  @Retry(5)
   public void testAnswerOpenApiYaml() {
     // given
 

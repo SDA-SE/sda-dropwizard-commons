@@ -39,7 +39,12 @@ public class KafkaBundleWithSaslPlainIT {
   private static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           .registerListener(
-              new SaslPlainListener().withUsername("kafkaclient").withPassword("client-secret"));
+              new SaslPlainListener().withUsername("kafkaclient").withPassword("client-secret"))
+          // we only need one consumer offsets partition
+          .withBrokerProperty("offsets.topic.num.partitions", "1")
+          // we don't need to wait that a consumer group rebalances since we always start with a
+          // fresh kafka instance
+          .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
   private static final DropwizardAppRule<KafkaTestConfiguration> DW =
       new DropwizardAppRule<>(

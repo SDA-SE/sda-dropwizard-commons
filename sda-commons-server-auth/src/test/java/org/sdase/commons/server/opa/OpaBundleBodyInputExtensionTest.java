@@ -31,10 +31,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.extension.OpaInputExtension;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaBundleBodyInputExtensionTest {
   private static final WireMockClassRule WIRE =
@@ -64,6 +67,8 @@ public class OpaBundleBodyInputExtensionTest {
   public static RuleChain CHAIN =
       RuleChain.outerRule(WIRE).around(DW_WITH_EXTENSION).around(DW_WITHOUT_EXTENSION);
 
+  @Rule public final RetryRule retryRule = new RetryRule();
+
   @BeforeClass
   public static void before() {
     WIRE.resetAll();
@@ -88,6 +93,7 @@ public class OpaBundleBodyInputExtensionTest {
   }
 
   @Test
+  @Retry(5)
   public void testFailureWhenExtensionIsActivated() {
     // given
     WIRE.resetRequests();
@@ -107,6 +113,7 @@ public class OpaBundleBodyInputExtensionTest {
   }
 
   @Test
+  @Retry(5)
   public void testSuccessWhenExtensionIsNotActivated() {
     // given
     WIRE.resetRequests();

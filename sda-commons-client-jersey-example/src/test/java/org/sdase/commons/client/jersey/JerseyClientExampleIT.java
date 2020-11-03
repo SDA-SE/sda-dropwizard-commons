@@ -6,6 +6,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,28 +21,22 @@ import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.client.jersey.clients.apia.Car;
-import org.sdase.commons.server.testing.EnvironmentRule;
 
 public class JerseyClientExampleIT {
 
-  @ClassRule
   public static final WireMockClassRule WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
   private static final DropwizardAppRule<JerseyClientExampleConfiguration> DW =
       new DropwizardAppRule<>(
-          JerseyClientExampleApplication.class, resourceFilePath("test-config.yaml"));
+          JerseyClientExampleApplication.class,
+          resourceFilePath("test-config.yaml"),
+          config("servicea", () -> WIRE.url("api")));
 
-  @Rule
-  public final RuleChain rule =
-      RuleChain.outerRule(
-              new EnvironmentRule()
-                  .setEnv("SERVICE_A_URL", String.format("%s/%s", WIRE.baseUrl(), "api")))
-          .around(DW);
+  @ClassRule public static final RuleChain rule = RuleChain.outerRule(WIRE).around(DW);
 
   private JerseyClientExampleApplication app;
   private static final ObjectMapper OM = new ObjectMapper();
@@ -49,11 +44,6 @@ public class JerseyClientExampleIT {
       new Car().setSign("HH XX 1234").setColor("bright blue"); // NOSONAR
   private static final Car LIGHT_BLUE_CAR =
       new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
-
-  @BeforeClass
-  public static void start() {
-    WIRE.start();
-  }
 
   @Before
   public void resetRequests() {

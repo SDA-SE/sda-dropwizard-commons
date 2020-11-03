@@ -21,7 +21,14 @@ import org.sdase.commons.server.kafka.model.Value;
 
 public class KafkaExampleConsumerIT {
 
-  private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource().withBrokers(2);
+  private static final SharedKafkaTestResource KAFKA =
+      new SharedKafkaTestResource()
+          .withBrokers(2)
+          // we only need one consumer offsets partition
+          .withBrokerProperty("offsets.topic.num.partitions", "1")
+          // we don't need to wait that a consumer group rebalances since we always start with a
+          // fresh kafka instance
+          .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
   private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE =
       new KafkaBrokerEnvironmentRule(KAFKA);

@@ -37,7 +37,12 @@ public class KafkaBundleWithSslIT {
                   .withKeyStorePassword("password")
                   .withTrustStoreLocation(resourceFilePath("ssl/kafka.server.truststore.jks"))
                   .withTrustStorePassword("password")
-                  .withKeyPassword("password"));
+                  .withKeyPassword("password"))
+          // we only need one consumer offsets partition
+          .withBrokerProperty("offsets.topic.num.partitions", "1")
+          // we don't need to wait that a consumer group rebalances since we always start with a
+          // fresh kafka instance
+          .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
   private static final DropwizardAppRule<KafkaTestConfiguration> DW =
       new DropwizardAppRule<>(

@@ -81,7 +81,8 @@ public class KafkaBundleWithConfigIT {
           config("kafka.brokers", KAFKA::getKafkaConnectString),
 
           // performance improvements in the tests
-          config("kafka.config.heartbeat\\.interval\\.ms", "250"));
+          config("kafka.config.heartbeat\\.interval\\.ms", "250"),
+          config("kafka.adminConfig.adminClientRequestTimeoutMs", "30000"));
 
   @ClassRule
   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
@@ -453,9 +454,6 @@ public class KafkaBundleWithConfigIT {
                     record -> resultsString.add(record.value()),
                     new IgnoreAndProceedErrorHandler<>()))
             .build());
-
-    // empty topic before test
-    KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(topic);
 
     List<String> checkMessages = new ArrayList<>();
 

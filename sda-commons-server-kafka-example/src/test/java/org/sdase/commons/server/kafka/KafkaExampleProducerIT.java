@@ -1,20 +1,22 @@
 package org.sdase.commons.server.kafka;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
-import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
 import org.sdase.commons.server.kafka.model.Key;
 import org.sdase.commons.server.kafka.model.Value;
 
@@ -23,19 +25,21 @@ public class KafkaExampleProducerIT {
   private static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           .withBrokerProperty("auto.create.topics.enable", "false")
+          // we only need one consumer offsets partition
+          .withBrokerProperty("offsets.topic.num.partitions", "1")
+          // we don't need to wait that a consumer group rebalances since we always start with a
+          // fresh kafka instance
+          .withBrokerProperty("group.initial.rebalance.delay.ms", "0")
           .withBrokers(2);
-
-  private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE =
-      new KafkaBrokerEnvironmentRule(KAFKA);
 
   private static final DropwizardAppRule<KafkaExampleConfiguration> DROPWIZARD_APP_RULE =
       new DropwizardAppRule<>(
           KafkaExampleProducerApplication.class,
-          ResourceHelpers.resourceFilePath("test-config-producer.yml"));
+          resourceFilePath("test-config-producer.yml"),
+          config("kafka.brokers", KAFKA::getKafkaConnectString));
 
   @ClassRule
-  public static final TestRule CHAIN =
-      RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
+  public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
 
   private static final String TOPIC_NAME = "exampleTopic";
 
@@ -51,15 +55,22 @@ public class KafkaExampleProducerIT {
     application.sendExample(key, v1, v2);
 
     // then
+    List<ConsumerRecord<byte[], byte[]>> records = new ArrayList<>();
     await()
         .atMost(10, TimeUnit.SECONDS)
-        .until(() -> !KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC_NAME).isEmpty());
+        .untilAsserted(
+            () -> {
+              List<ConsumerRecord<byte[], byte[]>> consumerRecords =
+                  KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC_NAME);
+              assertThat(consumerRecords).isNotEmpty();
+              records.addAll(consumerRecords);
+            });
 
-    assertThat(KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC_NAME))
+    assertThat(records)
         .extracting(ConsumerRecord::key)
         .containsExactly(new ObjectMapper().writeValueAsBytes(new Key(key)));
 
-    assertThat(KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC_NAME))
+    assertThat(records)
         .extracting(ConsumerRecord::value)
         .containsExactly(new ObjectMapper().writeValueAsBytes(new Value(v1, v2)));
   }
@@ -73,17 +84,18 @@ public class KafkaExampleProducerIT {
     application.sendExampleWithConfiguration(1L, 2L);
 
     // then
+    List<ConsumerRecord<byte[], byte[]>> records = new ArrayList<>();
     await()
         .atMost(10, TimeUnit.SECONDS)
-        .until(
-            () ->
-                !KAFKA
-                    .getKafkaTestUtils()
-                    .consumeAllRecordsFromTopic("exampleTopicConfiguration")
-                    .isEmpty());
+        .untilAsserted(
+            () -> {
+              List<ConsumerRecord<byte[], byte[]>> consumerRecords =
+                  KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic("exampleTopicConfiguration");
+              assertThat(consumerRecords).isNotEmpty();
+              records.addAll(consumerRecords);
+            });
 
-    ConsumerRecord<byte[], byte[]> record =
-        KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic("exampleTopicConfiguration").get(0);
+    ConsumerRecord<byte[], byte[]> record = records.get(0);
 
     assertThat(getLong(record.key())).isEqualTo(1L);
     assertThat(getLong(record.value())).isEqualTo(2L);
