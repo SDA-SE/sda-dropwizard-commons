@@ -79,7 +79,7 @@ dependencies {
     // sda-commons-server-morphia
     api "dev.morphia.morphia:core:$morphiaVersion"
     api "dev.morphia.morphia:validation:$morphiaVersion"
-    api "org.bouncycastle:bcpkix-jdk15on:1.66"
+    api "org.bouncycastle:bcpkix-jdk15on:1.67"
 
     // sda-commons-server-swagger
     api "io.openapitools.hal:swagger-hal:1.0.4"
