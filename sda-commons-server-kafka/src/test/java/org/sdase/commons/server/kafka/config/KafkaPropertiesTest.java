@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Properties;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.junit.Test;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 import org.sdase.commons.server.kafka.KafkaProperties;
@@ -104,6 +105,7 @@ public class KafkaPropertiesTest {
     sec.setPassword("password");
     sec.setUser("user");
     sec.setSaslMechanism("SCRAM-SHA-512");
+    sec.setProtocol(ProtocolType.SASL_PLAINTEXT);
 
     config.setSecurity(sec);
 
@@ -129,5 +131,39 @@ public class KafkaPropertiesTest {
     assertThatThrownBy(() -> KafkaProperties.forProducer(config))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Unsupported SASL mechanism OAUTHBEARER");
+  }
+
+  @Test
+  public void itShouldNotConfigureSaslForPLAINTEXT() {
+    KafkaConfiguration config = new KafkaConfiguration();
+
+    Security sec = new Security();
+    sec.setPassword("password");
+    sec.setUser("user");
+    sec.setSaslMechanism("PLAIN");
+    sec.setProtocol(ProtocolType.PLAINTEXT);
+
+    config.setSecurity(sec);
+
+    Properties props = KafkaProperties.forProducer(config);
+    assertThat(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG)).isNull();
+    assertThat(props.getProperty(SaslConfigs.SASL_MECHANISM)).isNull();
+  }
+
+  @Test
+  public void itShouldNotConfigureSaslForSSL() {
+    KafkaConfiguration config = new KafkaConfiguration();
+
+    Security sec = new Security();
+    sec.setPassword("password");
+    sec.setUser("user");
+    sec.setSaslMechanism("PLAIN");
+    sec.setProtocol(ProtocolType.SSL);
+
+    config.setSecurity(sec);
+
+    Properties props = KafkaProperties.forProducer(config);
+    assertThat(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG)).isNull();
+    assertThat(props.getProperty(SaslConfigs.SASL_MECHANISM)).isNull();
   }
 }
