@@ -1,6 +1,6 @@
 package org.sdase.commons.server.morphia;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 public class MongoConfiguration {
 

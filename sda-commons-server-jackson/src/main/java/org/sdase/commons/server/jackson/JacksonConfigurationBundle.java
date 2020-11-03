@@ -3,6 +3,7 @@ package org.sdase.commons.server.jackson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -11,6 +12,7 @@ import java.util.function.Consumer;
 import org.sda.commons.server.jackson.hal.HalLinkProvider;
 import org.sdase.commons.server.jackson.errors.ApiExceptionMapper;
 import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
+import org.sdase.commons.server.jackson.errors.JacksonPropertyNodeNameProvider;
 import org.sdase.commons.server.jackson.errors.JerseyValidationExceptionMapper;
 import org.sdase.commons.server.jackson.errors.JsonProcessingExceptionMapper;
 import org.sdase.commons.server.jackson.errors.RuntimeExceptionMapper;
@@ -73,6 +75,12 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
   public void initialize(Bootstrap<?> bootstrap) {
     // Overwrite with custom defaults
     bootstrap.setObjectMapper(objectMapperBuilder.build());
+
+    // Configure the Hibernate Validator to ask Jackson for property names
+    bootstrap.setValidatorFactory(
+        Validators.newConfiguration()
+            .propertyNodeNameProvider(new JacksonPropertyNodeNameProvider())
+            .buildValidatorFactory());
   }
 
   @Override
