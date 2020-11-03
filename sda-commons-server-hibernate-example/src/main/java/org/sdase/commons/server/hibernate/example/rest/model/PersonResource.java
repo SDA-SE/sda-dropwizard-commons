@@ -1,6 +1,6 @@
 package org.sdase.commons.server.hibernate.example.rest.model;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 /** REST resource data model */
 public class PersonResource {

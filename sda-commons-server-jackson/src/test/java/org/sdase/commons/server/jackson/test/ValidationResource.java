@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.validation.OneOf;
 import io.dropwizard.validation.ValidationMethod;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @CheckNameRepeated
 public class ValidationResource {

@@ -1,6 +1,6 @@
 package org.sdase.commons.server.errorhandling.rest.model;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 import org.sdase.commons.server.errorhandling.rest.validation.UpperCase;
 
 /** Dummy object for request to get {@link javax.validation.ValidationException} */
