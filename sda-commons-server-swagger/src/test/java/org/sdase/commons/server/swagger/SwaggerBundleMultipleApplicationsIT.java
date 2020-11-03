@@ -34,7 +34,7 @@ public class SwaggerBundleMultipleApplicationsIT {
 
     assertThatJson(response)
         .inPath("$.info.title")
-        .isEqualTo(((SwaggerBundleTestApp) DW.getApplication()).getTitle());
+        .isEqualTo(DW.<SwaggerBundleTestApp>getApplication().getTitle());
     assertThatJson(response).inPath("$.info.version").asString().isEqualTo("1");
   }
 

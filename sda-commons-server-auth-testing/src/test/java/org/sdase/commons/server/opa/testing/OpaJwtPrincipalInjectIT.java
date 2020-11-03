@@ -13,10 +13,13 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.testing.AuthRule;
 import org.sdase.commons.server.opa.testing.test.OpaJwtPrincipalInjectApp;
+import org.sdase.commons.server.testing.Retry;
+import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaJwtPrincipalInjectIT {
 
@@ -31,12 +34,15 @@ public class OpaJwtPrincipalInjectIT {
 
   @ClassRule public static RuleChain CHAIN = RuleChain.outerRule(AUTH).around(OPA).around(DW);
 
+  @Rule public final RetryRule retryRule = new RetryRule();
+
   @Before
   public void setUp() {
     OPA.reset();
   }
 
   @Test
+  @Retry(5)
   public void shouldInjectPrincipalWithConstraints() {
 
     String token = AUTH.auth().buildToken();
@@ -59,6 +65,7 @@ public class OpaJwtPrincipalInjectIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldProvideConstraintsWithoutUserContext() {
 
     OPA.mock(
@@ -79,6 +86,7 @@ public class OpaJwtPrincipalInjectIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldRejectWithForbiddenWithoutUserContext() {
 
     OPA.mock(OpaRule.onAnyRequest().deny());
@@ -94,6 +102,7 @@ public class OpaJwtPrincipalInjectIT {
   }
 
   @Test
+  @Retry(5)
   public void shouldCreateSeparateContextForEachRequest() {
 
     String token1 = AUTH.auth().addClaim("foo", "bar").buildToken();

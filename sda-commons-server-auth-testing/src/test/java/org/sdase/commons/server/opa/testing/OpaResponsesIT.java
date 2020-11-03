@@ -16,7 +16,6 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,11 +40,6 @@ public class OpaResponsesIT {
 
   @ClassRule public static final RuleChain chain = RuleChain.outerRule(WIRE).around(DW);
   @Rule public RetryRule retryRule = new RetryRule();
-
-  @BeforeClass
-  public static void start() {
-    WIRE.start();
-  }
 
   @Before
   public void before() {

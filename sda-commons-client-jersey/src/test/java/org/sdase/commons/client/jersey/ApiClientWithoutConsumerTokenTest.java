@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,18 +18,15 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.ClientWithoutConsumerTokenTestApp;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
-import org.sdase.commons.server.testing.EnvironmentRule;
 
 public class ApiClientWithoutConsumerTokenTest {
 
-  @ClassRule
   public static final WireMockClassRule WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
@@ -38,19 +36,18 @@ public class ApiClientWithoutConsumerTokenTest {
   private static final Car LIGHT_BLUE_CAR =
       new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
 
-  private final DropwizardAppRule<ClientTestConfig> dw =
+  private static final DropwizardAppRule<ClientTestConfig> DW =
       new DropwizardAppRule<>(
-          ClientWithoutConsumerTokenTestApp.class, resourceFilePath("test-config.yaml"));
+          ClientWithoutConsumerTokenTestApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("mockBaseUrl", WIRE::baseUrl));
 
-  @Rule
-  public final RuleChain rule =
-      RuleChain.outerRule(new EnvironmentRule().setEnv("MOCK_BASE_URL", WIRE.baseUrl())).around(dw);
+  @ClassRule public static final RuleChain RULE = RuleChain.outerRule(WIRE).around(DW);
 
   private ClientWithoutConsumerTokenTestApp app;
 
   @BeforeClass
   public static void initWires() throws JsonProcessingException {
-    WIRE.start();
     WIRE.stubFor(
         get("/api/cars") // NOSONAR
             .withHeader("Accept", equalTo("application/json")) // NOSONAR
@@ -64,7 +61,7 @@ public class ApiClientWithoutConsumerTokenTest {
   @Before
   public void resetRequests() {
     WIRE.resetRequests();
-    app = dw.getApplication();
+    app = DW.getApplication();
   }
 
   @Test

@@ -3,7 +3,7 @@ package org.sdase.commons.server.healthcheck.example.thread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Example thread. It just counts every second and stops by a method call */
+/** Example thread. It just counts every quarter second and stops by a method call */
 public class CountingThread extends Thread {
 
   private static final Logger LOG = LoggerFactory.getLogger(CountingThread.class);
@@ -15,7 +15,7 @@ public class CountingThread extends Thread {
   public void run() {
     while (!stop) {
       try {
-        Thread.sleep(1000);
+        Thread.sleep(250);
         LOG.info("still counting {}", count++);
 
       } catch (InterruptedException e) {

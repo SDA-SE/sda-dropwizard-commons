@@ -16,7 +16,6 @@ import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,11 +44,6 @@ public class OpaRequestsIT {
   public static final RuleChain chain = RuleChain.outerRule(WIRE).around(AUTH).around(DW);
 
   @Rule public RetryRule retryRule = new RetryRule();
-
-  @BeforeClass
-  public static void start() {
-    WIRE.start();
-  }
 
   private void mock() {
     WIRE.stubFor(

@@ -2,11 +2,13 @@ package org.sdase.commons.client.jersey.error;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.asClientRequestException;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.clientError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.connectTimeoutError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.processingError;
@@ -24,9 +26,44 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.assertj.core.api.Condition;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 public class ClientRequestExceptionTest {
+
+  @Rule public final MockitoRule mockitoRule = MockitoJUnit.rule();
+
+  @Mock Condition<ClientRequestException> condition;
+
+  @Test
+  public void identifyClientRequestException() {
+    when(condition.matches(any())).thenReturn(true);
+
+    assertThatExceptionOfType(Throwable.class)
+        .isThrownBy(
+            () -> {
+              throw new ClientRequestException(new NotFoundException());
+            })
+        .is(asClientRequestException(condition));
+
+    verify(condition, times(1)).matches(any(ClientRequestException.class));
+  }
+
+  @Test
+  public void ignoreNonClientRequestException() {
+    assertThatExceptionOfType(Throwable.class)
+        .isThrownBy(
+            () -> {
+              throw new Throwable();
+            })
+        .isNot(asClientRequestException(condition));
+
+    verify(condition, times(0)).matches(any());
+  }
 
   @Test
   public void identifyClientError() {

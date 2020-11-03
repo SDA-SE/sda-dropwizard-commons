@@ -12,6 +12,7 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.codahale.metrics.MetricFilter;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -19,8 +20,8 @@ import io.dropwizard.util.Duration;
 import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
@@ -29,23 +30,26 @@ import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 /** Test that http client configuration is correct. */
 public class ApiClientConfigurationTest {
 
-  @ClassRule
   public static final WireMockRule WIRE =
       new WireMockRule(new WireMockConfiguration().dynamicPort());
 
-  @Rule
-  public final DropwizardAppRule<ClientTestConfig> dw =
+  public static final DropwizardAppRule<ClientTestConfig> DW =
       new DropwizardAppRule<>(
           ClientTestApp.class,
           resourceFilePath("test-config.yaml"),
-          config("mockBaseUrl", WIRE.baseUrl()));
+          config("mockBaseUrl", WIRE::baseUrl));
+
+  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(WIRE).around(DW);
 
   private ClientTestApp app;
 
   @Before
   public void setUp() {
     WIRE.resetAll();
-    app = dw.getApplication();
+    app = DW.getApplication();
+
+    // reset the metrics since we don't use it in this test
+    DW.getEnvironment().metrics().removeMatching(MetricFilter.ALL);
   }
 
   @Test

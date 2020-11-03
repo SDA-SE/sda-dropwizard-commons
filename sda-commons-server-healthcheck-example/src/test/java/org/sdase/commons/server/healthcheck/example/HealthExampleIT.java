@@ -1,20 +1,20 @@
 package org.sdase.commons.server.healthcheck.example;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
+import org.junit.rules.RuleChain;
 
 public class HealthExampleIT {
 
@@ -22,29 +22,19 @@ public class HealthExampleIT {
   private static final String HEALTH_CHECK = "healthcheck";
   private static final String HEALTH_INTERNAL = "healthcheck/internal";
 
-  @ClassRule
   // Wiremock to mock external service
   public static final WireMockClassRule WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
-  @Rule
   // create example application
-  public final DropwizardAppRule<HealthExampleConfiguration> rule =
-      DropwizardRuleHelper.dropwizardTestAppFrom(HealthExampleApplication.class)
-          .withConfigFrom(HealthExampleConfiguration::new)
-          .withRandomPorts()
-          .withConfigurationModifier(c -> c.setExternalServiceUrl(WIRE.baseUrl() + SERVICE_PATH))
-          .build();
+  public static final DropwizardAppRule<HealthExampleConfiguration> DW =
+      new DropwizardAppRule<>(
+          HealthExampleApplication.class,
+          resourceFilePath("test-config.yaml"),
+          config("externalServiceUrl", () -> WIRE.url(SERVICE_PATH)));
 
-  @BeforeClass
-  public static void startMock() {
-    WIRE.start();
-  }
-
-  @AfterClass
-  public static void stopMock() {
-    WIRE.stop();
-  }
+  // start the two rules in order
+  @ClassRule public static final RuleChain RULE = RuleChain.outerRule(WIRE).around(DW);
 
   @Before
   public void resetMock() {
@@ -60,9 +50,9 @@ public class HealthExampleIT {
   }
 
   @Test
-  public void overallHealthCheckStatusShouldBecomeUnhealthy() {
+  public void overallHealthCheckStatusShouldBecomeUnhealthy() throws InterruptedException {
     mockHealthy();
-    HealthExampleApplication app = rule.getApplication();
+    HealthExampleApplication app = DW.getApplication();
     // reset counting thread and set application to healthy by doing so
     app.startCountingThread();
     assertThat(getHealth(HEALTH_CHECK).getStatus()).isEqualTo(200);
@@ -73,9 +63,9 @@ public class HealthExampleIT {
   }
 
   @Test
-  public void internalHealthCheckStatusShouldBecomeUnhealthy() {
+  public void internalHealthCheckStatusShouldBecomeUnhealthy() throws InterruptedException {
     mockHealthy();
-    HealthExampleApplication app = rule.getApplication();
+    HealthExampleApplication app = DW.getApplication();
     // reset counting thread and set application to healthy by doing so
     app.startCountingThread();
     assertThat(getHealth(HEALTH_INTERNAL).getStatus()).isEqualTo(200);
@@ -88,7 +78,7 @@ public class HealthExampleIT {
   @Test
   public void externalHealthCheckDoesOnlyAffectOverallStatus() {
     mockUnhealthy();
-    HealthExampleApplication app = rule.getApplication();
+    HealthExampleApplication app = DW.getApplication();
     // reset counting thread and set application to healthy by doing so
     app.startCountingThread();
     assertThat(getHealth(HEALTH_CHECK).getStatus()).isEqualTo(500);
@@ -96,8 +86,8 @@ public class HealthExampleIT {
   }
 
   private Response getHealth(String s) {
-    return rule.client()
-        .target("http://localhost:" + rule.getAdminPort())
+    return DW.client()
+        .target("http://localhost:" + DW.getAdminPort())
         .path(s)
         .request(MediaType.APPLICATION_JSON_TYPE)
         .get();

@@ -39,13 +39,12 @@ public class HealthExampleApplication extends Application<HealthExampleConfigura
    * method only for testing issues: changes internal state of the application to simulate healthy
    * and unhealthy
    */
-  void stopCountingThread() {
+  void stopCountingThread() throws InterruptedException {
     CountingThread counting = threadAliveHealthCheck.getThread();
     counting.setStop(true);
-    //noinspection StatementWithEmptyBody,LoopConditionNotUpdatedInsideLoop
-    while (counting.isAlive()) {
-      // wait until thread is dead
-    }
+
+    // wait until thread is dead
+    counting.join();
   }
 
   /** method only for testing issues: resets initial state of the application */

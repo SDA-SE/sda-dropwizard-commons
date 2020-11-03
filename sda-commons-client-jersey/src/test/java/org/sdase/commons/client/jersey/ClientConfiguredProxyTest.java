@@ -14,8 +14,6 @@ import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import java.util.Collections;
-import java.util.Optional;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpHeaders;
@@ -51,10 +49,8 @@ public class ClientConfiguredProxyTest {
           ClientTestApp.class,
           resourceFilePath("test-config.yaml"),
           config("client.proxy.host", "localhost"),
-          config("client.proxy.port", () -> "" + PROXY_WIRE.port())
-          // TODO: activate the next line after https://github.com/dropwizard/dropwizard/pull/3442
-          // config("client.proxy.nonProxyHosts", "localhost")
-          );
+          config("client.proxy.port", () -> "" + PROXY_WIRE.port()),
+          config("client.proxy.nonProxyHosts", "localhost"));
 
   @ClassRule
   public static final RuleChain rule =
@@ -107,15 +103,10 @@ public class ClientConfiguredProxyTest {
   }
 
   private Client getClient(String name) {
-    // TODO: remove this code after https://github.com/dropwizard/dropwizard/pull/3442
-    HttpClientConfiguration conf = DW.getConfiguration().getClient();
-    Optional.ofNullable(conf.getProxyConfiguration())
-        .ifPresent(p -> p.setNonProxyHosts(Collections.singletonList("localhost")));
-
     return DW.<ClientTestApp>getApplication()
         .getJerseyClientBundle()
         .getClientFactory()
-        .externalClient(conf)
+        .externalClient(DW.getConfiguration().getClient())
         .buildGenericClient(name);
   }
 }
