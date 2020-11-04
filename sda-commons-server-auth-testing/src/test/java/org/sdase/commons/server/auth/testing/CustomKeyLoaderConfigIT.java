@@ -19,42 +19,38 @@ import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 import org.sdase.commons.server.testing.EnvironmentRule;
-import org.sdase.commons.server.testing.LazyRule;
 
 /** A test that checks if the jersey client that is used to load keys is configurable */
 public class CustomKeyLoaderConfigIT {
   public static final WireMockRule WIRE =
       new WireMockRule(new WireMockConfiguration().dynamicPort());
 
+  static {
+    // the stub needs to be registered before the application starts.
+    // A @BeforeClass method might be too late.
+    WIRE.stubFor(get(anyUrl()).willReturn(okJson("{\"keys\": []}")));
+  }
+
   public static final EnvironmentRule ENVIRONMENT_RULE =
       new EnvironmentRule().setEnv("AUTH_RULE", "{\"keys\": [{}]}");
 
-  private static final LazyRule<DropwizardAppRule<AuthTestConfig>> DW =
-      new LazyRule<>(
-          () ->
-              new DropwizardAppRule<>(
-                  AuthTestApp.class,
-                  ResourceHelpers.resourceFilePath("test-config.yaml"),
-                  // add a custom keyLoader config
-                  config("auth.keyLoaderClient.userAgent", "my-user-agent"),
-                  config("auth.keys[0].type", "JWKS"),
-                  config("auth.keys[0].location", String.format("%s/jwks", WIRE.baseUrl()))));
+  private static final DropwizardAppRule<AuthTestConfig> DW =
+      new DropwizardAppRule<>(
+          AuthTestApp.class,
+          ResourceHelpers.resourceFilePath("test-config.yaml"),
+          // add a custom keyLoader config
+          config("auth.keyLoaderClient.userAgent", "my-user-agent"),
+          config("auth.keys[0].type", "JWKS"),
+          config("auth.keys[0].location", () -> WIRE.url("jwks")));
 
   @ClassRule
   public static RuleChain RULE = RuleChain.outerRule(WIRE).around(ENVIRONMENT_RULE).around(DW);
-
-  @BeforeClass
-  public static void beforeClass() {
-    WIRE.resetAll();
-    WIRE.stubFor(get(anyUrl()).willReturn(okJson("{\"keys\": []}")));
-  }
 
   @Test
   public void shouldSendCustomUserAgentInTheJwksRequest() {
@@ -74,6 +70,6 @@ public class CustomKeyLoaderConfigIT {
   }
 
   private WebTarget createWebTarget() {
-    return DW.getRule().client().target("http://localhost:" + DW.getRule().getLocalPort());
+    return DW.client().target("http://localhost:" + DW.getLocalPort());
   }
 }

@@ -1,5 +1,7 @@
 package org.sdase.commons.server.opa.testing;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -14,27 +16,18 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.testing.AuthRule;
-import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.testing.test.OpaJwtPrincipalInjectApp;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 
 public class OpaJwtPrincipalInjectIT {
 
-  private static AuthRule AUTH = AuthRule.builder().build();
-  private static OpaRule OPA = new OpaRule();
+  private static final AuthRule AUTH = AuthRule.builder().build();
+  private static final OpaRule OPA = new OpaRule();
 
-  private static LazyRule<DropwizardAppRule<OpaJwtPrincipalInjectApp.Config>> DW =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(OpaJwtPrincipalInjectApp.class)
-                  .withConfigFrom(OpaJwtPrincipalInjectApp.Config::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c -> c.setOpa(new OpaConfig().setBaseUrl(OPA.getUrl())))
-                  .withConfigurationModifier(
-                      AUTH.applyConfig(OpaJwtPrincipalInjectApp.Config::setAuth))
-                  .build());
+  private static final DropwizardAppRule<OpaJwtPrincipalInjectApp.Config> DW =
+      new DropwizardAppRule<>(
+          OpaJwtPrincipalInjectApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("opa.baseUrl", OPA::getUrl));
 
   @ClassRule public static RuleChain CHAIN = RuleChain.outerRule(AUTH).around(OPA).around(DW);
 
@@ -132,6 +125,6 @@ public class OpaJwtPrincipalInjectIT {
   }
 
   private WebTarget client() {
-    return DW.getRule().client().target("http://localhost:" + DW.getRule().getLocalPort());
+    return DW.client().target("http://localhost:" + DW.getLocalPort());
   }
 }

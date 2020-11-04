@@ -7,6 +7,7 @@ import io.dropwizard.setup.Environment;
 import java.util.List;
 import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.auth.config.AuthConfig;
+import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.opa.OpaBundle;
 import org.sdase.commons.server.opa.config.OpaConfig;
 
@@ -14,6 +15,7 @@ public class OpaJwtPrincipalInjectApp extends Application<OpaJwtPrincipalInjectA
 
   @Override
   public void initialize(Bootstrap<Config> bootstrap) {
+    bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
     bootstrap.addBundle(
         AuthBundle.builder()
             .withAuthConfigProvider(Config::getAuth)

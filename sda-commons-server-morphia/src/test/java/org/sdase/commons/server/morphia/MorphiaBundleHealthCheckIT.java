@@ -1,5 +1,7 @@
 package org.sdase.commons.server.morphia;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,26 +16,18 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.morphia.test.Config;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 
 /** Tests if database health check is registered and works */
 public class MorphiaBundleHealthCheckIT {
 
   private static final MongoDbRule MONGODB = MongoDbRule.builder().build();
 
-  private static final LazyRule<DropwizardAppRule<Config>> DW =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(MorphiaTestApp.class)
-                  .withConfigFrom(Config::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c ->
-                          c.getMongo()
-                              .setHosts(MONGODB.getHost())
-                              .setDatabase(MONGODB.getDatabase()))
-                  .build());
+  private static final DropwizardAppRule<Config> DW =
+      new DropwizardAppRule<>(
+          MorphiaTestApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("mongo.hosts", MONGODB::getHost),
+          config("mongo.database", MONGODB::getDatabase));
 
   @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
 
@@ -41,9 +35,8 @@ public class MorphiaBundleHealthCheckIT {
   public void shouldRegisterHealthCheck() {
     String healthcheckName = "mongo";
     Map<String, HealthCheckResult> healthCheck =
-        DW.getRule()
-            .client()
-            .target("http://localhost:" + DW.getRule().getAdminPort())
+        DW.client()
+            .target("http://localhost:" + DW.getAdminPort())
             .path("/healthcheck")
             .request(APPLICATION_JSON)
             .get(new GenericType<Map<String, HealthCheckResult>>() {});

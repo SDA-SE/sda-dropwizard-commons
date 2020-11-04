@@ -32,20 +32,16 @@ public static final MongoDbRule RULE = MongoDbRule
 
 The test rule takes care to choose a free port for the database. You can access the database 
 servers address using `RULE.getHost()`.
-Often one need to pass the server address to the constructor of another rule, where the 
-[`LazyRule`](../sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/LazyRule.java) 
-can be handy:
+Often one need to pass the server address to the constructor of another rule:
 
 ```
 private static final MongoDbRule MONGODB = MongoDbRule.builder().build();
 
-private static final LazyRule<DropwizardAppRule<AppConfiguration>> DW =
-    new LazyRule<>(
-        () ->
-            new DropwizardAppRule<>(
-                MyApplication.class,
-                ResourceHelpers.resourceFilePath("test-config.yml"),
-                ConfigOverride.config("mongo.hosts", MONGODB.getHost())));
+private static final DropwizardAppRule<AppConfiguration> DW =
+    new DropwizardAppRule<>(
+        MyApplication.class,
+        ResourceHelpers.resourceFilePath("test-config.yml"),
+        ConfigOverride.config("mongo.hosts", () -> MONGODB.getHost()));
 
 @ClassRule
 public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);

@@ -10,25 +10,21 @@ import org.junit.Test;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 
 public class OpaConnectionMisconfiguredIT {
 
   @ClassRule
-  public static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
-                  .withConfigFrom(OpaBundeTestAppConfiguration::new)
-                  .withRandomPorts()
-                  .build());
+  public static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
+      DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
+          .withConfigFrom(OpaBundeTestAppConfiguration::new)
+          .withRandomPorts()
+          .build();
 
   @Test
   public void shouldDenyAccess() {
     Response response =
-        DW.getRule()
-            .client()
-            .target("http://localhost:" + DW.getRule().getLocalPort()) // NOSONAR
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
             .path("resources")
             .request()
             .get(); // NOSONAR

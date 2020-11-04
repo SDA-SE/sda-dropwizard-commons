@@ -115,9 +115,9 @@ public class OpaIT {
 
    private static final OpaRule OPA_RULE = new OpaRule();
 
-   private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW = new LazyRule<>(
-         () -> new DropwizardAppRule<>(OpaBundleTestApp.class, ResourceHelpers.resourceFilePath("test-opa-config.yaml"),
-               config("opa.baseUrl", OPA_RULE.getUrl())));
+   private static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
+         new DropwizardAppRule<>(OpaBundleTestApp.class, ResourceHelpers.resourceFilePath("test-opa-config.yaml"),
+         config("opa.baseUrl", OPA_RULE::getUrl));
 
 
    @ClassRule
@@ -134,11 +134,11 @@ public class OpaRuleProgrammaticIT {
 
   private static final OpaRule OPA_RULE = new OpaRule();
 
-  private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW = new LazyRule<>( () ->
+  private static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
        DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
            .withConfigFrom(OpaBundeTestAppConfiguration::new)
       .withRandomPorts()
-      .withConfigurationModifier(c -> c.getOpa().setBaseUrl(OPA_RULE.getUrl())).build());
+      .withConfigurationModifier(c -> c.getOpa().setBaseUrl(OPA_RULE.getUrl())).build();
   @ClassRule
   public static final RuleChain chain = RuleChain.outerRule(OPA_RULE).around(DW);
          

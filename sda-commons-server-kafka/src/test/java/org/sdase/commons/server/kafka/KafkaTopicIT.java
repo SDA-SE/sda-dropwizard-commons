@@ -1,9 +1,10 @@
 package org.sdase.commons.server.kafka;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.KafkaBroker;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.KafkaFuture;
@@ -38,8 +38,6 @@ import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException;
 import org.sdase.commons.server.kafka.topicana.TopicComparer;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 
 public class KafkaTopicIT {
 
@@ -53,20 +51,11 @@ public class KafkaTopicIT {
           .withBrokerProperty("group.initial.rebalance.delay.ms", "0")
           .withBrokers(2);
 
-  private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(KafkaTestApplication.class)
-                  .withConfigFrom(KafkaTestConfiguration::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c ->
-                          c.getKafka()
-                              .setBrokers(
-                                  KAFKA.getKafkaBrokers().stream()
-                                      .map(KafkaBroker::getConnectString)
-                                      .collect(Collectors.toList())))
-                  .build());
+  private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE =
+      new DropwizardAppRule<>(
+          KafkaTestApplication.class,
+          resourceFilePath("test-config-default.yml"),
+          config("kafka.brokers", KAFKA::getKafkaConnectString));
 
   @ClassRule
   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
@@ -77,7 +66,7 @@ public class KafkaTopicIT {
   @Before
   public void setup() {
     results.clear();
-    KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
+    KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
     bundle = app.kafkaBundle();
   }
 
@@ -231,8 +220,7 @@ public class KafkaTopicIT {
             .build();
     ComparisonResult compare =
         comparer.compare(
-            Collections.singletonList(topic),
-            DROPWIZARD_APP_RULE.getRule().getConfiguration().getKafka());
+            Collections.singletonList(topic), DROPWIZARD_APP_RULE.getConfiguration().getKafka());
 
     assertThat(compare).isNotNull();
     Collection<Comparison<String>> topicCompareDetails =
@@ -255,8 +243,7 @@ public class KafkaTopicIT {
             .build();
     ComparisonResult compare =
         comparer.compare(
-            Collections.singletonList(topic),
-            DROPWIZARD_APP_RULE.getRule().getConfiguration().getKafka());
+            Collections.singletonList(topic), DROPWIZARD_APP_RULE.getConfiguration().getKafka());
 
     assertThat(compare).isNotNull();
     assertThat(compare.getMissingTopics()).containsExactly(topicName);
@@ -277,8 +264,7 @@ public class KafkaTopicIT {
 
     ComparisonResult compare =
         comparer.compare(
-            Collections.singletonList(topic),
-            DROPWIZARD_APP_RULE.getRule().getConfiguration().getKafka());
+            Collections.singletonList(topic), DROPWIZARD_APP_RULE.getConfiguration().getKafka());
 
     assertThat(compare).isNotNull();
     assertThat(compare.getMismatchingReplicationFactor().get(topicName))

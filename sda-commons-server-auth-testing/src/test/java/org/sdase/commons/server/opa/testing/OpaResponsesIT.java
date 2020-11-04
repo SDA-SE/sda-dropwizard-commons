@@ -4,6 +4,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -22,8 +24,6 @@ import org.junit.rules.RuleChain;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 import org.sdase.commons.server.testing.Retry;
 import org.sdase.commons.server.testing.RetryRule;
 
@@ -32,18 +32,12 @@ public class OpaResponsesIT {
   private static final WireMockClassRule WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
-  private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
-                  .withConfigFrom(OpaBundeTestAppConfiguration::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c ->
-                          c.getOpa()
-                              .setBaseUrl(WIRE.baseUrl())
-                              .setPolicyPackage("my.policy")) // NOSONAR
-                  .build());
+  private static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
+      new DropwizardAppRule<>(
+          OpaBundleTestApp.class,
+          resourceFilePath("test-opa-config.yaml"),
+          config("opa.baseUrl", WIRE::baseUrl),
+          config("opa.policyPackage", "my.policy"));
 
   @ClassRule public static final RuleChain chain = RuleChain.outerRule(WIRE).around(DW);
   @Rule public RetryRule retryRule = new RetryRule();
@@ -222,9 +216,8 @@ public class OpaResponsesIT {
   }
 
   private Response doGetRequest() {
-    return DW.getRule()
-        .client()
-        .target("http://localhost:" + DW.getRule().getLocalPort())
+    return DW.client()
+        .target("http://localhost:" + DW.getLocalPort())
         .path("resources")
         .request()
         .get();

@@ -1,10 +1,11 @@
 package org.sdase.commons.server.kafka;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.KafkaBroker;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.prometheus.client.Collector;
@@ -13,8 +14,6 @@ import io.prometheus.client.CollectorRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.assertj.core.api.iterable.Extractor;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -22,15 +21,11 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
-import org.sdase.commons.server.kafka.config.ConsumerConfig;
-import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,50 +45,14 @@ public class KafkaPrometheusMonitoringIT {
 
   private static final String PRODUCER_1 = "producer1";
 
-  private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(KafkaTestApplication.class)
-                  .withConfigFrom(KafkaTestConfiguration::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c -> {
-                        KafkaConfiguration kafka = c.getKafka();
-                        kafka.setBrokers(
-                            KAFKA.getKafkaBrokers().stream()
-                                .map(KafkaBroker::getConnectString)
-                                .collect(Collectors.toList()));
+  private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE =
+      new DropwizardAppRule<>(
+          KafkaTestApplication.class,
+          resourceFilePath("test-config-default.yml"),
+          config("kafka.brokers", KAFKA::getKafkaConnectString),
 
-                        kafka
-                            .getConsumers()
-                            .put(
-                                CONSUMER_1,
-                                ConsumerConfig.builder()
-                                    .withGroup("default")
-                                    .withClientId(CONSUMER_1)
-                                    .addConfig(
-                                        "key.deserializer",
-                                        "org.apache.kafka.common.serialization.LongDeserializer")
-                                    .addConfig(
-                                        "value.deserializer",
-                                        "org.apache.kafka.common.serialization.LongDeserializer")
-                                    .build());
-
-                        kafka
-                            .getProducers()
-                            .put(
-                                PRODUCER_1,
-                                ProducerConfig.builder()
-                                    .addConfig(
-                                        "key.serializer",
-                                        "org.apache.kafka.common.serialization.LongSerializer")
-                                    .addConfig(
-                                        "value.serializer",
-                                        "org.apache.kafka.common.serialization.LongSerializer")
-                                    .build());
-                        kafka.getProducers().put("producer2", ProducerConfig.builder().build());
-                      })
-                  .build());
+          // performance improvements in the tests
+          config("kafka.config.heartbeat\\.interval\\.ms", "250"));
 
   @ClassRule
   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
@@ -104,7 +63,7 @@ public class KafkaPrometheusMonitoringIT {
 
   @Before
   public void before() {
-    KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
+    KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
     kafkaBundle = app.kafkaBundle();
     resultsLong.clear();
   }
@@ -150,7 +109,7 @@ public class KafkaPrometheusMonitoringIT {
       "kafka_consumer_records_lag"
     };
 
-    assertThat(list).extracting(MetricExtractor.name()).contains(metrics);
+    assertThat(list).extracting(m -> m.name).contains(metrics);
 
     list.forEach(
         mfs -> {
@@ -180,20 +139,5 @@ public class KafkaPrometheusMonitoringIT {
                 new String[] {CONSUMER_1 + "-0", topic}))
         .as("sample value for metric 'kafka_consumer_topic_message_duration_count'")
         .isEqualTo(2);
-  }
-
-  static class MetricExtractor implements Extractor<MetricFamilySamples, String> {
-
-    private MetricExtractor() {}
-
-    static Extractor<MetricFamilySamples, String> name() {
-      return new MetricExtractor();
-    }
-
-    /** @see org.assertj.core.api.iterable.Extractor#extract(java.lang.Object) */
-    @Override
-    public String extract(MetricFamilySamples input) {
-      return input.name;
-    }
   }
 }
