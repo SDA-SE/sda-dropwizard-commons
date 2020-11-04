@@ -1,4 +1,8 @@
 dependencies {
+  // Dropwizard only manages bcprov but we want to make sure that all bouncycastle modules that we
+  // import use the same version.
+  components.all(BouncycastleAlignmentRule)
+
   // Add all new modules here to verify that there are no dependency clashes.
   compile project(':sda-commons-client-jersey')
   compile project(':sda-commons-client-jersey-wiremock-testing')
@@ -34,4 +38,19 @@ dependencies {
   compile project(':sda-commons-shared-forms')
   compile project(':sda-commons-shared-tracing')
   compile project(':sda-commons-shared-yaml')
+}
+
+/**
+ * A rule that forces all bouncycastle modules to use the same version.
+ */
+class BouncycastleAlignmentRule implements ComponentMetadataRule {
+  @Override
+  void execute(ComponentMetadataContext ctx) {
+    ctx.details.with {
+      if (id.group == "org.bouncycastle") {
+        // declare that the modules belong to the bouncycastle virtual platform
+        belongsTo("org.bouncycastle:bouncycastle-virtual-platform:${id.version}")
+      }
+    }
+  }
 }
