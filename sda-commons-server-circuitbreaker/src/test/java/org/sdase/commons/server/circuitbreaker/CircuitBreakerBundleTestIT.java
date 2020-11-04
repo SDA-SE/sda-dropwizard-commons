@@ -21,23 +21,20 @@ import java.util.List;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
-import org.sdase.commons.server.circuitbreaker.CircuitBreakerWrapperHelperTest.Simple;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
-import org.sdase.commons.server.testing.LazyRule;
 
 public class CircuitBreakerBundleTestIT {
   private static final WireMockClassRule WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
-  private static final LazyRule<DropwizardAppRule<AppConfiguration>> DW =
-      new LazyRule<>(
-          () -> new DropwizardAppRule<>(TestApp.class, resourceFilePath("test-config.yml")));
+  private static final DropwizardAppRule<AppConfiguration> DW =
+      new DropwizardAppRule<>(TestApp.class, resourceFilePath("test-config.yml"));
 
   @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(WIRE).around(DW);
 
   @Test
   public void shouldCreateCircuitBreaker() {
-    TestApp app = DW.getRule().getApplication();
+    TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
         circuitBreakerBundle.createCircuitBreaker("create").withDefaultConfig().build();
@@ -47,7 +44,7 @@ public class CircuitBreakerBundleTestIT {
 
   @Test
   public void shouldHaveDefaultConfiguration() {
-    TestApp app = DW.getRule().getApplication();
+    TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
         circuitBreakerBundle.createCircuitBreaker("default").withDefaultConfig().build();
@@ -68,7 +65,7 @@ public class CircuitBreakerBundleTestIT {
 
   @Test
   public void shouldHaveCustomConfiguration() {
-    TestApp app = DW.getRule().getApplication();
+    TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
         circuitBreakerBundle
@@ -97,7 +94,7 @@ public class CircuitBreakerBundleTestIT {
 
   @Test
   public void shouldApplyIgnoredExceptions() {
-    TestApp app = DW.getRule().getApplication();
+    TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
         circuitBreakerBundle
@@ -122,7 +119,7 @@ public class CircuitBreakerBundleTestIT {
 
   @Test
   public void shouldWrapTarget() {
-    TestApp app = DW.getRule().getApplication();
+    TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     Simple target =
         circuitBreakerBundle
@@ -135,16 +132,15 @@ public class CircuitBreakerBundleTestIT {
 
   @Test
   public void shouldProvideMetrics() {
-    TestApp app = DW.getRule().getApplication();
+    TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
         circuitBreakerBundle.createCircuitBreaker("metrics").withDefaultConfig().build();
     circuitBreaker.executeSupplier(() -> true);
 
     String metrics =
-        DW.getRule()
-            .client()
-            .target("http://localhost:" + DW.getRule().getAdminPort())
+        DW.client()
+            .target("http://localhost:" + DW.getAdminPort())
             .path("metrics/prometheus")
             .request()
             .get()

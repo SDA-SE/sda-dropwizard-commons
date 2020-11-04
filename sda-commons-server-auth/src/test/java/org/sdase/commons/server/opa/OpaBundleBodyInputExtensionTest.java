@@ -5,6 +5,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,43 +29,43 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.extension.OpaInputExtension;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 
 public class OpaBundleBodyInputExtensionTest {
   private static final WireMockClassRule WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
-  private static final LazyRule<DropwizardAppRule<TestConfiguration>> DW_WITH_EXTENSION =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(TestApplicationWithExtension.class)
-                  .withConfigFrom(TestConfiguration::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(c -> c.getOpa().setPolicyPackage("with"))
-                  .build());
+  private static final DropwizardAppRule<TestConfiguration> DW_WITH_EXTENSION =
+      new DropwizardAppRule<>(
+          TestApplicationWithExtension.class,
+          resourceFilePath("test-config-key-provider.yaml"),
+          config("opa.baseUrl", WIRE::baseUrl),
+          config("opa.policyPackage", "with"),
 
-  private static final LazyRule<DropwizardAppRule<TestConfiguration>> DW_WITHOUT_EXTENSION =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(TestApplicationWithoutExtension.class)
-                  .withConfigFrom(TestConfiguration::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(c -> c.getOpa().setPolicyPackage("without"))
-                  .build());
+          // relax the timeout to make tests more stable
+          config("opa.opaClient.timeout", "1s"));
+
+  private static final DropwizardAppRule<TestConfiguration> DW_WITHOUT_EXTENSION =
+      new DropwizardAppRule<>(
+          TestApplicationWithoutExtension.class,
+          resourceFilePath("test-config-key-provider.yaml"),
+          config("opa.baseUrl", WIRE::baseUrl),
+          config("opa.policyPackage", "without"),
+
+          // relax the timeout to make tests more stable
+          config("opa.opaClient.timeout", "1s"));
 
   @ClassRule
   public static RuleChain CHAIN =
       RuleChain.outerRule(WIRE).around(DW_WITH_EXTENSION).around(DW_WITHOUT_EXTENSION);
 
-  @Before
-  public void before() {
+  @BeforeClass
+  public static void before() {
     WIRE.resetAll();
 
     WIRE.stubFor(
@@ -88,12 +90,13 @@ public class OpaBundleBodyInputExtensionTest {
   @Test
   public void testFailureWhenExtensionIsActivated() {
     // given
+    WIRE.resetRequests();
+
     // when
     Response response =
         DW_WITH_EXTENSION
-            .getRule()
             .client()
-            .target("http://localhost:" + DW_WITH_EXTENSION.getRule().getLocalPort())
+            .target("http://localhost:" + DW_WITH_EXTENSION.getLocalPort())
             .request()
             .post(Entity.json(Collections.singletonMap("key", "value")));
 
@@ -106,12 +109,13 @@ public class OpaBundleBodyInputExtensionTest {
   @Test
   public void testSuccessWhenExtensionIsNotActivated() {
     // given
+    WIRE.resetRequests();
+
     // when
     Response response =
         DW_WITHOUT_EXTENSION
-            .getRule()
             .client()
-            .target("http://localhost:" + DW_WITHOUT_EXTENSION.getRule().getLocalPort())
+            .target("http://localhost:" + DW_WITHOUT_EXTENSION.getLocalPort())
             .request()
             .post(Entity.json(Collections.singletonMap("key", "value")));
 
@@ -203,7 +207,7 @@ public class OpaBundleBodyInputExtensionTest {
   }
 
   public static class TestConfiguration extends Configuration {
-    private final OpaConfig opa = new OpaConfig().setBaseUrl(WIRE.baseUrl());
+    private OpaConfig opa;
 
     public OpaConfig getOpa() {
       return opa;

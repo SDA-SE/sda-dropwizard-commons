@@ -21,41 +21,37 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpHeaders;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 import org.sdase.commons.server.testing.EnvironmentRule;
-import org.sdase.commons.server.testing.LazyRule;
 import org.sdase.commons.server.testing.SystemPropertyRule;
 
 /** A test that checks if the jersey client that is used to load keys can use a proxy server */
 public class KeyLoaderProxyIT {
-  @ClassRule
-  public static final WireMockClassRule PROXY_WIRE =
+  private static final WireMockClassRule PROXY_WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
-  @ClassRule
-  public static final EnvironmentRule ENVIRONMENT_RULE =
+  private static final EnvironmentRule ENVIRONMENT_RULE =
       new EnvironmentRule().setEnv("AUTH_RULE", "{\"keys\": [{}]}");
 
-  private final SystemPropertyRule systemProperty =
+  private static final SystemPropertyRule SYSTEM_PROPERTY =
       new SystemPropertyRule()
           .setProperty("http.proxyHost", "localhost")
-          .setProperty("http.proxyPort", "" + PROXY_WIRE.port())
+          .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port())
           .setProperty("http.nonProxyHosts", "localhost");
 
-  private final LazyRule<DropwizardAppRule<AuthTestConfig>> dw =
-      new LazyRule<>(
-          () ->
-              new DropwizardAppRule<>(
-                  AuthTestApp.class,
-                  ResourceHelpers.resourceFilePath("test-config.yaml"),
-                  config("auth.keys[0].type", "JWKS"),
-                  config("auth.keys[0].location", "http://sda.se/jwks")));
+  private static final DropwizardAppRule<AuthTestConfig> DW =
+      new DropwizardAppRule<>(
+          AuthTestApp.class,
+          ResourceHelpers.resourceFilePath("test-config.yaml"),
+          config("auth.keys[0].type", "JWKS"),
+          config("auth.keys[0].location", "http://sda.se/jwks"));
 
-  @Rule public final RuleChain rule = RuleChain.outerRule(systemProperty).around(dw);
+  @ClassRule
+  public static final RuleChain rule =
+      RuleChain.outerRule(PROXY_WIRE).around(ENVIRONMENT_RULE).around(SYSTEM_PROPERTY).around(DW);
 
   @BeforeClass
   public static void setupWiremock() {
@@ -91,6 +87,6 @@ public class KeyLoaderProxyIT {
   }
 
   private WebTarget createWebTarget() {
-    return dw.getRule().client().target("http://localhost:" + dw.getRule().getLocalPort());
+    return DW.client().target("http://localhost:" + DW.getLocalPort());
   }
 }

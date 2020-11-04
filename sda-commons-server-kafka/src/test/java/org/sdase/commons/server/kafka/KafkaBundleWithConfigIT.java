@@ -1,11 +1,12 @@
 package org.sdase.commons.server.kafka;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salesforce.kafka.test.KafkaBroker;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -36,11 +36,9 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
-import org.sdase.commons.server.kafka.config.AdminConfig;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
-import org.sdase.commons.server.kafka.config.TopicConfig;
 import org.sdase.commons.server.kafka.consumer.ErrorHandler;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.KafkaHelper;
@@ -57,8 +55,6 @@ import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
 import org.sdase.commons.server.kafka.serializers.WrappedNoSerializationErrorDeserializer;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 
 public class KafkaBundleWithConfigIT {
 
@@ -78,93 +74,20 @@ public class KafkaBundleWithConfigIT {
   private static final String LISTENER_CONFIG_ASYNC = "async";
   private static final String CLIENT_ID_ASYNC = "async";
 
-  private static final LazyRule<DropwizardAppRule<KafkaTestConfiguration>> DROPWIZARD_APP_RULE =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(KafkaTestApplication.class)
-                  .withConfigFrom(KafkaTestConfiguration::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c -> {
-                        KafkaConfiguration kafka = c.getKafka();
+  private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE =
+      new DropwizardAppRule<>(
+          KafkaTestApplication.class,
+          resourceFilePath("test-config-default.yml"),
+          config("kafka.brokers", KAFKA::getKafkaConnectString),
 
-                        kafka.setBrokers(
-                            KAFKA.getKafkaBrokers().stream()
-                                .map(KafkaBroker::getConnectString)
-                                .collect(Collectors.toList()));
-
-                        AdminConfig adminConfig = new AdminConfig();
-                        adminConfig.setAdminClientRequestTimeoutMs(2000);
-                        kafka.setAdminConfig(adminConfig);
-
-                        kafka
-                            .getConsumers()
-                            .put(
-                                CONSUMER_1,
-                                ConsumerConfig.builder()
-                                    .withGroup("default")
-                                    .withClientId(CONSUMER_1)
-                                    .addConfig(
-                                        "key.deserializer",
-                                        "org.apache.kafka.common.serialization.LongDeserializer")
-                                    .addConfig(
-                                        "value.deserializer",
-                                        "org.apache.kafka.common.serialization.LongDeserializer")
-                                    .build());
-                        kafka
-                            .getConsumers()
-                            .put(CONSUMER_2, ConsumerConfig.builder().withClientId("c2").build());
-
-                        kafka
-                            .getProducers()
-                            .put(
-                                PRODUCER_1,
-                                ProducerConfig.builder()
-                                    .addConfig(
-                                        "key.serializer",
-                                        "org.apache.kafka.common.serialization.LongSerializer")
-                                    .addConfig(
-                                        "value.serializer",
-                                        "org.apache.kafka.common.serialization.LongSerializer")
-                                    .build());
-                        kafka
-                            .getProducers()
-                            .put(PRODUCER_2, ProducerConfig.builder().withClientId("p2").build());
-
-                        kafka
-                            .getListenerConfig()
-                            .put(
-                                LISTENER_CONFIG_ASYNC,
-                                ListenerConfig.builder().withTopicMissingRetryMs(60000).build(1));
-
-                        kafka
-                            .getTopics()
-                            .put(
-                                "topicId1",
-                                TopicConfig.builder()
-                                    .name("topic1")
-                                    .withPartitions(2)
-                                    .withReplicationFactor(2)
-                                    .addConfig("max.message.bytes", "1024")
-                                    .addConfig("retention.ms", "60480000")
-                                    .build());
-                        kafka
-                            .getTopics()
-                            .put(
-                                "topicId2", // NOSONAR
-                                TopicConfig.builder()
-                                    .name("topic2")
-                                    .withPartitions(1)
-                                    .withReplicationFactor(1)
-                                    .build()); // NOSONAR
-                      })
-                  .build());
+          // performance improvements in the tests
+          config("kafka.config.heartbeat\\.interval\\.ms", "250"));
 
   @ClassRule
   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
 
-  private List<Long> results = Collections.synchronizedList(new ArrayList<>());
-  private List<String> resultsString = Collections.synchronizedList(new ArrayList<>());
+  private final List<Long> results = Collections.synchronizedList(new ArrayList<>());
+  private final List<String> resultsString = Collections.synchronizedList(new ArrayList<>());
 
   private KafkaBundle<KafkaTestConfiguration> kafkaBundle;
   private int callbackCount = 0;
@@ -184,7 +107,7 @@ public class KafkaBundleWithConfigIT {
 
   @Before
   public void before() {
-    KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
+    KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
     kafkaBundle = app.kafkaBundle();
     results.clear();
     resultsString.clear();
@@ -192,7 +115,7 @@ public class KafkaBundleWithConfigIT {
 
   @Test
   public void healthCheckShouldBeAdded() {
-    KafkaTestApplication app = DROPWIZARD_APP_RULE.getRule().getApplication();
+    KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
     assertThat(app.healthCheckRegistry().getHealthCheck("kafkaConnection")).isNotNull();
   }
 
@@ -857,16 +780,6 @@ public class KafkaBundleWithConfigIT {
             1)) {
 
       assertThat(KafkaHelper.getClientId(c1)).isEqualTo("c1-1");
-    }
-  }
-
-  @Test
-  public void shouldSetConsumerNameCorrectlyWithConsumerConfigFromYaml() {
-    try (KafkaConsumer<String, String> c1 =
-        kafkaBundle.createConsumer(
-            new StringDeserializer(), new StringDeserializer(), CONSUMER_1)) {
-
-      assertThat(KafkaHelper.getClientId(c1)).isEqualTo(CONSUMER_1 + "-0");
     }
   }
 

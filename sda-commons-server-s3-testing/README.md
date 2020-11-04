@@ -27,22 +27,18 @@ public static final S3MockRule S3_MOCK = S3MockRule
 
 The test rule takes care to choose a free port for the endpoint. You can access the mock 
 URL using `RULE.getEndpoint()`.
-Often one need to pass the endpoint URL to the constructor of another rule, where the 
-[`LazyRule`](../sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/LazyRule.java) 
-can be handy:
+Often one need to pass the endpoint URL to the constructor of another rule:
 
 ```
 public static final S3MockRule S3_MOCK = S3MockRule
       .builder()
       .build();
 
-private static final LazyRule<DropwizardAppRule<AppConfiguration>> DW =
-    new LazyRule<>(
-        () ->
-            new DropwizardAppRule<>(
-                MyApplication.class,
-                ResourceHelpers.resourceFilePath("test-config.yml"),
-                ConfigOverride.config("objectstorage.endpoint", S3_MOCK.getEndpoint())));
+private static final DropwizardAppRule<AppConfiguration> DW =
+    new DropwizardAppRule<>(
+        MyApplication.class,
+        ResourceHelpers.resourceFilePath("test-config.yml"),
+        ConfigOverride.config("objectstorage.endpoint", () -> S3_MOCK.getEndpoint())));
 
 @ClassRule
 public static final RuleChain CHAIN = RuleChain.outerRule(S3_MOCK).around(DW);

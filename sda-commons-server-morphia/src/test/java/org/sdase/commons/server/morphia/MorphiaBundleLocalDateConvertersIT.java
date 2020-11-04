@@ -1,5 +1,7 @@
 package org.sdase.commons.server.morphia;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -19,39 +21,25 @@ import org.junit.rules.RuleChain;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.morphia.test.Config;
 import org.sdase.commons.server.morphia.test.model.Person;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 
 /** Tests if entities can be added by exact definition. */
 public class MorphiaBundleLocalDateConvertersIT {
 
   private static final MongoDbRule MONGODB = MongoDbRule.builder().build();
 
-  private static final LazyRule<DropwizardAppRule<Config>> DW_SDA =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(MorphiaTestApp.class)
-                  .withConfigFrom(Config::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c ->
-                          c.getMongo()
-                              .setHosts(MONGODB.getHost())
-                              .setDatabase(MONGODB.getDatabase()))
-                  .build());
+  private static final DropwizardAppRule<Config> DW_SDA =
+      new DropwizardAppRule<>(
+          MorphiaTestApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("mongo.hosts", MONGODB::getHost),
+          config("mongo.database", MONGODB::getDatabase));
 
-  private static final LazyRule<DropwizardAppRule<Config>> DW_PLAIN =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(MorphiaPlainTestApp.class)
-                  .withConfigFrom(Config::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c ->
-                          c.getMongo()
-                              .setHosts(MONGODB.getHost())
-                              .setDatabase(MONGODB.getDatabase()))
-                  .build());
+  private static final DropwizardAppRule<Config> DW_PLAIN =
+      new DropwizardAppRule<>(
+          MorphiaPlainTestApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("mongo.hosts", MONGODB::getHost),
+          config("mongo.database", MONGODB::getDatabase));
 
   @ClassRule
   public static final RuleChain CHAIN =
@@ -118,13 +106,12 @@ public class MorphiaBundleLocalDateConvertersIT {
   }
 
   private Datastore getSdaDatastore() {
-    return ((MorphiaTestApp) DW_SDA.getRule().getApplication())
-        .getMorphiaBundleWithSdaConverter()
-        .datastore();
+    return DW_SDA.<MorphiaTestApp>getApplication().getMorphiaBundleWithSdaConverter().datastore();
   }
 
   private Datastore getPlainMorphiaDatastore() {
-    return ((MorphiaPlainTestApp) DW_PLAIN.getRule().getApplication())
+    return DW_PLAIN
+        .<MorphiaPlainTestApp>getApplication()
         .getMorphiaBundleWithPlainMorphia()
         .datastore();
   }

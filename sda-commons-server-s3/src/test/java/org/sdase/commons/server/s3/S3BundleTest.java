@@ -1,5 +1,7 @@
 package org.sdase.commons.server.s3;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -12,33 +14,25 @@ import org.junit.rules.RuleChain;
 import org.sdase.commons.server.s3.test.Config;
 import org.sdase.commons.server.s3.test.TestApp;
 import org.sdase.commons.server.s3.testing.S3MockRule;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 
 public class S3BundleTest {
 
   private static final S3MockRule S_3_MOCK_RULE =
       S3MockRule.builder().putObject("bucket", "key", "data").build();
 
-  private static final LazyRule<DropwizardAppRule<Config>> DW =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(TestApp.class)
-                  .withConfigFrom(Config::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c ->
-                          c.getS3Config()
-                              .setEndpoint(S_3_MOCK_RULE.getEndpoint())
-                              .setAccessKey("access-key")
-                              .setSecretKey("secret-key"))
-                  .build());
+  private static final DropwizardAppRule<Config> DW =
+      new DropwizardAppRule<>(
+          TestApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("s3Config.endpoint", S_3_MOCK_RULE::getEndpoint),
+          config("s3Config.accessKey", "access-key"),
+          config("s3Config.secretKey", "secret-key"));
 
   @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(S_3_MOCK_RULE).around(DW);
 
   @Test()
   public void shouldProvideClient() {
-    TestApp app = DW.getRule().getApplication();
+    TestApp app = DW.getApplication();
     S3Bundle bundle = app.getS3Bundle();
     AmazonS3 client = bundle.getClient();
 
@@ -47,7 +41,7 @@ public class S3BundleTest {
 
   @Test()
   public void shouldTraceCalls() {
-    TestApp app = DW.getRule().getApplication();
+    TestApp app = DW.getApplication();
     S3Bundle bundle = app.getS3Bundle();
     AmazonS3 client = bundle.getClient();
 

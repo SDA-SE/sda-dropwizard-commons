@@ -1,5 +1,7 @@
 package org.sdase.commons.server.opa.testing;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -12,22 +14,17 @@ import org.junit.Test;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 import org.sdase.commons.server.testing.Retry;
 import org.sdase.commons.server.testing.RetryRule;
 
 public class OpaDisabledIT {
 
   @ClassRule
-  public static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
-                  .withConfigFrom(OpaBundeTestAppConfiguration::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(c -> c.getOpa().setDisableOpa(true))
-                  .build());
+  public static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
+      new DropwizardAppRule<>(
+          OpaBundleTestApp.class,
+          resourceFilePath("test-opa-config.yaml"),
+          config("opa.disableOpa", "true"));
 
   @Rule public RetryRule rule = new RetryRule();
 
@@ -35,9 +32,8 @@ public class OpaDisabledIT {
   @Retry(5)
   public void shouldAllowAccess() {
     Response response =
-        DW.getRule()
-            .client()
-            .target("http://localhost:" + DW.getRule().getLocalPort()) // NOSONAR
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
             .path("resources")
             .request()
             .get(); // NOSONAR
@@ -49,9 +45,8 @@ public class OpaDisabledIT {
   @Retry(5)
   public void shouldNotIncludeHealthCheck() {
     Response response =
-        DW.getRule()
-            .client()
-            .target("http://localhost:" + DW.getRule().getAdminPort()) // NOSONAR
+        DW.client()
+            .target("http://localhost:" + DW.getAdminPort()) // NOSONAR
             .path("healthcheck")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .get();

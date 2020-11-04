@@ -1,5 +1,7 @@
 package org.sdase.commons.server.opa.testing;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.HttpHeaders.WWW_AUTHENTICATE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -28,8 +30,6 @@ import org.sdase.commons.server.opa.testing.test.AuthAndOpaBundeTestAppConfigura
 import org.sdase.commons.server.opa.testing.test.AuthAndOpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.ConstraintModel;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 import org.sdase.commons.server.testing.Retry;
 import org.sdase.commons.server.testing.RetryRule;
 
@@ -39,21 +39,16 @@ public class AuthAndOpaIT {
 
   private static final OpaRule OPA_RULE = new OpaRule();
 
-  private static final LazyRule<DropwizardAppRule<AuthAndOpaBundeTestAppConfiguration>> DW =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(AuthAndOpaBundleTestApp.class)
-                  .withConfigFrom(AuthAndOpaBundeTestAppConfiguration::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      AUTH.applyConfig(AuthAndOpaBundeTestAppConfiguration::setAuth))
-                  .withConfigurationModifier(c -> c.getOpa().setBaseUrl(OPA_RULE.getUrl()))
-                  .build());
+  private static final DropwizardAppRule<AuthAndOpaBundeTestAppConfiguration> DW =
+      new DropwizardAppRule<>(
+          AuthAndOpaBundleTestApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("opa.baseUrl", OPA_RULE::getUrl));
 
   @ClassRule
   public static final RuleChain chain = RuleChain.outerRule(AUTH).around(OPA_RULE).around(DW);
 
-  @Rule public RetryRule retryRule = new RetryRule();
+  @Rule public final RetryRule retryRule = new RetryRule();
 
   private static String path = "resources";
   private static String method = "GET";
@@ -165,9 +160,8 @@ public class AuthAndOpaIT {
       headers.put(HttpHeaders.AUTHORIZATION, newArrayList("Bearer " + jwt));
     }
 
-    return DW.getRule()
-        .client()
-        .target("http://localhost:" + DW.getRule().getLocalPort()) // NOSONAR
+    return DW.client()
+        .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
         .path(path)
         .request()
         .headers(headers)

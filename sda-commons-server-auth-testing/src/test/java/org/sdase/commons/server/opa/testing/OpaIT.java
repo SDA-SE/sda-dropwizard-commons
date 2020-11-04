@@ -1,6 +1,7 @@
 package org.sdase.commons.server.opa.testing;
 
 import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,7 +10,6 @@ import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
 import com.google.common.collect.Lists;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -25,7 +25,6 @@ import org.sdase.commons.server.opa.testing.test.ConstraintModel;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
-import org.sdase.commons.server.testing.LazyRule;
 import org.sdase.commons.server.testing.Retry;
 import org.sdase.commons.server.testing.RetryRule;
 
@@ -33,16 +32,14 @@ public class OpaIT {
 
   private static final OpaRule OPA_RULE = new OpaRule();
 
-  private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW =
-      new LazyRule<>(
-          () ->
-              new DropwizardAppRule<>(
-                  OpaBundleTestApp.class,
-                  ResourceHelpers.resourceFilePath("test-opa-config.yaml"),
-                  config("opa.baseUrl", OPA_RULE.getUrl())));
+  private static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
+      new DropwizardAppRule<>(
+          OpaBundleTestApp.class,
+          resourceFilePath("test-opa-config.yaml"),
+          config("opa.baseUrl", OPA_RULE::getUrl));
 
   @ClassRule public static final RuleChain chain = RuleChain.outerRule(OPA_RULE).around(DW);
-  @Rule public RetryRule retryRule = new RetryRule();
+  @Rule public final RetryRule retryRule = new RetryRule();
 
   private static String path = "resources";
   private static String method = "GET";
@@ -187,9 +184,8 @@ public class OpaIT {
   @Retry(5)
   public void shouldIncludeHealthCheck() {
     Response response =
-        DW.getRule()
-            .client()
-            .target("http://localhost:" + DW.getRule().getAdminPort()) // NOSONAR
+        DW.client()
+            .target("http://localhost:" + DW.getAdminPort()) // NOSONAR
             .path("healthcheck")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .get();
@@ -203,18 +199,12 @@ public class OpaIT {
   }
 
   private Response doGetRequest(String rPath) {
-    return DW.getRule()
-        .client()
-        .target("http://localhost:" + DW.getRule().getLocalPort())
-        .path(rPath)
-        .request()
-        .get();
+    return DW.client().target("http://localhost:" + DW.getLocalPort()).path(rPath).request().get();
   }
 
   private Response doPostRequest(String rPath) {
-    return DW.getRule()
-        .client()
-        .target("http://localhost:" + DW.getRule().getLocalPort())
+    return DW.client()
+        .target("http://localhost:" + DW.getLocalPort())
         .path(rPath)
         .request()
         .post(Entity.json(null));

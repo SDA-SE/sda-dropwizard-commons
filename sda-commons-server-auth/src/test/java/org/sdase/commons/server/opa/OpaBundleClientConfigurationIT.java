@@ -7,6 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -18,7 +19,6 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,21 +33,18 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.opa.config.OpaConfig;
-import org.sdase.commons.server.testing.LazyRule;
 
 public class OpaBundleClientConfigurationIT {
   public static final WireMockRule WIRE =
       new WireMockRule(new WireMockConfiguration().dynamicPort());
 
-  private static final LazyRule<DropwizardAppRule<TestConfiguration>> DW =
-      new LazyRule<>(
-          () ->
-              new DropwizardAppRule<>(
-                  TestApplication.class,
-                  ResourceHelpers.resourceFilePath("test-config-key-provider.yaml"),
-                  config("opa.baseUrl", WIRE.baseUrl()),
-                  config("opa.policyPackage", "test"),
-                  config("opa.opaClient.userAgent", "my-user-agent")));
+  private static final DropwizardAppRule<TestConfiguration> DW =
+      new DropwizardAppRule<>(
+          TestApplication.class,
+          resourceFilePath("test-config-key-provider.yaml"),
+          config("opa.baseUrl", WIRE::baseUrl),
+          config("opa.policyPackage", "test"),
+          config("opa.opaClient.userAgent", "my-user-agent"));
 
   @ClassRule public static RuleChain RULE = RuleChain.outerRule(WIRE).around(DW);
 
@@ -73,7 +70,7 @@ public class OpaBundleClientConfigurationIT {
   }
 
   private WebTarget createWebTarget() {
-    return DW.getRule().client().target("http://localhost:" + DW.getRule().getLocalPort());
+    return DW.client().target("http://localhost:" + DW.getLocalPort());
   }
 
   public static class TestConfiguration extends Configuration {

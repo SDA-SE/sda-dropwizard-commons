@@ -5,5 +5,3 @@ server:
   adminConnectors:
   - type: http
     port: 0
-
-auth: ${AUTH_RULE}

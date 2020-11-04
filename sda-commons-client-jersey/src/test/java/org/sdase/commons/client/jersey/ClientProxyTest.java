@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
-import org.sdase.commons.server.testing.LazyRule;
 import org.sdase.commons.server.testing.SystemPropertyRule;
 
 /** A test that checks if the proxy can be configured via system properties */
@@ -34,13 +33,11 @@ public class ClientProxyTest {
   private static final WireMockClassRule PROXY_WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
-  private static final LazyRule<SystemPropertyRule> PROP =
-      new LazyRule<>(
-          () ->
-              new SystemPropertyRule()
-                  .setProperty("http.proxyHost", "localhost")
-                  .setProperty("http.proxyPort", "" + PROXY_WIRE.port())
-                  .setProperty("http.nonProxyHosts", "localhost"));
+  private static final SystemPropertyRule PROP =
+      new SystemPropertyRule()
+          .setProperty("http.proxyHost", "localhost")
+          .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port())
+          .setProperty("http.nonProxyHosts", "localhost");
 
   private static final DropwizardAppRule<ClientTestConfig> DW =
       new DropwizardAppRule<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));

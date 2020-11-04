@@ -1,5 +1,7 @@
 package org.sdase.commons.server.morphia;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
@@ -18,26 +20,18 @@ import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.morphia.test.Config;
 import org.sdase.commons.server.morphia.test.model.ModelMarker;
 import org.sdase.commons.server.morphia.test.model.Person;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
 
 /** Tests if entities can be added by class path scanning from marker class. */
 public class MorphiaBundleScanPackageByMarkerClassIT {
 
   private static final MongoDbRule MONGODB = MongoDbRule.builder().build();
 
-  private static final LazyRule<DropwizardAppRule<Config>> DW =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(MorphiaTestApp.class)
-                  .withConfigFrom(Config::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(
-                      c ->
-                          c.getMongo()
-                              .setHosts(MONGODB.getHost())
-                              .setDatabase(MONGODB.getDatabase()))
-                  .build());
+  private static final DropwizardAppRule<Config> DW =
+      new DropwizardAppRule<>(
+          MorphiaTestApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("mongo.hosts", MONGODB::getHost),
+          config("mongo.database", MONGODB::getDatabase));
 
   @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
 
@@ -63,7 +57,7 @@ public class MorphiaBundleScanPackageByMarkerClassIT {
   }
 
   private Datastore getDatastore() {
-    return ((MorphiaTestApp) DW.getRule().getApplication()).getMorphiaBundle().datastore();
+    return DW.<MorphiaTestApp>getApplication().getMorphiaBundle().datastore();
   }
 
   public static class MorphiaTestApp extends Application<Config> {

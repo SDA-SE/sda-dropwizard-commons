@@ -7,3 +7,41 @@ server:
     port: 0
 kafka:
   brokers: ${BROKER_CONNECTION_STRING:-[]}
+
+  adminConfig:
+    adminClientRequestTimeoutMs: 2000
+
+  consumers:
+    consumer1:
+      group: default
+      clientId: consumer1
+      config:
+        key.deserializer: "org.apache.kafka.common.serialization.LongDeserializer"
+        value.deserializer: "org.apache.kafka.common.serialization.LongDeserializer"
+    consumer2:
+      clientId: c2
+
+  producers:
+    producer1:
+      config:
+        key.serializer: "org.apache.kafka.common.serialization.LongSerializer"
+        value.serializer: "org.apache.kafka.common.serialization.LongSerializer"
+    producer2:
+      clientId: p2
+
+  listenerConfig:
+    async:
+      topicMissingRetryMs: 40000
+
+  topics:
+    topicId1:
+      name: topic1
+      partitions: 2
+      replicationFactor: 2
+      config:
+        max.message.bytes: 1024
+        retention.ms: 60480000
+    topicId2:
+      name: topic2
+      partitions: 1
+      replicationFactor: 1
