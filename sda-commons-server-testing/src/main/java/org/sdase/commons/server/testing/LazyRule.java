@@ -30,7 +30,25 @@ import org.junit.runners.model.Statement;
  *     &#64;ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(WIRE).around(DW);
  *   }
  * </pre>
+ *
+ * @deprecated Use {@link io.dropwizard.testing.ConfigOverride#config(String, Supplier)} instead.
+ *     The above example can be written as:
+ *     <pre>
+ *   class MyTest {
+ *     private static final WireMockClassRule WIRE =
+ *         new WireMockClassRule(wireMockConfig().dynamicPort());
+ *     private static final DropwizardAppRule&#60;AppConfiguration&#62; DW =
+ *         new DropwizardAppRule&#60;&#62;(
+ *             TestApplication.class,
+ *             ResourceHelpers.resourceFilePath("test-config.yml"),
+ *             ConfigOverride.config("url", WIRE::baseUrl));
+ *             // or ConfigOverride.config("url", () -&#62; WIRE.baseUrl()));
+ *
+ *     &#64;ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(WIRE).around(DW);
+ *   }
+ * </pre>
  */
+@Deprecated
 public class LazyRule<T extends TestRule> implements TestRule {
   private Supplier<T> ruleSupplier;
   private T rule;
