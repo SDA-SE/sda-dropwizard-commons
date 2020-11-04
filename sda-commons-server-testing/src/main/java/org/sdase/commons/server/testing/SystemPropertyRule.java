@@ -2,6 +2,7 @@ package org.sdase.commons.server.testing;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -20,7 +21,7 @@ import org.junit.runners.model.Statement;
  */
 public class SystemPropertyRule implements TestRule {
 
-  private final Map<String, String> propertiesToSet = new HashMap<>();
+  private final Map<String, Supplier<String>> propertiesToSet = new HashMap<>();
 
   private final Map<String, String> propertiesToReset = new HashMap<>();
 
@@ -29,7 +30,8 @@ public class SystemPropertyRule implements TestRule {
     return new Statement() {
       @Override
       public void evaluate() throws Throwable {
-        propertiesToSet.forEach(SystemPropertyRule.this::applyProperty);
+        propertiesToSet.forEach(
+            (key, value) -> SystemPropertyRule.this.applyProperty(key, value.get()));
         try {
           base.evaluate();
         } finally {
@@ -39,14 +41,41 @@ public class SystemPropertyRule implements TestRule {
     };
   }
 
-  public SystemPropertyRule setProperty(String key, String value) {
+  /**
+   * Set a property to a computed value for the test. The {@code value} supplier is called when the
+   * rule is started and the property is set. This is useful, if the {@link SystemPropertyRule} is
+   * part of a {@link org.junit.rules.RuleChain} and the value can only be access after other rules
+   * have started.
+   *
+   * @param key the property to set
+   * @param value the supplier that provides the value to set
+   * @return the rule
+   */
+  public SystemPropertyRule setProperty(String key, Supplier<String> value) {
     propertiesToSet.put(key, value);
     propertiesToReset.put(key, System.getProperty(key));
     return this;
   }
 
+  /**
+   * Set a property to a value for the test..
+   *
+   * @param key the property to set
+   * @param value the value to set
+   * @return the rule
+   */
+  public SystemPropertyRule setProperty(String key, String value) {
+    return setProperty(key, () -> value);
+  }
+
+  /**
+   * Unset a property for the test.
+   *
+   * @param key the property to unser
+   * @return the rule
+   */
   public SystemPropertyRule unsetProperty(String key) {
-    propertiesToSet.put(key, null);
+    propertiesToSet.put(key, () -> null);
     propertiesToReset.put(key, System.getProperty(key));
     return this;
   }
