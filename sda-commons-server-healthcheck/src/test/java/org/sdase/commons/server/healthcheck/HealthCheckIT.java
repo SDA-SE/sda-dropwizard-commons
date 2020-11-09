@@ -1,5 +1,6 @@
 package org.sdase.commons.server.healthcheck;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,7 +12,6 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.healthcheck.helper.ExternalServiceHealthCheck;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +21,7 @@ public class HealthCheckIT {
 
   @ClassRule
   public static final DropwizardAppRule<Configuration> RULE =
-      DropwizardRuleHelper.dropwizardTestAppFrom(HealthApplication.class)
-          .withConfigFrom(Configuration::new)
-          .withRandomPorts()
-          .build();
+      new DropwizardAppRule<>(HealthApplication.class, resourceFilePath("test-config.yaml"));
 
   @Before
   public void setUp() {

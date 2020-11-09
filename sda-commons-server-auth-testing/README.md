@@ -66,24 +66,6 @@ public class AuthRuleIT {
 }
 ```
 
-The `AuthRule` may also be used with programmatic configuration omitting a `test-config.yaml`:
-
-```java
-public class AuthRuleProgrammaticIT {
-
-   private static AuthRule AUTH = AuthRule.builder().build();
-
-   @ClassRule
-   public static DropwizardAppRule<AuthTestConfig> DW = DropwizardRuleHelper.dropwizardTestAppFrom(AuthTestApp.class)
-         .withConfigFrom(AuthTestConfig::new)
-         .withRandomPorts()
-         .withConfigurationModifier(AUTH.applyConfig(AuthTestConfig::setAuth))
-         .build();
-
-   // @Test
-}
-```
-
 The `AuthRule` provides functions to generate a valid token that matches to the auth configuration in tests.
 ```java
    Response response = createWebTarget()
@@ -122,26 +104,6 @@ public class OpaIT {
 
    @ClassRule
    public static RuleChain CHAIN = RuleChain.outerRule(OPA_RULE).around(DW);
-
-   // @Test
-}
-```
-
-The `OpaRule` may also be used with programmatic configuration omitting a `test-config.yaml`:
-
-```java
-public class OpaRuleProgrammaticIT {
-
-  private static final OpaRule OPA_RULE = new OpaRule();
-
-  private static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
-       DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
-           .withConfigFrom(OpaBundeTestAppConfiguration::new)
-      .withRandomPorts()
-      .withConfigurationModifier(c -> c.getOpa().setBaseUrl(OPA_RULE.getUrl())).build();
-  @ClassRule
-  public static final RuleChain chain = RuleChain.outerRule(OPA_RULE).around(DW);
-         
 
    // @Test
 }

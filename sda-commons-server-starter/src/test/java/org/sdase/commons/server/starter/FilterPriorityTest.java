@@ -1,9 +1,9 @@
 package org.sdase.commons.server.starter;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
-import static org.sdase.commons.server.testing.DropwizardRuleHelper.dropwizardTestAppFrom;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.core.Response;
@@ -15,11 +15,7 @@ public class FilterPriorityTest {
 
   @ClassRule
   public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
-      dropwizardTestAppFrom(StarterApp.class)
-          .withConfigFrom(SdaPlatformConfiguration::new)
-          .withRandomPorts()
-          .withRootPath("/api/*")
-          .build();
+      new DropwizardAppRule<>(StarterApp.class, resourceFilePath("test-config.yaml"));
 
   @Test
   public void corsFromSwaggerHasHigherPriority() {

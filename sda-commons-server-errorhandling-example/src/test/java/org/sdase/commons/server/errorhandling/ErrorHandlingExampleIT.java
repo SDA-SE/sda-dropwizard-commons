@@ -1,5 +1,6 @@
 package org.sdase.commons.server.errorhandling;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Configuration;
@@ -11,18 +12,15 @@ import javax.ws.rs.core.Response;
 import org.assertj.core.groups.Tuple;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.shared.api.error.ApiInvalidParam;
 
-public class ErrorHandlineExampleIT {
+public class ErrorHandlingExampleIT {
 
   @ClassRule
   public static final DropwizardAppRule<Configuration> DW =
-      DropwizardRuleHelper.dropwizardTestAppFrom(ErrorHandlingExampleApplication.class)
-          .withConfigFrom(Configuration::new)
-          .withRandomPorts()
-          .build();
+      new DropwizardAppRule<>(
+          ErrorHandlingExampleApplication.class, resourceFilePath("test-config.yaml"));
 
   @Test
   public void shouldGetNotFoundException() {

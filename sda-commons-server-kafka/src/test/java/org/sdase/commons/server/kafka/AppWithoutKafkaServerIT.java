@@ -1,6 +1,8 @@
 package org.sdase.commons.server.kafka;
 
-import com.google.common.collect.Lists;
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,18 +18,15 @@ import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
 
 public class AppWithoutKafkaServerIT {
 
   @ClassRule
   public static final DropwizardAppRule<KafkaTestConfiguration> DW =
-      DropwizardRuleHelper.dropwizardTestAppFrom(KafkaTestApplication.class)
-          .withConfigFrom(KafkaTestConfiguration::new)
-          .withRandomPorts()
-          .withConfigurationModifier(
-              c -> c.getKafka().setBrokers(Lists.newArrayList("PLAINTEXT://127.0.0.1:1")))
-          .build();
+      new DropwizardAppRule<>(
+          KafkaTestApplication.class,
+          resourceFilePath("test-config-default.yml"),
+          config("kafka.brokers", "PLAINTEXT://127.0.0.1:1"));
 
   private List<String> results = Collections.synchronizedList(new ArrayList<>());
 
