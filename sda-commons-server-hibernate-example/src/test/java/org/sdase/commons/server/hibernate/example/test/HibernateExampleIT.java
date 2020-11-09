@@ -1,5 +1,7 @@
 package org.sdase.commons.server.hibernate.example.test;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,11 +18,13 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.sdase.commons.server.hibernate.example.HibernateExampleApplication;
 import org.sdase.commons.server.hibernate.example.HibernateExampleConfiguration;
 import org.sdase.commons.server.hibernate.example.db.model.PersonEntity;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
 
 @DBUnit(
     url = HibernateExampleIT.DB_URI,
@@ -33,20 +37,15 @@ public class HibernateExampleIT {
 
   @ClassRule
   public static final DropwizardAppRule<HibernateExampleConfiguration> DW =
-      DropwizardRuleHelper.dropwizardTestAppFrom(HibernateExampleApplication.class)
-          .withConfigFrom(HibernateExampleConfiguration::new)
-          .withRandomPorts()
-          .withConfigurationModifier(
-              c -> {
-                c.setDatabase(new DataSourceFactory());
-                c.getDatabase().setDriverClass("org.h2.Driver");
-                c.getDatabase().setUser("sa");
-                c.getDatabase().setPassword("sa");
-                c.getDatabase().setUrl(DB_URI);
-              })
-          .build();
+      new DropwizardAppRule<>(
+          HibernateExampleApplication.class,
+          resourceFilePath("test-config.yaml"),
+          config("database.driverClass", "org.h2.Driver"),
+          config("database.user", "sa"),
+          config("database.password", "sa"),
+          config("database.url", DB_URI));
 
-  @Rule public final DBUnitRule dbUnitRule = DBUnitRule.instance();
+  @ClassRule public static final DBUnitRule dbUnitRule = DBUnitRule.instance();
 
   @BeforeClass
   public static void initDb() {

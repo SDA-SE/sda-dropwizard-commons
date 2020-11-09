@@ -1,0 +1,12 @@
+# use random ports so that tests can run in parallel
+# and do not affect each other when one is not shutting down
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+
+# The configuration of the test auth bundle is injected here
+auth: ${AUTH_RULE}

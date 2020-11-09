@@ -1,5 +1,6 @@
 package org.sdase.commons.server.opa.testing;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -9,16 +10,12 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
 
 public class OpaConnectionMisconfiguredIT {
 
   @ClassRule
   public static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
-      DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
-          .withConfigFrom(OpaBundeTestAppConfiguration::new)
-          .withRandomPorts()
-          .build();
+      new DropwizardAppRule<>(OpaBundleTestApp.class, resourceFilePath("test-opa-config.yaml"));
 
   @Test
   public void shouldDenyAccess() {

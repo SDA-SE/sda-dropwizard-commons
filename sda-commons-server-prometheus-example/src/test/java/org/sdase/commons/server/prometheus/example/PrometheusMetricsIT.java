@@ -1,5 +1,6 @@
 package org.sdase.commons.server.prometheus.example;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -7,7 +8,6 @@ import javax.ws.rs.core.Response;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.starter.SdaPlatformConfiguration;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +17,7 @@ public class PrometheusMetricsIT {
 
   @ClassRule
   public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
-      DropwizardRuleHelper.dropwizardTestAppFrom(MetricExampleApp.class)
-          .withConfigFrom(SdaPlatformConfiguration::new)
-          .withRandomPorts()
-          .build();
+      new DropwizardAppRule<>(MetricExampleApp.class, resourceFilePath("test-config.yaml"));
 
   @Test
   public void produceGaugeMetric() {

@@ -1,5 +1,7 @@
 package org.sdase.commons.server.kafka;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertNull;
 
@@ -20,18 +22,16 @@ import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
 
 /** checks that all public bundle methods can be called without any exception */
 public class AppDisabledKafkaServerIT {
 
   @ClassRule
   public static final DropwizardAppRule<KafkaTestConfiguration> DW =
-      DropwizardRuleHelper.dropwizardTestAppFrom(KafkaTestApplication.class)
-          .withConfigFrom(KafkaTestConfiguration::new)
-          .withRandomPorts()
-          .withConfigurationModifier(c -> c.getKafka().setDisabled(true))
-          .build();
+      new DropwizardAppRule<>(
+          KafkaTestApplication.class,
+          resourceFilePath("test-config-default.yml"),
+          config("kafka.disabled", "true"));
 
   private List<String> results = Collections.synchronizedList(new ArrayList<>());
 

@@ -1,5 +1,6 @@
 package org.sdase.commons.server.openapi.example.people.rest;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,10 +10,10 @@ import javax.ws.rs.core.Response;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.testing.AuthRule;
 import org.sdase.commons.server.openapi.example.OpenApiExampleApplication;
 import org.sdase.commons.server.starter.SdaPlatformConfiguration;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.server.testing.Retry;
 import org.sdase.commons.server.testing.RetryRule;
 
@@ -24,18 +25,16 @@ public class OpenApiIT {
   // Connect provider for the tests
   private static final AuthRule AUTH = AuthRule.builder().build();
 
-  @ClassRule
   public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
       // Setup a test instance of the application
-      DropwizardRuleHelper.dropwizardTestAppFrom(OpenApiExampleApplication.class)
-          .withConfigFrom(SdaPlatformConfiguration::new)
-          // use random ports so that tests can run in parallel
-          // and do not affect each other when one is not shutting down
-          .withRandomPorts()
-          // apply the auth config to the test instance of the application
-          // to verify incoming tokens correctly
-          .withConfigurationModifier(AUTH.applyConfig(SdaPlatformConfiguration::setAuth))
-          .build();
+      new DropwizardAppRule<>(
+          OpenApiExampleApplication.class,
+          // use the config file 'test-config.yaml' from the test resources folder
+          resourceFilePath("test-config.yaml"));
+
+  // apply the auth config to the test instance of the application
+  // to verify incoming tokens correctly
+  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
 
   @Rule public RetryRule retryRule = new RetryRule();
 

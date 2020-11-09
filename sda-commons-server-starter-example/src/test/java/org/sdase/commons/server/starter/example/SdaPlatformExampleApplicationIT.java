@@ -1,5 +1,6 @@
 package org.sdase.commons.server.starter.example;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,12 +14,12 @@ import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.testing.AuthRule;
 import org.sdase.commons.server.starter.SdaPlatformConfiguration;
 import org.sdase.commons.server.starter.example.people.db.PersonEntity;
 import org.sdase.commons.server.starter.example.people.db.TestDataUtil;
 import org.sdase.commons.server.starter.example.people.rest.PersonResource;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 
 public class SdaPlatformExampleApplicationIT {
@@ -27,18 +28,16 @@ public class SdaPlatformExampleApplicationIT {
   // tests
   private static final AuthRule AUTH = AuthRule.builder().build();
 
-  @ClassRule
   public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
       // Setup a test instance of the application
-      DropwizardRuleHelper.dropwizardTestAppFrom(SdaPlatformExampleApplication.class)
-          .withConfigFrom(SdaPlatformConfiguration::new)
-          // use random ports so that tests can run in parallel
-          // and do not affect each other when one is not shutting down
-          .withRandomPorts()
-          // apply the auth config to the test instance of the application to verify incoming tokens
-          // correctly
-          .withConfigurationModifier(AUTH.applyConfig(SdaPlatformConfiguration::setAuth))
-          .build();
+      new DropwizardAppRule<>(
+          SdaPlatformExampleApplication.class,
+          // use the config file 'test-config.yaml' from the test resources folder
+          resourceFilePath("test-config.yaml"));
+
+  // apply the auth config to the test instance of the application
+  // to verify incoming tokens correctly
+  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
 
   private static final String TEST_CONSUMER_TOKEN = "test-consumer";
 
