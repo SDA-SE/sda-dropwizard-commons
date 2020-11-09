@@ -117,8 +117,10 @@ public class AuthRule implements TestRule {
    *     org.sdase.commons.server.testing.DropwizardRuleHelper#withConfigurationModifier(Consumer)}
    *     or {@link
    *     org.sdase.commons.server.testing.DropwizardConfigurationHelper#withConfigurationModifier(Consumer)}
+   * @deprecated see {@link org.sdase.commons.server.testing.DropwizardRuleHelper}
    */
   @SuppressWarnings("WeakerAccess")
+  @Deprecated
   public <C extends Configuration> Consumer<C> applyConfig(
       BiConsumer<C, AuthConfig> authConfigSetter) {
     return c -> authConfigSetter.accept(c, this.authConfig);

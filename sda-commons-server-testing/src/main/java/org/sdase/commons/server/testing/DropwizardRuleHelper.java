@@ -15,7 +15,21 @@ import org.sdase.commons.server.testing.builder.DropwizardRuleBuilders.PortBuild
  *
  * @param <C> the type of the {@link Configuration} used by the {@link Application}
  * @param <A> the type of the {@link Application} that bootstraps the service
+ * @deprecated Prefer the original {@link DropwizardAppRule} and a config file with the following
+ *     minimal content:
+ *     <pre>{@code
+ * # use random ports so that tests can run in parallel
+ * # and do not affect each other when one is not shutting down
+ * server:
+ *   applicationConnectors:
+ *   - type: http
+ *     port: 0
+ *   adminConnectors:
+ *   - type: http
+ *     port: 0
+ * }</pre>
  */
+@Deprecated
 public class DropwizardRuleHelper<C extends Configuration, A extends Application<C>>
     implements ConfigurationBuilder<C>, PortBuilder<C>, CustomizationBuilder<C> {
 
