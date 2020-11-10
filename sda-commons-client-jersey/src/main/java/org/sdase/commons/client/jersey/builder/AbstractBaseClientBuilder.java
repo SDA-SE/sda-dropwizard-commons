@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientRequestFilter;
+import org.sdase.commons.client.jersey.ApiHttpClientConfiguration;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
 
 /**
@@ -134,7 +135,14 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
    * @param apiInterface the interface that declares the API using JAX-RS annotations.
    * @param <A> the type of the api
    * @return a builder to define the root path of the API for the proxy that is build
+   * @deprecated if API clients from interfaces are used, it is now preferred to move to the
+   *     {@linkplain org.sdase.commons.client.jersey.ApiHttpClientConfiguration dedicated config}
+   *     and start building the client with {@link
+   *     org.sdase.commons.client.jersey.ClientFactory#externalClient(ApiHttpClientConfiguration)}
+   *     or {@link
+   *     org.sdase.commons.client.jersey.ClientFactory#platformClient(ApiHttpClientConfiguration)}
    */
+  @Deprecated
   public <A> ApiClientBuilder<A> api(Class<A> apiInterface) {
     return api(apiInterface, apiInterface.getSimpleName());
   }
@@ -148,7 +156,14 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
    *     service and metrics. Names have to be unique.
    * @param <A> the type of the api
    * @return a builder to define the root path of the API for the proxy that is build
+   * @deprecated if API clients from interfaces are used, it is now preferred to move to the
+   *     {@linkplain org.sdase.commons.client.jersey.ApiHttpClientConfiguration dedicated config}
+   *     and start building the client with {@link
+   *     org.sdase.commons.client.jersey.ClientFactory#externalClient(ApiHttpClientConfiguration)}
+   *     or {@link
+   *     org.sdase.commons.client.jersey.ClientFactory#platformClient(ApiHttpClientConfiguration)}
    */
+  @Deprecated
   public <A> ApiClientBuilder<A> api(Class<A> apiInterface, String customName) {
     return new ApiClientBuilder<>(apiInterface, buildGenericClient(customName));
   }

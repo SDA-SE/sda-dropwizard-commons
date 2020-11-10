@@ -33,7 +33,7 @@ public class ClientWithoutConsumerTokenTestApp extends Application<ClientTestCon
         .jersey()
         .register(
             new ClientTestEndPoint(
-                jerseyClientBundle.getClientFactory(), configuration.getMockBaseUrl()));
+                jerseyClientBundle.getClientFactory(), configuration.getMockClient()));
   }
 
   public JerseyClientBundle getJerseyClientBundle() {

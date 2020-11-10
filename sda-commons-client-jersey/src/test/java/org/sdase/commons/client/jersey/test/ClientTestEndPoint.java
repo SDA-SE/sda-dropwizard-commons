@@ -6,6 +6,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.sdase.commons.client.jersey.ApiHttpClientConfiguration;
 import org.sdase.commons.client.jersey.ClientFactory;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 
@@ -15,23 +16,21 @@ public class ClientTestEndPoint {
   private MockApiClient externalMockApiClient;
   private MockApiClient authMockApiClient;
 
-  ClientTestEndPoint(ClientFactory clientFactory, String baseUrl) {
+  ClientTestEndPoint(
+      ClientFactory clientFactory, ApiHttpClientConfiguration apiHttpClientConfiguration) {
     mockApiClient =
         clientFactory
-            .platformClient()
-            .api(MockApiClient.class, "MockApiClientWithoutAuth")
-            .atTarget(baseUrl);
+            .platformClient(apiHttpClientConfiguration)
+            .api(MockApiClient.class, "MockApiClientWithoutAuth");
     authMockApiClient =
         clientFactory
-            .platformClient()
+            .platformClient(apiHttpClientConfiguration)
             .enableAuthenticationPassThrough()
-            .api(MockApiClient.class, "MockApiClientWithAuth")
-            .atTarget(baseUrl);
+            .api(MockApiClient.class, "MockApiClientWithAuth");
     externalMockApiClient =
         clientFactory
-            .externalClient()
-            .api(MockApiClient.class, "MockApiClientExternal")
-            .atTarget(baseUrl);
+            .externalClient(apiHttpClientConfiguration)
+            .api(MockApiClient.class, "MockApiClientExternal");
   }
 
   @GET

@@ -6,5 +6,9 @@ server:
   - type: http
     port: 0
 
-mockBaseUrl: ${MOCK_BASE_URL}
 consumerToken: test-consumer
+
+mockClient:
+  apiBaseUrl: ${MOCK_BASE_URL}
+  timeout: ${MOCK_READ_TIMEOUT:-2000ms}
+  connectionTimeout: ${MOCK_CONNECT_TIMEOUT:-500ms}

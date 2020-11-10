@@ -39,7 +39,7 @@ public class ClientTestApp extends Application<ClientTestConfig> {
         .jersey()
         .register(
             new ClientTestEndPoint(
-                jerseyClientBundle.getClientFactory(), configuration.getMockBaseUrl()));
+                jerseyClientBundle.getClientFactory(), configuration.getMockClient()));
   }
 
   public JerseyClientBundle<ClientTestConfig> getJerseyClientBundle() {

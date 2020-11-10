@@ -2,7 +2,9 @@ package org.sdase.commons.client.jersey;
 
 import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
+import org.sdase.commons.client.jersey.builder.ExternalApiClientBuilder;
 import org.sdase.commons.client.jersey.builder.ExternalClientBuilder;
+import org.sdase.commons.client.jersey.builder.PlatformApiClientBuilder;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
 
 /**
@@ -49,6 +51,21 @@ public class ClientFactory {
   }
 
   /**
+   * Starts creation of a client that calls APIs within the SDA SE Platform. This clients
+   * automatically send a {@code Trace-Token} from the incoming request or a new {@code Trace-Token}
+   * to the API resources and can optionally send a {@code Consumer-Token} or pass through the
+   * {@code Authorization} header from the incoming request.
+   *
+   * @param apiHttpClientConfiguration Allows to pass additional configuration for the http client.
+   * @return a builder to configure the client
+   */
+  public PlatformApiClientBuilder platformClient(
+      ApiHttpClientConfiguration apiHttpClientConfiguration) {
+    return new PlatformApiClientBuilder(
+        environment, apiHttpClientConfiguration, tracer, consumerToken);
+  }
+
+  /**
    * Starts creation of a client that calls APIs outside of the SDA SE Platform. This clients does
    * no header magic.
    *
@@ -69,5 +86,17 @@ public class ClientFactory {
    */
   public ExternalClientBuilder externalClient(HttpClientConfiguration httpClientConfiguration) {
     return new ExternalClientBuilder(environment, httpClientConfiguration, tracer);
+  }
+
+  /**
+   * Starts creation of a client that calls APIs outside of the SDA SE Platform. This clients does
+   * no header magic.
+   *
+   * @param apiHttpClientConfiguration Allows to pass additional configuration for the http client.
+   * @return a builder to configure the client
+   */
+  public ExternalApiClientBuilder externalClient(
+      ApiHttpClientConfiguration apiHttpClientConfiguration) {
+    return new ExternalApiClientBuilder(environment, apiHttpClientConfiguration, tracer);
   }
 }

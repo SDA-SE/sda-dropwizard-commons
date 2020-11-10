@@ -37,7 +37,7 @@ public class ApiClientConfigurationTest {
       new DropwizardAppRule<>(
           ClientTestApp.class,
           resourceFilePath("test-config.yaml"),
-          config("mockBaseUrl", WIRE::baseUrl));
+          config("mockClient.apiBaseUrl", WIRE::baseUrl));
 
   @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(WIRE).around(DW);
 
