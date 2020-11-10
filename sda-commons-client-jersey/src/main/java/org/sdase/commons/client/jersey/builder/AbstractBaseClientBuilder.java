@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> the type of the subclass
  */
-abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
+abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseClientBuilder.class);
   /**
