@@ -1,22 +1,15 @@
 package org.sdase.commons.client.jersey.builder;
 
-import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.registerTracing;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
-import java.net.ProxySelector;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientRequestFilter;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
-import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Builder that provides options that are common for all types of clients.
@@ -25,7 +18,6 @@ import org.slf4j.LoggerFactory;
  */
 abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseClientBuilder.class);
   /**
    * As default, the client will follow redirects so that redirect status codes are automatically
    * resolved by the client.
@@ -33,8 +25,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
   private static final boolean DEFAULT_FOLLOW_REDIRECTS = true;
 
   private HttpClientConfiguration httpClientConfiguration;
-  private JerseyClientBuilder jerseyClientBuilder;
-  private final Tracer tracer;
+  private InternalJerseyClientFactory internalJerseyClientFactory;
   private final ObjectMapper objectMapper;
 
   private List<ClientRequestFilter> filters;
@@ -48,17 +39,11 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
   AbstractBaseClientBuilder(
       Environment environment, HttpClientConfiguration httpClientConfiguration, Tracer tracer) {
     this.httpClientConfiguration = httpClientConfiguration;
-    this.jerseyClientBuilder = new JerseyClientBuilder(environment);
-    this.tracer = tracer;
+    this.internalJerseyClientFactory =
+        new InternalJerseyClientFactory(new JerseyClientBuilder(environment), tracer);
     this.objectMapper = environment.getObjectMapper();
     this.filters = new ArrayList<>();
     this.followRedirects = DEFAULT_FOLLOW_REDIRECTS;
-
-    // a specific proxy configuration always overrides the system proxy
-    if (httpClientConfiguration.getProxyConfiguration() == null) {
-      // register a route planner that uses the default proxy variables (e.g. http.proxyHost)
-      this.jerseyClientBuilder.using(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
-    }
   }
 
   /**
@@ -127,6 +112,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
    */
   public T disableFollowRedirects() {
     this.followRedirects = false;
+    //noinspection unchecked
     return (T) this;
   }
 
@@ -137,28 +123,9 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
    * @return the client instance
    */
   public Client buildGenericClient(String name) {
-    // Create a copy of the configuration
-    final HttpClientConfiguration configuration =
-        objectMapper.convertValue(httpClientConfiguration, httpClientConfiguration.getClass());
-
-    // This is a legacy option that should be removed if the connectionTimeout is no longer
-    // configurable directly.
-    if (connectionTimeoutMillis != null) {
-      configuration.setConnectionTimeout(
-          io.dropwizard.util.Duration.milliseconds(connectionTimeoutMillis));
-    }
-    // This is a legacy option that should be removed if the readTimeout is no longer configurable
-    // directly.
-    if (readTimeoutMillis != null) {
-      configuration.setTimeout(io.dropwizard.util.Duration.milliseconds(readTimeoutMillis));
-    }
-
-    Client client = jerseyClientBuilder.using(configuration).build(name);
-    filters.forEach(client::register);
-    client.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
-    registerMultiPartIfAvailable(client);
-    registerTracing(client, tracer);
-    return client;
+    HttpClientConfiguration configuration = createBackwardCompatibleHttpClientConfiguration();
+    return internalJerseyClientFactory.createClient(
+        name, configuration, this.filters, this.followRedirects);
   }
 
   /**
@@ -186,19 +153,26 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
     return new ApiClientBuilder<>(apiInterface, buildGenericClient(customName));
   }
 
-  private void registerMultiPartIfAvailable(Client client) {
-    try {
-      ClassLoader classLoader = getClass().getClassLoader();
-      Class<?> multiPartFeature =
-          classLoader.loadClass("org.glassfish.jersey.media.multipart.MultiPartFeature");
-      if (multiPartFeature != null) {
-        LOG.info("Registering MultiPartFeature for client.");
-        client.register(multiPartFeature);
-      }
-    } catch (ClassNotFoundException e) {
-      LOG.info("Not registering MultiPartFeature for client: Class is not available.");
-    } catch (Exception e) {
-      LOG.warn("Failed to register MultiPartFeature for client.");
+  /**
+   * @return a copy of the {@link #httpClientConfiguration} using timeouts from deprecated
+   *     configuration if needed
+   */
+  private HttpClientConfiguration createBackwardCompatibleHttpClientConfiguration() {
+    // Create a copy of the configuration
+    HttpClientConfiguration configuration =
+        objectMapper.convertValue(httpClientConfiguration, httpClientConfiguration.getClass());
+
+    // This is a legacy option that should be removed if the connectionTimeout is no longer
+    // configurable directly.
+    if (connectionTimeoutMillis != null) {
+      configuration.setConnectionTimeout(
+          io.dropwizard.util.Duration.milliseconds(connectionTimeoutMillis));
     }
+    // This is a legacy option that should be removed if the readTimeout is no longer configurable
+    // directly.
+    if (readTimeoutMillis != null) {
+      configuration.setTimeout(io.dropwizard.util.Duration.milliseconds(readTimeoutMillis));
+    }
+    return configuration;
   }
 }
