@@ -1,6 +1,7 @@
 package org.sdase.commons.server.testing;
 
-import org.assertj.core.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -12,30 +13,37 @@ public class SystemPropertyRuleTest {
   public SystemPropertyRule PROP =
       new SystemPropertyRule()
           .setProperty("envForTesting", "envForTestingValue")
+          .setProperty("envForTestingSupplier", () -> "envForTestingSupplierValue")
           .unsetProperty("envNotForTesting");
 
   @BeforeClass
   public static void assertVariableIsNotSetBeforeTest() {
-    Assertions.assertThat(System.getProperty("envForTesting")).isNull();
-    Assertions.assertThat(System.getProperty("envNotForTesting")).isNull();
+    assertThat(System.getProperty("envForTesting")).isNull();
+    assertThat(System.getProperty("envNotForTesting")).isNull();
+    assertThat(System.getProperty("envForTestingSupplier")).isNull();
     System.setProperty("envNotForTesting", "envNotForTestingValue");
   }
 
   @Test
   public void shouldBeSetInTest() {
-    Assertions.assertThat(System.getProperty("envForTesting")).isEqualTo("envForTestingValue");
+    assertThat(System.getProperty("envForTesting")).isEqualTo("envForTestingValue");
+  }
+
+  @Test
+  public void shouldBeSetInTestWhenUsingSupplier() {
+    assertThat(System.getProperty("envForTestingSupplier")).isEqualTo("envForTestingSupplierValue");
   }
 
   @Test
   public void shouldBeUnsetInTest() {
-    Assertions.assertThat(System.getProperty("envNotForTesting")).isNull();
+    assertThat(System.getProperty("envNotForTesting")).isNull();
   }
 
   @AfterClass
   public static void assertVariableIsNotSetAfterTest() {
-    Assertions.assertThat(System.getProperty("envForTesting")).isNull();
-    Assertions.assertThat(System.getProperty("envNotForTesting"))
-        .isEqualTo("envNotForTestingValue");
+    assertThat(System.getProperty("envForTesting")).isNull();
+    assertThat(System.getProperty("envForTestingSupplier")).isNull();
+    assertThat(System.getProperty("envNotForTesting")).isEqualTo("envNotForTestingValue");
     System.clearProperty("envNotForTesting");
   }
 }
