@@ -1,7 +1,8 @@
 dependencies {
   compile project(':sda-commons-server-starter')
-  compile project(':sda-commons-server-openapi')
 
   testCompile project(':sda-commons-server-testing')
   testCompile project(':sda-commons-server-auth-testing')
+
+  testCompile 'org.assertj:assertj-core'
 }

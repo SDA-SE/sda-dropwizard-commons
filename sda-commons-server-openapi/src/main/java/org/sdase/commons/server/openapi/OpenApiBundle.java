@@ -230,7 +230,7 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
     OpenApiBundle build();
   }
 
-  public static final class Builder implements InitialBuilder, FinalBuilder {
+  public static final class Builder implements FinalBuilder {
 
     private final Set<String> resourcePackages;
 

@@ -18,8 +18,7 @@ public class MetricExampleApp extends Application<SdaPlatformConfiguration> {
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
             .withRequiredConsumerToken()
-            .withSwaggerInfoTitle("Metric Example App")
-            .addSwaggerResourcePackageClass(this.getClass())
+            .addOpenApiResourcePackageClass(this.getClass())
             .build());
   }
 
