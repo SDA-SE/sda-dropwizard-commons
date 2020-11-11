@@ -1,6 +1,7 @@
 package org.sdase.commons.server.testing;
 
-import org.assertj.core.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.*;
 
 public class EnvironmentRuleTest {
@@ -9,29 +10,35 @@ public class EnvironmentRuleTest {
   public EnvironmentRule ENV =
       new EnvironmentRule()
           .setEnv("envForTesting", "envForTestingValue")
+          .setEnv("envForTestingSupplier", "envForTestingSupplierValue")
           .unsetEnv("envNotForTesting");
 
   @BeforeClass
   public static void assertVariableIsNotSetBeforeTest() {
-    Assertions.assertThat(System.getenv("envForTesting")).isNull();
-    Assertions.assertThat(System.getenv("envNotForTesting")).isNull();
+    assertThat(System.getenv())
+        .doesNotContainKeys("envForTesting", "envNotForTesting", "envForTestingSupplier");
     Environment.setEnv("envNotForTesting", "envNotForTestingValue");
   }
 
   @Test
   public void shouldBeSetInTest() {
-    Assertions.assertThat(System.getenv("envForTesting")).isEqualTo("envForTestingValue");
+    assertThat(System.getenv("envForTesting")).isEqualTo("envForTestingValue");
+  }
+
+  @Test
+  public void shouldBeSetInTestWhenUsingSupplier() {
+    assertThat(System.getenv("envForTestingSupplier")).isEqualTo("envForTestingSupplierValue");
   }
 
   @Test
   public void shouldBeUnsetInTest() {
-    Assertions.assertThat(System.getenv("envNotForTesting")).isNull();
+    assertThat(System.getenv("envNotForTesting")).isNull();
   }
 
   @AfterClass
   public static void assertVariableIsNotSetAfterTest() {
-    Assertions.assertThat(System.getenv("envForTesting")).isNull();
-    Assertions.assertThat(System.getenv("envNotForTesting")).isEqualTo("envNotForTestingValue");
+    assertThat(System.getenv("envForTesting")).isNull();
+    assertThat(System.getenv("envNotForTesting")).isEqualTo("envNotForTestingValue");
     Environment.unsetEnv("envNotForTesting");
   }
 }

@@ -44,8 +44,8 @@ public class SystemPropertyRule implements TestRule {
   /**
    * Set a property to a computed value for the test. The {@code value} supplier is called when the
    * rule is started and the property is set. This is useful, if the {@link SystemPropertyRule} is
-   * part of a {@link org.junit.rules.RuleChain} and the value can only be access after other rules
-   * have started.
+   * part of a {@link org.junit.rules.RuleChain} and the value can only be accessed after other
+   * rules have been started.
    *
    * @param key the property to set
    * @param value the supplier that provides the value to set
