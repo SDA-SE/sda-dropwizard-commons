@@ -27,7 +27,7 @@ dependencies {
   compile project(':sda-commons-server-s3')
   compile project(':sda-commons-server-s3-testing')
   compile project(':sda-commons-server-security')
-  compile project(':sda-commons-server-starter')
+  compile project(':sda-commons-server-starter-swagger')
   compile project(':sda-commons-server-swagger')
   compile project(':sda-commons-server-testing')
   compile project(':sda-commons-server-trace')

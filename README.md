@@ -1,5 +1,5 @@
 [![Latest Release](https://img.shields.io/github/v/release/sda-se/sda-dropwizard-commons?label=latest)](https://github.com/SDA-SE/sda-dropwizard-commons/releases/latest)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sdase.commons/sda-commons-server-starter/badge.svg)](https://search.maven.org/search?q=org.sdase.commons)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sdase.commons/sda-commons-server-starter-swagger/badge.svg)](https://search.maven.org/search?q=org.sdase.commons)
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-bom/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/)
 [![Java CI](https://github.com/SDA-SE/sda-dropwizard-commons/workflows/Java%20CI/badge.svg)](https://github.com/SDA-SE/sda-dropwizard-commons/actions?query=branch%3Amaster+workflow%3A%22Java+CI%22)
 [![Publish Release to Maven Central](https://github.com/SDA-SE/sda-dropwizard-commons/workflows/Publish%20Release%20to%20Maven%20Central/badge.svg)](https://github.com/SDA-SE/sda-dropwizard-commons/actions?query=workflow%3A%22Publish+Release+to+Maven+Central%22)
@@ -14,12 +14,12 @@ SDA Dropwizard Commons is a set of libraries to bootstrap services easily that f
 the SDA SE.
 
 >
-> ##### ⚠️ ATTENTION: Please use SDA Dropwizard Commons version 2 and newer:
+> ##### ⚠️ ATTENTION: Please use SDA Dropwizard Commons version 3 and newer:
 >
-> New features can only be contributed in version 2.x.x.
+> New features can only be contributed in version 3.x.x.
 > Version 1.x.x only receives critical security updates.
 > Version 1.x.x will be discontinued at the same time Dropwizard version 1.3.x is discontinued. This is [announced for 31.12.2020](https://groups.google.com/g/dropwizard-user/c/6gpDMuSb4_Y).
-> Please make sure to upgrade to version 2 as soon as possible.
+> Please make sure to upgrade to version 3 as soon as possible.
 >
 
 SDA Dropwizard Commons is separated in different modules that can be combined as needed. Most of the modules require the 
@@ -71,10 +71,10 @@ The main server modules help to bootstrap and test a Dropwizard application with
 
 ##### Starter
 
-The module [`sda-commons-server-starter`](./sda-commons-server-starter/README.md) provides all basics required to build 
+The module [`sda-commons-server-starter-swagger`](./sda-commons-server-starter-swagger/README.md) provides all basics required to build 
 a service for the SDA Platform with Dropwizard.
 
-The module [`sda-commons-server-starter-example`](./sda-commons-server-starter-example/README.md) gives a small example 
+The module [`sda-commons-server-starter-swagger-example`](./sda-commons-server-starter-swagger-example/README.md) gives a small example 
 on starting an application using defaults for the SDA Platform.
 
 
