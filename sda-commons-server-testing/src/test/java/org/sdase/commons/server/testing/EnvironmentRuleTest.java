@@ -10,7 +10,7 @@ public class EnvironmentRuleTest {
   public EnvironmentRule ENV =
       new EnvironmentRule()
           .setEnv("envForTesting", "envForTestingValue")
-          .setEnv("envForTestingSupplier", "envForTestingSupplierValue")
+          .setEnv("envForTestingSupplier", () -> "envForTestingSupplierValue")
           .unsetEnv("envNotForTesting");
 
   @BeforeClass
