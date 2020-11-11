@@ -1,8 +1,8 @@
-# SDA Commons Server Starter
+# SDA Commons Server Starter Swagger
 
-[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-starter/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-starter)
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-starter-swagger/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-starter-swagger)
 
-The module `sda-commons-server-starter` provides all basics required to build a service for the SDA Platform with
+The module `sda-commons-server-starter-swagger` provides all basics required to build a service for the SDA Platform with
 Dropwizard.
 
 Apps built with the [`SdaPlatformBundle`](./src/main/java/org/sdase/commons/server/starter/SdaPlatformBundle.java)

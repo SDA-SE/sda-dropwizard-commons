@@ -1,8 +1,8 @@
-# SDA Commons Server Starter Example
+# SDA Commons Server Starter Swagger Example
 
 This example module shows an 
 [application](./src/main/java/org/sdase/commons/server/starter/example/SdaPlatformExampleApplication.java) that uses the 
-[`SdaPlatformBundle`](../sda-commons-server-starter/src/main/java/org/sdase/commons/server/starter/SdaPlatformBundle.java)
+[`SdaPlatformBundle`](../sda-commons-server-starter-swagger/src/main/java/org/sdase/commons/server/starter/SdaPlatformBundle.java)
 to bootstrap a Dropwizard application for use in the SDA Platform.
 
 Beside the initialization of the bundle, it includes a 
@@ -16,7 +16,7 @@ shows how the application is bootstrapped in tests. The tests show the capabilit
 The provided [`local-config.yaml`](./local-config.yaml) allows to start the 
 [application](./src/main/java/org/sdase/commons/server/starter/example/SdaPlatformExampleApplication.java) without the 
 need for authentication locally using a run configuration of the favourite IDE that defines the program arguments 
-`server sda-commons-server-starter-example/local-config.yaml`. Note that there will be no data available and the example
+`server sda-commons-server-starter-swagger-example/local-config.yaml`. Note that there will be no data available and the example
 application does not provide POST endpoints. All that is available is an empty array at `GET /people` and the simple
 Swagger documentation at `GET /swagger.json` or `GET /swagger.yaml`
 
