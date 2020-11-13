@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientRequestFilter;
+import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
 
 /**
@@ -20,7 +21,11 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
 
   /**
    * As default, the client will follow redirects so that redirect status codes are automatically
-   * resolved by the client.
+   * resolved by the client. Automatically following redirects only works well for 303 See Other
+   * although the {@linkplain ClientProperties#FOLLOW_REDIRECTS documentation} describes 3xx
+   * redirects. It is required to keep {@linkplain
+   * HttpClientConfiguration#setGzipEnabledForRequests(boolean) GZIP disabled for requests} which is
+   * the default of the {@link HttpClientConfiguration}.
    */
   private static final boolean DEFAULT_FOLLOW_REDIRECTS = true;
 
