@@ -21,7 +21,8 @@ public class AuthHeaderClientFilter implements AddRequestHeaderFilter {
 
   @Override
   public Optional<String> getHeaderValue() {
-    return currentRequestContext()
+    final Optional<ContainerRequestContext> containerRequestContext = currentRequestContext();
+    return containerRequestContext
         .map(ContainerRequestContext::getHeaders)
         .map(h -> h.getFirst(HttpHeaders.AUTHORIZATION));
   }

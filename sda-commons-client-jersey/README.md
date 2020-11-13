@@ -63,10 +63,13 @@ Clients for the SDA Platform have some magic added that clients for an external 
   SDA Platform clients can be configured to pass through the Authorization header of an incoming request context:
   
   ```java
-  clientFactory.platformClient()
+  // using ApiHttpClientConfiguration property from service config
+  clientFactory
+        .apiClient(OtherSdaServiceClient.class)
+        .withConfiguration(configuration.getOtherSdaServiceClient())
+        .enablePlatformFeatures() 
         .enableAuthenticationPassThrough()
-        .api(OtherSdaServiceClient.class)
-        .atTarget("http://other-sda-service.sda.net/api");
+        .build();
   ```
 - _Consumer-Token_
   
@@ -81,10 +84,13 @@ Clients for the SDA Platform have some magic added that clients for an external 
   Then the clients can be configured to add a Consumer-Token header:
   
   ```java
-  clientFactory.platformClient()
+  // using ApiHttpClientConfiguration property from service config
+  clientFactory
+        .apiClient(OtherSdaServiceClient.class)
+        .withConfiguration(configuration.getOtherSdaServiceClient())
+        .enablePlatformFeatures() 
         .enableConsumerToken()
-        .api(OtherSdaServiceClient.class)
-        .atTarget("http://other-sda-service.sda.net/api");
+        .build();
   ```
 
 
@@ -175,27 +181,32 @@ Each client can be configured with the standard
 Please note that this requires that there is a property in your Application's `Configuration` class. 
 
 ```java
-import org.sdase.commons.client.jersey.HttpClientConfiguration;
+import org.sdase.commons.client.jersey.ApiHttpClientConfiguration;
 
 public class MyConfiguration extends Configuration {
-   private HttpClientConfiguration myClient = new HttpClientConfiguration();
+   private ApiHttpClientConfiguration myClient = new APiHttpClientConfiguration();
 
-   public HttpClientConfiguration getMyClient() {
+   public ApiHttpClientConfiguration getMyClient() {
      return myClient;
    }
 
-   public void setMyClient(HttpClientConfiguration myClient) {
+   public void setMyClient(ApiHttpClientConfiguration myClient) {
      this.myClient = myClient;
    }
 }
 ```
 
 ```java
-Client client = clientFactory.platformClient(configuration.getMyClient()).buildGenericClient("test");
+MyClientInterface client = clientFactory
+    .apiClient(MyClientInterface.class)
+    .withConfiguration(myConfiguration.getMyClient())
+    .enablePlatformFeatures()
+    .build;
 ```
 
 ```yaml
 myClient:
+  apiBaseUrl: http://my-service:8080
   timeout: 500ms
   proxy:
     host: 192.168.52.11

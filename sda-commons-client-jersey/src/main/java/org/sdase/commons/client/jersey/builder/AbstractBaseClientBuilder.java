@@ -139,7 +139,16 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
    * @param apiInterface the interface that declares the API using JAX-RS annotations.
    * @param <A> the type of the api
    * @return a builder to define the root path of the API for the proxy that is build
+   * @deprecated a {@linkplain org.sdase.commons.client.jersey.ClientFactory#apiClient(Class) new
+   *     API} with a dedicated {@linkplain
+   *     org.sdase.commons.client.jersey.ApiHttpClientConfiguration configuration class} is
+   *     available to configure API clients based on interfaces. The new {@link
+   *     FluentApiClientBuilder} API provides the same features as this builder but uses all
+   *     configurable options in a the dedicated {@link
+   *     org.sdase.commons.client.jersey.ApiHttpClientConfiguration} and therefore enforces to have
+   *     all configuration options (like proxy settings) available for operators who need them.
    */
+  @Deprecated
   public <A> ApiClientBuilder<A> api(Class<A> apiInterface) {
     return api(apiInterface, apiInterface.getSimpleName());
   }
@@ -153,7 +162,16 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
    *     service and metrics. Names have to be unique.
    * @param <A> the type of the api
    * @return a builder to define the root path of the API for the proxy that is build
+   * @deprecated a {@linkplain org.sdase.commons.client.jersey.ClientFactory#apiClient(Class) new
+   *     API} with a dedicated {@linkplain
+   *     org.sdase.commons.client.jersey.ApiHttpClientConfiguration configuration class} is
+   *     available to configure API clients based on interfaces. The new {@link
+   *     FluentApiClientBuilder} API provides the same features as this builder but uses all
+   *     configurable options in a the dedicated {@link
+   *     org.sdase.commons.client.jersey.ApiHttpClientConfiguration} and therefore enforces to have
+   *     all configuration options (like proxy settings) available for operators who need them.
    */
+  @Deprecated
   public <A> ApiClientBuilder<A> api(Class<A> apiInterface, String customName) {
     return new ApiClientBuilder<>(apiInterface, buildGenericClient(customName));
   }

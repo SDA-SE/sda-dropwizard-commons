@@ -3,13 +3,15 @@ package org.sdase.commons.client.jersey;
 import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
 import org.sdase.commons.client.jersey.builder.ExternalClientBuilder;
+import org.sdase.commons.client.jersey.builder.FluentApiClientBuilder;
+import org.sdase.commons.client.jersey.builder.FluentApiClientFactory;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
 
 /**
  * A {@code ClientFactory} creates Http clients to access services within the SDA Platform or
  * external services.
  */
-public class ClientFactory {
+public class ClientFactory implements FluentApiClientBuilder {
 
   private final Environment environment;
   private final String consumerToken;
@@ -69,5 +71,10 @@ public class ClientFactory {
    */
   public ExternalClientBuilder externalClient(HttpClientConfiguration httpClientConfiguration) {
     return new ExternalClientBuilder(environment, httpClientConfiguration, tracer);
+  }
+
+  @Override
+  public <A> ApiClientInstanceConfigurationBuilder<A> apiClient(Class<A> apiInterface) {
+    return new FluentApiClientFactory<>(apiInterface, environment, consumerToken, tracer);
   }
 }
