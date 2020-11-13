@@ -6,14 +6,13 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
-import org.sdase.commons.client.jersey.filter.AddRequestHeaderFilter;
 import org.sdase.commons.client.jersey.filter.AuthHeaderClientFilter;
+import org.sdase.commons.client.jersey.filter.ConsumerTokenHeaderFilter;
 import org.sdase.commons.client.jersey.filter.TraceTokenClientFilter;
-import org.sdase.commons.shared.tracing.ConsumerTracing;
 
 public class PlatformClientBuilder extends AbstractBaseClientBuilder<PlatformClientBuilder> {
 
-  private Supplier<Optional<String>> consumerTokenSupplier;
+  private final Supplier<Optional<String>> consumerTokenSupplier;
 
   public PlatformClientBuilder(
       Environment environment,
@@ -43,17 +42,6 @@ public class PlatformClientBuilder extends AbstractBaseClientBuilder<PlatformCli
    * @return this builder instance
    */
   public PlatformClientBuilder enableConsumerToken() {
-    return addFilter(
-        new AddRequestHeaderFilter() {
-          @Override
-          public String getHeaderName() {
-            return ConsumerTracing.TOKEN_HEADER;
-          }
-
-          @Override
-          public Optional<String> getHeaderValue() {
-            return consumerTokenSupplier.get();
-          }
-        });
+    return addFilter(new ConsumerTokenHeaderFilter(consumerTokenSupplier));
   }
 }
