@@ -228,3 +228,47 @@ org.glassfish.jersey.client.JerseyClientBuilder
 ```
 
 This works if the library that requires the other implementation does not rely on the Java ServiceLoader.
+
+
+### Consume API clients without catching exceptions
+
+The [`Suppress*`](./src/main/java/org/sdase/commons/client/jersey/proxy/annotation) annotations can be used to suppress
+specific `ClientRequestException` thrown in any defined API method where the return type is not a `Response`.
+There are configurable suppressors for 
+[HTTP errors](./src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressHttpErrorsToNull.java),
+[connection timeouts](./src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressConnectTimeoutErrorsToNull.java),
+[read timeouts](./src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressReadTimeoutErrorsToNull.java)
+and all other [processing errors](./src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressProcessingErrorsToNull.java).
+
+Suppressed exceptions are logged at info level.
+
+The following client will convert a _404 Not Found_ error to `null` so that the consumer can handle 
+an entity that is not found by checking if the return value is `null`.
+Any other error will lead to a _500 Internal Server Error_ because the `ClientRequestException` is converted in the
+[`ClientRequestExceptionMapper`](./src/main/java/org/sdase/commons/client/jersey/error/ClientRequestExceptionMapper.java).
+
+```java
+@Path("/examples")
+public interface ExampleClient {
+
+  @GET
+  @Path("/{exampleId}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @SuppressHttpErrorsToNull(404)
+  Example getExample(@PathParam("exampleId") String exampleId);
+
+}
+
+public class ExampleService {
+   
+  private ExampleClient exampleClient;
+  private DoSomethingService doSomethingService;
+
+  public void doSomethingIfExampleExists(String exampleId) {
+    Example example = exampleClient.getExample(exampleId);
+    if (example != null) {
+      doSomethingService(example);
+    }
+  }
+}
+``` 
