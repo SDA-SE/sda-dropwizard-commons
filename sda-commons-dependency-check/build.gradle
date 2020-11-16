@@ -38,6 +38,7 @@ dependencies {
   compile project(':sda-commons-shared-forms')
   compile project(':sda-commons-shared-tracing')
   compile project(':sda-commons-shared-yaml')
+  compile project(':sda-commons-starter')
 }
 
 /**

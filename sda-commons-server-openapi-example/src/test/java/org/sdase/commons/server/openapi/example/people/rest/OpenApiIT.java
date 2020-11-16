@@ -13,9 +13,9 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.testing.AuthRule;
 import org.sdase.commons.server.openapi.example.OpenApiExampleApplication;
-import org.sdase.commons.server.starter.SdaPlatformConfiguration;
 import org.sdase.commons.server.testing.Retry;
 import org.sdase.commons.server.testing.RetryRule;
+import org.sdase.commons.starter.SdaPlatformConfiguration;
 
 // This is a simple integration test that checks whether the swagger documentation is produced at
 // the right path, however doesn't test the contents of the documentation.

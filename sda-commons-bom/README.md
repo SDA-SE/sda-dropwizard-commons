@@ -16,7 +16,7 @@ Example for your `build.gradle`:
 dependencies {
     compile enforcedPlatform("org.sdase.commons:sda-commons-bom:$sdaCommonsVersion")
     compile enforcedPlatform("org.sdase.commons:sda-commons-dependencies:$sdaCommonsVersion")
-    compile "org.sdase.commons:sda-commons-server-starter"
+    compile "org.sdase.commons:sda-commons-starter"
     compile "org.sdase.commons:sda-commons-server-morphia"
     compile "org.sdase.commons:sda-commons-server-kafka"
     compile "org.sdase.commons:sda-commons-server-s3"
@@ -30,7 +30,7 @@ or if you prefer Gradle's `implementation`:
 dependencies {
     implementation enforcedPlatform("org.sdase.commons:sda-commons-bom:$sdaCommonsVersion")
     implementation enforcedPlatform("org.sdase.commons:sda-commons-dependencies:$sdaCommonsVersion")
-    implementation "org.sdase.commons:sda-commons-server-starter"
+    implementation "org.sdase.commons:sda-commons-starter"
     ...
 }
 ```
