@@ -1,5 +1,5 @@
 dependencies {
-  compile project(':sda-commons-server-starter')
+  compile project(':sda-commons-starter')
 
   testCompile project(':sda-commons-server-testing')
 }

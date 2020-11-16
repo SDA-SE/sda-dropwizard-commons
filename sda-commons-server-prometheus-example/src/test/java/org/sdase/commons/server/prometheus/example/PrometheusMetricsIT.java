@@ -7,7 +7,7 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.core.Response;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.sdase.commons.server.starter.SdaPlatformConfiguration;
+import org.sdase.commons.starter.SdaPlatformConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

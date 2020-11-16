@@ -219,13 +219,6 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
   }
 
   public interface FinalBuilder extends InitialBuilder {
-    /**
-     * Disables automatic addition of the embed query parameter if embeddable resources are
-     * discovered.
-     *
-     * @return the builder.
-     */
-    FinalBuilder disableEmbedParameter();
 
     OpenApiBundle build();
   }
@@ -241,12 +234,6 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
       addResourcePackageClass(HalLinkDescriptionModifier.class);
       addResourcePackageClass(EmbedParameterModifier.class);
       addResourcePackageClass(OpenAPISorter.class);
-    }
-
-    @Override
-    public FinalBuilder disableEmbedParameter() {
-      this.resourcePackages.remove(getResourcePackage(EmbedParameterModifier.class));
-      return this;
     }
 
     @Override

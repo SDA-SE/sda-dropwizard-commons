@@ -1,6 +1,5 @@
 dependencies {
-  compile project(':sda-commons-server-starter')
-  compile project(':sda-commons-server-openapi')
+  compile project(':sda-commons-starter')
 
   testCompile project(':sda-commons-server-testing')
   testCompile project(':sda-commons-server-auth-testing')

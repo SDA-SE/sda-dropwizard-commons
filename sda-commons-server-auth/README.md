@@ -288,7 +288,7 @@ public class SecureEndPoint {
 To activate the OPA integration in an application, the bundle has to be added to the application. The Kubernetes file of the 
 service must also be adjusted to start OPA as sidecar.
 
-> If you use the SdaPlatformBundle, there is a [more convenient way to enable OPA support](../sda-commons-server-starter).
+> If you use the SdaPlatformBundle, there is a [more convenient way to enable OPA support](../sda-commons-starter).
 
 ```java
 public class MyApplication extends Application<MyConfiguration> {

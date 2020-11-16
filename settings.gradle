@@ -49,4 +49,6 @@ include 'sda-commons-shared-error'
 include 'sda-commons-shared-tracing'
 include 'sda-commons-shared-forms'
 include 'sda-commons-shared-yaml'
+include 'sda-commons-starter'
+include 'sda-commons-starter-example'
 
