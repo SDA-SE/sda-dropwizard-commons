@@ -95,6 +95,10 @@ public class KafkaProperties extends Properties {
     props.put(
         AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG,
         configuration.getAdminConfig().getAdminClientRequestTimeoutMs());
+    // there was a change in kafka (issue KIP-533) that introduced separate timeout for api calls
+    props.put(
+        AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG,
+        configuration.getAdminConfig().getAdminClientRequestTimeoutMs());
     props.putAll(configuration.getAdminConfig().getConfig());
     return props;
   }
