@@ -5,7 +5,7 @@ This example module shows an
 [`OpenApiBundle`](../sda-commons-server-openapi/src/main/java/org/sdase/commons/server/openapi/OpenApiBundle.java)
 to describe REST endpoints with a OpenApi 3 documentation.
 
-Beside the initialization of the bundle via the [`SdaPlatformBundle`](../sda-commons-server-starter/src/main/java/org/sdase/commons/server/starter/SdaPlatformBundle.java),
+Beside the initialization of the bundle via the [`SdaPlatformBundle`](../sda-commons-starter/src/main/java/org/sdase/commons/server/starter/SdaPlatformBundle.java),
 it includes a [`PersonService`](src/main/java/org/sdase/commons/server/openapi/example/people/rest/PersonService.java) 
 and a [`PersonResource`](src/main/java/org/sdase/commons/server/openapi/example/people/rest/PersonResource.java)
 to demonstrate some cases of API documentation.

@@ -1,0 +1,6 @@
+auth:
+  leeway: ${AUTH_LEEWAY:-0}
+  keys: ${AUTH_KEYS:-[]}
+
+cors:
+  allowedOrigins: ${CORS_ALLOWED_ORIGINS:-[]}

@@ -1,5 +1,5 @@
 [![Latest Release](https://img.shields.io/github/v/release/sda-se/sda-dropwizard-commons?label=latest)](https://github.com/SDA-SE/sda-dropwizard-commons/releases/latest)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sdase.commons/sda-commons-server-starter/badge.svg)](https://search.maven.org/search?q=org.sdase.commons)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sdase.commons/sda-commons-starter/badge.svg)](https://search.maven.org/search?q=org.sdase.commons)
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-bom/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/)
 [![Java CI](https://github.com/SDA-SE/sda-dropwizard-commons/workflows/Java%20CI/badge.svg)](https://github.com/SDA-SE/sda-dropwizard-commons/actions?query=branch%3Amaster+workflow%3A%22Java+CI%22)
 [![Publish Release to Maven Central](https://github.com/SDA-SE/sda-dropwizard-commons/workflows/Publish%20Release%20to%20Maven%20Central/badge.svg)](https://github.com/SDA-SE/sda-dropwizard-commons/actions?query=workflow%3A%22Publish+Release+to+Maven+Central%22)
@@ -71,10 +71,10 @@ The main server modules help to bootstrap and test a Dropwizard application with
 
 ##### Starter
 
-The module [`sda-commons-server-starter`](./sda-commons-server-starter/README.md) provides all basics required to build 
+The module [`sda-commons-starter`](./sda-commons-starter/README.md) provides all basics required to build 
 a service for the SDA Platform with Dropwizard.
 
-The module [`sda-commons-server-starter-example`](./sda-commons-server-starter-example/README.md) gives a small example 
+The module [`sda-commons-starter-example`](./sda-commons-starter-example/README.md) gives a small example 
 on starting an application using defaults for the SDA Platform.
 
 
