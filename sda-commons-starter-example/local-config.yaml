@@ -1,6 +1,9 @@
 auth:
   disableAuth: true
 
+opa:
+  disableOpa: true
+
 cors:
   allowedOrigins:
   - "*"

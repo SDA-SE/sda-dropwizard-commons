@@ -11,6 +11,7 @@ import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBu
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.jaeger.JaegerBundle;
+import org.sdase.commons.server.opa.OpaBundle;
 import org.sdase.commons.server.openapi.OpenApiBundle;
 import org.sdase.commons.server.opentracing.OpenTracingBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
@@ -73,11 +74,12 @@ public class SdaPlatformBundleBuilderTest {
               .assertThat(bundleAssertion.getBundleOfType(bundle, OpenApiBundle.class))
               .isNotNull();
           softly.assertThat(bundleAssertion.getBundleOfType(bundle, AuthBundle.class)).isNotNull();
+          softly.assertThat(bundleAssertion.getBundleOfType(bundle, OpaBundle.class)).isNotNull();
           softly.assertThat(bundleAssertion.getBundleOfType(bundle, CorsBundle.class)).isNotNull();
           softly
               .assertThat(bundleAssertion.getBundleOfType(bundle, ConsumerTokenBundle.class))
               .isNotNull();
-          softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(13);
+          softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(14);
         });
   }
 }

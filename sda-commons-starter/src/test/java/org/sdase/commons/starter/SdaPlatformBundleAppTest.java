@@ -18,9 +18,7 @@ public class SdaPlatformBundleAppTest {
   @ClassRule
   public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
       new DropwizardAppRule<>(
-          StarterApp.class,
-          resourceFilePath("test-config.yaml"),
-          config("auth.disableAuth", "true"));
+          StarterApp.class, resourceFilePath("test-config.yaml"), config("opa.disableOpa", "true"));
 
   @Test
   public void pongForPing() {
