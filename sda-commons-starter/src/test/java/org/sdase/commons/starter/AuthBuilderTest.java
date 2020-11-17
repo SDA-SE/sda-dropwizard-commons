@@ -32,8 +32,22 @@ public class AuthBuilderTest {
         bundle,
         AuthBundle.builder()
             .withAuthConfigProvider(SdaPlatformConfiguration::getAuth)
-            .withAnnotatedAuthorization()
+            .withExternalAuthorization()
             .build());
+  }
+
+  @Test
+  public void defaultOpa() {
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
+            .usingSdaPlatformConfiguration()
+            .withoutConsumerTokenSupport()
+            .addOpenApiResourcePackageClass(this.getClass())
+            .build();
+
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle,
+        OpaBundle.builder().withOpaConfigProvider(SdaPlatformConfiguration::getOpa).build());
   }
 
   @Test

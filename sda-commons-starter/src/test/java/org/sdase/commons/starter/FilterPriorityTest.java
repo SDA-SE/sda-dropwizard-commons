@@ -95,7 +95,7 @@ public class FilterPriorityTest {
             .header("Consumer-Token", "MyConsumer")
             .get();
 
-    assertThat(response.getStatus()).isEqualTo(401);
+    assertThat(response.getStatus()).isEqualTo(403);
 
     String metrics =
         DW.client()

@@ -5,6 +5,7 @@ import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
 import org.sdase.commons.server.consumer.ConsumerTokenConfig;
 import org.sdase.commons.server.cors.CorsConfiguration;
+import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders.ConsumerTokenConfigBuilder;
 
 /** Default configuration for the {@link SdaPlatformBundle}. */
@@ -12,6 +13,9 @@ public class SdaPlatformConfiguration extends Configuration {
 
   /** Configuration of authentication. */
   private AuthConfig auth = new AuthConfig();
+
+  /** Configuration of the open policy agent. */
+  private OpaConfig opa = new OpaConfig();
 
   /** Configuration of the CORS filter. */
   private CorsConfiguration cors = new CorsConfiguration();
@@ -55,6 +59,15 @@ public class SdaPlatformConfiguration extends Configuration {
 
   public SdaPlatformConfiguration setConsumerToken(ConsumerTokenConfig consumerToken) {
     this.consumerToken = consumerToken;
+    return this;
+  }
+
+  public OpaConfig getOpa() {
+    return opa;
+  }
+
+  public SdaPlatformConfiguration setOpa(OpaConfig opa) {
+    this.opa = opa;
     return this;
   }
 }
