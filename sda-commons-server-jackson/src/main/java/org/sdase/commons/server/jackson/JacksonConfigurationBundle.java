@@ -8,7 +8,10 @@ import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
+import javax.ws.rs.ext.ExceptionMapper;
 import org.sda.commons.server.jackson.hal.HalLinkProvider;
 import org.sdase.commons.server.jackson.errors.ApiExceptionMapper;
 import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
@@ -55,15 +58,33 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
 
   private ObjectMapperConfigurationUtil.Builder objectMapperBuilder;
 
+  private List<Class<? extends ExceptionMapper<? extends Exception>>> registeredMappers;
+
   public static Builder builder() {
     return new Builder();
   }
 
   private JacksonConfigurationBundle(
-      ObjectMapperConfigurationUtil.Builder objectMapperBuilder, boolean disableFieldFilter) {
+      ObjectMapperConfigurationUtil.Builder objectMapperBuilder,
+      boolean disableFieldFilter,
+      List<Class<? extends ExceptionMapper<? extends Exception>>> registeredMappers) {
     this.objectMapperBuilder = objectMapperBuilder;
     this.disableFieldFilter = disableFieldFilter;
+    this.registeredMappers = registeredMappers;
   }
+
+  private static final List<Class<? extends ExceptionMapper<? extends Exception>>> defaultMappers =
+      new ArrayList<Class<? extends ExceptionMapper<? extends Exception>>>() {
+        {
+          add(ApiExceptionMapper.class);
+          add(JerseyValidationExceptionMapper.class);
+          add(ValidationExceptionMapper.class);
+          add(EarlyEofExceptionMapper.class);
+          add(JsonProcessingExceptionMapper.class);
+          add(WebApplicationExceptionMapper.class);
+          add(RuntimeExceptionMapper.class);
+        }
+      };
 
   /**
    * Initializes the {@link ObjectMapper} as in the default {@link Bootstrap} but does not add the
@@ -100,13 +121,7 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
     environment.jersey().register(HalLinkProvider.getInstance());
 
     // register Exception Mapper
-    environment.jersey().register(ApiExceptionMapper.class);
-    environment.jersey().register(JerseyValidationExceptionMapper.class);
-    environment.jersey().register(ValidationExceptionMapper.class);
-    environment.jersey().register(EarlyEofExceptionMapper.class);
-    environment.jersey().register(JsonProcessingExceptionMapper.class);
-    environment.jersey().register(WebApplicationExceptionMapper.class);
-    environment.jersey().register(RuntimeExceptionMapper.class);
+    registeredMappers.forEach(m -> environment.jersey().register(m));
   }
 
   /**
@@ -144,6 +159,9 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
 
     private ObjectMapperConfigurationUtil.Builder objectMapperBuilder =
         ObjectMapperConfigurationUtil.configureMapper();
+
+    private final List<Class<? extends ExceptionMapper<? extends Exception>>> mappers =
+        new ArrayList<>(defaultMappers);
 
     private Builder() {}
 
@@ -184,6 +202,20 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
     }
 
     /**
+     * Allows customization of the default ExceptionMappers. Mappers can be removed, replaced or
+     * extended.
+     *
+     * @param customizer receives a list containing all default ExceptionMapper subclasses that may
+     *     be modified.
+     * @return the builder itself
+     */
+    public Builder withMapperCustomization(
+        Consumer<List<Class<? extends ExceptionMapper<? extends Exception>>>> customizer) {
+      customizer.accept(this.mappers);
+      return this;
+    }
+
+    /**
      * Registers a default serializer for {@link ZonedDateTime} that renders 3 digits of
      * milliseconds. The same serializer may be configured per field as documented in {@link
      * Iso8601Serializer.WithMillis}.
@@ -213,7 +245,7 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
     }
 
     public JacksonConfigurationBundle build() {
-      return new JacksonConfigurationBundle(objectMapperBuilder, disableFieldFilter);
+      return new JacksonConfigurationBundle(objectMapperBuilder, disableFieldFilter, mappers);
     }
   }
 }
