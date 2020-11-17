@@ -91,6 +91,12 @@ auth:
   leeway: ${AUTH_LEEWAY:-0}
   keys: ${AUTH_KEYS:-[]}
 
+opa:
+  disableOpa: ${OPA_DISABLE:-false}
+  baseUrl: ${OPA_URL:-http://localhost:8181}
+  policyPackage: ${OPA_POLICY_PACKAGE:-<your_package>}
+  readTimeout: ${OPA_READ_TIMEOUT:-500}
+
 # See sda-commons-server-cors
 cors:
   # List of origins that are allowed to use the service. "*" allows all origins
@@ -104,7 +110,10 @@ cors:
   # allowedOrigins: ${CORS_ALLOWED_ORIGINS:-["*"]}
 ```
 
-Instead of `.usingSdaPlatformConfiguration()`, the configuration may be fully customized using 
+By using `.usingSdaPlatformConfiguration()` or `.usingSdaPlatformConfiguration(MyCustomConfiguration.class)` 
+the authorization including the open policy agent are automatically enabled as well as the cors settings. 
+
+Instead of `.usingSdaPlatformConfiguration()` and `.usingSdaPlatformConfiguration(MyCustomConfiguration.class)`, the configuration may be fully customized using 
 `.usingCustomConfig(MyCustomConfiguration.class)` to support configurations that do not extend 
 [`SdaPlatformConfiguration`](./src/main/java/org/sdase/commons/starter/SdaPlatformConfiguration.java). This may 
 also be needed to disable some features of the starter module or add special features such as

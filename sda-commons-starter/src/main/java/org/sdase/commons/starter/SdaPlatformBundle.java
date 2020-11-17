@@ -150,8 +150,14 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
     @Override
     public ConsumerTokenConfigBuilder<SdaPlatformConfiguration> usingSdaPlatformConfiguration() {
-      return usingCustomConfig(SdaPlatformConfiguration.class)
-          .withAuthConfigProvider(SdaPlatformConfiguration::getAuth)
+      return usingSdaPlatformConfiguration(SdaPlatformConfiguration.class);
+    }
+
+    @Override
+    public <T extends SdaPlatformConfiguration>
+        ConsumerTokenConfigBuilder<T> usingSdaPlatformConfiguration(Class<T> configurationClass) {
+      return usingCustomConfig(configurationClass)
+          .withOpaAuthorization(SdaPlatformConfiguration::getAuth, SdaPlatformConfiguration::getOpa)
           .withCorsConfigProvider(SdaPlatformConfiguration::getCors);
     }
 
