@@ -59,4 +59,9 @@ public class ApiInvalidParam {
   public String getErrorCode() {
     return errorCode;
   }
+
+  @Override
+  public String toString() {
+    return "{" + "field='" + field + '\'' + ", errorCode='" + errorCode + '\'' + '}';
+  }
 }
