@@ -11,6 +11,8 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.shared.api.error.ApiInvalidParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Maps {@link JerseyViolationException}s to the error structure defined within the rest guidelines.
@@ -19,6 +21,9 @@ import org.sdase.commons.shared.api.error.ApiInvalidParam;
  */
 @Provider
 public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyViolationException> {
+
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(JerseyValidationExceptionMapper.class);
 
   private static final String VALIDATION_EXCEPTION_MESSAGE = "Request parameters are not valid.";
 
@@ -46,6 +51,7 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
             });
 
     ApiError apiError = new ApiError(VALIDATION_EXCEPTION_MESSAGE, invalidParameters);
+    LOGGER.info("Validation failed. Invalid params: '{}'", apiError.getInvalidParams());
     return Response.status(422).type(MediaType.APPLICATION_JSON_TYPE).entity(apiError).build();
   }
 }

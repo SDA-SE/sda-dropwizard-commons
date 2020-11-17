@@ -22,7 +22,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplica
 
   @Override
   public Response toResponse(WebApplicationException exception) {
-    LOGGER.error(exception.getClass().getSimpleName() + " thrown: ", exception);
+    LOGGER.error("{} thrown: ", exception.getClass().getSimpleName(), exception);
     Response response = exception.getResponse();
     ApiError apiError =
         new ApiError(
