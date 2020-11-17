@@ -2,5 +2,11 @@ auth:
   leeway: ${AUTH_LEEWAY:-0}
   keys: ${AUTH_KEYS:-[]}
 
+opa:
+  disableOpa: ${OPA_DISABLE:-false}
+  baseUrl: ${OPA_URL:-http://localhost:8181}
+  policyPackage: ${OPA_POLICY_PACKAGE:-<your_package>}
+  readTimeout: ${OPA_READ_TIMEOUT:-500}
+
 cors:
   allowedOrigins: ${CORS_ALLOWED_ORIGINS:-[]}
