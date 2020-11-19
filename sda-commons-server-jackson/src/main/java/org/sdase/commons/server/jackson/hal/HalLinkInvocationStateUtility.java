@@ -1,4 +1,4 @@
-package org.sda.commons.server.jackson.hal;
+package org.sdase.commons.server.jackson.hal;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Parameter;
@@ -68,7 +68,9 @@ public class HalLinkInvocationStateUtility {
           Proxy.newProxyInstance(
               type.getClassLoader(), new Class[] {type}, METHOD_PROCESSING_INVOCATION_HANDLER);
     } catch (IllegalArgumentException | SecurityException | NullPointerException e) {
-      throw new HalLinkMethodInvocationException(
+      // Deprecated type needed for backward compatibility until deprecated package is removed
+      // afterwards the the class from this package can be used
+      throw new org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException(
           String.format("Could not create proxy instance of type '%s' for method invocation", type),
           e);
     }
@@ -88,7 +90,9 @@ public class HalLinkInvocationStateUtility {
 
     // Check if all parameters has an Query/Path-Param annotation
     if (annotatedParams.size() != parameters.length) {
-      throw new HalLinkMethodInvocationException(
+      // Deprecated type needed for backward compatibility until deprecated package is removed
+      // afterwards the the class from this package can be used
+      throw new org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException(
           "Each method parameter needs at least a @PathParam or @QueryParam annotation.");
     }
 
