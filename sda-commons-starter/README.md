@@ -19,7 +19,6 @@ automatically contain
 
 They may be configured easily to
 
-- [require a Consumer token from clients](../sda-commons-server-consumer/README.md)
 - [allow cross origin resource sharing](../sda-commons-server-cors/README.md)
 - [use the Open Policy Agent for authorization](../sda-commons-server-auth/README.md)
 
@@ -59,7 +58,6 @@ public class MyFirstApp extends Application<SdaPlatformConfiguration> {
    public void initialize(Bootstrap<SdaPlatformConfiguration> bootstrap) {
       bootstrap.addBundle(SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withRequiredConsumerToken()
             // more Swagger data that may also be added with annotations
             .addSwaggerResourcePackageClass(this.getClass())
             // or use an existing OpenApi definition

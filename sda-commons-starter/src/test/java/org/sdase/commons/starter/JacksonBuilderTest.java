@@ -22,7 +22,6 @@ public class JacksonBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
@@ -35,7 +34,6 @@ public class JacksonBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .withoutHalSupport()
             .build();
@@ -49,7 +47,6 @@ public class JacksonBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .withoutFieldFilter()
             .build();
@@ -63,7 +60,6 @@ public class JacksonBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .alwaysWriteZonedDateTimeWithMillisInJson()
             .build();
@@ -77,7 +73,6 @@ public class JacksonBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .alwaysWriteZonedDateTimeWithoutMillisInJson()
             .build();
@@ -96,7 +91,6 @@ public class JacksonBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .withObjectMapperCustomization(omc)
             .build();

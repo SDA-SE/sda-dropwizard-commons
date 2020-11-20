@@ -24,7 +24,6 @@ public class AuthBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
@@ -41,7 +40,6 @@ public class AuthBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
@@ -60,7 +58,6 @@ public class AuthBuilderTest {
             .usingCustomConfig(SdaPlatformConfiguration.class)
             .withAuthConfigProvider(acp)
             .withoutCorsSupport()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
@@ -77,7 +74,6 @@ public class AuthBuilderTest {
             .usingCustomConfig(SdaPlatformConfiguration.class)
             .withoutAuthentication()
             .withoutCorsSupport()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
@@ -95,7 +91,6 @@ public class AuthBuilderTest {
             .usingCustomConfig(SdaPlatformConfiguration.class)
             .withOpaAuthorization(acp, ocp)
             .withoutCorsSupport()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 

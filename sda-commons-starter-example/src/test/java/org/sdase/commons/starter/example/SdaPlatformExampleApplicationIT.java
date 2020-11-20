@@ -75,18 +75,6 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void rejectApiRequestWithoutConsumerToken() {
-    Response response =
-        baseUrlWebTarget()
-            .path("people")
-            .request(APPLICATION_JSON)
-            .headers(AUTH.auth().buildAuthHeader())
-            .get();
-
-    assertThat(response.getStatus()).isEqualTo(401);
-  }
-
-  @Test
   public void accessApiWithAuthenticationAndConsumerToken() {
     OPA.mock(onAnyRequest().allow());
     Response response =

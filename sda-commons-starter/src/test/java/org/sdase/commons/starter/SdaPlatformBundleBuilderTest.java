@@ -34,7 +34,6 @@ public class SdaPlatformBundleBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withOptionalConsumerToken()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
