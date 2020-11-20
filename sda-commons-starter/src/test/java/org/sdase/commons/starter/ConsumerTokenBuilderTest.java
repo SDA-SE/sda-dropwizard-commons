@@ -31,23 +31,10 @@ public class ConsumerTokenBuilderTest {
   }
 
   @Test
-  public void withoutConsumerToken() {
+  public void withOptionalConsumerTokenByDefault() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
-            .addOpenApiResourcePackageClass(this.getClass())
-            .build();
-
-    bundleAssertion.assertBundleNotConfiguredByPlatformBundle(bundle, ConsumerTokenBundle.class);
-  }
-
-  @Test
-  public void withOptionalConsumerToken() {
-    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
-        SdaPlatformBundle.builder()
-            .usingSdaPlatformConfiguration()
-            .withOptionalConsumerToken()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
@@ -60,47 +47,11 @@ public class ConsumerTokenBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withRequiredConsumerToken()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
     verifyRegisteredConsumerTokenFiltersEqual(
-        bundle, ConsumerTokenBundle.builder().withRequiredConsumerToken().build());
-  }
-
-  @Test
-  public void withRequiredConsumerTokenAndExcludedPaths() {
-    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
-        SdaPlatformBundle.builder()
-            .usingSdaPlatformConfiguration()
-            .withRequiredConsumerToken()
-            .withExcludePatternsForRequiredConsumerToken("/public", "/ping")
-            .addOpenApiResourcePackageClass(this.getClass())
-            .build();
-
-    verifyRegisteredConsumerTokenFiltersEqual(
-        bundle,
-        ConsumerTokenBundle.builder()
-            .withRequiredConsumerToken()
-            .withExcludePatterns("/public", "/ping")
-            .build());
-  }
-
-  @Test
-  public void withConfigurableConsumerToken() {
-    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
-        SdaPlatformBundle.builder()
-            .usingSdaPlatformConfiguration()
-            .withConsumerTokenConfigProvider(SdaPlatformConfiguration::getConsumerToken)
-            .addOpenApiResourcePackageClass(this.getClass())
-            .build();
-
-    verifyRegisteredConsumerTokenFiltersEqual(
-        bundle,
-        ConsumerTokenBundle.builder()
-            .withConfigProvider(SdaPlatformConfiguration::getConsumerToken)
-            .build(),
-        SdaPlatformConfiguration.class);
+        bundle, ConsumerTokenBundle.builder().withOptionalConsumerToken().build());
   }
 
   private void verifyRegisteredConsumerTokenFiltersEqual(

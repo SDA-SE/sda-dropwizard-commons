@@ -55,13 +55,8 @@ public class SdaPlatformExampleApplication extends Application<SdaPlatformConfig
     bootstrap.addBundle(
         SdaPlatformBundle.builder()
             // Use all defaults provided by the Server Starter module. OPA authorization is enabled
-            // automatically
-            //
+            // by default
             .usingSdaPlatformConfiguration()
-            // Require a consumer token from the client. Only swagger.json/yaml is always
-            // accessible.
-            // (from sda-commons-server-consumer)
-            .withRequiredConsumerToken()
             // Additional Swagger documentation properties may be set here until
             // the packages that should be scanned for Swagger documentation annotations are defined
             .addOpenApiResourcePackageClass(this.getClass())

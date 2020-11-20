@@ -20,7 +20,6 @@ public class MetricExampleApp extends Application<SdaPlatformConfiguration> {
     bootstrap.addBundle(
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withRequiredConsumerToken()
             .addOpenApiResourcePackageClass(this.getClass())
             .build());
   }

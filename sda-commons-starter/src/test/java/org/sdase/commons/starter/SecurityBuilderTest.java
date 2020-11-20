@@ -19,7 +19,6 @@ public class SecurityBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
@@ -32,7 +31,6 @@ public class SecurityBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .disableBufferLimitValidationSecurityFeature()
             .build();
