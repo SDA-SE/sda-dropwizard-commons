@@ -20,7 +20,6 @@ public class OpenAPIBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withRequiredConsumerToken()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
@@ -34,7 +33,6 @@ public class OpenAPIBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withRequiredConsumerToken()
             .addOpenApiResourcePackageClass(this.getClass())
             .addOpenApiResourcePackage("com.example")
             .build();
@@ -53,7 +51,6 @@ public class OpenAPIBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withRequiredConsumerToken()
             .withExistingOpenAPIFromClasspathResource("/example.yaml")
             .build();
 

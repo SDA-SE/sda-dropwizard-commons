@@ -6,14 +6,11 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
-import org.sdase.commons.server.consumer.ConsumerTokenBundle.ConsumerTokenConfigProvider;
-import org.sdase.commons.server.consumer.ConsumerTokenConfig;
 import org.sdase.commons.server.cors.CorsBundle;
 import org.sdase.commons.server.cors.CorsConfigProvider;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
@@ -30,8 +27,6 @@ import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.server.security.SecurityBundle;
 import org.sdase.commons.server.trace.TraceTokenBundle;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders.AuthConfigProviderBuilder;
-import org.sdase.commons.starter.builder.CustomConfigurationProviders.ConsumerTokenConfigBuilder;
-import org.sdase.commons.starter.builder.CustomConfigurationProviders.ConsumerTokenRequiredConfigInitialBuilder;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders.CorsConfigProviderBuilder;
 import org.sdase.commons.starter.builder.InitialPlatformBundleBuilder;
 import org.sdase.commons.starter.builder.OpenApiCustomizer.OpenApiFinalBuilder;
@@ -49,7 +44,6 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
   private AuthBundle.AuthBuilder<C> authBundleBuilder;
   private OpaBuilder<C> opaBundleBuilder;
   private CorsBundle.FinalBuilder<C> corsBundleBuilder;
-  private ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder;
   private OpenApiBundle.FinalBuilder openApiBundleBuilder;
 
   private SdaPlatformBundle(
@@ -58,14 +52,12 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
       AuthBundle.AuthBuilder<C> authBundleBuilder,
       OpaBundle.OpaBuilder<C> opaBundleBuilder,
       CorsBundle.FinalBuilder<C> corsBundleBuilder,
-      ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder,
       OpenApiBundle.FinalBuilder openApiBundleBuilder) {
     this.securityBundleBuilder = securityBundleBuilder;
     this.jacksonConfigurationBundleBuilder = jacksonConfigurationBundleBuilder;
     this.authBundleBuilder = authBundleBuilder;
     this.opaBundleBuilder = opaBundleBuilder;
     this.corsBundleBuilder = corsBundleBuilder;
-    this.consumerTokenBundleBuilder = consumerTokenBundleBuilder;
     this.openApiBundleBuilder = openApiBundleBuilder;
   }
 
@@ -99,9 +91,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     if (corsBundleBuilder != null) {
       configuredBundles.add(corsBundleBuilder.build());
     }
-    if (consumerTokenBundleBuilder != null) {
-      configuredBundles.add(consumerTokenBundleBuilder.build());
-    }
+    configuredBundles.add(ConsumerTokenBundle.builder().withOptionalConsumerToken().build());
     configuredBundles.stream().map(b -> (ConfiguredBundle) b).forEach(bootstrap::addBundle);
   }
 
@@ -114,16 +104,12 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
       implements InitialPlatformBundleBuilder,
           AuthConfigProviderBuilder<C>,
           CorsConfigProviderBuilder<C>,
-          ConsumerTokenConfigBuilder<C>,
-          ConsumerTokenRequiredConfigInitialBuilder<C>,
           OpenApiInitialBuilder<C>,
           OpenApiFinalBuilder<C>,
           PlatformBundleBuilder<C> {
 
     private AuthBundle.AuthBuilder<C> authBundleBuilder;
     private OpaBundle.OpaBuilder<C> opaBundleBuilder;
-    private ConsumerTokenConfig consumerTokenConfig;
-    private ConsumerTokenBundle.FinalBuilder<C> consumerTokenBundleBuilder;
     private SecurityBundle.Builder securityBundleBuilder = SecurityBundle.builder();
     private JacksonConfigurationBundle.Builder jacksonBundleBuilder =
         JacksonConfigurationBundle.builder();
@@ -142,20 +128,19 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
           authBundleBuilder,
           opaBundleBuilder,
           corsBundleBuilder,
-          consumerTokenBundleBuilder,
           openApiBundleBuilder);
     }
 
     // InitialBuilder
 
     @Override
-    public ConsumerTokenConfigBuilder<SdaPlatformConfiguration> usingSdaPlatformConfiguration() {
+    public OpenApiInitialBuilder<SdaPlatformConfiguration> usingSdaPlatformConfiguration() {
       return usingSdaPlatformConfiguration(SdaPlatformConfiguration.class);
     }
 
     @Override
     public <T extends SdaPlatformConfiguration>
-        ConsumerTokenConfigBuilder<T> usingSdaPlatformConfiguration(Class<T> configurationClass) {
+        OpenApiInitialBuilder<T> usingSdaPlatformConfiguration(Class<T> configurationClass) {
       return usingCustomConfig(configurationClass)
           .withOpaAuthorization(SdaPlatformConfiguration::getAuth, SdaPlatformConfiguration::getOpa)
           .withCorsConfigProvider(SdaPlatformConfiguration::getCors);
@@ -196,55 +181,14 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     }
 
     @Override
-    public ConsumerTokenConfigBuilder<C> withoutCorsSupport() {
+    public OpenApiInitialBuilder<C> withoutCorsSupport() {
       return this;
     }
 
     @Override
-    public ConsumerTokenConfigBuilder<C> withCorsConfigProvider(
+    public OpenApiInitialBuilder<C> withCorsConfigProvider(
         CorsConfigProvider<C> corsConfigProvider) {
       this.corsBundleBuilder = CorsBundle.builder().withCorsConfigProvider(corsConfigProvider);
-      return this;
-    }
-
-    @Override
-    public OpenApiInitialBuilder<C> withoutConsumerTokenSupport() {
-      return this;
-    }
-
-    @Override
-    public OpenApiInitialBuilder<C> withOptionalConsumerToken() {
-      consumerTokenConfig = new ConsumerTokenConfig();
-      consumerTokenConfig.setOptional(true);
-      this.consumerTokenBundleBuilder =
-          ConsumerTokenBundle.builder().withConfigProvider(c -> consumerTokenConfig);
-      return this;
-    }
-
-    @Override
-    public ConsumerTokenRequiredConfigInitialBuilder<C> withRequiredConsumerToken() {
-      consumerTokenConfig = new ConsumerTokenConfig();
-      consumerTokenConfig.setOptional(false);
-      this.consumerTokenBundleBuilder =
-          ConsumerTokenBundle.builder().withConfigProvider(c -> consumerTokenConfig);
-      return this;
-    }
-
-    @Override
-    public OpenApiInitialBuilder<C> withConsumerTokenConfigProvider(
-        ConsumerTokenConfigProvider<C> consumerTokenConfigProvider) {
-      this.consumerTokenBundleBuilder =
-          ConsumerTokenBundle.builder().withConfigProvider(consumerTokenConfigProvider);
-      return this;
-    }
-
-    @Override
-    public OpenApiInitialBuilder<C> withExcludePatternsForRequiredConsumerToken(String... regex) {
-      if (this.consumerTokenConfig == null) {
-        throw new IllegalStateException(
-            "ConsumerToken support can't be configured because it is disabled.");
-      }
-      this.consumerTokenConfig.getExcludePatterns().addAll(Arrays.asList(regex));
       return this;
     }
 

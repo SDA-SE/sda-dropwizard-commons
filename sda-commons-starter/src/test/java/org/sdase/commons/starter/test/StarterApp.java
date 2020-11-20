@@ -41,7 +41,6 @@ public class StarterApp extends Application<SdaPlatformConfiguration> {
     bootstrap.addBundle(
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withRequiredConsumerToken()
             .addOpenApiResourcePackageClass(this.getClass())
             .build());
   }

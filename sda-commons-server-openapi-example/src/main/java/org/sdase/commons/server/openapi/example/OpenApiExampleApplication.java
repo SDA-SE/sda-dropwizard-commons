@@ -19,10 +19,8 @@ public class OpenApiExampleApplication extends Application<SdaPlatformConfigurat
     bootstrap.addBundle(
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withRequiredConsumerToken()
             // The following part configures the OpenApi bundle. It is required that the resource
-            // package
-            // class is configured.
+            // package class is configured.
             .addOpenApiResourcePackageClass(getClass())
             .build());
   }

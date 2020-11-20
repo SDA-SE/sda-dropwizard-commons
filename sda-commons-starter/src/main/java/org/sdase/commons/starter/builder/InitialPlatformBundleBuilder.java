@@ -7,7 +7,7 @@ import org.sdase.commons.server.opa.config.OpaConfigProvider;
 import org.sdase.commons.starter.SdaPlatformBundle;
 import org.sdase.commons.starter.SdaPlatformConfiguration;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders.AuthConfigProviderBuilder;
-import org.sdase.commons.starter.builder.CustomConfigurationProviders.ConsumerTokenConfigBuilder;
+import org.sdase.commons.starter.builder.OpenApiCustomizer.OpenApiInitialBuilder;
 
 public interface InitialPlatformBundleBuilder {
 
@@ -17,7 +17,7 @@ public interface InitialPlatformBundleBuilder {
    *
    * @return the builder instance
    */
-  ConsumerTokenConfigBuilder<SdaPlatformConfiguration> usingSdaPlatformConfiguration();
+  OpenApiInitialBuilder<SdaPlatformConfiguration> usingSdaPlatformConfiguration();
 
   /**
    * Start an application that uses a customized configuration which extends the {@link
@@ -31,7 +31,7 @@ public interface InitialPlatformBundleBuilder {
    * @param configurationClass - the customized configuration of the application
    * @return the builder instance
    */
-  <C extends SdaPlatformConfiguration> ConsumerTokenConfigBuilder<C> usingSdaPlatformConfiguration(
+  <C extends SdaPlatformConfiguration> OpenApiInitialBuilder<C> usingSdaPlatformConfiguration(
       Class<C> configurationClass);
 
   /**

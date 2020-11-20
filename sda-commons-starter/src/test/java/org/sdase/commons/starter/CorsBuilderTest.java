@@ -20,7 +20,6 @@ public class CorsBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .build();
 
@@ -34,7 +33,6 @@ public class CorsBuilderTest {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            .withoutConsumerTokenSupport()
             .addOpenApiResourcePackageClass(this.getClass())
             .withCorsAdditionalExposedHeaders("X-custom-header-1", "X-custom-header-2")
             .withCorsAdditionalAllowedHeaders("X-custom-header-3", "X-custom-header-4")
@@ -57,7 +55,6 @@ public class CorsBuilderTest {
         .usingCustomConfig(SdaPlatformConfiguration.class)
         .withAuthConfigProvider(c -> new AuthConfig())
         .withoutCorsSupport()
-        .withoutConsumerTokenSupport()
         .addOpenApiResourcePackageClass(this.getClass())
         .withCorsAdditionalExposedHeaders("x-foo");
   }
