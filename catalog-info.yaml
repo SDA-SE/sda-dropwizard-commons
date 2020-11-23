@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sda-dropwizard-commons
+  annotations:
+    github.com/project-slug: 'sda-se/sda-dropwizard-commons'
+    fossa.io/project-name: sda-dropwizard-commons
+    sonarqube.org/project-key: SDA-SE_sda-dropwizard-commons
+  description: |
+    SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow
+    the patterns and specifications promoted by the SDA SE.
+spec:
+  type: library
+  lifecycle: production
+  owner: plattform-team
