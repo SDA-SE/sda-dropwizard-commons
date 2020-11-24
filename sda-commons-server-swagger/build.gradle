@@ -1,5 +1,7 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-shared-yaml')
+
   compile 'io.swagger:swagger-jaxrs', {
     /**
      * swagger-jaxrs uses the following dependency:

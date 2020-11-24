@@ -112,6 +112,54 @@ SwaggerBundle.builder()
 The customizations above take precedence over the corresponding ones from
 [`@SwaggerDefinition(@Info)`](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X#info)
 
+### File Generation
+
+To automatically generate the Swagger spec and ensure that it is committed to version control, 
+one can use a test like this: 
+
+```java
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static org.sdase.commons.server.swagger.SwaggerFileHelper.normalizeSwaggerYaml;
+
+import io.dropwizard.Configuration;
+import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.sdase.commons.server.testing.GoldenFileAssertions;
+
+public class SwaggerDocumentationTest {
+  // start your application
+  @ClassRule
+  public static final DropwizardAppRule<Configuration> DW =
+      new DropwizardAppRule<>(YourApplication.class, resourceFilePath("test-config.yaml"));
+
+  @Test
+  public void shouldHaveSameSwaggerInRepository() throws IOException {
+    // receive the swagger.yaml from your service
+    String expected =
+        DW.client()
+            .target(String.format("http://localhost:%s", DW.getLocalPort()))
+            .path("swagger.yaml")
+            .request()
+            .get(String.class);
+
+    // specify where you want your file to be stored
+    Path filePath = Paths.get("swagger.yaml");
+
+    // check and update the file
+    GoldenFileAssertions.assertThat(filePath)
+        .hasContentAndUpdateGolden(normalizeSwaggerYaml(expected));
+  }
+}
+```
+
+This test uses the [`GoldenFileAssertions` from sda-commons-server-testing](../sda-commons-server-testing)
+and removes all contents that vary between tests (the `servers` key that contains random port numbers) with
+[`SwaggerFileHelper#nomalizSwaggerYaml(String yaml)`](./src/main/java/org/sdase/commons/server/swagger/SwaggerFileHelper.java).
+
 ## Further Information
 
 [Swagger-Core Annotations](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X)
