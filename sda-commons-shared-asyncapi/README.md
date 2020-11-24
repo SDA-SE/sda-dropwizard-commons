@@ -64,35 +64,33 @@ To automatically generate the AsyncAPI spec and ensure that it is committed to v
 one can use a test like this: 
 
 ```java
-    @Test
-    public void generateAndVerifySpec() throws IOException {
-        String expected = AsyncApiGenerator
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.junit.Test;
+import org.sdase.commons.server.testing.GoldenFileAssertions;
+import org.sdase.commons.shared.asyncapi.AsyncApiGenerator;
+import org.sdase.commons.shared.asyncapi.JsonSchemaGenerator;
+
+public class AsyncApiDocumentationTest {
+  @Test
+  public void generateAndVerifySpec() throws IOException {
+    String expected = AsyncApiGenerator
             .builder()
             .withAsyncApiBase(BaseEvent.class.getResource("/asyncapi.yaml"))
             .withSchema("./schema.json", BaseEvent.class)
             .generateYaml();
 
-        Path asyncApiPath = Paths.get("./asyncapi.yaml");
+    // specify where you want your file to be stored
+    Path filePath = Paths.get("asyncapi.yaml");
 
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            String actual = new String(Files.readAllBytes(asyncApiPath));
-            Map<String, Object> actualJson =
-                YamlUtil.load(actual, new TypeReference<Map<String, Object>>() {});
-            Map<String, Object> expectedJson =
-                YamlUtil.load(expected, new TypeReference<Map<String, Object>>() {});
-
-            softly.assertThat(actualJson)
-                .as("The current asyncapi.yaml file is not up-to-date. If this happens "
-                    + "locally, just run the test again. The asyncapi.yaml file is updated "
-                    + "automatically after running this test. If this happens in the CI, make sure "
-                    + "that you have committed the latest asyncapi.yaml file!")
-                .isEqualToComparingFieldByFieldRecursively(expectedJson);
-        } finally {
-            Files.write(asyncApiPath, expected.getBytes(StandardCharsets.UTF_8));
-        }
-    }
+    // check and update the file
+    GoldenFileAssertions.assertThat(filePath).hasContentAndUpdateGolden(expected);
+  }
+}
 ```
 
+This test uses the [`GoldenFileAssertions` from sda-commons-server-testing](../sda-commons-server-testing).
 
 ### Usage with Existing Schemas
 
