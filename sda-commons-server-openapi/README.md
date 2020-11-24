@@ -57,14 +57,6 @@ OpenApiBundle.builder()
     .addResourcePackage("my.package.containing.resources")
 ```
 
-The `embed` functionality is automatically documented to operations that return embeddable resources. This can be disabled if needed:
-
-```java
-OpenApiBundle.builder()
-//...
-    .disableEmbedParameter()
-```
-
 ## Further Information
 
 [Swagger-Core Annotations](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations)
