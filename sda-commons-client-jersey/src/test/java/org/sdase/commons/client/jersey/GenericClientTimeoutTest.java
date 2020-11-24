@@ -8,6 +8,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.awaitility.Awaitility.await;
 import static org.sdase.commons.client.jersey.error.ClientErrorUtil.convertExceptions;
+import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.asClientRequestException;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.connectTimeoutError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.readTimeoutError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.timeoutError;
@@ -15,13 +16,15 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
-import org.sdase.commons.client.jersey.error.ClientRequestException;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.server.testing.EnvironmentRule;
@@ -58,24 +61,21 @@ public class GenericClientTimeoutTest {
     Client client =
         app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("test");
 
+    CompletableFuture<Response> future =
+        CompletableFuture.supplyAsync(
+            () ->
+                // try to connect to an ip address that is not routable
+                convertExceptions(
+                    () -> client.target("http://192.168.123.123").path("timeout").request().get()));
+
     await()
-        .atMost(1, SECONDS)
         .untilAsserted(
             () ->
-                assertThatExceptionOfType(ClientRequestException.class)
-                    .isThrownBy(
-                        () ->
-                            // try to connect to an ip address that is not routable
-                            convertExceptions(
-                                () ->
-                                    client
-                                        .target("http://192.168.123.123")
-                                        .path("timeout")
-                                        .request()
-                                        .get() // NOSONAR
-                                ))
-                    .is(timeoutError())
-                    .is(connectTimeoutError()));
+                assertThatExceptionOfType(ExecutionException.class)
+                    .isThrownBy(future::get)
+                    .havingCause()
+                    .is(asClientRequestException(timeoutError()))
+                    .is(asClientRequestException(connectTimeoutError())));
   }
 
   @Test
@@ -88,48 +88,49 @@ public class GenericClientTimeoutTest {
             .withConnectionTimeout(Duration.ofSeconds(2))
             .buildGenericClient("test");
 
+    CompletableFuture<Response> future =
+        CompletableFuture.supplyAsync(
+            () ->
+                // try to connect to an ip address that is not routable
+                convertExceptions(
+                    () -> client.target("http://192.168.123.123").path("timeout").request().get()));
+
     await()
-        .between(1, SECONDS, 3, SECONDS)
+        .atLeast(1, SECONDS)
         .untilAsserted(
             () ->
-                assertThatExceptionOfType(ClientRequestException.class)
-                    .isThrownBy(
-                        () ->
-                            // try to connect to an ip address that is not routable
-                            convertExceptions(
-                                () ->
-                                    client
-                                        .target("http://192.168.123.123")
-                                        .path("timeout")
-                                        .request()
-                                        .get()))
-                    .is(timeoutError())
-                    .is(connectTimeoutError()));
+                assertThatExceptionOfType(ExecutionException.class)
+                    .isThrownBy(future::get)
+                    .havingCause()
+                    .is(asClientRequestException(timeoutError()))
+                    .is(asClientRequestException(connectTimeoutError())));
   }
 
   @Test
   @Retry(5)
   public void runIntoDefaultReadTimeoutOf2Seconds() {
-
     WIRE.stubFor(
         get("/timeout").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(3000)));
 
     Client client =
         app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("test");
 
+    CompletableFuture<Response> future =
+        CompletableFuture.supplyAsync(
+            () ->
+                // try to connect to an ip address that is not routable
+                convertExceptions(
+                    () -> client.target(WIRE.baseUrl()).path("timeout").request().get()));
+
     await()
-        .between(1, SECONDS, 3, SECONDS)
+        .atLeast(1, SECONDS)
         .untilAsserted(
             () ->
-                assertThatExceptionOfType(ClientRequestException.class)
-                    .isThrownBy(
-                        () ->
-                            // try to connect to an ip address that is not routable
-                            convertExceptions(
-                                () ->
-                                    client.target(WIRE.baseUrl()).path("timeout").request().get()))
-                    .is(timeoutError())
-                    .is(readTimeoutError()));
+                assertThatExceptionOfType(ExecutionException.class)
+                    .isThrownBy(future::get)
+                    .havingCause()
+                    .is(asClientRequestException(timeoutError()))
+                    .is(asClientRequestException(readTimeoutError())));
   }
 
   @Test
@@ -146,18 +147,21 @@ public class GenericClientTimeoutTest {
             .withReadTimeout(Duration.ofSeconds(4))
             .buildGenericClient("test");
 
+    CompletableFuture<Response> future =
+        CompletableFuture.supplyAsync(
+            () ->
+                // try to connect to an ip address that is not routable
+                convertExceptions(
+                    () -> client.target(WIRE.baseUrl()).path("timeout").request().get()));
+
     await()
-        .between(3, SECONDS, 5, SECONDS)
+        .atLeast(3, SECONDS)
         .untilAsserted(
             () ->
-                assertThatExceptionOfType(ClientRequestException.class)
-                    .isThrownBy(
-                        () ->
-                            // try to connect to an ip address that is not routable
-                            convertExceptions(
-                                () ->
-                                    client.target(WIRE.baseUrl()).path("timeout").request().get()))
-                    .is(timeoutError())
-                    .is(readTimeoutError()));
+                assertThatExceptionOfType(ExecutionException.class)
+                    .isThrownBy(future::get)
+                    .havingCause()
+                    .is(asClientRequestException(timeoutError()))
+                    .is(asClientRequestException(readTimeoutError())));
   }
 }
