@@ -1,5 +1,6 @@
 dependencies {
   compile project(':sda-commons-server-dropwizard')
+  compile project(':sda-commons-shared-yaml')
 
   compile 'io.swagger.core.v3:swagger-jaxrs2'
   compile 'io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2'
