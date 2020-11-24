@@ -12,6 +12,37 @@ Add the module with test scope:
   testCompile "org.sdase.commons:sda-commons-server-testing"
 ```
 
+## Provided Assertions
+
+### [GoldenFileAssertions](./src/main/java/org/sdase/commons/server/testing/GoldenFileAssertions.java)
+
+Special assertions for `Path` objects to check if a file matches the expected contents and updates
+them if needed. These assertions are helpful to check if certain files are stored in the repository
+(like [OpenAPI](../sda-commons-server-openapi) or [AsyncApi](../sda-commons-shared-asyncapi)).
+
+> Use this assertion if you want to conveniently store the latest copy of a file in your repository,
+> and let the CI fail if an update has not been committed.
+
+```java
+public class MyTestIT {
+  @Test
+  public void shouldHaveSameFileInRepository() throws IOException {
+    // get expected content from a generator or rest endpoint
+    String expected = ...; 
+  
+    // get a path to the file that should be checked
+    Path filePath = Paths.get("my-file.yaml");
+  
+    // assert the file and update the file afterwards
+    GoldenFileAssertions.assertThat(filePath)
+        .hasContentAndUpdateGolden(expected);
+  }
+}
+```
+
+There is also a `GoldenFileAssertions.assertThatYaml(...)` variant that interprets the content as YAML
+or JSON and ignores the order of keys.
+
 ## Provided Rules
 
 ### EnvironmentRule
@@ -19,7 +50,7 @@ Add the module with test scope:
 The [`EnvironmentRule`](./src/main/java/org/sdase/commons/server/testing/EnvironmentRule.java) allows to override or
 unset environment variables in test cases and resets them to the state before the test after the test finished.
 
-```
+```java
 public class CustomIT {
 
     @ClassRule
