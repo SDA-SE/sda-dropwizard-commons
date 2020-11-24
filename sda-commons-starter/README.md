@@ -2,6 +2,11 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-starter/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-starter)
 
+> #### ⚠️ Experimental ⚠
+>
+> Please be aware that this API is in an early stage and might change in the future.
+>
+
 The module `sda-commons-starter` provides all basics required to build a service for the SDA Platform with
 Dropwizard.
 
@@ -58,8 +63,8 @@ public class MyFirstApp extends Application<SdaPlatformConfiguration> {
    public void initialize(Bootstrap<SdaPlatformConfiguration> bootstrap) {
       bootstrap.addBundle(SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
-            // more Swagger data that may also be added with annotations
-            .addSwaggerResourcePackageClass(this.getClass())
+            // more Open API data that may also be added with annotations
+            .addOpenApiResourcePackageClass(this.getClass())
             // or use an existing OpenApi definition
             .withExistingOpenAPI("openApiJsonOrYaml")
             .build());
