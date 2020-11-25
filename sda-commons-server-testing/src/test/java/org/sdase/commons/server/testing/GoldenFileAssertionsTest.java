@@ -79,8 +79,8 @@ public class GoldenFileAssertionsTest {
     // should be accepted
     assertThatCode(
             () ->
-                GoldenFileAssertions.assertThatYaml(path)
-                    .hasContentAndUpdateGolden(
+                GoldenFileAssertions.assertThat(path)
+                    .hasYamlContentAndUpdateGolden(
                         "key0: v\nkey2:\n  nested2: b\n  nested1: a\nkey1: w"))
         .doesNotThrowAnyException();
 
@@ -95,10 +95,10 @@ public class GoldenFileAssertionsTest {
     Files.write(path, "key0: v\nkey1: w\nkey2:\n  nested1: a\n  nested2: b".getBytes());
 
     // should throw and update the file
-    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThatYaml(path);
+    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(path);
     assertThatThrownBy(
             () ->
-                goldenFileAssertions.hasContentAndUpdateGolden(
+                goldenFileAssertions.hasYamlContentAndUpdateGolden(
                     "key0: w\nkey1: x\nkey2:\n  nested1: b\n  nested2: c"))
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
@@ -122,8 +122,8 @@ public class GoldenFileAssertionsTest {
     // should be accepted
     assertThatCode(
             () ->
-                GoldenFileAssertions.assertThatYaml(path)
-                    .hasContentAndUpdateGolden(
+                GoldenFileAssertions.assertThat(path)
+                    .hasYamlContentAndUpdateGolden(
                         "{\"key0\": \"v\",\"key2\":{\"nested2\":\"b\",\"nested1\": \"a\"},\"key1\": \"w\"}"))
         .doesNotThrowAnyException();
 
@@ -143,10 +143,10 @@ public class GoldenFileAssertionsTest {
             .getBytes());
 
     // should throw and update the file
-    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThatYaml(path);
+    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(path);
     assertThatThrownBy(
             () ->
-                goldenFileAssertions.hasContentAndUpdateGolden(
+                goldenFileAssertions.hasYamlContentAndUpdateGolden(
                     "{\"key0\": \"2\",\"key1\": \"x\",\"key2\":{\"nested1\":\"b\",\"nested2\": \"c\"}}"))
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
@@ -165,8 +165,8 @@ public class GoldenFileAssertionsTest {
     Path path = Paths.get(temporaryFolder.getRoot().getAbsolutePath(), "non-existing-file.yaml");
 
     // should throw and update the file
-    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThatYaml(path);
-    assertThatThrownBy(() -> goldenFileAssertions.hasContentAndUpdateGolden("expected-content"))
+    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(path);
+    assertThatThrownBy(() -> goldenFileAssertions.hasYamlContentAndUpdateGolden("expected-content"))
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
             "The current %s file is not up-to-date. If this happens locally,",
