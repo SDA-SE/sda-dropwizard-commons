@@ -151,14 +151,16 @@ public class SwaggerDocumentationTest {
 
     // check and update the file
     GoldenFileAssertions.assertThat(filePath)
-        .hasContentAndUpdateGolden(normalizeSwaggerYaml(expected));
+        .hasYamlContentAndUpdateGolden(normalizeSwaggerYaml(expected));
   }
 }
 ```
 
 This test uses the [`GoldenFileAssertions` from sda-commons-server-testing](../sda-commons-server-testing)
 and removes all contents that vary between tests (the `servers` key that contains random port numbers) with
-[`SwaggerFileHelper#nomalizSwaggerYaml(String yaml)`](./src/main/java/org/sdase/commons/server/swagger/SwaggerFileHelper.java).
+[`SwaggerFileHelper#normalizeSwaggerYaml(String yaml)`](./src/main/java/org/sdase/commons/server/swagger/SwaggerFileHelper.java).
+Please note that the Swagger output is only semantically reproducible but the order of properties
+might change between runs.
 
 ## Further Information
 
