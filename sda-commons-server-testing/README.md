@@ -40,8 +40,10 @@ public class MyTestIT {
 }
 ```
 
-There is also a `GoldenFileAssertions.assertThatYaml(...)` variant that interprets the content as YAML
-or JSON and ignores the order of keys.
+There is also a `assertThat(...).hasYamlContentAndUpdateGolden(...)` variant that interprets the content as
+YAML or JSON and ignores the order of keys. If possible, prefer the other variant since the written
+content should always be reproducible. Note that the [AsyncAPI](../sda-commons-shared-asyncapi) and
+[OpenAPI](../sda-commons-server-openapi) generations export reproducible content. 
 
 ## Provided Rules
 

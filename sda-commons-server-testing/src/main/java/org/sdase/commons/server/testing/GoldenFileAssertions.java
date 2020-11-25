@@ -25,16 +25,13 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
           + "running this test. If this happens in the CI, make sure that you have committed the "
           + "latest %s file!";
 
-  private final boolean asYaml;
-
   /**
    * Constructor
    *
    * @param actual the path to test
    */
-  private GoldenFileAssertions(Path actual, boolean asYaml) {
+  private GoldenFileAssertions(Path actual) {
     super(actual, GoldenFileAssertions.class);
-    this.asYaml = asYaml;
   }
 
   /**
@@ -44,18 +41,7 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
    * @return the created assertion object
    */
   public static GoldenFileAssertions assertThat(Path actual) {
-    return new GoldenFileAssertions(actual, false);
-  }
-
-  /**
-   * Creates a new instance of {@link GoldenFileAssertions} that asserts the content as YAML. This
-   * means that it ignores the order of properties in a file.
-   *
-   * @param actual the path to test
-   * @return the created assertion object
-   */
-  public static GoldenFileAssertions assertThatYaml(Path actual) {
-    return new GoldenFileAssertions(actual, true);
+    return new GoldenFileAssertions(actual);
   }
 
   /**
@@ -74,7 +60,7 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
    *
    * String expected = ...; // call the service / start the generator
    *
-   * GoldenFileAssertions.assertThat(xFile).hasContentOnDisk(expected);
+   * GoldenFileAssertions.assertThat(xFile).hasContentAndUpdateGolden(expected);
    * </code></pre>
    *
    * @param expected the expected text content to compare the actual {@code Path}'s content to.
@@ -98,19 +84,64 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
       // assert if exists
       Assertions.assertThat(actual).as(ASSERTION_TEXT, fileName, fileName, fileName).exists();
 
-      if (asYaml) {
-        // assert YAML / JSON
-        ObjectMapper objectMapper = Jackson.newObjectMapper(new YAMLFactory());
-        Assertions.assertThat(objectMapper.readTree(actual.toFile()))
-            .as(ASSERTION_TEXT, fileName, fileName, fileName)
-            .isEqualTo(objectMapper.readTree(expected));
-      } else {
-        // assert normal text
-        Assertions.assertThat(actual)
-            .as(ASSERTION_TEXT, fileName, fileName, fileName)
-            .hasContent(expected);
-      }
+      // assert normal text
+      Assertions.assertThat(actual)
+          .as(ASSERTION_TEXT, fileName, fileName, fileName)
+          .hasContent(expected);
 
+    } finally {
+      // always update the file content
+      Files.write(actual, expected.getBytes(StandardCharsets.UTF_8));
+    }
+
+    return this;
+  }
+
+  /**
+   * Verifies that the text content of the actual {@code Path} equals the semantic of the given YAML
+   * content. If not, an {@link AssertionError} is thrown, but in contrast to {@link
+   * org.assertj.core.api.PathAssert#hasContent(String)} the file is updated with the expected value
+   * so the next assert succeeds.
+   *
+   * <p>Use this assertion if you want to conveniently store the latest copy of a file in your
+   * repository, and let the CI fail if an update has not been committed.
+   *
+   * <p>Examples:
+   *
+   * <pre><code class="java">
+   * Path xFile = Paths.get("openapi.yaml");
+   *
+   * String expected = ...; // call the service / start the generator
+   *
+   * GoldenFileAssertions.assertThat(xFile).hasYamlContentAndUpdateGolden(expected);
+   * </code></pre>
+   *
+   * @param expected the expected text content to compare the actual {@code Path}'s content to.
+   * @return {@code this} assertion object.
+   * @throws NullPointerException if the given content is {@code null}.
+   * @throws UncheckedIOException if an I/O error occurs.
+   * @throws AssertionError if the actual {@code Path} is {@code null}.
+   * @throws AssertionError if the actual {@code Path} is not a {@link Files#isReadable(Path)
+   *     readable} file.
+   * @throws AssertionError if the content of the actual {@code Path} is not equal to the given
+   *     content.
+   */
+  public GoldenFileAssertions hasYamlContentAndUpdateGolden(String expected) throws IOException {
+    // check if path is not null
+    isNotNull();
+
+    // assert the file
+    String fileName = actual.getFileName().toString();
+
+    try {
+      // assert if exists
+      Assertions.assertThat(actual).as(ASSERTION_TEXT, fileName, fileName, fileName).exists();
+
+      // assert YAML / JSON
+      ObjectMapper objectMapper = Jackson.newObjectMapper(new YAMLFactory());
+      Assertions.assertThat(objectMapper.readTree(actual.toFile()))
+          .as(ASSERTION_TEXT, fileName, fileName, fileName)
+          .isEqualTo(objectMapper.readTree(expected));
     } finally {
       // always update the file content
       Files.write(actual, expected.getBytes(StandardCharsets.UTF_8));
