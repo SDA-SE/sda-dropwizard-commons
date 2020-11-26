@@ -58,4 +58,13 @@ public class OpenAPIBuilderTest {
         bundle,
         OpenApiBundle.builder().withExistingOpenAPIFromClasspathResource("/example.yaml").build());
   }
+
+  @Test
+  public void withoutOpenApiBundle() {
+
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder().usingSdaPlatformConfiguration().build();
+
+    bundleAssertion.assertBundleNotConfiguredByPlatformBundle(bundle, OpenApiBundle.class);
+  }
 }

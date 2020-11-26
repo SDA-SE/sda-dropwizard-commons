@@ -81,7 +81,9 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     List<ConfiguredBundle<? super C>> configuredBundles = new ArrayList<>();
     configuredBundles.add(jacksonConfigurationBundleBuilder.build());
     configuredBundles.add(securityBundleBuilder.build());
-    configuredBundles.add(openApiBundleBuilder.build());
+    if (openApiBundleBuilder != null) {
+      configuredBundles.add(openApiBundleBuilder.build());
+    }
     if (authBundleBuilder != null) {
       configuredBundles.add(authBundleBuilder.build());
     }
