@@ -17,7 +17,7 @@ ext {
   kafkaVersion = '2.2.1' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
   confluentVersion = '5.2.3' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
   jettyVersion = '9.4.33.v20201020' // Same version as Dropwizard!
-  hk2Version = '2.5.0-b42'
+  hk2Version = '3.0.0-RC1'
   scalaVersion = '2.12.8'
 }
 
