@@ -1,0 +1,37 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+
+kafka:
+  brokers: ${BROKER_CONNECTION_STRING:-[]}
+
+  adminConfig:
+    adminClientRequestTimeoutMs: 2000
+
+  consumers:
+    consumer:
+      clientId: c2
+
+  producers:
+    producer:
+      clientId: p2
+
+  listenerConfig:
+    async:
+      topicMissingRetryMs: 40000
+
+kmsAws:
+  disableAwsEncryption: false
+  region: eu-central-1
+  accessKeyId: foo
+  secretAccessKey: bar
+  roleArn: halligalli
+  keyCaching:
+    enabled: false
+    maxCacheSize: 0
+    keyMaxLifetimeInSeconds: 0
+    maxMessagesPerKey: 1

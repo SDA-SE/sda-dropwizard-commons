@@ -1,0 +1,20 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+
+kmsAws:
+  disableAwsEncryption: false
+  region: eu-central-1
+  accessKeyId: foo
+  secretAccessKey: bar
+  roleArn: halligalli
+  roleSessionNamePrefix: testService
+  keyCaching:
+    enabled: false
+    maxCacheSize: 10
+    keyMaxLifetimeInSeconds: 10
+    maxMessagesPerKey: 10

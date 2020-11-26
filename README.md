@@ -163,7 +163,21 @@ The module [`sda-commons-server-kafka`](./sda-commons-server-kafka/README.md) pr
 messages from a Kafka topic.
 
 The module [`sda-commons-server-kafka-example`](./sda-commons-server-kafka-example/README.md) includes 
-applications, one with consumer and one with producer examples.   
+applications, one with consumer and one with producer examples.
+
+The module [`sda-commons-server-kms-aws-kafka`](./sda-commons-server-kms-aws-kafka/README.md) provides 
+wrappers for Serializers and Deserializers allowing for message encryption and decryption using 
+AWS Key Management Service (KMS).
+
+
+##### AWS Key Management Service (KMS)
+
+The module [`sda-commons-server-kms-aws`](./sda-commons-server-kms-aws/README.md) wraps the 
+[AWS Encryption SDK](https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/java.html) 
+for encryption and decryption of any plain text using Customer Master Keys stored in AWS KMS.
+
+The module [`sda-commons-server-kms-aws-testing`](./sda-commons-server-kms-aws-testing/README.md) provides 
+a AWS KMS simulator based on Wiremock for integration testing.
 
 
 ##### MongoDB

@@ -1,0 +1,14 @@
+dependencies {
+  compile project(':sda-commons-server-testing')
+  compile project(':sda-commons-client-jersey-wiremock-testing')
+
+  compile "com.amazonaws:aws-java-sdk-kms", {
+    exclude(group: "commons-logging", module: "commons-logging")
+  }
+
+  testCompile "com.amazonaws:aws-encryption-sdk-java", {
+    exclude(group: "org.bouncycastle", module: "bcprov-ext-jdk15on")
+  }
+
+  testCompile "org.bouncycastle:bcprov-jdk15on"
+}
