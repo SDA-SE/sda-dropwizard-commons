@@ -9,7 +9,7 @@ public class HibernateExampleConfiguration extends Configuration {
    * configuration required for hibernate database access. This section is mandatory within the
    * configuration if you use the hibernate bundle
    */
-  private DataSourceFactory database;
+  private DataSourceFactory database = new DataSourceFactory();
 
   public DataSourceFactory getDatabase() {
     return database;

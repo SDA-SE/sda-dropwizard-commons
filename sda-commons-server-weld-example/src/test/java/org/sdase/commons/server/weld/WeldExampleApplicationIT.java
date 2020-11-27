@@ -1,7 +1,8 @@
 package org.sdase.commons.server.weld;
 
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
+
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.assertj.core.api.Assertions;
 import org.junit.ClassRule;
@@ -12,8 +13,7 @@ public class WeldExampleApplicationIT {
 
   @ClassRule
   public static final DropwizardAppRule<Configuration> RULE =
-      new WeldAppRule<>(
-          WeldExampleApplication.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
+      new WeldAppRule<>(WeldExampleApplication.class, null, randomPorts());
 
   @Test
   public void shouldBeInjectedCorrectly() {

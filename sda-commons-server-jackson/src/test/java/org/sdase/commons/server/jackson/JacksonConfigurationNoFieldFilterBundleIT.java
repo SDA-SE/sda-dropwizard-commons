@@ -1,7 +1,8 @@
 package org.sdase.commons.server.jackson;
 
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
+
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.Map;
 import javax.ws.rs.core.GenericType;
@@ -16,9 +17,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
 
   @ClassRule
   public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(
-          JacksonConfigurationNoFieldFilterTestApp.class,
-          ResourceHelpers.resourceFilePath("test-config.yaml"));
+      new DropwizardAppRule<>(JacksonConfigurationNoFieldFilterTestApp.class, null, randomPorts());
 
   @Test
   public void shouldGetJohnDoe() {

@@ -1,6 +1,6 @@
 package org.sdase.commons.server.errorhandling;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Configuration;
@@ -19,8 +19,7 @@ public class ErrorHandlingExampleIT {
 
   @ClassRule
   public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(
-          ErrorHandlingExampleApplication.class, resourceFilePath("test-config.yaml"));
+      new DropwizardAppRule<>(ErrorHandlingExampleApplication.class, null, randomPorts());
 
   @Test
   public void shouldGetNotFoundException() {

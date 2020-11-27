@@ -1,7 +1,7 @@
 package org.sdase.commons.server.morphia.example;
 
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import dev.morphia.Datastore;
@@ -24,7 +24,9 @@ public class MorphiaApplicationIT {
   private static final WeldAppRule<MorphiaApplicationConfiguration> APP_RULE =
       new WeldAppRule<>(
           MorphiaApplication.class, // normal WELD rule initialization
-          resourceFilePath("test-config.yaml"),
+          null,
+          // start the application with random ports
+          randomPorts(),
           // provide a lambda to only read the value after the mongodb connection parameters are
           // available
           config("mongo.hosts", MONGODB::getHost),

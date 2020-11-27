@@ -7,7 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -44,7 +44,8 @@ public class OpaBundleClientConfigurationIT {
   private static final DropwizardAppRule<TestConfiguration> DW =
       new DropwizardAppRule<>(
           TestApplication.class,
-          resourceFilePath("test-config-key-provider.yaml"),
+          null,
+          randomPorts(),
           config("opa.baseUrl", WIRE::baseUrl),
           config("opa.policyPackage", "test"),
           config("opa.opaClient.userAgent", "my-user-agent"),
@@ -79,7 +80,7 @@ public class OpaBundleClientConfigurationIT {
   }
 
   public static class TestConfiguration extends Configuration {
-    @Valid private OpaConfig opa;
+    @Valid private OpaConfig opa = new OpaConfig();
 
     public OpaConfig getOpa() {
       return opa;

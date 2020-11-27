@@ -1,7 +1,7 @@
 package org.sdase.commons.server.morphia;
 
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.tuple;
@@ -33,7 +33,8 @@ public class MorphiaBundleEnsureIndexesIT {
   private static final DropwizardAppRule<Config> DW =
       new DropwizardAppRule<>(
           MorphiaTestApp.class,
-          resourceFilePath("test-config.yaml"),
+          null,
+          randomPorts(),
           config("mongo.hosts", MONGODB::getHost),
           config("mongo.database", MONGODB::getDatabase));
 

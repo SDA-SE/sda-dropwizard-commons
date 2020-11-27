@@ -1,9 +1,9 @@
 package org.sdase.commons.server.auth.key;
 
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.math.BigInteger;
 import java.util.List;
@@ -15,9 +15,7 @@ public class OpenIdProviderDiscoveryKeySourceIT {
 
   @ClassRule
   public static DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(
-          KeyProviderTestApp.class,
-          ResourceHelpers.resourceFilePath("test-config-key-provider.yaml"));
+      new DropwizardAppRule<>(KeyProviderTestApp.class, null, randomPorts());
 
   @Test
   public void shouldLoadKeysFromHttp() {

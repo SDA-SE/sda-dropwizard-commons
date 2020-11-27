@@ -1,6 +1,6 @@
 package org.sdase.commons.server.healthcheck;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,7 +21,7 @@ public class HealthCheckIT {
 
   @ClassRule
   public static final DropwizardAppRule<Configuration> RULE =
-      new DropwizardAppRule<>(HealthApplication.class, resourceFilePath("test-config.yaml"));
+      new DropwizardAppRule<>(HealthApplication.class, null, randomPorts());
 
   @Before
   public void setUp() {
