@@ -1,6 +1,6 @@
 package org.sdase.commons.server.prometheus.example;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -17,7 +17,12 @@ public class PrometheusMetricsIT {
 
   @ClassRule
   public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
-      new DropwizardAppRule<>(MetricExampleApp.class, resourceFilePath("test-config.yaml"));
+      new DropwizardAppRule<>(
+          MetricExampleApp.class,
+          null,
+          // use random ports so that tests can run in parallel
+          // and do not affect each other when one is not shutting down
+          randomPorts());
 
   @Test
   public void produceGaugeMetric() {

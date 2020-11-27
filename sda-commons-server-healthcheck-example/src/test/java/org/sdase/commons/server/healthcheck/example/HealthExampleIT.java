@@ -4,7 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
@@ -30,7 +30,8 @@ public class HealthExampleIT {
   public static final DropwizardAppRule<HealthExampleConfiguration> DW =
       new DropwizardAppRule<>(
           HealthExampleApplication.class,
-          resourceFilePath("test-config.yaml"),
+          null,
+          randomPorts(),
           config("externalServiceUrl", () -> WIRE.url(SERVICE_PATH)));
 
   // start the two rules in order

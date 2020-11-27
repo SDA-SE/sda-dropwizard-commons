@@ -1,7 +1,7 @@
 package org.sdase.commons.server.s3;
 
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -23,7 +23,8 @@ public class S3BundleTest {
   private static final DropwizardAppRule<Config> DW =
       new DropwizardAppRule<>(
           TestApp.class,
-          resourceFilePath("test-config.yaml"),
+          null,
+          randomPorts(),
           config("s3Config.endpoint", S_3_MOCK_RULE::getEndpoint),
           config("s3Config.accessKey", "access-key"),
           config("s3Config.secretKey", "secret-key"));

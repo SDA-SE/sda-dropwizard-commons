@@ -1,11 +1,11 @@
 package org.sdase.commons.server.jackson;
 
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,8 +35,7 @@ public class JacksonConfigurationBundleIT {
 
   @ClassRule
   public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(
-          JacksonConfigurationTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
+      new DropwizardAppRule<>(JacksonConfigurationTestApp.class, null, randomPorts());
 
   // Validation and Error Tests
   @Test

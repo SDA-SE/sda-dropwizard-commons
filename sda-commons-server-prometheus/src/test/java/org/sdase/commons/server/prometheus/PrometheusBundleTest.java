@@ -1,6 +1,6 @@
 package org.sdase.commons.server.prometheus;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Configuration;
@@ -22,8 +22,7 @@ public class PrometheusBundleTest {
   // of the test requests
   @Rule
   public final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(
-          PrometheusTestApplication.class, resourceFilePath("test-config.yaml"));
+      new DropwizardAppRule<>(PrometheusTestApplication.class, null, randomPorts());
 
   private static final String REST_URI = "http://localhost:%d";
   private String resourceUri;
