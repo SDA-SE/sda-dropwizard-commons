@@ -4,6 +4,6 @@ dependencies {
   // This dependency and version is used by Morphia in sda-commons-server-morphia.
   // Only upgrade here when there is a version or GAV conflict with the artifact provided by
   // Morphia.
-  compile 'org.mongodb:mongodb-driver-legacy:4.0.3'
+  compile 'org.mongodb:mongodb-driver-legacy:4.1.1'
   compile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 }
