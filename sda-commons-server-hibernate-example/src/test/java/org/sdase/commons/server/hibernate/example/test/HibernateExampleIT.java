@@ -1,7 +1,7 @@
 package org.sdase.commons.server.hibernate.example.test;
 
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,7 +39,8 @@ public class HibernateExampleIT {
   public static final DropwizardAppRule<HibernateExampleConfiguration> DW =
       new DropwizardAppRule<>(
           HibernateExampleApplication.class,
-          resourceFilePath("test-config.yaml"),
+          null,
+          randomPorts(),
           config("database.driverClass", "org.h2.Driver"),
           config("database.user", "sa"),
           config("database.password", "sa"),

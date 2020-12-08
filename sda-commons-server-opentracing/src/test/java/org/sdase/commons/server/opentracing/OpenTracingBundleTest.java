@@ -1,6 +1,6 @@
 package org.sdase.commons.server.opentracing;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static io.opentracing.log.Fields.ERROR_KIND;
 import static io.opentracing.log.Fields.ERROR_OBJECT;
 import static io.opentracing.log.Fields.EVENT;
@@ -36,7 +36,7 @@ public class OpenTracingBundleTest {
 
   @ClassRule
   public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(TraceTestApp.class, resourceFilePath("test-config.yaml"));
+      new DropwizardAppRule<>(TraceTestApp.class, null, randomPorts());
 
   private MockTracer tracer;
 

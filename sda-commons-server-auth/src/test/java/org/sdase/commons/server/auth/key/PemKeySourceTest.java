@@ -1,5 +1,6 @@
 package org.sdase.commons.server.auth.key;
 
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -19,9 +20,7 @@ public class PemKeySourceTest {
 
   @ClassRule
   public static DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(
-          KeyProviderTestApp.class,
-          ResourceHelpers.resourceFilePath("test-config-key-provider.yaml"));
+      new DropwizardAppRule<>(KeyProviderTestApp.class, null, randomPorts());
 
   @Test
   public void shouldLoadPemKeyFromHttp() {

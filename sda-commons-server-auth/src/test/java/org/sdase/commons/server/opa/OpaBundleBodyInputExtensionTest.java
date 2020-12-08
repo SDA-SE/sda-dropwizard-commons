@@ -6,7 +6,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -46,7 +46,8 @@ public class OpaBundleBodyInputExtensionTest {
   private static final DropwizardAppRule<TestConfiguration> DW_WITH_EXTENSION =
       new DropwizardAppRule<>(
           TestApplicationWithExtension.class,
-          resourceFilePath("test-config-key-provider.yaml"),
+          null,
+          randomPorts(),
           config("opa.baseUrl", WIRE::baseUrl),
           config("opa.policyPackage", "with"),
 
@@ -56,7 +57,8 @@ public class OpaBundleBodyInputExtensionTest {
   private static final DropwizardAppRule<TestConfiguration> DW_WITHOUT_EXTENSION =
       new DropwizardAppRule<>(
           TestApplicationWithoutExtension.class,
-          resourceFilePath("test-config-key-provider.yaml"),
+          null,
+          randomPorts(),
           config("opa.baseUrl", WIRE::baseUrl),
           config("opa.policyPackage", "without"),
 
@@ -214,7 +216,7 @@ public class OpaBundleBodyInputExtensionTest {
   }
 
   public static class TestConfiguration extends Configuration {
-    private OpaConfig opa;
+    private OpaConfig opa = new OpaConfig();
 
     public OpaConfig getOpa() {
       return opa;

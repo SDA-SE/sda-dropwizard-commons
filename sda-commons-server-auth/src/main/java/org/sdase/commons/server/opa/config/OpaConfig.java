@@ -1,12 +1,13 @@
 package org.sdase.commons.server.opa.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.validation.constraints.NotNull;
 
 /** Configuration for requesting OPA PDP. */
 @SuppressWarnings("UnusedReturnValue")
 public class OpaConfig {
   /** The client configuration of the HTTP client that is used to call the Open Policy Agent. */
-  private OpaClientConfiguration opaClient;
+  private OpaClientConfiguration opaClient = new OpaClientConfiguration();
 
   /** flag if OPA is disabled (for testing) */
   private boolean disableOpa;
@@ -101,6 +102,7 @@ public class OpaConfig {
     return this;
   }
 
+  @JsonIgnore
   public String getPolicyPackagePath() {
     return policyPackage.replaceAll("\\.", "/").trim();
   }
