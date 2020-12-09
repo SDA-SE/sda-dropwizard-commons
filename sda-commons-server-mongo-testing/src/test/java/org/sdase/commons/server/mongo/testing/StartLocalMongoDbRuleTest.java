@@ -16,6 +16,7 @@ import com.mongodb.internal.connection.ServerAddressHelper;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.lang3.SystemUtils;
 import org.bson.Document;
 import org.junit.AfterClass;
@@ -163,17 +164,21 @@ public class StartLocalMongoDbRuleTest {
   }
 
   @Test
-  public void shouldStartSpecificMongoDbVersion() {
+  public void shouldStartSpecificMongoDbVersion() throws Throwable {
+    AtomicReference<String> actualVersion = new AtomicReference<>();
     final IFeatureAwareVersion specificMongoDbVersion = Version.V3_2_20;
     MongoDbRule mongoDbRule = MongoDbRule.builder().withVersion(specificMongoDbVersion).build();
-    mongoDbRule.apply(
-        new Statement() {
-          @Override
-          public void evaluate() {
-            assertThat(mongoDbRule.getServerVersion()).isEqualTo("3.2.20");
-          }
-        },
-        Description.EMPTY);
+    mongoDbRule
+        .apply(
+            new Statement() {
+              @Override
+              public void evaluate() {
+                actualVersion.set(mongoDbRule.getServerVersion());
+              }
+            },
+            Description.EMPTY)
+        .evaluate();
+    assertThat(actualVersion.get()).isEqualTo("3.2.20");
   }
 
   @Test
