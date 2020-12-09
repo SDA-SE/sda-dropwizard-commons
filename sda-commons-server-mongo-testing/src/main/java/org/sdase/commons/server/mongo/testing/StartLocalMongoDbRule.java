@@ -193,7 +193,12 @@ public class StartLocalMongoDbRule extends ExternalResource implements MongoDbRu
     return database;
   }
 
+  /**
+   * @return the version of the MongoDB instance which is associated with this MongoDbRule
+   * @deprecated because this is specific to flap doodle, use {@link #getServerVersion()}
+   */
   @Override
+  @Deprecated
   public IFeatureAwareVersion getVersion() {
     return version;
   }

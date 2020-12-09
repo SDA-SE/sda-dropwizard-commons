@@ -9,6 +9,8 @@ import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import org.apache.commons.lang3.SystemUtils;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
 import org.bson.Document;
 import org.junit.rules.TestRule;
 import org.slf4j.Logger;
@@ -49,8 +51,13 @@ public interface MongoDbRule extends TestRule {
 
   /**
    * @return the version of the MongoDB instance which is associated with this MongoDbRule
+   * @throws UnsupportedOperationException if the database is not bootstrapped with flap doodle
+   * @deprecated because this is specific to flap doodle, use {@link #getServerVersion()}
    */
-  IFeatureAwareVersion getVersion();
+  @Deprecated
+  default IFeatureAwareVersion getVersion() {
+    throw new UnsupportedOperationException();
+  }
 
   /**
    * Creates a MongoClient that is connected to the database. The caller is responsible for closing
@@ -59,6 +66,17 @@ public interface MongoDbRule extends TestRule {
    * @return A MongoClient
    */
   MongoClient createClient();
+
+  /** @return the version of the MongoDB instance which is associated with this MongoDbRule */
+  default String getServerVersion() {
+    try (MongoClient client = createClient()) {
+      return client
+          .getDatabase(getDatabase())
+          .runCommand(new BsonDocument("buildinfo", new BsonString("")))
+          .get("version")
+          .toString();
+    }
+  }
 
   /**
    * Removes all documents from the database passed during construction. Keeps the collections and
