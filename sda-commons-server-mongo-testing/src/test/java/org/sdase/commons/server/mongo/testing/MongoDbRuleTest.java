@@ -9,6 +9,7 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.MongoQueryException;
 import com.mongodb.MongoSecurityException;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
@@ -86,13 +87,13 @@ public class MongoDbRuleTest {
   @Test
   public void shouldNotSupportJavaScriptByDefault() {
     try (MongoClient mongoClient = RULE.createClient()) {
-      assertThatThrownBy(
-              () ->
-                  mongoClient
-                      .getDatabase("my_db")
-                      .getCollection("test")
-                      .find(new Document("$where", "this.name == 5"))
-                      .into(new ArrayList<Document>()))
+      ArrayList<Document> givenTargetType = new ArrayList<>();
+      FindIterable<Document> actualDocumentsNotQueriedYet =
+          mongoClient
+              .getDatabase("my_db")
+              .getCollection("test")
+              .find(new Document("$where", "this.name == 5"));
+      assertThatThrownBy(() -> actualDocumentsNotQueriedYet.into(givenTargetType))
           .isInstanceOf(MongoQueryException.class)
           .hasMessageContaining("no globalScriptEngine in $where parsing");
     }
