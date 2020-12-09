@@ -39,6 +39,11 @@ public class UseExistingMongoDbRule extends ExternalResource implements MongoDbR
   }
 
   @Override
+  public String getOptions() {
+    return options;
+  }
+
+  @Override
   public String getUsername() {
     return username;
   }
@@ -46,11 +51,6 @@ public class UseExistingMongoDbRule extends ExternalResource implements MongoDbR
   @Override
   public String getPassword() {
     return password;
-  }
-
-  @Override
-  public String getOptions() {
-    return options;
   }
 
   @Override
