@@ -45,8 +45,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * JUnit Test rule for running a MongoDB instance alongside the (integration) tests. Can be
- * configured with custom user credentials and database name. Use {@link #getHost()} to retrieve the
- * host to connect to.
+ * configured with custom user credentials and database name. Use {@link #getHosts()} to retrieve
+ * the host to connect to.
  *
  * <p>Example usage:
  *
@@ -184,7 +184,7 @@ public class StartLocalMongoDbRule extends ExternalResource implements MongoDbRu
   }
 
   @Override
-  public String getHost() {
+  public String getHosts() {
     return mongodConfig.net().getBindIp() + ":" + mongodConfig.net().getPort();
   }
 
@@ -221,7 +221,7 @@ public class StartLocalMongoDbRule extends ExternalResource implements MongoDbRu
   @Override
   public MongoClient createClient() {
     return new MongoClient(
-        ServerAddressHelper.createServerAddress(getHost()),
+        ServerAddressHelper.createServerAddress(getHosts()),
         MongoCredential.createCredential(username, database, password.toCharArray()),
         MongoClientOptions.builder().build());
   }
@@ -282,7 +282,7 @@ public class StartLocalMongoDbRule extends ExternalResource implements MongoDbRu
                   })
               .build();
 
-      try (MongoClient mongoClient = new MongoClient(getHost(), options)) {
+      try (MongoClient mongoClient = new MongoClient(getHosts(), options)) {
         // ensure MongoDB is available before proceeding
         if (!countDownLatch.await(timeoutMs, MILLISECONDS)) {
           throw new IllegalStateException("Timeout, MongoDB not started.");
