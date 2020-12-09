@@ -2,6 +2,7 @@ package org.sdase.commons.server.mongo.testing;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -19,6 +20,8 @@ import org.apache.commons.lang3.SystemUtils;
 import org.bson.Document;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
 public class MongoDbRuleTest {
   private static final String DATABASE_NAME = "my_db";
@@ -135,26 +138,49 @@ public class MongoDbRuleTest {
 
   @Test
   public void shouldTakeSpecificMongoDbVersion() {
+    IFeatureAwareVersion specificMongoDbVersion = Version.V3_2_20;
+    MongoDbRule mongoDbRule = MongoDbRule.builder().withVersion(specificMongoDbVersion).build();
+    assumeThat(mongoDbRule).isExactlyInstanceOf(StartLocalMongoDbRule.class);
+    assertThat(mongoDbRule).extracting("version").isEqualTo(specificMongoDbVersion);
+  }
+
+  @Test
+  public void shouldStartSpecificMongoDbVersion() {
     final IFeatureAwareVersion specificMongoDbVersion = Version.V3_2_20;
-    assertThat(MongoDbRule.builder().withVersion(specificMongoDbVersion).build().getVersion())
-        .isEqualTo(specificMongoDbVersion);
+    MongoDbRule mongoDbRule = MongoDbRule.builder().withVersion(specificMongoDbVersion).build();
+    mongoDbRule.apply(
+        new Statement() {
+          @Override
+          public void evaluate() {
+            assertThat(mongoDbRule.getServerVersion()).isEqualTo("3.2.20");
+          }
+        },
+        Description.EMPTY);
   }
 
   @Test
   public void shouldDetermineMongoDbVersionIfVersionIsNull() {
-    assertThat(MongoDbRule.builder().withVersion(null).build().getVersion())
+    final MongoDbRule mongoDbRule = MongoDbRule.builder().withVersion(null).build();
+    assumeThat(mongoDbRule).isExactlyInstanceOf(StartLocalMongoDbRule.class);
+    assertThat(mongoDbRule)
+        .extracting("version")
         .isIn(MongoDbRule.Builder.DEFAULT_VERSION, MongoDbRule.Builder.WINDOWS_VERSION);
   }
 
   @Test
   public void shouldUseOsSpecificMongoDbVersion() {
-    final IFeatureAwareVersion mongoDbVersion = MongoDbRule.builder().build().getVersion();
+    MongoDbRule mongoDbRule = MongoDbRule.builder().build();
+    assumeThat(mongoDbRule).isExactlyInstanceOf(StartLocalMongoDbRule.class);
     if (SystemUtils.IS_OS_WINDOWS) {
-      assertThat(mongoDbVersion).isEqualTo(MongoDbRule.Builder.WINDOWS_VERSION);
-      assertThat(mongoDbVersion).isNotEqualTo(MongoDbRule.Builder.DEFAULT_VERSION);
+      assertThat(mongoDbRule).extracting("version").isEqualTo(MongoDbRule.Builder.WINDOWS_VERSION);
+      assertThat(mongoDbRule)
+          .extracting("version")
+          .isNotEqualTo(MongoDbRule.Builder.DEFAULT_VERSION);
     } else {
-      assertThat(mongoDbVersion).isEqualTo(MongoDbRule.Builder.DEFAULT_VERSION);
-      assertThat(mongoDbVersion).isNotEqualTo(MongoDbRule.Builder.WINDOWS_VERSION);
+      assertThat(mongoDbRule).extracting("version").isEqualTo(MongoDbRule.Builder.DEFAULT_VERSION);
+      assertThat(mongoDbRule)
+          .extracting("version")
+          .isNotEqualTo(MongoDbRule.Builder.WINDOWS_VERSION);
     }
   }
 }
