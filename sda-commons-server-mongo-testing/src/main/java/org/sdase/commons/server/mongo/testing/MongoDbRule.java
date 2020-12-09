@@ -2,50 +2,15 @@ package org.sdase.commons.server.mongo.testing;
 
 import static de.flapdoodle.embed.mongo.distribution.Version.Main.V3_6;
 import static de.flapdoodle.embed.mongo.distribution.Version.Main.V4_0;
-import static java.lang.Runtime.getRuntime;
-import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.event.ServerClosedEvent;
-import com.mongodb.event.ServerDescriptionChangedEvent;
-import com.mongodb.event.ServerListener;
-import com.mongodb.event.ServerOpeningEvent;
-import com.mongodb.internal.connection.ServerAddressHelper;
-import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.Defaults;
-import de.flapdoodle.embed.mongo.config.ImmutableMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
-import de.flapdoodle.embed.mongo.distribution.Version.Main;
-import de.flapdoodle.embed.process.config.store.DownloadConfig;
-import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
-import de.flapdoodle.embed.process.config.store.ImmutableDownloadConfig;
-import de.flapdoodle.embed.process.config.store.ProxyFactory;
-import de.flapdoodle.embed.process.config.store.SameDownloadPathForEveryDistribution;
-import de.flapdoodle.embed.process.runtime.Network;
-import de.flapdoodle.embed.process.store.ExtractedArtifactStore;
-import de.flapdoodle.embed.process.store.ImmutableExtractedArtifactStore;
-import java.io.IOException;
-import java.lang.invoke.MethodHandles;
-import java.net.Authenticator;
-import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
+import de.flapdoodle.embed.mongo.distribution.Version;
 import org.apache.commons.lang3.SystemUtils;
 import org.bson.Document;
-import org.junit.rules.ExternalResource;
+import org.junit.rules.TestRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,131 +31,10 @@ import org.slf4j.LoggerFactory;
  *     .build();
  * </pre>
  */
-public class MongoDbRule extends ExternalResource {
-  private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+public interface MongoDbRule extends TestRule {
 
-  // Initialization-on-demand holder idiom
-  private static class LazyHolder {
-    static final MongodStarter INSTANCE = getMongoStarter();
-
-    private static MongodStarter getMongoStarter() {
-      ImmutableExtractedArtifactStore.Builder artifactStoreBuilder =
-          ExtractedArtifactStore.builder()
-              .from(Defaults.extractedArtifactStoreFor(Command.MongoD))
-              .downloadConfig(createDownloadConfig());
-
-      return MongodStarter.getInstance(
-          Defaults.runtimeConfigFor(Command.MongoD)
-              .artifactStore(artifactStoreBuilder.build())
-              .build());
-    }
-
-    private static Optional<ProxyFactory> createProxyFactory() {
-      String httpProxy = System.getenv("http_proxy");
-      if (httpProxy != null) {
-        try {
-          URL url = new URL(httpProxy);
-
-          if (url.getUserInfo() != null) {
-            configureAuthentication(url);
-          }
-
-          return Optional.of(new HttpProxyFactory(url.getHost(), url.getPort()));
-        } catch (MalformedURLException exception) {
-          LOG.error("http_proxy could not be parsed.");
-        }
-      }
-      return Optional.empty();
-    }
-
-    private static void configureAuthentication(URL url) {
-      String userInfo = url.getUserInfo();
-      int pos = userInfo.indexOf(':');
-      if (pos >= 0) {
-        String username = userInfo.substring(0, pos);
-        String password = userInfo.substring(pos + 1);
-
-        Authenticator.setDefault(
-            new Authenticator() {
-              @Override
-              protected PasswordAuthentication getPasswordAuthentication() {
-                // Only provide the credentials to the specified
-                // origin
-                if (getRequestorType() == RequestorType.PROXY
-                    && getRequestingHost().equalsIgnoreCase(url.getHost())
-                    && url.getPort() == getRequestingPort()) {
-                  return new PasswordAuthentication(username, password.toCharArray());
-                }
-                return null;
-              }
-            });
-
-        // Starting with Java 8u111, basic auth is not supported
-        // for https by default.
-        // jdk.http.auth.tunneling.disabledSchemes can be used to
-        // enable it again.
-        System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
-      } else {
-        LOG.error("http_proxy user info could not be parsed.");
-      }
-    }
-
-    private static DownloadConfig createDownloadConfig() {
-      ImmutableDownloadConfig.Builder downloadConfigBuilder =
-          Defaults.downloadConfigFor(Command.MongoD).proxyFactory(createProxyFactory());
-
-      // Normally the mongod executable is downloaded directly from the
-      // mongodb web page, however sometimes this behavior is undesired. Some
-      // cases are proxy servers, missing internet access, or not wanting to
-      // download executables from untrusted sources.
-      //
-      // Optional it is possible to download it from a source configured in
-      // the environment variable:
-      String embeddedMongoDownloadPath = System.getenv("EMBEDDED_MONGO_DOWNLOAD_PATH");
-
-      if (embeddedMongoDownloadPath != null) {
-        downloadConfigBuilder.downloadPath(
-            new SameDownloadPathForEveryDistribution(embeddedMongoDownloadPath));
-      }
-
-      return downloadConfigBuilder.build();
-    }
-  }
-
-  private static MongodStarter ensureMongodStarter() {
-    return LazyHolder.INSTANCE;
-  }
-
-  public static Builder builder() {
+  static Builder builder() {
     return new Builder();
-  }
-
-  private final boolean enableScripting;
-  private final IFeatureAwareVersion version;
-  private final long timeoutMs;
-  private final String username;
-  private final String password;
-  private final String database;
-
-  private MongodConfig mongodConfig;
-  private MongodExecutable mongodExecutable;
-
-  private volatile boolean started;
-
-  private MongoDbRule(
-      String username,
-      String password,
-      String database,
-      boolean enableScripting,
-      IFeatureAwareVersion version,
-      long timeoutMs) {
-
-    this.version = requireNonNull(version, "version");
-    this.username = requireNonNull(username, "username");
-    this.password = requireNonNull(password, "password");
-    this.database = requireNonNull(database, "database");
-    this.enableScripting = enableScripting;
-    this.timeoutMs = timeoutMs;
   }
 
   /**
@@ -198,19 +42,15 @@ public class MongoDbRule extends ExternalResource {
    *
    * @return Hostname with port.
    */
-  public String getHost() {
-    return mongodConfig.net().getBindIp() + ":" + mongodConfig.net().getPort();
-  }
+  String getHost();
 
   /** @return the initialized database */
-  public String getDatabase() {
-    return database;
-  }
+  String getDatabase();
 
-  /** @return the version of the MongoDB instance which is associated with this MongoDbRule */
-  public IFeatureAwareVersion getVersion() {
-    return version;
-  }
+  /**
+   * @return the version of the MongoDB instance which is associated with this MongoDbRule
+   */
+  IFeatureAwareVersion getVersion();
 
   /**
    * Creates a MongoClient that is connected to the database. The caller is responsible for closing
@@ -218,20 +58,15 @@ public class MongoDbRule extends ExternalResource {
    *
    * @return A MongoClient
    */
-  public MongoClient createClient() {
-    return new MongoClient(
-        ServerAddressHelper.createServerAddress(getHost()),
-        MongoCredential.createCredential(username, database, password.toCharArray()),
-        MongoClientOptions.builder().build());
-  }
+  MongoClient createClient();
 
   /**
    * Removes all documents from the database passed during construction. Keeps the collections and
    * indices on the collections.
    */
-  public void clearCollections() {
+  default void clearCollections() {
     try (MongoClient client = createClient()) {
-      MongoDatabase db = client.getDatabase(database);
+      MongoDatabase db = client.getDatabase(getDatabase());
 
       Iterable<String> collectionNames = db.listCollectionNames();
       collectionNames.forEach(n -> db.getCollection(n).deleteMany(new Document()));
@@ -242,113 +77,18 @@ public class MongoDbRule extends ExternalResource {
    * Removes all collections and documents from the database passed during construction. Take care
    * that this also removes all indices from collections.
    */
-  public void clearDatabase() {
+  default void clearDatabase() {
     try (MongoClient client = createClient()) {
-      client.dropDatabase(database);
+      client.dropDatabase(getDatabase());
     }
   }
 
-  @Override
-  protected void before() {
-    startMongo();
-  }
+  final class Builder {
 
-  @Override
-  protected void after() {
-    stopMongo();
-  }
+    private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
 
-  private void startMongo() {
-    if (started) {
-      return;
-    }
-
-    try {
-      ImmutableMongodConfig.Builder mongodConfigBuilder =
-          MongodConfig.builder()
-              .version(version)
-              .net(
-                  new Net(
-                      Network.getLocalHost().getHostName(), Network.getFreeServerPort(), false));
-
-      if (!enableScripting) {
-        mongodConfigBuilder.putArgs("--noscripting", "");
-      }
-
-      mongodConfig = mongodConfigBuilder.build();
-
-      mongodExecutable = ensureMongodStarter().prepare(mongodConfig);
-      mongodExecutable.start();
-
-      final CountDownLatch countDownLatch = new CountDownLatch(1);
-
-      final MongoClientOptions options =
-          MongoClientOptions.builder()
-              .addServerListener(
-                  new ServerListener() {
-                    @Override
-                    public void serverOpening(final ServerOpeningEvent event) {
-                      countDownLatch.countDown();
-                    }
-
-                    @Override
-                    public void serverClosed(final ServerClosedEvent event) {
-                      // no action required
-                    }
-
-                    @Override
-                    public void serverDescriptionChanged(
-                        final ServerDescriptionChangedEvent event) {
-                      // no action required
-                    }
-                  })
-              .build();
-
-      try (MongoClient mongoClient = new MongoClient(getHost(), options)) {
-        // ensure MongoDB is available before proceeding
-        if (!countDownLatch.await(timeoutMs, MILLISECONDS)) {
-          throw new IllegalStateException("Timeout, MongoDB not started.");
-        }
-
-        // Create the database user for the test context
-        createDatabaseUser(mongoClient);
-      }
-    } catch (IOException e) {
-      throw new IllegalStateException(e);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
-
-    started = true;
-
-    // safety net
-    getRuntime().addShutdownHook(new Thread(this::stopMongo, "shutdown mongo"));
-  }
-
-  private void stopMongo() {
-    if (started && mongodExecutable != null) {
-      mongodExecutable.stop();
-      started = false;
-    }
-  }
-
-  private void createDatabaseUser(MongoClient mongoClient) {
-    MongoDatabase db = mongoClient.getDatabase(database);
-
-    final BasicDBObject createUserCommand =
-        new BasicDBObject("createUser", username)
-            .append("pwd", password)
-            .append(
-                "roles",
-                Collections.singletonList(
-                    new BasicDBObject("role", "readWrite").append("db", database)));
-    db.runCommand(createUserCommand);
-  }
-
-  public static final class Builder {
-
-    public static final Main DEFAULT_VERSION = V3_6;
-    public static final Main WINDOWS_VERSION = V4_0;
+    public static final Version.Main DEFAULT_VERSION = V3_6;
+    public static final Version.Main WINDOWS_VERSION = V4_0;
 
     private static final long DEFAULT_TIMEOUT_MS = MINUTES.toMillis(1L);
 
@@ -455,7 +195,7 @@ public class MongoDbRule extends ExternalResource {
       IFeatureAwareVersion mongoDbVersion = determineMongoDbVersion();
       long t =
           timeoutInMillis == null || timeoutInMillis < 1L ? DEFAULT_TIMEOUT_MS : timeoutInMillis;
-      return new MongoDbRule(username, password, database, scripting, mongoDbVersion, t);
+      return new StartLocalMongoDbRule(username, password, database, scripting, mongoDbVersion, t);
     }
   }
 }
