@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * JUnit Test rule for running a MongoDB instance alongside the (integration) tests. Can be
- * configured with custom user credentials and database name. Use {@link #getHost()} to retrieve the
- * host to connect to.
+ * configured with custom user credentials and database name. Use {@link #getHosts()} to retrieve
+ * the hosts to connect to.
  *
  * <p>Example usage:
  *
@@ -46,8 +46,21 @@ public interface MongoDbRule extends TestRule {
     return new Builder();
   }
 
-  /** @return the hostname and port that can be used to connect to the database. */
-  String getHost();
+  /**
+   * @return the hostname and port that can be used to connect to the database. The result may
+   *     contain a comma separated list of hosts as in the MongoDB Connection String
+   * @deprecated in favor of {@link #getHosts()}
+   */
+  @Deprecated
+  default String getHost() {
+    return getHosts();
+  }
+
+  /**
+   * @return the hostname and port that can be used to connect to the database. The result may
+   *     contain a comma separated list of hosts as in the MongoDB Connection String
+   */
+  String getHosts();
 
   /** @return the username that must be used to connect to the database. */
   String getUsername();

@@ -32,7 +32,7 @@ public class MorphiaBundleLocalDateConvertersIT {
           MorphiaTestApp.class,
           null,
           randomPorts(),
-          config("mongo.hosts", MONGODB::getHost),
+          config("mongo.hosts", MONGODB::getHosts),
           config("mongo.database", MONGODB::getDatabase));
 
   private static final DropwizardAppRule<Config> DW_PLAIN =
@@ -40,7 +40,7 @@ public class MorphiaBundleLocalDateConvertersIT {
           MorphiaPlainTestApp.class,
           null,
           randomPorts(),
-          config("mongo.hosts", MONGODB::getHost),
+          config("mongo.hosts", MONGODB::getHosts),
           config("mongo.database", MONGODB::getDatabase));
 
   @ClassRule

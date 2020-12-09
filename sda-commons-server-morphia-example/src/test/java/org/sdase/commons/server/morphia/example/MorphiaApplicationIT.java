@@ -29,7 +29,7 @@ public class MorphiaApplicationIT {
           randomPorts(),
           // provide a lambda to only read the value after the mongodb connection parameters are
           // available
-          config("mongo.hosts", MONGODB::getHost),
+          config("mongo.hosts", MONGODB::getHosts),
           config("mongo.database", MONGODB::getDatabase),
           config("mongo.username", MONGODB::getUsername),
           config("mongo.password", MONGODB::getPassword),

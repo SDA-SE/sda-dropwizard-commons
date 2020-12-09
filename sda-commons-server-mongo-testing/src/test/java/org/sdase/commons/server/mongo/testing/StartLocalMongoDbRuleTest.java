@@ -60,7 +60,7 @@ public class StartLocalMongoDbRuleTest {
   public void shouldStartMongoDbWithSpecifiedSettings() {
     try (MongoClient mongoClient =
         new MongoClient(
-            ServerAddressHelper.createServerAddress(RULE.getHost()),
+            ServerAddressHelper.createServerAddress(RULE.getHosts()),
             MongoCredential.createCredential(
                 DATABASE_USERNAME, DATABASE_NAME, DATABASE_PASSWORD.toCharArray()),
             MongoClientOptions.builder().build())) {
@@ -75,7 +75,7 @@ public class StartLocalMongoDbRuleTest {
   public void shouldRejectAccessForBadCredentials() {
     try (MongoClient mongoClient =
         new MongoClient(
-            ServerAddressHelper.createServerAddress(RULE.getHost()),
+            ServerAddressHelper.createServerAddress(RULE.getHosts()),
             MongoCredential.createCredential(
                 DATABASE_USERNAME, DATABASE_NAME, (DATABASE_PASSWORD + "_bad").toCharArray()),
             MongoClientOptions.builder().build())) {
@@ -87,7 +87,7 @@ public class StartLocalMongoDbRuleTest {
   public void shouldAllowAccessWithoutCredentials() {
     try (MongoClient mongoClient =
         new MongoClient(
-            ServerAddressHelper.createServerAddress(RULE.getHost()),
+            ServerAddressHelper.createServerAddress(RULE.getHosts()),
             MongoClientOptions.builder().build())) {
       long documentCount = mongoClient.getDatabase("my_db").getCollection("test").countDocuments();
       assertThat(documentCount).isZero();
@@ -121,7 +121,7 @@ public class StartLocalMongoDbRuleTest {
   public void shouldClearCollections() {
     try (MongoClient mongoClient =
         new MongoClient(
-            ServerAddressHelper.createServerAddress(RULE.getHost()),
+            ServerAddressHelper.createServerAddress(RULE.getHosts()),
             MongoCredential.createCredential(
                 DATABASE_USERNAME, DATABASE_NAME, DATABASE_PASSWORD.toCharArray()),
             MongoClientOptions.builder().build())) {
@@ -142,7 +142,7 @@ public class StartLocalMongoDbRuleTest {
   public void shouldClearDatabase() {
     try (MongoClient mongoClient =
         new MongoClient(
-            ServerAddressHelper.createServerAddress(RULE.getHost()),
+            ServerAddressHelper.createServerAddress(RULE.getHosts()),
             MongoCredential.createCredential(
                 DATABASE_USERNAME, DATABASE_NAME, DATABASE_PASSWORD.toCharArray()),
             MongoClientOptions.builder().build())) {
