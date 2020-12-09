@@ -35,6 +35,13 @@ import org.slf4j.LoggerFactory;
  */
 public interface MongoDbRule extends TestRule {
 
+  /**
+   * {@value} is the name of the environment variable that may hold a <a
+   * href="https://docs.mongodb.com/manual/reference/connection-string/">MongoDB Connection
+   * String</a> of the database used in tests instead of starting a dedicated instance.
+   */
+  String OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME = "TEST_MONGODB_CONNECTION_STRING";
+
   static Builder builder() {
     return new Builder();
   }
