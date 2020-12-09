@@ -1,0 +1,36 @@
+# This workflow tests the feature of using an external MongoDB for tests
+name: Java Test MongoDB
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  # Test with real MongoDB
+  test-mongodb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      TEST_MONGODB_CONNECTION_STRING: mongodb://test:example@localhost:27017/testdb?authSource=admin
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Start MongoDB
+        run: docker run -d -e MONGO_INITDB_ROOT_USERNAME=test -e MONGO_INITDB_ROOT_PASSWORD=example -p 27017:27017 --name test_mongo mongo:4.0
+
+      - name: Test with Gradle
+        run: ./gradlew :sda-commons-server-morphia-example:test
+
+      - name: Assert use of MongoDB
+        run: "docker logs test_mongo | grep -F 'build index on: testdb.'"
+
+      - name: Stop MongoDB
+        run: docker stop test_mongo
+
