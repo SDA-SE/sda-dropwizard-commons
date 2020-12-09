@@ -8,6 +8,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
@@ -240,10 +241,16 @@ public interface MongoDbRule extends TestRule {
     }
 
     public MongoDbRule build() {
-      IFeatureAwareVersion mongoDbVersion = determineMongoDbVersion();
-      long t =
-          timeoutInMillis == null || timeoutInMillis < 1L ? DEFAULT_TIMEOUT_MS : timeoutInMillis;
-      return new StartLocalMongoDbRule(username, password, database, scripting, mongoDbVersion, t);
+      String mongoDbUrlOverride = System.getenv(OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME);
+      if (StringUtils.isNotBlank(mongoDbUrlOverride)) {
+        return new UseExistingMongoDbRule(mongoDbUrlOverride);
+      } else {
+        IFeatureAwareVersion mongoDbVersion = determineMongoDbVersion();
+        long t =
+            timeoutInMillis == null || timeoutInMillis < 1L ? DEFAULT_TIMEOUT_MS : timeoutInMillis;
+        return new StartLocalMongoDbRule(
+            username, password, database, scripting, mongoDbVersion, t);
+      }
     }
   }
 }
