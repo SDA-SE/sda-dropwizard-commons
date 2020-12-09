@@ -46,15 +46,20 @@ public interface MongoDbRule extends TestRule {
     return new Builder();
   }
 
-  /**
-   * Returns the hostname and port that can be used to connect to the database.
-   *
-   * @return Hostname with port.
-   */
+  /** @return the hostname and port that can be used to connect to the database. */
   String getHost();
+
+  /** @return the username that must be used to connect to the database. */
+  String getUsername();
+
+  /** @return the password that must be used to connect to the database. */
+  String getPassword();
 
   /** @return the initialized database */
   String getDatabase();
+
+  /** @return the MongoDB options String without leading question mark */
+  String getOptions();
 
   /**
    * @return the version of the MongoDB instance which is associated with this MongoDbRule
@@ -117,14 +122,19 @@ public interface MongoDbRule extends TestRule {
 
     private static final long DEFAULT_TIMEOUT_MS = MINUTES.toMillis(1L);
 
-    public static final String DEFAULT_USER = "dbuser";
-    public static final String DEFAULT_PASSWORD = "sda123"; // NOSONAR
-    public static final String DEFAULT_DATABASE = "default_db";
+    /** @deprecated use {@link MongoDbRule#getUsername()} of the actual rule instance */
+    @Deprecated public static final String DEFAULT_USER = "dbuser";
+
+    /** @deprecated use {@link MongoDbRule#getPassword()} ()} of the actual rule instance */
+    @Deprecated public static final String DEFAULT_PASSWORD = "sda123"; // NOSONAR
+
+    /** @deprecated use {@link MongoDbRule#getDatabase()} of the actual rule instance */
+    @Deprecated public static final String DEFAULT_DATABASE = "default_db";
 
     private IFeatureAwareVersion version;
     private Long timeoutInMillis;
     private String username = DEFAULT_USER;
-    private String password = DEFAULT_PASSWORD; // NOSONAR
+    private String password = DEFAULT_PASSWORD;
     private String database = DEFAULT_DATABASE;
     private boolean scripting = false;
 

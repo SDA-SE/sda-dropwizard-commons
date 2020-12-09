@@ -193,6 +193,21 @@ public class StartLocalMongoDbRule extends ExternalResource implements MongoDbRu
     return database;
   }
 
+  @Override
+  public String getUsername() {
+    return username;
+  }
+
+  @Override
+  public String getPassword() {
+    return password;
+  }
+
+  @Override
+  public String getOptions() {
+    return "";
+  }
+
   /**
    * @return the version of the MongoDB instance which is associated with this MongoDbRule
    * @deprecated because this is specific to flap doodle, use {@link #getServerVersion()}
