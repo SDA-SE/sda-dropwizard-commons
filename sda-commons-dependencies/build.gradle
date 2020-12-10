@@ -31,7 +31,7 @@ dependencies {
     api "commons-codec:commons-codec:1.15", {
       because "conflict between org.apache.httpcomponents:httpclient:4.5.12 and org.dbunit:dbunit:2.7.0"
     }
-    api "io.github.classgraph:classgraph:4.8.90", {
+    api "io.github.classgraph:classgraph:4.8.94", {
       because "conflict between com.kjetland:mbknor-jackson-jsonschema_2.12 and dev.morphia.morphia:core"
     }
     api "net.sf.jopt-simple:jopt-simple:5.0.4", {
