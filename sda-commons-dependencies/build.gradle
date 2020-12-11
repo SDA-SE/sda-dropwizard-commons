@@ -67,12 +67,7 @@ dependencies {
     api "org.flywaydb:flyway-core:6.5.5"
 
     // sda-commons-server-hibernate-testing
-    api "com.github.database-rider:rider-core:1.2.9", {
-      because "latest version that supports Parameterized tests: https://github.com/database-rider/database-rider/issues/104"
-    }
-    api "org.dbunit:dbunit:2.7.0", {
-      because "rider in 1.2.9 only provides 2.5.3 from 2016, see http://dbunit.sourceforge.net/changes-report.html"
-    }
+    api "com.github.database-rider:rider-core:1.21.0"
 
     // sda-commons-server-jaeger
     api "io.jaegertracing:jaeger-client:1.5.0"
