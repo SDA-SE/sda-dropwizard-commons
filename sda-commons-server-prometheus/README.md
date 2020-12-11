@@ -2,12 +2,8 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-prometheus/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-prometheus)
 
-The module `sda-commons-server-prometheus` provides 
-
-- an admin endpoint to serve metrics in a format that Prometheus can read. The endpoint is available at the applications 
-  admin port at `/metrics/prometheus`
-- an admin endpoint to serve health check results as Prometheus metrics. The endpoint is available at the applications 
-  admin port at `/healthcheck/prometheus`
+The module `sda-commons-server-prometheus` provides an admin endpoint to serve metrics and health check results in a format that Prometheus can read. 
+The endpoint is available at the applications admin port at `/metrics/prometheus`.
 
 ## Provided metrics
 
@@ -30,18 +26,21 @@ Default metrics that are provided at `/metrics/prometheus`:
 | **`kafka_producer_topic_message_total`**                    | Tracks the number of messaged published to a Kafka topic     | `KafkaMessageProducer`                    |
 |                                   | _`consumer_name`_       | Name of the consumer that processed the message              | Bridged from Kafka                        |
 |                                   | _`topic_name`_          | Name of the topic where messages where consumed from         | Bridged from Kafka                        |
-| **`jvm_`***                         |                       | Multiple metrics about the JVM                               | Bridged from Dropwizard                   |
-| **`io_dropwizard_jetty_`***         |                       | Multiple metrics from the embedded Jetty server              | Bridged from Dropwizard                   |
-| **`io_dropwizard_db_`***            |                       | Multiple metrics from the database if a database is used     | Bridged from Dropwizard                   |
+| **`jvm_`***                       |                         | Multiple metrics about the JVM                               | Bridged from Dropwizard                   |
+| **`io_dropwizard_jetty_`**        |                         | Multiple metrics from the embedded Jetty server              | Bridged from Dropwizard                   |
+| **`io_dropwizard_db_`**           |                         | Multiple metrics from the database if a database is used     | Bridged from Dropwizard                   |
+| **`healthcheck_status`**          | _`name`_                | Metrics that represent the state of the health checks        | `HealthCheckMetricsCollector`             | 
 
 *) A filter that extracts the consumer from the HTTP headers should add `Consumer-Name` to the request properties. That
    filter is not part of the `PrometheusBundle`.
 
 ## Health Checks
 
-All health checks are provided at the applications admin port at `/healthcheck/prometheus` as Gauge metric 
-`healthcheck_status`. The name of the Health Check is used as label `name`. The metric value is `1.0` for healthy and
-`0.0` for unhealthy. Example:
+All health checks are provided as a Gauge metric `healthcheck_status` and are included in the metrics endpoint.
+They are also available at the applications admin port at `/healthcheck/prometheus`.
+This endpoint is only available for backward compatibility and will be removed in the future.
+The name of the Health Check is used as label `name`.
+The metric value is `1.0` for healthy and `0.0` for unhealthy. Example:
 
 ```
 healthcheck_status{name="hibernate",} 1.0
