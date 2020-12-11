@@ -162,6 +162,15 @@ public class PrometheusBundleTest {
 
   @Test
   public void shouldProvideHealthChecksAsPrometheusMetrics() {
+    String healthChecks = readMetrics();
+
+    assertThat(healthChecks)
+        .contains("healthcheck_status{name=\"anUnhealthyCheck\",} 0.0")
+        .contains("healthcheck_status{name=\"aHealthyCheck\",} 1.0");
+  }
+
+  @Test
+  public void shouldProvideHealthChecksAsPrometheusMetricsOnCustomEndpoint() {
     String healthChecks = readHealthChecks();
 
     assertThat(healthChecks)

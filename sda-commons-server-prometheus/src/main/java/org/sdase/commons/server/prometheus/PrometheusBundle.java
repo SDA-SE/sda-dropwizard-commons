@@ -23,6 +23,7 @@ import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import org.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
+import org.sdase.commons.server.prometheus.health.HealthCheckMetricsCollector;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
 import org.slf4j.Logger;
@@ -62,6 +63,7 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
 
     registerMetricsServlet(environment.admin());
     registerHealthCheckServlet(environment.admin());
+    registerHealthCheckMetrics(environment);
     environment.jersey().register(this);
 
     // init Histogram at startup
@@ -280,6 +282,19 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
         .addServlet(
             "Health Check as Prometheus Metrics", new HealthCheckAsPrometheusMetricServlet())
         .addMapping(HEALTH_SERVLET_URL);
+  }
+
+  private void registerHealthCheckMetrics(Environment environment) {
+    HealthCheckMetricsCollector healthCheckMetricsCollector =
+        new HealthCheckMetricsCollector(environment.healthChecks());
+
+    healthCheckMetricsCollector.register();
+
+    environment
+        .lifecycle()
+        .manage(
+            onShutdown(
+                () -> CollectorRegistry.defaultRegistry.unregister(healthCheckMetricsCollector)));
   }
 
   @Override
