@@ -18,7 +18,11 @@ import org.junit.runners.model.Statement;
  *     &#64;ClassRule public static final SystemPropertyRule PROP = new SystemPropertyRule().setProperty("DISABLE_JWT", "true");
  *   }
  * </pre>
+ *
+ * @deprecated Migrate to Junit 5 and use {@link
+ *     org.sdase.commons.server.testing.junit5.SystemPropertyExtension}
  */
+@Deprecated
 public class SystemPropertyRule implements TestRule {
 
   private final Map<String, Supplier<String>> propertiesToSet = new HashMap<>();

@@ -58,13 +58,34 @@ public class CustomIT {
     @RegisterExtension
     public final EnvironmentExtension ENV = new EnvironmentExtension()
             .setEnv("DISABLE_AUTH", Boolean.TRUE.toString())
+            .setEnv("SERVICE_URL", () -> "http://localhost:8080")
             .unsetEnv("USER_NAME");
 
     // ...
 }
 ```
 
+### SystemPropertyExtension
+
+The [`SystemPropertyExtension`](./src/main/java/org/sdase/commons/server/testing/junit5/SystemPropertyExtension.java) 
+allows to set system properties for JUnit tests. All system properties will be reset after the test has run.
+
+```java
+public class CustomIT {
+
+    @RegisterExtension
+    public final SystemPropertyExtension ENV = new EnvironmentExtension()
+            .setProperty("DISABLE_AUTH", Boolean.TRUE.toString())
+            .setProperty("SERVICE_URL", () -> "http://localhost:8080")
+            .unsetProperty("USER_NAME");
+
+    // ...
+}
+```
+
 ## Provided Rules
+
+Please note that Junit 4 rules are deprecated in favour of Junit 5 extensions.
 
 ### EnvironmentRule
 

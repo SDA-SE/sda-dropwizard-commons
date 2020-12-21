@@ -18,7 +18,9 @@ import org.junit.runners.model.Statement;
  *     &#64;ClassRule public static final ENV = new EnvironmentRule().setEnv("DISABLE_JWT", "true");
  *   }
  * </pre>
- * @deprecated Migrate to Junit 5 and use {@link org.sdase.commons.server.testing.junit5.EnvironmentExtension}
+ *
+ * @deprecated Migrate to Junit 5 and use {@link
+ *     org.sdase.commons.server.testing.junit5.EnvironmentExtension}
  */
 @Deprecated
 public class EnvironmentRule implements TestRule {

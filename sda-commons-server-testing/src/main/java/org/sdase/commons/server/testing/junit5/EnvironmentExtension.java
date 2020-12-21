@@ -3,14 +3,13 @@ package org.sdase.commons.server.testing.junit5;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.rules.TestRule;
 import org.sdase.commons.server.testing.Environment;
 
 /**
- * This {@link TestRule} allows to set environment variables for JUnit tests. All environment
+ * This Junit 5 extension allows to set environment variables for JUnit tests. All environment
  * variables will be reset after the test has run.
  *
  * <p>Example:
@@ -24,19 +23,19 @@ import org.sdase.commons.server.testing.Environment;
  *   }
  * </pre>
  */
-public class EnvironmentExtension implements BeforeEachCallback, AfterEachCallback {
+public class EnvironmentExtension implements BeforeAllCallback, AfterAllCallback {
 
   private final Map<String, Supplier<String>> envToSet = new HashMap<>();
 
   private final Map<String, String> envToReset = new HashMap<>();
 
   @Override
-  public void beforeEach(ExtensionContext context) {
+  public void beforeAll(ExtensionContext context) {
     envToSet.forEach((key, value) -> applyEnv(key, value.get()));
   }
 
   @Override
-  public void afterEach(ExtensionContext context) {
+  public void afterAll(ExtensionContext context) {
     envToReset.forEach(EnvironmentExtension.this::applyEnv);
   }
 
@@ -73,5 +72,4 @@ public class EnvironmentExtension implements BeforeEachCallback, AfterEachCallba
       Environment.setEnv(key, value);
     }
   }
-
 }
