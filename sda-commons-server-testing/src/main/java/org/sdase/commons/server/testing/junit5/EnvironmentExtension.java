@@ -1,11 +1,13 @@
-package org.sdase.commons.server.testing;
+package org.sdase.commons.server.testing.junit5;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import org.sdase.commons.server.testing.Environment;
 
 /**
  * This {@link TestRule} allows to set environment variables for JUnit tests. All environment
@@ -15,54 +17,50 @@ import org.junit.runners.model.Statement;
  *
  * <pre>
  *   class MyTest {
- *     &#64;ClassRule public static final ENV = new EnvironmentRule().setEnv("DISABLE_JWT", "true");
+ *
+ *     &#64;RegisterExtension
+ *     public final env = new EnvironmentExtension().setEnv("DISABLE_JWT", "true");
+ *
  *   }
  * </pre>
- * @deprecated Migrate to Junit 5 and use {@link org.sdase.commons.server.testing.junit5.EnvironmentExtension}
  */
-@Deprecated
-public class EnvironmentRule implements TestRule {
+public class EnvironmentExtension implements BeforeEachCallback, AfterEachCallback {
 
   private final Map<String, Supplier<String>> envToSet = new HashMap<>();
 
   private final Map<String, String> envToReset = new HashMap<>();
 
   @Override
-  public Statement apply(Statement base, Description description) {
-    return new Statement() {
-      @Override
-      public void evaluate() throws Throwable {
-        envToSet.forEach((key, value) -> applyEnv(key, value.get()));
-        try {
-          base.evaluate();
-        } finally {
-          envToReset.forEach(EnvironmentRule.this::applyEnv);
-        }
-      }
-    };
+  public void beforeEach(ExtensionContext context) {
+    envToSet.forEach((key, value) -> applyEnv(key, value.get()));
   }
 
-  public EnvironmentRule setEnv(String key, String value) {
+  @Override
+  public void afterEach(ExtensionContext context) {
+    envToReset.forEach(EnvironmentExtension.this::applyEnv);
+  }
+
+  public EnvironmentExtension setEnv(String key, String value) {
     return setEnv(key, () -> value);
   }
 
   /**
    * Set an environment variable to a computed value for the test. The {@code value} supplier is
    * called when the rule is started and the property is set. This is useful, if the {@link
-   * EnvironmentRule} is part of a {@link org.junit.rules.RuleChain} and the value can only be
+   * EnvironmentExtension} is part of a {@link org.junit.rules.RuleChain} and the value can only be
    * accessed after other rules have been started.
    *
    * @param key the property to set
    * @param value the supplier that provides the value to set
    * @return the rule
    */
-  public EnvironmentRule setEnv(String key, Supplier<String> value) {
+  public EnvironmentExtension setEnv(String key, Supplier<String> value) {
     envToSet.put(key, value);
     envToReset.put(key, System.getenv(key));
     return this;
   }
 
-  public EnvironmentRule unsetEnv(String key) {
+  public EnvironmentExtension unsetEnv(String key) {
     envToSet.put(key, () -> null);
     envToReset.put(key, System.getenv(key));
     return this;
@@ -75,4 +73,5 @@ public class EnvironmentRule implements TestRule {
       Environment.setEnv(key, value);
     }
   }
+
 }

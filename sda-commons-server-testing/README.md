@@ -45,6 +45,25 @@ YAML or JSON and ignores the order of keys. If possible, prefer the other varian
 content should always be reproducible. Note that the [AsyncAPI](../sda-commons-shared-asyncapi) and
 [OpenAPI](../sda-commons-server-openapi) generations export reproducible content. 
 
+## Provided Junit 5 Extensions
+
+### EnvironmentExtension
+
+The [`EnvironmentExtension`](./src/main/java/org/sdase/commons/server/testing/junit5/EnvironmentExtension.java) allows to override or
+unset environment variables in test cases and resets them to the state before the test after the test finished.
+
+```java
+public class CustomIT {
+
+    @RegisterExtension
+    public final EnvironmentExtension ENV = new EnvironmentExtension()
+            .setEnv("DISABLE_AUTH", Boolean.TRUE.toString())
+            .unsetEnv("USER_NAME");
+
+    // ...
+}
+```
+
 ## Provided Rules
 
 ### EnvironmentRule
