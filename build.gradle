@@ -211,6 +211,10 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
       failOnVersionConflict()
     }
   }
+
+  test {
+    useJUnitPlatform()
+  }
 }
 
 /**
