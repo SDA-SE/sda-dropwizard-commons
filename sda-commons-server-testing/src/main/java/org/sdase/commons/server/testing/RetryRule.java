@@ -6,7 +6,12 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Retry flaky tests. Used together with the {@link Retry} annotation. */
+/**
+ * Retry flaky tests. Used together with the {@link Retry} annotation.
+ *
+ * @deprecated migrate to Junit 5 and use {@link org.junitpioneer.jupiter.RetryingTest}
+ */
+@Deprecated
 public class RetryRule implements TestRule {
 
   private static class RetryStatement extends Statement {

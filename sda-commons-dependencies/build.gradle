@@ -132,6 +132,7 @@ dependencies {
           hamcrest in the code base. Please do not upgrade hamcrest-core.
           '''
     }
+    api "org.junit-pioneer:junit-pioneer:1.1.0"
 
     // sda-commons-server-weld
     api "org.jboss.weld.se:weld-se-core:$weldVersion"

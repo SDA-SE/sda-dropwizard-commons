@@ -25,6 +25,8 @@ import java.lang.annotation.Target;
  * </pre>
  *
  * <p>Please note that the retry rule must be used as {@code @Rule} and not as {@code @ClassRule}
+ *
+ * @deprecated Please migrate to Junit 5 and use {@link org.junitpioneer.jupiter.RetryingTest}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({METHOD, ANNOTATION_TYPE})

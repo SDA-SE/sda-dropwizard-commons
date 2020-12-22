@@ -47,10 +47,20 @@ content should always be reproducible. Note that the [AsyncAPI](../sda-commons-s
 
 ## Provided Junit 5 Extensions
 
+We recommend extensions from [JUnit pioneer](https://junit-pioneer.org/docs/). The project provides
+the following extensions:
+- clearing / setting system properties
+- clearing / setting environment variables
+- retrying failing tests
+- ...
+
 ### EnvironmentExtension
 
 The [`EnvironmentExtension`](./src/main/java/org/sdase/commons/server/testing/junit5/EnvironmentExtension.java) allows to override or
 unset environment variables in test cases and resets them to the state before the test after the test finished.
+
+In addition to what [JUnit pioneer](https://junit-pioneer.org/docs/environment-variables/) offers 
+this extension is capable of setting a variable with a supplier function.
 
 ```java
 public class CustomIT {
@@ -70,6 +80,9 @@ public class CustomIT {
 The [`SystemPropertyExtension`](./src/main/java/org/sdase/commons/server/testing/junit5/SystemPropertyExtension.java) 
 allows to set system properties for JUnit tests. All system properties will be reset after the test has run.
 
+In addition to what [JUnit pioneer](https://junit-pioneer.org/docs/system-properties/) offers this 
+extension is capable of setting a property with a supplier function.
+
 ```java
 public class CustomIT {
 
@@ -83,9 +96,7 @@ public class CustomIT {
 }
 ```
 
-## Provided Rules
-
-Please note that Junit 4 rules are deprecated in favour of Junit 5 extensions.
+## Provided Junit 4 Rules (deprecated)
 
 ### EnvironmentRule
 
