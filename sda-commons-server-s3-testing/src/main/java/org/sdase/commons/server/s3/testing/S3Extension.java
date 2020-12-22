@@ -5,13 +5,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import io.findify.s3mock.S3Mock;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.ServerSocket;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.extension.*;
 import org.sdase.commons.server.s3.testing.builder.ContentObject;
 import org.sdase.commons.server.s3.testing.builder.FileObject;
 import org.sdase.commons.server.s3.testing.builder.MockObject;
@@ -19,35 +13,40 @@ import org.sdase.commons.server.s3.testing.builder.StreamObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * JUnit Test rule for running a AWS S3-compatible object storage alongside the (integration) tests.
+ * JUnit 5 extension for running a AWS S3-compatible object storage alongside the (integration) tests.
  * Use {@link #getEndpoint()} to retrieve the endpoint URL to connect to.
  *
  * <p>Example usage:
  *
  * <pre>
- *   &#64;ClassRule
- *   public static final S3MockRule S3_MOCK = S3MockRule.builder().build();
+ *   &#64;RegisterExtension
+ *   static final S3Extension S3_EXTENSION = S3Extension.builder().build();
  * </pre>
- *
- * @deprecated migrate to Junit 5 and use {@link S3Extension}
  */
-@Deprecated
-public class S3MockRule extends ExternalResource {
-  private static final Logger LOGGER = LoggerFactory.getLogger(S3MockRule.class);
+public class S3Extension implements BeforeAllCallback, AfterAllCallback {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(S3Extension.class);
   private final List<String> buckets;
   private final List<MockObject> mockObjects;
 
   private S3Mock s3Mock;
   private Integer port;
 
-  public S3MockRule(List<String> buckets, List<MockObject> mockObjects) {
+  public S3Extension(final List<String> buckets, final List<MockObject> mockObjects) {
     this.buckets = buckets;
     this.mockObjects = mockObjects;
   }
 
   @Override
-  protected void before() {
+  public void beforeAll(ExtensionContext context) {
     port = getFreePort();
     s3Mock = new S3Mock.Builder().withInMemoryBackend().withPort(port).build();
     s3Mock.start();
@@ -58,7 +57,7 @@ public class S3MockRule extends ExternalResource {
   }
 
   @Override
-  protected void after() {
+  public void afterAll(ExtensionContext context) {
     s3Mock.stop();
     LOGGER.info("Stopped S3 Mock");
   }
@@ -79,7 +78,7 @@ public class S3MockRule extends ExternalResource {
    */
   public int getPort() {
     if (port == null) {
-      throw new IllegalStateException("Rule not started yet, port not available");
+      throw new IllegalStateException("Extension not started yet, port not available");
     }
 
     return port;
@@ -143,8 +142,8 @@ public class S3MockRule extends ExternalResource {
   //
   // Builder
   //
-  public static Builder builder() {
-    return new Builder();
+  public static S3Extension.Builder builder() {
+    return new S3Extension.Builder();
   }
 
   public static final class Builder {
@@ -161,7 +160,7 @@ public class S3MockRule extends ExternalResource {
      * @param bucketName the name of the bucket
      * @return The builder.
      */
-    public S3MockRule.Builder createBucket(String bucketName) {
+    public S3Extension.Builder createBucket(String bucketName) {
       buckets.add(bucketName);
       return this;
     }
@@ -175,7 +174,7 @@ public class S3MockRule extends ExternalResource {
      * @param file the content to store as file
      * @return The builder.
      */
-    public S3MockRule.Builder putObject(String bucketName, String key, File file) {
+    public S3Extension.Builder putObject(String bucketName, String key, File file) {
       createBucket(bucketName);
       mockObjects.add(new FileObject(bucketName, key, file));
       return this;
@@ -190,7 +189,7 @@ public class S3MockRule extends ExternalResource {
      * @param content the content to store as string
      * @return The builder.
      */
-    public S3MockRule.Builder putObject(String bucketName, String key, String content) {
+    public S3Extension.Builder putObject(String bucketName, String key, String content) {
       createBucket(bucketName);
       mockObjects.add(new ContentObject(bucketName, key, content));
       return this;
@@ -205,14 +204,14 @@ public class S3MockRule extends ExternalResource {
      * @param stream the content to store as stream
      * @return The builder
      */
-    public S3MockRule.Builder putObject(String bucketName, String key, InputStream stream) {
+    public S3Extension.Builder putObject(String bucketName, String key, InputStream stream) {
       createBucket(bucketName);
       mockObjects.add(new StreamObject(bucketName, key, stream));
       return this;
     }
 
-    public S3MockRule build() {
-      return new S3MockRule(buckets, mockObjects);
+    public S3Extension build() {
+      return new S3Extension(buckets, mockObjects);
     }
   }
 }
