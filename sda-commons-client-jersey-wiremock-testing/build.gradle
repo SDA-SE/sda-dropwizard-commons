@@ -11,4 +11,6 @@ dependencies {
   compile 'org.glassfish.jersey.core:jersey-client'
   compile 'org.glassfish.jersey.ext:jersey-proxy-client'
   compile 'jakarta.servlet:jakarta.servlet-api'
+
+  compile 'org.junit.jupiter:junit-jupiter-api'
 }

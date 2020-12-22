@@ -5,41 +5,43 @@ import static java.util.Arrays.asList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.openapitools.jackson.dataformat.hal.HALLink;
 import java.util.List;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.sdase.commons.server.auth.testing.AuthExtension;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.rules.RuleChain;
+import org.sdase.commons.server.auth.testing.AuthRule;
 import org.sdase.commons.server.starter.SdaPlatformConfiguration;
 import org.sdase.commons.server.starter.example.people.db.PersonEntity;
 import org.sdase.commons.server.starter.example.people.db.TestDataUtil;
 import org.sdase.commons.server.starter.example.people.rest.PersonResource;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 
-@ExtendWith(DropwizardExtensionsSupport.class)
-public class SdaPlatformExampleApplicationIT {
+public class SdaPlatformExampleApplicationJunit4IT {
 
   // create a dummy authentication provider that works as a local OpenId Connect provider for the
   // tests
-  @RegisterExtension public static final AuthExtension AUTH = AuthExtension.builder().build();
+  private static final AuthRule AUTH = AuthRule.builder().build();
 
-  public static final DropwizardAppExtension<SdaPlatformConfiguration> DW =
+  public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
       // Setup a test instance of the application
-      new DropwizardAppExtension<>(
+      new DropwizardAppRule<>(
           SdaPlatformExampleApplication.class,
           // use the config file 'test-config.yaml' from the test resources folder
           resourceFilePath("test-config.yaml"));
 
+  // apply the auth config to the test instance of the application
+  // to verify incoming tokens correctly
+  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
+
   private static final String TEST_CONSUMER_TOKEN = "test-consumer";
 
-  @BeforeEach
+  @Before
   public void setupTestData() {
     TestDataUtil.clearTestData();
     PersonEntity john = TestDataUtil.addPersonEntity("john-doe", "John", "Doe");

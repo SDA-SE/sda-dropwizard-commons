@@ -11,11 +11,12 @@ testCompile 'org.sdase.commons:sda-commons-server-auth-testing:<current-version>
 ```
 
 In an integration test, authentication can be configured using the 
-[`AuthRule`](./src/main/java/org/sdase/commons/server/auth/testing/AuthRule.java) and/or the [`OpaRule`](./src/main/java/org/sdase/commons/server/opa/testing/OpaRule.java).
+[`AuthRule`](./src/main/java/org/sdase/commons/server/auth/testing/AuthRule.java) and/or the [`OpaRule`](./src/main/java/org/sdase/commons/server/opa/testing/OpaRule.java) (Junit 4) or
+[`AuthExtension`](./src/main/java/org/sdase/commons/server/auth/testing/AuthExtension.java) and/or the [`OpaExtension`](./src/main/java/org/sdase/commons/server/opa/testing/OpaExtension.java) (Junit 5).
 
-## Auth Rule
-The `AuthRule` uses the `EnvironmentRule` to create the `AuthConfig` in an environment property called `AUTH_RULE`.
-Therefore the configuration in the test needs to use this property and the application is required to use the 
+## Auth Extension
+The `AuthExtension` puts the `AuthConfig` in an environment variable named `AUTH_RULE` (for backwards compatibility).
+The configuration in the test needs to use this property and the application is required to use the 
 [`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
 from [`sda-commons-server-dropwizard`](../sda-commons-server-dropwizard/README.md):
 
@@ -49,24 +50,22 @@ server:
 auth: ${AUTH_RULE}
 ```
 
-To implement the test, the `AuthRule` has to be applied around the `DropwizardAppRule`:
+To implement the test, the `AuthExtension` has to be initialized before the `DropwizardAppExtension`:
 
 ```java
-public class AuthRuleIT {
+@ExtendWith(DropwizardExtensionsSupport.class)
+class AuthExtensionIT {
 
-   private static DropwizardAppRule<MyConfig> DW = new DropwizardAppRule<>(
-         MyApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
+  @RegisterExtension public static final AuthExtension AUTH = AuthExtension.builder().build();
 
-   private static AuthRule AUTH = AuthRule.builder().build();
-
-   @ClassRule
-   public static RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
-
+  private static final DropwizardAppExtension<AuthTestConfig> DW =
+      new DropwizardAppExtension<>(
+          AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
    // @Test
 }
 ```
 
-The `AuthRule` provides functions to generate a valid token that matches to the auth configuration in tests.
+The `AuthExtension` provides functions to generate a valid token that matches to the auth configuration in tests.
 ```java
    Response response = createWebTarget()
             .path("/secure")

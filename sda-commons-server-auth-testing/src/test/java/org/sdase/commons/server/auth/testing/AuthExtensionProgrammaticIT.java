@@ -5,11 +5,8 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.GenericType;
@@ -19,30 +16,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
+import org.sdase.commons.server.testing.DropwizardRuleHelper;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-class AuthRuleCustomizationIT {
+class AuthExtensionProgrammaticIT {
 
-  @RegisterExtension
-  public static final AuthExtension AUTH =
-      AuthExtension.builder()
-          .withKeyId(null)
-          .withIssuer("customIssuer") // NOSONAR
-          .withSubject("customSubject") // NOSONAR
-          .withCustomKeyPair(
-              AuthRuleCustomizationIT.class.getResource("/test.pem").toString(),
-              AuthRuleCustomizationIT.class.getResource("/test.key").toString())
-          .build();
+  @RegisterExtension public static AuthExtension AUTH = AuthExtension.builder().build();
 
   private static final DropwizardAppExtension<AuthTestConfig> DW =
-      new DropwizardAppExtension<>(
-          AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
+      DropwizardRuleHelper.dropwizardTestAppFrom(AuthTestApp.class)
+          .withConfigFrom(AuthTestConfig::new)
+          .withRandomPorts()
+          .withConfigurationModifier(AUTH.applyConfig(AuthTestConfig::setAuth))
+          .buildExtension();
 
   @Test
   void shouldAccessOpenEndPointWithoutToken() {
     Response response =
         DW.client()
-            .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
+            .target("http://localhost:" + DW.getLocalPort())
             .path("/open")
             .request(APPLICATION_JSON)
             .get();
@@ -56,7 +48,7 @@ class AuthRuleCustomizationIT {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
-            .path("/secure") // NOSONAR
+            .path("/secure")
             .request(APPLICATION_JSON)
             .get();
 
@@ -75,24 +67,7 @@ class AuthRuleCustomizationIT {
 
     assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
     assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
-        .contains(entry("iss", "customIssuer"), entry("sub", "customSubject"));
-  }
-
-  @Test
-  void shouldDenyAccessWhenTokenExpires() {
-    Response response =
-        DW.client()
-            .target("http://localhost:" + DW.getLocalPort())
-            .path("/secure")
-            .request(APPLICATION_JSON)
-            .headers(
-                AUTH.auth()
-                    .addClaim("exp", new GregorianCalendar(1956, Calendar.MARCH, 17).getTime())
-                    .buildAuthHeader())
-            .get();
-
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
-    assertThat(response.getHeaderString("WWW-Authenticate")).contains("Bearer");
+        .contains(entry("iss", "AuthExtension"), entry("sub", "test"));
   }
 
   @Test
@@ -112,8 +87,8 @@ class AuthRuleCustomizationIT {
     assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
     assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
         .contains(
-            entry("iss", "customIssuer"),
-            entry("sub", "customSubject"),
+            entry("iss", "AuthExtension"),
+            entry("sub", "test"),
             entry("test", "testClaim"),
             entry("mapKey", "testClaimFromMap"));
   }

@@ -2,6 +2,7 @@ package org.sdase.commons.server.testing.builder;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -41,6 +42,8 @@ public interface DropwizardRuleBuilders {
      *     configured with this builder
      */
     DropwizardAppRule<C> build();
+
+    DropwizardAppExtension<C> buildExtension();
   }
 
   interface PortBuilder<C extends Configuration> {

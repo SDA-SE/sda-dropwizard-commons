@@ -10,38 +10,28 @@ import java.net.URI;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.auth.config.KeyLocation;
 import org.sdase.commons.server.auth.config.KeyUriType;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.Environment;
 
-/**
- * This {@link TestRule} configures a Dropwizard application that uses JWT authentication for
- * integration tests. It provides a local certificate for JWT verification and offers {@link
- * AuthRule#auth() a builder} for creation of tokens with optional custom claims. The rule may be
- * used with custom issuer, subject, certificate and public key. Issuer and subject may be
- * customized for each token.
- *
- * @deprecated Please migrate to Junit 5 using {@link AuthExtension}
- */
-public class AuthRule extends AbstractAuth implements TestRule {
+public class AuthExtension extends AbstractAuth implements BeforeAllCallback, AfterAllCallback {
 
   @SuppressWarnings("WeakerAccess")
   public static final String AUTH_RULE_ENV_KEY = "AUTH_RULE";
 
-  private static final String DEFAULT_KEY_ID = AuthRule.class.getSimpleName();
-  private static final String DEFAULT_ISSUER = "AuthRule";
+  private static final String DEFAULT_KEY_ID = AuthExtension.class.getSimpleName();
+  private static final String DEFAULT_ISSUER = "AuthExtension";
   private static final String DEFAULT_SUBJECT = "test";
   private static final String DEFAULT_INTERNAL_KEY_PATH =
       "/org/sdase/commons/server/auth/testing"; // NOSONAR classpath Url is intentionally hardcoded
   private static final String DEFAULT_PRIVATE_KEY_LOCATION =
-      AuthRule.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-private.key").toString();
+      AuthExtension.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-private.key").toString();
   private static final String DEFAULT_CERTIFICATE_LOCATION =
-      AuthRule.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-x.509.pem").toString();
+      AuthExtension.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-x.509.pem").toString();
 
   private final boolean disableAuth;
 
@@ -51,8 +41,6 @@ public class AuthRule extends AbstractAuth implements TestRule {
 
   private final String subject;
 
-  private RuleChain delegate;
-
   private RSAPrivateKey privateKey;
 
   private final String privateKeyLocation;
@@ -61,15 +49,18 @@ public class AuthRule extends AbstractAuth implements TestRule {
 
   private AuthConfig authConfig;
 
+  private String valueToRestore;
+
   /**
-   * @return a builder that guides along required fields to fluently create a new {@link AuthRule}
+   * @return a builder that guides along required fields to fluently create a new {@link
+   *     AuthExtension}
    */
   @SuppressWarnings("WeakerAccess")
-  public static AuthRuleBuilder builder() {
-    return new Builder();
+  public static AuthExtension.AuthExtensionBuilder builder() {
+    return new AuthExtension.Builder();
   }
 
-  private AuthRule(
+  private AuthExtension(
       boolean disableAuth,
       String keyId,
       String issuer,
@@ -97,13 +88,18 @@ public class AuthRule extends AbstractAuth implements TestRule {
   }
 
   @Override
-  public Statement apply(Statement base, Description description) {
-    return delegate.apply(base, description);
+  public void beforeAll(ExtensionContext context) {
+    valueToRestore = System.getenv(AUTH_RULE_ENV_KEY);
+  }
+
+  @Override
+  public void afterAll(ExtensionContext context) {
+    Environment.setEnv(AUTH_RULE_ENV_KEY, valueToRestore);
   }
 
   /**
-   * Provides a consumer that applies the {@link AuthConfig} matching this {@code AuthRule} to an
-   * application configuration in tests that do not use a configuration yaml file.
+   * Provides a consumer that applies the {@link AuthConfig} matching this {@code AuthExtension} to
+   * an application configuration in tests that do not use a configuration yaml file.
    *
    * @param authConfigSetter a reference to the setter of the {@link AuthConfig} in the {@link
    *     Configuration} the application uses, e.g. {@code MyAppConfig::setAuth}
@@ -131,9 +127,7 @@ public class AuthRule extends AbstractAuth implements TestRule {
 
   private void initDisabledTestAuth() {
     this.authConfig = new AuthConfig().setDisableAuth(true);
-    delegate =
-        RuleChain.outerRule(
-            new EnvironmentRule().setEnv(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}"));
+    Environment.setEnv(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}");
   }
 
   private void initEnabledTestAuth() {
@@ -146,8 +140,7 @@ public class AuthRule extends AbstractAuth implements TestRule {
 
     try {
       String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);
-      delegate =
-          RuleChain.outerRule(new EnvironmentRule().setEnv(AUTH_RULE_ENV_KEY, authKeysConfig));
+      Environment.setEnv(AUTH_RULE_ENV_KEY, authKeysConfig);
     } catch (JsonProcessingException e) {
       fail("Failed to create the config keys: " + e.getMessage());
     }
@@ -157,26 +150,27 @@ public class AuthRule extends AbstractAuth implements TestRule {
   // Builder
   //
 
-  public interface AuthRuleBuilder {
-    AuthRuleBuilder withKeyId(String keyId);
+  public interface AuthExtensionBuilder {
+    AuthExtension.AuthExtensionBuilder withKeyId(String keyId);
 
-    AuthRuleBuilder withIssuer(String issuer);
+    AuthExtension.AuthExtensionBuilder withIssuer(String issuer);
 
-    AuthRuleBuilder withSubject(String subject);
+    AuthExtension.AuthExtensionBuilder withSubject(String subject);
 
-    AuthRuleBuilder withCustomKeyPair(
+    AuthExtension.AuthExtensionBuilder withCustomKeyPair(
         String publicKeyCertificateLocation, String privateKeyLocation);
 
-    DisabledBuilder withDisabledAuth();
+    AuthExtension.DisabledBuilder withDisabledAuth();
 
-    AuthRule build();
+    AuthExtension build();
   }
 
   public interface DisabledBuilder {
-    AuthRule build();
+    AuthExtension build();
   }
 
-  public static class Builder implements AuthRuleBuilder, DisabledBuilder {
+  public static class Builder
+      implements AuthExtension.AuthExtensionBuilder, AuthExtension.DisabledBuilder {
 
     private boolean disableAuth;
     private String keyId = DEFAULT_KEY_ID;
@@ -188,25 +182,25 @@ public class AuthRule extends AbstractAuth implements TestRule {
     private Builder() {}
 
     @Override
-    public AuthRuleBuilder withKeyId(String keyId) {
+    public AuthExtension.AuthExtensionBuilder withKeyId(String keyId) {
       this.keyId = keyId;
       return this;
     }
 
     @Override
-    public AuthRuleBuilder withIssuer(String issuer) {
+    public AuthExtension.AuthExtensionBuilder withIssuer(String issuer) {
       this.issuer = issuer;
       return this;
     }
 
     @Override
-    public AuthRuleBuilder withSubject(String subject) {
+    public AuthExtension.AuthExtensionBuilder withSubject(String subject) {
       this.subject = subject;
       return this;
     }
 
     @Override
-    public AuthRuleBuilder withCustomKeyPair(
+    public AuthExtension.AuthExtensionBuilder withCustomKeyPair(
         String publicKeyCertificateLocation, String privateKeyLocation) {
       this.publicKeyCertificateLocation = publicKeyCertificateLocation;
       this.privateKeyLocation = privateKeyLocation;
@@ -214,14 +208,14 @@ public class AuthRule extends AbstractAuth implements TestRule {
     }
 
     @Override
-    public DisabledBuilder withDisabledAuth() {
+    public AuthExtension.DisabledBuilder withDisabledAuth() {
       this.disableAuth = true;
       return this;
     }
 
     @Override
-    public AuthRule build() {
-      return new AuthRule(
+    public AuthExtension build() {
+      return new AuthExtension(
           disableAuth, keyId, issuer, subject, publicKeyCertificateLocation, privateKeyLocation);
     }
   }
