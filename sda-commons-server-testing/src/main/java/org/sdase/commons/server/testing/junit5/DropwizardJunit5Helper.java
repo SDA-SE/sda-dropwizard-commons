@@ -13,8 +13,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class DropwizardJunit5Helper {
 
-  private DropwizardJunit5Helper() {
-  }
+  private DropwizardJunit5Helper() {}
 
   public static <C extends Configuration> DropwizardAppExtensionWithCallbacks<C> addCallbacks(
       DropwizardAppExtension<C> extension) {
@@ -39,6 +38,7 @@ public class DropwizardJunit5Helper {
     public void beforeAll(ExtensionContext context) throws Exception {
       delegate.before();
     }
+
     public Application<C> getApplication() {
       return delegate.getApplication();
     }

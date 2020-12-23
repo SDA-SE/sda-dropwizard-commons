@@ -6,11 +6,9 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.awaitility.Awaitility.await;
-import static org.sdase.commons.server.testing.junit5.DropwizardJunit5Helper.addCallbacks;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
-import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,7 +33,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.sdase.commons.server.testing.junit5.DropwizardJunit5Helper.DropwizardAppExtensionWithCallbacks;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
@@ -57,6 +54,7 @@ import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
 import org.sdase.commons.server.kafka.serializers.WrappedNoSerializationErrorDeserializer;
+import org.sdase.commons.server.testing.junit5.DropwizardAppExtension;
 
 class KafkaBundleWithConfigIT {
 
@@ -72,16 +70,15 @@ class KafkaBundleWithConfigIT {
 
   @RegisterExtension
   @Order(1)
-  public static final DropwizardAppExtensionWithCallbacks<KafkaTestConfiguration> DW =
-      addCallbacks(
-          new DropwizardAppExtension<>(
-              KafkaTestApplication.class,
-              resourceFilePath("test-config-default.yml"),
-              config("kafka.brokers", KAFKA::getKafkaConnectString),
+  public static final DropwizardAppExtension<KafkaTestConfiguration> DW =
+      new DropwizardAppExtension<>(
+          KafkaTestApplication.class,
+          resourceFilePath("test-config-default.yml"),
+          config("kafka.brokers", KAFKA::getKafkaConnectString),
 
-              // performance improvements in the tests
-              config("kafka.config.heartbeat\\.interval\\.ms", "250"),
-              config("kafka.adminConfig.adminClientRequestTimeoutMs", "30000")));
+          // performance improvements in the tests
+          config("kafka.config.heartbeat\\.interval\\.ms", "250"),
+          config("kafka.adminConfig.adminClientRequestTimeoutMs", "30000"));
 
   private static final String CONSUMER_1 = "consumer1";
   private static final String PRODUCER_1 = "producer1";
@@ -112,7 +109,7 @@ class KafkaBundleWithConfigIT {
 
   @BeforeEach
   void before() {
-    KafkaTestApplication app = (KafkaTestApplication) DW.getApplication();
+    KafkaTestApplication app = DW.getApplication();
     kafkaBundle = app.kafkaBundle();
     results.clear();
     resultsString.clear();
@@ -120,7 +117,7 @@ class KafkaBundleWithConfigIT {
 
   @Test
   void healthCheckShouldBeAdded() {
-    KafkaTestApplication app = (KafkaTestApplication) DW.getApplication();
+    KafkaTestApplication app = DW.getApplication();
     assertThat(app.healthCheckRegistry().getHealthCheck("kafkaConnection")).isNotNull();
   }
 
