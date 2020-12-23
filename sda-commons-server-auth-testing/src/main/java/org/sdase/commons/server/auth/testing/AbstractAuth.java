@@ -31,8 +31,13 @@ public class AbstractAuth {
 
   protected AuthConfig authConfig;
 
-  public AbstractAuth(boolean disableAuth, String keyId, String issuer, String subject,
-      String privateKeyLocation, String certificateLocation) {
+  public AbstractAuth(
+      boolean disableAuth,
+      String keyId,
+      String issuer,
+      String subject,
+      String privateKeyLocation,
+      String certificateLocation) {
     this.disableAuth = disableAuth;
     this.keyId = keyId;
     this.issuer = issuer;

@@ -5,6 +5,12 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import io.findify.s3mock.S3Mock;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.extension.*;
 import org.sdase.commons.server.s3.testing.builder.ContentObject;
 import org.sdase.commons.server.s3.testing.builder.FileObject;
@@ -13,16 +19,9 @@ import org.sdase.commons.server.s3.testing.builder.StreamObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.ServerSocket;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * JUnit 5 extension for running a AWS S3-compatible object storage alongside the (integration) tests.
- * Use {@link #getEndpoint()} to retrieve the endpoint URL to connect to.
+ * JUnit 5 extension for running a AWS S3-compatible object storage alongside the (integration)
+ * tests. Use {@link #getEndpoint()} to retrieve the endpoint URL to connect to.
  *
  * <p>Example usage:
  *

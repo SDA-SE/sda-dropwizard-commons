@@ -1,5 +1,8 @@
 package org.sdase.commons.server.s3.testing;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -9,30 +12,26 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
-import org.junit.jupiter.api.BeforeAll;
+import java.io.File;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import java.io.File;
-
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class S3ExtensionTest {
   private static final String PRE_FILLED_BUCKET = "pre-filled-bucket";
   private static final String WATER_BUCKET = "bucket-of-water";
 
   @RegisterExtension
-  static final S3Extension S3_EXTENSION = S3Extension.builder()
-      .createBucket(WATER_BUCKET)
-      .putObject(PRE_FILLED_BUCKET, "file.txt", new File(resourceFilePath("test-file.txt")))
-      .putObject(
-          PRE_FILLED_BUCKET,
-          "stream.txt",
-          S3MockRuleTest.class.getResourceAsStream("/test-file.txt"))
-      .putObject(PRE_FILLED_BUCKET, "content.txt", "RUN SDA")
-      .build();
+  static final S3Extension S3_EXTENSION =
+      S3Extension.builder()
+          .createBucket(WATER_BUCKET)
+          .putObject(PRE_FILLED_BUCKET, "file.txt", new File(resourceFilePath("test-file.txt")))
+          .putObject(
+              PRE_FILLED_BUCKET,
+              "stream.txt",
+              S3MockRuleTest.class.getResourceAsStream("/test-file.txt"))
+          .putObject(PRE_FILLED_BUCKET, "content.txt", "RUN SDA")
+          .build();
 
   private AmazonS3 s3Client;
 
