@@ -57,4 +57,8 @@ public class KafkaBrokerEnvironmentRule implements TestRule, KafkaBrokerRule {
         .map(KafkaBroker::getConnectString)
         .collect(Collectors.toList());
   }
+
+  public SharedKafkaTestResource getSharedKafkaTestResource() {
+    return kafka;
+  }
 }

@@ -6,7 +6,7 @@ import org.junit.rules.TestRule;
 /** Interface to wrap all kind of Broker Rules to be able to get the connection string */
 public interface KafkaBrokerRule extends TestRule {
 
-  public String getConnectString();
+  String getConnectString();
 
-  public List<String> getBrokerConnectStrings();
+  List<String> getBrokerConnectStrings();
 }

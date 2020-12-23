@@ -17,6 +17,7 @@ ext {
   jsonUnitVersion = '2.22.0'
   scalaVersion = '2.12.8' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
   kafkaVersion = '2.2.1' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
+  kafkaJunitVersion = '3.2.2' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
 }
 
 dependencies {
@@ -151,7 +152,8 @@ dependencies {
     api "com.101tec:zkclient:0.11"
     api "org.apache.curator:curator-test:2.12.0"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
-    api "com.salesforce.kafka.test:kafka-junit4:3.2.2"
+    api "com.salesforce.kafka.test:kafka-junit4:$kafkaJunitVersion"
+    api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
     api "com.typesafe.scala-logging:scala-logging_2.12:3.9.2", {
       because "conflict between io.findify:s3mock_2.12 and org.apache.kafka:kafka_2.12 prefer version of kafka!"
     }

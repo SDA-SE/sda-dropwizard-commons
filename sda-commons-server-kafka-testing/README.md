@@ -2,36 +2,30 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka-testing)
 
-The module `sda-commons-server-kafka-testing` is the base module to add unit and integrations test for Kafka broker usage.
+The module `sda-commons-server-kafka-testing` is the base module to add unit and integrations test 
+for Kafka broker usage.
 
 It includes the dependencies to [sda-commons-server-testing](../sda-commons-server-testing/README.md) module.
 
-For Kafka based tests, the following libraries are included
+## Usage of Kafka-JUnit 5
 
-| Group            | Artifact           | Version |
-|------------------|--------------------|---------|
-| `com.salesforce.kafka.test` | `kafka-junit4` | 3.0.1 |
-| `org.apache.kafka` | `kafka_2.12` | 1.1.1|
-| `org.awaitility` | `awaitility` | 3.1.2 |
-
-kafka-junit4 does not depend on a fixed Kafka broker version. The kafka must be included in the used version within an dedicated dependency.
-Currently, the Kafka version 1.1.1 with scala version 2.12 is used.
-
-## Usage of Kafka-Unit
-The kafka-junit4 library provides means for easily setting up a Kafka broker that can be reconfigured easily by using the following class rule:
+The kafka-junit5 library provides means for easily setting up a Kafka broker that can be 
+reconfigured easily by using the following extension:
 ```
-@ClassRule
-protected static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
+@RegisterExtension
+public static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
          .withBrokerProperty("auto.create.topics.enable", "false")
          // all avaliable kafka broker properties can be configured
          .withBrokers(2); // number of broker instances in the cluster
 ```
 
 ## Test support with random broker ports
-The usage of random ports allows to execute tests in parallel and reduce the probability of port conflicts, e.g. when local-infra is also started.  
+The usage of random ports allows to execute tests in parallel and reduce the probability of port 
+conflicts, e.g. when local-infra is also started.  
 
-The example above, starts two Kafka brokers within a cluster. To test your application, you have to configure these servers as 
-bootstrap servers. This is normally done via the configuration YAML file within the property `kafka -> brokers`.
+The example above, starts two Kafka brokers within a cluster. To test your application, you have to 
+configure these servers as bootstrap servers. This is normally done via the `config.yaml` file
+setting the property `kafka.brokers`.
 
 By using the following snippets, the broker urls are passed to the application.  
 
@@ -41,20 +35,15 @@ kafka:
   brokers: ${BROKER_CONNECTION_STRING} 
 ```
 
-**Usage of `KafkaBrokerEnvironmentRule` within the test**
+**Usage of `KafkaBrokerEnvironmentExtension` within the test**
 
-The `KafkaBrokerEnvironmentRule` sets the broker urls as JSON formatted string into the environment variable:
+The `KafkaBrokerEnvironmentExtension` sets the broker urls as JSON formatted string into the 
+environment variable:
+
 ```
-protected static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource()
-         .withBrokers(2);
-
-   protected static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE = new KafkaBrokerEnvironmentRule(KAFKA);
-
-   protected static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
-         KafkaTestApplication.class, ResourceHelpers.resourceFilePath("test-config-default.yml"));
-
-   @ClassRule
-   public static final TestRule CHAIN = RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE); 
+  @RegisterExtension
+  public static final KafkaBrokerEnvironmentExtension KAFKA =
+      new KafkaBrokerEnvironmentExtension(new SharedKafkaTestResource().withBrokers(2)); 
 ```
 
 **Usage of ConfigurationSubstitutionBundle within the application**

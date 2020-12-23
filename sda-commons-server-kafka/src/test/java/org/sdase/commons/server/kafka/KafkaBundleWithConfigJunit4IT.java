@@ -4,13 +4,11 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.awaitility.Awaitility.await;
-import static org.sdase.commons.server.testing.junit5.DropwizardJunit5Helper.addCallbacks;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
-import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,13 +27,13 @@ import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.sdase.commons.server.testing.junit5.DropwizardJunit5Helper.DropwizardAppExtensionWithCallbacks;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
@@ -58,30 +56,15 @@ import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
 import org.sdase.commons.server.kafka.serializers.WrappedNoSerializationErrorDeserializer;
 
-class KafkaBundleWithConfigIT {
+public class KafkaBundleWithConfigJunit4IT {
 
-  @RegisterExtension
-  @Order(0)
-  public static final SharedKafkaTestResource KAFKA =
+  private static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           // we only need one consumer offsets partition
           .withBrokerProperty("offsets.topic.num.partitions", "1")
           // we don't need to wait that a consumer group rebalances since we always start with a
           // fresh kafka instance
           .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
-
-  @RegisterExtension
-  @Order(1)
-  public static final DropwizardAppExtensionWithCallbacks<KafkaTestConfiguration> DW =
-      addCallbacks(
-          new DropwizardAppExtension<>(
-              KafkaTestApplication.class,
-              resourceFilePath("test-config-default.yml"),
-              config("kafka.brokers", KAFKA::getKafkaConnectString),
-
-              // performance improvements in the tests
-              config("kafka.config.heartbeat\\.interval\\.ms", "250"),
-              config("kafka.adminConfig.adminClientRequestTimeoutMs", "30000")));
 
   private static final String CONSUMER_1 = "consumer1";
   private static final String PRODUCER_1 = "producer1";
@@ -91,6 +74,19 @@ class KafkaBundleWithConfigIT {
   private static final String LISTENER_CONFIG_ASYNC = "async";
   private static final String CLIENT_ID_ASYNC = "async";
 
+  private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE =
+      new DropwizardAppRule<>(
+          KafkaTestApplication.class,
+          resourceFilePath("test-config-default.yml"),
+          config("kafka.brokers", KAFKA::getKafkaConnectString),
+
+          // performance improvements in the tests
+          config("kafka.config.heartbeat\\.interval\\.ms", "250"),
+          config("kafka.adminConfig.adminClientRequestTimeoutMs", "30000"));
+
+  @ClassRule
+  public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
+
   private final List<Long> results = Collections.synchronizedList(new ArrayList<>());
   private final List<String> resultsString = Collections.synchronizedList(new ArrayList<>());
 
@@ -99,33 +95,33 @@ class KafkaBundleWithConfigIT {
 
   private static KafkaProducer<String, String> stringStringProducer;
 
-  @BeforeAll
+  @BeforeClass
   public static void beforeClass() {
     stringStringProducer =
         KAFKA.getKafkaTestUtils().getKafkaProducer(StringSerializer.class, StringSerializer.class);
   }
 
-  @AfterAll
+  @AfterClass
   public static void afterClass() {
     stringStringProducer.close();
   }
 
-  @BeforeEach
-  void before() {
-    KafkaTestApplication app = (KafkaTestApplication) DW.getApplication();
+  @Before
+  public void before() {
+    KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
     kafkaBundle = app.kafkaBundle();
     results.clear();
     resultsString.clear();
   }
 
   @Test
-  void healthCheckShouldBeAdded() {
-    KafkaTestApplication app = (KafkaTestApplication) DW.getApplication();
+  public void healthCheckShouldBeAdded() {
+    KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
     assertThat(app.healthCheckRegistry().getHealthCheck("kafkaConnection")).isNotNull();
   }
 
   @Test
-  void allTopicsDescriptionsGenerated() {
+  public void allTopicsDescriptionsGenerated() {
     final String testTopic1 = "topicId1";
     assertThat(kafkaBundle.getTopicConfiguration(testTopic1)).isNotNull();
     assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getReplicationFactor().count())
@@ -136,7 +132,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void createProducerWithTopic() {
+  public void createProducerWithTopic() {
     MessageProducer<String, String> topicName2 =
         kafkaBundle.registerProducer(
             ProducerRegistration.builder()
@@ -150,7 +146,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void autocommitStrategyShouldCommit() {
+  public void autocommitStrategyShouldCommit() {
     String topic = "autocommitStrategyShouldCommit";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
     AtomicLong offset = new AtomicLong(0);
@@ -190,23 +186,17 @@ class KafkaBundleWithConfigIT {
         .untilAsserted(() -> assertThat(offset.get()).isGreaterThanOrEqualTo(5L));
   }
 
-  @Test
-  void shouldProduceConfigExceptionWhenConsumerConfigNotExists() {
-    assertThatCode(
-            () -> {
-              try (KafkaConsumer<String, String> ignored =
-                  kafkaBundle.createConsumer(
-                      new StringDeserializer(),
-                      new StringDeserializer(),
-                      "notExistingConsumerConfig")) {
-                // empty
-              }
-            })
-        .isInstanceOf(ConfigurationException.class);
+  @Test(expected = ConfigurationException.class)
+  public void shouldProduceConfigExceptionWhenConsumerConfigNotExists() {
+    try (KafkaConsumer<String, String> consumer =
+        kafkaBundle.createConsumer(
+            new StringDeserializer(), new StringDeserializer(), "notExistingConsumerConfig")) {
+      // empty
+    }
   }
 
   @Test
-  void shouldReturnConsumerByConsumerConfigName() {
+  public void shouldReturnConsumerByConsumerConfigName() {
     try (KafkaConsumer<String, String> consumer =
         kafkaBundle.createConsumer(
             new StringDeserializer(), new StringDeserializer(), CONSUMER_1)) {
@@ -216,7 +206,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void shouldReturnConsumerByConsumerConfig() {
+  public void shouldReturnConsumerByConsumerConfig() {
     try (KafkaConsumer<String, String> consumer =
         kafkaBundle.createConsumer(
             new StringDeserializer(),
@@ -233,23 +223,17 @@ class KafkaBundleWithConfigIT {
     }
   }
 
-  @Test
-  void shouldProduceConfigExceptionWhenProducerConfigNotExists() {
-    assertThatCode(
-            () -> {
-              try (KafkaProducer<String, String> ignored =
-                  kafkaBundle.createProducer(
-                      new StringSerializer(),
-                      new StringSerializer(),
-                      "notExistingProducerConfig")) {
-                // empty
-              }
-            })
-        .isInstanceOf(ConfigurationException.class);
+  @Test(expected = ConfigurationException.class)
+  public void shouldProduceConfigExceptionWhenProducerConfigNotExists() {
+    try (KafkaProducer<String, String> producer =
+        kafkaBundle.createProducer(
+            new StringSerializer(), new StringSerializer(), "notExistingProducerConfig")) {
+      // empty
+    }
   }
 
   @Test
-  void shouldReturnProducerByProducerConfigName() {
+  public void shouldReturnProducerByProducerConfigName() {
     try (KafkaProducer<String, String> producer =
         kafkaBundle.createProducer(new StringSerializer(), new StringSerializer(), PRODUCER_1)) {
       assertThat(producer).isNotNull();
@@ -258,7 +242,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void shouldReturnProducerByProducerConfig() {
+  public void shouldReturnProducerByProducerConfig() {
     try (KafkaProducer<String, String> producer =
         kafkaBundle.createProducer(
             null,
@@ -276,7 +260,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void testConsumerCanReadMessages() {
+  public void testConsumerCanReadMessages() {
     String topic = "testConsumerCanReadMessages";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -306,7 +290,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void testConsumerCanReadMessagesNamed() {
+  public void testConsumerCanReadMessagesNamed() {
     String topic = "testConsumerCanReadMessagesNamed";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -340,7 +324,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void defaultConProdShouldHaveStringSerializer() {
+  public void defaultConProdShouldHaveStringSerializer() {
     String topic = "defaultConProdShouldHaveStringSerializer";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -375,7 +359,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void testKafkaMessages() {
+  public void testKafkaMessages() {
     String topic = "testKafkaMessages";
 
     List<String> checkMessages = new ArrayList<>();
@@ -410,7 +394,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void producerShouldSendMessagesToKafka() {
+  public void producerShouldSendMessagesToKafka() {
     String topic = "producerShouldSendMessagesToKafka";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
     MessageProducer<String, String> producer =
@@ -452,7 +436,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void kafkaConsumerReceivesMessages() {
+  public void kafkaConsumerReceivesMessages() {
 
     String topic = "kafkaConsumerReceivesMessages";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
@@ -488,7 +472,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void kafkaConsumerReceivesMessagesAsyncCommit() {
+  public void kafkaConsumerReceivesMessagesAsyncCommit() {
     String topic = "kafkaConsumerReceivesMessagesAsyncCommit";
     StringDeserializer deserializer = new StringDeserializer();
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
@@ -544,7 +528,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void multiTest() {
+  public void multiTest() {
 
     final String TOPIC_CREATE = "create";
     final String TOPIC_DELETE = "delete";
@@ -601,7 +585,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void testJsonSerializer() {
+  public void testJsonSerializer() {
     String topic = "testJsonSerializer";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -643,7 +627,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void testValueWrappedNoSerializationErrorDeserializer() {
+  public void testValueWrappedNoSerializationErrorDeserializer() {
     String topic = "testWrappedNoSerializationErrorDeserializer";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -686,7 +670,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void testKeyWrappedNoSerializationErrorDeserializer() {
+  public void testKeyWrappedNoSerializationErrorDeserializer() {
     String topic = "testKeyWrappedNoSerializationErrorDeserializer";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
@@ -728,7 +712,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void shouldCreateSeveralInstancesOfConsumer() {
+  public void shouldCreateSeveralInstancesOfConsumer() {
     String topic = "shouldCreateSeveralInstancesOfConsumer";
     // when
     List<MessageListener<SimpleEntity, String>> listener =
@@ -758,7 +742,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void shouldSetProducerNameCorrectlyWithProducerConfig() {
+  public void shouldSetProducerNameCorrectlyWithProducerConfig() {
     try (KafkaProducer<String, String> p1 =
         kafkaBundle.createProducer(
             new StringSerializer(),
@@ -769,7 +753,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void shouldSetProducerNameCorrectlyWithProducerConfigFromYaml() {
+  public void shouldSetProducerNameCorrectlyWithProducerConfigFromYaml() {
     try (KafkaProducer<String, String> p1 =
         kafkaBundle.createProducer(new StringSerializer(), new StringSerializer(), PRODUCER_1)) {
       assertThat(KafkaHelper.getClientId(p1)).isEqualTo(PRODUCER_1);
@@ -777,7 +761,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void shouldSetProducerNameCorrectlyWithProducerConfigFromYamlWithExplicitClientId() {
+  public void shouldSetProducerNameCorrectlyWithProducerConfigFromYamlWithExplicitClientId() {
     try (KafkaProducer<String, String> p1 =
         kafkaBundle.createProducer(new StringSerializer(), new StringSerializer(), PRODUCER_2)) {
       assertThat(KafkaHelper.getClientId(p1)).isEqualTo("p2");
@@ -785,7 +769,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void shouldSetConsumerNameCorrectlyWithConsumerConfig() {
+  public void shouldSetConsumerNameCorrectlyWithConsumerConfig() {
     try (KafkaConsumer<String, String> c1 =
         kafkaBundle.createConsumer(
             new StringDeserializer(),
@@ -798,7 +782,7 @@ class KafkaBundleWithConfigIT {
   }
 
   @Test
-  void shouldSetConsumerNameCorrectlyWithConsumerConfigFromYamlWithExplicitClientId() {
+  public void shouldSetConsumerNameCorrectlyWithConsumerConfigFromYamlWithExplicitClientId() {
     try (KafkaConsumer<String, String> c1 =
         kafkaBundle.createConsumer(
             new StringDeserializer(), new StringDeserializer(), CONSUMER_2)) {
