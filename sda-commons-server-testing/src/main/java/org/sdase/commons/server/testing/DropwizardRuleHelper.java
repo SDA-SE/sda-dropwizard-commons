@@ -94,6 +94,6 @@ public class DropwizardRuleHelper<C extends Configuration, A extends Application
 
   @Override
   public DropwizardAppExtension<C> buildExtension() {
-    return new DropwizardAppExtension<C>(appClass, configurationBuilder.build());
+    return new DropwizardAppExtension<>(appClass, configurationBuilder.build());
   }
 }

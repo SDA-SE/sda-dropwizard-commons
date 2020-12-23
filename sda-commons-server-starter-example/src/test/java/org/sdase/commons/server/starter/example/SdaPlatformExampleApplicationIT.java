@@ -24,7 +24,7 @@ import org.sdase.commons.server.starter.example.people.rest.PersonResource;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class SdaPlatformExampleApplicationIT {
+class SdaPlatformExampleApplicationIT {
 
   // create a dummy authentication provider that works as a local OpenId Connect provider for the
   // tests
@@ -48,14 +48,14 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void accessSwaggerWithoutAuthentication() {
+  void accessSwaggerWithoutAuthentication() {
     Response response = baseUrlWebTarget().path("swagger.json").request(APPLICATION_JSON).get();
 
     assertThat(response).extracting(Response::getStatus).isEqualTo(200);
   }
 
   @Test
-  public void rejectApiRequestWithoutAuthentication() {
+  void rejectApiRequestWithoutAuthentication() {
     Response response =
         baseUrlWebTarget()
             .path("people")
@@ -67,7 +67,7 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void rejectApiRequestWithoutConsumerToken() {
+  void rejectApiRequestWithoutConsumerToken() {
     Response response =
         baseUrlWebTarget()
             .path("people")
@@ -79,7 +79,7 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void accessApiWithAuthenticationAndConsumerToken() {
+  void accessApiWithAuthenticationAndConsumerToken() {
     Response response =
         baseUrlWebTarget()
             .path("people")
@@ -92,7 +92,7 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void respond404ForUnknownPerson() {
+  void respond404ForUnknownPerson() {
     Response response =
         baseUrlWebTarget()
             .path("people")
@@ -106,7 +106,7 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void provideSelfLinkInPersonResource() {
+  void provideSelfLinkInPersonResource() {
     PersonResource personResource =
         baseUrlWebTarget()
             .path("people")
@@ -122,7 +122,7 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void provideRelationLinksInPersonResource() {
+  void provideRelationLinksInPersonResource() {
     PersonResource personResource =
         baseUrlWebTarget()
             .path("people")

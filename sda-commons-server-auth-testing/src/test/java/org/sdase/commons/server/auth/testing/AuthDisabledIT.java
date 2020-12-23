@@ -21,7 +21,7 @@ class AuthDisabledIT {
   @RegisterExtension
   public static AuthExtension AUTH = AuthExtension.builder().withDisabledAuth().build();
 
-  private static DropwizardAppExtension<AuthTestConfig> DW =
+  private static final DropwizardAppExtension<AuthTestConfig> DW =
       new DropwizardAppExtension<>(
           AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
@@ -52,6 +52,6 @@ class AuthDisabledIT {
 
   @Test
   void shouldThrowExceptionIfRequestingTokenWhileAuthIsDisabled() {
-    assertThatCode(() -> AUTH.auth().buildToken()).isInstanceOf(IllegalStateException.class);
+    assertThatCode(AUTH::auth).isInstanceOf(IllegalStateException.class);
   }
 }

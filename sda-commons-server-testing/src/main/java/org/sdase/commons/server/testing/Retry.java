@@ -30,6 +30,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({METHOD, ANNOTATION_TYPE})
+@Deprecated
 public @interface Retry {
   int value() default 1;
 }
