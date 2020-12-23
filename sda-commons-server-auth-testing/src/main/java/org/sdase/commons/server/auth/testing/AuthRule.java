@@ -6,8 +6,6 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
-import java.net.URI;
-import java.security.interfaces.RSAPrivateKey;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import org.junit.rules.RuleChain;
@@ -15,8 +13,6 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.auth.config.AuthConfig;
-import org.sdase.commons.server.auth.config.KeyLocation;
-import org.sdase.commons.server.auth.config.KeyUriType;
 import org.sdase.commons.server.testing.EnvironmentRule;
 
 /**
@@ -28,6 +24,7 @@ import org.sdase.commons.server.testing.EnvironmentRule;
  *
  * @deprecated Please migrate to Junit 5 using {@link AuthExtension}
  */
+@Deprecated
 public class AuthRule extends AbstractAuth implements TestRule {
 
   @SuppressWarnings("WeakerAccess")
@@ -43,23 +40,7 @@ public class AuthRule extends AbstractAuth implements TestRule {
   private static final String DEFAULT_CERTIFICATE_LOCATION =
       AuthRule.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-x.509.pem").toString();
 
-  private final boolean disableAuth;
-
-  private final String keyId;
-
-  private final String issuer;
-
-  private final String subject;
-
   private RuleChain delegate;
-
-  private RSAPrivateKey privateKey;
-
-  private final String privateKeyLocation;
-
-  private final String certificateLocation;
-
-  private AuthConfig authConfig;
 
   /**
    * @return a builder that guides along required fields to fluently create a new {@link AuthRule}
@@ -76,12 +57,7 @@ public class AuthRule extends AbstractAuth implements TestRule {
       String subject,
       String certificateLocation,
       String privateKeyLocation) {
-    this.disableAuth = disableAuth;
-    this.keyId = keyId;
-    this.issuer = issuer;
-    this.subject = subject;
-    this.privateKeyLocation = privateKeyLocation;
-    this.certificateLocation = certificateLocation;
+    super(disableAuth, keyId, issuer, subject, privateKeyLocation, certificateLocation);
     init();
   }
 
@@ -138,11 +114,7 @@ public class AuthRule extends AbstractAuth implements TestRule {
 
   private void initEnabledTestAuth() {
     this.privateKey = loadPrivateKey(this.privateKeyLocation);
-    KeyLocation keyLocation = new KeyLocation();
-    keyLocation.setPemKeyId(keyId);
-    keyLocation.setLocation(URI.create(certificateLocation));
-    keyLocation.setType(KeyUriType.PEM);
-    this.authConfig = new AuthConfig().setKeys(singletonList(keyLocation));
+    this.authConfig = new AuthConfig().setKeys(singletonList(createKeyLocation()));
 
     try {
       String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);

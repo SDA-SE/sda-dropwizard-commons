@@ -6,16 +6,12 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
-import java.net.URI;
-import java.security.interfaces.RSAPrivateKey;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.sdase.commons.server.auth.config.AuthConfig;
-import org.sdase.commons.server.auth.config.KeyLocation;
-import org.sdase.commons.server.auth.config.KeyUriType;
 import org.sdase.commons.server.testing.Environment;
 
 public class AuthExtension extends AbstractAuth implements BeforeAllCallback, AfterAllCallback {
@@ -32,22 +28,6 @@ public class AuthExtension extends AbstractAuth implements BeforeAllCallback, Af
       AuthExtension.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-private.key").toString();
   private static final String DEFAULT_CERTIFICATE_LOCATION =
       AuthExtension.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-x.509.pem").toString();
-
-  private final boolean disableAuth;
-
-  private final String keyId;
-
-  private final String issuer;
-
-  private final String subject;
-
-  private RSAPrivateKey privateKey;
-
-  private final String privateKeyLocation;
-
-  private final String certificateLocation;
-
-  private AuthConfig authConfig;
 
   private String valueToRestore;
 
@@ -67,13 +47,13 @@ public class AuthExtension extends AbstractAuth implements BeforeAllCallback, Af
       String subject,
       String certificateLocation,
       String privateKeyLocation) {
-    this.disableAuth = disableAuth;
-    this.keyId = keyId;
-    this.issuer = issuer;
-    this.subject = subject;
-    this.privateKeyLocation = privateKeyLocation;
-    this.certificateLocation = certificateLocation;
-    init();
+    super(disableAuth, keyId, issuer, subject, privateKeyLocation, certificateLocation);
+
+    if (disableAuth) {
+      initDisabledTestAuth();
+    } else {
+      initEnabledTestAuth();
+    }
   }
 
   /**
@@ -117,14 +97,6 @@ public class AuthExtension extends AbstractAuth implements BeforeAllCallback, Af
     return c -> authConfigSetter.accept(c, this.authConfig);
   }
 
-  private void init() {
-    if (disableAuth) {
-      initDisabledTestAuth();
-    } else {
-      initEnabledTestAuth();
-    }
-  }
-
   private void initDisabledTestAuth() {
     this.authConfig = new AuthConfig().setDisableAuth(true);
     Environment.setEnv(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}");
@@ -132,11 +104,7 @@ public class AuthExtension extends AbstractAuth implements BeforeAllCallback, Af
 
   private void initEnabledTestAuth() {
     this.privateKey = loadPrivateKey(this.privateKeyLocation);
-    KeyLocation keyLocation = new KeyLocation();
-    keyLocation.setPemKeyId(keyId);
-    keyLocation.setLocation(URI.create(certificateLocation));
-    keyLocation.setType(KeyUriType.PEM);
-    this.authConfig = new AuthConfig().setKeys(singletonList(keyLocation));
+    this.authConfig = new AuthConfig().setKeys(singletonList(createKeyLocation()));
 
     try {
       String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);

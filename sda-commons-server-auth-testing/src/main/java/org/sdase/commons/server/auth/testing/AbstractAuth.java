@@ -9,8 +9,37 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import org.sdase.commons.server.auth.config.AuthConfig;
+import org.sdase.commons.server.auth.config.KeyLocation;
+import org.sdase.commons.server.auth.config.KeyUriType;
 
 public class AbstractAuth {
+
+  protected final boolean disableAuth;
+
+  protected final String keyId;
+
+  protected final String issuer;
+
+  protected final String subject;
+
+  protected RSAPrivateKey privateKey;
+
+  protected final String privateKeyLocation;
+
+  protected final String certificateLocation;
+
+  protected AuthConfig authConfig;
+
+  public AbstractAuth(boolean disableAuth, String keyId, String issuer, String subject,
+      String privateKeyLocation, String certificateLocation) {
+    this.disableAuth = disableAuth;
+    this.keyId = keyId;
+    this.issuer = issuer;
+    this.subject = subject;
+    this.privateKeyLocation = privateKeyLocation;
+    this.certificateLocation = certificateLocation;
+  }
 
   protected RSAPrivateKey loadPrivateKey(String privateKeyLocation) {
     try (InputStream is = URI.create(privateKeyLocation).toURL().openStream()) {
@@ -21,6 +50,14 @@ public class AbstractAuth {
     } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
       return null;
     }
+  }
+
+  protected KeyLocation createKeyLocation() {
+    KeyLocation keyLocation = new KeyLocation();
+    keyLocation.setPemKeyId(keyId);
+    keyLocation.setLocation(URI.create(certificateLocation));
+    keyLocation.setType(KeyUriType.PEM);
+    return keyLocation;
   }
 
   private byte[] read(InputStream is) throws IOException {
