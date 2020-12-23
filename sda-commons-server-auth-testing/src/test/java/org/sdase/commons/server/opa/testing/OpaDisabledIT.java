@@ -1,35 +1,32 @@
 package org.sdase.commons.server.opa.testing;
 
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junitpioneer.jupiter.RetryingTest;
+import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
+import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
+import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.http.HttpStatus;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
-import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
-import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
-
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class OpaDisabledIT {
 
-  @ClassRule
-  public static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
-      new DropwizardAppRule<>(
+  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+      new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
           resourceFilePath("test-opa-config.yaml"),
           config("opa.disableOpa", "true"));
 
-  @Rule public RetryRule rule = new RetryRule();
 
-  @Test
-  @Retry(5)
+  @RetryingTest(5)
   public void shouldAllowAccess() {
     Response response =
         DW.client()
@@ -41,8 +38,7 @@ public class OpaDisabledIT {
     assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
   }
 
-  @Test
-  @Retry(5)
+  @RetryingTest(5)
   public void shouldNotIncludeHealthCheck() {
     Response response =
         DW.client()

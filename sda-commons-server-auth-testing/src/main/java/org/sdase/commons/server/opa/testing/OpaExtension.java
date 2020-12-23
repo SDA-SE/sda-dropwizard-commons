@@ -1,45 +1,35 @@
 package org.sdase.commons.server.opa.testing;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.absent;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
-import java.util.List;
-import java.util.Objects;
-import javax.ws.rs.core.MultivaluedMap;
-import org.junit.rules.ExternalResource;
-import org.junit.rules.RuleChain;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockExtension;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("WeakerAccess")
-/**
- * @deprecated migrate to Junit 5 and use {@link OpaExtension}
- */
-@Deprecated
-public class OpaRule extends ExternalResource {
+import javax.ws.rs.core.MultivaluedMap;
+import java.util.List;
+import java.util.Objects;
 
-  private static final Logger LOG = LoggerFactory.getLogger(OpaRule.class);
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+
+@SuppressWarnings("WeakerAccess")
+public class OpaExtension implements BeforeAllCallback, AfterAllCallback {
+
+  private static final Logger LOG = LoggerFactory.getLogger(OpaExtension.class);
 
   private static final ObjectMapper OM = new ObjectMapper();
 
-  private final WireMockClassRule wire = new WireMockClassRule(wireMockConfig().dynamicPort());
+  private final WireMockExtension wire = new WireMockExtension(wireMockConfig().dynamicPort());
 
   /**
    * Create a builder to match a request.
@@ -62,11 +52,6 @@ public class OpaRule extends ExternalResource {
     return new StubBuilder().onAnyRequest();
   }
 
-  @Override
-  public Statement apply(Statement base, Description description) {
-    return RuleChain.outerRule(wire).apply(base, description);
-  }
-
   public String getUrl() {
     return wire.baseUrl();
   }
@@ -76,12 +61,12 @@ public class OpaRule extends ExternalResource {
   }
 
   @Override
-  protected void before() {
+  public void beforeAll(final ExtensionContext context) {
     wire.start();
   }
 
   @Override
-  protected void after() {
+  public void afterAll(final ExtensionContext context)  {
     wire.stop();
   }
 
@@ -190,7 +175,7 @@ public class OpaRule extends ExternalResource {
   }
 
   public interface BuildBuilder {
-    void build(WireMockClassRule wire);
+    void build(WireMockExtension wire);
   }
 
   public static class StubBuilder
@@ -279,7 +264,7 @@ public class OpaRule extends ExternalResource {
     }
 
     @Override
-    public void build(WireMockClassRule wire) {
+    public void build(WireMockExtension wire) {
       MappingBuilder mappingBuilder;
       if (onAnyRequest) {
         mappingBuilder = matchAnyPostUrl();

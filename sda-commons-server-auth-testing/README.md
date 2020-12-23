@@ -85,24 +85,31 @@ Examples can be found in the [test source branch](./src/test) of this module. Th
   which uses the `EnvironmentRule` instead of the `AuthRule`
 - [An appropriate test `config.yaml`](./src/test/resources/test-config.yaml)
 
-## OPA Rule
+## OPA Extension
 
-The OPA Rule is build around WireMock. The mock can be configured via the rule.
+The Junit 5 OPA Extension is build around WireMock. The mock can be configured via the extension.
 
-To implement a test with an OPA Mock, the `OpaRule` has to be applied around the `DropwizardAppRule` with a RuleChain. Lazy Rule must be used since the OPA Mock starts on a random port. 
+Use extension `DropwizardAppExtension` from `org.sdase.commons:sda-commons-server-auth-testing` instead of the native Dropwizard equivalent.
+The native extension is currently not working well with `@RegisterExtension`.
+
+To implement a test with an OPA Mock, the `OpaExtension` has to be initialized before `DropwizardAppExtension` implicitly by field declaration order or explicitly with a `@Order(N)`.
 
 ```java
+import org.sdase.commons.server.testing.junit5.DropwizardAppExtension;
+
 public class OpaIT {
+    
+  @RegisterExtension
+  @Order(0)
+  static final OpaExtension OPA_EXTENSION = new OpaExtension();
 
-   private static final OpaRule OPA_RULE = new OpaRule();
-
-   private static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
-         new DropwizardAppRule<>(OpaBundleTestApp.class, ResourceHelpers.resourceFilePath("test-opa-config.yaml"),
-         config("opa.baseUrl", OPA_RULE::getUrl));
-
-
-   @ClassRule
-   public static RuleChain CHAIN = RuleChain.outerRule(OPA_RULE).around(DW);
+  @RegisterExtension
+  @Order(1)
+  static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+         new DropwizardAppExtension<>(
+                  OpaBundleTestApp.class,
+                  ResourceHelpers.resourceFilePath("test-opa-config.yaml"),
+                  ConfigOverride.config("opa.baseUrl", OPA_EXTENSION::getUrl));
 
    // @Test
 }
@@ -111,25 +118,25 @@ public class OpaIT {
 To control the OPA mock behavior, the following API is provided
 ```java
  // allow access to a given httpMethod/path combination
- OPA_RULE.mock(onRequest().withHttpMethod(httpMethod).withPath(path).allow());
+ OPA_EXTENSION.mock(onRequest().withHttpMethod(httpMethod).withPath(path).allow());
  // allow access to a given httpMethod/path/jwt combination
- OPA_RULE.mock(onRequest().withHttpMethod(httpMethod).withPath(path).withJwt(jwt).allow());
+ OPA_EXTENSION.mock(onRequest().withHttpMethod(httpMethod).withPath(path).withJwt(jwt).allow());
  // deny access to a given httpMethod/path combination
- OPA_RULE.mock(onRequest().withHttpMethod(httpMethod).withPath(path).deny());
+ OPA_EXTENSION.mock(onRequest().withHttpMethod(httpMethod).withPath(path).deny());
  // allow access to a given httpMethod/path combination with constraint
- OPA_RULE.mock(onRequest().withHttpMethod(httpMethod).withPath(path).allow().withConstraint(new ConstraintModel(...)));
+ OPA_EXTENSION.mock(onRequest().withHttpMethod(httpMethod).withPath(path).allow().withConstraint(new ConstraintModel(...)));
  // the response is returned for all requests, if no more specific mock is configured
- OPA_RULE.mock(onAnyRequest().answer(new OpaResponse(...)));
+ OPA_EXTENSION.mock(onAnyRequest().answer(new OpaResponse(...)));
  
  // the same options are available for any requests if no more specific mock is configured
- OPA_RULE.mock(onAnyRequest().allow());
- OPA_RULE.mock(onAnyRequest().answer(new OpaResponse(...)));
+ OPA_EXTENSION.mock(onAnyRequest().allow());
+ OPA_EXTENSION.mock(onAnyRequest().answer(new OpaResponse(...)));
  
  // It is possible to verify of the OPA has been invoked with parameters for the resource 
  // defined by the path and the httpMethod
  verify(int count, String httpMethod, String path)
  // it is also possible to check against a builder instance
- OPA_RULE.verify(1, onRequest().withHttpMethod(httpMethod).withPath(path).withJwt(jwt));
+ OPA_EXTENSION.verify(1, onRequest().withHttpMethod(httpMethod).withPath(path).withJwt(jwt));
 ```
 
 Examples can be found in the [test source branch](./src/test) of this module. There is

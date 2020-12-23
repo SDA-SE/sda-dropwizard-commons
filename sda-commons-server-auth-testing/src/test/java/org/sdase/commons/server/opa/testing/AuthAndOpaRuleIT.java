@@ -33,7 +33,7 @@ import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
 import org.sdase.commons.server.testing.Retry;
 import org.sdase.commons.server.testing.RetryRule;
 
-public class AuthAndOpaIT {
+public class AuthAndOpaRuleIT {
 
   private static final AuthRule AUTH = AuthRule.builder().build();
 
