@@ -1,12 +1,5 @@
 package org.sdase.commons.server.mongo.testing;
 
-import static de.flapdoodle.embed.mongo.distribution.Version.Main.V3_6;
-import static de.flapdoodle.embed.mongo.distribution.Version.Main.V4_0;
-import static java.lang.Runtime.getRuntime;
-import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.MINUTES;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -26,14 +19,18 @@ import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version.Main;
-import de.flapdoodle.embed.process.config.store.DownloadConfig;
-import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
-import de.flapdoodle.embed.process.config.store.ImmutableDownloadConfig;
-import de.flapdoodle.embed.process.config.store.ProxyFactory;
-import de.flapdoodle.embed.process.config.store.SameDownloadPathForEveryDistribution;
+import de.flapdoodle.embed.process.config.store.*;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.embed.process.store.ExtractedArtifactStore;
 import de.flapdoodle.embed.process.store.ImmutableExtractedArtifactStore;
+import org.apache.commons.lang3.SystemUtils;
+import org.bson.Document;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.Authenticator;
@@ -43,33 +40,32 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
-import org.apache.commons.lang3.SystemUtils;
-import org.bson.Document;
-import org.junit.rules.ExternalResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V3_6;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V4_0;
+import static java.lang.Runtime.getRuntime;
+import static java.util.Objects.requireNonNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
- * JUnit Test rule for running a MongoDB instance alongside the (integration) tests. Can be
+ * JUnit 5 Extension for running a MongoDB instance alongside the (integration) tests. Can be
  * configured with custom user credentials and database name. Use {@link #getHost()} to retrieve the
  * host to connect to.
  *
  * <p>Example usage:
  *
  * <pre>
- * &#64;ClassRule
- * public static final MongoDbRule RULE = MongoDbRule
+ * &#64;RegisterExtension
+ * static final MongoDbExtension MONGO_DB_EXTENSION = MongoDbExtension
  *     .builder()
  *     .withDatabase("my_db")
  *     .withUsername("my_user")
  *     .withPassword("my_s3cr3t")
  *     .build();
  * </pre>
- *
- * @deprecated migrate to Junit 5 and use {@link MongoDbExtension}
  */
-@Deprecated
-public class MongoDbRule extends ExternalResource {
+public class MongoDbExtension implements BeforeAllCallback, AfterAllCallback {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   // Initialization-on-demand holder idiom
@@ -180,7 +176,7 @@ public class MongoDbRule extends ExternalResource {
 
   private volatile boolean started;
 
-  private MongoDbRule(
+  private MongoDbExtension(
       String username,
       String password,
       String database,
@@ -210,7 +206,7 @@ public class MongoDbRule extends ExternalResource {
     return database;
   }
 
-  /** @return the version of the MongoDB instance which is associated with this MongoDbRule */
+  /** @return the version of the MongoDB instance which is associated with this MongoDbExtension */
   public IFeatureAwareVersion getVersion() {
     return version;
   }
@@ -252,12 +248,12 @@ public class MongoDbRule extends ExternalResource {
   }
 
   @Override
-  protected void before() {
+  public void beforeAll(ExtensionContext context) {
     startMongo();
   }
 
   @Override
-  protected void after() {
+  public void afterAll(ExtensionContext context) {
     stopMongo();
   }
 
@@ -454,11 +450,11 @@ public class MongoDbRule extends ExternalResource {
       }
     }
 
-    public MongoDbRule build() {
+    public MongoDbExtension build() {
       IFeatureAwareVersion mongoDbVersion = determineMongoDbVersion();
       long t =
           timeoutInMillis == null || timeoutInMillis < 1L ? DEFAULT_TIMEOUT_MS : timeoutInMillis;
-      return new MongoDbRule(username, password, database, scripting, mongoDbVersion, t);
+      return new MongoDbExtension(username, password, database, scripting, mongoDbVersion, t);
     }
   }
 }
