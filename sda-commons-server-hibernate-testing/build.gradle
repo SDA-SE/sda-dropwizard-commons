@@ -1,5 +1,8 @@
 dependencies {
   compile project(':sda-commons-server-testing')
   compile 'com.h2database:h2'
-  compile 'com.github.database-rider:rider-core'
+  compile 'com.github.database-rider:rider-core', {
+    // excluded due to licensing issues
+    exclude group: 'mysql', module: 'mysql-connector-java'
+  }
 }
