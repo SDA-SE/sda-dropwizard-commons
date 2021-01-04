@@ -122,7 +122,11 @@ public interface CustomConfigurationProviders {
      * OpenApiBundle is used instead.
      *
      * @return the builder
+     * @deprecated If you want to use the {@code OpenApiBundle}, use the {@code sda-commons-starter}
+     *     module instead. You will get dependency conflicts when importing both {@code
+     *     sda-commons-server-starter} and {@code sda-commons-server-openapi}.
      */
+    @Deprecated
     PlatformBundleBuilder<C> withoutSwagger();
 
     /**
