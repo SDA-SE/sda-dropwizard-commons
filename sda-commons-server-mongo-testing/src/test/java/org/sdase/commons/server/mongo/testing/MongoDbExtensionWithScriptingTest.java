@@ -1,13 +1,12 @@
 package org.sdase.commons.server.mongo.testing;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.mongodb.MongoClient;
+import java.util.ArrayList;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import java.util.ArrayList;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class MongoDbExtensionWithScriptingTest {
   private static final String DATABASE_NAME = "my_db";

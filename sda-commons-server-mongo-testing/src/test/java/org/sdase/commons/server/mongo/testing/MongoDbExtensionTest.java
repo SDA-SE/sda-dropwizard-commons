@@ -1,5 +1,8 @@
 package org.sdase.commons.server.mongo.testing;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -7,15 +10,11 @@ import com.mongodb.client.model.Indexes;
 import com.mongodb.internal.connection.ServerAddressHelper;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import java.util.ArrayList;
 import org.apache.commons.lang3.SystemUtils;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import java.util.ArrayList;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MongoDbExtensionTest {
   private static final String DATABASE_NAME = "my_db";
@@ -48,16 +47,16 @@ public class MongoDbExtensionTest {
 
   @Test
   void shouldRejectAccessForBadCredentials() {
-      try (MongoClient mongoClient =
-               new MongoClient(
-                   ServerAddressHelper.createServerAddress(MONGO_DB_EXTENSION.getHost()),
-                   MongoCredential.createCredential(
-                       DATABASE_USERNAME, DATABASE_NAME, (DATABASE_PASSWORD + "_bad").toCharArray()),
-                   MongoClientOptions.builder().build())) {
-        assertThatThrownBy(() ->
-            mongoClient.getDatabase("my_db").getCollection("test").countDocuments())
-            .isInstanceOf(MongoSecurityException.class);
-      }
+    try (MongoClient mongoClient =
+        new MongoClient(
+            ServerAddressHelper.createServerAddress(MONGO_DB_EXTENSION.getHost()),
+            MongoCredential.createCredential(
+                DATABASE_USERNAME, DATABASE_NAME, (DATABASE_PASSWORD + "_bad").toCharArray()),
+            MongoClientOptions.builder().build())) {
+      assertThatThrownBy(
+              () -> mongoClient.getDatabase("my_db").getCollection("test").countDocuments())
+          .isInstanceOf(MongoSecurityException.class);
+    }
   }
 
   @Test // Flapdoodle can not require auth and create a user

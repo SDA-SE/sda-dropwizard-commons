@@ -1,5 +1,19 @@
 package org.sdase.commons.server.opa.testing;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.HttpHeaders.WWW_AUTHENTICATE;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
+import static org.assertj.core.util.Lists.newArrayList;
+import static org.sdase.commons.server.opa.testing.OpaExtension.onAnyRequest;
+import static org.sdase.commons.server.opa.testing.OpaExtension.onRequest;
+
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.*;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
@@ -11,21 +25,6 @@ import org.sdase.commons.server.opa.testing.test.AuthAndOpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.ConstraintModel;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
 import org.sdase.commons.server.testing.junit5.DropwizardAppExtension;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.*;
-import java.util.Map;
-
-import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.HttpHeaders.WWW_AUTHENTICATE;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
-import static org.assertj.core.util.Lists.newArrayList;
-import static org.sdase.commons.server.opa.testing.OpaExtension.onAnyRequest;
-import static org.sdase.commons.server.opa.testing.OpaExtension.onRequest;
 
 public class AuthAndOpaExtensionIT {
 

@@ -1,5 +1,12 @@
 package org.sdase.commons.server.mongo.testing;
 
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V3_6;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V4_0;
+import static java.lang.Runtime.getRuntime;
+import static java.util.Objects.requireNonNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -23,14 +30,6 @@ import de.flapdoodle.embed.process.config.store.*;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.embed.process.store.ExtractedArtifactStore;
 import de.flapdoodle.embed.process.store.ImmutableExtractedArtifactStore;
-import org.apache.commons.lang3.SystemUtils;
-import org.bson.Document;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.Authenticator;
@@ -40,13 +39,13 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
-
-import static de.flapdoodle.embed.mongo.distribution.Version.Main.V3_6;
-import static de.flapdoodle.embed.mongo.distribution.Version.Main.V4_0;
-import static java.lang.Runtime.getRuntime;
-import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.MINUTES;
+import org.apache.commons.lang3.SystemUtils;
+import org.bson.Document;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JUnit 5 Extension for running a MongoDB instance alongside the (integration) tests. Can be

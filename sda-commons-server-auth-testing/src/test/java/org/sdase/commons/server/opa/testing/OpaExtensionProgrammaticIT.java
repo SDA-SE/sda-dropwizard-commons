@@ -1,5 +1,11 @@
 package org.sdase.commons.server.opa.testing;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.sdase.commons.server.opa.testing.OpaExtension.onRequest;
+
+import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -8,13 +14,6 @@ import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
 import org.sdase.commons.server.testing.junit5.DropwizardAppExtension;
-
-import javax.ws.rs.core.Response;
-
-import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.sdase.commons.server.opa.testing.OpaExtension.onRequest;
 
 public class OpaExtensionProgrammaticIT {
 
@@ -28,8 +27,7 @@ public class OpaExtensionProgrammaticIT {
       new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
           resourceFilePath("test-opa-config.yaml"),
-          config("opa.baseUrl", OPA_EXTENSION::getUrl)
-      );
+          config("opa.baseUrl", OPA_EXTENSION::getUrl));
 
   // only one test since this is for demonstration with programmatic config
   @RetryingTest(5)

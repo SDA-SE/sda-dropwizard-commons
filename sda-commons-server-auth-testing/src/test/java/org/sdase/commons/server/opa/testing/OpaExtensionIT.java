@@ -1,7 +1,17 @@
 package org.sdase.commons.server.opa.testing;
 
+import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.sdase.commons.server.opa.testing.OpaExtension.onAnyRequest;
+import static org.sdase.commons.server.opa.testing.OpaExtension.onRequest;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.VerificationException;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,21 +22,9 @@ import org.sdase.commons.server.opa.filter.model.OpaRequest;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.sdase.commons.server.opa.testing.test.ConstraintModel;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
-import static org.apache.http.HttpStatus.SC_OK;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.sdase.commons.server.opa.testing.OpaExtension.onAnyRequest;
-import static org.sdase.commons.server.opa.testing.OpaExtension.onRequest;
-
 public class OpaExtensionIT {
 
-  @RegisterExtension
-  static final OpaExtension OPA_EXTENSION = new OpaExtension();
+  @RegisterExtension static final OpaExtension OPA_EXTENSION = new OpaExtension();
 
   private final String path = "resources";
   private final String method = "GET";
@@ -73,12 +71,11 @@ public class OpaExtensionIT {
     // when
     requestMock(requestWithJwt("INVALID", method, path));
     // then
-    assertThrows(VerificationException.class, () -> OPA_EXTENSION
-        .verify(1,
-            onRequest()
-                .withHttpMethod(method)
-                .withPath(path)
-                .withJwt(jwt)));
+    assertThrows(
+        VerificationException.class,
+        () ->
+            OPA_EXTENSION.verify(
+                1, onRequest().withHttpMethod(method).withPath(path).withJwt(jwt)));
   }
 
   @RetryingTest(5)
@@ -171,7 +168,8 @@ public class OpaExtensionIT {
     assertThat(OpaExtension.StubBuilder.splitPath("b/c")).containsExactly("b", "c");
     assertThat(OpaExtension.StubBuilder.splitPath("/d")).containsExactly("d");
     assertThat(OpaExtension.StubBuilder.splitPath("/e/f/")).containsExactly("e", "f");
-    assertThat(OpaExtension.StubBuilder.splitPath("/g/h/i/j////")).containsExactly("g", "h", "i", "j");
+    assertThat(OpaExtension.StubBuilder.splitPath("/g/h/i/j////"))
+        .containsExactly("g", "h", "i", "j");
   }
 
   private Response requestMock(OpaRequest request) {

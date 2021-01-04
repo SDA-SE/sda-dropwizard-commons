@@ -29,9 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("WeakerAccess")
-/**
- * @deprecated migrate to Junit 5 and use {@link OpaExtension}
- */
+/** @deprecated migrate to Junit 5 and use {@link OpaExtension} */
 @Deprecated
 public class OpaRule extends ExternalResource {
 

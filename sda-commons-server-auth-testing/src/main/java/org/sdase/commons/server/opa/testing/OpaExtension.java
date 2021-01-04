@@ -1,5 +1,8 @@
 package org.sdase.commons.server.opa.testing;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -7,6 +10,9 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
+import java.util.List;
+import java.util.Objects;
+import javax.ws.rs.core.MultivaluedMap;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -14,13 +20,6 @@ import org.sdase.commons.client.jersey.wiremock.testing.WireMockExtension;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.core.MultivaluedMap;
-import java.util.List;
-import java.util.Objects;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 @SuppressWarnings("WeakerAccess")
 public class OpaExtension implements BeforeAllCallback, AfterAllCallback {
@@ -66,7 +65,7 @@ public class OpaExtension implements BeforeAllCallback, AfterAllCallback {
   }
 
   @Override
-  public void afterAll(final ExtensionContext context)  {
+  public void afterAll(final ExtensionContext context) {
     wire.stop();
   }
 
