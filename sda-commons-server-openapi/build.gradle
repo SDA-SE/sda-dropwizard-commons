@@ -4,7 +4,17 @@ dependencies {
 
   compile 'io.swagger.core.v3:swagger-jaxrs2'
   compile 'io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2'
-  compile 'io.swagger.parser.v3:swagger-parser-v3'
+  compile 'io.swagger.parser.v3:swagger-parser-v3', {
+    exclude group: 'io.swagger.core.v3', module: 'swagger-core'
+  }
+
+  // swagger-hal >= 2.0.0 supports io.swagger.core.v3
+  compile 'io.openapitools.hal:swagger-hal:2.0.0', {
+    exclude group: 'io.swagger.core.v3', module: 'swagger-models'
+    exclude group: 'org.slf4j', module: 'slf4j-api'
+  }
+  compile 'io.swagger.core.v3:swagger-core'
+  compile 'io.swagger.core.v3:swagger-models'
 
   compile 'io.openapitools.jackson.dataformat:jackson-dataformat-hal', {
     exclude group: 'org.slf4j', module: 'slf4j-api'

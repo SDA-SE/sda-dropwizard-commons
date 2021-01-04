@@ -86,7 +86,6 @@ dependencies {
     api "org.bouncycastle:bcpkix-jdk15on:1.67" // use the same version as bcprov-jdk15on in DW
 
     // sda-commons-server-swagger
-    api "io.openapitools.hal:swagger-hal:1.0.4"
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.7"
     api "io.swagger:swagger-annotations:$swaggerCoreVersion"
     api "io.swagger:swagger-jaxrs:$swaggerCoreVersion"
@@ -105,6 +104,8 @@ dependencies {
     api "io.swagger.core.v3:swagger-jaxrs2:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations:$swaggerCoreV3Version"
+    api "io.swagger.core.v3:swagger-core:$swaggerCoreV3Version"
+    api "io.swagger.core.v3:swagger-models:$swaggerCoreV3Version"
     api "io.swagger.parser.v3:swagger-parser-v3:2.0.24"
 
     // sda-commons-server-prometheus
