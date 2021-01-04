@@ -25,8 +25,12 @@ dependencies {
   compile 'jakarta.ws.rs:jakarta.ws.rs-api'
   compile 'jakarta.validation:jakarta.validation-api'
 
-  compile 'io.openapitools.hal:swagger-hal', {
+  // We intentionally stick to the 1.0.4 version here since all updates only work with OpenAPI 3.0.
+  // The sda-commons-server-openapi module uses a newer version that is compatible with the new
+  // swagger-v3 library.
+  compile 'io.openapitools.hal:swagger-hal:1.0.4', {
     exclude group: 'io.swagger', module: 'swagger-jaxrs'
+    exclude group: 'org.slf4j', module: 'slf4j-api'
   }
   compile 'io.openapitools.jackson.dataformat:jackson-dataformat-hal'
 
