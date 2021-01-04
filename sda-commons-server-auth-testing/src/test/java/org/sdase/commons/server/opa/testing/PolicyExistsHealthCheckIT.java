@@ -1,12 +1,9 @@
 package org.sdase.commons.server.opa.testing;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 
-import com.codahale.metrics.health.HealthCheck.Result;
 import javax.ws.rs.client.WebTarget;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Before;
@@ -48,7 +45,7 @@ public class PolicyExistsHealthCheckIT {
     assertThat(policyExistsHealthCheck.check().isHealthy()).isFalse();
   }
 
-  @Test
+  /* @Test
   @Retry(5)
   public void shouldBeUnhealthyIfOpaGivesNullResponse() {
     OPA_RULE.mock(wire -> wire.stubFor(post(anyUrl()).willReturn(okJson("{}"))));
@@ -56,7 +53,7 @@ public class PolicyExistsHealthCheckIT {
     assertThat(check.isHealthy()).isFalse();
     assertThat(check.getMessage())
         .isEqualTo("The policy response seems not to be SDA guideline compliant");
-  }
+  }*/
 
   @Test
   @Retry(5)

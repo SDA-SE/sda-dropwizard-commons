@@ -15,15 +15,11 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("WeakerAccess")
 /** @deprecated migrate to Junit 5 and use {@link OpaExtension} */
 @Deprecated
 public class OpaRule extends AbstractOpa implements TestRule {
-
-  private static final Logger LOG = LoggerFactory.getLogger(OpaRule.class);
 
   private static final ObjectMapper OM = new ObjectMapper();
 
