@@ -34,6 +34,15 @@ public class OpaExtension extends AbstractOpa implements BeforeAllCallback, Afte
     return new StubBuilder().onAnyRequest();
   }
 
+  public String getUrl() {
+    return wire.baseUrl();
+  }
+
+  public void reset() {
+    wire.resetAll();
+  }
+
+  @Override
   public void beforeAll(final ExtensionContext context) {
     wire.start();
   }

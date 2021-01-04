@@ -47,6 +47,10 @@ public class OpaRule extends AbstractOpa implements TestRule {
     return RuleChain.outerRule(wire).apply(base, description);
   }
 
+  public String getUrl() {
+    return wire.baseUrl();
+  }
+
   public void reset() {
     wire.resetAll();
   }
