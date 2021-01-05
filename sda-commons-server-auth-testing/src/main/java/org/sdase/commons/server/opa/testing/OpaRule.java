@@ -1,20 +1,14 @@
 package org.sdase.commons.server.opa.testing;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.sdase.commons.server.opa.filter.model.OpaResponse;
 
 @SuppressWarnings("WeakerAccess")
 /** @deprecated migrate to Junit 5 and use {@link OpaExtension} */
@@ -51,15 +45,15 @@ public class OpaRule extends AbstractOpa implements TestRule {
     wire.resetAll();
   }
 
-  @Before
-  protected void before() {
-    wire.start();
-  }
-
-  @After
-  protected void after() {
-    wire.stop();
-  }
+  //  @Before
+  //  protected void before() {
+  //    wire.start();
+  //  }
+  //
+  //  @After
+  //  protected void after() {
+  //    wire.stop();
+  //  }
 
   /**
    * Verify if the policy was called for the method/path
@@ -76,60 +70,15 @@ public class OpaRule extends AbstractOpa implements TestRule {
   }
 
   public void verify(int count, AllowBuilder allowBuilder) {
-    verify(count, (AbstractStubBuilder) allowBuilder);
+    verify(count, (StubBuilder) allowBuilder);
   }
 
-  private void verify(int count, AbstractStubBuilder builder) {
+  private void verify(int count, StubBuilder builder) {
     RequestPatternBuilder requestPattern = buildRequestPattern(builder);
     wire.verify(count, requestPattern);
   }
 
   public void mock(BuildBuilder builder) {
     builder.build(wire);
-  }
-
-  public static class StubBuilder extends AbstractStubBuilder {
-
-    @Override
-    public void build(Object wire) {
-      WireMockClassRule wireMockClassRule = (WireMockClassRule) wire;
-      MappingBuilder mappingBuilder;
-      if (isOnAnyRequest()) {
-        mappingBuilder = matchAnyPostUrl();
-      } else {
-        mappingBuilder = matchInput(getHttpMethod(), getPaths());
-
-        if (isMatchJWT()) {
-          mappingBuilder.withRequestBody(
-              matchingJsonPath("$.input.jwt", getJwt() != null ? equalTo(getJwt()) : absent()));
-        }
-      }
-
-      if (isErrorResponse()) {
-        wireMockClassRule.stubFor(mappingBuilder.willReturn(aResponse().withStatus(500)));
-        return;
-      }
-
-      if (isErrorResponse()) {
-        wireMockClassRule.stubFor(mappingBuilder.willReturn(null));
-        return;
-      }
-
-      OpaResponse response;
-      if (getAnswer() != null) {
-        response = getAnswer();
-      } else {
-        ObjectNode objectNode = OM.createObjectNode();
-
-        if (getConstraint() != null) {
-          objectNode = OM.valueToTree(getConstraint());
-        }
-
-        objectNode.put("allow", isAllow());
-
-        response = new OpaResponse().setResult(objectNode);
-      }
-      wireMockClassRule.stubFor(mappingBuilder.willReturn(getResponse(response)));
-    }
   }
 }

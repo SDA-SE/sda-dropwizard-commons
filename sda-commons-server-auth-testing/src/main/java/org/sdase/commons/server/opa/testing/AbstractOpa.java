@@ -1,9 +1,17 @@
 package org.sdase.commons.server.opa.testing;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.absent;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
@@ -20,7 +28,7 @@ public class AbstractOpa {
 
   private static final ObjectMapper OM = new ObjectMapper();
 
-  public RequestPatternBuilder buildRequestPattern(AbstractStubBuilder builder) {
+  public RequestPatternBuilder buildRequestPattern(StubBuilder builder) {
     RequestPatternBuilder requestPattern;
 
     if (builder.onAnyRequest) {
@@ -104,16 +112,16 @@ public class AbstractOpa {
     BuildBuilder serverError();
   }
 
-  public interface FinalBuilder<T> extends BuildBuilder {
+  public interface FinalBuilder extends BuildBuilder {
 
     FinalBuilder withConstraint(Object c);
   }
 
-  public interface BuildBuilder<T> {
-    void build(T wire);
+  public interface BuildBuilder {
+    void build(WireMockServer wire);
   }
 
-  public abstract static class AbstractStubBuilder
+  public static class StubBuilder
       implements RequestMethodBuilder,
           RequestPathBuilder,
           RequestExtraBuilder,
@@ -125,6 +133,48 @@ public class AbstractOpa {
     private String[] paths;
     private boolean matchJWT;
     private String jwt;
+
+    @Override
+    public void build(WireMockServer wire) {
+
+      MappingBuilder mappingBuilder;
+      if (isOnAnyRequest()) {
+        mappingBuilder = matchAnyPostUrl();
+      } else {
+        mappingBuilder = matchInput(getHttpMethod(), getPaths());
+
+        if (isMatchJWT()) {
+          mappingBuilder.withRequestBody(
+              matchingJsonPath("$.input.jwt", getJwt() != null ? equalTo(getJwt()) : absent()));
+        }
+      }
+
+      if (isErrorResponse()) {
+        wire.stubFor(mappingBuilder.willReturn(aResponse().withStatus(500)));
+        return;
+      }
+
+      if (isEmptyResponse()) {
+        wire.stubFor(mappingBuilder.willReturn(null));
+        return;
+      }
+
+      OpaResponse response;
+      if (getAnswer() != null) {
+        response = getAnswer();
+      } else {
+        ObjectNode objectNode = OM.createObjectNode();
+
+        if (getConstraint() != null) {
+          objectNode = OM.valueToTree(getConstraint());
+        }
+
+        objectNode.put("allow", isAllow());
+
+        response = new OpaResponse().setResult(objectNode);
+      }
+      wire.stubFor(mappingBuilder.willReturn(getResponse(response)));
+    }
 
     public boolean isAllow() {
       return allow;
@@ -187,7 +237,7 @@ public class AbstractOpa {
       }
     }
 
-    AbstractStubBuilder onAnyRequest() {
+    StubBuilder onAnyRequest() {
       onAnyRequest = true;
       return this;
     }
@@ -208,12 +258,12 @@ public class AbstractOpa {
       return this;
     }
 
-    public AbstractStubBuilder allow() {
+    public StubBuilder allow() {
       this.allow = true;
       return this;
     }
 
-    public AbstractStubBuilder deny() {
+    public StubBuilder deny() {
       this.allow = false;
       return this;
     }

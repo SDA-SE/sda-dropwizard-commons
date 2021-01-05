@@ -1,18 +1,13 @@
 package org.sdase.commons.server.opa.testing;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.sdase.commons.client.jersey.wiremock.testing.WireMockExtension;
-import org.sdase.commons.server.opa.filter.model.OpaResponse;
 
 @SuppressWarnings("WeakerAccess")
 public class OpaExtension extends AbstractOpa implements BeforeAllCallback, AfterAllCallback {
@@ -47,6 +42,7 @@ public class OpaExtension extends AbstractOpa implements BeforeAllCallback, Afte
     wire.start();
   }
 
+  @Override
   public void afterAll(final ExtensionContext context) {
     wire.stop();
   }
@@ -66,59 +62,15 @@ public class OpaExtension extends AbstractOpa implements BeforeAllCallback, Afte
   }
 
   public void verify(int count, AllowBuilder allowBuilder) {
-    verify(count, (AbstractStubBuilder) allowBuilder);
+    verify(count, (AbstractOpa.StubBuilder) allowBuilder);
   }
 
-  private void verify(int count, AbstractStubBuilder builder) {
+  private void verify(int count, AbstractOpa.StubBuilder builder) {
     RequestPatternBuilder requestPattern = buildRequestPattern(builder);
     wire.verify(count, requestPattern);
   }
 
   public void mock(BuildBuilder builder) {
     builder.build(wire);
-  }
-
-  public static class StubBuilder extends AbstractStubBuilder {
-    @Override
-    public void build(Object wire) {
-      WireMockExtension wireMockExtension = (WireMockExtension) wire;
-      MappingBuilder mappingBuilder;
-      if (isOnAnyRequest()) {
-        mappingBuilder = matchAnyPostUrl();
-      } else {
-        mappingBuilder = matchInput(getHttpMethod(), getPaths());
-
-        if (isMatchJWT()) {
-          mappingBuilder.withRequestBody(
-              matchingJsonPath("$.input.jwt", getJwt() != null ? equalTo(getJwt()) : absent()));
-        }
-      }
-
-      if (isErrorResponse()) {
-        wireMockExtension.stubFor(mappingBuilder.willReturn(aResponse().withStatus(500)));
-        return;
-      }
-
-      if (isErrorResponse()) {
-        wireMockExtension.stubFor(mappingBuilder.willReturn(null));
-        return;
-      }
-
-      OpaResponse response;
-      if (getAnswer() != null) {
-        response = getAnswer();
-      } else {
-        ObjectNode objectNode = OM.createObjectNode();
-
-        if (getConstraint() != null) {
-          objectNode = OM.valueToTree(getConstraint());
-        }
-
-        objectNode.put("allow", isAllow());
-
-        response = new OpaResponse().setResult(objectNode);
-      }
-      wireMockExtension.stubFor(mappingBuilder.willReturn(getResponse(response)));
-    }
   }
 }
