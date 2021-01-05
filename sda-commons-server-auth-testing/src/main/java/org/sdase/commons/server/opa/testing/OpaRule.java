@@ -9,9 +9,9 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-@SuppressWarnings("WeakerAccess")
 /** @deprecated migrate to Junit 5 and use {@link OpaExtension} */
 @Deprecated
+@SuppressWarnings("WeakerAccess")
 public class OpaRule extends AbstractOpa implements TestRule {
 
   private final WireMockClassRule wireMockClassRule =
