@@ -23,10 +23,43 @@ import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractOpa {
+public abstract class AbstractOpa {
   private static final Logger LOG = LoggerFactory.getLogger(AbstractOpa.class);
 
   private static final ObjectMapper OM = new ObjectMapper();
+
+  /**
+   * Create a builder to match a request.
+   *
+   * @return the builder
+   */
+  public static RequestMethodBuilder onRequest() {
+    return new StubBuilder();
+  }
+
+  public static AllowBuilder onAnyRequest() {
+    return new StubBuilder().onAnyRequest();
+  }
+
+  /**
+   * Verify if the policy was called for the method/path
+   *
+   * <p>Please prefer to use {@code verify(count,
+   * onRequest().withHttpMethod(httpMethod).withPath(path))} instead.
+   *
+   * @param count the expected count of calls
+   * @param httpMethod the HTTP method to check
+   * @param path the path to check
+   */
+  public void verify(int count, String httpMethod, String path) {
+    verify(count, onRequest().withHttpMethod(httpMethod).withPath(path));
+  }
+
+  public void verify(int count, AllowBuilder allowBuilder) {
+    verify(count, (StubBuilder) allowBuilder);
+  }
+
+  abstract void verify(int count, StubBuilder builder);
 
   public RequestPatternBuilder buildRequestPattern(StubBuilder builder) {
     RequestPatternBuilder requestPattern;
