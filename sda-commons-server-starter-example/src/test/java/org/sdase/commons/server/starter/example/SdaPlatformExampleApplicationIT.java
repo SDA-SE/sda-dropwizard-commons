@@ -5,8 +5,6 @@ import static java.util.Arrays.asList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.openapitools.jackson.dataformat.hal.HALLink;
 import java.util.List;
 import javax.ws.rs.client.WebTarget;
@@ -14,22 +12,22 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.auth.testing.AuthExtension;
 import org.sdase.commons.server.starter.SdaPlatformConfiguration;
 import org.sdase.commons.server.starter.example.people.db.PersonEntity;
 import org.sdase.commons.server.starter.example.people.db.TestDataUtil;
 import org.sdase.commons.server.starter.example.people.rest.PersonResource;
+import org.sdase.commons.server.testing.junit5.DropwizardAppExtension;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 
-@ExtendWith(DropwizardExtensionsSupport.class)
 class SdaPlatformExampleApplicationIT {
 
   // create a dummy authentication provider that works as a local OpenId Connect provider for the
   // tests
   @RegisterExtension public static final AuthExtension AUTH = AuthExtension.builder().build();
 
+  @RegisterExtension
   public static final DropwizardAppExtension<SdaPlatformConfiguration> DW =
       // Setup a test instance of the application
       new DropwizardAppExtension<>(

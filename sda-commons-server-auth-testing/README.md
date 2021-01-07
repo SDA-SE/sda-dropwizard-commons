@@ -53,12 +53,12 @@ auth: ${AUTH_RULE}
 To implement the test, the `AuthExtension` has to be initialized before the `DropwizardAppExtension`:
 
 ```java
-@ExtendWith(DropwizardExtensionsSupport.class)
 class AuthExtensionIT {
 
   @RegisterExtension public static final AuthExtension AUTH = AuthExtension.builder().build();
 
-  private static final DropwizardAppExtension<AuthTestConfig> DW =
+  @RegisterExtension
+  public static final DropwizardAppExtension<AuthTestConfig> DW =
       new DropwizardAppExtension<>(
           AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
    // @Test

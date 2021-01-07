@@ -33,7 +33,6 @@ Often one need to pass the endpoint URL to the constructor of another rule:
 
 ```
 
-@ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardIT {
 
   @RegisterExtension
@@ -41,6 +40,7 @@ class DropwizardIT {
         .builder()
         .build();
 
+  @RegisterExtension
   static DropwizardAppExtension<TestConfiguration> DW =
     new DropwizardAppExtension<>(
           MyApplication.class,

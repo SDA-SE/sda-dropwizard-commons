@@ -5,23 +5,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
+import org.sdase.commons.server.testing.junit5.DropwizardAppExtension;
 
-@ExtendWith(DropwizardExtensionsSupport.class)
 class AuthDisabledIT {
 
   @RegisterExtension
   public static AuthExtension AUTH = AuthExtension.builder().withDisabledAuth().build();
 
-  private static final DropwizardAppExtension<AuthTestConfig> DW =
+  @RegisterExtension
+  public static final DropwizardAppExtension<AuthTestConfig> DW =
       new DropwizardAppExtension<>(
           AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
