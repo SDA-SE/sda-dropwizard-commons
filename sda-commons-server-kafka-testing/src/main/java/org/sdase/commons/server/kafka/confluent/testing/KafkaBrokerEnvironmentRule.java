@@ -11,6 +11,8 @@ import org.junit.runners.model.Statement;
 import org.sdase.commons.server.testing.Environment;
 
 /** Rule for setting the Environment Variable */
+// Todo: add @deprecated documentation
+@Deprecated
 public class KafkaBrokerEnvironmentRule implements TestRule, KafkaBrokerRule {
 
   private final SharedKafkaTestResource kafka;
