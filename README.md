@@ -16,9 +16,8 @@ the SDA SE.
 >
 > ##### ⚠️ ATTENTION: Please use SDA Dropwizard Commons version 2 and newer:
 >
-> New features can only be contributed in version 2.x.x.
-> Version 1.x.x only receives critical security updates.
-> Version 1.x.x will be discontinued at the same time Dropwizard version 1.3.x is discontinued. This is [announced for 31.12.2020](https://groups.google.com/g/dropwizard-user/c/6gpDMuSb4_Y).
+> New features and security patches are only contributed in version 2.x.x.
+> As the support for [Dropwizard version 1.3.x is discontinued](https://github.com/dropwizard/dropwizard/releases/tag/v1.3.29), we also discontinued the version 1.x.x.
 > Please make sure to upgrade to version 2 as soon as possible.
 >
 
