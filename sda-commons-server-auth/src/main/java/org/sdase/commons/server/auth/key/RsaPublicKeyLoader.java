@@ -61,17 +61,15 @@ public class RsaPublicKeyLoader {
     new Thread(this::loadAllNewKeys).start();
   }
 
-  @SuppressWarnings("WeakerAccess")
   public int getTotalNumberOfKeySources() {
     return keySources.size();
   }
 
-  @SuppressWarnings("WeakerAccess")
   public int getTotalNumberOfKeys() {
     return keysWithoutKeyId.size() + keysByKid.size();
   }
 
-  private void reloadKeys() {
+  void reloadKeys() {
     synchronized (loadingSemaphore) {
       keySources
           .keySet()
