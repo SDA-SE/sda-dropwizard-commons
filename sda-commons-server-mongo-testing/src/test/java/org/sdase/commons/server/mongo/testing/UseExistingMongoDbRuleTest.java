@@ -21,7 +21,7 @@ public class UseExistingMongoDbRuleTest {
       MongoDbRule.builder()
           .withDatabase("testDb")
           .withUsername("testuser")
-          .withPassword("testpassowrd")
+          .withPassword("testpassword")
           .build();
 
   private static EnvironmentRule ENV;
