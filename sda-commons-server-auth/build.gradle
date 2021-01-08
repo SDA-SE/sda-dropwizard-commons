@@ -17,4 +17,5 @@ dependencies {
 
   testCompile project(':sda-commons-server-testing')
   testCompile project(':sda-commons-client-jersey-wiremock-testing')
+  testCompile 'org.awaitility:awaitility'
 }

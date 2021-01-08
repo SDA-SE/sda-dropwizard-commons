@@ -11,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import java.net.ProxySelector;
+import java.util.concurrent.ScheduledExecutorService;
 import javax.ws.rs.client.Client;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.sdase.commons.server.auth.config.AuthConfig;
@@ -23,6 +24,7 @@ import org.sdase.commons.server.auth.key.JwksKeySource;
 import org.sdase.commons.server.auth.key.KeySource;
 import org.sdase.commons.server.auth.key.OpenIdProviderDiscoveryKeySource;
 import org.sdase.commons.server.auth.key.PemKeySource;
+import org.sdase.commons.server.auth.key.RsaKeyLoaderScheduler;
 import org.sdase.commons.server.auth.key.RsaPublicKeyLoader;
 import org.sdase.commons.server.auth.service.AuthRSA256Service;
 import org.sdase.commons.server.auth.service.AuthService;
@@ -70,6 +72,10 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
     config.getKeys().stream()
         .map(k -> this.createKeySources(k, client))
         .forEach(keyLoader::addKeySource);
+
+    ScheduledExecutorService executorService =
+        environment.lifecycle().scheduledExecutorService("reloadKeysExecutorService").build();
+    RsaKeyLoaderScheduler.create(keyLoader, executorService).start();
 
     AuthService authRSA256Service = new AuthRSA256Service(keyLoader, config.getLeeway());
     JwtAuthenticator authenticator =

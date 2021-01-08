@@ -147,6 +147,14 @@ In this case, the `AUTH_KEYS` variable should contain a JSON array of
 ]
 ```
 
+### Periodical reloading of public keys
+
+The public keys are cached locally. For keys with an unknown key-id (kid), 
+the cache is refreshed, and the key is searched again afterwards. 
+In addition, the key-cache is refreshed periodically (currently each 5 min) to remove keys
+which are revoked by their issuers. 
+If the refresh fails (e.g. key-source unavailable, network-problems etc.), the old keys in the cache stay valid.
+
 ### HTTP Client Configuration and Proxy Support
 
 The client that calls the OpenID Discovery endpoint or the JWKS url, is configurable with the standard
@@ -171,6 +179,7 @@ Use this if all clients should use an individual proxy configuration.
 In addition, the client consumes the standard [proxy system properties](https://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html#Proxies).
 Please note that a specific proxy configuration in the `HttpClientConfiguration` disables the proxy system properties for the client using that configuration.
 This can be helpful when all clients in an Application should use the same proxy configuration (this includes all clients that are created by the [`sda-commons-client-jersey` bundle](../sda-commons-client-jersey).
+
 
 ## OPA Bundle
 
