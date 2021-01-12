@@ -6,6 +6,10 @@ dependencies {
     exclude group: 'org.apache.curator', module: 'curator-test'
   }
 
+  compile 'com.salesforce.kafka.test:kafka-junit5', {
+    exclude group: 'org.apache.curator', module: 'curator-test'
+  }
+
   compile "org.apache.curator:curator-test", {
     exclude group: 'org.apache.zookeeper', module: 'zookeeper'
   }

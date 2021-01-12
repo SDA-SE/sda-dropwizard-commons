@@ -10,7 +10,14 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.testing.Environment;
 
-/** Rule for setting the Environment Variable */
+/**
+ * Rule for setting the Environment Variable `BROKER_CONNECTION_STRING`
+ *
+ * @deprecated please replace with the original {@link KafkaBrokerRule} and use standard config
+ *     overrides when creating your {@link io.dropwizard.testing.junit.DropwizardAppRule}, e.g.
+ *     {@code config("kafka.brokers", KAFKA::getKafkaConnectString)}
+ */
+@Deprecated
 public class KafkaBrokerEnvironmentRule implements TestRule, KafkaBrokerRule {
 
   private final SharedKafkaTestResource kafka;
