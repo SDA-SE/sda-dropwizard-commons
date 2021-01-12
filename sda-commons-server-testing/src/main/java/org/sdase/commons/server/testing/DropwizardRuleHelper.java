@@ -3,12 +3,8 @@ package org.sdase.commons.server.testing;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import org.sdase.commons.server.testing.builder.ConfigurationBuilders;
-import org.sdase.commons.server.testing.builder.DropwizardRuleBuilders.ConfigurationBuilder;
+import org.sdase.commons.server.testing.builder.DropwizardBuilders.ConfigurationBuilder;
 import org.sdase.commons.server.testing.builder.DropwizardRuleBuilders.CustomizationBuilder;
-import org.sdase.commons.server.testing.builder.DropwizardRuleBuilders.PortBuilder;
 
 /**
  * A helper that creates a {@link DropwizardAppRule} with configuration programmatically.
@@ -31,7 +27,11 @@ import org.sdase.commons.server.testing.builder.DropwizardRuleBuilders.PortBuild
  */
 @Deprecated
 public class DropwizardRuleHelper<C extends Configuration, A extends Application<C>>
-    implements ConfigurationBuilder<C>, PortBuilder<C>, CustomizationBuilder<C> {
+    extends DropwizardHelper<C, A> implements CustomizationBuilder<C> {
+
+  public DropwizardRuleHelper(Class<A> appClass) {
+    super(appClass);
+  }
 
   /**
    * Provides a builder that is able to create a {@link DropwizardRuleHelper} using programmatic
@@ -45,45 +45,6 @@ public class DropwizardRuleHelper<C extends Configuration, A extends Application
   public static <C1 extends Configuration, A1 extends Application<C1>>
       ConfigurationBuilder<C1> dropwizardTestAppFrom(Class<A1> appClass) {
     return new DropwizardRuleHelper<>(appClass);
-  }
-
-  private Class<A> appClass;
-
-  private ConfigurationBuilders.PortBuilder<C> configurationPortBuilder; // intermediate builder
-  private ConfigurationBuilders.CustomizationBuilder<C> configurationBuilder;
-
-  private DropwizardRuleHelper(Class<A> appClass) {
-    this.appClass = appClass;
-  }
-
-  @Override
-  public PortBuilder<C> withConfigFrom(Supplier<C> configurationSupplier) {
-    this.configurationPortBuilder = DropwizardConfigurationHelper.configFrom(configurationSupplier);
-    return this;
-  }
-
-  @Override
-  public CustomizationBuilder<C> withRandomPorts() {
-    configurationBuilder = configurationPortBuilder.withRandomPorts();
-    return this;
-  }
-
-  @Override
-  public CustomizationBuilder<C> withPorts(int applicationPort, int adminPort) {
-    configurationBuilder = configurationPortBuilder.withPorts(applicationPort, adminPort);
-    return this;
-  }
-
-  @Override
-  public CustomizationBuilder<C> withConfigurationModifier(Consumer<C> configurationCustomizer) {
-    configurationBuilder = configurationBuilder.withConfigurationModifier(configurationCustomizer);
-    return this;
-  }
-
-  @Override
-  public CustomizationBuilder<C> withRootPath(String rootPath) {
-    configurationBuilder = configurationBuilder.withRootPath(rootPath);
-    return this;
   }
 
   @Override

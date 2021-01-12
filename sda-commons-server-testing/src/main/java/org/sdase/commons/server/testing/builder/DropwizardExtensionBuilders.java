@@ -1,17 +1,17 @@
 package org.sdase.commons.server.testing.builder;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 
-public interface DropwizardRuleBuilders extends DropwizardBuilders {
+public interface DropwizardExtensionBuilders extends DropwizardBuilders {
 
   interface CustomizationBuilder<C extends Configuration>
       extends DropwizardBuilders.CustomizationBuilder<C> {
 
     /**
-     * @return the {@link DropwizardAppRule} using {@link Configuration} of type {@code C}
+     * @return the {@link DropwizardAppExtension} using {@link Configuration} of type {@code C}
      *     configured with this builder
      */
-    DropwizardAppRule<C> build();
+    DropwizardAppExtension<C> build();
   }
 }
