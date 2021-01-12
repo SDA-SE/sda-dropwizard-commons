@@ -4,12 +4,18 @@
 
 The module `sda-commons-server-testing` is the base module to add unit and integrations test for applications in the 
 SDA SE infrastructure.
-It provides JUnit test rules that are helpful in integration tests. 
+It provides JUnit test rules and extensions that are helpful in integration tests. 
 
 Add the module with test scope:
 
 ```groovy
   testCompile "org.sdase.commons:sda-commons-server-testing"
+```
+In case you want to use JUnit 5 you also have to activate it in your build.gradle:
+```groovy
+  test {
+    useJUnitPlatform()
+  }
 ```
 
 ## Provided Assertions
@@ -45,7 +51,27 @@ YAML or JSON and ignores the order of keys. If possible, prefer the other varian
 content should always be reproducible. Note that the [AsyncAPI](../sda-commons-shared-asyncapi) and
 [OpenAPI](../sda-commons-server-openapi) generations export reproducible content. 
 
-## Provided Rules
+## Provided Junit 5 Extensions
+
+### EnvironmentExtension
+
+The [`EnvironmentExtension`](./src/main/java/org/sdase/commons/server/testing/junit5/EnvironmentExtension.java) allows to override or
+unset environment variables in test cases and resets them to the state before the test after the test finished.
+
+```java
+public class CustomIT {
+
+    @RegisterExtension
+    public final EnvironmentExtension ENV = new EnvironmentExtension()
+            .setEnv("DISABLE_AUTH", Boolean.TRUE.toString())
+            .setEnv("SERVICE_URL", () -> "http://localhost:8080")
+            .unsetEnv("USER_NAME"); 
+
+    // ...
+}
+```
+
+## Provided Junit 4 Rules
 
 ### EnvironmentRule
 

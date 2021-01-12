@@ -11,7 +11,11 @@ dependencies {
   compile 'jakarta.servlet:jakarta.servlet-api'
 
   compile 'junit:junit'
+  compile 'org.junit.jupiter:junit-jupiter-api'
   compile 'org.hamcrest:hamcrest'
   compile 'org.mockito:mockito-core'
   compile 'org.assertj:assertj-core'
+
+  runtimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  runtimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
