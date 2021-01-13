@@ -10,6 +10,9 @@ that downloads and starts MongoDB in a separate process.
 As an alternative, one can use [FakeMongo Fongo](https://github.com/fakemongo/fongo) to create an 
 in-memory MongoDB database, however it seems to be discontinued and is lacking major features.
 
+The rule can be overridden in a test environment to 
+[use an existing database](#use-an-existing-database) instead of starting a local MongoDB.
+
 ## Usage
 
 To use the test rule, a dependency to this module has to be added:
@@ -31,7 +34,7 @@ public static final MongoDbRule RULE = MongoDbRule
 ```
 
 The test rule takes care to choose a free port for the database. You can access the database 
-servers address using `RULE.getHost()`.
+servers address using `RULE.getHosts()` and other getters that define the connection.
 Often one need to pass the server address to the constructor of another rule:
 
 ```
@@ -41,7 +44,11 @@ private static final DropwizardAppRule<AppConfiguration> DW =
     new DropwizardAppRule<>(
         MyApplication.class,
         ResourceHelpers.resourceFilePath("test-config.yml"),
-        ConfigOverride.config("mongo.hosts", () -> MONGODB.getHost()));
+        ConfigOverride.config("mongo.hosts", MONGODB::getHosts),
+        ConfigOverride.config("mongo.database", MONGODB::getDatabase),
+        ConfigOverride.config("mongo.username", MONGODB::getUsername),
+        ConfigOverride.config("mongo.password", MONGODB::getPassword),
+        ConfigOverride.config("mongo.options", MONGODB::getOptions));
 
 @ClassRule
 public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
@@ -84,3 +91,31 @@ environment variable `EMBEDDED_MONGO_DOWNLOAD_PATH`.
 If `EMBEDDED_MONGO_DOWNLOAD_PATH` is set to `http://example.com/download/`, the rule for example 
 tries to download `http://example.com/download/osx/mongodb-osx-ssl-x86_64-3.6.5.tgz`.
 
+## Use an Existing Database
+
+**Experimental Feature**
+
+To test specific scenarios, e.g. a real database set up like in production, the rule can be 
+configured to not bootstrap a database with Flapdoodle.
+
+A [MongoDB Connection String](https://docs.mongodb.com/manual/reference/connection-string/) must be
+set as environment variable `TEST_MONGODB_CONNECTION_STRING` in the build environment to reference
+the existing database:
+
+```bash
+# example for SDA SE internal MongoDB in local-infra
+export TEST_MONGODB_CONNECTION_STRING=mongodb://<user>:<password>@mongo-1:27118,mongo-2:27119,mongo-3:27120/testdb?authSource=admin
+./gradlew check
+``` 
+
+It may be required to create a Keystore and apply it to JVM that executes the tests if the database
+uses custom certificates.
+
+If such an environment variable is set, the `MongoDbRule` will not start a local MongoDB but 
+provides the configuration and an appropriate `MongoClient` to access the external database.
+
+To make this feature work, tests
+
+- must provide all configuration to the application in test as shown in the [example above](#usage)
+- must clean up the collections they modify because a single database is shared across tests
+- cannot run in parallel because only a single database is shared across tests

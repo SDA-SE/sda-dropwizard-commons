@@ -35,7 +35,7 @@ public class MorphiaBundleEnsureIndexesIT {
           MorphiaTestApp.class,
           null,
           randomPorts(),
-          config("mongo.hosts", MONGODB::getHost),
+          config("mongo.hosts", MONGODB::getHosts),
           config("mongo.database", MONGODB::getDatabase));
 
   @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
