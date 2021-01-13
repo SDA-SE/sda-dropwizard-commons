@@ -4,12 +4,18 @@
 
 The module `sda-commons-server-testing` is the base module to add unit and integrations test for applications in the 
 SDA SE infrastructure.
-It provides JUnit test rules that are helpful in integration tests. 
+It provides JUnit test rules and extensions that are helpful in integration tests. 
 
 Add the module with test scope:
 
 ```groovy
   testCompile "org.sdase.commons:sda-commons-server-testing"
+```
+In case you want to use JUnit 5 you also have to activate it in your build.gradle:
+```groovy
+  test {
+    useJUnitPlatform()
+  }
 ```
 
 ## Provided Assertions
