@@ -147,13 +147,16 @@ In this case, the `AUTH_KEYS` variable should contain a JSON array of
 ]
 ```
 
-### Periodical reloading of public keys
 
-The public keys are cached locally. For keys with an unknown key-id (kid), 
-the cache is refreshed, and the key is searched again afterwards. 
-In addition, the key-cache is refreshed periodically (currently each 5 min) to remove keys
-which are revoked by their issuers. 
-If the refresh fails (e.g. key-source unavailable, network-problems etc.), the old keys in the cache stay valid.
+### Periodical reloading of public keys provided via JWKS
+
+Public keys provided via a [JSON Web Key Set](https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5) (JWKS) are stored in a local key-cache.
+The cache updates every 5 minutes.
+It will also update when a JWT with unknown [kid](https://tools.ietf.org/html/rfc7515#section-4.1.4) must be validated.
+No changes apply when the JWKS is unreachable.
+
+To avoid acceptance of tokens signed by revoked keys, all keys not available in the JWKS are removed on update.
+
 
 ### HTTP Client Configuration and Proxy Support
 
