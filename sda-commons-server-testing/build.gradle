@@ -15,6 +15,7 @@ dependencies {
   compile 'org.hamcrest:hamcrest'
   compile 'org.mockito:mockito-core'
   compile 'org.assertj:assertj-core'
+  compile 'org.junit-pioneer:junit-pioneer'
 
   runtimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   runtimeOnly 'org.junit.vintage:junit-vintage-engine'
