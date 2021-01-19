@@ -51,7 +51,7 @@ YAML or JSON and ignores the order of keys. If possible, prefer the other varian
 content should always be reproducible. Note that the [AsyncAPI](../sda-commons-shared-asyncapi) and
 [OpenAPI](../sda-commons-server-openapi) generations export reproducible content. 
 
-## Provided Rules
+## Provided Junit 4 Rules
 
 ### EnvironmentRule
 
@@ -109,3 +109,9 @@ public class CustomIT {
     // ...
 }
 ```
+
+## JUnit 5
+For JUnit 5 we will not supply a replacement for the `EnvironmentRule` and `DropwizardRuleHelper`. 
+
+* The `EnvironmentRule` can be replaced with [JUnit Pioneer](https://junit-pioneer.org/docs/environment-variables/) capabilities.
+* Use `DropwizardAppExtension` directly as a replacement for the `DropwizardRuleHelper`.

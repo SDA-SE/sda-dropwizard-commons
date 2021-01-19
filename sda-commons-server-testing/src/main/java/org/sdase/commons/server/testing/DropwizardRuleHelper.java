@@ -28,6 +28,15 @@ import org.sdase.commons.server.testing.builder.DropwizardRuleBuilders.PortBuild
  *   - type: http
  *     port: 0
  * }</pre>
+ *     Instead of specifying connectors in a config file you can create random ports
+ *     programmatically:
+ *     <pre>{@code
+ * new DropwizardAppRule<>(
+ *   App.class,
+ *   randomPorts(),
+ *   ...);
+ * }</pre>
+ *     When using Junit5 use {@link io.dropwizard.testing.junit5.DropwizardAppExtension}.
  */
 @Deprecated
 public class DropwizardRuleHelper<C extends Configuration, A extends Application<C>>
