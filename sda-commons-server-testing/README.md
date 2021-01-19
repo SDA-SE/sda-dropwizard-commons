@@ -51,7 +51,7 @@ YAML or JSON and ignores the order of keys. If possible, prefer the other varian
 content should always be reproducible. Note that the [AsyncAPI](../sda-commons-shared-asyncapi) and
 [OpenAPI](../sda-commons-server-openapi) generations export reproducible content. 
 
-## Provided Junit 4 Rules
+## Provided JUnit 4 Rules
 
 ### EnvironmentRule
 
@@ -68,6 +68,22 @@ public class CustomIT {
 
     // ...
 }
+```
+
+### SystemPropertyRule
+
+The [`SystemPropertyRule`](src/main/java/org/sdase/commons/server/testing/SystemPropertyRule.java)
+allows for overriding or unsetting system properties for (integration) tests and resets them to their original value when the tests have finished.
+
+To use the rule register it to your test class via the JUnit4 `@Rule`:
+
+```java
+@Rule
+public SystemPropertyRule PROP =
+  new SystemPropertyRule()
+    .setProperty(PROP_TO_SET, VALUE)
+    .setProperty(PROP_TO_SET_SUPPLIER, () -> VALUE)
+    .unsetProperty(PROP_TO_UNSET);
 ```
 
 ## Provided helpers
@@ -109,6 +125,27 @@ public class CustomIT {
     // ...
 }
 ```
+
+
+## Provided JUnit 5 Extensions
+
+### SystemPropertyClassExtension
+
+This module provides the [`SystemPropertyClassExtension`](src/main/java/org/sdase/commons/server/testing/SystemPropertyClassExtension.java),
+a JUnit5 test extension to set and unset system properties before running an integration test.
+
+To use the extension register it to your test class via the JUnit5 `@RegisterExtension`:
+
+```java
+@RegisterExtension
+static final SystemPropertyClassExtension PROP = 
+  new SystemPropertyClassExtension()
+    .setProperty(PROP_TO_SET, VALUE)
+    .setProperty(PROP_TO_SET_SUPPLIER, () -> VALUE)
+    .unsetProperty(PROP_TO_UNSET);
+```
+
+Set and overwritten values will be reset to their original value once the test has finished.
 
 ## JUnit 5
 For JUnit 5 we will not supply a replacement for the `EnvironmentRule` and `DropwizardRuleHelper`. 
