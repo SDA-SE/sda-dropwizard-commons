@@ -16,6 +16,11 @@ In case you want to use JUnit 5 you also have to activate it in your build.gradl
   test {
     useJUnitPlatform()
   }
+
+  // in case you use the integrationTest plugin:
+  integrationTest {
+    useJUnitPlatform()
+  }
 ```
 
 ## Provided Assertions
