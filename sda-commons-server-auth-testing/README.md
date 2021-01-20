@@ -86,7 +86,7 @@ Examples can be found in the [test source branch](./src/test) of this module. Th
 - [An appropriate test `config.yaml`](./src/test/resources/test-config.yaml)
 
 ## Auth Extension
-The `AuthExtension` puts the `AuthConfig` in an environment variable named `AUTH_RULE` (for backwards compatibility).
+The `AuthClassExtension` puts the `AuthConfig` in an environment variable named `AUTH_RULE` (for backwards compatibility).
 The configuration in the test needs to use this property and the application is required to use the
 [`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
 from [`sda-commons-server-dropwizard`](../sda-commons-server-dropwizard/README.md):
@@ -121,14 +121,14 @@ server:
 auth: ${AUTH_RULE}
 ```
 
-To implement the test, the `AuthExtension` has to be initialized before the `DropwizardAppExtension`:
+To implement the test, the `AuthClassExtension` has to be initialized before the `DropwizardAppExtension`:
 
 ```java
-class AuthExtensionIT {
+class AuthClassExtensionIT {
 
   @Order(0)
   @RegisterExtension 
-  static final AuthExtension AUTH = AuthExtension.builder().build();
+  static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
   
   @Order(1)
   @RegisterExtension
@@ -139,7 +139,7 @@ class AuthExtensionIT {
 }
 ```
 
-The `AuthExtension` provides functions to generate a valid token that matches to the auth configuration in tests.
+The `AuthClassExtension` provides functions to generate a valid token that matches to the auth configuration in tests.
 ```java
    Response response = createWebTarget()
             .path("/secure")
@@ -220,16 +220,14 @@ Example with activated AUTH and OPA bundle can be found here:
 
 The Junit 5 OPA Extension is built around WireMock. The mock can be configured via the extension.
 
-To implement a test with an OPA Mock, the `OpaExtension` has to be initialized before `DropwizardAppExtension` implicitly by field declaration order or explicitly with a `@Order(N)`.
+To implement a test with an OPA Mock, the `OpaClassExtension` has to be initialized before `DropwizardAppExtension` implicitly by field declaration order or explicitly with a `@Order(N)`.
 
 ```java
-import org.sdase.commons.server.testing.junit5.DropwizardAppExtension;
-
 public class OpaIT {
 
   @Order(0)
   @RegisterExtension
-  static final OpaExtension OPA_EXTENSION = new OpaExtension();
+  static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
   @Order(1)
   @RegisterExtension
