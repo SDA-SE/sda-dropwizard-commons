@@ -5,4 +5,8 @@ dependencies {
     // excluded due to licensing issues
     exclude group: 'mysql', module: 'mysql-connector-java'
   }
+  compile 'com.github.database-rider:rider-junit5', {
+    // excluded due to licensing issues
+    exclude group: 'mysql', module: 'mysql-connector-java'
+  }
 }
