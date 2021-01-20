@@ -205,6 +205,6 @@ public interface MongoDb {
       return timeoutInMillis == null || timeoutInMillis < 1L ? DEFAULT_TIMEOUT_MS : timeoutInMillis;
     }
 
-    abstract T build();
+    public abstract T build();
   }
 }
