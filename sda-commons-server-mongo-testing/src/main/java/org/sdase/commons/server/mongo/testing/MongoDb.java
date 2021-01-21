@@ -15,23 +15,7 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * JUnit Test rule for running a MongoDB instance alongside the (integration) tests. Can be
- * configured with custom user credentials and database name. Use {@link #getHosts()} to retrieve
- * the hosts to connect to.
- *
- * <p>Example usage:
- *
- * <pre>
- * &#64;ClassRule
- * public static final MongoDbRule RULE = MongoDbRule
- *     .builder()
- *     .withDatabase("my_db")
- *     .withUsername("my_user")
- *     .withPassword("my_s3cr3t")
- *     .build();
- * </pre>
- */
+/** Common interface for MongoDB test rule / extension. */
 public interface MongoDb {
 
   /**

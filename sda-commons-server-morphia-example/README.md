@@ -7,7 +7,12 @@ The [`CarsManager`](./src/main/java/org/sdase/commons/server/morphia/example/mon
 
 The example also shows how the datastore object (created within the bundle) can be used in other classes by dependency injection (WELD).
 
-The demonstration integration test [`MorphiaApplicationIT`](./src/test/java/org/sdase/commons/server/morphia/example/MorphiaApplicationIT.java) shows
-how to use the `MongoDBRule` to create a WELD capable Dropwizard application that uses a mongo database in a test case. 
+This module contains the following tests:
 
-Note: The application is not meant to be started. It's only used for integration test purposes.
+| Test | JUnit 4 | JUnit 5 | Weld |
+|------|---------|---------|------|
+| [`MorphiaApplicationJUnit4IT`](./src/test/java/org/sdase/commons/server/morphia/example/MorphiaApplicationJUnit4IT.java) | Yes | No | No |
+| [`MorphiaApplicationJUnit5IT`](./src/test/java/org/sdase/commons/server/morphia/example/MorphiaApplicationJUnit5IT.java) | No | Yes | No |
+| [`MorphiaApplicationWeldIT`](./src/test/java/org/sdase/commons/server/morphia/example/MorphiaApplicationWeldIT.java) | Yes | No | Yes |
+
+Note: The applications are not meant to be started. They're only used for integration test purposes.

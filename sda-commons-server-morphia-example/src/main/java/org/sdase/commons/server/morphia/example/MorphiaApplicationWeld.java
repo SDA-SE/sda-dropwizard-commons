@@ -4,13 +4,18 @@ import dev.morphia.Datastore;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import org.sdase.commons.server.morphia.MorphiaBundle;
 import org.sdase.commons.server.morphia.example.mongo.CarManager;
 import org.sdase.commons.server.morphia.example.mongo.model.Car;
 import org.sdase.commons.server.weld.DropwizardWeldHelper;
 
-public class MorphiaApplication extends Application<MorphiaApplicationConfiguration> {
+@ApplicationScoped // make this application a WELD application
+public class MorphiaApplicationWeld extends Application<MorphiaApplicationConfiguration> {
 
+  @Inject
   private CarManager carManager; // car manager as example for injection of morphia data store
 
   private MorphiaBundle<MorphiaApplicationConfiguration> morphiaBundle =
@@ -23,7 +28,7 @@ public class MorphiaApplication extends Application<MorphiaApplicationConfigurat
           .build();
 
   public static void main(String[] args) throws Exception {
-    DropwizardWeldHelper.run(MorphiaApplication.class, args); // Main to start this application
+    DropwizardWeldHelper.run(MorphiaApplicationWeld.class, args); // Main to start this application
   }
 
   @Override
@@ -33,9 +38,16 @@ public class MorphiaApplication extends Application<MorphiaApplicationConfigurat
 
   @Override
   public void run(MorphiaApplicationConfiguration configuration, Environment environment) {
-    carManager = new CarManager(morphiaDatastore());
+    // noting to do here
   }
 
+  /**
+   * If weld is used, the datastore can be provided within a producer to be injectable. In this
+   * example, the datastore is used within the @{@link CarManager}
+   *
+   * @return morphia datastore
+   */
+  @Produces
   Datastore morphiaDatastore() {
     return morphiaBundle.datastore();
   }
