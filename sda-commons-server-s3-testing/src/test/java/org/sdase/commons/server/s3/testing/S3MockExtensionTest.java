@@ -5,12 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import java.io.File;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,15 +39,7 @@ class S3MockExtensionTest {
     ClientConfiguration clientConfiguration = new ClientConfiguration();
     clientConfiguration.setSignerOverride("AWSS3V4SignerType");
 
-    s3Client =
-        AmazonS3ClientBuilder.standard()
-            .withEndpointConfiguration(
-                new AwsClientBuilder.EndpointConfiguration(
-                    S3_EXTENSION.getEndpoint(), Regions.DEFAULT_REGION.getName()))
-            .withPathStyleAccessEnabled(true)
-            .withClientConfiguration(clientConfiguration)
-            .withCredentials(new AWSStaticCredentialsProvider(credentials))
-            .build();
+    s3Client = S3_EXTENSION.getClient();
   }
 
   @Test
