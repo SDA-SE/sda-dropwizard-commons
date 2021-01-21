@@ -1,5 +1,6 @@
 package org.sdase.commons.server.s3.testing;
 
+import com.amazonaws.services.s3.AmazonS3;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -45,6 +46,10 @@ public class S3MockRule extends ExternalResource {
 
   public void resetAll() {
     s3Mock.resetAll();
+  }
+
+  public AmazonS3 getClient() {
+    return s3Mock.getClient();
   }
 
   //
