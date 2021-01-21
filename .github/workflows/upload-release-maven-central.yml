@@ -49,3 +49,20 @@ jobs:
           SDA_SONATYPE_USER: ${{ secrets.SDA_SONATYPE_USER }}
           SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
           SONATYPE_STAGING_REPOSITORY_ID: ${{ steps.create-staging-repo.outputs.STAGING_PROFILE_ID }}
+
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: workflow,job,commit,repo,ref,author,took
+          custom_payload: |
+            {
+              username: 'Maven Central Upload',
+              icon_emoji: ':coffin-dance:',
+              attachments: [{
+                color: 'danger',
+                text: `Maven Central Upload of ${{ github.event.release.tag_name }} failed!\n\nWorkflow ${process.env.AS_WORKFLOW}`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        if: failure()
