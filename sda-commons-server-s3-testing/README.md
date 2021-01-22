@@ -20,7 +20,7 @@ testCompile 'org.sdase.commons:sda-commons-server-s3-testing'
 ## JUnit 4
 To create a S3 Mock instance, add the S3 test rule to your test class:
 
-```
+```java
 public static final S3MockRule S3_MOCK = S3MockRule
       .builder()
       .build();
@@ -30,7 +30,7 @@ The test rule takes care to choose a free port for the endpoint. You can access 
 URL using `RULE.getEndpoint()`.
 Often one need to pass the endpoint URL to the constructor of another rule:
 
-```
+```java
 public static final S3MockRule S3_MOCK = S3MockRule
       .builder()
       .build();
@@ -49,7 +49,7 @@ In case you need a pre-populated bucket in your tests, you might add files while
 You can call `S3_MOCK.resetAll()` to restore this state at any time. If you need to perform additional
 operations on the object storage `S3_MOCK.getClient()` provides a full S3 storage client.
 
-```
+```java
 @ClassRule
 public static final S3MockRule S3_MOCK = S3MockRule
      .builder()
@@ -63,7 +63,7 @@ public static final S3MockRule S3_MOCK = S3MockRule
 
 ## JUnit 5
 
-This module provides the [`S3Extension`](src/main/java/org/sdase/commons/server/s3/testing/S3Extension.java),
+This module provides the [`S3ClassExtension`](src/main/java/org/sdase/commons/server/s3/testing/S3ClassExtension.java),
 a JUnit 5 extension that is used to automatically bootstrap an AWS S3-compatible object storage instance
 for integration tests.
 
@@ -73,24 +73,24 @@ provides an in memory object storage.
 
 To create a S3 Mock instance, register the S3 test extension in your test class:
 
-```
+```java
 @RegisterExtension
 @Order(0)
-static final S3Extension S3_EXTENSION = S3Extension
+static final S3ClassExtension S3_EXTENSION = S3ClassExtension
       .builder()
       .build();
 ```
 
-The extension takes care to choose a free port for the endpoint. You can access the mock
+The extension takes care to choose a free port for the endpoint. You can access the
 URL using `S3_EXTENSION.getEndpoint()`.
-Often one needs to pass the endpoint URL to the constructor of another rule:
+Often one needs to pass the endpoint URL to the constructor of another extension:
 
-```
+```java
 class DropwizardIT {
 
   @RegisterExtension
   @Order(0)
-  static final S3Extension S3_EXTENSION = S3Extension
+  static final S3ClassExtension S3_EXTENSION = S3ClassExtension
         .builder()
         .build();
 
@@ -100,7 +100,7 @@ class DropwizardIT {
     new DropwizardAppExtension<>(
           MyApplication.class,
           ResourceHelpers.resourceFilePath("test-config.yml"),
-          ConfigOverride.config("objectstorage.endpoint", () -> S3_EXTENSION.getEndpoint())));
+          ConfigOverride.config("objectstorage.endpoint", () -> S3_EXTENSION.getEndpoint()));
 
 }
 ```
@@ -109,10 +109,10 @@ In case you need a pre-populated bucket in your tests, you might add files while
 You can call `S3_EXTENSION.resetAll()` to restore this state at any time. If you need to perform additional
 operations on the object storage `S3_EXTENSION.getClient()` provides a full S3 storage client.
 
-```
+```java
 @RegisterExtension
 @Order(0)
-static final S3Extension S3_EXTENSION = S3Extension
+static final S3ClassExtension S3_EXTENSION = S3ClassExtension
      .builder()
      .createBucket("bucket-of-water")
      .putObject("bucket", "file.txt", new File(ResourceHelpers.resourceFilePath("test-file.txt")))

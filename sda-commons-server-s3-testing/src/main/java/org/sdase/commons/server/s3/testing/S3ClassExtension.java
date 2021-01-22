@@ -20,12 +20,12 @@ import org.sdase.commons.server.s3.testing.builder.StreamObject;
  *
  * <pre>
  *   &#64;RegisterExtension
- *   static final S3MockExtension S3_EXTENSION = S3MockExtension.builder().build();
+ *   static final S3ClassExtension S3_EXTENSION = S3ClassExtension.builder().build();
  * </pre>
  */
-public class S3MockExtension extends S3Mock implements BeforeAllCallback, AfterAllCallback {
+public class S3ClassExtension extends S3Mock implements BeforeAllCallback, AfterAllCallback {
 
-  public S3MockExtension(final List<String> buckets, final List<MockObject> mockObjects) {
+  public S3ClassExtension(final List<String> buckets, final List<MockObject> mockObjects) {
     super(buckets, mockObjects);
   }
 
@@ -42,8 +42,8 @@ public class S3MockExtension extends S3Mock implements BeforeAllCallback, AfterA
   //
   // Builder
   //
-  public static S3MockExtension.Builder builder() {
-    return new S3MockExtension.Builder();
+  public static S3ClassExtension.Builder builder() {
+    return new S3ClassExtension.Builder();
   }
 
   public static final class Builder {
@@ -60,7 +60,7 @@ public class S3MockExtension extends S3Mock implements BeforeAllCallback, AfterA
      * @param bucketName the name of the bucket
      * @return The builder.
      */
-    public S3MockExtension.Builder createBucket(String bucketName) {
+    public S3ClassExtension.Builder createBucket(String bucketName) {
       buckets.add(bucketName);
       return this;
     }
@@ -74,7 +74,7 @@ public class S3MockExtension extends S3Mock implements BeforeAllCallback, AfterA
      * @param file the content to store as file
      * @return The builder.
      */
-    public S3MockExtension.Builder putObject(String bucketName, String key, File file) {
+    public S3ClassExtension.Builder putObject(String bucketName, String key, File file) {
       createBucket(bucketName);
       mockObjects.add(new FileObject(bucketName, key, file));
       return this;
@@ -89,7 +89,7 @@ public class S3MockExtension extends S3Mock implements BeforeAllCallback, AfterA
      * @param content the content to store as string
      * @return The builder.
      */
-    public S3MockExtension.Builder putObject(String bucketName, String key, String content) {
+    public S3ClassExtension.Builder putObject(String bucketName, String key, String content) {
       createBucket(bucketName);
       mockObjects.add(new ContentObject(bucketName, key, content));
       return this;
@@ -104,14 +104,14 @@ public class S3MockExtension extends S3Mock implements BeforeAllCallback, AfterA
      * @param stream the content to store as stream
      * @return The builder
      */
-    public S3MockExtension.Builder putObject(String bucketName, String key, InputStream stream) {
+    public S3ClassExtension.Builder putObject(String bucketName, String key, InputStream stream) {
       createBucket(bucketName);
       mockObjects.add(new StreamObject(bucketName, key, stream));
       return this;
     }
 
-    public S3MockExtension build() {
-      return new S3MockExtension(buckets, mockObjects);
+    public S3ClassExtension build() {
+      return new S3ClassExtension(buckets, mockObjects);
     }
   }
 }

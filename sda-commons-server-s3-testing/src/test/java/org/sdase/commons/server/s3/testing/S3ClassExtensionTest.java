@@ -13,13 +13,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-class S3MockExtensionTest {
+class S3ClassExtensionTest {
   private static final String PRE_FILLED_BUCKET = "pre-filled-bucket";
   private static final String WATER_BUCKET = "bucket-of-water";
 
   @RegisterExtension
-  static final S3MockExtension S3_EXTENSION =
-      S3MockExtension.builder()
+  static final S3ClassExtension S3_EXTENSION =
+      S3ClassExtension.builder()
           .createBucket(WATER_BUCKET)
           .putObject(PRE_FILLED_BUCKET, "file.txt", new File(resourceFilePath("test-file.txt")))
           .putObject(
