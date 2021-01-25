@@ -15,9 +15,12 @@ dependencies {
   compile 'org.hamcrest:hamcrest'
   compile 'org.mockito:mockito-core'
   compile 'org.assertj:assertj-core'
-  compile 'org.junit-pioneer:junit-pioneer'
+  compile 'org.junit-pioneer:junit-pioneer', {
+    exclude group: 'org.junit.platform', module: 'junit-platform-launcher'
+  }
   compile 'org.junit.jupiter:junit-jupiter-params'
 
+  runtimeOnly 'org.junit.platform:junit-platform-launcher' // enforce JUnit's version
   runtimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   runtimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
