@@ -103,12 +103,16 @@ public interface MongoDb {
 
   abstract class Builder<T extends MongoDb> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
-
     public static final Version.Main DEFAULT_VERSION = V3_6;
     public static final Version.Main WINDOWS_VERSION = V4_0;
 
     protected static final long DEFAULT_TIMEOUT_MS = MINUTES.toMillis(1L);
+
+    static final String DEFAULT_USER = "dbuser";
+    static final String DEFAULT_PASSWORD = "sda123"; // NOSONAR
+    static final String DEFAULT_DATABASE = "default_db";
+
+    private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
 
     protected String mongoDbUrlOverride =
         System.getenv(OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME);
