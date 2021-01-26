@@ -5,48 +5,53 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.sdase.commons.server.opa.testing.AbstractOpa.onRequest;
 import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.openapitools.jackson.dataformat.hal.HALLink;
 import java.util.List;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.sdase.commons.server.auth.testing.AuthRule;
-import org.sdase.commons.server.opa.testing.OpaRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.server.auth.testing.AuthClassExtension;
+import org.sdase.commons.server.opa.testing.OpaClassExtension;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.sdase.commons.starter.SdaPlatformConfiguration;
 import org.sdase.commons.starter.example.people.db.PersonEntity;
 import org.sdase.commons.starter.example.people.db.TestDataUtil;
 import org.sdase.commons.starter.example.people.rest.PersonResource;
 
-public class SdaPlatformExampleApplicationIT {
+class SdaPlatformExampleApplicationIT {
 
   // create a dummy authentication provider that works as a local OpenId Connect provider for the
   // tests
-  private static final AuthRule AUTH = AuthRule.builder().build();
-  private static final OpaRule OPA = new OpaRule();
+  @Order(0)
+  @RegisterExtension
+  static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
-  private static final DropwizardAppRule<SdaPlatformConfiguration> DW =
-      new DropwizardAppRule<>(
+  @Order(1)
+  @RegisterExtension
+  static final OpaClassExtension OPA = new OpaClassExtension();
+
+  @Order(2)
+  @RegisterExtension
+  static final DropwizardAppExtension<SdaPlatformConfiguration> DW =
+      new DropwizardAppExtension<>(
           SdaPlatformExampleApplication.class,
           // use the config file 'test-config.yaml' from the test resources folder
           resourceFilePath("test-config.yaml"),
           config("opa.baseUrl", OPA::getUrl));
 
-  // apply the auth config to the test instance of the application
-  // to verify incoming tokens correctly
-  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(AUTH).around(OPA).around(DW);
-
   private static final String TEST_CONSUMER_TOKEN = "test-consumer";
 
-  @Before
-  public void setupTestData() {
+  @BeforeEach
+  void setupTestData() {
     TestDataUtil.clearTestData();
     PersonEntity john = TestDataUtil.addPersonEntity("john-doe", "John", "Doe");
     PersonEntity jane = TestDataUtil.addPersonEntity("jane-doe", "Jane", "Doe");
@@ -56,14 +61,14 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void accessSwaggerWithoutAuthentication() {
+  void accessSwaggerWithoutAuthentication() {
     Response response = baseUrlWebTarget().path("openapi.json").request(APPLICATION_JSON).get();
 
     assertThat(response).extracting(Response::getStatus).isEqualTo(200);
   }
 
   @Test
-  public void rejectApiRequestWithoutAuthentication() {
+  void rejectApiRequestWithoutAuthentication() {
     Response response =
         baseUrlWebTarget()
             .path("people")
@@ -75,13 +80,21 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void accessApiWithAuthenticationAndConsumerToken() {
-    OPA.mock(onAnyRequest().allow());
+  void accessApiWithAuthenticationAndConsumerToken() {
+    String authHeader = AUTH.auth().buildHeaderValue();
+    OPA.mock(onAnyRequest().deny());
+    OPA.mock(
+        onRequest()
+            .withHttpMethod(HttpMethod.GET)
+            .withPath("people")
+            .withJwtFromHeaderValue(authHeader)
+            .allow());
+
     Response response =
         baseUrlWebTarget()
             .path("people")
             .request(APPLICATION_JSON)
-            .header(HttpHeaders.AUTHORIZATION, AUTH.auth().buildHeaderValue())
+            .header(HttpHeaders.AUTHORIZATION, authHeader)
             .header(ConsumerTracing.TOKEN_HEADER, TEST_CONSUMER_TOKEN)
             .get();
 
@@ -89,7 +102,20 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void respond404ForUnknownPerson() {
+  void respond401DueToInvalidJWT() {
+    OPA.mock(onAnyRequest().deny());
+    Response response =
+        baseUrlWebTarget()
+            .path("people")
+            .request(APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer: invalidToken")
+            .get();
+
+    assertThat(response.getStatus()).isEqualTo(401);
+  }
+
+  @Test
+  void respond404ForUnknownPerson() {
     OPA.mock(onAnyRequest().allow());
     Response response =
         baseUrlWebTarget()
@@ -104,7 +130,7 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void provideSelfLinkInPersonResource() {
+  void provideSelfLinkInPersonResource() {
     OPA.mock(onAnyRequest().allow());
     PersonResource personResource =
         baseUrlWebTarget()
@@ -121,7 +147,7 @@ public class SdaPlatformExampleApplicationIT {
   }
 
   @Test
-  public void provideRelationLinksInPersonResource() {
+  void provideRelationLinksInPersonResource() {
     OPA.mock(onAnyRequest().allow());
     PersonResource personResource =
         baseUrlWebTarget()
