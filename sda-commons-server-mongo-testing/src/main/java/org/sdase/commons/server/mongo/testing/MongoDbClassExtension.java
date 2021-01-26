@@ -34,6 +34,9 @@ public interface MongoDbClassExtension extends MongoDb, BeforeAllCallback {
 
     private Builder() {
       // prevent instantiation
+      username = DEFAULT_USER;
+      password = DEFAULT_PASSWORD; // NOSONAR Sonar's security hotspot
+      database = DEFAULT_DATABASE;
     }
 
     public MongoDbClassExtension build() {
