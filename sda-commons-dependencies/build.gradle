@@ -18,7 +18,7 @@ ext {
   scalaVersion = '2.12.8' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
   kafkaVersion = '2.2.1' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
   kafkaJunitVersion = '3.2.2' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
-  dbRiderVersion = '1.21.0'
+  dbRiderVersion = '1.22.0'
 }
 
 dependencies {
