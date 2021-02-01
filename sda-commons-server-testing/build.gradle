@@ -17,6 +17,7 @@ dependencies {
   compile 'org.assertj:assertj-core'
   compile 'org.junit-pioneer:junit-pioneer'
   compile 'org.junit.jupiter:junit-jupiter-params'
+  compile 'org.mockito:mockito-junit-jupiter'
 
   runtimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   runtimeOnly 'org.junit.vintage:junit-vintage-engine'
