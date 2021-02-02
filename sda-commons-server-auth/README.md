@@ -58,7 +58,7 @@ public class MyApplication extends Application<MyConfiguration> {
 
 The Bundle can be configured to perform basic authorization based on whether a token is presented or not on endpoints
 that are annotated with `@PermitAll` with the setting `.withAnnotatedAuthorization()`.
-If the authorization should be handled by e.g. the OpaBundle, the option `.withExternalAuthorization()` still validates
+If the authorization should be handled by e.g. the `OpaBundle`, the option `.withExternalAuthorization()` still validates
 tokens sent in the `Authorization` header but also accepts requests _without header_ to be processed and eventually
 rejected in a later stage.
 
@@ -189,6 +189,16 @@ This can be helpful when all clients in an Application should use the same proxy
 Details about the authorization with Open Policy Agent are documented within the authorization concept (see Confluence). 
 In short, Open Policy Agent acts as policy decision point and is started as sidecar to the actual service.
 
+The OPA Bundle acts as a client to the Open Policy Agent and is hooked in as request filter handling requests after they have 
+been validated by the `JwtAuthenticator` and before they reach the service implementation.
+
+The OPA Bundle requires the [`AuthBundle`](./src/main/java/org/sdase/commons/server/auth/AuthBundle.java) in place, so that the JWT can be verified against public keys before it is handed over to OPA. 
+In case the request does not contain a JWT token at all, the JWT verification in the `AuthBundle` will be skipped without error and further 
+checks should be part of the OPA policy.
+
+If it is still required to reject requests that do not contain a JWT token the `AuthBundle` needs to be configured to perform basic authorization. This is achieved 
+by setting `.withAnnotatedAuthorization()` on the `AuhtBundle` and annotate endpoints with `@PermitAll`.
+
 ![Overview](./docs/Overview.svg)
 
 The OPA bundle requests the policy decision providing the following inputs
@@ -198,7 +208,7 @@ The OPA bundle requests the policy decision providing the following inputs
  * all request headers (can be disabled in the [`OpaBundle`](./src/main/java/org/sdase/commons/server/opa/OpaBundle.java) builder)
 
 _Remark to HTTP request headers:_  
-The bundle normalizes  header names to lower case to simplify handling in OPA since HTTP specification defines header names as case insensitive.
+The bundle normalizes  header names to lower case to simplify handling in OPA since HTTP specification defines header names as case-insensitive.
 Multivalued headers are not normalized with respect to the representation as list or single string with separator char.
 They are forwarded as parsed by the framework. 
 
