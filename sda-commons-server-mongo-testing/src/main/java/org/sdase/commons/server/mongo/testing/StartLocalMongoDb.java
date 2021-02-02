@@ -23,12 +23,15 @@ import de.flapdoodle.embed.mongo.config.ImmutableMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import de.flapdoodle.embed.process.extract.DirectoryAndExecutableNaming;
+import de.flapdoodle.embed.process.io.directories.*;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.embed.process.store.ExtractedArtifactStore;
 import de.flapdoodle.embed.process.store.ImmutableExtractedArtifactStore;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
+import org.apache.commons.lang3.SystemUtils;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
 
@@ -203,6 +206,17 @@ public class StartLocalMongoDb {
           ExtractedArtifactStore.builder()
               .from(Defaults.extractedArtifactStoreFor(Command.MongoD))
               .downloadConfig(createDownloadConfig());
+
+      // avoid recurring firewall requests on mac,
+      if (SystemUtils.IS_OS_MAC_OSX) {
+        artifactStoreBuilder
+            .extraction(
+                DirectoryAndExecutableNaming.of(
+                    new PlatformTempDir(), (prefix, postfix) -> "mongod"))
+            .temp(
+                DirectoryAndExecutableNaming.of(
+                    new PlatformTempDir(), (prefix, postfix) -> "mongod"));
+      }
 
       return MongodStarter.getInstance(
           Defaults.runtimeConfigFor(Command.MongoD)
