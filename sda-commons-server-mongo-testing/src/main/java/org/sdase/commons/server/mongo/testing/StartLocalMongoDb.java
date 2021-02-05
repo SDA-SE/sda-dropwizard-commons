@@ -27,6 +27,7 @@ import de.flapdoodle.embed.process.extract.DirectoryAndExecutableNaming;
 import de.flapdoodle.embed.process.io.directories.*;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.embed.process.store.ExtractedArtifactStore;
+import de.flapdoodle.embed.process.store.IArtifactStore;
 import de.flapdoodle.embed.process.store.ImmutableExtractedArtifactStore;
 import java.io.IOException;
 import java.util.Collections;
@@ -198,17 +199,23 @@ public class StartLocalMongoDb {
   }
 
   // Initialization-on-demand holder idiom
-  private static class LazyHolder {
+  static class LazyHolder {
     static final MongodStarter INSTANCE = getMongoStarter();
 
     private static MongodStarter getMongoStarter() {
+      IArtifactStore artifactStore = createArtifactStore(SystemUtils.IS_OS_MAC_OSX);
+      return MongodStarter.getInstance(
+          Defaults.runtimeConfigFor(Command.MongoD).artifactStore(artifactStore).build());
+    }
+
+    static IArtifactStore createArtifactStore(boolean forMacOs) {
       ImmutableExtractedArtifactStore.Builder artifactStoreBuilder =
           ExtractedArtifactStore.builder()
               .from(Defaults.extractedArtifactStoreFor(Command.MongoD))
               .downloadConfig(createDownloadConfig());
 
       // avoid recurring firewall requests on mac,
-      if (SystemUtils.IS_OS_MAC_OSX) {
+      if (forMacOs) {
         artifactStoreBuilder
             .extraction(
                 DirectoryAndExecutableNaming.of(
@@ -218,10 +225,7 @@ public class StartLocalMongoDb {
                     new PlatformTempDir(), (prefix, postfix) -> "mongod"));
       }
 
-      return MongodStarter.getInstance(
-          Defaults.runtimeConfigFor(Command.MongoD)
-              .artifactStore(artifactStoreBuilder.build())
-              .build());
+      return artifactStoreBuilder.build();
     }
   }
 }
