@@ -26,7 +26,7 @@ dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion")
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.11.952")
-  api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.6.1")
+  api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
   constraints {
     // overall conflicts
