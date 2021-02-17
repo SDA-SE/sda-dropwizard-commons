@@ -24,4 +24,9 @@ public class UseExistingMongoDbClassExtension extends UseExistingMongoDb
   public void beforeAll(ExtensionContext context) {
     logConnection();
   }
+
+  @Override
+  public void afterAll(ExtensionContext context) {
+    LOGGER.debug("Shutting down extension");
+  }
 }
