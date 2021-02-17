@@ -1,7 +1,6 @@
 package org.sdase.commons.server.mongo.testing;
 
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
@@ -11,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * @see org.sdase.commons.server.mongo.testing.StartLocalMongoDb
  */
 public class StartLocalMongoDbClassExtension extends StartLocalMongoDb
-    implements MongoDbClassExtension, AfterAllCallback {
+    implements MongoDbClassExtension {
 
   StartLocalMongoDbClassExtension(
       String username,

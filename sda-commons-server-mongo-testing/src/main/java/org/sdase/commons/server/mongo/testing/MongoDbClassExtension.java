@@ -1,6 +1,7 @@
 package org.sdase.commons.server.mongo.testing;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 
 /**
@@ -24,7 +25,7 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
  * <p>Normally a MongoDb is started on demand. For connecting to an already running MongoDb set the
  * environment variable {@code TEST_MONGODB_CONNECTION_STRING}.
  */
-public interface MongoDbClassExtension extends MongoDb, BeforeAllCallback {
+public interface MongoDbClassExtension extends MongoDb, BeforeAllCallback, AfterAllCallback {
 
   static Builder builder() {
     return new Builder();
