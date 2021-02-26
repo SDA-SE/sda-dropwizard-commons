@@ -23,7 +23,9 @@ public class HalLinkDescriptionModifier implements ReaderListener {
 
   @Override
   public void afterScan(OpenApiReader reader, OpenAPI openAPI) {
-    if (openAPI.getComponents().getSchemas().containsKey(HALLink.class.getSimpleName())) {
+    if (openAPI.getComponents() != null
+        && openAPI.getComponents().getSchemas() != null
+        && openAPI.getComponents().getSchemas().containsKey(HALLink.class.getSimpleName())) {
       Schema schema =
           ModelConverters.getInstance().read(HALLink.class).get(HALLink.class.getSimpleName());
       schema.setDescription("Representation of a link as defined in HAL");
