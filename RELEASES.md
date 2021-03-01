@@ -9,10 +9,10 @@ It generates new releases for all merges to `master` or `release/1.x.x` and uplo
 New releases are created based on Semantic Versioning (see also [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 As soon as a Pull Request was merged, the following actions happen in order:
-1. It executes the Workflow to test the code ([gradle.yml](./.github/workflows/gradle.yml)).
-2. It executes the Workflow to determine if a new semantic version must be created ([gradle.yml](./.github/workflows/gradle.yml)).
-3. It creates a new release resulting in a new Git tag and a GitHub Release ([gradle.yml](./.github/workflows/gradle.yml)).
-4. The release creation triggers a Workflow for the upload ([upload-release-maven-central.yml](./.github/workflows/upload-release-maven-central.yml)).
+1. It executes the Workflow to test the code ([java-ci.yml](.github/workflows/java-ci.yml)).
+2. It executes the Workflow to determine if a new semantic version must be created ([java-ci.yml](.github/workflows/java-ci.yml)).
+3. It creates a new release resulting in a new Git tag and a GitHub Release ([java-ci.yml](.github/workflows/java-ci.yml)).
+4. The release creation triggers a Workflow for the upload ([publish-release-maven-central.yml](.github/workflows/publish-release-maven-central.yml)).
    1. Build and sign all artifacts (*.pom, *.jar, *-sources.jar, *-javadoc.jar).
    2. Create a new staging repository at https://oss.sonatype.org to allow parallel releases and increased stability.
    3. Publish the signed artifacts to the staging repository.
