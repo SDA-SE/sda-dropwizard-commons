@@ -9,6 +9,7 @@ metadata:
     sda.se/summary: |
       SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow
       the patterns and specifications promoted by the SDA SE.
+    sda.se/federation-scopes: public
   description: |
     SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow
     the patterns and specifications promoted by the SDA SE.
