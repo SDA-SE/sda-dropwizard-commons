@@ -7,8 +7,12 @@ metadata:
     fossa.io/project-name: sda-dropwizard-commons
     sonarqube.org/project-key: SDA-SE_sda-dropwizard-commons
     sda.se/summary: |
-      SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow
-      the patterns and specifications promoted by the SDA SE.
+      The SDA SE provides the [sda-dropwizard-commons](https://github.com/SDA-SE/sda-dropwizard-commons)
+      library that includes several modules to speed up SDA-compliant microservice development
+      that is based on the [Dropwizard](https://www.dropwizard.io) framework, that offers a
+      bundle mechanism for extensions. The bundles that are provided with _sda-dropwizard-commons_
+      configure the framework with default SDA specific settings and add support for an easy and
+      fast integration of standard technologies such as SQL, noSQL, or messaging frameworks.
     sda.se/federation-scopes: public
   description: |
     SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow
@@ -28,8 +32,12 @@ metadata:
     the patterns and specifications promoted by the SDA SE.
   annotations:
     sda.se/summary: |
-      SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow
-      the patterns and specifications promoted by the SDA SE.
+      The SDA SE provides the [sda-dropwizard-commons](https://github.com/SDA-SE/sda-dropwizard-commons)
+      library that includes several modules to speed up SDA-compliant microservice development
+      that is based on the [Dropwizard](https://www.dropwizard.io) framework, that offers a
+      bundle mechanism for extensions. The bundles that are provided with _sda-dropwizard-commons_
+      configure the framework with default SDA specific settings and add support for an easy and
+      fast integration of standard technologies such as SQL, noSQL, or messaging frameworks.
 spec:
   domain: platform
   owner: platform-team
