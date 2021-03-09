@@ -1,5 +1,6 @@
 package org.sdase.commons.server.kafka.consumer;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -65,7 +66,7 @@ public class MessageListener<K, V> implements Runnable {
     while (!shouldStop.get()) {
       // return immediately and resubmit Runnable
       try {
-        ConsumerRecords<K, V> records = consumer.poll(pollInterval);
+        ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(pollInterval));
 
         if (records.count() > 0) {
           LOGGER.debug("Received {} messages from topics [{}]", records.count(), joinedTopics);

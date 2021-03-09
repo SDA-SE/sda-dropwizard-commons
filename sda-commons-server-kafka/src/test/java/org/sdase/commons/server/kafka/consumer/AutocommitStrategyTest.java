@@ -3,13 +3,14 @@ package org.sdase.commons.server.kafka.consumer;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.mockito.AdditionalMatchers.gt;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.when;
 
 import java.lang.Thread.State;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -99,11 +100,11 @@ public class AutocommitStrategyTest {
   public void itShouldSubscribeToAllTopics() {
     setupMocks();
     setupListener();
-    when(consumer.poll(gt(-10)))
+    when(consumer.poll(argThat(d -> d.toMillis() > -10)))
         .thenAnswer(
             invocation -> {
-              long timeout = invocation.getArgument(0);
-              if (timeout > 0) {
+              Duration timeout = invocation.getArgument(0);
+              if (timeout.toMillis() > 0) {
                 throw new WakeupException();
               }
               return ConsumerRecords.EMPTY;
@@ -120,7 +121,7 @@ public class AutocommitStrategyTest {
     setupListener();
 
     AtomicInteger counter = new AtomicInteger(0);
-    when(consumer.poll(gt(0L)))
+    when(consumer.poll(any(Duration.class)))
         .thenAnswer(
             invocation -> {
               if (counter.incrementAndGet() < 2) {
@@ -132,7 +133,8 @@ public class AutocommitStrategyTest {
 
     startListenerThread();
 
-    Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(2)).poll(gt(0L));
+    Mockito.verify(consumer, timeout(WAIT_TIME_MS).atLeast(2))
+        .poll(argThat(d -> d.toMillis() > 0L));
   }
 
   @Test
@@ -142,7 +144,7 @@ public class AutocommitStrategyTest {
     setupListener();
     AtomicInteger count = new AtomicInteger(0);
 
-    when(consumer.poll(gt(0L))).thenReturn(records);
+    when(consumer.poll(argThat(d -> d.toMillis() > 0L))).thenReturn(records);
 
     Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(any());
 
@@ -165,7 +167,7 @@ public class AutocommitStrategyTest {
     setupListener();
     AtomicInteger count = new AtomicInteger(0);
 
-    when(consumer.poll(gt(0L))).thenReturn(records);
+    when(consumer.poll(argThat(d -> d.toMillis() > 0L))).thenReturn(records);
     Mockito.doThrow(new RuntimeException("SampleException")).when(handler).handle(any());
 
     when(errorHandler.handleError(any(), any(), any()))
@@ -188,7 +190,7 @@ public class AutocommitStrategyTest {
     setupListener();
 
     AtomicBoolean wasReturned = new AtomicBoolean(false);
-    when(consumer.poll(gt(0L)))
+    when(consumer.poll(argThat(d -> d.toMillis() > 0L)))
         .thenAnswer(invocation -> !wasReturned.getAndSet(true) ? records : ConsumerRecords.empty());
 
     startListenerThread();
@@ -213,7 +215,7 @@ public class AutocommitStrategyTest {
         .when(consumer)
         .wakeup();
 
-    when(consumer.poll(gt(0L)))
+    when(consumer.poll(argThat(d -> d.toMillis() > 0L)))
         .thenAnswer(
             (Answer<Void>)
                 invocation -> {
@@ -224,7 +226,7 @@ public class AutocommitStrategyTest {
     Thread t = startListenerThread();
 
     // verify and wait until poll has been invoked
-    Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).poll(gt(0L));
+    Mockito.verify(consumer, timeout(WAIT_TIME_MS).times(1)).poll(argThat(d -> d.toMillis() > 0L));
 
     listener.stopConsumer();
 
@@ -276,7 +278,7 @@ public class AutocommitStrategyTest {
 
   private void setupMocks() {
     Mockito.doNothing().when(consumer).subscribe(Mockito.anyList());
-    when(consumer.poll(0)).thenReturn(null);
+    when(consumer.poll(Duration.ZERO)).thenReturn(null);
   }
 
   @Test

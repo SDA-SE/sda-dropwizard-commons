@@ -51,7 +51,7 @@ Import snapshots by adding the snapshot repository to the `build.gradle`:
     repositories {
       ...
       maven {
-        url "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
+        url "https://nexus.sda-se.io/repository/sda-se-snapshots/"
         credentials {
           username sdaNexusUser
           password sdaNexusPassword

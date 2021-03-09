@@ -7,22 +7,23 @@ import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.model.Key;
 import org.sdase.commons.server.kafka.model.Value;
 
-public class KafkaExampleProducerIT {
+class KafkaExampleProducerIT {
 
-  private static final SharedKafkaTestResource KAFKA =
+  @RegisterExtension
+  @Order(0)
+  static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           .withBrokerProperty("auto.create.topics.enable", "false")
           // we only need one consumer offsets partition
@@ -32,21 +33,20 @@ public class KafkaExampleProducerIT {
           .withBrokerProperty("group.initial.rebalance.delay.ms", "0")
           .withBrokers(2);
 
-  private static final DropwizardAppRule<KafkaExampleConfiguration> DROPWIZARD_APP_RULE =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  static final DropwizardAppExtension<KafkaExampleConfiguration> DW =
+      new DropwizardAppExtension<>(
           KafkaExampleProducerApplication.class,
           resourceFilePath("test-config-producer.yml"),
           config("kafka.brokers", KAFKA::getKafkaConnectString));
 
-  @ClassRule
-  public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
-
   private static final String TOPIC_NAME = "exampleTopic";
 
   @Test
-  public void testUseProducer() throws JsonProcessingException {
+  void testUseProducer() throws JsonProcessingException {
     // given
-    KafkaExampleProducerApplication application = DROPWIZARD_APP_RULE.getApplication();
+    KafkaExampleProducerApplication application = DW.getApplication();
     final String key = "key";
     final String v1 = "v1";
     final String v2 = "v2";
@@ -76,9 +76,9 @@ public class KafkaExampleProducerIT {
   }
 
   @Test
-  public void testUseProducerWithConfiguration() {
+  void testUseProducerWithConfiguration() {
     // given
-    KafkaExampleProducerApplication application = DROPWIZARD_APP_RULE.getApplication();
+    KafkaExampleProducerApplication application = DW.getApplication();
 
     // when
     application.sendExampleWithConfiguration(1L, 2L);
