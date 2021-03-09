@@ -1,27 +1,28 @@
 package org.sdase.commons.server.kafka;
 
+import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-import org.sdase.commons.server.kafka.confluent.testing.KafkaBrokerEnvironmentRule;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.model.Key;
 import org.sdase.commons.server.kafka.model.Value;
 
-public class KafkaExampleConsumerIT {
+class KafkaExampleConsumerIT {
 
-  private static final SharedKafkaTestResource KAFKA =
+  @RegisterExtension
+  @Order(0)
+  static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           .withBrokers(2)
           // we only need one consumer offsets partition
@@ -30,24 +31,20 @@ public class KafkaExampleConsumerIT {
           // fresh kafka instance
           .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
-  private static final KafkaBrokerEnvironmentRule KAFKA_BROKER_ENVIRONMENT_RULE =
-      new KafkaBrokerEnvironmentRule(KAFKA);
-
-  private static final DropwizardAppRule<KafkaExampleConfiguration> DROPWIZARD_APP_RULE =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  static final DropwizardAppExtension<KafkaExampleConfiguration> DW =
+      new DropwizardAppExtension<>(
           KafkaExampleConsumerApplication.class,
-          ResourceHelpers.resourceFilePath("test-config-consumer.yml"));
-
-  @ClassRule
-  public static final TestRule CHAIN =
-      RuleChain.outerRule(KAFKA_BROKER_ENVIRONMENT_RULE).around(DROPWIZARD_APP_RULE);
+          ResourceHelpers.resourceFilePath("test-config-consumer.yml"),
+          config("kafka.brokers", KAFKA::getKafkaConnectString));
 
   private static final String TOPIC_NAME = "exampleTopic";
 
   @Test
-  public void testUseConsumer() throws JsonProcessingException {
+  void testUseConsumer() throws JsonProcessingException {
     // given
-    KafkaExampleConsumerApplication application = DROPWIZARD_APP_RULE.getApplication();
+    KafkaExampleConsumerApplication application = DW.getApplication();
     final String key = "key";
     final String v1 = "v1";
     final String v2 = "v2";
@@ -67,9 +64,9 @@ public class KafkaExampleConsumerIT {
   }
 
   @Test
-  public void testUseConsumerWithConfiguration() {
+  void testUseConsumerWithConfiguration() {
     // given
-    KafkaExampleConsumerApplication application = DROPWIZARD_APP_RULE.getApplication();
+    KafkaExampleConsumerApplication application = DW.getApplication();
 
     Map<byte[], byte[]> records = new HashMap<>();
     records.put(new byte[] {0, 0, 0, 0, 0, 0, 0, 1}, new byte[] {0, 0, 0, 0, 0, 0, 0, 2});

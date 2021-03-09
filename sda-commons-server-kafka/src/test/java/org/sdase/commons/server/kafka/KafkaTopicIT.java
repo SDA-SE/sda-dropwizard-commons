@@ -3,10 +3,11 @@ package org.sdase.commons.server.kafka;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,11 +19,10 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.assertj.core.util.Maps;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
@@ -39,9 +39,11 @@ import org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException;
 import org.sdase.commons.server.kafka.topicana.TopicComparer;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
-public class KafkaTopicIT {
+class KafkaTopicIT {
 
-  private static final SharedKafkaTestResource KAFKA =
+  @RegisterExtension
+  @Order(0)
+  static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           .withBrokerProperty("auto.create.topics.enable", "false")
           // we only need one consumer offsets partition
@@ -51,27 +53,26 @@ public class KafkaTopicIT {
           .withBrokerProperty("group.initial.rebalance.delay.ms", "0")
           .withBrokers(2);
 
-  private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  static final DropwizardAppExtension<KafkaTestConfiguration> DW =
+      new DropwizardAppExtension<>(
           KafkaTestApplication.class,
           resourceFilePath("test-config-default.yml"),
           config("kafka.brokers", KAFKA::getKafkaConnectString));
 
-  @ClassRule
-  public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
-
   private KafkaBundle<KafkaTestConfiguration> bundle;
-  private List<String> results = Collections.synchronizedList(new ArrayList<>());
+  private final List<String> results = Collections.synchronizedList(new ArrayList<>());
 
-  @Before
+  @BeforeEach
   public void setup() {
     results.clear();
-    KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
+    KafkaTestApplication app = DW.getApplication();
     bundle = app.kafkaBundle();
   }
 
   @Test
-  public void checkTopicSuccessful() {
+  void checkTopicSuccessful() {
     String topicName = "checkTopicSuccessful";
     KAFKA.getKafkaTestUtils().createTopic(topicName, 1, (short) 1);
     List<MessageListener<String, String>> stringStringMessageListener =
@@ -92,7 +93,7 @@ public class KafkaTopicIT {
   }
 
   @Test
-  public void checkTopicSuccessfulComplex() {
+  void checkTopicSuccessfulComplex() {
     String topicName = "checkTopicSuccessfulComplex";
     KAFKA.getKafkaTestUtils().createTopic(topicName, 2, (short) 1);
     List<MessageListener<String, String>> stringStringMessageListener =
@@ -117,28 +118,27 @@ public class KafkaTopicIT {
     assertThat(stringStringMessageListener).isNotNull();
   }
 
-  @Test(expected = MismatchedTopicConfigException.class)
-  public void checkTopicFails() {
-
-    List<MessageListener<String, String>> stringStringMessageListener =
-        bundle.createMessageListener(
-            MessageListenerRegistration.builder()
-                .withDefaultListenerConfig()
-                .forTopic("SomeNotExisting")
-                .checkTopicConfiguration()
-                .withDefaultConsumer()
-                .withValueDeserializer(new StringDeserializer())
-                .withListenerStrategy(
-                    new AutocommitMLS<String, String>(
-                        record -> results.add(record.value()),
-                        new IgnoreAndProceedErrorHandler<>()))
-                .build());
-
-    assertThat(stringStringMessageListener).isNotNull();
+  @Test
+  void checkTopicFails() {
+    assertThatCode(
+            () ->
+                bundle.createMessageListener(
+                    MessageListenerRegistration.builder()
+                        .withDefaultListenerConfig()
+                        .forTopic("SomeNotExisting")
+                        .checkTopicConfiguration()
+                        .withDefaultConsumer()
+                        .withValueDeserializer(new StringDeserializer())
+                        .withListenerStrategy(
+                            new AutocommitMLS<String, String>(
+                                record -> results.add(record.value()),
+                                new IgnoreAndProceedErrorHandler<>()))
+                        .build()))
+        .isInstanceOf(MismatchedTopicConfigException.class);
   }
 
   @Test
-  public void createSimpleTopic() {
+  void createSimpleTopic() {
     String topicName = "createSimpleTopic";
     ExpectedTopicConfiguration topic =
         TopicConfigurationBuilder.builder(topicName)
@@ -157,7 +157,7 @@ public class KafkaTopicIT {
   }
 
   @Test
-  public void createSimpleTopicNameOnly() {
+  void createSimpleTopicNameOnly() {
     String topicName = "createSimpleTopicNameOnly";
     MessageProducer<Object, Object> producer =
         bundle.registerProducer(
@@ -169,8 +169,8 @@ public class KafkaTopicIT {
     assertThat(producer).isNotNull();
   }
 
-  @Test(expected = TopicCreationException.class)
-  public void createTopicException() {
+  @Test
+  void createTopicException() {
     String topicName = "createTopicException";
     ExpectedTopicConfiguration topic =
         TopicConfigurationBuilder.builder(topicName)
@@ -179,16 +179,19 @@ public class KafkaTopicIT {
             .withConfig("delete.retention.ms", "2000")
             .withConfig("some.bullshit", "2000")
             .build();
-    bundle.registerProducer(
-        ProducerRegistration.builder()
-            .forTopic(topic)
-            .createTopicIfMissing()
-            .withDefaultProducer()
-            .build());
+    assertThatCode(
+            () ->
+                bundle.registerProducer(
+                    ProducerRegistration.builder()
+                        .forTopic(topic)
+                        .createTopicIfMissing()
+                        .withDefaultProducer()
+                        .build()))
+        .isInstanceOf(TopicCreationException.class);
   }
 
-  @Test(expected = MismatchedTopicConfigException.class)
-  public void compareTopicWithConfigFail() {
+  @Test
+  void compareTopicWithConfigFail() {
     String topicName = "compareTopicWithConfigFail";
     createTopic(topicName, Maps.newHashMap("delete.retention.ms", "9999"));
 
@@ -198,16 +201,19 @@ public class KafkaTopicIT {
             .withReplicationFactor(2)
             .withConfig("delete.retention.ms", "2000")
             .build();
-    bundle.registerProducer(
-        ProducerRegistration.builder()
-            .forTopic(topic)
-            .checkTopicConfiguration()
-            .withDefaultProducer()
-            .build());
+    assertThatCode(
+            () ->
+                bundle.registerProducer(
+                    ProducerRegistration.builder()
+                        .forTopic(topic)
+                        .checkTopicConfiguration()
+                        .withDefaultProducer()
+                        .build()))
+        .isInstanceOf(MismatchedTopicConfigException.class);
   }
 
   @Test
-  public void compareTopicWrongProperty() {
+  void compareTopicWrongProperty() {
     String topicName = "compareTopicWrongProperty";
     createTopic(topicName, Maps.newHashMap("delete.retention.ms", "9999"));
 
@@ -219,8 +225,7 @@ public class KafkaTopicIT {
             .withConfig("delete.retention.ms", "2000")
             .build();
     ComparisonResult compare =
-        comparer.compare(
-            Collections.singletonList(topic), DROPWIZARD_APP_RULE.getConfiguration().getKafka());
+        comparer.compare(Collections.singletonList(topic), DW.getConfiguration().getKafka());
 
     assertThat(compare).isNotNull();
     Collection<Comparison<String>> topicCompareDetails =
@@ -232,7 +237,7 @@ public class KafkaTopicIT {
   }
 
   @Test
-  public void compareTopicMissing() {
+  void compareTopicMissing() {
     String topicName = "compareTopicMissing";
 
     TopicComparer comparer = new TopicComparer();
@@ -242,15 +247,14 @@ public class KafkaTopicIT {
             .withReplicationFactor(2)
             .build();
     ComparisonResult compare =
-        comparer.compare(
-            Collections.singletonList(topic), DROPWIZARD_APP_RULE.getConfiguration().getKafka());
+        comparer.compare(Collections.singletonList(topic), DW.getConfiguration().getKafka());
 
     assertThat(compare).isNotNull();
     assertThat(compare.getMissingTopics()).containsExactly(topicName);
   }
 
   @Test
-  public void compareTopicWrongReplication() {
+  void compareTopicWrongReplication() {
     String topicName = "compareTopicWrongReplication";
 
     createTopic(topicName);
@@ -263,8 +267,7 @@ public class KafkaTopicIT {
             .build();
 
     ComparisonResult compare =
-        comparer.compare(
-            Collections.singletonList(topic), DROPWIZARD_APP_RULE.getConfiguration().getKafka());
+        comparer.compare(Collections.singletonList(topic), DW.getConfiguration().getKafka());
 
     assertThat(compare).isNotNull();
     assertThat(compare.getMismatchingReplicationFactor().get(topicName))
@@ -288,7 +291,7 @@ public class KafkaTopicIT {
   }
 
   @Test
-  public void compareTopicWithConfigOk() {
+  void compareTopicWithConfigOk() {
     String topicName = "compareTopicWithConfigOk";
 
     try (AdminClient admin = KAFKA.getKafkaTestUtils().getAdminClient()) {
@@ -314,7 +317,7 @@ public class KafkaTopicIT {
   }
 
   @Test
-  public void createComplexTopic() {
+  void createComplexTopic() {
     String topicName = "createComplexTopic";
     ExpectedTopicConfiguration topic =
         TopicConfigurationBuilder.builder(topicName)

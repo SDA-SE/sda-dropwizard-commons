@@ -136,8 +136,8 @@ subprojects {
       repositories {
         maven {
           name = "sdaIntern"
-          def releasesRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-releases/"
-          def snapshotsRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
+          def releasesRepoUrl = "https://nexus.sda-se.io/repository/sda-se-releases/"
+          def snapshotsRepoUrl = "https://nexus.sda-se.io/repository/sda-se-snapshots/"
           url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
           credentials {
