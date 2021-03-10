@@ -17,7 +17,7 @@ Example:
 class WireMockExtensionTest {
 
   @RegisterExtension
-  WiremockExtension wire = new WiremockExtension();
+  WireMockExtension wire = new WireMockExtension();
 
   @BeforeEach
   void before() {
