@@ -3,9 +3,6 @@ kind: Component
 metadata:
   name: sda-dropwizard-commons
   annotations:
-    github.com/project-slug: 'sda-se/sda-dropwizard-commons'
-    fossa.io/project-name: sda-dropwizard-commons
-    sonarqube.org/project-key: SDA-SE_sda-dropwizard-commons
     sda.se/summary: |
       The [sda-dropwizard-commons](https://github.com/SDA-SE/sda-dropwizard-commons) library
       includes several modules to speed up SDA-compliant microservice development. It is
