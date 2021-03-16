@@ -24,6 +24,7 @@ import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.process.extract.DirectoryAndExecutableNaming;
+import de.flapdoodle.embed.process.extract.UUIDTempNaming;
 import de.flapdoodle.embed.process.io.directories.*;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.embed.process.store.ExtractedArtifactStore;
@@ -225,8 +226,13 @@ public class StartLocalMongoDb {
             .temp(
                 DirectoryAndExecutableNaming.of(
                     new PlatformTempDir(), (prefix, postfix) -> "mongod"));
+      } else {
+        artifactStoreBuilder.extraction(
+            DirectoryAndExecutableNaming.builder()
+                .directory(new PropertyOrPlatformTempDir())
+                .executableNaming(new UUIDTempNaming())
+                .build());
       }
-
       return artifactStoreBuilder.build();
     }
   }
