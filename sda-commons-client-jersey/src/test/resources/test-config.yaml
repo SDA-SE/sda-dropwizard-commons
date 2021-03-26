@@ -8,3 +8,11 @@ server:
 
 mockBaseUrl: ${MOCK_BASE_URL}
 consumerToken: test-consumer
+
+oidc:
+  disabled: false
+  useAuthHeader: true
+  clientId: id
+  clientSecret: secret
+  issuerUrl: url
+  grantType: client_credentials
