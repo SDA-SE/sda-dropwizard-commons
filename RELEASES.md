@@ -5,7 +5,7 @@ This document describes the release process of SDA Dropwizard Commons.
 ## Happy Path
 
 The release process is automated.
-It generates new releases for all merges to `master` or `release/2.x.x` and uploads all releases to Maven Central.
+It generates new releases for all merges to `master` and uploads all releases to Maven Central.
 New releases are created based on Semantic Versioning (see also [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 As soon as a Pull Request was merged, the following actions happen in order:
