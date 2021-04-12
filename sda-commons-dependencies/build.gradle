@@ -174,7 +174,7 @@ dependencies {
     api "org.scala-lang:scala-reflect:$scalaVersion", {
       because "version from org.apache.kafka:kafka_2.12"
     }
-    api "com.fasterxml.jackson.module:jackson-module-scala_2.12:2.10.2", {
+    api "com.fasterxml.jackson.module:jackson-module-scala_2.12:2.12.2", {
       because "this is the requested version of org.apache.kafka:kafka_2.12:2.6.1"
     }
   }
