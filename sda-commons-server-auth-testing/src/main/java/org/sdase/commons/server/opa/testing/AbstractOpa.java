@@ -24,6 +24,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractOpa {
+
+  /**
+   * Tests are a bit flaky on servers when OPA is involved. That's why we increase the default
+   * timeout.
+   */
+  static final String OPA_CLIENT_TIMEOUT = "dw.opa.opaClient.timeout";
+
+  static final String OPA_CLIENT_TIMEOUT_DEFAULT = "1000ms";
+
   private static final Logger LOG = LoggerFactory.getLogger(AbstractOpa.class);
 
   private static final ObjectMapper OM = new ObjectMapper();
