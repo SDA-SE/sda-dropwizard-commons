@@ -8,6 +8,7 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 @SuppressWarnings("WeakerAccess")
 public class OpaRule extends AbstractOpa implements TestRule {
@@ -15,9 +16,14 @@ public class OpaRule extends AbstractOpa implements TestRule {
   private final WireMockClassRule wireMockClassRule =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
+  private final SystemPropertyRule systemPropertyRule =
+      new SystemPropertyRule().setProperty(OPA_CLIENT_TIMEOUT, OPA_CLIENT_TIMEOUT_DEFAULT);
+
   @Override
   public Statement apply(Statement base, Description description) {
-    return RuleChain.outerRule(wireMockClassRule).apply(base, description);
+    return RuleChain.outerRule(wireMockClassRule)
+        .around(systemPropertyRule)
+        .apply(base, description);
   }
 
   public String getUrl() {
