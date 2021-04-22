@@ -79,3 +79,6 @@ Add to the dependencies (example):
       ...
     }
 ```
+
+# Intentional Submitting Vulnerabilities
+By submitting the patch, I as a contributor aggree to not introduce bugs intentionally.
