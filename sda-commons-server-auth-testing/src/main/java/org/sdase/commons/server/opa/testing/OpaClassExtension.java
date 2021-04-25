@@ -14,6 +14,8 @@ public class OpaClassExtension extends AbstractOpa implements BeforeAllCallback,
   private final WireMockExtension wireMockExtension =
       new WireMockExtension(wireMockConfig().dynamicPort());
 
+  private String opaClientTimeoutBackup = null;
+
   public String getUrl() {
     return wireMockExtension.baseUrl();
   }
@@ -24,11 +26,18 @@ public class OpaClassExtension extends AbstractOpa implements BeforeAllCallback,
 
   @Override
   public void beforeAll(final ExtensionContext context) {
+    opaClientTimeoutBackup = System.getProperty(OPA_CLIENT_TIMEOUT);
+    System.setProperty(OPA_CLIENT_TIMEOUT, OPA_CLIENT_TIMEOUT_DEFAULT);
     wireMockExtension.start();
   }
 
   @Override
   public void afterAll(final ExtensionContext context) {
+    if (opaClientTimeoutBackup == null) {
+      System.clearProperty(OPA_CLIENT_TIMEOUT);
+    } else {
+      System.setProperty(OPA_CLIENT_TIMEOUT, opaClientTimeoutBackup);
+    }
     wireMockExtension.stop();
   }
 
