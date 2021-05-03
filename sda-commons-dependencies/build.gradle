@@ -116,7 +116,7 @@ dependencies {
     api "io.findify:s3mock_2.12:0.2.6"
 
     // sda-commons-server-swagger
-    api "com.github.java-json-tools:json-schema-validator:2.2.10"
+    api "com.github.java-json-tools:json-schema-validator:2.2.14"
     api "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"
 
     // sda-commons-server-testing
