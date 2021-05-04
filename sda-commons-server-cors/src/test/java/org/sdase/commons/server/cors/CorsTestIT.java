@@ -38,11 +38,19 @@ public class CorsTestIT {
           CorsRestrictedTestApp.class,
           ResourceHelpers.resourceFilePath("test-config-restricted.yaml"));
 
+  @ClassRule
+  public static DropwizardAppRule<CorsTestConfiguration> DW_PATTERN =
+      new DropwizardAppRule<>(
+          CorsRestrictedTestApp.class,
+          ResourceHelpers.resourceFilePath("test-config-pattern.yaml"));
+
   private String allowAllEndpoint =
       "http://localhost:" + DW_ALLOW.getLocalPort() + "/samples/empty";
   private String denyEndpoint = "http://localhost:" + DW_DENY.getLocalPort() + "/samples/empty";
   private String restrictedEndpoint =
       "http://localhost:" + DW_RESTRICTED.getLocalPort() + "/samples/empty";
+  private String patternEndpoint =
+      "http://localhost:" + DW_PATTERN.getLocalPort() + "/samples/empty";
 
   @Test
   public void shouldNotSetHeaderWhenDeny() {
@@ -253,6 +261,64 @@ public class CorsTestIT {
         .isNullOrEmpty();
     assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
         .isNullOrEmpty();
+  }
+
+  @Test
+  public void shouldNotSetHeaderWhenDenyedUnmatchedHostname() {
+    String origin = "unknown-server-a.com";
+    Response response =
+        DW_PATTERN
+            .client()
+            .target(patternEndpoint)
+            .request(MediaType.APPLICATION_JSON)
+            .header("Origin", origin)
+            .get();
+
+    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+        .isNullOrEmpty();
+    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+        .isNullOrEmpty();
+    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+        .isNullOrEmpty();
+  }
+
+  @Test
+  public void shouldSetHeaderWhenAllowForMatchedSubdomain() {
+    String origin = "unknown.server-a.com";
+    Response response =
+        DW_PATTERN
+            .client()
+            .target(patternEndpoint)
+            .request(MediaType.APPLICATION_JSON)
+            .header("Origin", origin)
+            .get();
+
+    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+        .isEqualTo(origin);
+    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+        .isEqualTo("Location,exposed");
+    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+        .isEqualTo(Boolean.TRUE.toString());
+  }
+
+  @Test
+  public void shouldSetHeaderWhenAllowForMatchedDomain() {
+    String origin = "unknownserver-c.com";
+    Response response =
+        DW_PATTERN
+            .client()
+            .target(patternEndpoint)
+            .request(MediaType.APPLICATION_JSON)
+            .header("Origin", origin)
+            .header(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER, "POST")
+            .get();
+
+    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+        .isEqualTo(origin);
+    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+        .isEqualTo("Location,exposed");
+    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+        .isEqualTo(Boolean.TRUE.toString());
   }
 
   private String[] getAllowedHeaderList(String... configured) {
