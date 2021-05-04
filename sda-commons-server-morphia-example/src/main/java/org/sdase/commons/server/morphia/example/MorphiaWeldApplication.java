@@ -12,8 +12,9 @@ import org.sdase.commons.server.morphia.example.mongo.CarManager;
 import org.sdase.commons.server.morphia.example.mongo.model.Car;
 import org.sdase.commons.server.weld.DropwizardWeldHelper;
 
+/** Example to use MorphiaBundle in a Weld application. */
 @ApplicationScoped // make this application a WELD application
-public class MorphiaApplication extends Application<MorphiaApplicationConfiguration> {
+public class MorphiaWeldApplication extends Application<MorphiaApplicationConfiguration> {
 
   @Inject
   private CarManager carManager; // car manager as example for injection of morphia data store
@@ -28,7 +29,7 @@ public class MorphiaApplication extends Application<MorphiaApplicationConfigurat
           .build();
 
   public static void main(String[] args) throws Exception {
-    DropwizardWeldHelper.run(MorphiaApplication.class, args); // Main to start this application
+    DropwizardWeldHelper.run(MorphiaWeldApplication.class, args); // Main to start this application
   }
 
   @Override

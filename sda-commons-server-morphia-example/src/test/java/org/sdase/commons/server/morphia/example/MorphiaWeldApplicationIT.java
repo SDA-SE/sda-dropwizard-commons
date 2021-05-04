@@ -15,7 +15,7 @@ import org.sdase.commons.server.morphia.example.mongo.CarManager;
 import org.sdase.commons.server.morphia.example.mongo.model.Car;
 import org.sdase.commons.server.weld.testing.WeldAppRule;
 
-public class MorphiaApplicationIT {
+public class MorphiaWeldApplicationIT {
 
   private static final MongoDbRule MONGODB =
       MongoDbRule.builder()
@@ -23,7 +23,7 @@ public class MorphiaApplicationIT {
 
   private static final WeldAppRule<MorphiaApplicationConfiguration> APP_RULE =
       new WeldAppRule<>(
-          MorphiaApplication.class, // normal WELD rule initialization
+          MorphiaWeldApplication.class, // normal WELD rule initialization
           null,
           // start the application with random ports
           randomPorts(),
@@ -47,7 +47,7 @@ public class MorphiaApplicationIT {
 
   @Before
   public void before() {
-    MorphiaApplication app = APP_RULE.<MorphiaApplication>getApplication();
+    MorphiaWeldApplication app = APP_RULE.getApplication();
     carManager = app.carManager();
     datastore = app.morphiaDatastore();
     datastore.delete(datastore.createQuery(Car.class));
