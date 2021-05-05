@@ -7,6 +7,7 @@ import static org.sda.commons.server.jackson.hal.HalLinkProvider.methodOn;
 
 import io.openapitools.jackson.dataformat.hal.HALLink;
 import java.net.URI;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -35,6 +36,13 @@ public class HalLinkProviderTest {
     final org.sda.commons.server.jackson.hal.LinkResult linkResult =
         linkTo(methodOn(TestApi.class).testMethodQueryParam("TEST"));
     assertLinkResult(linkResult, "/testPath?testRequestParam=TEST");
+  }
+
+  @Test
+  public void shouldProvideHalLinkIgnoringCookieParam() {
+    final org.sda.commons.server.jackson.hal.LinkResult linkResult =
+        linkTo(methodOn(TestApi.class).testMethodCookieParam("TEST"));
+    assertLinkResult(linkResult, "/testPath");
   }
 
   @Test
@@ -98,6 +106,10 @@ interface TestApi {
       @PathParam("testArg") String testArg,
       @QueryParam("query") Integer testArgTwo,
       @PathParam("testArg2") String query);
+
+  @Path("/testPath")
+  @GET
+  String testMethodCookieParam(@CookieParam("testCookie") String testCookie);
 
   @Path("/testPath")
   @GET
