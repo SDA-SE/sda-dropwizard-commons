@@ -3,11 +3,8 @@ package org.sdase.commons.server.jackson.hal;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import org.slf4j.Logger;
@@ -80,34 +77,21 @@ public class HalLinkInvocationStateUtility {
       MethodInvocationState methodInvocationState,
       Object[] methodArguments,
       Parameter[] parameters) {
-    final List<Parameter> annotatedParams =
-        Arrays.stream(parameters)
-            .filter(
-                parameter ->
-                    parameter.getAnnotation(PathParam.class) != null
-                        || parameter.getAnnotation(QueryParam.class) != null)
-            .collect(Collectors.toList());
-
-    // Check if all parameters has an Query/Path-Param annotation
-    if (annotatedParams.size() != parameters.length) {
-      // Deprecated type needed for backward compatibility until deprecated package is removed
-      // afterwards the the class from this package can be used
-      throw new org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException(
-          "Each method parameter needs at least a @PathParam or @QueryParam annotation.");
-    }
 
     // Correlation between method argument order and annotatedParams order
-    for (int i = 0; i < annotatedParams.size(); i++) {
-      final PathParam pathParam = annotatedParams.get(i).getAnnotation(PathParam.class);
-      final Object paramValue = methodArguments[i];
-      if (pathParam != null) {
+    for (int i = 0; i < parameters.length; i++) {
+      Parameter parameter = parameters[i];
+      if (parameter.isAnnotationPresent(PathParam.class)) {
+        final PathParam pathParam = parameter.getAnnotation(PathParam.class);
+        final Object paramValue = methodArguments[i];
         methodInvocationState.getPathParams().put(pathParam.value(), paramValue);
         LOG.debug(
             "Saved PathParam: '{}' with value: '{}' to current invocation state",
             pathParam.value(),
             paramValue);
-      } else {
-        final QueryParam queryParam = annotatedParams.get(i).getAnnotation(QueryParam.class);
+      } else if (parameter.isAnnotationPresent(QueryParam.class)) {
+        final QueryParam queryParam = parameter.getAnnotation(QueryParam.class);
+        final Object paramValue = methodArguments[i];
         if (paramValue != null) {
           methodInvocationState.getQueryParams().put(queryParam.value(), paramValue);
           LOG.debug(
@@ -115,9 +99,7 @@ public class HalLinkInvocationStateUtility {
               queryParam.value(),
               paramValue);
         } else {
-          LOG.debug(
-              "Ignoring QueryParam: '{}' with null-value. Won't be used for building the Link.",
-              queryParam.value());
+          LOG.debug("Ignoring parameter {} annotated with {}", i, parameter.getAnnotations());
         }
       }
     }
