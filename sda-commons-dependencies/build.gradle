@@ -139,7 +139,7 @@ dependencies {
       because "Dropwizard does not use the jakarta version yet so we replace it in weld with the javax version that comes as transitive dependency without explicit version."
     }
 
-    api "org.junit-pioneer:junit-pioneer:1.4.0"
+    api "org.junit-pioneer:junit-pioneer:1.4.1"
 
     // sda-commons-shared-*
     api 'commons-io:commons-io:2.8.0'
