@@ -95,7 +95,7 @@ public class HalLinkProvider implements Feature {
     try {
       if (invocation != null || !methodInvocationState.isProcessed()) {
         // Deprecated type needed for backward compatibility until deprecated package is removed
-        // afterwards the the class from this package can be used
+        // afterwards the class from this package can be used
         throw new org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException(
             "No proxied method invocation processed.");
       }
