@@ -1,6 +1,7 @@
 package org.sdase.commons.shared.asyncapi;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
+import org.sdase.commons.shared.asyncapi.AsyncApiGenerator.SchemaBuilder;
 import org.sdase.commons.shared.asyncapi.models.BaseEvent;
 import org.sdase.commons.shared.yaml.YamlUtil;
 
@@ -30,6 +32,15 @@ public class AsyncApiGeneratorTest {
         YamlUtil.load(actual, new TypeReference<Map<String, Object>>() {});
 
     assertThat(actualJson).usingRecursiveComparison().isEqualTo(expectedJson);
+  }
+
+  @Test
+  public void shouldNotGenerateAsyncApi() {
+    final SchemaBuilder schemaBuilder =
+        AsyncApiGenerator.builder()
+            .withAsyncApiBase(getClass().getResource("/asyncapi_template.yaml"))
+            .withSchema("BAD_PLACEHOLDER", BaseEvent.class);
+    assertThatCode(schemaBuilder::generateYaml).isInstanceOf(UnknownSchemaException.class);
   }
 
   @Test
