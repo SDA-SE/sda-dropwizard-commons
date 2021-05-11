@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Feature;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
@@ -38,6 +39,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
   private final ObjectMapper objectMapper;
 
   private List<ClientRequestFilter> filters;
+  private List<Feature> features;
 
   private Integer connectionTimeoutMillis;
 
@@ -52,6 +54,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
     this.tracer = tracer;
     this.objectMapper = environment.getObjectMapper();
     this.filters = new ArrayList<>();
+    this.features = new ArrayList<>();
     this.followRedirects = DEFAULT_FOLLOW_REDIRECTS;
 
     // a specific proxy configuration always overrides the system proxy
@@ -69,6 +72,18 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
    */
   public T addFilter(ClientRequestFilter clientRequestFilter) {
     this.filters.add(clientRequestFilter);
+    //noinspection unchecked
+    return (T) this;
+  }
+
+  /**
+   * Adds a feature used by the client.
+   *
+   * @param feature to be added
+   * @return this builder instance
+   */
+  public T addFeature(Feature feature) {
+    this.features.add(feature);
     //noinspection unchecked
     return (T) this;
   }
@@ -155,6 +170,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
 
     Client client = jerseyClientBuilder.using(configuration).build(name);
     filters.forEach(client::register);
+    features.forEach(client::register);
     client.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
     registerMultiPartIfAvailable(client);
     registerTracing(client, tracer);
