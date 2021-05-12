@@ -51,4 +51,4 @@ include 'sda-commons-shared-forms'
 include 'sda-commons-shared-yaml'
 include 'sda-commons-starter'
 include 'sda-commons-starter-example'
-
+include 'sda-commons-server-key-mgmt'

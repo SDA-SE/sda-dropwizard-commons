@@ -116,6 +116,10 @@ consumer token identifying the calling application.
 The module [`sda-commons-server-cors`](./sda-commons-server-cors/README.md) adds support for CORS. This allows
 Cross-origin resource sharing for the service.
 
+##### Forms
+
+The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) adds all required dependencies to support
+`multipart/*` in Dropwizard applications.
 
 ##### Dropwizard
 
@@ -151,12 +155,6 @@ The module [`sda-commons-server-jackson`](./sda-commons-server-jackson/README.md
 * registers exception mapper to support the common error structure as defined within the rest guide
 
 
-##### Forms
-
-The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) adds all required dependencies to support 
-`multipart/*` in Dropwizard applications.
-
-
 ##### Kafka
 
 The module [`sda-commons-server-kafka`](./sda-commons-server-kafka/README.md) provides means to send and consume 
@@ -165,6 +163,10 @@ messages from a Kafka topic.
 The module [`sda-commons-server-kafka-example`](./sda-commons-server-kafka-example/README.md) includes 
 applications, one with consumer and one with producer examples.   
 
+##### Key Management
+
+The module [`sda-commons-server-key-mgmt`](./sda-commons-server-key-mgmt/README.md) provides means to provide
+and map enumerations (keys) between the API data model and a possible implementation.
 
 ##### MongoDB
 
@@ -258,12 +260,6 @@ sda-commons library versions.
 
 The module [`sda-commons-client-jersey-example`](./sda-commons-client-jersey-example/README.md)
 presents an example application that shows how to invoke services.
-
-
-#### Forms
-
-The module [`sda-commons-shared-forms`](./sda-commons-shared-forms/README.md) adds all required dependencies to support 
-`multipart/*` in Dropwizard applications.
 
 
 ## Usage
