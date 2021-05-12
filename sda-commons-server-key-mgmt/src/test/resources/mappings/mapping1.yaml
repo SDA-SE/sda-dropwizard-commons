@@ -1,0 +1,16 @@
+name: LINES_OF_BUSINESS
+mapping:
+  apiToImplBidirectional:
+    - api: "HOUSEHOLD"
+      impl: "010"
+    - api: "CAR"
+      impl: "001"
+  apiToImpl:
+    - api: "HOUSEHOLD" # Test if precedence of concrete mapping over bi-directional works
+      impl: "020"
+---
+name: BIDIRECTIONAL_ONLY
+mapping:
+  apiToImplBidirectional:
+    - api: "A"
+      impl: "B"

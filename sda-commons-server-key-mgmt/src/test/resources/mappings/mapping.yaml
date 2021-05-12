@@ -1,0 +1,21 @@
+name: GENDER
+mapping:
+  apiToImplBidirectional:
+    - api: "MALE"
+      impl: "m"
+    - api: "FEMALE"
+      impl: "F"
+    - api: "OTHER"
+      impl: "d"
+---
+name: SALUTATION
+mapping:
+  apiToImplBidirectional:
+    - api: "MRS"
+      impl: "1"
+    - api: "MR"
+      impl: "0"
+  implToApi:
+    - impl: "2"
+      api: "MRS"
+
