@@ -319,6 +319,21 @@ It is highly recommended to use the grant type `client_credentials`.
 
 ## Tips and Tricks
 
+### Basic Authentication
+
+In order to call http endpoints which require a Basic Authentication header set you can register
+the `org.glassfish.jersey.client.authentication.HttpAuthenticationFeature` using the
+JerseyClientBuilder.
+
+```java
+jerseyClientBundle
+    .getClientFactory()
+    .externalClient()
+    .addFeature(HttpAuthenticationFeature.basic("foo", "bar"))
+    .api(ApiA.class)
+    .atTarget(apiABaseUrl);
+```
+
 ### 3rd Party `javax.ws.rs-api` Client Implementations in Classpath
 
 The clients used in sda-commons require the Jersey Client implementation. 
