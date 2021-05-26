@@ -85,7 +85,7 @@ dependencies {
     api "org.bouncycastle:bcpkix-jdk15on:1.68" // use the same version as bcprov-jdk15on in DW
 
     // sda-commons-server-swagger
-    api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.8"
+    api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9"
     api "io.swagger:swagger-annotations:$swaggerCoreVersion"
     api "io.swagger:swagger-jaxrs:$swaggerCoreVersion"
 
