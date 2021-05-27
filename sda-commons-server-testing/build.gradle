@@ -15,7 +15,9 @@ dependencies {
   compile 'org.hamcrest:hamcrest'
   compile 'org.mockito:mockito-core'
   compile 'org.assertj:assertj-core'
-  compile 'org.junit-pioneer:junit-pioneer'
+  compile 'org.junit-pioneer:junit-pioneer', {
+    exclude group: 'org.junit', module: 'junit-bom'
+  }
   compile 'org.junit.jupiter:junit-jupiter-params'
   compile 'org.mockito:mockito-junit-jupiter'
 
