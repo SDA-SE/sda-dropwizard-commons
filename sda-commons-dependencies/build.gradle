@@ -39,7 +39,7 @@ dependencies {
     api "net.sf.jopt-simple:jopt-simple:5.0.4", {
       because "conflict between org.apache.kafka:kafka_2.12 and com.github.tomakehurst:wiremock-jre8"
     }
-    api "org.jboss.logging:jboss-logging:3.4.1.Final", {
+    api "org.jboss.logging:jboss-logging:3.4.2.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
     }
     api "org.yaml:snakeyaml:1.28", {
