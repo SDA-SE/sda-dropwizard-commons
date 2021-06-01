@@ -19,6 +19,7 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
   private static final Logger LOG = LoggerFactory.getLogger(KeyMgmtBundle.class);
 
   private final KeyMgmtConfigProvider<T> configProvider;
+  private final FailStrategy failStrategy;
 
   private Map<String, KeyDefinition> keys;
   private Map<String, KeyMappingModel> mappings;
@@ -28,8 +29,9 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
     return new Builder<>();
   }
 
-  private KeyMgmtBundle(KeyMgmtConfigProvider<T> configProvider) {
+  private KeyMgmtBundle(KeyMgmtConfigProvider<T> configProvider, FailStrategy failStrategy) {
     this.configProvider = configProvider;
+    this.failStrategy = failStrategy;
   }
 
   @Override
@@ -63,6 +65,23 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
       throw new IllegalStateException(
           "KeyMapper can be build in run(C, Environment), not in initialize(Bootstrap)");
     }
+    if (failStrategy == FailStrategy.FAIL_WITH_EXCEPTION) {
+      return getMapOrFailKeyMapper(keyDefinitionName);
+    } else {
+      return getMapOrPassthroughKeyMapper(keyDefinitionName);
+    }
+  }
+
+  private MapOrFailKeyMapper getMapOrFailKeyMapper(String keyDefinitionName) {
+    if (mappings.containsKey(keyDefinitionName)) {
+      return new MapOrFailKeyMapper(mappings.get(keyDefinitionName));
+    } else {
+      throw new IllegalArgumentException(
+          String.format("No mapping found for key '%s'", keyDefinitionName));
+    }
+  }
+
+  private KeyMapper getMapOrPassthroughKeyMapper(String keyDefinitionName) {
     if (mappings.containsKey(keyDefinitionName)) {
       return new MapOrPassthroughKeyMapper(mappings.get(keyDefinitionName));
     } else {
@@ -83,18 +102,27 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
   // --------------
   // ----- Builder
   // --------------
+  public enum FailStrategy {
+    PASSTHROUGH,
+    FAIL_WITH_EXCEPTION
+  }
+
   public interface InitialBuilder {
     <C extends Configuration> FinalBuilder<C> withKeyMgmtConfigProvider(
         KeyMgmtConfigProvider<C> configProvider);
   }
 
   public interface FinalBuilder<C extends Configuration> {
+
+    FinalBuilder<C> withFailStrategy(FailStrategy strategy);
+
     KeyMgmtBundle<C> build();
   }
 
   public static class Builder<C extends Configuration> implements InitialBuilder, FinalBuilder<C> {
 
     private KeyMgmtConfigProvider<C> keyMgmtConfigProvider;
+    private FailStrategy failStrategy = FailStrategy.PASSTHROUGH;
 
     private Builder() {
       // private method to prevent external instantiation
@@ -105,8 +133,14 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
     }
 
     @Override
+    public FinalBuilder<C> withFailStrategy(FailStrategy strategy) {
+      this.failStrategy = strategy;
+      return this;
+    }
+
+    @Override
     public KeyMgmtBundle<C> build() {
-      return new KeyMgmtBundle<>(keyMgmtConfigProvider);
+      return new KeyMgmtBundle<>(keyMgmtConfigProvider, failStrategy);
     }
 
     @Override
