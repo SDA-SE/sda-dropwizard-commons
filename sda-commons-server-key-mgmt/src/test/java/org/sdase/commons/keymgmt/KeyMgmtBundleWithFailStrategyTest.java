@@ -2,6 +2,7 @@ package org.sdase.commons.keymgmt;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -12,12 +13,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.sdase.commons.keymgmt.manager.KeyManager;
-import org.sdase.commons.keymgmt.manager.KeyMapper;
-import org.sdase.commons.keymgmt.manager.NoKeyKeyManager;
-import org.sdase.commons.keymgmt.manager.PassthroughKeyMapper;
+import org.sdase.commons.keymgmt.manager.*;
 
-class KeyMgmtBundleTest {
+class KeyMgmtBundleWithFailStrategyTest {
 
   @RegisterExtension
   @Order(0)
@@ -38,22 +36,9 @@ class KeyMgmtBundleTest {
   }
 
   @Test
-  void shouldGetNoKeyKeyManagerIfKeyDoesNotExist() {
-    assertThat(keyMgmtBundle.createKeyManager("NOTEXISTING")).isInstanceOf(NoKeyKeyManager.class);
-  }
-
-  @Test
-  void shouldGetPassthroughKeyMapperManagerIfMappingDoesNotExists() {
-    assertThat(keyMgmtBundle.createKeyMapper("NOTEXISTING"))
-        .isInstanceOf(PassthroughKeyMapper.class);
-  }
-
-  @Test
-  void shouldGetKeyManagerManagerCaseInsensitive() {
-    KeyManager upperCase = keyMgmtBundle.createKeyManager("GENDER");
-    KeyManager lowerCase = keyMgmtBundle.createKeyManager("gender");
-    KeyManager mixedCase = keyMgmtBundle.createKeyManager("GeNdER");
-    assertThat(upperCase).isEqualTo(lowerCase).isEqualTo(mixedCase);
+  void shouldThrowIfMappingDoesNotExists() {
+    assertThrows(
+        IllegalArgumentException.class, () -> keyMgmtBundle.createKeyMapper("NOTEXISTING"));
   }
 
   @Test
@@ -61,15 +46,10 @@ class KeyMgmtBundleTest {
     KeyMapper upperCase = keyMgmtBundle.createKeyMapper("GENDER");
     KeyMapper lowerCase = keyMgmtBundle.createKeyMapper("gender");
     KeyMapper mixedCase = keyMgmtBundle.createKeyMapper("GeNdER");
-    assertThat(upperCase).isEqualTo(lowerCase).isEqualTo(mixedCase);
-  }
-
-  @Test
-  void shouldCheckKeyValuesCaseInsensitive() {
-    KeyManager gender = keyMgmtBundle.createKeyManager("GENDER");
-    assertThat(gender.isValidValue("MALE")).isTrue();
-    assertThat(gender.isValidValue("Male")).isTrue();
-    assertThat(gender.isValidValue("male")).isTrue();
+    assertThat(upperCase)
+        .isInstanceOf(MapOrFailKeyMapper.class)
+        .isEqualTo(lowerCase)
+        .isEqualTo(mixedCase);
   }
 
   @Test
@@ -97,8 +77,8 @@ class KeyMgmtBundleTest {
     KeyMapper gender = keyMgmtBundle.createKeyMapper("GENDER");
     assertThat(gender.toApi("m")).isEqualTo("MALE");
     assertThat(gender.toApi("F")).isEqualTo("FEMALE");
-    // pass through case
-    assertThat(gender.toApi("f")).isEqualTo("f");
+    // fail case
+    assertThrows(IllegalArgumentException.class, () -> gender.toApi("f"));
   }
 
   @Test
@@ -112,49 +92,14 @@ class KeyMgmtBundleTest {
   }
 
   @Test
-  void shouldConfirmValidKey() {
-    assertThat(keyMgmtBundle.createKeyManager("GENDER").isValidValue("MALE")).isTrue();
-    assertThat(keyMgmtBundle.createKeyManager("GENDER").isValidValue("MaLe")).isTrue();
-    assertThat(keyMgmtBundle.createKeyManager("GENDER").isValidValue("male")).isTrue();
-  }
-
-  @Test
-  void shouldDeclineInvalidKey() {
-    assertThat(keyMgmtBundle.createKeyManager("GENDER").isValidValue("Mr")).isFalse();
-  }
-
-  @Test
-  void shouldReturnListOfValidValues() {
-    assertThat(keyMgmtBundle.createKeyManager("GENDER").getValidValues())
-        .containsExactlyInAnyOrder("MALE", "FEMALE", "OTHER");
-  }
-
-  @Test
-  void shouldReturnFalseIfKeyNotEmpty() {
-    assertThat(keyMgmtBundle.createKeyManager("NONEXISTING").getValidValues()).isEmpty();
-  }
-
-  @Test
   void shouldMapBiDirectionalMappings() {
-    assertThat(keyMgmtBundle.createKeyMapper("BIDIRECTIONAL_ONLY").toApi("A"))
-        .isEqualTo("A"); // Pass through
-    assertThat(keyMgmtBundle.createKeyMapper("BIDIRECTIONAL_ONLY").toImpl("B"))
-        .isEqualTo("B"); // Pass through
-    assertThat(keyMgmtBundle.createKeyMapper("BIDIRECTIONAL_ONLY").toImpl("A")).isEqualTo("B");
-    assertThat(keyMgmtBundle.createKeyMapper("BIDIRECTIONAL_ONLY").toApi("B")).isEqualTo("A");
-  }
-
-  @Test
-  void shouldGetAllKeys() {
-    assertThat(keyMgmtBundle.getKeyDefinitionNames())
-        .containsExactlyInAnyOrder("GENDER", "SALUTATION");
-  }
-
-  @Test
-  void shouldGetAllMappings() {
-    assertThat(keyMgmtBundle.getMappingKeyDefinitionNames())
-        .containsExactlyInAnyOrder(
-            "GENDER", "SALUTATION", "LINES_OF_BUSINESS", "BIDIRECTIONAL_ONLY");
+    KeyMapper keyMapper = keyMgmtBundle.createKeyMapper("BIDIRECTIONAL_ONLY");
+    // fail case
+    assertThrows(IllegalArgumentException.class, () -> keyMapper.toApi("A"));
+    // fail case
+    assertThrows(IllegalArgumentException.class, () -> keyMapper.toImpl("B"));
+    assertThat(keyMapper.toImpl("A")).isEqualTo("B");
+    assertThat(keyMapper.toApi("B")).isEqualTo("A");
   }
 
   public static class KeyMgmtBundleTestApp extends Application<KeyMgmtBundleTestConfig> {
@@ -162,6 +107,7 @@ class KeyMgmtBundleTest {
     private final KeyMgmtBundle<KeyMgmtBundleTestConfig> keyMgmt =
         KeyMgmtBundle.builder()
             .withKeyMgmtConfigProvider(KeyMgmtBundleTestConfig::getKeyMgmt)
+            .withFailStrategy(KeyMgmtBundle.FailStrategy.FAIL_WITH_EXCEPTION)
             .build();
 
     @Override

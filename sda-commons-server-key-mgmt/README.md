@@ -22,9 +22,11 @@ The mapping between API and implementation of an API is necessary to define APIs
 For example, when wrapping an API that fits into the platform around an existing implementation.
 Therefore, every value mapping consists of an `api` and an `impl`ementation value. 
 
-The bundle provides a "pass through" default behavior for keys and mappings that are not known. 
-This means, that the original value is just passed instead of being mapped. 
-There is just a warning in the log files.
+The bundle provides a "pass through" default behavior for keys and mappings that are not known.
+This means, that the original value is just passed instead of being mapped. There is just a warning in the log files.
+
+This fail strategy can be configured as part of the builder. There is another fail strategy implemented (`FAIL_WITH_EXCEPTION`),
+that throws an `IllegalArgumentException` when no mapping can be found with no log message.
 
 ## Usage
 ```
@@ -36,6 +38,7 @@ Initialization of bundle:
   private final KeyMgmtBundle<KeyMgmtBundleTestConfig> keyMgmt =
         KeyMgmtBundle.builder()
             .withKeyMgmtConfigProvider(KeyMgmtBundleTestConfig::getKeyMgmt)
+            .withFailStrategy(FAIL_WITH_EXCEPTION)
             .build();
 ```
 
