@@ -49,6 +49,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.assertj.core.util.Lists;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.Before;
@@ -238,6 +239,17 @@ public class ApiClientTest {
         RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
             .withHeader("Trace-Token", matchingUuid()) // NOSONAR
             .withoutHeader(HttpHeaders.AUTHORIZATION));
+  }
+
+  @Test
+  public void loadCarsWithBasicAuthAndResponseDetails() {
+    Response response = createMockApiClientWithBasicAuth().requestCars();
+
+    assertThat(response.getStatus()).isEqualTo(200);
+    WIRE.verify(
+        RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
+            .withHeader("Trace-Token", matchingUuid()) // NOSONAR
+            .withHeader(HttpHeaders.AUTHORIZATION, matching("Basic Zm9vOmJhcg==")));
   }
 
   @Test
@@ -640,6 +652,16 @@ public class ApiClientTest {
     return app.getJerseyClientBundle()
         .getClientFactory()
         .platformClient()
+        .enableConsumerToken()
+        .api(MockApiClient.class)
+        .atTarget(WIRE.baseUrl());
+  }
+
+  private MockApiClient createMockApiClientWithBasicAuth() {
+    return app.getJerseyClientBundle()
+        .getClientFactory()
+        .platformClient()
+        .addFeature(HttpAuthenticationFeature.basic("foo", "bar"))
         .enableConsumerToken()
         .api(MockApiClient.class)
         .atTarget(WIRE.baseUrl());

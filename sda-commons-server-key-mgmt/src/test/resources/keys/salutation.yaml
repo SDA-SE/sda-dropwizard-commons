@@ -1,0 +1,7 @@
+name: SALUTATION
+description: "Salutation of a human in letters"
+values:
+  - value: MR
+    description: "male salutation"
+  - value: MRS
+    description: "female salutation"

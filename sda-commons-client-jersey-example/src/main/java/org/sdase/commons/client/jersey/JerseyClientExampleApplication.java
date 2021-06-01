@@ -8,6 +8,7 @@ import io.dropwizard.setup.Environment;
 import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.sdase.commons.client.jersey.clients.apia.ApiA;
 import org.sdase.commons.client.jersey.clients.apia.Car;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
@@ -55,10 +56,12 @@ public class JerseyClientExampleApplication extends Application<JerseyClientExam
 
     // Example 3:
     // create an external client based on an API that can simply be used as java interface
+    // (basic authentication header is set automatically)
     apiClient =
         jerseyClientBundle
             .getClientFactory()
             .externalClient()
+            .addFeature(HttpAuthenticationFeature.basic("foo", "bar"))
             .api(ApiA.class)
             .atTarget(apiABaseUrl);
 

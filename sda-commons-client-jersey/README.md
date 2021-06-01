@@ -213,7 +213,126 @@ In addition, each client can consume the standard [proxy system properties](http
 Please note that a specific proxy configuration in the `HttpClientConfiguration` disables the proxy system properties for the client using that configuration.
 This can be helpful when all clients in an Application should use the same proxy configuration (this includes the clients that are used by the [`sda-commons-server-auth` bundle](../sda-commons-server-auth).
 
+## OIDC Client
+
+This module also provides support for requesting OIDC access tokens from
+respective providers (e.g. Keycloak) for subsequent requests to other services.
+
+### Usage
+
+The [`OidcClient`](./src/main/java/org/sdase/commons/client/jersey/oidc/OidcClient.java) can be instantiated
+with a Jersey [`ClientFactory`](../sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java)
+and the respectable [`OidcConfiguration`](./src/main/java/org/sdase/commons/client/jersey/oidc/OidcConfiguration.java).
+The client also implements caching that is configured according to the access tokens expiration time claim.
+
+```java
+OidcClient oidcClient = new OidcClient(jerseyClientBundle.getClientFactory(), configuration.getOidc());
+OidcResult oidcResult = oidcClient.createAccessToken();
+String accessToken = oidcResult.getAccessToken();
+```
+
+An easy way to integrate the OidcClient into existing PlatformClients is by creating a ClientRequestFilter
+and passing it to the PlatformClientBuilder:
+
+
+```java
+public class OidcRequestFilter implements ClientRequestFilter {
+
+  private OidcClient oidcClient;
+
+  public OidcRequestFilter(ClientFactory clientFactory, OidcConfiguration oidc) {
+      this.oidcClient = new OidcClient(clientFactory, oidc);
+  }
+
+  @Override
+  public void filter(ClientRequestContext requestContext) {
+    requestContext.getHeaders().add(AUTHORIZATION, oidcResult.getBearerToken());
+  }
+}
+```
+
+```java
+ExternalServiceClient client = 
+    jerseyClientBundle
+      .getClientFactory()
+      .platformClient(configuration.getAuditableArchiveHttpClient())
+      .addFilter(oidcRequestFilter)
+      .api(ExternalServiceClient.class)
+      .atTarget(externalServiceUrl);
+```
+
+
+### Configuration
+
+The oidc client is configured in the `config.yaml` of the application.
+
+Example config for **production** to be used with environment variables of the cluster configuration:
+```yaml
+oidc:
+  disabled: ${OIDC_DISABLED:-false}
+  grantType: ${OIDC_GRANT_TYPE:-client_credentials}
+  clientId: ${OIDC_CLIENT_ID}
+  clientSecret: ${OIDC_CLIENT_SECRET}
+  username: ${OIDC_USERNAME}
+  password: ${OIDC_PASSWORD}
+  issuerUrl: ${OIDC_ISSUER_URL}
+  cache:
+    disabled: ${OIDC_CACHE_DISABLED:-false}
+```
+
+- _OIDC_DISABLED_
+  * Disable retrieving a new token completely. Not meant for production! 
+  * Example: `false`
+
+- _OIDC_GRANT_TYPE_
+  * Sets the OIDC grant type.
+  * Default: `client_credentials`
+  * Supported values:
+    * `client_credentials`
+    * *Deprecated*: `password`
+
+- _OIDC_CLIENT_ID_
+  * The client id.
+  * Example: `client_id`
+- _OIDC_CLIENT_SECRET_
+  * The client secret.
+  * Example: `s3cr3t`
+     
+- _OIDC_USERNAME_
+  * *Deprecated*: A username. Only used for grant type 'password'.
+  * Example: `john`
+
+- _OIDC_PASSWORD_
+  * *Deprecated*: A password. Only used for grant type 'password'.
+  * Example: `pa$$word`
+
+- _OIDC_ISSUER_URL_
+  * Contains the URL to the OpenID provider configuration document.
+  * Example: `https://<keycloak.domain>/auth/realms/<realm>`
+
+- _OIDC_CACHE_DISABLED_
+  * Disable the caching of retrieved tokens.
+  * Default: `false`
+    
+The grant type `password` is no longer allowed in OAuth2/2.1 and the support for it in this module will be deprecated at some point.
+It is highly recommended to use the grant type `client_credentials`.
+
 ## Tips and Tricks
+
+### Basic Authentication
+
+In order to call http endpoints which require a Basic Authentication header set you can register
+the `org.glassfish.jersey.client.authentication.HttpAuthenticationFeature` using the
+JerseyClientBuilder.
+
+```java
+jerseyClientBundle
+    .getClientFactory()
+    .externalClient()
+    .addFeature(HttpAuthenticationFeature.basic("foo", "bar"))
+    .api(ApiA.class)
+    .atTarget(apiABaseUrl);
+```
 
 ### 3rd Party `javax.ws.rs-api` Client Implementations in Classpath
 

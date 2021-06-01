@@ -7,6 +7,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.opentracing.mock.MockTracer;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
+import org.sdase.commons.client.jersey.oidc.OidcClient;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.trace.TraceTokenBundle;
 
@@ -18,6 +19,8 @@ public class ClientTestApp extends Application<ClientTestConfig> {
           .withConsumerTokenProvider(ClientTestConfig::getConsumerToken)
           .withTracer(tracer)
           .build();
+
+  private OidcClient oidcClient;
 
   public static void main(String[] args) throws Exception {
     new ClientTestApp().run(args);
@@ -40,6 +43,8 @@ public class ClientTestApp extends Application<ClientTestConfig> {
         .register(
             new ClientTestEndPoint(
                 jerseyClientBundle.getClientFactory(), configuration.getMockBaseUrl()));
+
+    oidcClient = new OidcClient(jerseyClientBundle.getClientFactory(), configuration.getOidc());
   }
 
   public JerseyClientBundle<ClientTestConfig> getJerseyClientBundle() {
@@ -48,5 +53,9 @@ public class ClientTestApp extends Application<ClientTestConfig> {
 
   public MockTracer getTracer() {
     return tracer;
+  }
+
+  public OidcClient getOidcClient() {
+    return oidcClient;
   }
 }

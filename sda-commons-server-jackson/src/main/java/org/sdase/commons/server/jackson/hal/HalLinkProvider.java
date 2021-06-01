@@ -92,23 +92,28 @@ public class HalLinkProvider implements Feature {
   private LinkResult linkToInvocation(Object invocation) {
     final HalLinkInvocationStateUtility.MethodInvocationState methodInvocationState =
         HalLinkInvocationStateUtility.loadMethodInvocationState();
-    if (invocation != null || !methodInvocationState.isProcessed()) {
-      // Deprecated type needed for backward compatibility until deprecated package is removed
-      // afterwards the the class from this package can be used
+    try {
+      if (invocation != null || !methodInvocationState.isProcessed()) {
+        // Deprecated type needed for backward compatibility until deprecated package is removed
+        // afterwards the class from this package can be used
+        throw new org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException(
+            "No proxied method invocation processed.");
+      }
+      final UriBuilder uriBuilder =
+          baseUriBuilder()
+              .path(methodInvocationState.getType())
+              .path(methodInvocationState.getType(), methodInvocationState.getInvokedMethod())
+              // Add Path Params from invocation state
+              .resolveTemplates(methodInvocationState.getPathParams());
+      // Add Query Params from invocation state
+      methodInvocationState.getQueryParams().forEach(uriBuilder::queryParam);
+      LinkResult linkResult = new LinkResult(uriBuilder.build());
+      HalLinkInvocationStateUtility.unloadMethodInvocationState();
+      return linkResult;
+    } catch (IllegalArgumentException e) {
       throw new org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException(
-          "No proxied method invocation processed.");
+          "Could not build URI.", e);
     }
-    final UriBuilder uriBuilder =
-        baseUriBuilder()
-            .path(methodInvocationState.getType())
-            .path(methodInvocationState.getType(), methodInvocationState.getInvokedMethod())
-            // Add Path Params from invocation state
-            .resolveTemplates(methodInvocationState.getPathParams());
-    // Add Query Params from invocation state
-    methodInvocationState.getQueryParams().forEach(uriBuilder::queryParam);
-    LinkResult linkResult = new LinkResult(uriBuilder.build());
-    HalLinkInvocationStateUtility.unloadMethodInvocationState();
-    return linkResult;
   }
 
   /**

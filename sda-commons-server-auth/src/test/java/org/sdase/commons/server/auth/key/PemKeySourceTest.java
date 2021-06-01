@@ -38,9 +38,23 @@ public class PemKeySourceTest {
   }
 
   @Test
-  public void shouldLoadPemKeyFromFile() {
+  public void shouldLoadPemKeyFromCertificateFile() {
     PemKeySource pemKeySource =
         new PemKeySource(null, new File(ResourceHelpers.resourceFilePath("example.pem")).toURI());
+
+    List<LoadedPublicKey> loadedPublicKeys = pemKeySource.loadKeysFromSource();
+
+    assertThat(loadedPublicKeys).hasSize(1);
+    LoadedPublicKey loadedPublicKey = loadedPublicKeys.get(0);
+    assertThat(loadedPublicKey.getKeySource()).isSameAs(pemKeySource);
+    assertThat(loadedPublicKey.getKid()).isNull();
+    assertThatLoadedKeyContainsPublicKey(loadedPublicKey);
+  }
+
+  @Test
+  public void shouldLoadPemKeyFromPublicKeyFile() {
+    final String resourceFilePath = ResourceHelpers.resourceFilePath("example-public-key.pem");
+    PemKeySource pemKeySource = new PemKeySource(null, new File(resourceFilePath).toURI());
 
     List<LoadedPublicKey> loadedPublicKeys = pemKeySource.loadKeysFromSource();
 

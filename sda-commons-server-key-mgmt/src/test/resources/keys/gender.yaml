@@ -1,0 +1,10 @@
+name: GENDER
+description: "Gender of a human"
+values:
+  - value: MALE
+    description: "male gender"
+  - value: FEMALE
+    description: "female gender"
+  - value: Other
+    description: "other if male or female does not fit"
+

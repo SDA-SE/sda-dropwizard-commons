@@ -93,7 +93,14 @@ public class AsyncApiGenerator {
     private JsonNode asyncApiBaseTemplate;
     private final Map<String, JsonNode> schemas = new HashMap<>();
     private final JsonSchemaEmbedder jsonSchemaEmbedder =
-        new JsonSchemaEmbedder("/components/schemas", schemas::get);
+        new JsonSchemaEmbedder(
+            "/components/schemas",
+            key -> {
+              if (!schemas.containsKey(key)) {
+                throw new UnknownSchemaException("Can't find schema for URL '" + key + "'");
+              }
+              return schemas.get(key);
+            });
 
     @Override
     public SchemaBuilder withAsyncApiBase(URL url) {

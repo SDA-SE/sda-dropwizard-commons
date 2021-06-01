@@ -14,6 +14,8 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      # always run all tests to avoid having different amounts of tests.
+      fail-fast: false
       matrix:
         java_version: ['1.8', '11']
         os: ['ubuntu-latest', 'windows-latest']
@@ -42,7 +44,9 @@ jobs:
         if: always()
         with:
           name: ${{ matrix.os }}-${{ matrix.java_version }}-test-results
-          path: build/reports/allTests
+          path: |
+            build/reports/allTests
+            */build/test-results/**/*.xml
           retention-days: 7
 
       - name: Sonarcloud
@@ -53,6 +57,24 @@ jobs:
           SONAR_LOGIN_TOKEN: ${{ secrets.SONAR_LOGIN_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PR: ${{ github.event.number }}
+
+  publish-test-results:
+    name: "Publish Unit Tests Results"
+    timeout-minutes: 60
+    needs: build
+    runs-on: ubuntu-latest
+    # Don't run for forks because of missing secrets
+    if: (success() || failure()) && !(github.event.pull_request && github.event.pull_request.head.repo.fork)
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@2c1638db7746f235576536a706b83d2eece7f413
+        with:
+          files: artifacts/**/*.xml
 
   # create release and publish the artifacts
   semantic-release:

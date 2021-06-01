@@ -8,8 +8,8 @@ plugins {
   id 'maven-publish'
   id 'jacoco'
   id 'signing'
-  id 'org.sonarqube' version '3.1.1'
-  id 'com.diffplug.spotless' version '5.10.0'
+  id 'org.sonarqube' version '3.2.0'
+  id 'com.diffplug.spotless' version '5.12.5'
   id 'io.codearte.nexus-staging' version '0.22.0'
 }
 
@@ -136,8 +136,8 @@ subprojects {
       repositories {
         maven {
           name = "sdaIntern"
-          def releasesRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-releases/"
-          def snapshotsRepoUrl = "https://nexus.intern.sda-se.online/repository/sda-se-snapshots/"
+          def releasesRepoUrl = "https://nexus.sda-se.io/repository/sda-se-releases/"
+          def snapshotsRepoUrl = "https://nexus.sda-se.io/repository/sda-se-snapshots/"
           url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
           credentials {

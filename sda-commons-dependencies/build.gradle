@@ -7,25 +7,25 @@ javaPlatform {
 }
 
 ext {
-  dropwizardVersion = '2.0.19'
+  dropwizardVersion = '2.0.22'
   morphiaVersion = '1.6.1'
   prometheusVersion = '0.9.0'
   swaggerCoreVersion = '1.6.2'
-  swaggerCoreV3Version = '2.1.6'
+  swaggerCoreV3Version = '2.1.9'
   weldVersion = '3.1.5.Final'
   openTracingUtilVersion = '0.33.0'
-  jsonUnitVersion = '2.24.0'
-  scalaVersion = '2.12.8' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
-  kafkaVersion = '2.2.1' // Fix version as decided in https://sda-se.atlassian.net/l/c/ce8EFM2e. Be careful when upgrading this dependency.
+  jsonUnitVersion = '2.26.0'
+  scalaVersion = '2.12.11' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
+  kafkaVersion = '2.6.1'
   kafkaJunitVersion = '3.2.2' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
-  dbRiderVersion = '1.22.0'
+  dbRiderVersion = '1.23.1'
 }
 
 dependencies {
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.3.50") // override version from dropwizard-bom
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion")
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.11.952")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.11.1021")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
   constraints {
@@ -33,16 +33,16 @@ dependencies {
     api "commons-codec:commons-codec:1.15", {
       because "conflict between org.apache.httpcomponents:httpclient:4.5.12 and org.dbunit:dbunit:2.7.0"
     }
-    api "io.github.classgraph:classgraph:4.8.90", {
+    api "io.github.classgraph:classgraph:4.8.106", {
       because "conflict between com.kjetland:mbknor-jackson-jsonschema_2.12 and dev.morphia.morphia:core"
     }
     api "net.sf.jopt-simple:jopt-simple:5.0.4", {
       because "conflict between org.apache.kafka:kafka_2.12 and com.github.tomakehurst:wiremock-jre8"
     }
-    api "org.jboss.logging:jboss-logging:3.4.1.Final", {
+    api "org.jboss.logging:jboss-logging:3.4.2.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
     }
-    api "org.yaml:snakeyaml:1.26", {
+    api "org.yaml:snakeyaml:1.28", {
       because "conflict between com.github.ftrossbach:club-topicana-core and com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
     }
     api "net.javacrumbs.json-unit:json-unit-core:$jsonUnitVersion", {
@@ -50,7 +50,7 @@ dependencies {
     }
 
     // overall testing dependencies
-    api "org.awaitility:awaitility:4.0.3"
+    api "org.awaitility:awaitility:4.1.0"
 
     // sda-commons-client-jersey-wiremock-testing
     api "com.github.tomakehurst:wiremock-jre8:2.27.2"
@@ -59,13 +59,13 @@ dependencies {
     api "com.kjetland:mbknor-jackson-jsonschema_2.12:1.0.39"
 
     // sda-commons-server-auth
-    api "com.auth0:java-jwt:3.12.1"
+    api "com.auth0:java-jwt:3.16.0"
 
     // sda-commons-server-circuitbreaker
     api "org.objenesis:objenesis:3.1"
 
     // sda-commons-server-hibernate
-    api "org.postgresql:postgresql:42.2.18"
+    api "org.postgresql:postgresql:42.2.20"
     api "org.flywaydb:flyway-core:6.5.5"
 
     // sda-commons-server-hibernate-testing
@@ -84,7 +84,7 @@ dependencies {
     api "org.bouncycastle:bcpkix-jdk15on:1.68" // use the same version as bcprov-jdk15on in DW
 
     // sda-commons-server-swagger
-    api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.7"
+    api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9"
     api "io.swagger:swagger-annotations:$swaggerCoreVersion"
     api "io.swagger:swagger-jaxrs:$swaggerCoreVersion"
 
@@ -104,7 +104,7 @@ dependencies {
     api "io.swagger.core.v3:swagger-annotations:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-core:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-models:$swaggerCoreV3Version"
-    api "io.swagger.parser.v3:swagger-parser-v3:2.0.24"
+    api "io.swagger.parser.v3:swagger-parser-v3:2.0.26"
 
     // sda-commons-server-prometheus
     api "io.prometheus:simpleclient:$prometheusVersion"
@@ -116,7 +116,7 @@ dependencies {
     api "io.findify:s3mock_2.12:0.2.6"
 
     // sda-commons-server-swagger
-    api "com.github.java-json-tools:json-schema-validator:2.2.10"
+    api "com.github.java-json-tools:json-schema-validator:2.2.14"
     api "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"
 
     // sda-commons-server-testing
@@ -139,7 +139,7 @@ dependencies {
       because "Dropwizard does not use the jakarta version yet so we replace it in weld with the javax version that comes as transitive dependency without explicit version."
     }
 
-    api "org.junit-pioneer:junit-pioneer:1.3.0"
+    api "org.junit-pioneer:junit-pioneer:1.4.2"
 
     // sda-commons-shared-*
     api 'commons-io:commons-io:2.8.0'
@@ -147,13 +147,25 @@ dependencies {
     // Kafka
     api "org.apache.kafka:kafka_2.12:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.4.10"
-    api "com.101tec:zkclient:0.11"
-    api "org.apache.curator:curator-test:2.12.0"
+    api "org.apache.zookeeper:zookeeper:3.5.8"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
     api "com.salesforce.kafka.test:kafka-junit4:$kafkaJunitVersion"
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
+    api "org.apache.curator:curator-test:5.1.0", {
+      because '''\
+          Upgrade because kafka-junit still uses curator 2.12.0.
+          The older version does not work when executing tests parallel because it starts the
+          Zookeeper Admin Server on a fixed port. More recent versions do not start the admin server
+          anymore.
+        '''
+    }
+    api "org.xerial.snappy:snappy-java:1.1.7.3", {
+      because "conflict between kafka-clients:2.6.1 & curator-test:5.1.0"
+    }
     api "com.typesafe.scala-logging:scala-logging_2.12:3.9.2", {
+      because "conflict between io.findify:s3mock_2.12 and org.apache.kafka:kafka_2.12 prefer version of kafka!"
+    }
+    api "org.scala-lang.modules:scala-java8-compat_2.12:0.9.1", {
       because "conflict between io.findify:s3mock_2.12 and org.apache.kafka:kafka_2.12 prefer version of kafka!"
     }
     api "org.scala-lang:scala-library:$scalaVersion", {
@@ -161,6 +173,9 @@ dependencies {
     }
     api "org.scala-lang:scala-reflect:$scalaVersion", {
       because "version from org.apache.kafka:kafka_2.12"
+    }
+    api "com.fasterxml.jackson.module:jackson-module-scala_2.12:2.10.2", {
+      because "this is the requested version of org.apache.kafka:kafka_2.12:2.6.1"
     }
   }
 }
