@@ -1,9 +1,9 @@
 package org.sdase.commons.keymgmt;
 
-import io.dropwizard.Configuration;
 import org.sdase.commons.keymgmt.config.KeyMgmtConfig;
+import org.sdase.commons.starter.SdaPlatformConfiguration;
 
-public class KeyMgmtBundleTestConfig extends Configuration {
+public class KeyMgmtBundleTestConfig extends SdaPlatformConfiguration {
 
   private KeyMgmtConfig keyMgmt;
 

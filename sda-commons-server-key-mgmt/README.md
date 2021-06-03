@@ -5,6 +5,8 @@ The main purpose is to provide configurable key management and mappings for keys
 This allows to define keys and mappings at deployment time and not at development time. 
 So the actual keys can be adjusted according to the deployment scenario.
 
+The bundle also provides the annotation `@PlatformKey("<keyName>")` to mark a String attribute to contain a valid key value.
+
 When defining keys at runtime, it might happen that keys used in business logic do not exist at runtime. 
 This problem is not solved by the bundle. 
 It must be considered as part of the key definition process. 
@@ -43,6 +45,13 @@ Initialization of bundle:
 ```
 
 The [configuration](src/main/java/org/sdase/commons/keymgmt/config/KeyMgmtConfig.java) includes the paths to the mapping and keys yaml files.
+
+### @PlatformKey
+The annotation `@PlatformKey` will trigger a validator to verify if the received value is a valid key for the referenced platform key.
+```java
+@PlatformKey("GENDER")
+private String genderKey
+```
 
 ### Key yaml file
 The yaml file or keys may contain one or more [KeyDefinition](src/main/java/org/sdase/commons/keymgmt/model/KeyDefinition.java) documents.

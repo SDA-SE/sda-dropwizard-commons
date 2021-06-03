@@ -2,5 +2,7 @@ dependencies {
   compile project(':sda-commons-server-dropwizard')
   compile project(':sda-commons-shared-yaml')
 
+  testCompile project(':sda-commons-starter')
   testCompile project(':sda-commons-server-testing')
+  testCompile project(':sda-commons-shared-error')
 }
