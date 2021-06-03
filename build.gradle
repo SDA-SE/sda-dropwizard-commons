@@ -204,6 +204,10 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     }
   }
 
+  configurations {
+    all*.exclude group: 'javax.servlet', module: 'javax.servlet-api'
+  }
+
   configurations.all {
     resolutionStrategy {
       // fail eagerly on version conflict (includes transitive dependencies)

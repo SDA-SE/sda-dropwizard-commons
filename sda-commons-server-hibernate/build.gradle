@@ -2,11 +2,6 @@ dependencies {
   compile project(':sda-commons-server-dropwizard')
   compile 'io.dropwizard:dropwizard-hibernate', {
     /**
-     * Dropwizard comes with jakarta.servlet instead of javax.servlet.
-     * Both contain the same classes.
-     */
-    exclude group: 'javax.servlet', module: 'javax.servlet-api'
-    /**
      * dropwizard-hibernate provides javax.transaction:javax.transaction-api through
      * jackson-datatype-hibernate5 and
      * org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec through hibernate-core.

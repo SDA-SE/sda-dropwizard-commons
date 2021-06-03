@@ -3,12 +3,6 @@ dependencies {
   compile project(':sda-commons-server-weld')
 
   testCompile project(':sda-commons-server-jackson')
-  testCompile 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0', {
-    /**
-     * Dropwizard comes with jakarta.servlet instead of javax.servlet.
-     * Both contain the same classes.
-     */
-    exclude group: 'javax.servlet', module: 'javax.servlet-api'
-  }
+  testCompile 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0'
   testCompile 'jakarta.servlet:jakarta.servlet-api'
 }
