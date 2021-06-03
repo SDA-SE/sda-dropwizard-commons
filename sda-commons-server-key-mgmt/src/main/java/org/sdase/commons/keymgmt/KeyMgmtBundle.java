@@ -11,6 +11,7 @@ import org.sdase.commons.keymgmt.config.KeyMgmtConfigProvider;
 import org.sdase.commons.keymgmt.manager.*;
 import org.sdase.commons.keymgmt.model.KeyDefinition;
 import org.sdase.commons.keymgmt.model.KeyMappingModel;
+import org.sdase.commons.keymgmt.validator.KeyMgmtBundleHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +46,7 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
 
     keys = ModelReader.parseApiKeys(config.getApiKeysDefinitionPath());
     mappings = ModelReader.parseMappingFile(config.getMappingDefinitionPath());
+    KeyMgmtBundleHolder.setKeyMgmtBundle(this);
     initialized = true;
   }
 
