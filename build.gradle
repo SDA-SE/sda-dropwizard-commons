@@ -205,7 +205,8 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   }
 
   configurations {
-    all*.exclude group: 'javax.servlet', module: 'javax.servlet-api'
+    all*.exclude group: 'javax.servlet', module: 'javax.servlet-api' // prefer jakarta.servlet-api
+    all*.exclude group: 'commons-logging', module: 'commons-logging' // prefer jcl-over-slf4j
   }
 
   configurations.all {
