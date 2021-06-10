@@ -1,7 +1,7 @@
 package org.sdase.commons.keymgmt.validator;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.TYPE_USE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -22,7 +22,7 @@ import org.sdase.commons.keymgmt.model.KeyDefinition;
  *
  * <p>The validator accepts <code>null</code> values.
  */
-@Target({FIELD, PARAMETER})
+@Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Constraint(validatedBy = KeyValidator.class)
 @Documented

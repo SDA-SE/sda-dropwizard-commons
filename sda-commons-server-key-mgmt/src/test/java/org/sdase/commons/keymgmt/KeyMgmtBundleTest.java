@@ -9,11 +9,10 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import java.util.Arrays;
+import java.util.List;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -214,6 +213,58 @@ class KeyMgmtBundleTest {
     assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
   }
 
+  @Test
+  void shouldValidateAsListElements() {
+    Response response =
+        client
+            .path("api")
+            .path("validate")
+            .request()
+            .post(
+                Entity.entity(
+                    new ObjectWithKey().setGenderList(Arrays.asList("MALE", "FEMALE")),
+                    APPLICATION_JSON));
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+  }
+
+  @Test
+  void shouldValidateAsListElementsFail() {
+    Response response =
+        client
+            .path("api")
+            .path("validate")
+            .request()
+            .post(
+                Entity.entity(
+                    new ObjectWithKey().setGenderList(Arrays.asList("MALE", "NOVALID")),
+                    APPLICATION_JSON));
+    assertThat(response.getStatus()).isEqualTo(422);
+  }
+
+  @Test
+  void shouldValidateAsParameter() {
+    Response response =
+        client
+            .path("api")
+            .path("validateParameter")
+            .queryParam("param", "MALE")
+            .request(APPLICATION_JSON)
+            .get();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+  }
+
+  @Test
+  void shouldValidateAsParameterFail() {
+    Response responseNotValid =
+        client
+            .path("api")
+            .path("validateParameter")
+            .queryParam("param", "NOVALID")
+            .request(APPLICATION_JSON)
+            .get();
+    assertThat(responseNotValid.getStatus()).isEqualTo(422);
+  }
+
   public static class KeyMgmtBundleTestApp extends Application<KeyMgmtBundleTestConfig> {
 
     private final KeyMgmtBundle<KeyMgmtBundleTestConfig> keyMgmt =
@@ -247,11 +298,19 @@ class KeyMgmtBundleTest {
     public Response validate(@Valid ObjectWithKey valid) {
       return Response.noContent().build();
     }
+
+    @GET
+    @Path("/validateParameter")
+    public Response validateParameter(@QueryParam("param") @PlatformKey("GENDER") String valid) {
+      return Response.noContent().build();
+    }
   }
 
   public static class ObjectWithKey {
     @PlatformKey("GENDER")
     private String genderKey;
+
+    private List<@Valid @PlatformKey("GENDER") String> genderList;
 
     public String getGenderKey() {
       return genderKey;
@@ -259,6 +318,15 @@ class KeyMgmtBundleTest {
 
     public ObjectWithKey setGenderKey(String genderKey) {
       this.genderKey = genderKey;
+      return this;
+    }
+
+    public List<String> getGenderList() {
+      return genderList;
+    }
+
+    public ObjectWithKey setGenderList(List<String> genderList) {
+      this.genderList = genderList;
       return this;
     }
   }
