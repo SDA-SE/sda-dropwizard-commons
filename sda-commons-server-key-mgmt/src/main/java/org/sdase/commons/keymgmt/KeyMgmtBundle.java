@@ -25,6 +25,7 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
   private Map<String, KeyDefinition> keys;
   private Map<String, KeyMappingModel> mappings;
   private boolean initialized = false;
+  private KeyMgmtConfig config;
 
   public static InitialBuilder builder() {
     return new Builder<>();
@@ -42,7 +43,7 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
 
   @Override
   public void run(T configuration, Environment environment) throws IOException {
-    KeyMgmtConfig config = configProvider.apply(configuration);
+    config = configProvider.apply(configuration);
 
     keys = ModelReader.parseApiKeys(config.getApiKeysDefinitionPath());
     mappings = ModelReader.parseMappingFile(config.getMappingDefinitionPath());
@@ -89,6 +90,15 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
     } else {
       return new PassthroughKeyMapper();
     }
+  }
+
+  /**
+   * determines if the bundle should validate incoming key values
+   *
+   * @return true if the bundle validates
+   */
+  public boolean isValueValidationEnabled() {
+    return !config.isDisableValidation();
   }
 
   /** @return a set with all known key definition names */
