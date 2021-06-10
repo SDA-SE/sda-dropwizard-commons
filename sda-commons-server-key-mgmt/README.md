@@ -44,7 +44,14 @@ Initialization of bundle:
             .build();
 ```
 
-The [configuration](src/main/java/org/sdase/commons/keymgmt/config/KeyMgmtConfig.java) includes the paths to the mapping and keys yaml files.
+The [configuration](src/main/java/org/sdase/commons/keymgmt/config/KeyMgmtConfig.java) includes the paths to the mapping and keys yaml files as well as the option to disable value validation.
+The following listing shows a yaml snippet for the `keyMgmt` configuration. 
+```yaml
+keyMgmt:
+  apiKeysDefinitionPath: "/keys"     # path to key definition yaml files
+  mappingDefinitionPath: "/mappings" # path to mapping definition yaml files
+  disableValidation: false           # option to deactivate input value validation for keys. Default: false
+```
 
 ### @PlatformKey
 The annotation `@PlatformKey` will trigger a validator to verify if the received value is a valid key for the referenced platform key.

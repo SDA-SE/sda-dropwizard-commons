@@ -29,7 +29,10 @@ public class KeyValidator implements ConstraintValidator<PlatformKey, String> {
       LOG.warn("Validation of messages attributes before key-mgmt-bundle is available");
       return false;
     } else {
-      return keyMgmtBundle.createKeyManager(keyName).isValidValue(value);
+      if (keyMgmtBundle.isValueValidationEnabled()) {
+        return keyMgmtBundle.createKeyManager(keyName).isValidValue(value);
+      }
+      return true;
     }
   }
 }
