@@ -166,4 +166,22 @@ public class KafkaPropertiesTest {
     assertThat(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG)).isNull();
     assertThat(props.getProperty(SaslConfigs.SASL_MECHANISM)).isNull();
   }
+
+  @Test
+  public void itShouldFilterNullValueConfigs() {
+    KafkaConfiguration config = new KafkaConfiguration();
+
+    config.getConfig().put("setting", "from.global");
+    config.getConfig().put("ssl.truststore.location", null);
+
+    assertThat(KafkaProperties.forProducer(config).get("setting")).isEqualTo("from.global");
+    assertThat(KafkaProperties.forProducer(config).containsKey("ssl.truststore.location"))
+        .isFalse();
+    assertThat(KafkaProperties.forConsumer(config).get("setting")).isEqualTo("from.global");
+    assertThat(KafkaProperties.forConsumer(config).containsKey("ssl.truststore.location"))
+        .isFalse();
+    assertThat(KafkaProperties.forAdminClient(config).get("setting")).isEqualTo("from.global");
+    assertThat(KafkaProperties.forAdminClient(config).containsKey("ssl.truststore.location"))
+        .isFalse();
+  }
 }

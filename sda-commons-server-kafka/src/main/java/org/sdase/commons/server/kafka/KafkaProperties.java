@@ -1,7 +1,9 @@
 package org.sdase.commons.server.kafka;
 
 import com.google.common.base.Strings;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -61,7 +63,11 @@ public class KafkaProperties extends Properties {
     props.putAll(configureSecurity(configuration.getSecurity()));
 
     if (configuration.getConfig() != null) {
-      props.putAll(configuration.getConfig());
+      Map<String, String> nonNullConfigs =
+          configuration.getConfig().entrySet().stream()
+              .filter(entry -> entry.getValue() != null)
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      props.putAll(nonNullConfigs);
     }
 
     return props;
