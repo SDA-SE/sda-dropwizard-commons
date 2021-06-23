@@ -19,36 +19,38 @@ import static org.sdase.commons.server.opentracing.tags.TagUtils.HTTP_REQUEST_HE
 import static org.sdase.commons.server.opentracing.tags.TagUtils.HTTP_RESPONSE_HEADERS;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockSpan.LogEntry;
 import io.opentracing.mock.MockTracer;
 import io.opentracing.tag.Tags;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.opentracing.test.TraceTestApp;
 
-public class OpenTracingBundleTest {
+class OpenTracingBundleTest {
 
-  @ClassRule
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(TraceTestApp.class, null, randomPorts());
+  @RegisterExtension
+  public static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(TraceTestApp.class, null, randomPorts());
 
   private MockTracer tracer;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     TraceTestApp app = DW.getApplication();
     tracer = app.getTracer();
     tracer.reset();
   }
 
   @Test
-  public void shouldExtractTraceAndSpanIdFromRequestHeaders() {
+  void shouldExtractTraceAndSpanIdFromRequestHeaders() {
     Response r =
         createClient()
             .path("respond/mine")
@@ -71,7 +73,7 @@ public class OpenTracingBundleTest {
   }
 
   @Test
-  public void shouldInstrumentServlets() {
+  void shouldInstrumentServlets() {
     Response r = createClient().path("respond/test").request().get();
 
     // Make sure to wait till the request is completed:
@@ -79,17 +81,11 @@ public class OpenTracingBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_OK);
 
-    await()
-        .untilAsserted(
-            () ->
-                assertThat(tracer.finishedSpans())
-                    .flatExtracting(MockSpan::tags)
-                    .extracting(COMPONENT.getKey())
-                    .contains("java-web-servlet"));
+    await().untilAsserted(() -> assertThat(collectComponentTags()).contains("java-web-servlet"));
   }
 
   @Test
-  public void shouldInstrumentJaxRs() {
+  void shouldInstrumentJaxRs() {
     Response r = createClient().path("respond/test").request().get();
 
     // Make sure to wait till the request is completed:
@@ -97,17 +93,11 @@ public class OpenTracingBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_OK);
 
-    await()
-        .untilAsserted(
-            () ->
-                assertThat(tracer.finishedSpans())
-                    .flatExtracting(MockSpan::tags)
-                    .extracting(COMPONENT.getKey())
-                    .contains("jaxrs"));
+    await().untilAsserted(() -> assertThat(collectComponentTags()).contains("jaxrs"));
   }
 
   @Test
-  public void shouldChainFiltersInCorrectOrderSoAllSpansAreFinished() {
+  void shouldChainFiltersInCorrectOrderSoAllSpansAreFinished() {
     for (int i = 0; i < 10; ++i) {
       Response r = createClient().path("error").request().get();
 
@@ -126,7 +116,7 @@ public class OpenTracingBundleTest {
   }
 
   @Test
-  public void shouldTraceAndLogExceptions() {
+  void shouldTraceAndLogExceptions() {
     Response r = createClient().path("error").request().get();
 
     // Make sure to wait till the request is completed:
@@ -149,7 +139,7 @@ public class OpenTracingBundleTest {
   }
 
   @Test
-  public void shouldDecorateJaxRsSpanWithHeaders() {
+  void shouldDecorateJaxRsSpanWithHeaders() {
     Response r = createClient().path("respond/test").request().get();
 
     // Make sure to wait till the request is completed:
@@ -179,7 +169,7 @@ public class OpenTracingBundleTest {
   }
 
   @Test
-  public void shouldDecorateServletSpanWithHeaders() {
+  void shouldDecorateServletSpanWithHeaders() {
     Response r = createClient().path("respond/test").request().get();
 
     // Make sure to wait till the request is completed:
@@ -210,7 +200,7 @@ public class OpenTracingBundleTest {
   }
 
   @Test
-  public void shouldCollectLogStatementsInTrace() {
+  void shouldCollectLogStatementsInTrace() {
     Response r = createClient().path("log").request().get();
 
     // Make sure to wait till the request is completed:
@@ -234,7 +224,7 @@ public class OpenTracingBundleTest {
   }
 
   @Test
-  public void shouldCollectLogErrorStatementsInTrace() {
+  void shouldCollectLogErrorStatementsInTrace() {
     Response r = createClient().path("logError").request().get();
 
     // Make sure to wait till the request is completed:
@@ -261,7 +251,7 @@ public class OpenTracingBundleTest {
   }
 
   @Test
-  public void shouldInstrumentAdminServletsButAvoidSampling() {
+  void shouldInstrumentAdminServletsButAvoidSampling() {
     Response r = createAdminClient().path("healthcheck").request().get();
 
     // Make sure to wait till the request is completed:
@@ -284,7 +274,7 @@ public class OpenTracingBundleTest {
   }
 
   @Test
-  public void shouldInstrumentAdminServletsAndSampleIfDebug() {
+  void shouldInstrumentAdminServletsAndSampleIfDebug() {
     Response r =
         createAdminClient().path("healthcheck").request().header("jaeger-debug-id", "test").get();
 
@@ -313,5 +303,12 @@ public class OpenTracingBundleTest {
 
   private WebTarget createAdminClient() {
     return DW.client().target("http://localhost:" + DW.getAdminPort());
+  }
+
+  private Set<String> collectComponentTags() {
+    return tracer.finishedSpans().stream()
+        .map(MockSpan::tags)
+        .map(tags -> (String) tags.get(COMPONENT.getKey()))
+        .collect(Collectors.toSet());
   }
 }
