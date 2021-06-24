@@ -73,7 +73,7 @@ dependencies {
     api "com.github.database-rider:rider-junit5:$dbRiderVersion"
 
     // sda-commons-server-jaeger
-    api "io.jaegertracing:jaeger-client:1.5.0"
+    api "io.jaegertracing:jaeger-client:1.6.0"
 
     // sda-commons-server-mongo-testing
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.0.0"

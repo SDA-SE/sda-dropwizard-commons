@@ -7,6 +7,11 @@ dependencies {
      * Both contain the same classes.
      */
     exclude group: "javax.annotation", module: "javax.annotation-api"
+
+    /**
+     * Is added as compile dependency in libthrift. Most likely will be fixed with 0.15.0 when this dependency is moved to crossTestCompile
+     */
+    exclude group: "org.apache.tomcat.embed", module: "tomcat-embed-core"
   }
   compile 'jakarta.annotation:jakarta.annotation-api'
 
