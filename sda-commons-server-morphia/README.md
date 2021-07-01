@@ -97,7 +97,7 @@ mongo:
   username: "${MONGODB_USERNAME:-}"
   password: "${MONGODB_PASSWORD:-}"
   useSsl: ${MONGODB_USE_SSL:-true}
-  caCertificate: "${MONGODB_CA_CERTIFICATE}"
+  caCertificate: "${MONGODB_CA_CERTIFICATE:-}"
 ```
 _Please note the double quotes around the values.
  Without them for `caCertificate`, Dropwizard will not be able to load the certificate correctly because the `MONGODB_CA_CERTIFICATE` variable contains line breaks.  
