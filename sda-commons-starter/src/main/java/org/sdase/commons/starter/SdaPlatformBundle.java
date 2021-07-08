@@ -77,7 +77,9 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     bootstrap.addBundle(OpenTracingBundle.builder().build());
     bootstrap.addBundle(PrometheusBundle.builder().build());
     bootstrap.addBundle(TraceTokenBundle.builder().build());
-    bootstrap.addBundle(new CaCertificatesBundle<>()); // TODO needs to use the builder
+    bootstrap.addBundle(
+        CaCertificatesBundle.builder()
+            .build()); // TODO add config param to SdaPlatformConfiguration
 
     // add configured bundles
     List<ConfiguredBundle<? super C>> configuredBundles = new ArrayList<>();
