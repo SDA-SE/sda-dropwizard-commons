@@ -11,6 +11,7 @@ dependencies {
   compile project(':sda-commons-server-prometheus')
   compile project(':sda-commons-server-security')
   compile project(':sda-commons-server-trace')
+  compile project(':sda-commons-shared-certificates')
 
   testCompile project(':sda-commons-server-testing')
   testCompile project(':sda-commons-server-auth-testing')
