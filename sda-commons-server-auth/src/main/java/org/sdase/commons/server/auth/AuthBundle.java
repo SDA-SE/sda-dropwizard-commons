@@ -11,8 +11,11 @@ import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.ws.rs.client.Client;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
@@ -41,7 +44,7 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
   private final Tracer tracer;
 
   public static ProviderBuilder builder() {
-    return new Builder();
+    return new Builder<>();
   }
 
   private AuthBundle(
@@ -124,15 +127,45 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
   private KeySource createKeySources(KeyLocation keyLocation, Client client) {
     switch (keyLocation.getType()) {
       case PEM:
-        return new PemKeySource(keyLocation.getPemKeyId(), keyLocation.getLocation());
+        return new PemKeySource(
+            keyLocation.getPemKeyId(), keyLocation.getLocation(), keyLocation.getRequiredIssuer());
       case OPEN_ID_DISCOVERY:
+        validateKeyLocation(keyLocation.getLocation(), keyLocation.getRequiredIssuer());
         return new OpenIdProviderDiscoveryKeySource(
-            keyLocation.getLocation().toASCIIString(), client);
+            keyLocation.getLocation().toASCIIString(), client, keyLocation.getRequiredIssuer());
       case JWKS:
-        return new JwksKeySource(keyLocation.getLocation().toASCIIString(), client);
+        validateKeyLocation(keyLocation.getLocation(), keyLocation.getRequiredIssuer());
+        return new JwksKeySource(
+            keyLocation.getLocation().toASCIIString(), client, keyLocation.getRequiredIssuer());
       default:
         throw new IllegalArgumentException(
             "KeyLocation has no valid type: " + keyLocation.getType());
+    }
+  }
+
+  /**
+   * Validate, that if a required issuer is set as URI the host name of the key location source and
+   * the requiredIssuer must be the same.
+   *
+   * @param location The source {@link URI} of the key(s) as discovery or jwks endpoint.
+   * @param requiredIssuer The required issuer as {@link String} for the correlated key source.
+   */
+  private void validateKeyLocation(URI location, String requiredIssuer) {
+    if (StringUtils.isNotBlank(requiredIssuer) && StringUtils.contains(requiredIssuer, ':')) {
+      try {
+        URI issuerUri = new URI(requiredIssuer);
+        if (!StringUtils.equalsIgnoreCase(location.getHost(), issuerUri.getHost())) {
+          LOG.warn(
+              "The required issuer host name <{}> for the key <{}> does not match to the key"
+                  + " source uri host name <{}>.",
+              issuerUri.getHost(),
+              location,
+              location.getHost());
+        }
+      } catch (URISyntaxException e) {
+        throw new IllegalArgumentException(
+            "The requiredIssuer <" + requiredIssuer + "> is no valid stringOrURI", e);
+      }
     }
   }
 

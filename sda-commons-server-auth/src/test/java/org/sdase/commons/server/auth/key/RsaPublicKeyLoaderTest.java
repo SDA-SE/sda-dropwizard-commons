@@ -22,14 +22,15 @@ public class RsaPublicKeyLoaderTest {
         new KeySource() {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
-            return singletonList(new LoadedPublicKey(null, mockKey, this));
+            return singletonList(new LoadedPublicKey(null, mockKey, this, null));
           }
         };
 
     keyLoader.addKeySource(keySource);
 
-    assertThat(keyLoader.getKeysWithoutId()).containsExactly(mockKey);
-    assertThat(keyLoader.getKey(null)).isNull();
+    assertThat(keyLoader.getKeysWithoutId().stream().map(LoadedPublicKey::getPublicKey))
+        .containsExactly(mockKey);
+    assertThat(keyLoader.getLoadedPublicKey(null)).isNull();
   }
 
   @Test
@@ -39,14 +40,14 @@ public class RsaPublicKeyLoaderTest {
         new KeySource() {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
-            return singletonList(new LoadedPublicKey("exampleKid", mockKey, this));
+            return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null));
           }
         };
 
     keyLoader.addKeySource(keySource);
 
     assertThat(keyLoader.getKeysWithoutId()).isEmpty();
-    assertThat(keyLoader.getKey("exampleKid")).isSameAs(mockKey);
+    assertThat(keyLoader.getLoadedPublicKey("exampleKid").getPublicKey()).isSameAs(mockKey);
   }
 
   @Test
@@ -59,26 +60,26 @@ public class RsaPublicKeyLoaderTest {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
             if (numberOfCalls.getAndIncrement() < 1) {
-              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this));
+              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null));
             } else {
-              return singletonList(new LoadedPublicKey("newKid", newMockKey, this));
+              return singletonList(new LoadedPublicKey("newKid", newMockKey, this, null));
             }
           }
         };
 
     keyLoader.addKeySource(keySource);
 
-    assertThat(keyLoader.getKey("exampleKid")).isSameAs(mockKey);
+    assertThat(keyLoader.getLoadedPublicKey("exampleKid").getPublicKey()).isSameAs(mockKey);
     assertThat(numberOfCalls.get()).isEqualTo(1);
 
-    assertThat(keyLoader.getKey("exampleKid")).isSameAs(mockKey);
+    assertThat(keyLoader.getLoadedPublicKey("exampleKid").getPublicKey()).isSameAs(mockKey);
     // no reload for known key
     assertThat(numberOfCalls.get()).isEqualTo(1);
 
-    assertThat(keyLoader.getKey("newKid")).isSameAs(newMockKey);
+    assertThat(keyLoader.getLoadedPublicKey("newKid").getPublicKey()).isSameAs(newMockKey);
     assertThat(numberOfCalls.get()).isEqualTo(2);
 
-    assertThat(keyLoader.getKey("exampleKid")).isNull();
+    assertThat(keyLoader.getLoadedPublicKey("exampleKid")).isNull();
     assertThat(numberOfCalls.get()).isEqualTo(3);
   }
 
@@ -92,28 +93,28 @@ public class RsaPublicKeyLoaderTest {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
             if (numberOfCalls.getAndIncrement() < 1) {
-              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this));
+              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null));
             } else {
               return Arrays.asList(
-                  new LoadedPublicKey("exampleKid", mockKey, this),
-                  new LoadedPublicKey("newKid", newMockKey, this));
+                  new LoadedPublicKey("exampleKid", mockKey, this, null),
+                  new LoadedPublicKey("newKid", newMockKey, this, null));
             }
           }
         };
 
     keyLoader.addKeySource(keySource);
 
-    assertThat(keyLoader.getKey("exampleKid")).isSameAs(mockKey);
+    assertThat(keyLoader.getLoadedPublicKey("exampleKid").getPublicKey()).isSameAs(mockKey);
     assertThat(numberOfCalls.get()).isEqualTo(1);
 
-    assertThat(keyLoader.getKey("exampleKid")).isSameAs(mockKey);
+    assertThat(keyLoader.getLoadedPublicKey("exampleKid").getPublicKey()).isSameAs(mockKey);
     // no reload for known key
     assertThat(numberOfCalls.get()).isEqualTo(1);
 
-    assertThat(keyLoader.getKey("newKid")).isSameAs(newMockKey);
+    assertThat(keyLoader.getLoadedPublicKey("newKid").getPublicKey()).isSameAs(newMockKey);
     assertThat(numberOfCalls.get()).isEqualTo(2);
 
-    assertThat(keyLoader.getKey("exampleKid")).isSameAs(mockKey);
+    assertThat(keyLoader.getLoadedPublicKey("exampleKid").getPublicKey()).isSameAs(mockKey);
     assertThat(numberOfCalls.get()).isEqualTo(2);
   }
 
@@ -126,7 +127,7 @@ public class RsaPublicKeyLoaderTest {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
             if (numberOfCalls.getAndIncrement() < 1) {
-              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this));
+              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null));
             } else {
               throw new KeyLoadFailedException("Test error");
             }
@@ -135,17 +136,17 @@ public class RsaPublicKeyLoaderTest {
 
     keyLoader.addKeySource(keySource);
 
-    assertThat(keyLoader.getKey("exampleKid")).isSameAs(mockKey);
+    assertThat(keyLoader.getLoadedPublicKey("exampleKid").getPublicKey()).isSameAs(mockKey);
     assertThat(numberOfCalls.get()).isEqualTo(1);
 
-    assertThat(keyLoader.getKey("exampleKid")).isSameAs(mockKey);
+    assertThat(keyLoader.getLoadedPublicKey("exampleKid").getPublicKey()).isSameAs(mockKey);
     // no reload for known key
     assertThat(numberOfCalls.get()).isEqualTo(1);
 
-    assertThat(keyLoader.getKey("newKid")).isNull();
+    assertThat(keyLoader.getLoadedPublicKey("newKid")).isNull();
     assertThat(numberOfCalls.get()).isEqualTo(2);
 
-    assertThat(keyLoader.getKey("exampleKid")).isSameAs(mockKey);
+    assertThat(keyLoader.getLoadedPublicKey("exampleKid").getPublicKey()).isSameAs(mockKey);
     assertThat(numberOfCalls.get()).isEqualTo(2);
   }
 
@@ -156,7 +157,7 @@ public class RsaPublicKeyLoaderTest {
         new KeySource() {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
-            return singletonList(new LoadedPublicKey(null, mockKey, this));
+            return singletonList(new LoadedPublicKey(null, mockKey, this, null));
           }
         };
 
@@ -164,7 +165,7 @@ public class RsaPublicKeyLoaderTest {
 
     keyLoader.addKeySource(keySource);
     keyLoader.getKeysWithoutId();
-    keyLoader.getKey("exampleKid");
+    keyLoader.getLoadedPublicKey("exampleKid");
 
     assertThat(keyLoader.getTotalNumberOfKeySources()).isEqualTo(1);
   }
@@ -177,8 +178,8 @@ public class RsaPublicKeyLoaderTest {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
             return Arrays.asList(
-                new LoadedPublicKey(null, mockKey, this),
-                new LoadedPublicKey("exampleKid", mockKey, this));
+                new LoadedPublicKey(null, mockKey, this, null),
+                new LoadedPublicKey("exampleKid", mockKey, this, null));
           }
         };
 
@@ -186,7 +187,7 @@ public class RsaPublicKeyLoaderTest {
 
     keyLoader.addKeySource(keySource);
     keyLoader.getKeysWithoutId();
-    keyLoader.getKey("exampleKid");
+    keyLoader.getLoadedPublicKey("exampleKid");
 
     assertThat(keyLoader.getTotalNumberOfKeys()).isEqualTo(2);
   }
@@ -205,17 +206,17 @@ public class RsaPublicKeyLoaderTest {
               throw new KeyLoadFailedException();
             }
             return singletonList(
-                new LoadedPublicKey("the-kid", Mockito.mock(RSAPublicKey.class), this));
+                new LoadedPublicKey("the-kid", Mockito.mock(RSAPublicKey.class), this, null));
           }
         };
 
     rsaPublicKeyLoader.addKeySource(keySource);
-    assertThat(rsaPublicKeyLoader.getKey("the-kid")).isNotNull();
+    assertThat(rsaPublicKeyLoader.getLoadedPublicKey("the-kid")).isNotNull();
 
     assertThat(loaded).isTrue();
     assertThat(rsaPublicKeyLoader.getTotalNumberOfKeys()).isEqualTo(1);
 
-    rsaPublicKeyLoader.getKey("unknown-key-id");
+    rsaPublicKeyLoader.getLoadedPublicKey("unknown-key-id");
     assertThat(rsaPublicKeyLoader.getTotalNumberOfKeys()).isEqualTo(1);
 
     assertThat(thrown).isTrue();

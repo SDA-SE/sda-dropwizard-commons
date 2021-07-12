@@ -89,6 +89,9 @@ Multiple sources for public keys for verification of the signature can be config
 The authentication can be disabled for use in test and development environments. **Be careful to NEVER disable
 authentication in production.**
 
+For the authentication provider root URL and a jwks source a required issuer can be configured by the attribute `requiredIssuer`.
+If the attribute `requiredIssuer` is set, the issuer of the token must match to the provided required issuer.
+A warning will be logged if the host name of the source url does not match the host name of the required issuer.
 Example config:
 ```yaml
 auth:
@@ -115,9 +118,11 @@ auth:
     # Public keys will be loaded from the OpenID provider using discovery.
   - type: OPEN_ID_DISCOVERY
     location: https://keycloak.example.com/auth/realms/my-realm
+    requiredIssuer: https://keycloak.example.com/auth/realms/my-realm
   - # Public keys will be loaded directly from the JWKS url of the OpenID provider.
     type: JWKS
     location: https://keycloak.example.com/auth/realms/my-realm/protocol/openid-connect/certs
+    requiredIssuer: https://keycloak.example.com/auth/realms/my-realm
 ```
 
 The config may be filled from environment variables if the

@@ -36,7 +36,7 @@ public class JwtAuthFilterTest {
     when(requestContext.getHeaders()).thenReturn(headers);
     when(authenticator.authenticate(credentialsCaptor.capture())).thenReturn(Optional.empty());
 
-    JwtAuthFilter authFilter =
+    JwtAuthFilter<JwtPrincipal> authFilter =
         new Builder<JwtPrincipal>().setAuthenticator(authenticator).buildAuthFilter();
 
     // when

@@ -22,7 +22,7 @@ public class OpenIdProviderDiscoveryKeySourceIT {
 
     String location = "http://localhost:" + DW.getLocalPort() + "";
     OpenIdProviderDiscoveryKeySource keySource =
-        new OpenIdProviderDiscoveryKeySource(location, DW.client());
+        new OpenIdProviderDiscoveryKeySource(location, DW.client(), null);
 
     List<LoadedPublicKey> loadedPublicKeys = keySource.loadKeysFromSource();
 
@@ -37,7 +37,7 @@ public class OpenIdProviderDiscoveryKeySourceIT {
   public void shouldThrowKeyLoadFailedExceptionOnFailure() {
     String location = "http://localhost:" + DW.getLocalPort() + "/test";
     OpenIdProviderDiscoveryKeySource keySource =
-        new OpenIdProviderDiscoveryKeySource(location, DW.client());
+        new OpenIdProviderDiscoveryKeySource(location, DW.client(), null);
 
     keySource.loadKeysFromSource();
   }
@@ -46,7 +46,7 @@ public class OpenIdProviderDiscoveryKeySourceIT {
   public void shouldThrowKeyLoadFailedExceptionOnConnectionError() {
     String location = "http://unknownhost/test";
     OpenIdProviderDiscoveryKeySource keySource =
-        new OpenIdProviderDiscoveryKeySource(location, DW.client());
+        new OpenIdProviderDiscoveryKeySource(location, DW.client(), null);
 
     keySource.loadKeysFromSource();
   }

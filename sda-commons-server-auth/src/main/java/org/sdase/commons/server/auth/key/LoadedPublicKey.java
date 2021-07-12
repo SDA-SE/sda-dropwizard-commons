@@ -14,10 +14,15 @@ public class LoadedPublicKey {
   /** The source where the key has been loaded from. */
   private KeySource keySource;
 
-  public LoadedPublicKey(String kid, RSAPublicKey publicKey, KeySource keySource) {
+  /** The required issuer for the JWT in correlation to the publicKey. */
+  private String requiredIssuer;
+
+  public LoadedPublicKey(
+      String kid, RSAPublicKey publicKey, KeySource keySource, String requiredIssuer) {
     this.kid = kid;
     this.publicKey = publicKey;
     this.keySource = keySource;
+    this.requiredIssuer = requiredIssuer;
   }
 
   public String getKid() {
@@ -30,6 +35,10 @@ public class LoadedPublicKey {
 
   public KeySource getKeySource() {
     return keySource;
+  }
+
+  public String getRequiredIssuer() {
+    return requiredIssuer;
   }
 
   @Override

@@ -22,7 +22,7 @@ public class JwksKeySourceIT {
   public void shouldLoadKeysFromHttp() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
-    JwksKeySource keySource = new JwksKeySource(location, DW.client());
+    JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
 
     List<LoadedPublicKey> loadedPublicKeys = keySource.loadKeysFromSource();
 
@@ -37,7 +37,7 @@ public class JwksKeySourceIT {
   public void shouldLoadKeyWithoutAlg() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
-    JwksKeySource keySource = new JwksKeySource(location, DW.client());
+    JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
 
     List<LoadedPublicKey> loadedPublicKeys = keySource.loadKeysFromSource();
 
@@ -50,7 +50,7 @@ public class JwksKeySourceIT {
   public void shouldNotLoadKeyWithWrongKeyType() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
-    JwksKeySource keySource = new JwksKeySource(location, DW.client());
+    JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
 
     List<LoadedPublicKey> loadedPublicKeys = keySource.loadKeysFromSource();
 
@@ -64,7 +64,7 @@ public class JwksKeySourceIT {
   public void shouldNotLoadKeyWithWrongAlg() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
-    JwksKeySource keySource = new JwksKeySource(location, DW.client());
+    JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
 
     List<LoadedPublicKey> loadedPublicKeys = keySource.loadKeysFromSource();
 
@@ -78,7 +78,7 @@ public class JwksKeySourceIT {
   public void shouldConsiderSameKeyLoadedTwiceAsEqual() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
-    JwksKeySource keySource = new JwksKeySource(location, DW.client());
+    JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
 
     LoadedPublicKey key1 = keySource.loadKeysFromSource().get(0);
     LoadedPublicKey key2 = keySource.loadKeysFromSource().get(0);
@@ -91,20 +91,20 @@ public class JwksKeySourceIT {
   @Test(expected = KeyLoadFailedException.class)
   public void shouldFailWithKeyLoadFailedException() {
     String location = "http://localhost:" + DW.getLocalPort() + "/invalid-path";
-    new JwksKeySource(location, DW.client()).loadKeysFromSource();
+    new JwksKeySource(location, DW.client(), null).loadKeysFromSource();
   }
 
   @Test(expected = KeyLoadFailedException.class)
   public void shouldFailWithKeyLoadFailedExceptionOnTimeout() {
     String location = "http://unknownhost/invalid-path";
-    new JwksKeySource(location, DW.client()).loadKeysFromSource();
+    new JwksKeySource(location, DW.client(), null).loadKeysFromSource();
   }
 
   @Test
   public void shouldNotFailOnReload() {
     String location = "http://localhost:" + DW.getLocalPort() + "/invalid-path";
     Optional<List<LoadedPublicKey>> keys =
-        new JwksKeySource(location, DW.client()).reloadKeysFromSource();
+        new JwksKeySource(location, DW.client(), null).reloadKeysFromSource();
     assertThat(keys).isNotPresent();
   }
 

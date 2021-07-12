@@ -25,7 +25,7 @@ public class OpenIdProviderDiscoveryKeySourceTest {
     doThrow(keyLoadFailedException).when(client).target(anyString());
 
     OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource =
-        new OpenIdProviderDiscoveryKeySource("uri", client);
+        new OpenIdProviderDiscoveryKeySource("uri", client, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
@@ -41,7 +41,7 @@ public class OpenIdProviderDiscoveryKeySourceTest {
     doReturn(response).when(webApplicationException).getResponse();
     doThrow(webApplicationException).when(client).target(anyString());
     OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource =
-        new OpenIdProviderDiscoveryKeySource("uri", client);
+        new OpenIdProviderDiscoveryKeySource("uri", client, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource);
@@ -59,7 +59,7 @@ public class OpenIdProviderDiscoveryKeySourceTest {
     doThrow(webApplicationException).when(client).target(anyString());
     doThrow(new ProcessingException("Test")).when(response).close();
     OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource =
-        new OpenIdProviderDiscoveryKeySource("uri", client);
+        new OpenIdProviderDiscoveryKeySource("uri", client, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
@@ -75,7 +75,7 @@ public class OpenIdProviderDiscoveryKeySourceTest {
     doReturn(response).when(webApplicationException).getResponse();
     doThrow(webApplicationException).when(client).target(anyString());
     OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource =
-        new OpenIdProviderDiscoveryKeySource("uri", client);
+        new OpenIdProviderDiscoveryKeySource("uri", client, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
@@ -91,7 +91,7 @@ public class OpenIdProviderDiscoveryKeySourceTest {
     doThrow(e).when(client).target(anyString());
 
     OpenIdProviderDiscoveryKeySource openIdProviderDiscoveryKeySource =
-        new OpenIdProviderDiscoveryKeySource("uri", client);
+        new OpenIdProviderDiscoveryKeySource("uri", client, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(openIdProviderDiscoveryKeySource::loadKeysFromSource)
