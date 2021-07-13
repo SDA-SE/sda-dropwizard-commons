@@ -1,6 +1,6 @@
 dependencies {
-  compile project(':sda-commons-server-starter')
+  api project(':sda-commons-server-starter')
 
-  testCompile project(':sda-commons-server-testing')
-  testCompile project(':sda-commons-server-auth-testing')
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-server-auth-testing')
 }

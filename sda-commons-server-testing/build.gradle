@@ -1,19 +1,19 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-dropwizard')
 
-  compile 'io.dropwizard:dropwizard-testing'
-  compile 'jakarta.servlet:jakarta.servlet-api'
+  api 'io.dropwizard:dropwizard-testing'
+  api 'jakarta.servlet:jakarta.servlet-api'
 
-  compile 'junit:junit'
-  compile 'org.junit.jupiter:junit-jupiter-api'
-  compile 'org.hamcrest:hamcrest'
-  compile 'org.mockito:mockito-core'
-  compile 'org.assertj:assertj-core'
-  compile 'org.junit-pioneer:junit-pioneer', {
+  api 'junit:junit'
+  api 'org.junit.jupiter:junit-jupiter-api'
+  api 'org.hamcrest:hamcrest'
+  api 'org.mockito:mockito-core'
+  api 'org.assertj:assertj-core'
+  api 'org.junit-pioneer:junit-pioneer', {
     exclude group: 'org.junit', module: 'junit-bom'
   }
-  compile 'org.junit.jupiter:junit-jupiter-params'
-  compile 'org.mockito:mockito-junit-jupiter'
+  api 'org.junit.jupiter:junit-jupiter-params'
+  api 'org.mockito:mockito-junit-jupiter'
 
   runtimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   runtimeOnly 'org.junit.vintage:junit-vintage-engine'

@@ -4,52 +4,52 @@ dependencies {
   components.all(BouncycastleAlignmentRule)
 
   // Add all new modules here to verify that there are no dependency clashes.
-  compile project(':sda-commons-client-jersey')
-  compile project(':sda-commons-client-jersey-wiremock-testing')
-  compile project(':sda-commons-server-auth')
-  compile project(':sda-commons-server-auth-testing')
-  compile project(':sda-commons-server-circuitbreaker')
-  compile project(':sda-commons-server-consumer')
-  compile project(':sda-commons-server-cors')
-  compile project(':sda-commons-server-key-mgmt')
-  compile project(':sda-commons-server-dropwizard')
-  compile project(':sda-commons-server-healthcheck')
-  compile project(':sda-commons-server-hibernate')
-  compile project(':sda-commons-server-hibernate-testing')
-  compile project(':sda-commons-server-jackson')
-  compile project(':sda-commons-server-jaeger')
-  compile project(':sda-commons-server-kafka')
-  compile project(':sda-commons-server-kafka-testing')
-  compile project(':sda-commons-server-mongo-testing')
-  compile project(':sda-commons-server-morphia')
-  compile project(':sda-commons-server-openapi')
-  compile project(':sda-commons-server-opentracing')
-  compile project(':sda-commons-server-prometheus')
-  compile project(':sda-commons-server-s3')
-  compile project(':sda-commons-server-s3-testing')
-  compile project(':sda-commons-server-security')
-  compile project(':sda-commons-server-starter'), {
+  api project(':sda-commons-client-jersey')
+  api project(':sda-commons-client-jersey-wiremock-testing')
+  api project(':sda-commons-server-auth')
+  api project(':sda-commons-server-auth-testing')
+  api project(':sda-commons-server-circuitbreaker')
+  api project(':sda-commons-server-consumer')
+  api project(':sda-commons-server-cors')
+  api project(':sda-commons-server-key-mgmt')
+  api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-healthcheck')
+  api project(':sda-commons-server-hibernate')
+  api project(':sda-commons-server-hibernate-testing')
+  api project(':sda-commons-server-jackson')
+  api project(':sda-commons-server-jaeger')
+  api project(':sda-commons-server-kafka')
+  api project(':sda-commons-server-kafka-testing')
+  api project(':sda-commons-server-mongo-testing')
+  api project(':sda-commons-server-morphia')
+  api project(':sda-commons-server-openapi')
+  api project(':sda-commons-server-opentracing')
+  api project(':sda-commons-server-prometheus')
+  api project(':sda-commons-server-s3')
+  api project(':sda-commons-server-s3-testing')
+  api project(':sda-commons-server-security')
+  api project(':sda-commons-server-starter'), {
     // we intentionally allow this conflict. the swagger and openapi module can't be used in one project.
     // since the sda-commons-server-starter will be replaced by sda-commons-starter in the future, we
     // don't check the swagger-related dependencies anymore.
     exclude group: 'io.openapitools.hal', module: 'swagger-hal'
   }
-  compile project(':sda-commons-server-swagger'), {
+  api project(':sda-commons-server-swagger'), {
     // we intentionally allow this conflict. the swagger and openapi module can't be used in one project.
     // since the sda-commons-server-swagger will be replaced by sda-commons-server-openapi in the
     // future, we don't check the swagger-related dependencies anymore.
     exclude group: 'io.openapitools.hal', module: 'swagger-hal'
   }
-  compile project(':sda-commons-server-testing')
-  compile project(':sda-commons-server-trace')
-  compile project(':sda-commons-server-weld')
-  compile project(':sda-commons-server-weld-testing')
-  compile project(':sda-commons-shared-asyncapi')
-  compile project(':sda-commons-shared-error')
-  compile project(':sda-commons-shared-forms')
-  compile project(':sda-commons-shared-tracing')
-  compile project(':sda-commons-shared-yaml')
-  compile project(':sda-commons-starter')
+  api project(':sda-commons-server-testing')
+  api project(':sda-commons-server-trace')
+  api project(':sda-commons-server-weld')
+  api project(':sda-commons-server-weld-testing')
+  api project(':sda-commons-shared-asyncapi')
+  api project(':sda-commons-shared-error')
+  api project(':sda-commons-shared-forms')
+  api project(':sda-commons-shared-tracing')
+  api project(':sda-commons-shared-yaml')
+  api project(':sda-commons-starter')
 }
 
 /**

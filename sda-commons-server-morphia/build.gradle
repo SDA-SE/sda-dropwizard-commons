@@ -1,8 +1,8 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-dropwizard')
 
-  compile 'dev.morphia.morphia:core'
-  compile 'dev.morphia.morphia:validation', {
+  api 'dev.morphia.morphia:core'
+  api 'dev.morphia.morphia:validation', {
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
      * javax.inject.
@@ -21,15 +21,15 @@ dependencies {
      */
     exclude group: 'aopalliance', module: 'aopalliance'
   }
-  compile 'org.glassfish.hk2.external:jakarta.inject'
-  compile 'jakarta.validation:jakarta.validation-api'
-  compile 'org.glassfish.hk2.external:aopalliance-repackaged'
+  api 'org.glassfish.hk2.external:jakarta.inject'
+  api 'jakarta.validation:jakarta.validation-api'
+  api 'org.glassfish.hk2.external:aopalliance-repackaged'
 
-  compile 'org.bouncycastle:bcpkix-jdk15on'
-  compile 'io.opentracing.contrib:opentracing-mongo-driver'
+  api 'org.bouncycastle:bcpkix-jdk15on'
+  api 'io.opentracing.contrib:opentracing-mongo-driver'
 
-  testCompile project(':sda-commons-server-mongo-testing')
-  testCompile 'commons-io:commons-io'
-  testCompile 'org.assertj:assertj-core'
-  testCompile 'io.opentracing:opentracing-mock'
+  testImplementation project(':sda-commons-server-mongo-testing')
+  testImplementation 'commons-io:commons-io'
+  testImplementation 'org.assertj:assertj-core'
+  testImplementation 'io.opentracing:opentracing-mock'
 }

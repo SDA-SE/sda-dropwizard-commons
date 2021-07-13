@@ -1,7 +1,7 @@
 dependencies {
-  compile project(':sda-commons-server-opentracing')
-  compile project(':sda-commons-server-jaeger')
-  compile project(':sda-commons-client-jersey')
+  api project(':sda-commons-server-opentracing')
+  api project(':sda-commons-server-jaeger')
+  api project(':sda-commons-client-jersey')
 
-  testCompile project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-server-testing')
 }

@@ -1,8 +1,8 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
-  compile project(':sda-commons-shared-yaml')
+  api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-shared-yaml')
 
-  compile 'io.swagger:swagger-jaxrs', {
+  api 'io.swagger:swagger-jaxrs', {
     /**
      * swagger-jaxrs uses the following dependency:
      *
@@ -22,32 +22,32 @@ dependencies {
      */
     exclude group: 'javax.validation', module: 'validation-api'
   }
-  compile 'jakarta.ws.rs:jakarta.ws.rs-api'
-  compile 'jakarta.validation:jakarta.validation-api'
+  api 'jakarta.ws.rs:jakarta.ws.rs-api'
+  api 'jakarta.validation:jakarta.validation-api'
 
   // We intentionally stick to the 1.0.4 version here since all updates only work with OpenAPI 3.0.
   // The sda-commons-server-openapi module uses a newer version that is compatible with the new
   // swagger-v3 library.
-  compile 'io.openapitools.hal:swagger-hal:1.0.4', {
+  api 'io.openapitools.hal:swagger-hal:1.0.4', {
     exclude group: 'io.swagger', module: 'swagger-jaxrs'
     exclude group: 'org.slf4j', module: 'slf4j-api'
   }
-  compile 'io.openapitools.jackson.dataformat:jackson-dataformat-hal'
+  api 'io.openapitools.jackson.dataformat:jackson-dataformat-hal'
 
-  compile 'org.slf4j:slf4j-api'
+  api 'org.slf4j:slf4j-api'
 
-  testCompile project(':sda-commons-server-testing')
-  testCompile 'net.javacrumbs.json-unit:json-unit-assertj', {
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation 'net.javacrumbs.json-unit:json-unit-assertj', {
     exclude group: 'org.hamcrest',  module: 'hamcrest-core'
   }
-  testCompile 'com.github.java-json-tools:json-schema-validator', {
+  testImplementation 'com.github.java-json-tools:json-schema-validator', {
     /**
      * Dropwizard comes with jakarta.activation instead of javax.activation.
      * Both contain the same classes.
      */
     exclude group: 'javax.activation', module: 'activation'
   }
-  testCompile 'jakarta.activation:jakarta.activation-api'
+  testImplementation 'jakarta.activation:jakarta.activation-api'
 }
 
 test {

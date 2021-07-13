@@ -1,15 +1,15 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
-  compile project(':sda-commons-shared-error')
-  compile project(':sda-commons-server-opentracing')
-  compile project(':sda-commons-shared-tracing')
-  compile 'io.dropwizard:dropwizard-auth'
-  compile 'io.dropwizard:dropwizard-client'
-  compile 'jakarta.servlet:jakarta.servlet-api'
+  api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-shared-error')
+  api project(':sda-commons-server-opentracing')
+  api project(':sda-commons-shared-tracing')
+  api 'io.dropwizard:dropwizard-auth'
+  api 'io.dropwizard:dropwizard-client'
+  api 'jakarta.servlet:jakarta.servlet-api'
 
-  compile 'com.auth0:java-jwt'
+  api 'com.auth0:java-jwt'
 
-  testCompile project(':sda-commons-server-testing')
-  testCompile project(':sda-commons-client-jersey-wiremock-testing')
-  testCompile 'org.awaitility:awaitility'
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-client-jersey-wiremock-testing')
+  testImplementation 'org.awaitility:awaitility'
 }

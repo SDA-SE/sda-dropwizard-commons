@@ -1,22 +1,22 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
-  compile project(':sda-commons-server-opentracing')
-  compile project(':sda-commons-shared-tracing')
-  compile project(':sda-commons-shared-error')
+  api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-opentracing')
+  api project(':sda-commons-shared-tracing')
+  api project(':sda-commons-shared-error')
 
-  compile 'io.dropwizard:dropwizard-client'
-  compile 'jakarta.servlet:jakarta.servlet-api'
-  compile 'org.glassfish.jersey.core:jersey-client'
-  compile 'org.glassfish.jersey.ext:jersey-proxy-client'
-  compile 'org.codefetti.proxy:proxy-handler:1.0.0'
-  compile 'io.opentracing.contrib:opentracing-concurrent'
+  api 'io.dropwizard:dropwizard-client'
+  api 'jakarta.servlet:jakarta.servlet-api'
+  api 'org.glassfish.jersey.core:jersey-client'
+  api 'org.glassfish.jersey.ext:jersey-proxy-client'
+  api 'org.codefetti.proxy:proxy-handler:1.0.0'
+  api 'io.opentracing.contrib:opentracing-concurrent'
 
-  testCompile project(':sda-commons-server-testing')
-  testCompile project(':sda-commons-client-jersey-wiremock-testing')
-  testCompile project(':sda-commons-server-trace')
-  testCompile project(':sda-commons-shared-forms')
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-client-jersey-wiremock-testing')
+  testImplementation project(':sda-commons-server-trace')
+  testImplementation project(':sda-commons-shared-forms')
 
-  testCompile 'org.awaitility:awaitility'
-  testCompile 'org.assertj:assertj-core'
-  testCompile 'io.opentracing:opentracing-mock'
+  testImplementation 'org.awaitility:awaitility'
+  testImplementation 'org.assertj:assertj-core'
+  testImplementation 'io.opentracing:opentracing-mock'
 }

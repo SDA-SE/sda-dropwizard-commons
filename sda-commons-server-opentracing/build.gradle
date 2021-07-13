@@ -1,10 +1,10 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-dropwizard')
 
-  compile 'io.opentracing.contrib:opentracing-jaxrs2'
-  compile 'io.opentracing.contrib:opentracing-web-servlet-filter'
+  api 'io.opentracing.contrib:opentracing-jaxrs2'
+  api 'io.opentracing.contrib:opentracing-web-servlet-filter'
 
-  testCompile project(':sda-commons-server-testing')
-  testCompile 'io.opentracing:opentracing-mock'
-  testCompile 'org.awaitility:awaitility'
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation 'io.opentracing:opentracing-mock'
+  testImplementation 'org.awaitility:awaitility'
 }

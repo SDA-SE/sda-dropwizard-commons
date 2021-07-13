@@ -1,7 +1,7 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
-  compile project(':sda-commons-server-kafka')
+  api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-kafka')
 
-  testCompile project(':sda-commons-server-kafka-testing')
+  testImplementation project(':sda-commons-server-kafka-testing')
 }
 

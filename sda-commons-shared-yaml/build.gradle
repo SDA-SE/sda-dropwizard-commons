@@ -1,9 +1,9 @@
 dependencies {
-  compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml'
-  compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
-  compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8'
-  compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names'
+  api group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml'
+  api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
+  api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8'
+  api group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names'
 
-  testCompile project(':sda-commons-server-testing')
-  testCompile 'commons-io:commons-io'
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation 'commons-io:commons-io'
 }

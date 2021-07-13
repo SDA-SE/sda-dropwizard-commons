@@ -1,7 +1,7 @@
 dependencies {
 
-  compile project(':sda-commons-server-dropwizard')
-  compile project(':sda-commons-server-jackson')
+  api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-jackson')
 
-  testCompile project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-server-testing')
 }
