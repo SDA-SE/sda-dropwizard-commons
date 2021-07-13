@@ -10,7 +10,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.testing.ResourceHelpers;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +38,12 @@ public class AuthConfigTest {
     pem.setLocation(new File(pemLocation).toURI());
     pem.setType(KeyUriType.PEM);
     pem.setPemKeyId("example");
+    pem.setRequiredIssuer("http://localhost/dex");
     keys.add(pem);
     KeyLocation discovery = new KeyLocation();
     discovery.setLocation(URI.create("http://keycloak.example.com/auth/realms/my-app"));
     discovery.setType(KeyUriType.OPEN_ID_DISCOVERY);
+    discovery.setRequiredIssuer("http://localhost/dex2");
     keys.add(discovery);
     try {
       String keysJson = new ObjectMapper().writeValueAsString(keys);
@@ -62,16 +68,22 @@ public class AuthConfigTest {
     assertThat(testConfig).isNotNull();
     assertThat(testConfig.getAuth()).isNotNull();
     assertThat(testConfig.getAuth().getKeys())
-        .extracting(KeyLocation::getType, KeyLocation::getLocation, KeyLocation::getPemKeyId)
+        .extracting(
+            KeyLocation::getType,
+            KeyLocation::getLocation,
+            KeyLocation::getPemKeyId,
+            KeyLocation::getRequiredIssuer)
         .containsExactly(
             tuple(
                 KeyUriType.PEM,
                 new File(ResourceHelpers.resourceFilePath("example.pem")).toURI(),
-                "example"),
+                "example",
+                "http://localhost/dex"),
             tuple(
                 KeyUriType.OPEN_ID_DISCOVERY,
                 URI.create("http://keycloak.example.com/auth/realms/my-app"),
-                null));
+                null,
+                "http://localhost/dex2"));
   }
 
   private String readConfigWithSubstitution(String configPath) throws IOException {

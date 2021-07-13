@@ -26,13 +26,16 @@ public class PemKeySource implements KeySource {
 
   private static final Logger LOG = LoggerFactory.getLogger(PemKeySource.class);
 
-  private String kid;
+  private final String kid;
 
-  private URI pemKeyLocation;
+  private final URI pemKeyLocation;
 
-  public PemKeySource(String kid, URI pemKeyLocation) {
+  private final String requiredIssuer;
+
+  public PemKeySource(String kid, URI pemKeyLocation, String requiredIssuer) {
     this.kid = kid;
     this.pemKeyLocation = pemKeyLocation;
+    this.requiredIssuer = requiredIssuer;
   }
 
   @Override
@@ -41,12 +44,12 @@ public class PemKeySource implements KeySource {
       LOG.info("Loading public key for token signature verification from PEM {}", pemKeyLocation);
       if (isPublicKey(pemKeyLocation)) {
         RSAPublicKey publicKey = loadPublicKey(pemKeyLocation);
-        return Collections.singletonList(new LoadedPublicKey(kid, publicKey, this));
+        return Collections.singletonList(new LoadedPublicKey(kid, publicKey, this, requiredIssuer));
       } else {
         X509Certificate cer = loadCertificate(pemKeyLocation);
         RSAPublicKey publicKey = extractRsaPublicKeyFromCertificate(cer);
         LOG.info("Loaded public key for token signature verification from PEM {}", pemKeyLocation);
-        return Collections.singletonList(new LoadedPublicKey(kid, publicKey, this));
+        return Collections.singletonList(new LoadedPublicKey(kid, publicKey, this, requiredIssuer));
       }
     } catch (IOException | CertificateException | NullPointerException | ClassCastException e) {
 

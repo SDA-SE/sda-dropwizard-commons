@@ -38,6 +38,12 @@ public class KeyLocation {
    */
   private String pemKeyId;
 
+  /**
+   * Optional <a href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken">iss</a> that
+   * specifies the required issuer of the jwt token, if not empty.
+   */
+  private String requiredIssuer;
+
   public URI getLocation() {
     return location;
   }
@@ -62,6 +68,15 @@ public class KeyLocation {
 
   public KeyLocation setPemKeyId(String pemKeyId) {
     this.pemKeyId = pemKeyId;
+    return this;
+  }
+
+  public String getRequiredIssuer() {
+    return requiredIssuer;
+  }
+
+  public KeyLocation setRequiredIssuer(String requiredIssuer) {
+    this.requiredIssuer = requiredIssuer;
     return this;
   }
 }

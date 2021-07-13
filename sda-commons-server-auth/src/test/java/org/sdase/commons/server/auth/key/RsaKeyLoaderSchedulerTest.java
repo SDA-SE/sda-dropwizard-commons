@@ -61,8 +61,8 @@ public class RsaKeyLoaderSchedulerTest {
     RSAPublicKey keyToBeRevoked = mock(RSAPublicKey.class);
 
     // initially, two known keys are published
-    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource));
-    actualKeys.add(new LoadedPublicKey("kidForKeyToBeRevoked", keyToBeRevoked, keySource));
+    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null));
+    actualKeys.add(new LoadedPublicKey("kidForKeyToBeRevoked", keyToBeRevoked, keySource, null));
 
     waitForNextReload();
     assertThatKeyIsKnown("kidForValidKey", validKey);
@@ -80,7 +80,7 @@ public class RsaKeyLoaderSchedulerTest {
   public void shouldKeepKeysOnLoadingFailure() {
     final RSAPublicKey validKey = mock(RSAPublicKey.class);
 
-    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource));
+    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null));
 
     waitForNextReload();
     assertThatKeyIsKnown("kidForValidKey", validKey);
@@ -105,18 +105,18 @@ public class RsaKeyLoaderSchedulerTest {
 
     // expect more schedules
     actualInvocationFails.set(false);
-    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource));
+    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null));
 
     waitForNextReload();
     assertThatKeyIsKnown("kidForValidKey", validKey);
   }
 
   private void assertThatKeyIsUnknown(String kid) {
-    assertThat(keyLoader.getKey(kid)).isNull();
+    assertThat(keyLoader.getLoadedPublicKey(kid)).isNull();
   }
 
   private void assertThatKeyIsKnown(String kid, RSAPublicKey expectedKeyInstance) {
-    assertThat(keyLoader.getKey(kid)).isSameAs(expectedKeyInstance);
+    assertThat(keyLoader.getLoadedPublicKey(kid).getPublicKey()).isSameAs(expectedKeyInstance);
   }
 
   private void waitForNextReload() {

@@ -24,7 +24,7 @@ public class JwksKeySourceTest {
     Client client = mock(Client.class);
     doThrow(keyLoadFailedException).when(client).target(anyString());
 
-    JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
+    JwksKeySource jwksKeySource = new JwksKeySource("uri", client, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(jwksKeySource::loadKeysFromSource)
@@ -39,7 +39,7 @@ public class JwksKeySourceTest {
     WebApplicationException webApplicationException = mock(WebApplicationException.class);
     doReturn(response).when(webApplicationException).getResponse();
     doThrow(webApplicationException).when(client).target(anyString());
-    JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
+    JwksKeySource jwksKeySource = new JwksKeySource("uri", client, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(jwksKeySource::loadKeysFromSource);
@@ -56,7 +56,7 @@ public class JwksKeySourceTest {
     doReturn(response).when(webApplicationException).getResponse();
     doThrow(webApplicationException).when(client).target(anyString());
     doThrow(new ProcessingException("Test")).when(response).close();
-    JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
+    JwksKeySource jwksKeySource = new JwksKeySource("uri", client, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(jwksKeySource::loadKeysFromSource)
@@ -71,7 +71,7 @@ public class JwksKeySourceTest {
     WebApplicationException webApplicationException = mock(WebApplicationException.class);
     doReturn(response).when(webApplicationException).getResponse();
     doThrow(webApplicationException).when(client).target(anyString());
-    JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
+    JwksKeySource jwksKeySource = new JwksKeySource("uri", client, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(jwksKeySource::loadKeysFromSource)
@@ -85,7 +85,7 @@ public class JwksKeySourceTest {
 
     Client client = mock(Client.class);
     doThrow(e).when(client).target(anyString());
-    JwksKeySource jwksKeySource = new JwksKeySource("uri", client);
+    JwksKeySource jwksKeySource = new JwksKeySource("uri", client, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(jwksKeySource::loadKeysFromSource)

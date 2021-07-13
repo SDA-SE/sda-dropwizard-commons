@@ -26,7 +26,7 @@ public class PemKeySourceTest {
   public void shouldLoadPemKeyFromHttp() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/key.pem";
-    PemKeySource pemKeySource = new PemKeySource("exampleHttp", URI.create(location));
+    PemKeySource pemKeySource = new PemKeySource("exampleHttp", URI.create(location), null);
 
     List<LoadedPublicKey> loadedPublicKeys = pemKeySource.loadKeysFromSource();
 
@@ -40,7 +40,8 @@ public class PemKeySourceTest {
   @Test
   public void shouldLoadPemKeyFromCertificateFile() {
     PemKeySource pemKeySource =
-        new PemKeySource(null, new File(ResourceHelpers.resourceFilePath("example.pem")).toURI());
+        new PemKeySource(
+            null, new File(ResourceHelpers.resourceFilePath("example.pem")).toURI(), null);
 
     List<LoadedPublicKey> loadedPublicKeys = pemKeySource.loadKeysFromSource();
 
@@ -54,7 +55,7 @@ public class PemKeySourceTest {
   @Test
   public void shouldLoadPemKeyFromPublicKeyFile() {
     final String resourceFilePath = ResourceHelpers.resourceFilePath("example-public-key.pem");
-    PemKeySource pemKeySource = new PemKeySource(null, new File(resourceFilePath).toURI());
+    PemKeySource pemKeySource = new PemKeySource(null, new File(resourceFilePath).toURI(), null);
 
     List<LoadedPublicKey> loadedPublicKeys = pemKeySource.loadKeysFromSource();
 
@@ -68,7 +69,7 @@ public class PemKeySourceTest {
   @Test
   public void shouldNotFailWithIOException() {
     File unknownFile = new File("DOES_NOT_EXIST.pem");
-    PemKeySource pemKeySource = new PemKeySource(null, unknownFile.toURI());
+    PemKeySource pemKeySource = new PemKeySource(null, unknownFile.toURI(), null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(pemKeySource::loadKeysFromSource)
@@ -77,7 +78,7 @@ public class PemKeySourceTest {
 
   @Test
   public void shouldNotFailWithNPE() {
-    PemKeySource pemKeySource = new PemKeySource(null, null);
+    PemKeySource pemKeySource = new PemKeySource(null, null, null);
 
     assertThatExceptionOfType(KeyLoadFailedException.class)
         .isThrownBy(pemKeySource::loadKeysFromSource)

@@ -28,10 +28,11 @@ import org.slf4j.LoggerFactory;
 public class JwksKeySource implements KeySource {
   private static final Logger LOGGER = LoggerFactory.getLogger(JwksKeySource.class);
 
-  private String jwksUri;
+  private final String jwksUri;
 
-  private Client client;
+  private final Client client;
 
+  private final String requiredIssuer;
   /**
    * @param jwksUri the uri providing a <a
    *     href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5">JSON Web Key
@@ -40,10 +41,13 @@ public class JwksKeySource implements KeySource {
    * @param client the client used to execute the discovery request, may be created from the
    *     application {@link io.dropwizard.setup.Environment} using {@link
    *     io.dropwizard.client.JerseyClientBuilder}
+   * @param requiredIssuer the required value of the issuer claim of the token in conjunction to the
+   *     current key.
    */
-  public JwksKeySource(String jwksUri, Client client) {
+  public JwksKeySource(String jwksUri, Client client, String requiredIssuer) {
     this.jwksUri = jwksUri;
     this.client = client;
+    this.requiredIssuer = requiredIssuer;
   }
 
   @Override
@@ -113,7 +117,7 @@ public class JwksKeySource implements KeySource {
 
       PublicKey publicKey = keyFactory.generatePublic(new RSAPublicKeySpec(modulus, exponent));
       if (publicKey instanceof RSAPublicKey) {
-        return new LoadedPublicKey(kid, (RSAPublicKey) publicKey, this);
+        return new LoadedPublicKey(kid, (RSAPublicKey) publicKey, this, requiredIssuer);
       } else {
         throw new KeyLoadFailedException(
             "Only RSA keys are supported but loaded a "

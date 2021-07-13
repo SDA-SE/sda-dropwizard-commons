@@ -26,20 +26,24 @@ public class OpenIdProviderDiscoveryKeySource implements KeySource {
       "/.well-known/openid-configuration"; // NOSONAR URL should be configurable but in this case
   // configuration makes no sense
 
-  private String issuerUrl;
+  private final String issuerUrl;
 
-  private Client client;
+  private final Client client;
 
+  private final String requiredIssuer;
   /**
    * @param issuerUrl the url of the issuer without the {@link #DISCOVERY_PATH}, e.g. {@code
    *     http://keycloak.example.com/auth/realms/my-realm}
    * @param client the client used to execute the discovery request, may be created from the
    *     application {@link io.dropwizard.setup.Environment} using {@link
    *     io.dropwizard.client.JerseyClientBuilder}
+   * @param requiredIssuer the required value of the issuer claim of the token in conjunction to the
+   *     current key
    */
-  public OpenIdProviderDiscoveryKeySource(String issuerUrl, Client client) {
+  public OpenIdProviderDiscoveryKeySource(String issuerUrl, Client client, String requiredIssuer) {
     this.issuerUrl = issuerUrl;
     this.client = client;
+    this.requiredIssuer = requiredIssuer;
   }
 
   @Override
@@ -51,9 +55,9 @@ public class OpenIdProviderDiscoveryKeySource implements KeySource {
               .request(MediaType.APPLICATION_JSON)
               .get(Discovery.class);
       List<LoadedPublicKey> loadedPublicKeys =
-          new JwksKeySource(discovery.getJwksUri(), client).loadKeysFromSource();
+          new JwksKeySource(discovery.getJwksUri(), client, requiredIssuer).loadKeysFromSource();
       return loadedPublicKeys.stream()
-          .map(k -> new LoadedPublicKey(k.getKid(), k.getPublicKey(), this))
+          .map(k -> new LoadedPublicKey(k.getKid(), k.getPublicKey(), this, requiredIssuer))
           .collect(Collectors.toList());
     } catch (KeyLoadFailedException e) {
       throw e;

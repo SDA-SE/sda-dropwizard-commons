@@ -1,6 +1,6 @@
 package org.sdase.commons.server.auth.key;
 
-import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,32 +27,26 @@ public class RsaPublicKeyLoader {
   private final Object loadingSemaphore = new Object();
 
   /** @return All keys that have been registered without kid in the order they have been added. */
-  public List<RSAPublicKey> getKeysWithoutId() {
+  public List<LoadedPublicKey> getKeysWithoutId() {
     if (keysWithoutKeyId.isEmpty()) {
       // we may need to avoid reloading every time and delay reloads if reloaded keys just moments
       // ago
       reloadKeys();
     }
-    return keysWithoutKeyId.stream()
-        .map(LoadedPublicKey::getPublicKey)
-        .collect(Collectors.toList());
+    return new ArrayList<>(keysWithoutKeyId);
   }
 
-  public RSAPublicKey getKey(String kid) {
+  public LoadedPublicKey getLoadedPublicKey(String kid) {
     if (kid == null) {
       return null;
     }
     LoadedPublicKey key = keysByKid.get(kid);
     if (key != null) {
-      return key.getPublicKey();
+      return key;
     }
     // we may need to avoid reloading every time and delay reloads if reloaded keys just moments ago
     reloadKeys();
-    key = keysByKid.get(kid);
-    if (key != null) {
-      return key.getPublicKey();
-    }
-    return null;
+    return keysByKid.get(kid);
   }
 
   public void addKeySource(KeySource keySource) {
