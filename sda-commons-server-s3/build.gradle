@@ -1,11 +1,11 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
-  compile 'com.amazonaws:aws-java-sdk-s3'
-  compile 'org.slf4j:jcl-over-slf4j'
-  compile 'io.opentracing.contrib:opentracing-aws-sdk-1'
-  compile 'io.opentracing:opentracing-util'
+  api project(':sda-commons-server-dropwizard')
+  api 'com.amazonaws:aws-java-sdk-s3'
+  api 'org.slf4j:jcl-over-slf4j'
+  api 'io.opentracing.contrib:opentracing-aws-sdk-1'
+  api 'io.opentracing:opentracing-util'
 
-  testCompile project(':sda-commons-server-s3-testing')
-  testCompile 'org.assertj:assertj-core'
-  testCompile 'io.opentracing:opentracing-mock'
+  testImplementation project(':sda-commons-server-s3-testing')
+  testImplementation 'org.assertj:assertj-core'
+  testImplementation 'io.opentracing:opentracing-mock'
 }

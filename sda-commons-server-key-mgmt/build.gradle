@@ -1,8 +1,8 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
-  compile project(':sda-commons-shared-yaml')
+  api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-shared-yaml')
 
-  testCompile project(':sda-commons-starter')
-  testCompile project(':sda-commons-server-testing')
-  testCompile project(':sda-commons-shared-error')
+  testImplementation project(':sda-commons-starter')
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-shared-error')
 }

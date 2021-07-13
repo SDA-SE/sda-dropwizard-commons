@@ -1,17 +1,17 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
-  compile project(':sda-commons-shared-tracing')
-  compile project(':sda-commons-shared-error')
+  api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-shared-tracing')
+  api project(':sda-commons-shared-error')
 
-  testCompile project(':sda-commons-server-jackson')
-  testCompile project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-server-jackson')
+  testImplementation project(':sda-commons-server-testing')
 
   // the following modules ship with different versions of the swagger-hal library.
   // since swagger-hal is not needed in these tests, they are excluded from both.
-  testCompile project(':sda-commons-server-openapi'), {
+  testImplementation project(':sda-commons-server-openapi'), {
     exclude group: 'io.openapitools.hal', module: 'swagger-hal'
   }
-  testCompile project(':sda-commons-server-swagger'), {
+  testImplementation project(':sda-commons-server-swagger'), {
     exclude group: 'io.openapitools.hal', module: 'swagger-hal'
   }
 }

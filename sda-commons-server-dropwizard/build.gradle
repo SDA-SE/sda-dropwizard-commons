@@ -1,7 +1,7 @@
 dependencies {
-  compile 'io.dropwizard:dropwizard-core'
-  compile 'jakarta.servlet:jakarta.servlet-api'
-  compile 'io.dropwizard:dropwizard-json-logging'
+  api 'io.dropwizard:dropwizard-core'
+  api 'jakarta.servlet:jakarta.servlet-api'
+  api 'io.dropwizard:dropwizard-json-logging'
 
-  testCompile project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-server-testing')
 }
