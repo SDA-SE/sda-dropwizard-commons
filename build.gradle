@@ -170,7 +170,7 @@ subprojects {
  * Problem is: You can't apply plugins 'java' and 'java-platform' at the same time.
  */
 configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
-  apply plugin: 'java'
+  apply plugin: 'java-library'
   apply plugin: 'jacoco'
 
   sourceCompatibility = JavaVersion.VERSION_1_8
@@ -192,7 +192,7 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   }
 
   dependencies {
-    compile enforcedPlatform(project(':sda-commons-dependencies'))
+    api enforcedPlatform(project(':sda-commons-dependencies'))
   }
 
   sourceSets {

@@ -1,19 +1,19 @@
 dependencies {
-  compile project(':sda-commons-server-auth')
-  compile project(':sda-commons-server-consumer')
-  compile project(':sda-commons-server-cors')
-  compile project(':sda-commons-server-dropwizard')
-  compile project(':sda-commons-server-healthcheck')
-  compile project(':sda-commons-server-jackson')
-  compile project(':sda-commons-server-jaeger')
-  compile project(':sda-commons-server-openapi')
-  compile project(':sda-commons-server-opentracing')
-  compile project(':sda-commons-server-prometheus')
-  compile project(':sda-commons-server-security')
-  compile project(':sda-commons-server-trace')
+  api project(':sda-commons-server-auth')
+  api project(':sda-commons-server-consumer')
+  api project(':sda-commons-server-cors')
+  api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-healthcheck')
+  api project(':sda-commons-server-jackson')
+  api project(':sda-commons-server-jaeger')
+  api project(':sda-commons-server-openapi')
+  api project(':sda-commons-server-opentracing')
+  api project(':sda-commons-server-prometheus')
+  api project(':sda-commons-server-security')
+  api project(':sda-commons-server-trace')
 
-  testCompile project(':sda-commons-server-testing')
-  testCompile project(':sda-commons-server-auth-testing')
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-server-auth-testing')
 }
 
 test {

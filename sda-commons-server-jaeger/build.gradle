@@ -1,7 +1,7 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-dropwizard')
 
-  compile 'io.jaegertracing:jaeger-client', {
+  api 'io.jaegertracing:jaeger-client', {
     /**
      * Dropwizard comes with jakarta.annotation-api instead of javax.annotation-api.
      * Both contain the same classes.
@@ -13,14 +13,14 @@ dependencies {
      */
     exclude group: "org.apache.tomcat.embed", module: "tomcat-embed-core"
   }
-  compile 'jakarta.annotation:jakarta.annotation-api'
+  api 'jakarta.annotation:jakarta.annotation-api'
 
 
   // Sadly the required code is in a test dependency, but as an alternative we could also copy the class here.
-  compile group: 'io.opentracing', name: 'opentracing-util', classifier: 'tests'
-  compile 'io.prometheus:simpleclient'
+  api group: 'io.opentracing', name: 'opentracing-util', classifier: 'tests'
+  api 'io.prometheus:simpleclient'
 
-  testCompile project(':sda-commons-server-testing')
-  testCompile project(':sda-commons-server-opentracing')
-  testCompile project(':sda-commons-server-prometheus')
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-server-opentracing')
+  testImplementation project(':sda-commons-server-prometheus')
 }

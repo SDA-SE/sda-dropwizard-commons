@@ -1,11 +1,11 @@
 dependencies {
-  compile project(':sda-commons-server-testing')
-  compile 'com.h2database:h2'
-  compile 'com.github.database-rider:rider-core', {
+  api project(':sda-commons-server-testing')
+  api 'com.h2database:h2'
+  api 'com.github.database-rider:rider-core', {
     // excluded due to licensing issues
     exclude group: 'mysql', module: 'mysql-connector-java'
   }
-  compile 'com.github.database-rider:rider-junit5', {
+  api 'com.github.database-rider:rider-junit5', {
     // excluded due to licensing issues
     exclude group: 'mysql', module: 'mysql-connector-java'
   }

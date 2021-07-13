@@ -1,11 +1,11 @@
 dependencies {
-  compile project(':sda-commons-server-jackson')
-  compile project(':sda-commons-shared-yaml')
-  compile 'com.kjetland:mbknor-jackson-jsonschema_2.12', {
+  api project(':sda-commons-server-jackson')
+  api project(':sda-commons-shared-yaml')
+  api 'com.kjetland:mbknor-jackson-jsonschema_2.12', {
     exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
     exclude group: 'javax.validation', module: 'validation-api'
     exclude group: 'org.slf4j', module: 'slf4j-api'
   }
 
-  testCompile project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-server-testing')
 }

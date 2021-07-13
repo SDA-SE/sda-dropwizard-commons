@@ -1,7 +1,7 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-dropwizard')
 
-  compile 'org.jboss.weld.se:weld-se-core', {
+  api 'org.jboss.weld.se:weld-se-core', {
     exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
     exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
     /**
@@ -32,7 +32,7 @@ dependencies {
      */
     exclude group: 'org.jboss.spec.javax.annotation', module: 'jboss-annotations-api_1.3_spec'
   }
-  compile 'org.jboss.weld.servlet:weld-servlet-core', {
+  api 'org.jboss.weld.servlet:weld-servlet-core', {
     /**
      * Dropwizard manages jakarta.el from Glassfish
      */
@@ -62,11 +62,11 @@ dependencies {
      */
     exclude group: 'org.jboss.spec.javax.annotation', module: 'jboss-annotations-api_1.3_spec'
   }
-  compile 'org.glassfish.hk2.external:jakarta.inject'
-  compile 'org.glassfish:jakarta.el'
-  compile 'jakarta.annotation:jakarta.annotation-api'
+  api 'org.glassfish.hk2.external:jakarta.inject'
+  api 'org.glassfish:jakarta.el'
+  api 'jakarta.annotation:jakarta.annotation-api'
 
-  compile 'jakarta.enterprise:jakarta.enterprise.cdi-api', {
+  api 'jakarta.enterprise:jakarta.enterprise.cdi-api', {
     exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
@@ -79,6 +79,6 @@ dependencies {
      */
     exclude group: 'jakarta.el', module: 'jakarta.el-api'
   }
-  compile 'javax.transaction:javax.transaction-api'
-  compile 'org.glassfish.jersey.ext.cdi:jersey-cdi1x'
+  api 'javax.transaction:javax.transaction-api'
+  api 'org.glassfish.jersey.ext.cdi:jersey-cdi1x'
 }

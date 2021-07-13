@@ -1,16 +1,16 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
-  compile project(':sda-commons-server-testing')
-  compile project(':sda-commons-server-auth')
-  compile 'com.auth0:java-jwt'
-  compile project(':sda-commons-client-jersey-wiremock-testing')
+  api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-testing')
+  api project(':sda-commons-server-auth')
+  api 'com.auth0:java-jwt'
+  api project(':sda-commons-client-jersey-wiremock-testing')
 
   // the following modules ship with different versions of the swagger-hal library.
   // since swagger-hal is not needed in these tests, they are excluded from both.
-  testCompile project(':sda-commons-server-openapi'), {
+  testImplementation project(':sda-commons-server-openapi'), {
     exclude group: 'io.openapitools.hal', module: 'swagger-hal'
   }
-  testCompile project(':sda-commons-server-swagger'), {
+  testImplementation project(':sda-commons-server-swagger'), {
     exclude group: 'io.openapitools.hal', module: 'swagger-hal'
   }
 
