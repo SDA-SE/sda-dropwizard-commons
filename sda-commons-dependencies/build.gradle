@@ -12,7 +12,7 @@ ext {
   prometheusVersion = '0.9.0'
   swaggerCoreVersion = '1.6.2'
   swaggerCoreV3Version = '2.1.10'
-  weldVersion = '3.1.5.Final'
+  weldVersion = '4.0.2.Final'
   openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.27.0'
   scalaVersion = '2.12.11' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
