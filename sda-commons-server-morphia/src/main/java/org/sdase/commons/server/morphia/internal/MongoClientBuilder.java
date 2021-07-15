@@ -83,7 +83,7 @@ public class MongoClientBuilder {
     if (configuration.isUseSsl()) {
       mongoClientOptionsBuilder.sslEnabled(true);
       // use sslContext created with env variable by default
-      if (configuration.getCaCertificate() != null && !configuration.getCaCertificate().isEmpty()) {
+      if (StringUtils.isNotBlank(configuration.getCaCertificate())) {
         sslContext = createSslContextIfAnyCertificatesAreConfigured();
       }
       if (sslContext != null) {
@@ -107,11 +107,8 @@ public class MongoClientBuilder {
       throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException,
           KeyManagementException {
     String caCertificate = configuration.getCaCertificate();
-    if (StringUtils.isNotBlank(caCertificate)) {
-      KeyStore truststoreFromPemKey = createKeyStoreFromCaCertificate(caCertificate);
-      return SslUtil.createSslContext(truststoreFromPemKey);
-    }
-    return null;
+    KeyStore truststoreFromPemKey = createKeyStoreFromCaCertificate(caCertificate);
+    return SslUtil.createSslContext(truststoreFromPemKey);
   }
 
   private KeyStore createKeyStoreFromCaCertificate(String caCertificate)
