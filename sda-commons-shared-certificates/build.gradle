@@ -1,8 +1,8 @@
 dependencies {
-  compile project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-dropwizard')
 
-  compile 'org.bouncycastle:bcpkix-jdk15on'
+  api 'org.bouncycastle:bcpkix-jdk15on'
 
-  testCompile project(':sda-commons-server-testing')
-  testCompile 'org.assertj:assertj-core'
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation 'org.assertj:assertj-core'
 }
