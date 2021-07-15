@@ -4,16 +4,32 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import java.util.function.Function;
+import java.security.KeyStoreException;
+import java.util.Optional;
+import javax.annotation.Nullable;
+import javax.net.ssl.SSLContext;
+import org.sdase.commons.shared.certificates.ca.ssl.CertificateReader;
+import org.sdase.commons.shared.certificates.ca.ssl.SslUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CaCertificatesBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
-  private static final String DEFAULT_TRUSTED_CERTIFICATES_DIR = "/var/trust/certificates";
+  private static final Logger LOGGER = LoggerFactory.getLogger(CaCertificatesBundle.class);
 
-  private final TrustedCertificatesDirConfigProvider<C> configProvider;
+  public static final String DEFAULT_TRUSTED_CERTIFICATES_DIR = "/var/trust/certificates";
+  private final CaCertificateConfigurationProvider<C> configProvider;
+  private CertificateReader certificateReader =
+      new CertificateReader(DEFAULT_TRUSTED_CERTIFICATES_DIR);
+  private SSLContext sslContext;
+  private boolean isCertificateLoaded = false;
 
-  public CaCertificatesBundle(TrustedCertificatesDirConfigProvider<C> configProvider) {
+  public CaCertificatesBundle(CaCertificateConfigurationProvider<C> configProvider) {
     this.configProvider = configProvider;
+  }
+
+  public static <T extends Configuration> Builder<T> builder() {
+    return new Builder<>();
   }
 
   @Override
@@ -22,45 +38,78 @@ public class CaCertificatesBundle<C extends Configuration> implements Configured
   }
 
   @Override
-  public void run(C configuration, Environment environment) {
-    final String certificateDir = configProvider.apply(configuration);
+  public void run(C configuration, Environment environment) throws KeyStoreException {
+    String processedDirectory = DEFAULT_TRUSTED_CERTIFICATES_DIR;
+    if (configProvider != null) {
+      CaCertificateConfiguration certificateConfiguration = configProvider.apply(configuration);
+      if (certificateConfiguration != null
+          && certificateConfiguration.getCustomCaCertificateDir() != null) {
+        processedDirectory = certificateConfiguration.getCustomCaCertificateDir();
+        this.certificateReader = new CertificateReader(processedDirectory);
+      }
+    }
     // read the certificates
+    Optional<SSLContext> optionalSSLContext = createSSLContext();
+    if (optionalSSLContext.isPresent()) {
+      this.sslContext = optionalSSLContext.get();
+      LOGGER.info("Loaded certificates from {}", processedDirectory);
+    } else {
+      LOGGER.warn("No certificates are found in the provided directory {}", processedDirectory);
+    }
+    isCertificateLoaded = true;
   }
 
-  public static <C extends Configuration> InitialBuilder<C> builder() {
-    return new Builder<>();
+  /**
+   * @return the created {@link SSLContext} that is ready to be used in other modules. If the
+   *     returned value is null then there was no certificates found in the provided config
+   *     directory.
+   * @throws IllegalStateException if the method is called before the sslContext is initialized in
+   *     {@link #run(Configuration, Environment)}
+   */
+  @Nullable
+  public SSLContext getSslContext() {
+    if (sslContext == null && !isCertificateLoaded) {
+      throw new IllegalStateException(
+          "Could not access sslContext before Application#run(Configuration, Environment).");
+    }
+    return sslContext;
   }
 
-  public interface InitialBuilder<C1 extends Configuration> extends FinalBuilder<C1> {
-    FinalBuilder<C1> withTrustedCertificatesDir(
-        TrustedCertificatesDirConfigProvider<C1> configProvider);
+  private Optional<SSLContext> createSSLContext() {
+    return certificateReader
+        .readCertificates()
+        .map(SslUtil::createTruststoreFromPemKey)
+        .map(SslUtil::createSslContext);
+  }
+
+  public interface InitialBuilder {
+    <C extends Configuration> FinalBuilder<C> withCaCertificateConfigProvider(
+        CaCertificateConfigurationProvider<C> configProvider);
   }
 
   public interface FinalBuilder<C extends Configuration> {
     CaCertificatesBundle<C> build();
   }
 
-  public static class Builder<C extends Configuration>
-      implements InitialBuilder<C>, FinalBuilder<C> {
+  public static class Builder<C extends Configuration> implements InitialBuilder, FinalBuilder<C> {
 
-    private TrustedCertificatesDirConfigProvider<C> trustedCertificatesDir =
-        c -> DEFAULT_TRUSTED_CERTIFICATES_DIR;
+    private CaCertificateConfigurationProvider<C> configProvider;
+
+    private Builder() {}
+
+    private Builder(CaCertificateConfigurationProvider<C> configProvider) {
+      this.configProvider = configProvider;
+    }
 
     @Override
-    public FinalBuilder<C> withTrustedCertificatesDir(
-        TrustedCertificatesDirConfigProvider<C> configProvider) {
-      this.trustedCertificatesDir = configProvider;
-      return this;
+    public <C1 extends Configuration> FinalBuilder<C1> withCaCertificateConfigProvider(
+        CaCertificateConfigurationProvider<C1> configProvider) {
+      return new Builder<>(configProvider);
     }
 
     @Override
     public CaCertificatesBundle<C> build() {
-      return new CaCertificatesBundle<>(trustedCertificatesDir);
+      return new CaCertificatesBundle<>(configProvider);
     }
   }
-
-  /** @param <C> the type of the specific {@link Configuration} used in the application */
-  @FunctionalInterface
-  public interface TrustedCertificatesDirConfigProvider<C extends Configuration>
-      extends Function<C, String> {}
 }
