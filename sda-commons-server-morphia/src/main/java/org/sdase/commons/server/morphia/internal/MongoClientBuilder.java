@@ -5,11 +5,7 @@ import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListe
 import static org.sdase.commons.server.morphia.internal.ConnectionStringUtil.createConnectionString;
 import static org.sdase.commons.server.morphia.internal.SslUtil.createTruststoreFromPemKey;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoException;
-import com.mongodb.WriteConcern;
+import com.mongodb.*;
 import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.mongo.common.SpanDecorator;
@@ -37,6 +33,7 @@ public class MongoClientBuilder {
   private final MongoConfiguration configuration;
   private final MongoClientOptions.Builder mongoClientOptionsBuilder;
   private Tracer tracer;
+  private SSLContext sslContext;
 
   public MongoClientBuilder(MongoConfiguration configuration) {
     this(configuration, MongoClientOptions.builder(DEFAULT_OPTIONS.build()));
@@ -50,6 +47,11 @@ public class MongoClientBuilder {
 
   public MongoClientBuilder withTracer(Tracer tracer) {
     this.tracer = tracer;
+    return this;
+  }
+
+  public MongoClientBuilder withSSlContext(SSLContext sslContext) {
+    this.sslContext = sslContext;
     return this;
   }
 
@@ -78,10 +80,12 @@ public class MongoClientBuilder {
   private MongoClient createMongoClient()
       throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException,
           KeyManagementException {
-
     if (configuration.isUseSsl()) {
       mongoClientOptionsBuilder.sslEnabled(true);
-      SSLContext sslContext = createSslContextIfAnyCertificatesAreConfigured();
+      // use sslContext created with env variable by default
+      if (configuration.getCaCertificate() != null && !configuration.getCaCertificate().isEmpty()) {
+        sslContext = createSslContextIfAnyCertificatesAreConfigured();
+      }
       if (sslContext != null) {
         mongoClientOptionsBuilder.sslContext(sslContext);
       }

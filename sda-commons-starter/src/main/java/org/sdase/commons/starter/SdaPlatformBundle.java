@@ -26,7 +26,6 @@ import org.sdase.commons.server.opentracing.OpenTracingBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.server.security.SecurityBundle;
 import org.sdase.commons.server.trace.TraceTokenBundle;
-import org.sdase.commons.shared.certificates.ca.CaCertificatesBundle;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders.AuthConfigProviderBuilder;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders.CorsConfigProviderBuilder;
 import org.sdase.commons.starter.builder.InitialPlatformBundleBuilder;
@@ -77,9 +76,6 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     bootstrap.addBundle(OpenTracingBundle.builder().build());
     bootstrap.addBundle(PrometheusBundle.builder().build());
     bootstrap.addBundle(TraceTokenBundle.builder().build());
-    bootstrap.addBundle(
-        CaCertificatesBundle.builder()
-            .build()); // TODO add config param to SdaPlatformConfiguration
 
     // add configured bundles
     List<ConfiguredBundle<? super C>> configuredBundles = new ArrayList<>();
