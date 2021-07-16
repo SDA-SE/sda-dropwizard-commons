@@ -8,6 +8,7 @@ import java.security.KeyStoreException;
 import java.util.Optional;
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
+import org.apache.commons.lang3.StringUtils;
 import org.sdase.commons.shared.certificates.ca.ssl.CertificateReader;
 import org.sdase.commons.shared.certificates.ca.ssl.SslUtil;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class CaCertificatesBundle<C extends Configuration> implements Configured
     if (configProvider != null) {
       CaCertificateConfiguration certificateConfiguration = configProvider.apply(configuration);
       if (certificateConfiguration != null
-          && certificateConfiguration.getCustomCaCertificateDir() != null) {
+          && StringUtils.isNotBlank(certificateConfiguration.getCustomCaCertificateDir())) {
         processedDirectory = certificateConfiguration.getCustomCaCertificateDir();
         this.certificateReader = new CertificateReader(processedDirectory);
       }

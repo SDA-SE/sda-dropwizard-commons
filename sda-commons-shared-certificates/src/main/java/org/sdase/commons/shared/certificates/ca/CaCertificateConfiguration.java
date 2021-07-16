@@ -7,12 +7,6 @@ public class CaCertificateConfiguration {
    */
   private String customCaCertificateDir;
 
-  public CaCertificateConfiguration() {}
-
-  public CaCertificateConfiguration(String customCaCertificateDir) {
-    this.customCaCertificateDir = customCaCertificateDir;
-  }
-
   public String getCustomCaCertificateDir() {
     return customCaCertificateDir;
   }
