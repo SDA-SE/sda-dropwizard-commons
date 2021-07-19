@@ -78,9 +78,9 @@ public class CaCertificatesBundle<C extends Configuration> implements Configured
 
   private Optional<SSLContext> createSSLContext() {
     return certificateReader
-        .readCertificates()
-        .map(SslUtil::createTruststoreFromPemKey)
-        .map(SslUtil::createSslContext);
+        .readCertificates() // pem content as strings
+        .map(SslUtil::createTruststoreFromPemKey) // a keystore instance that have certs loaded
+        .map(SslUtil::createSslContext); // the sslContext created with the previous keystore
   }
 
   public interface InitialBuilder {

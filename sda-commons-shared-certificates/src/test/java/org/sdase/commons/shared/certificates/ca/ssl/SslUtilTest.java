@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 class SslUtilTest {
 
+  private static final String DEFAULT_SSL_PROTOCOL = "TLSv1.2";
   // absolute path of resources directory
   private final String resourcesDirectory = Paths.get("src", "test", "resources").toString();
 
@@ -42,16 +43,19 @@ class SslUtilTest {
 
     List<Certificate> certificates = extractCertificates(truststore);
     assertThat(truststore).isNotNull();
-    assertThat(certificates).hasSize(5);
+    assertThat(certificates).hasSize(6);
   }
 
   @Test
   void shouldCreateSslContext() {
-    KeyStore givenTrustStore = SslUtil.createTruststoreFromPemKey(readPemContent("test.pem"));
+    KeyStore givenTrustStore = SslUtil.createTruststoreFromPemKey(readPemContent("trusted.pem"));
 
     SSLContext sslContext = SslUtil.createSslContext(givenTrustStore);
 
-    assertThat(sslContext).isNotNull().extracting(SSLContext::getProtocol).isEqualTo("TLSv1.2");
+    assertThat(sslContext)
+        .isNotNull()
+        .extracting(SSLContext::getProtocol)
+        .isEqualTo(DEFAULT_SSL_PROTOCOL);
   }
 
   private String readPemContent(String pemResource) {
