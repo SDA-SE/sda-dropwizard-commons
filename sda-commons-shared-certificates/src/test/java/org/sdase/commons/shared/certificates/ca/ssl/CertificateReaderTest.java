@@ -45,7 +45,7 @@ class CertificateReaderTest {
 
     assertThat(actualCertificatesOptional)
         .isPresent()
-        .hasValueSatisfying(content -> assertThat(content).contains(readPemContent("test.pem")));
+        .hasValueSatisfying(content -> assertThat(content).contains(readPemContent("trusted.pem")));
   }
 
   @Test
@@ -69,7 +69,7 @@ class CertificateReaderTest {
         .hasValueSatisfying(
             content ->
                 assertThat(content)
-                    .doesNotContain(readPemContent("notEmpty/notPemFile.extention")));
+                    .doesNotContain(readPemContent("notEmpty/notPemFile.extension")));
   }
 
   @Test

@@ -7,8 +7,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+import java.util.Arrays;
+import javax.net.ssl.*;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openssl.PEMParser;
@@ -20,17 +20,17 @@ public class SslUtil {
 
   private static final Logger LOG = LoggerFactory.getLogger(SslUtil.class);
 
+  private static final String DEFAULT_SSL_PROTOCOL = "TLSv1.2";
+
   private SslUtil() {}
 
-  public static SSLContext createSslContext(KeyStore keyStore) {
+  public static SSLContext createSslContext(KeyStore keystore) {
     try {
-      String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-      TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(tmfAlgorithm);
-      trustManagerFactory.init(keyStore);
+      TrustManager[] trustManagers = {createCompositeTrustManager(keystore)};
 
-      SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-      sslContext.init(null, trustManagerFactory.getTrustManagers(), createSecureRandom());
-
+      // create sslContext combining multi managers
+      SSLContext sslContext = SSLContext.getInstance(DEFAULT_SSL_PROTOCOL);
+      sslContext.init(null, trustManagers, createSecureRandom());
       return sslContext;
     } catch (Exception e) {
       throw new IllegalStateException(e);
@@ -53,7 +53,7 @@ public class SslUtil {
     }
   }
 
-  private static X509Certificate parseCert(PEMParser parser)
+  public static X509Certificate parseCert(PEMParser parser)
       throws IOException, CertificateException {
 
     Object certificateObject = parser.readObject();
@@ -73,7 +73,7 @@ public class SslUtil {
         "Could not read certificate of type " + certificateObject.getClass());
   }
 
-  private static SecureRandom createSecureRandom() throws NoSuchAlgorithmException {
+  public static SecureRandom createSecureRandom() throws NoSuchAlgorithmException {
     String algorithmNativePRNG = "NativePRNG";
     String algorithmWindowsPRNG = "Windows-PRNG";
     try {
@@ -87,5 +87,27 @@ public class SslUtil {
           e);
       return SecureRandom.getInstance(algorithmWindowsPRNG);
     }
+  }
+
+  public static X509TrustManager getTrustManager(String algorithm, KeyStore keyStore) {
+    try {
+      TrustManagerFactory factory = TrustManagerFactory.getInstance(algorithm);
+      factory.init(keyStore);
+      return Arrays.stream(factory.getTrustManagers())
+          .filter(X509TrustManager.class::isInstance)
+          .map(X509TrustManager.class::cast)
+          .findFirst()
+          .orElse(null);
+    } catch (Exception e) {
+      // nothing here
+    }
+    return null;
+  }
+
+  private static TrustManager createCompositeTrustManager(KeyStore keystore) {
+    String defaultTrustManagerAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+    X509TrustManager defaultTrustManager = getTrustManager(defaultTrustManagerAlgorithm, null);
+    X509TrustManager customTrustManager = getTrustManager(defaultTrustManagerAlgorithm, keystore);
+    return new CompositeX509TrustManager(Arrays.asList(defaultTrustManager, customTrustManager));
   }
 }
