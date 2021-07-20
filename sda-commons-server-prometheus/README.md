@@ -29,7 +29,8 @@ Default metrics that are provided at `/metrics/prometheus`:
 | **`jvm_`***                       |                         | Multiple metrics about the JVM                               | Bridged from Dropwizard                   |
 | **`io_dropwizard_jetty_`**        |                         | Multiple metrics from the embedded Jetty server              | Bridged from Dropwizard                   |
 | **`io_dropwizard_db_`**           |                         | Multiple metrics from the database if a database is used     | Bridged from Dropwizard                   |
-| **`healthcheck_status`**          | _`name`_                | Metrics that represent the state of the health checks        | `HealthCheckMetricsCollector`             | 
+| **`healthcheck_status`**          | _`name`_                | Metrics that represent the state of the health checks        | `HealthCheckMetricsCollector`             |
+| **`healthcheck_status_overall`**  |                         | Aggregated metric over all healthcheck_status checks         | `HealthCheckMetricsCollector`             |
 
 *) A filter that extracts the consumer from the HTTP headers should add `Consumer-Name` to the request properties. That
    filter is not part of the `PrometheusBundle`.
@@ -45,6 +46,16 @@ The metric value is `1.0` for healthy and `0.0` for unhealthy. Example:
 ```
 healthcheck_status{name="hibernate",} 1.0
 healthcheck_status{name="disk_space",} 0.0
+```
+
+Additionaly to the metric `healthcheck_status` there is the metric `healthcheck_status_overall`, which aggregates each `healthcheck_status`
+to a combined metric, because if any of the singular `healthcheck_status` fails, it results in the service being not available (kubernetes readiness probe).
+This metric is exposed to avoid the calculation in prometheus, because it could run fairly frequently for alerting or over long time frames.
+The metric value is `1.0` as long as all singular `healthcheck_status` return the value `1.0`. As soon as one of all the `healthcheck_status` returns the value `0.0`,
+the metric value for `healthcheck_status_overall` will be `0.0`.
+
+```
+healthcheck_status_overall 1.0
 ```
 
 Currently health checks are evaluated when their status is requested. Slow health checks should be annotated with 
