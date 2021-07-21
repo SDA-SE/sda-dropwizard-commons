@@ -20,12 +20,15 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
+import javax.net.ssl.SSLContext;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.Validate;
 import org.sdase.commons.server.morphia.converter.LocalDateConverter;
 import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
 import org.sdase.commons.server.morphia.health.MongoHealthCheck;
 import org.sdase.commons.server.morphia.internal.MongoClientBuilder;
+import org.sdase.commons.shared.certificates.ca.CaCertificateConfigurationProvider;
+import org.sdase.commons.shared.certificates.ca.CaCertificatesBundle;
 
 /**
  * A bundle used to create a connection to a MongoDB that is accessed through a <a
@@ -44,7 +47,6 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       new LinkedHashSet<>(asList(new ZonedDateTimeConverter(), new LocalDateConverter()));
 
   private final Function<C, MongoConfiguration> configurationProvider;
-
   private final Set<TypeConverter> customConverters = new LinkedHashSet<>();
   private final Set<String> packagesToScan = new HashSet<>();
 
@@ -54,12 +56,14 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   private final boolean ensureIndexes;
   private final boolean forceEnsureIndexes;
   private final Tracer tracer;
-
   /** Activate JSR303 validation. */
   private final boolean activateValidation;
 
+  private final CaCertificatesBundle.FinalBuilder<C> caCertificatesBundleBuilder;
   private MongoClient mongoClient;
   private Datastore morphiaDatastore;
+  private SSLContext sslContext;
+  private CaCertificatesBundle<C> caCertificatesBundle;
 
   private MorphiaBundle( // NOSONAR: Methods should not have too many parameters
       MongoConfigurationProvider<C> configProvider,
@@ -70,7 +74,8 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       boolean ensureIndexes,
       boolean forceEnsureIndexes,
       boolean activateValidation,
-      Tracer tracer) {
+      Tracer tracer,
+      CaCertificatesBundle.FinalBuilder<C> caCertificatesBundleBuilder) {
     this.configurationProvider = configProvider;
     this.tracer = tracer;
     this.packagesToScan.addAll(packagesToScan);
@@ -79,11 +84,20 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     this.ensureIndexes = ensureIndexes;
     this.forceEnsureIndexes = forceEnsureIndexes;
     this.activateValidation = activateValidation;
+    this.caCertificatesBundleBuilder = caCertificatesBundleBuilder;
+  }
+
+  //
+  // Builder
+  //
+  public static InitialBuilder builder() {
+    return new Builder<>();
   }
 
   @Override
   public void initialize(Bootstrap<?> bootstrap) {
-    // nothing to do here
+    this.caCertificatesBundle = caCertificatesBundleBuilder.build();
+    bootstrap.addBundle((ConfiguredBundle) this.caCertificatesBundle);
   }
 
   @Override
@@ -96,6 +110,10 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       configuredMorphia.map(entityClasses);
     }
     this.packagesToScan.forEach(configuredMorphia::mapPackage);
+
+    // get the sslContext instance produced by the caCertificateBundle
+    this.sslContext = this.caCertificatesBundle.getSslContext();
+
     this.mongoClient = createClient(environment, mongoConfiguration);
     this.morphiaDatastore =
         configuredMorphia.createDatastore(mongoClient, mongoConfiguration.getDatabase());
@@ -150,14 +168,10 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   }
 
   private MongoClient createClient(Environment environment, MongoConfiguration mongoConfiguration) {
-    return new MongoClientBuilder(mongoConfiguration).withTracer(tracer).build(environment);
-  }
-
-  //
-  // Builder
-  //
-  public static InitialBuilder builder() {
-    return new Builder<>();
+    return new MongoClientBuilder(mongoConfiguration)
+        .withSSlContext(sslContext)
+        .withTracer(tracer)
+        .build(environment);
   }
 
   public interface InitialBuilder {
@@ -168,7 +182,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
      * @param <C> the type of the applications configuration class
      * @return a builder instance for further configuration
      */
-    <C extends Configuration> ScanPackageBuilder<C> withConfigurationProvider(
+    <C extends Configuration> CaCertificateConfigProviderBuilder<C> withConfigurationProvider(
         @NotNull MongoConfigurationProvider<C> configurationProvider);
   }
 
@@ -294,6 +308,20 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     FinalBuilder<C> forceEnsureIndexes();
   }
 
+  public interface CaCertificateConfigProviderBuilder<C extends Configuration>
+      extends ScanPackageBuilder<C> {
+    /**
+     * * Add the ability to use SSl for connection with the database. If no specific configuration
+     * is provided it will try to look for the pem files in the default directory {@value
+     * org.sdase.commons.shared.certificates.ca.CaCertificatesBundle#DEFAULT_TRUSTED_CERTIFICATES_DIR}
+     *
+     * @param configProvider
+     * @return a builder instance for further configuration
+     */
+    FinalBuilder<C> withCaCertificateConfigProvider(
+        CaCertificateConfigurationProvider<C> configProvider);
+  }
+
   public interface FinalBuilder<C extends Configuration> extends ScanPackageBuilder<C> {
 
     /**
@@ -333,6 +361,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
           DisableConverterBuilder<T>,
           CustomConverterBuilder<T>,
           EnsureIndexesConfigBuilder<T>,
+          CaCertificateConfigProviderBuilder<T>,
           FinalBuilder<T> {
 
     private final MongoConfigurationProvider<T> configProvider;
@@ -342,6 +371,8 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     @SuppressWarnings("rawtypes") // same type as in Morphia
     private final Set<Class> entityClasses = new HashSet<>();
 
+    private CaCertificatesBundle.FinalBuilder<T> caCertificatesBundleBuilder =
+        CaCertificatesBundle.builder();
     private boolean ensureIndexes = true;
     private boolean forceEnsureIndexes = false;
     private boolean activateValidation = false;
@@ -356,8 +387,9 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     }
 
     @Override
-    public <C extends Configuration> ScanPackageBuilder<C> withConfigurationProvider(
-        MongoConfigurationProvider<C> configurationProvider) {
+    public <C extends Configuration>
+        CaCertificateConfigProviderBuilder<C> withConfigurationProvider(
+            MongoConfigurationProvider<C> configurationProvider) {
       return new Builder<>(configurationProvider);
     }
 
@@ -419,6 +451,14 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       return this;
     }
 
+    @Override
+    public FinalBuilder<T> withCaCertificateConfigProvider(
+        CaCertificateConfigurationProvider<T> configProvider) {
+      this.caCertificatesBundleBuilder =
+          CaCertificatesBundle.builder().withCaCertificateConfigProvider(configProvider);
+      return this;
+    }
+
     public FinalBuilder<T> withTracer(Tracer tracer) {
       this.tracer = tracer;
       return this;
@@ -434,7 +474,8 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
           ensureIndexes,
           forceEnsureIndexes,
           activateValidation,
-          tracer);
+          tracer,
+          caCertificatesBundleBuilder);
     }
   }
 }

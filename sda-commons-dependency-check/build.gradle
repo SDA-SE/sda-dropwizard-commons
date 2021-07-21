@@ -45,6 +45,7 @@ dependencies {
   api project(':sda-commons-server-weld')
   api project(':sda-commons-server-weld-testing')
   api project(':sda-commons-shared-asyncapi')
+  api project(':sda-commons-shared-certificates')
   api project(':sda-commons-shared-error')
   api project(':sda-commons-shared-forms')
   api project(':sda-commons-shared-tracing')
