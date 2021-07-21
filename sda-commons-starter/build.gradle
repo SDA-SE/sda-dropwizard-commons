@@ -11,6 +11,7 @@ dependencies {
   api project(':sda-commons-server-prometheus')
   api project(':sda-commons-server-security')
   api project(':sda-commons-server-trace')
+  api project(':sda-commons-shared-certificates')
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-server-auth-testing')

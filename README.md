@@ -215,6 +215,11 @@ The module [`sda-commons-server-security`](./sda-commons-server-security/README.
 Dropwizard application.
 
 
+##### Shared Certificates
+
+The module [`sda-commons-shared-certificates`](./sda-commons-shared-certificates/README.md) adds support for trusting custom certificate authorities.
+
+
 ##### Swagger
 
 The module [`sda-commons-server-swagger`](./sda-commons-server-swagger/README.md) is the base 
