@@ -60,11 +60,13 @@ public class MongoConfiguration {
   private boolean useSsl;
 
   /**
-   * The content of a CA certificate (list) in PEM format. This certificates are added to the {@link
-   * javax.net.ssl.TrustManager}s to verify the connection. The string represents the content of a
-   * regular PEM file, e.g.:
-   *
-   * <pre>
+   * @deprecated Instead of using CA Certificate as a string, add this configuration to the
+   *     Dropwizard Application. See: {@link
+   *     org.sdase.commons.shared.certificates.ca.CaCertificateConfiguration}
+   *     <p>The content of a CA certificate (list) in PEM format. This certificates are added to the
+   *     {@link javax.net.ssl.TrustManager}s to verify the connection. The string represents the
+   *     content of a regular PEM file, e.g.:
+   *     <pre>
    * -----BEGIN CERTIFICATE-----
    * MIIEkjCCA3qgAwIBAgIQCgFBQgAAAVOFc2oLheynCDANBgkqhkiG9w0BAQsFADA/
    * MSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT
@@ -75,7 +77,7 @@ public class MongoConfiguration {
    * -----END CERTIFICATE-----
    * </pre>
    */
-  private String caCertificate;
+  @Deprecated private String caCertificate;
 
   public String getHosts() {
     return hosts;
@@ -131,10 +133,12 @@ public class MongoConfiguration {
     return this;
   }
 
+  @Deprecated
   public String getCaCertificate() {
     return caCertificate;
   }
 
+  @Deprecated
   public MongoConfiguration setCaCertificate(String caCertificate) {
     this.caCertificate = caCertificate;
     return this;
