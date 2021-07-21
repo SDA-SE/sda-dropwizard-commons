@@ -16,17 +16,18 @@ import org.sdase.commons.server.weld.DropwizardWeldHelper;
 @ApplicationScoped // make this application a WELD application
 public class MorphiaWeldApplication extends Application<MorphiaApplicationConfiguration> {
 
-  @Inject
-  private CarManager carManager; // car manager as example for injection of morphia data store
-
-  private MorphiaBundle<MorphiaApplicationConfiguration> morphiaBundle =
+  private final MorphiaBundle<MorphiaApplicationConfiguration> morphiaBundle =
       MorphiaBundle.builder()
           .withConfigurationProvider(
               MorphiaApplicationConfiguration
                   ::getMongo) // configuration provider of mongo connection details
-          .withEntity(Car.class) // Entity that is registered in morphia. Morphia will configure the
+          .withEntity(Car.class)
+          // Entity that is registered in morphia. Morphia will configure the
           // database as defined within the entity e.g. with indexes.
           .build();
+
+  @Inject
+  private CarManager carManager; // car manager as example for injection of morphia data store
 
   public static void main(String[] args) throws Exception {
     DropwizardWeldHelper.run(MorphiaWeldApplication.class, args); // Main to start this application

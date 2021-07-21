@@ -1,0 +1,9 @@
+dependencies {
+  api project(':sda-commons-server-dropwizard')
+
+  api 'org.bouncycastle:bcpkix-jdk15on'
+
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-client-jersey-wiremock-testing')
+  testImplementation 'org.assertj:assertj-core'
+}
