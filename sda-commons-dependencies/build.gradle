@@ -15,8 +15,8 @@ ext {
   weldVersion = '3.1.8.Final'
   openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.27.0'
-  scalaVersion = '2.12.11' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
-  kafkaVersion = '2.6.1'
+  scalaVersion = '2.12.12' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
+  kafkaVersion = '2.7.1'
   kafkaJunitVersion = '3.2.2' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.25.0'
 }
@@ -147,7 +147,7 @@ dependencies {
     // Kafka
     api "org.apache.kafka:kafka_2.12:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.5.8"
+    api "org.apache.zookeeper:zookeeper:3.5.9"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
     api "com.salesforce.kafka.test:kafka-junit4:$kafkaJunitVersion"
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
@@ -159,7 +159,7 @@ dependencies {
           anymore.
         '''
     }
-    api "org.xerial.snappy:snappy-java:1.1.7.3", {
+    api "org.xerial.snappy:snappy-java:1.1.7.7", {
       because "conflict between kafka-clients:2.6.1 & curator-test:5.1.0"
     }
     api "com.typesafe.scala-logging:scala-logging_2.12:3.9.2", {
@@ -168,14 +168,17 @@ dependencies {
     api "org.scala-lang.modules:scala-java8-compat_2.12:0.9.1", {
       because "conflict between io.findify:s3mock_2.12 and org.apache.kafka:kafka_2.12 prefer version of kafka!"
     }
+    api "org.scala-lang.modules:scala-collection-compat_2.12:2.2.0", {
+      because "version from org.apache.kafka:kafka_2.12"
+    }
     api "org.scala-lang:scala-library:$scalaVersion", {
       because "version from org.apache.kafka:kafka_2.12"
     }
     api "org.scala-lang:scala-reflect:$scalaVersion", {
       because "version from org.apache.kafka:kafka_2.12"
     }
-    api "com.fasterxml.jackson.module:jackson-module-scala_2.12:2.10.2", {
-      because "this is the requested version of org.apache.kafka:kafka_2.12:2.6.1"
+    api "com.fasterxml.jackson.module:jackson-module-scala_2.12:2.10.5", {
+      because "this is the requested version of org.apache.kafka:kafka_2.12:2.7.1"
     }
   }
 }
