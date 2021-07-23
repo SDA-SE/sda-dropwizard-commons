@@ -33,6 +33,7 @@ public class SslUtil {
       sslContext.init(null, trustManagers, createSecureRandom());
       return sslContext;
     } catch (Exception e) {
+      e.printStackTrace();
       throw new IllegalStateException(e);
     }
   }
@@ -47,8 +48,11 @@ public class SslUtil {
         keyStore.setCertificateEntry("cert_" + i, certificate);
         i += 1;
       }
+
+      LOG.info("found {} certificates", i);
       return keyStore;
     } catch (Exception e) {
+      e.printStackTrace();
       throw new IllegalStateException(e);
     }
   }
@@ -100,6 +104,7 @@ public class SslUtil {
           .orElse(null);
     } catch (Exception e) {
       // nothing here
+      e.printStackTrace();
     }
     return null;
   }
@@ -108,6 +113,13 @@ public class SslUtil {
     String defaultTrustManagerAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
     X509TrustManager defaultTrustManager = getTrustManager(defaultTrustManagerAlgorithm, null);
     X509TrustManager customTrustManager = getTrustManager(defaultTrustManagerAlgorithm, keystore);
-    return new CompositeX509TrustManager(Arrays.asList(defaultTrustManager, customTrustManager));
+    CompositeX509TrustManager compositeX509TrustManager =
+        new CompositeX509TrustManager(Arrays.asList(defaultTrustManager, customTrustManager));
+
+    LOG.info(
+        "found {} in the composed trustManager",
+        compositeX509TrustManager.getAcceptedIssuers().length);
+
+    return compositeX509TrustManager;
   }
 }
