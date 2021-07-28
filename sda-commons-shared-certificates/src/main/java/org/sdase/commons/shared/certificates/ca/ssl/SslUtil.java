@@ -2,9 +2,7 @@ package org.sdase.commons.shared.certificates.ca.ssl;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -24,23 +22,37 @@ public class SslUtil {
 
   private SslUtil() {}
 
-  public static SSLContext createSslContext(KeyStore keystore) {
+  public static SSLContext createCompositeSslContext(KeyStore keystore) {
     try {
-      TrustManager[] trustManagers = {createCompositeTrustManager(keystore)};
+      TrustManager compositeTrustManager = createCompositeTrustManager(keystore);
 
-      // create sslContext combining multi managers
       SSLContext sslContext = SSLContext.getInstance(DEFAULT_SSL_PROTOCOL);
-      sslContext.init(null, trustManagers, createSecureRandom());
+      sslContext.init(null, new TrustManager[] {compositeTrustManager}, createSecureRandom());
+
       return sslContext;
+
     } catch (Exception e) {
-      e.printStackTrace();
       throw new IllegalStateException(e);
     }
   }
 
+  public static SSLContext createSslContext(KeyStore keyStore)
+      throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+    TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(tmfAlgorithm);
+    trustManagerFactory.init(keyStore);
+
+    SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+    sslContext.init(null, trustManagerFactory.getTrustManagers(), createSecureRandom());
+
+    return sslContext;
+  }
+
   public static KeyStore createTruststoreFromPemKey(String certificateAsString) {
     try (PEMParser parser = new PEMParser(new StringReader(certificateAsString))) {
-      KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+      String defaultType = KeyStore.getDefaultType();
+      LOG.info("Default JVM keystore type found: {} ", defaultType);
+      KeyStore keyStore = KeyStore.getInstance("jks");
       keyStore.load(null, null);
       int i = 0;
       X509Certificate certificate;
@@ -52,7 +64,6 @@ public class SslUtil {
       LOG.info("found {} certificates", i);
       return keyStore;
     } catch (Exception e) {
-      e.printStackTrace();
       throw new IllegalStateException(e);
     }
   }
@@ -104,7 +115,6 @@ public class SslUtil {
           .orElse(null);
     } catch (Exception e) {
       // nothing here
-      e.printStackTrace();
     }
     return null;
   }

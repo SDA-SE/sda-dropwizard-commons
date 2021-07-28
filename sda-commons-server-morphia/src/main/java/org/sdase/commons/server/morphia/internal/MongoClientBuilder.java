@@ -80,11 +80,13 @@ public class MongoClientBuilder {
   private MongoClient createMongoClient()
       throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException,
           KeyManagementException {
+
     if (configuration.isUseSsl()) {
       mongoClientOptionsBuilder.sslEnabled(true);
-      // use sslContext created with env variable by default
+      // override sslContext with one from env variable
       if (StringUtils.isNotBlank(configuration.getCaCertificate())) {
         sslContext = createSslContextIfAnyCertificatesAreConfigured();
+        LOGGER.info("Overriding context with environment certificate");
       }
       if (sslContext != null) {
         mongoClientOptionsBuilder.sslContext(sslContext);

@@ -24,14 +24,16 @@ public class CaCertificatesBundleHttpsIT {
   private static final String securedHost = "https://google.com";
 
   @Test
-  public void shouldFailWithCustomTrustStore() throws Exception {
+  public void shouldFailWithCustomTrustStore()
+      throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 
     CertificateReader certificateReader =
-        new CertificateReader(Paths.get("src", "test", "resources").toString());
+        new CertificateReader(Paths.get("src", "test", "resources").toString().concat("/notEmpty"));
     Optional<String> pemContent = certificateReader.readCertificates();
 
     // create custom sslContext that has no trusted certificate
-    SSLContext sslContext = createSSlContextWithoutDefaultMerging(pemContent.get());
+    SSLContext sslContext =
+        SslUtil.createSslContext(SslUtil.createTruststoreFromPemKey(pemContent.get()));
 
     assertThatExceptionOfType(SSLHandshakeException.class)
         .isThrownBy(() -> callSecureEndpointWithSSLContext(sslContext));
@@ -46,10 +48,9 @@ public class CaCertificatesBundleHttpsIT {
 
     // create custom sslContext that has no trusted certificate but falls back to JVM default
     SSLContext sslContext =
-        SslUtil.createSslContext(SslUtil.createTruststoreFromPemKey(pemContent.get()));
-
-    assertThat(callSecureEndpointWithSSLContext(sslContext).getStatusLine().getStatusCode())
-        .isEqualTo(200);
+        SslUtil.createCompositeSslContext(SslUtil.createTruststoreFromPemKey(pemContent.get()));
+    CloseableHttpResponse closeableHttpResponse = callSecureEndpointWithSSLContext(sslContext);
+    assertThat(closeableHttpResponse.getStatusLine().getStatusCode()).isEqualTo(200);
   }
 
   public static CloseableHttpResponse callSecureEndpointWithSSLContext(SSLContext sslContext)

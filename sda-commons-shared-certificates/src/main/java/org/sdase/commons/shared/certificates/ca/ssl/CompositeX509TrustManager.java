@@ -1,9 +1,10 @@
 package org.sdase.commons.shared.certificates.ca.ssl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.List;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.TrustManager;
@@ -54,9 +55,12 @@ public class CompositeX509TrustManager implements X509TrustManager {
 
   @Override
   public X509Certificate[] getAcceptedIssuers() {
-    return trustManagerList.stream()
-        .map(X509TrustManager::getAcceptedIssuers)
-        .flatMap(Arrays::stream)
-        .toArray(X509Certificate[]::new);
+    ImmutableList.Builder<X509Certificate> certificates = ImmutableList.builder();
+    for (X509TrustManager trustManager : trustManagerList) {
+      for (X509Certificate cert : trustManager.getAcceptedIssuers()) {
+        certificates.add(cert);
+      }
+    }
+    return Iterables.toArray(certificates.build(), X509Certificate.class);
   }
 }
