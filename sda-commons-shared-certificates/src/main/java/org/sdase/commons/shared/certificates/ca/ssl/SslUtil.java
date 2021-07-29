@@ -2,11 +2,16 @@ package org.sdase.commons.shared.certificates.ca.ssl;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.security.*;
+import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openssl.PEMParser;
@@ -36,16 +41,19 @@ public class SslUtil {
     }
   }
 
-  public static SSLContext createSslContext(KeyStore keyStore)
-      throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
-    String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-    TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(tmfAlgorithm);
-    trustManagerFactory.init(keyStore);
+  public static SSLContext createSslContext(KeyStore keyStore) {
+    try {
+      String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+      TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(tmfAlgorithm);
+      trustManagerFactory.init(keyStore);
 
-    SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-    sslContext.init(null, trustManagerFactory.getTrustManagers(), createSecureRandom());
+      SSLContext sslContext = SSLContext.getInstance(DEFAULT_SSL_PROTOCOL);
+      sslContext.init(null, trustManagerFactory.getTrustManagers(), createSecureRandom());
 
-    return sslContext;
+      return sslContext;
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   public static KeyStore createTruststoreFromPemKey(String certificateAsString) {
