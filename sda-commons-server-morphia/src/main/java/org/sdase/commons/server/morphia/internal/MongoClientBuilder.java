@@ -84,11 +84,12 @@ public class MongoClientBuilder {
     if (configuration.isUseSsl()) {
       mongoClientOptionsBuilder.sslEnabled(true);
       // override sslContext with one from env variable
-      if (StringUtils.isNotBlank(configuration.getCaCertificate())) {
+      /*if (StringUtils.isNotBlank(configuration.getCaCertificate())) {
         sslContext = createSslContextIfAnyCertificatesAreConfigured();
         LOGGER.info("Overriding context with environment certificate");
-      }
+      }*/
       if (sslContext != null) {
+        LOGGER.info("Using SSl config in Mongo client");
         mongoClientOptionsBuilder.sslContext(sslContext);
       }
     }
