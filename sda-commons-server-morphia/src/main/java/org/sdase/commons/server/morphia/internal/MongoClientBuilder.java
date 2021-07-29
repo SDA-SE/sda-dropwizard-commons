@@ -3,7 +3,6 @@ package org.sdase.commons.server.morphia.internal;
 import static java.util.Arrays.asList;
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 import static org.sdase.commons.server.morphia.internal.ConnectionStringUtil.createConnectionString;
-import static org.sdase.commons.server.morphia.internal.SslUtil.createTruststoreFromPemKey;
 
 import com.mongodb.*;
 import io.dropwizard.setup.Environment;
@@ -11,15 +10,11 @@ import io.opentracing.Tracer;
 import io.opentracing.contrib.mongo.common.SpanDecorator;
 import io.opentracing.contrib.mongo.common.TracingCommandListener;
 import io.opentracing.util.GlobalTracer;
-import java.io.IOException;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import javax.net.ssl.SSLContext;
 import org.apache.commons.lang3.StringUtils;
 import org.sdase.commons.server.morphia.MongoConfiguration;
+import org.sdase.commons.shared.certificates.ca.ssl.SslUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,13 +72,12 @@ public class MongoClientBuilder {
     }
   }
 
-  private MongoClient createMongoClient()
-      throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException,
-          KeyManagementException {
+  private MongoClient createMongoClient() {
     if (configuration.isUseSsl()) {
       mongoClientOptionsBuilder.sslEnabled(true);
       // use sslContext created with env variable by default
       if (StringUtils.isNotBlank(configuration.getCaCertificate())) {
+        LOGGER.info("Overriding ssl config from env variable");
         sslContext = createSslContextIfAnyCertificatesAreConfigured();
       }
       if (sslContext != null) {
@@ -103,20 +97,9 @@ public class MongoClientBuilder {
         new MongoClientURI(createConnectionString(configuration), mongoClientOptionsBuilder));
   }
 
-  private SSLContext createSslContextIfAnyCertificatesAreConfigured()
-      throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException,
-          KeyManagementException {
+  private SSLContext createSslContextIfAnyCertificatesAreConfigured() {
     String caCertificate = configuration.getCaCertificate();
-    KeyStore truststoreFromPemKey = createKeyStoreFromCaCertificate(caCertificate);
+    KeyStore truststoreFromPemKey = SslUtil.createTruststoreFromPemKey(caCertificate);
     return SslUtil.createSslContext(truststoreFromPemKey);
-  }
-
-  private KeyStore createKeyStoreFromCaCertificate(String caCertificate)
-      throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
-    KeyStore truststoreFromPemKey = null;
-    if (StringUtils.isNotBlank(caCertificate)) {
-      truststoreFromPemKey = createTruststoreFromPemKey(caCertificate);
-    }
-    return truststoreFromPemKey;
   }
 }

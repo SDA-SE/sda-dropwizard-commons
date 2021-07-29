@@ -74,8 +74,15 @@ public class MongoConfiguration {
    * KOqkqm57TH2H3eDJAkSnh6/DNFu0Qg==
    * -----END CERTIFICATE-----
    * </pre>
+   *
+   * @deprecated Instead of using CA Certificate as a string from the environment, it is preferred
+   *     to mount CA certificates directly in {@value
+   *     org.sdase.commons.shared.certificates.ca.CaCertificatesBundle#DEFAULT_TRUSTED_CERTIFICATES_DIR}.
+   *     When providing a {@link
+   *     org.sdase.commons.shared.certificates.ca.CaCertificateConfiguration} the directory can be
+   *     configured.
    */
-  private String caCertificate;
+  @Deprecated private String caCertificate;
 
   public String getHosts() {
     return hosts;
@@ -131,10 +138,35 @@ public class MongoConfiguration {
     return this;
   }
 
+  /**
+   * @return The content of a CA certificate (list) in PEM format. This certificates are added to
+   *     the {@link javax.net.ssl.TrustManager}s to verify the connection. The string represents the
+   *     content of a regular PEM file.
+   * @deprecated Instead of using CA Certificate as a string from the environment, it is preferred
+   *     to mount CA certificates directly in {@value
+   *     org.sdase.commons.shared.certificates.ca.CaCertificatesBundle#DEFAULT_TRUSTED_CERTIFICATES_DIR}.
+   *     When providing a {@link
+   *     org.sdase.commons.shared.certificates.ca.CaCertificateConfiguration} the directory can be
+   *     configured.
+   */
+  @Deprecated
   public String getCaCertificate() {
     return caCertificate;
   }
 
+  /**
+   * @param caCertificate The content of a CA certificate (list) in PEM format. This certificates
+   *     are added to the {@link javax.net.ssl.TrustManager}s to verify the connection. The string
+   *     represents the content of a regular PEM file.
+   * @return this instance
+   * @deprecated Instead of using CA Certificate as a string from the environment, it is preferred
+   *     to mount CA certificates directly in {@value
+   *     org.sdase.commons.shared.certificates.ca.CaCertificatesBundle#DEFAULT_TRUSTED_CERTIFICATES_DIR}.
+   *     When providing a {@link
+   *     org.sdase.commons.shared.certificates.ca.CaCertificateConfiguration} the directory can be
+   *     configured.
+   */
+  @Deprecated
   public MongoConfiguration setCaCertificate(String caCertificate) {
     this.caCertificate = caCertificate;
     return this;
