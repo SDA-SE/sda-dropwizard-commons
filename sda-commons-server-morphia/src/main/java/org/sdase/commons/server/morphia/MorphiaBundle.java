@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.function.Function;
 import javax.net.ssl.SSLContext;
 import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.sdase.commons.server.morphia.converter.LocalDateConverter;
 import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
@@ -29,6 +30,8 @@ import org.sdase.commons.server.morphia.health.MongoHealthCheck;
 import org.sdase.commons.server.morphia.internal.MongoClientBuilder;
 import org.sdase.commons.shared.certificates.ca.CaCertificateConfigurationProvider;
 import org.sdase.commons.shared.certificates.ca.CaCertificatesBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A bundle used to create a connection to a MongoDB that is accessed through a <a
@@ -37,6 +40,8 @@ import org.sdase.commons.shared.certificates.ca.CaCertificatesBundle;
  * @param <C> The subtype of {@link Configuration}, the {@link io.dropwizard.Application} uses.
  */
 public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<C> {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(MorphiaBundle.class);
 
   /**
    * {@link LocalDateTimeConverter} is already included in Morphia's {@link
@@ -103,6 +108,8 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   @Override
   public void run(C configuration, Environment environment) {
     MongoConfiguration mongoConfiguration = configurationProvider.apply(configuration);
+
+    checkMongoConfig(mongoConfiguration);
 
     Morphia configuredMorphia = new Morphia();
     customConverters.forEach(cc -> configuredMorphia.getMapper().getConverters().addConverter(cc));
@@ -172,6 +179,15 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
         .withSSlContext(sslContext)
         .withTracer(tracer)
         .build(environment);
+  }
+
+  public void checkMongoConfig(MongoConfiguration config) {
+    final String caCertificate = config.getCaCertificate();
+    if (StringUtils.isNotBlank(caCertificate)
+        && caCertificate.startsWith("${")
+        && caCertificate.endsWith("}")) {
+      LOGGER.warn("Missing default value for caCertificate in config.yml");
+    }
   }
 
   public interface InitialBuilder {
