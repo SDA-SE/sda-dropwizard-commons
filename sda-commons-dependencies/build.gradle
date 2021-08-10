@@ -48,6 +48,10 @@ dependencies {
     api "net.javacrumbs.json-unit:json-unit-core:$jsonUnitVersion", {
       because "conflict between com.github.tomakehurst:wiremock-jre8 and net.javacrumbs.json-unit:json-unit-assertj"
     }
+    // TODO: Cleanup after dropwizard itself updated to >= 1.1.3.
+    api "io.dropwizard.logback:logback-throttling-appender:1.1.3", {
+      because "version from dropwizard has a conflict with com.google.j2objc:j2objc-annotations"
+    }
 
     // overall testing dependencies
     api "org.awaitility:awaitility:4.1.0"
