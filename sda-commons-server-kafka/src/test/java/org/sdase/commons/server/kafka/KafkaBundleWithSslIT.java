@@ -68,6 +68,8 @@ public class KafkaBundleWithSslIT {
 
   @BeforeClass
   public static void beforeClass() {
+    KAFKA.getKafkaTestUtils().createTopic("my-topic", 1, (short) 1);
+
     final KafkaProducer<String, String> producer =
         KAFKA.getKafkaTestUtils().getKafkaProducer(StringSerializer.class, StringSerializer.class);
     producer.send(new ProducerRecord<>("my-topic", "My Message"));
