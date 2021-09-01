@@ -33,6 +33,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.java_version }}
+          cache: 'gradle'
 
       - name: Test with Gradle
         run: ./gradlew --parallel --continue javadoc spotlessCheck check
@@ -95,6 +96,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 8
+          cache: 'gradle'
 
       - name: Install Semantic release
         run: |

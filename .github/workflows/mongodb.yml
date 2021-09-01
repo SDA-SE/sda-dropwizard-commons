@@ -22,6 +22,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 11
+          cache: 'gradle'
 
       - name: Start MongoDB
         run: docker run -d -e MONGO_INITDB_ROOT_USERNAME=test -e MONGO_INITDB_ROOT_PASSWORD=example -p 27017:27017 --name test_mongo mongo:4.0
