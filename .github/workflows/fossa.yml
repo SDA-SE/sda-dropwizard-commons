@@ -17,6 +17,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 8
+          cache: 'gradle'
 
       - name: Install Fossa
         run: "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"

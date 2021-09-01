@@ -16,6 +16,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 8
+          cache: 'gradle'
 
       - name: Build and Publish Snapshot
         run: ./gradlew publishMavenPublicationToSdaInternRepository

@@ -22,6 +22,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 8
+          cache: 'gradle'
 
       - name: Build and Sign packages
         run: ./gradlew --parallel signMavenPublication
