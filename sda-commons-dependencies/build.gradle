@@ -7,7 +7,7 @@ javaPlatform {
 }
 
 ext {
-  dropwizardVersion = '2.0.24'
+  dropwizardVersion = '2.0.25'
   morphiaVersion = '1.6.1'
   prometheusVersion = '0.9.0'
   swaggerCoreVersion = '1.6.2'
@@ -172,7 +172,7 @@ dependencies {
     api "org.scala-lang.modules:scala-java8-compat_2.12:0.9.1", {
       because "conflict between io.findify:s3mock_2.12 and org.apache.kafka:kafka_2.12 prefer version of kafka!"
     }
-    api "org.scala-lang.modules:scala-collection-compat_2.12:2.3.0", {
+    api "org.scala-lang.modules:scala-collection-compat_2.12:2.5.0", {
       because "version from org.apache.kafka:kafka_2.12"
     }
     api "org.scala-lang:scala-library:$scalaVersion", {
