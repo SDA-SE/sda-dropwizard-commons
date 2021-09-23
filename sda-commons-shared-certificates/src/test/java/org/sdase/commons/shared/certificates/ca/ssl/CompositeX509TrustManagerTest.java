@@ -18,9 +18,9 @@ import javax.net.ssl.X509TrustManager;
 import org.bouncycastle.openssl.PEMParser;
 import org.junit.Before;
 import org.junit.Test;
-import sun.security.validator.ValidatorException;
 
 public class CompositeX509TrustManagerTest {
+
   public static final String AUTH_TYPE = "Basic";
   private X509TrustManager trustManager;
   private X509Certificate trustedChain;
@@ -78,10 +78,10 @@ public class CompositeX509TrustManagerTest {
     CompositeX509TrustManager compositeX509TrustManager =
         new CompositeX509TrustManager(Collections.singletonList(trustManager));
 
-    assertThatExceptionOfType(ValidatorException.class)
-        .isThrownBy(
+    assertThatCode(
             () ->
-                trustManager.checkServerTrusted(new X509Certificate[] {unTrustedChain}, AUTH_TYPE));
+                trustManager.checkServerTrusted(new X509Certificate[] {unTrustedChain}, AUTH_TYPE))
+        .hasMessageContaining("unable to find valid certification path to requested target");
     assertThatExceptionOfType(CertificateException.class)
         .isThrownBy(
             () ->
