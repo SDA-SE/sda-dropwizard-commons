@@ -7,6 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.sdase.commons.client.jersey.ClientFactory;
+import org.sdase.commons.client.jersey.oidc.filter.OidcRequestFilter;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 
 @Path("/api")
@@ -15,12 +16,30 @@ public class ClientTestEndPoint {
   private MockApiClient externalMockApiClient;
   private MockApiClient authMockApiClient;
 
+  ClientTestEndPoint(
+      ClientFactory clientFactory, String baseUrl, OidcRequestFilter oidcRequestFilter) {
+    mockApiClient =
+        clientFactory
+            .platformClient()
+            .addFilter(oidcRequestFilter)
+            .enableAuthenticationPassThrough()
+            .api(MockApiClient.class, "MockApiClientWithoutAuth")
+            .atTarget(baseUrl);
+
+    setupClients(clientFactory, baseUrl);
+  }
+
   ClientTestEndPoint(ClientFactory clientFactory, String baseUrl) {
     mockApiClient =
         clientFactory
             .platformClient()
             .api(MockApiClient.class, "MockApiClientWithoutAuth")
             .atTarget(baseUrl);
+
+    setupClients(clientFactory, baseUrl);
+  }
+
+  private void setupClients(ClientFactory clientFactory, String baseUrl) {
     authMockApiClient =
         clientFactory
             .platformClient()

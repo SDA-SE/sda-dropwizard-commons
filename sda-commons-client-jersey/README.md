@@ -231,27 +231,14 @@ OidcResult oidcResult = oidcClient.createAccessToken();
 String accessToken = oidcResult.getAccessToken();
 ```
 
-An easy way to integrate the OidcClient into existing PlatformClients is by creating a ClientRequestFilter
+An easy way to integrate the OidcClient into existing PlatformClients is by using the provided [`OidcRequestFilter`](./src/main/java/org/sdase/commons/client/jersey/oidc/filter/OidcRequestFilter.java)
 and passing it to the PlatformClientBuilder:
 
 
 ```java
-public class OidcRequestFilter implements ClientRequestFilter {
+OidcRequestFilter oidcRequestFilter =
+    new OidcRequestFilter(jerseyClientBundle.getClientFactory(), configuration.getOidc(), true);
 
-  private OidcClient oidcClient;
-
-  public OidcRequestFilter(ClientFactory clientFactory, OidcConfiguration oidc) {
-      this.oidcClient = new OidcClient(clientFactory, oidc);
-  }
-
-  @Override
-  public void filter(ClientRequestContext requestContext) {
-    requestContext.getHeaders().add(AUTHORIZATION, oidcResult.getBearerToken());
-  }
-}
-```
-
-```java
 ExternalServiceClient client = 
     jerseyClientBundle
       .getClientFactory()
