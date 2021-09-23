@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -28,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.auth.error.JwtAuthException;
 import org.sdase.commons.server.auth.key.RsaPublicKeyLoader;
 import org.sdase.commons.server.auth.service.testsources.JwksTestKeySource;
-import sun.security.rsa.RSAPrivateCrtKeyImpl;
 
 /**
  * This will validate the AuthRSA256Service by this unit test with the inclusion of the token issuer
@@ -319,7 +319,7 @@ class AuthRSA256ServiceTest {
     try {
       final String privateKeyLocation = ResourceHelpers.resourceFilePath(privateKeyFileLocation);
 
-      RSAPrivateCrtKeyImpl privateKey = (RSAPrivateCrtKeyImpl) loadPrivateKey(privateKeyLocation);
+      RSAPrivateCrtKey privateKey = (RSAPrivateCrtKey) loadPrivateKey(privateKeyLocation);
       RSAPublicKeySpec publicKeySpec =
           new RSAPublicKeySpec(privateKey.getModulus(), privateKey.getPublicExponent());
       KeyFactory keyFactory = KeyFactory.getInstance("RSA");
