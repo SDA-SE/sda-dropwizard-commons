@@ -5,7 +5,6 @@ import com.salesforce.kafka.test.junit4.SharedZookeeperTestResource;
 import com.salesforce.kafka.test.listeners.BrokerListener;
 import com.salesforce.kafka.test.listeners.SaslScramListener;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import kafka.admin.ConfigCommand;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -31,14 +30,9 @@ public class SharedKafkaTestResourceScram extends SharedKafkaTestResource {
         // the field is private, so we need to make it accessible
         f.setAccessible(true);
 
-        // the field is final, so we need to remove the modifier
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-
         // use the already started (and configured) zookeeper server.
         f.set(kafkaCluster, sharedZookeeperTestResource.getZookeeperTestServer());
-      } catch (NoSuchFieldException | IllegalAccessException e) {
+      } catch (Exception e) {
         throw new RuntimeException("Error on replacing the zkTestServer", e);
       }
     }
