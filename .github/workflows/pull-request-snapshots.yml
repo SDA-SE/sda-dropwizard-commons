@@ -5,8 +5,8 @@ on: [pull_request]
 
 jobs:
   pull-request-snapshots:
-    # do not execute for PRs that origin from forks since we are missing the secrets for the push
-    if: "!(github.event.pull_request && github.event.pull_request.head.repo.fork)"
+    # do not execute for PRs that origin from forks or created by dependabot since we are missing the secrets for the push
+    if: "!(github.event.pull_request && github.event.pull_request.head.repo.fork) && github.actor != 'dependabot[bot]'"
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
