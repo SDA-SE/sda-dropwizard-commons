@@ -65,8 +65,8 @@ jobs:
     timeout-minutes: 60
     needs: build
     runs-on: ubuntu-latest
-    # Don't run for forks because of missing secrets
-    if: (success() || failure()) && !(github.event.pull_request && github.event.pull_request.head.repo.fork)
+    # Don't run for forks and dependabot because of missing secrets
+    if: (success() || failure()) && !(github.event.pull_request && github.event.pull_request.head.repo.fork) && github.actor != 'dependabot[bot]'
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v2
