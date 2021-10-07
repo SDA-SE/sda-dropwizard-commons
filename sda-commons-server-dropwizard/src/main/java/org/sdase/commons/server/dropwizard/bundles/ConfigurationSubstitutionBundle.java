@@ -47,7 +47,11 @@ public class ConfigurationSubstitutionBundle implements Bundle {
 
   public static class Builder {
     public ConfigurationSubstitutionBundle build() {
-      return new ConfigurationSubstitutionBundle();
+      if (true) {
+        return new ConfigurationSubstitutionBundle();
+      } else {
+        return new ConfigurationSubstitutionBundle();
+      }
     }
   }
 }
