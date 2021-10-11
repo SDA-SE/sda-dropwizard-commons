@@ -64,6 +64,7 @@ jobs:
         run: ./gradlew -x test codeCoverageReport sonarqube
         env:
           SONAR_LOGIN_TOKEN: ${{ secrets.SONAR_LOGIN_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PR: ${{ github.event.number }}
 
   publish-test-results:
