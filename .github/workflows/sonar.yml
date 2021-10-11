@@ -15,7 +15,7 @@ jobs:
     # According to the latter you can recognize pull requests from forks by 'null' values of 'head_branch'
     # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#workflow_run
     # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#check_suite
-    if: "github.event.workflow_run.head_branch != null && github.actor != 'dependabot[bot]"
+    if: "github.event.workflow_run.head_branch != null && github.actor != 'dependabot[bot]'"
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -26,6 +26,7 @@ jobs:
 
       # fetch master so that Sonar can identify new issues in PR builds
       - name: Get master
+        if: "github.event.workflow_run.head_branch != 'refs/heads/master'"
         run: git fetch origin master:master && git status
 
       - name: Download Artifacts
