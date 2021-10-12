@@ -10,14 +10,13 @@ import com.salesforce.kafka.test.SharedKafkaTestResourceScram;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import com.salesforce.kafka.test.listeners.SaslScramListener;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.security.JaasUtils;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -61,14 +60,6 @@ public class KafkaBundleWithSaslScramIT {
   public static final TestRule CHAIN =
       RuleChain.outerRule(CLEANUP).around(PROP).around(KAFKA).around(DW);
 
-  @BeforeClass
-  public static void beforeClass() {
-    final KafkaProducer<String, String> producer =
-        KAFKA.getKafkaTestUtils().getKafkaProducer(StringSerializer.class, StringSerializer.class);
-    producer.send(new ProducerRecord<>("my-topic", "My Message"));
-    producer.close();
-  }
-
   @Test
   public void shouldReceiveEntries() {
     Set<String> results = new HashSet<>();
@@ -84,6 +75,12 @@ public class KafkaBundleWithSaslScramIT {
                 .withValueDeserializer(new StringDeserializer())
                 .withListenerStrategy(new SyncCommitMLS<>(r -> results.add(r.value()), null))
                 .build());
+
+    Map<byte[], byte[]> records = new HashMap<>();
+    records.put(
+        "key".getBytes(StandardCharsets.UTF_8), "My Message".getBytes(StandardCharsets.UTF_8));
+
+    KAFKA.getKafkaTestUtils().produceRecords(records, "my-topic", 0);
 
     await()
         .atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS)
