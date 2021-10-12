@@ -83,7 +83,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@95a3aff882d4abe2838b187c66477be7fbf3ddb8
         with:
-          files: artifacts/**/*.xml
+          files: artifacts/**/build/test-results/**/*.xml
 
   # create release and publish the artifacts
   semantic-release:
