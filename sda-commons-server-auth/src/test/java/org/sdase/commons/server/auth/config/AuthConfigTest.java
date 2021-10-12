@@ -29,7 +29,9 @@ public class AuthConfigTest {
 
   private static final Logger LOG = LoggerFactory.getLogger(AuthConfigTest.class);
 
-  private static String KEYS_JSON = initKeys();
+  private static final String KEYS_JSON = initKeys();
+  private static final String ISSUERS =
+      "http://keycloak.example.com/auth/realms/my-issuers-app,   ,http://keycloak.example.com/auth/realms/my-issuers-app-2,   ,";
 
   private static String initKeys() {
     List<KeyLocation> keys = new ArrayList<>();
@@ -55,7 +57,9 @@ public class AuthConfigTest {
     }
   }
 
-  @ClassRule public static EnvironmentRule ENV = new EnvironmentRule().setEnv("KEYS", KEYS_JSON);
+  @ClassRule
+  public static EnvironmentRule ENV =
+      new EnvironmentRule().setEnv("KEYS", KEYS_JSON).setEnv("ISSUERS", ISSUERS);
 
   @Test
   public void shouldReadConfigFromJsonEnvironment() throws Exception {
@@ -83,7 +87,17 @@ public class AuthConfigTest {
                 KeyUriType.OPEN_ID_DISCOVERY,
                 URI.create("http://keycloak.example.com/auth/realms/my-app"),
                 null,
-                "http://localhost/dex2"));
+                "http://localhost/dex2"),
+            tuple(
+                KeyUriType.OPEN_ID_DISCOVERY,
+                URI.create("http://keycloak.example.com/auth/realms/my-issuers-app"),
+                null,
+                "http://keycloak.example.com/auth/realms/my-issuers-app"),
+            tuple(
+                KeyUriType.OPEN_ID_DISCOVERY,
+                URI.create("http://keycloak.example.com/auth/realms/my-issuers-app-2"),
+                null,
+                "http://keycloak.example.com/auth/realms/my-issuers-app-2"));
   }
 
   private String readConfigWithSubstitution(String configPath) throws IOException {

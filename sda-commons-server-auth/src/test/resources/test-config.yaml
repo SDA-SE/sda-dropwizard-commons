@@ -8,3 +8,4 @@ server:
 
 auth:
   keys: ${KEYS}
+  issuers: ${ISSUERS}

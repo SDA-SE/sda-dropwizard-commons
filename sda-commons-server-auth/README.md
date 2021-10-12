@@ -123,6 +123,11 @@ auth:
     type: JWKS
     location: https://keycloak.example.com/auth/realms/my-realm/protocol/openid-connect/certs
     requiredIssuer: https://keycloak.example.com/auth/realms/my-realm
+  # Comma separated string of OPEN_ID_DISCOVERY key sources with required issuer. Can be used to
+  # shorten the configuration when the discovery base URL matches the iss claim, the IDP sets.
+  # The value used for configuration here must exactly match the iss claim.
+  # keys and issuers can be used at the same time. Both are added to the accepted key sources.
+  issuers: "https://keycloak.example.com/auth/realms/my-realm, https://keycloak.example.com/auth/realms/my-other-realm"
 ```
 
 The config may be filled from environment variables if the
@@ -134,6 +139,7 @@ auth:
   disableAuth: ${DISABLE_AUTH:-false}
   leeway: ${AUTH_LEEWAY:-0}
   keys: ${AUTH_KEYS:-[]}
+  issuers: "${AUTH_ISSUERS:-}"
 ```
 
 In this case, the `AUTH_KEYS` variable should contain a JSON array of 
