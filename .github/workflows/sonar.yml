@@ -29,9 +29,12 @@ jobs:
         if: "github.event.workflow_run.head_branch != 'master'"
         run: git fetch origin master:master && git status
 
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
+      # Download from previous workflow: https://github.com/dawidd6/action-download-artifact
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
         with:
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          commit: ${{github.event.workflow_run.head_sha}}
           name: ubuntu-latest-11-test-results
 
       - name: Set up JDK 11
