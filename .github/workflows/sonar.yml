@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+          ref: ${{ github.event.workflow_run.head_sha }} # checkout commit that triggered this workflow
           fetch-depth: 0 # fetch commit log so that Sonar is able to assign committers to issues
 
       # fetch master so that Sonar can identify new issues in PR builds
