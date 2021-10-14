@@ -27,7 +27,7 @@ jobs:
       # fetch master so that Sonar can identify new issues in PR builds
       - name: Get master
         if: "github.event.workflow_run.head_branch != 'master'"
-        run: git fetch origin master:master && git status
+        run: git rev-parse HEAD && git fetch origin master:master && git status && git rev-parse HEAD
 
       # Download from previous workflow: https://github.com/dawidd6/action-download-artifact
       - name: Download artifact
