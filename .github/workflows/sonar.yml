@@ -45,7 +45,7 @@ jobs:
           cache: 'gradle'
 
       - name: Sonarcloud
-        run: ./gradlew -x test sonarqube
+        run: ./gradlew -x test sonarqube -Dsonar.verbose=true
         env:
           SONAR_LOGIN_TOKEN: ${{ secrets.SONAR_LOGIN_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
