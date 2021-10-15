@@ -335,5 +335,10 @@ sonarqube {
     if (System.getenv('GITHUB_PR') != null) {
       property 'sonar.pullrequest.key', System.getenv('GITHUB_PR')
     }
+
+    if (System.getenv('SONAR_SCM_REVISION') != null) {
+      property 'sonar.scm.revision', System.getenv('SONAR_SCM_REVISION')
+    }
+
   }
 }
