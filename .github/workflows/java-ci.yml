@@ -38,7 +38,13 @@ jobs:
           cache: 'gradle'
 
       - name: Test with Gradle
-        run: ./gradlew --parallel --continue javadoc spotlessCheck check
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 30
+          max_attempts: 5
+          retry_wait_seconds: 10
+          warning_on_retry: false
+          command: ./gradlew --parallel --continue javadoc spotlessCheck check
 
       - name: Generate Test Report
         if: always()
