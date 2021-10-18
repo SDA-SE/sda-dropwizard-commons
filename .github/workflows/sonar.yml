@@ -10,6 +10,7 @@ on:
 
 jobs:
   Sonarcloud:
+    name: "Sonarcloud ${{ github.event.workflow_run.head_branch != 'master' && format('PR {0}', github.event.workflow_run.pull_requests[0].number) || 'master' }}"
     # Do not execute for PRs that origin from forks or Dependabot since we are missing the secrets for the scan
     # According the official documentation 'workflow_run' has most of the properties of 'check_suite'.
     # According to the latter you can recognize pull requests from forks by 'null' values of 'head_branch'
