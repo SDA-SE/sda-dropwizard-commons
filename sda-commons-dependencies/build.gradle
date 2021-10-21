@@ -19,10 +19,13 @@ ext {
   kafkaVersion = '2.8.1'
   kafkaJunitVersion = '3.2.3' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.31.0'
+  kotlinVersion = '1.5.31'
+  kotlinxCoroutinesVersion = '1.5.2'
 }
 
 dependencies {
-  api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.5.31") // override version from dropwizard-bom
+  api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:${kotlinVersion}") // override version from dropwizard-bom
+  api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:${kotlinxCoroutinesVersion}")
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion")
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.93")
@@ -62,7 +65,7 @@ dependencies {
       because "version conflict within Wiremock"
     }
 
-    // sda-commons-server-asyncapi
+    // sda-commons-shared-asyncapi
     api "com.kjetland:mbknor-jackson-jsonschema_2.12:1.0.39"
 
     // sda-commons-server-auth
