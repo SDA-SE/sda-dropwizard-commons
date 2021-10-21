@@ -166,7 +166,7 @@ dependencies {
           anymore.
         '''
     }
-    api "org.xerial.snappy:snappy-java:1.1.7.7", {
+    api "org.xerial.snappy:snappy-java:1.1.8.4", {
       because "conflict between kafka-clients:2.6.1 & curator-test:5.1.0"
     }
     api "com.typesafe.scala-logging:scala-logging_2.12:3.9.2", {
