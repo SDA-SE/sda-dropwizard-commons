@@ -15,7 +15,7 @@ ext {
   weldVersion = '3.1.8.Final'
   openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.28.0'
-  scalaVersion = '2.12.12' // Always prefer the version from kafka_2.12. Make sure that the major version is always aligned with kafka, s3mock, and mbknor-jackson-jsonschema.
+  scalaVersion = '2.13.6' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '2.8.1'
   kafkaJunitVersion = '3.2.3' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.32.0'
@@ -37,10 +37,7 @@ dependencies {
       because "conflict between org.apache.httpcomponents:httpclient:4.5.12 and org.dbunit:dbunit:2.7.0"
     }
     api "io.github.classgraph:classgraph:4.8.128", {
-      because "conflict between com.kjetland:mbknor-jackson-jsonschema_2.12 and dev.morphia.morphia:core"
-    }
-    api "net.sf.jopt-simple:jopt-simple:5.0.4", {
-      because "conflict between org.apache.kafka:kafka_2.12 and com.github.tomakehurst:wiremock-jre8"
+      because "conflict between io.swagger.core.v3:swagger-jaxrs2, io.swagger.core.v3:swagger-integration, dev.morphia.morphia:core and com.kjetland:mbknor-jackson-jsonschema_2.13 upgrade"
     }
     api "org.jboss.logging:jboss-logging:3.4.2.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
@@ -66,7 +63,7 @@ dependencies {
     }
 
     // sda-commons-shared-asyncapi
-    api "com.kjetland:mbknor-jackson-jsonschema_2.12:1.0.39"
+    api "com.kjetland:mbknor-jackson-jsonschema_2.13:1.0.39"
 
     // sda-commons-server-auth
     api "com.auth0:java-jwt:3.18.2"
@@ -123,7 +120,7 @@ dependencies {
     api "io.prometheus:simpleclient_servlet:$prometheusVersion"
 
     // sda-commons-server-s3-testing
-    api "io.findify:s3mock_2.12:0.2.6"
+    api "io.findify:s3mock_2.13:0.2.6"
 
     // sda-commons-server-swagger
     api "com.github.java-json-tools:json-schema-validator:2.2.14"
@@ -155,13 +152,13 @@ dependencies {
     api 'commons-io:commons-io:2.11.0'
 
     // Kafka
-    api "org.apache.kafka:kafka_2.12:$kafkaVersion"
+    api "org.apache.kafka:kafka_2.13:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
     api "org.apache.zookeeper:zookeeper:3.5.9"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
     api "com.salesforce.kafka.test:kafka-junit4:$kafkaJunitVersion"
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
-    api "org.apache.curator:curator-test:5.1.0", {
+    api "org.apache.curator:curator-test:5.2.0", {
       because '''\
           Upgrade because kafka-junit still uses curator 2.12.0.
           The older version does not work when executing tests parallel because it starts the
@@ -172,23 +169,17 @@ dependencies {
     api "org.xerial.snappy:snappy-java:1.1.7.7", {
       because "conflict between kafka-clients:2.6.1 & curator-test:5.1.0"
     }
-    api "com.typesafe.scala-logging:scala-logging_2.12:3.9.2", {
-      because "conflict between io.findify:s3mock_2.12 and org.apache.kafka:kafka_2.12 prefer version of kafka!"
+    api "org.scala-lang.modules:scala-java8-compat_2.13:0.9.1", {
+      because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13 upgrade"
     }
-    api "org.scala-lang.modules:scala-java8-compat_2.12:0.9.1", {
-      because "conflict between io.findify:s3mock_2.12 and org.apache.kafka:kafka_2.12 prefer version of kafka!"
-    }
-    api "org.scala-lang.modules:scala-collection-compat_2.12:2.3.0", {
-      because "version from org.apache.kafka:kafka_2.12"
+    api "org.scala-lang.modules:scala-collection-compat_2.13:2.5.0", {
+      because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13 upgrade"
     }
     api "org.scala-lang:scala-library:$scalaVersion", {
-      because "version from org.apache.kafka:kafka_2.12"
+      because "conflict between org.apache.kafka:kafka_2.13, io.findify:s3mock_2.13 and com.kjetland:mbknor-jackson-jsonschema_2.13: upgrade"
     }
     api "org.scala-lang:scala-reflect:$scalaVersion", {
-      because "version from org.apache.kafka:kafka_2.12"
-    }
-    api "com.fasterxml.jackson.module:jackson-module-scala_2.12:2.10.5", {
-      because "this is the requested version of org.apache.kafka:kafka_2.12:2.8.0"
+      because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13"
     }
   }
 }
