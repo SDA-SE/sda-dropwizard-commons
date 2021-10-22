@@ -166,8 +166,8 @@ dependencies {
           anymore.
         '''
     }
-    api "org.xerial.snappy:snappy-java:1.1.7.7", {
-      because "conflict between kafka-clients:2.6.1 & curator-test:5.1.0"
+    api "org.xerial.snappy:snappy-java:1.1.8.4", {
+      because "conflict between org.apache.kafka:kafka-clients and org.apache.curator:curator-test upgrade"
     }
     api "org.scala-lang.modules:scala-java8-compat_2.13:0.9.1", {
       because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13 upgrade"
@@ -176,7 +176,7 @@ dependencies {
       because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13 upgrade"
     }
     api "org.scala-lang:scala-library:$scalaVersion", {
-      because "conflict between org.apache.kafka:kafka_2.13, io.findify:s3mock_2.13 and com.kjetland:mbknor-jackson-jsonschema_2.13: upgrade"
+      because "conflict between org.apache.kafka:kafka_2.13, io.findify:s3mock_2.13 and com.kjetland:mbknor-jackson-jsonschema_2.13:+ upgrade"
     }
     api "org.scala-lang:scala-reflect:$scalaVersion", {
       because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13"
