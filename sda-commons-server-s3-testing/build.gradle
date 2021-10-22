@@ -1,13 +1,7 @@
 dependencies {
   api project(':sda-commons-server-testing')
 
-  api 'io.findify:s3mock_2.12', {
-    /**
-     * Dropwizard comes with jakarta.activation-api instead of javax.activation-api.
-     * Both contain the same classes.
-     */
-    exclude group: "javax.activation", module: "javax.activation-api"
-
+  api 'io.findify:s3mock_2.13', {
     /**
      * Dropwizard comes with jakarta.xml.bind-api instead of jaxb-api.
      * Both contain the same classes.

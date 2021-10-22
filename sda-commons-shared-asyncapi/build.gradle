@@ -1,10 +1,12 @@
 dependencies {
   api project(':sda-commons-server-jackson')
   api project(':sda-commons-shared-yaml')
-  api 'com.kjetland:mbknor-jackson-jsonschema_2.12', {
-    exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+  api 'com.kjetland:mbknor-jackson-jsonschema_2.13', {
+    /**
+     * Dropwizard comes with jakarta.validation-api instead of javax.validation-api.
+     * Both contain the same classes.
+     */
     exclude group: 'javax.validation', module: 'validation-api'
-    exclude group: 'org.slf4j', module: 'slf4j-api'
     // v1.3.50 has duplicate classes with org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.31
     // when upgrading bom to v1.5.31, kotlinx-coroutines-core-jvm is pulled as transitive dependency
     // in the desired bom version but kotlinx-coroutines-core is pulled as v1.1.1
