@@ -7,12 +7,7 @@ dependencies {
      * Both contain the same classes.
      */
     exclude group: 'javax.validation', module: 'validation-api'
-    // v1.3.50 has duplicate classes with org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.31
-    // when upgrading bom to v1.5.31, kotlinx-coroutines-core-jvm is pulled as transitive dependency
-    // in the desired bom version but kotlinx-coroutines-core is pulled as v1.1.1
-    exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core'
   }
-  api 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm'
 
   testImplementation project(':sda-commons-server-testing')
 }
