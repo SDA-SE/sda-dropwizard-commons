@@ -35,16 +35,7 @@ public class WebSecurityHeaderFilter implements ContainerResponseFilter {
     webSecurityHeaders.put("X-Permitted-Cross-Domain-Policies", "none");
     webSecurityHeaders.put(
         "Content-Security-Policy",
-        String.join(
-            "; ",
-            asList(
-                "default-src 'self'",
-                "script-src 'self'",
-                "img-src 'self'",
-                "style-src 'self'",
-                "font-src 'self'",
-                "frame-src 'none'",
-                "object-src 'none'")));
+        String.join("; ", asList("default-src 'none'", "frame-ancestors 'none'", "sandbox")));
     return webSecurityHeaders;
   }
 

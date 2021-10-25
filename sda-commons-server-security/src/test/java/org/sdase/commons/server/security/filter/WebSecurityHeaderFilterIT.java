@@ -43,14 +43,7 @@ public class WebSecurityHeaderFilterIT {
           "Content-Security-Policy",
           String.join(
               "; ", // NOSONAR
-              asList(
-                  "default-src 'self'",
-                  "script-src 'self'",
-                  "img-src 'self'",
-                  "style-src 'self'",
-                  "font-src 'self'",
-                  "frame-src 'none'",
-                  "object-src 'none'"))
+              asList("default-src 'none'", "frame-ancestors 'none'", "sandbox"))
         });
   }
 
