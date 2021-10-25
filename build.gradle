@@ -178,7 +178,7 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   // Configure JaCoCo to export the reports in XML format
   jacocoTestReport {
     reports {
-      xml.enabled true
+      xml.required = true
     }
   }
 
@@ -307,7 +307,7 @@ task codeCoverageReport(type: JacocoReport) {
   }
 
   reports {
-    xml.enabled = true
+    xml.required = true
     xml.destination file("${buildDir}/reports/jacoco/report.xml")
   }
 }
