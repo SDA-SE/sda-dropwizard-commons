@@ -1,14 +1,25 @@
 package org.sdase.commons.server.jackson.errors;
 
+import static org.glassfish.jersey.model.Parameter.Source.QUERY;
+
 import com.google.common.base.CaseFormat;
 import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.JerseyViolationException;
+import io.dropwizard.util.Lists;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import javax.validation.ConstraintViolation;
+import javax.validation.ElementKind;
+import javax.validation.Path;
+import javax.validation.Path.Node;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import org.glassfish.jersey.server.model.Invocable;
+import org.glassfish.jersey.server.model.Parameter;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.shared.api.error.ApiInvalidParam;
 import org.slf4j.Logger;
@@ -36,7 +47,8 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
         .forEach(
             cv -> {
               String propertyPath =
-                  ConstraintMessage.isRequestEntity(cv, e.getInvocable()).orElse("N/A");
+                  ConstraintMessage.isRequestEntity(cv, e.getInvocable())
+                      .orElse(isQueryParameter(cv, e.getInvocable()).orElse("N/A"));
               String annotation =
                   cv.getConstraintDescriptor().getAnnotation().annotationType().toString();
 
@@ -53,5 +65,31 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
     ApiError apiError = new ApiError(VALIDATION_EXCEPTION_MESSAGE, invalidParameters);
     LOGGER.info("Validation failed. Invalid params: '{}'", apiError.getInvalidParams());
     return Response.status(422).type(MediaType.APPLICATION_JSON_TYPE).entity(apiError).build();
+  }
+
+  /**
+   * Determines if constraint violation occurred in a query parameter. If it did, return a client
+   * friendly string representation of the parameter where the error occurred (eg. "name").
+   *
+   * <p>The implementation is based on {@link ConstraintMessage#isRequestEntity}.
+   */
+  private static Optional<String> isQueryParameter(
+      ConstraintViolation<?> violation, Invocable invocable) {
+    final Collection<Node> propertyPath = Lists.of(violation.getPropertyPath());
+    final Path.Node parent = propertyPath.stream().skip(1L).findFirst().orElse(null);
+    if (parent == null) {
+      return Optional.empty();
+    }
+    final List<Parameter> parameters = invocable.getParameters();
+
+    if (parent.getKind() == ElementKind.PARAMETER) {
+      final Parameter param =
+          parameters.get(parent.as(Path.ParameterNode.class).getParameterIndex());
+      if (param.getSource().equals(QUERY)) {
+        return Optional.of(param.getSourceName());
+      }
+    }
+
+    return Optional.empty();
   }
 }

@@ -566,4 +566,35 @@ public class JacksonConfigurationBundleIT {
       assertThat(details.getTitle()).isNotBlank().doesNotContain("RuntimeException");
     }
   }
+
+  @Test
+  public void shouldGetQueryParameter() {
+    String q =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("requiredQuery")
+            .queryParam("q", "My Value")
+            .request(MediaType.APPLICATION_JSON)
+            .get(String.class);
+
+    assertThat(q).isEqualTo("My Value");
+  }
+
+  @Test
+  public void shouldGetErrorForMissingQueryParameter() {
+    Response response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("requiredQuery")
+            .request(MediaType.APPLICATION_JSON)
+            .get();
+
+    ApiError error = response.readEntity(ApiError.class);
+    assertThat(response.getStatus()).isEqualTo(422);
+    assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
+
+    assertThat(error.getInvalidParams())
+        .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
+        .containsExactly(tuple("q", "NOT_EMPTY"));
+  }
 }
