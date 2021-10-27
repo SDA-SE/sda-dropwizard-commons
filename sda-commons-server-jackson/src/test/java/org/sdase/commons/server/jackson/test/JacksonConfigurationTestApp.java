@@ -11,6 +11,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.ForbiddenException;
@@ -184,5 +185,14 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
                 .path("1")
                 .build())
         .build();
+  }
+
+  @GET
+  @Valid
+  @Path("/requiredQuery")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response createRequiredQueryValidationResource(
+      @QueryParam("q") @Valid @NotEmpty String searchString) {
+    return Response.ok(searchString).build();
   }
 }
