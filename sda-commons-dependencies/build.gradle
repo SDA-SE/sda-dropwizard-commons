@@ -181,5 +181,8 @@ dependencies {
     api "org.scala-lang:scala-reflect:$scalaVersion", {
       because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13"
     }
+    api "com.typesafe.scala-logging:scala-logging_2.13:3.9.3", {
+      because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13 upgrade"
+    }
   }
 }
