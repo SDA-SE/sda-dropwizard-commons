@@ -2,7 +2,8 @@ package org.sdase.commons.server.prometheus;
 
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
-import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.AdminEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * }
  * }</pre>
  */
-public class PrometheusBundle implements Bundle, DynamicFeature {
+public class PrometheusBundle implements ConfiguredBundle<Configuration>, DynamicFeature {
 
   // sonar: this path is used as a convention in our world!
   private static final String METRICS_SERVLET_URL = "/metrics/prometheus"; // NOSONAR
@@ -59,7 +60,7 @@ public class PrometheusBundle implements Bundle, DynamicFeature {
   private PrometheusBundle() {}
 
   @Override
-  public void run(Environment environment) {
+  public void run(Configuration configuration, Environment environment) {
 
     registerMetricsServlet(environment.admin());
     registerHealthCheckServlet(environment.admin());

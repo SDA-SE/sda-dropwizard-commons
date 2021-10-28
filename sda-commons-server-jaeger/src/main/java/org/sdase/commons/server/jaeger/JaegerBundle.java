@@ -2,7 +2,7 @@ package org.sdase.commons.server.jaeger;
 
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
-import io.dropwizard.Bundle;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.jaegertracing.Configuration;
@@ -21,7 +21,7 @@ import org.sdase.commons.server.jaeger.metrics.PrometheusMetricsFactory;
  *
  * @see <a href="https://www.jaegertracing.io/docs/1.16/client-features/">Jaeger Configuration</a>
  */
-public class JaegerBundle implements Bundle {
+public class JaegerBundle implements ConfiguredBundle<io.dropwizard.Configuration> {
 
   private static final String JAEGER_SERVICE_NAME = "JAEGER_SERVICE_NAME";
 
@@ -37,7 +37,7 @@ public class JaegerBundle implements Bundle {
   }
 
   @Override
-  public void run(Environment environment) {
+  public void run(io.dropwizard.Configuration configuration, Environment environment) {
     SamplerConfiguration samplerConfig = SamplerConfiguration.fromEnv();
 
     if (samplerConfig.getType() == null && samplerConfig.getParam() == null) {

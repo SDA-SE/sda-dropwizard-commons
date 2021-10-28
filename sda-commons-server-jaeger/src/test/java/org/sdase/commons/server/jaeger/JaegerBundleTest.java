@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.opentracing.util.GlobalTracer;
@@ -32,10 +33,11 @@ public class JaegerBundleTest {
     Bootstrap bootstrap = mock(Bootstrap.class);
     Environment environment = mock(Environment.class, Mockito.RETURNS_DEEP_STUBS);
     when(environment.getName()).thenReturn("MyApp");
+    Configuration c = new Configuration();
 
     JaegerBundle jaegerBundle = JaegerBundle.builder().build();
     jaegerBundle.initialize(bootstrap);
-    jaegerBundle.run(environment);
+    jaegerBundle.run(c, environment);
 
     assertThat(GlobalTracer.isRegistered()).isTrue();
   }

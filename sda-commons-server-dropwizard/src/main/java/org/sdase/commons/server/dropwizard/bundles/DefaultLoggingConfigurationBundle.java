@@ -1,6 +1,7 @@
 package org.sdase.commons.server.dropwizard.bundles;
 
-import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.sdase.commons.server.dropwizard.logging.ConsoleAppenderInjectorSourceProvider;
@@ -10,7 +11,7 @@ import org.sdase.commons.server.dropwizard.logging.ConsoleAppenderInjectorSource
  * settings desired by the SDA. Requires that the environment variable {@code ENABLE_JSON_LOGGING}
  * is set to {@code "true"}.
  */
-public class DefaultLoggingConfigurationBundle implements Bundle {
+public class DefaultLoggingConfigurationBundle implements ConfiguredBundle<Configuration> {
   public static Builder builder() {
     return new Builder();
   }
@@ -22,7 +23,7 @@ public class DefaultLoggingConfigurationBundle implements Bundle {
   }
 
   @Override
-  public void run(Environment environment) {
+  public void run(Configuration configuration, Environment environment) {
     // nothing to run
   }
 
