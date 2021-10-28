@@ -1,6 +1,7 @@
 package org.sdase.commons.server.dropwizard.bundles;
 
-import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
@@ -26,7 +27,7 @@ import io.dropwizard.setup.Environment;
  *
  * }</pre>
  */
-public class ConfigurationSubstitutionBundle implements Bundle {
+public class ConfigurationSubstitutionBundle implements ConfiguredBundle<Configuration> {
 
   public static Builder builder() {
     return new Builder();
@@ -41,7 +42,7 @@ public class ConfigurationSubstitutionBundle implements Bundle {
   }
 
   @Override
-  public void run(Environment environment) {
+  public void run(Configuration configuration, Environment environment) {
     // nothing that has to be done in the run phase
   }
 

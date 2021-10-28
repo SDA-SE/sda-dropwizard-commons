@@ -5,7 +5,8 @@ import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
@@ -27,7 +28,7 @@ import org.sdase.commons.server.opentracing.servlet.AdminServletSpanDecorator;
 import org.sdase.commons.server.opentracing.servlet.CustomServletSpanDecorator;
 import org.slf4j.LoggerFactory;
 
-public class OpenTracingBundle implements Bundle {
+public class OpenTracingBundle implements ConfiguredBundle<Configuration> {
 
   private final Tracer tracer;
 
@@ -41,7 +42,7 @@ public class OpenTracingBundle implements Bundle {
   }
 
   @Override
-  public void run(Environment environment) {
+  public void run(Configuration configuration, Environment environment) {
     Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
 
     registerLogAppender(currentTracer);

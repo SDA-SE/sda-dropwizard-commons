@@ -1,6 +1,7 @@
 package org.sdase.commons.server.weld;
 
-import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.jboss.weld.environment.servlet.Listener;
@@ -19,14 +20,14 @@ import org.jboss.weld.environment.servlet.Listener;
  * }
  * }</pre>
  */
-public class WeldBundle implements Bundle {
+public class WeldBundle implements ConfiguredBundle<Configuration> {
   @Override
   public void initialize(final Bootstrap<?> bootstrap) {
     // not implemented
   }
 
   @Override
-  public void run(final Environment environment) {
+  public void run(final Configuration configuration, final Environment environment) {
     environment.getApplicationContext().addEventListener(new Listener());
   }
 }
