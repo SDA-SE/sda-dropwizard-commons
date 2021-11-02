@@ -8,13 +8,6 @@ updates:
     timezone: Europe/Berlin
   open-pull-requests-limit: 15
   target-branch: master
-  ignore:
-  - dependency-name: org.scala-lang:scala-library
-    versions:
-    - ">= 2.13.a"
-  - dependency-name: org.scala-lang:scala-reflect
-    versions:
-    - ">= 2.13.a"
   commit-message:
     prefix: fix
     prefix-development: chore
