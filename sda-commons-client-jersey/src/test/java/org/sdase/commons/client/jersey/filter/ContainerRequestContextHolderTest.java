@@ -26,8 +26,8 @@ public class ContainerRequestContextHolderTest {
             transferRequestContext(
                 () -> {
                   assertThat(MDC.get("Trace-Token")).isEqualTo("a-trace-token");
-                  assertThat(new AuthHeaderClientFilter().getHeaderValue().orElse(null))
-                      .isEqualTo("an-access-token");
+                  assertThat(new AuthHeaderClientFilter().getHeaderValue())
+                      .hasValue("an-access-token");
                 }))
         .get();
 
@@ -46,8 +46,8 @@ public class ContainerRequestContextHolderTest {
                 transferRequestContext(
                     () -> {
                       assertThat(MDC.get("Trace-Token")).isEqualTo("a-trace-token");
-                      assertThat(new AuthHeaderClientFilter().getHeaderValue().orElse(null))
-                          .isEqualTo("an-access-token");
+                      assertThat(new AuthHeaderClientFilter().getHeaderValue())
+                          .hasValue("an-access-token");
                       return 42;
                     }))
             .get();
@@ -69,7 +69,7 @@ public class ContainerRequestContextHolderTest {
             () -> {
               // As the thread is reused, we expect it to be cleaned.
               assertThat(MDC.get("Trace-Token")).isNull();
-              assertThat(new AuthHeaderClientFilter().getHeaderValue().isPresent()).isFalse();
+              assertThat(new AuthHeaderClientFilter().getHeaderValue()).isNotPresent();
             })
         .get();
 
@@ -88,7 +88,7 @@ public class ContainerRequestContextHolderTest {
             () -> {
               // As the thread is reused, we expect it to be cleaned.
               assertThat(MDC.get("Trace-Token")).isNull();
-              assertThat(new AuthHeaderClientFilter().getHeaderValue().isPresent()).isFalse();
+              assertThat(new AuthHeaderClientFilter().getHeaderValue()).isNotPresent();
               return 42;
             })
         .get();

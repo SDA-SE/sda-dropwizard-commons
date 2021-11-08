@@ -523,7 +523,7 @@ public class KafkaBundleWithConfigIT {
         .untilAsserted(
             () -> {
               assertThat(resultsString).containsExactlyInAnyOrderElementsOf(checkMessages);
-              assertThat(callbackCount).isGreaterThan(0);
+              assertThat(callbackCount).isPositive();
             });
   }
 

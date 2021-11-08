@@ -3,7 +3,6 @@ package org.sdase.commons.server.jackson;
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -121,8 +120,7 @@ public class JacksonConfigurationBundleTest {
     verify(environmentMock, times(1)).getObjectMapper();
     // we must disable default exception mappers because they are not properly overwritten in a CDI
     // context
-    verify(defaultServerFactoryMock, times(1))
-        .setRegisterDefaultExceptionMappers(eq(Boolean.FALSE));
+    verify(defaultServerFactoryMock, times(1)).setRegisterDefaultExceptionMappers(Boolean.FALSE);
 
     return omRef.get();
   }

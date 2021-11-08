@@ -2,7 +2,6 @@ package org.sdase.commons.client.jersey.oidc;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import javax.validation.*;
 import org.sdase.commons.client.jersey.ClientFactory;
 import org.sdase.commons.client.jersey.oidc.cache.AfterCreateExpiry;
 import org.sdase.commons.client.jersey.oidc.model.OidcResult;
