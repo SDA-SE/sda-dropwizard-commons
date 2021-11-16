@@ -12,7 +12,7 @@ import org.junit.rules.RuleChain;
 import org.sdase.commons.server.consumer.test.ConsumerTokenOptionalTestApp;
 import org.sdase.commons.server.consumer.test.ConsumerTokenTestApp;
 import org.sdase.commons.server.consumer.test.ConsumerTokenTestConfig;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class ConsumerTokenBundleOptionalTokenTest {
 
@@ -26,7 +26,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
 
   @ClassRule
   public static RuleChain CHAIN =
-      RuleChain.outerRule(new EnvironmentRule().setEnv("CONSUMER_TOKEN_OPTIONAL", "true"))
+      RuleChain.outerRule(new SystemPropertyRule().setProperty("CONSUMER_TOKEN_OPTIONAL", "true"))
           .around(DW)
           .around(DW_OPTIONAL);
 

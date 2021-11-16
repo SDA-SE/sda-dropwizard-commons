@@ -12,15 +12,15 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class DownloadConfigFactoryUtilTest {
 
   @Test
   public void shouldCreateWithFixedDownloadPath() throws Throwable {
     AtomicReference<DownloadConfig> actualConfig = new AtomicReference<>();
-    new EnvironmentRule()
-        .setEnv("EMBEDDED_MONGO_DOWNLOAD_PATH", "http://localhost/mongo.tar.gz")
+    new SystemPropertyRule()
+        .setProperty("EMBEDDED_MONGO_DOWNLOAD_PATH", "http://localhost/mongo.tar.gz")
         .apply(
             new Statement() {
               @Override
@@ -41,8 +41,8 @@ public class DownloadConfigFactoryUtilTest {
   @Test
   public void shouldCreateProxyWithAuthentication() throws Throwable {
     AtomicReference<DownloadConfig> actualConfig = new AtomicReference<>();
-    new EnvironmentRule()
-        .setEnv("http_proxy", "http://tester:dummy@the-test-domain.example.com:1234")
+    new SystemPropertyRule()
+        .setProperty("http_proxy", "http://tester:dummy@the-test-domain.example.com:1234")
         .apply(
             new Statement() {
               @Override

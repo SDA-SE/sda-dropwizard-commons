@@ -12,6 +12,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
 import org.bson.Document;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public interface MongoDb {
    * href="https://docs.mongodb.com/manual/reference/connection-string/">MongoDB Connection
    * String</a> of the database used in tests instead of starting a dedicated instance.
    */
-  String OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME = "TEST_MONGODB_CONNECTION_STRING";
+  String OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME = "TEST_MONGODB_CONNECTION_STRING";
 
   /**
    * @return the hostname and port that can be used to connect to the database. The result may
@@ -115,7 +116,8 @@ public interface MongoDb {
     private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
 
     protected String mongoDbUrlOverride =
-        System.getenv(OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME);
+        new SystemPropertyAndEnvironmentLookup()
+            .lookup(OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME);
 
     protected IFeatureAwareVersion version;
     protected Long timeoutInMillis;

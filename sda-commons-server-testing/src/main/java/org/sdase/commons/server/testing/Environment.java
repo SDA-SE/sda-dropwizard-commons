@@ -3,7 +3,13 @@ package org.sdase.commons.server.testing;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-/** To be used with {@link EnvironmentRule} */
+/**
+ * To be used with {@link EnvironmentRule}
+ *
+ * @deprecated Java 17 will make it very cumbersome using environment variables; try to use system
+ *     properties instead
+ */
+@Deprecated
 public final class Environment {
 
   private Environment() {

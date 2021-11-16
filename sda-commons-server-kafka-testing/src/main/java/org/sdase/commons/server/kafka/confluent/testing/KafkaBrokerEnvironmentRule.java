@@ -8,7 +8,6 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.sdase.commons.server.testing.Environment;
 
 /**
  * Rule for setting the Environment Variable `BROKER_CONNECTION_STRING`
@@ -36,7 +35,7 @@ public class KafkaBrokerEnvironmentRule implements TestRule, KafkaBrokerRule {
                 new Statement() {
                   @Override
                   public void evaluate() throws Throwable {
-                    Environment.setEnv(
+                    System.setProperty(
                         CONNECTION_STRING_ENV,
                         String.format(
                             "[ %s ]",
@@ -46,7 +45,7 @@ public class KafkaBrokerEnvironmentRule implements TestRule, KafkaBrokerRule {
                     try {
                       base1.evaluate();
                     } finally {
-                      Environment.unsetEnv(CONNECTION_STRING_ENV);
+                      System.clearProperty(CONNECTION_STRING_ENV);
                     }
                   }
                 })

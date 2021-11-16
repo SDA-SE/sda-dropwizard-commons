@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 
 public class KafkaBrokerEnvironmentRuleTest {
 
@@ -24,7 +25,9 @@ public class KafkaBrokerEnvironmentRuleTest {
                 .map(b -> "\"" + b.getConnectString() + "\"")
                 .collect(Collectors.joining(", "))
             + " ]";
-    Assertions.assertThat(System.getenv(KafkaBrokerEnvironmentRule.CONNECTION_STRING_ENV))
+    Assertions.assertThat(
+            new SystemPropertyAndEnvironmentLookup()
+                .lookup(KafkaBrokerEnvironmentRule.CONNECTION_STRING_ENV))
         .isEqualTo(compare);
   }
 }

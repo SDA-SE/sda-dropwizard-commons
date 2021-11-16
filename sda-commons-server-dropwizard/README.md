@@ -16,8 +16,9 @@ The Dropwizard module provides default Bundles that are useful for most Dropwiza
 ### ConfigurationSubstitutionBundle
 
 The [`ConfigurationSubstitutionBundle`](./src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
-allows to use placeholders for environment variables in the config.yaml of the application to dynamically configure the
-application at startup. Default values can be added after the environment variable name separated by `:-`
+allows to use placeholders for environment variables or system properties in the config.yaml of the 
+application to dynamically configure the application at startup. Default values can be added after 
+the environment variable name separated by `:-`
 
 ```yaml
 database:

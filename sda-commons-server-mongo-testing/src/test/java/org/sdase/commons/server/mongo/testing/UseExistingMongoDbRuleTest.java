@@ -12,7 +12,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class UseExistingMongoDbRuleTest {
 
@@ -24,15 +24,15 @@ public class UseExistingMongoDbRuleTest {
           .withPassword("testpassword")
           .build();
 
-  private static EnvironmentRule ENV;
+  private static SystemPropertyRule SYSTEM_PROPERTY_RULE;
 
   private MongoDbRule useExistingMongoDbRule;
 
   @BeforeClass
   public static void initEnvAfterStartOfExternalDb() {
-    ENV =
-        new EnvironmentRule()
-            .setEnv(
+    SYSTEM_PROPERTY_RULE =
+        new SystemPropertyRule()
+            .setProperty(
                 "TEST_MONGODB_CONNECTION_STRING",
                 "mongodb://"
                     + EXTERNAL_DB.getUsername()
@@ -48,7 +48,8 @@ public class UseExistingMongoDbRuleTest {
 
   @Before
   public void initUseExistingMongoDbRule() throws Throwable {
-    ENV.apply(
+    SYSTEM_PROPERTY_RULE
+        .apply(
             new Statement() {
               @Override
               public void evaluate() {

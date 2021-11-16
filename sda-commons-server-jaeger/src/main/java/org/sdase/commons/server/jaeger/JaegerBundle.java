@@ -13,6 +13,7 @@ import io.jaegertracing.Configuration.SamplerConfiguration;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import io.opentracing.util.GlobalTracerTestUtil;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 import org.sdase.commons.server.jaeger.metrics.PrometheusMetricsFactory;
 
 /**
@@ -93,6 +94,6 @@ public class JaegerBundle implements ConfiguredBundle<io.dropwizard.Configuratio
   }
 
   private static String getProperty(String name) {
-    return System.getProperty(name, System.getenv(name));
+    return new SystemPropertyAndEnvironmentLookup().lookup(name);
   }
 }

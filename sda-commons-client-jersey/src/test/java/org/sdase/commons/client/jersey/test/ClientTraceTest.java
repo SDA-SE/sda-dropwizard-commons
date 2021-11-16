@@ -25,7 +25,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class ClientTraceTest {
 
@@ -38,7 +38,8 @@ public class ClientTraceTest {
 
   @Rule
   public final RuleChain rule =
-      RuleChain.outerRule(new EnvironmentRule().setEnv("MOCK_BASE_URL", WIRE.baseUrl())).around(dw);
+      RuleChain.outerRule(new SystemPropertyRule().setProperty("MOCK_BASE_URL", WIRE.baseUrl()))
+          .around(dw);
 
   private ClientTestApp app;
 

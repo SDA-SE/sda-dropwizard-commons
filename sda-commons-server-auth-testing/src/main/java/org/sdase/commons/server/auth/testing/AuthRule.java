@@ -13,7 +13,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.auth.config.AuthConfig;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 /**
  * This {@link TestRule} configures a Dropwizard application that uses JWT authentication for
@@ -106,7 +106,7 @@ public class AuthRule extends AbstractAuth implements TestRule {
     this.authConfig = new AuthConfig().setDisableAuth(true);
     delegate =
         RuleChain.outerRule(
-            new EnvironmentRule().setEnv(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}"));
+            new SystemPropertyRule().setProperty(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}"));
   }
 
   private void initEnabledTestAuth() {
@@ -116,7 +116,8 @@ public class AuthRule extends AbstractAuth implements TestRule {
     try {
       String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);
       delegate =
-          RuleChain.outerRule(new EnvironmentRule().setEnv(AUTH_RULE_ENV_KEY, authKeysConfig));
+          RuleChain.outerRule(
+              new SystemPropertyRule().setProperty(AUTH_RULE_ENV_KEY, authKeysConfig));
     } catch (JsonProcessingException e) {
       fail("Failed to create the config keys: " + e.getMessage());
     }

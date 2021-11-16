@@ -6,15 +6,17 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class MongoDbRuleTest {
 
   @Test
   public void shouldUseExistingMongoDb() throws Throwable {
     AtomicReference<MongoDbRule> actualRule = new AtomicReference<>();
-    new EnvironmentRule()
-        .setEnv(MongoDbRule.OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME, "mongodb://localhost")
+    new SystemPropertyRule()
+        .setProperty(
+            MongoDbRule.OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME,
+            "mongodb://localhost")
         .apply(
             new Statement() {
               @Override
@@ -30,8 +32,8 @@ public class MongoDbRuleTest {
   @Test
   public void shouldStartLocalMongoDb() throws Throwable {
     AtomicReference<MongoDbRule> actualRule = new AtomicReference<>();
-    new EnvironmentRule()
-        .unsetEnv(MongoDbRule.OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME)
+    new SystemPropertyRule()
+        .unsetProperty(MongoDbRule.OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME)
         .apply(
             new Statement() {
               @Override

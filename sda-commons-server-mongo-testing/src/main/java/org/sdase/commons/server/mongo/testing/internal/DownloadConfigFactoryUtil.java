@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Optional;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,8 @@ public class DownloadConfigFactoryUtil {
     //
     // Optional it is possible to download it from a source configured in
     // the environment variable:
-    String embeddedMongoDownloadPath = System.getenv(EMBEDDED_MONGO_DOWNLOAD_PATH_ENV_NAME);
+    String embeddedMongoDownloadPath =
+        new SystemPropertyAndEnvironmentLookup().lookup(EMBEDDED_MONGO_DOWNLOAD_PATH_ENV_NAME);
 
     if (embeddedMongoDownloadPath != null) {
       downloadConfigBuilder.downloadPath(
@@ -57,7 +59,7 @@ public class DownloadConfigFactoryUtil {
   }
 
   private static Optional<ProxyFactory> createProxyFactory() {
-    String httpProxy = System.getenv(PROXY_ENV_NAME);
+    String httpProxy = new SystemPropertyAndEnvironmentLookup().lookup(PROXY_ENV_NAME);
     if (httpProxy != null) {
       try {
         URL url = new URL(httpProxy);

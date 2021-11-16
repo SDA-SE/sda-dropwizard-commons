@@ -14,7 +14,7 @@ In an integration test, authentication can be configured using the
 [`AuthRule`](./src/main/java/org/sdase/commons/server/auth/testing/AuthRule.java) and/or the [`OpaRule`](./src/main/java/org/sdase/commons/server/opa/testing/OpaRule.java).
 
 ## Auth Rule
-The `AuthRule` uses the `EnvironmentRule` to create the `AuthConfig` in an environment property called `AUTH_RULE`.
+The `AuthRule` uses the `SystemPropertyRule` to create the `AuthConfig` in an environment property called `AUTH_RULE`.
 Therefore the configuration in the test needs to use this property and the application is required to use the 
 [`ConfigurationSubstitutionBundle`](../sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
 from [`sda-commons-server-dropwizard`](../sda-commons-server-dropwizard/README.md):

@@ -19,18 +19,19 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.dropwizard.bundles.test.LoggingTestApp;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
 
-  public static final EnvironmentRule ENV =
-      new EnvironmentRule().setEnv("ENABLE_JSON_LOGGING", "true");
+  public static final SystemPropertyRule SYSTEM_PROPERTY_RULE =
+      new SystemPropertyRule().setProperty("ENABLE_JSON_LOGGING", "true");
 
   public static final DropwizardAppRule<Configuration> DW =
       new DropwizardAppRule<>(
           LoggingTestApp.class, resourceFilePath("without-appenders-key-config.yaml"));
 
-  @ClassRule public static final RuleChain RULE = RuleChain.outerRule(ENV).around(DW);
+  @ClassRule
+  public static final RuleChain RULE = RuleChain.outerRule(SYSTEM_PROPERTY_RULE).around(DW);
 
   @Test()
   public void shouldApplyConsoleAppender() {

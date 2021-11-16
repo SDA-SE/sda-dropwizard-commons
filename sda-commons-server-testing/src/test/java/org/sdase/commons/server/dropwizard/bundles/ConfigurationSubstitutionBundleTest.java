@@ -7,15 +7,15 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.dropwizard.test.DropwizardApp;
 import org.sdase.commons.server.dropwizard.test.DropwizardConfig;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class ConfigurationSubstitutionBundleTest {
 
   @ClassRule
-  public static final EnvironmentRule ENV =
-      new EnvironmentRule()
-          .setEnv("ENV_REPLACEMENT", "valueFromEnv")
-          .setEnv("EXAMPLE_SUFFIX", "hello");
+  public static final SystemPropertyRule ENV =
+      new SystemPropertyRule()
+          .setProperty("ENV_REPLACEMENT", "valueFromEnv")
+          .setProperty("EXAMPLE_SUFFIX", "hello");
 
   @ClassRule
   public static final DropwizardAppRule<DropwizardConfig> DW =

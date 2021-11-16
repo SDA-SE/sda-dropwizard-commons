@@ -7,13 +7,14 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.dropwizard.test.DropwizardApp;
 import org.sdase.commons.server.dropwizard.test.DropwizardConfig;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class ConfigurationSubstitutionBundleWithOptionalConfigAsJsonTest {
 
   @ClassRule
-  public static final EnvironmentRule ENV =
-      new EnvironmentRule().setEnv("OPTIONAL_CONFIG", "{'property1':'juice', 'property2':'beer'}");
+  public static final SystemPropertyRule SYSTEM_PROPERTY_RULE =
+      new SystemPropertyRule()
+          .setProperty("OPTIONAL_CONFIG", "{'property1':'juice', 'property2':'beer'}");
 
   @ClassRule
   public static final DropwizardAppRule<DropwizardConfig> DW =

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -107,7 +108,7 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
     consoleAppender.putIfAbsent("threshold", DEFAULT_THRESHOLD);
     consoleAppender.putIfAbsent("logFormat", DEFAULT_LOG_FORMAT);
 
-    if ("true".equals(System.getenv("ENABLE_JSON_LOGGING"))) {
+    if ("true".equals(new SystemPropertyAndEnvironmentLookup().lookup("ENABLE_JSON_LOGGING"))) {
       consoleAppender.putIfAbsent("layout", createLoggingConsoleAppenderLayout());
     }
 
@@ -174,7 +175,7 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
   }
 
   private void applyRequestLogConsoleAppenderDefaults(Map<String, Object> consoleAppender) {
-    if ("true".equals(System.getenv("ENABLE_JSON_LOGGING"))) {
+    if ("true".equals(new SystemPropertyAndEnvironmentLookup().lookup("ENABLE_JSON_LOGGING"))) {
       consoleAppender.putIfAbsent("layout", createRequestLogConsoleAppenderLayout());
     }
   }
