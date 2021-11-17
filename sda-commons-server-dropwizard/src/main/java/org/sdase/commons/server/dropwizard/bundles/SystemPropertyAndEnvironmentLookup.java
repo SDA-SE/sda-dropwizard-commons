@@ -2,6 +2,10 @@ package org.sdase.commons.server.dropwizard.bundles;
 
 import io.dropwizard.configuration.EnvironmentVariableLookup;
 
+/**
+ * Lookup for Java's system properties and environment variables. System properties have higher
+ * priority.
+ */
 public class SystemPropertyAndEnvironmentLookup extends EnvironmentVariableLookup {
 
   @Override
