@@ -32,11 +32,9 @@ public class KeyLoaderProxyIT {
   private static final WireMockClassRule PROXY_WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
-  private static final SystemPropertyRule SYSTEM_PROPERTY_RULE =
-      new SystemPropertyRule().setProperty("AUTH_RULE", "{\"keys\": [{}]}");
-
   private static final SystemPropertyRule SYSTEM_PROPERTY =
       new SystemPropertyRule()
+          .setProperty("AUTH_RULE", "{\"keys\": [{}]}")
           .setProperty("http.proxyHost", "localhost")
           .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port())
           .setProperty("http.nonProxyHosts", "localhost");
@@ -50,10 +48,7 @@ public class KeyLoaderProxyIT {
 
   @ClassRule
   public static final RuleChain rule =
-      RuleChain.outerRule(PROXY_WIRE)
-          .around(SYSTEM_PROPERTY_RULE)
-          .around(SYSTEM_PROPERTY)
-          .around(DW);
+      RuleChain.outerRule(PROXY_WIRE).around(SYSTEM_PROPERTY).around(DW);
 
   @BeforeClass
   public static void setupWiremock() {
