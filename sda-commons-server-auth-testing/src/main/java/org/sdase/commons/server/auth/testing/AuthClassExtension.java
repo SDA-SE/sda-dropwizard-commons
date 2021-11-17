@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.sdase.commons.server.auth.config.AuthConfig;
-import org.sdase.commons.server.testing.Environment;
 
 public class AuthClassExtension extends AbstractAuth
     implements BeforeAllCallback, AfterAllCallback {
@@ -69,17 +68,17 @@ public class AuthClassExtension extends AbstractAuth
 
   @Override
   public void beforeAll(ExtensionContext context) {
-    valueToRestore = System.getenv(AUTH_RULE_ENV_KEY);
+    valueToRestore = System.getProperty(AUTH_RULE_ENV_KEY);
   }
 
   @Override
   public void afterAll(ExtensionContext context) {
-    Environment.setEnv(AUTH_RULE_ENV_KEY, valueToRestore);
+    System.setProperty(AUTH_RULE_ENV_KEY, valueToRestore);
   }
 
   private void initDisabledTestAuth() {
     this.authConfig = new AuthConfig().setDisableAuth(true);
-    Environment.setEnv(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}");
+    System.setProperty(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}");
   }
 
   private void initEnabledTestAuth() {
@@ -88,7 +87,7 @@ public class AuthClassExtension extends AbstractAuth
 
     try {
       String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);
-      Environment.setEnv(AUTH_RULE_ENV_KEY, authKeysConfig);
+      System.setProperty(AUTH_RULE_ENV_KEY, authKeysConfig);
     } catch (JsonProcessingException e) {
       fail("Failed to create the config keys: " + e.getMessage());
     }

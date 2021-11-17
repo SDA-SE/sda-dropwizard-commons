@@ -1,7 +1,7 @@
 package org.sdase.commons.server.mongo.testing;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.sdase.commons.server.mongo.testing.MongoDbClassExtension.OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME;
+import static org.sdase.commons.server.mongo.testing.MongoDbClassExtension.OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.sdase.commons.server.testing.Environment;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 
 class UseExistingMongoDbClassExtensionTest {
 
@@ -41,8 +41,10 @@ class UseExistingMongoDbClassExtensionTest {
             + "?"
             + EXTERNAL_DB.getOptions();
     originalMongoDbConnectionString =
-        System.getenv().get(OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME);
-    Environment.setEnv(OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME, MONGODB_CONNECTION_STRING);
+        new SystemPropertyAndEnvironmentLookup()
+            .lookup(OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME);
+    System.setProperty(
+        OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME, MONGODB_CONNECTION_STRING);
 
     useExistingMongoDbClassExtension =
         MongoDbClassExtension.builder()
@@ -63,10 +65,10 @@ class UseExistingMongoDbClassExtensionTest {
   @AfterEach
   public void clearDatabase() {
     useExistingMongoDbClassExtension.clearDatabase();
-    Environment.unsetEnv(OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME);
+    System.clearProperty(OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME);
     if (StringUtils.isNotBlank(originalMongoDbConnectionString)) {
-      Environment.setEnv(
-          OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME, originalMongoDbConnectionString);
+      System.setProperty(
+          OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME, originalMongoDbConnectionString);
     }
   }
 

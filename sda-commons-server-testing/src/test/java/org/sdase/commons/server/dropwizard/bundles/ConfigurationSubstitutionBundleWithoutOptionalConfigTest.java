@@ -7,12 +7,13 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.sdase.commons.server.dropwizard.test.DropwizardApp;
 import org.sdase.commons.server.dropwizard.test.DropwizardConfig;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class ConfigurationSubstitutionBundleWithoutOptionalConfigTest {
 
   @ClassRule
-  public static final EnvironmentRule ENV = new EnvironmentRule().setEnv("OPTIONAL_CONFIG", "null");
+  public static final SystemPropertyRule ENV =
+      new SystemPropertyRule().setProperty("OPTIONAL_CONFIG", "null");
 
   @ClassRule
   public static final DropwizardAppRule<DropwizardConfig> DW =

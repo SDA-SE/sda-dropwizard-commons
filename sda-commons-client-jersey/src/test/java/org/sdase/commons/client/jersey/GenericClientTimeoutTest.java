@@ -27,9 +27,9 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
-import org.sdase.commons.server.testing.EnvironmentRule;
 import org.sdase.commons.server.testing.Retry;
 import org.sdase.commons.server.testing.RetryRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 /** Tests that timeouts are correctly mapped. */
 public class GenericClientTimeoutTest {
@@ -44,7 +44,7 @@ public class GenericClientTimeoutTest {
   @Rule
   public final RuleChain rule =
       RuleChain.outerRule(new RetryRule())
-          .around(new EnvironmentRule().setEnv("MOCK_BASE_URL", WIRE.baseUrl()))
+          .around(new SystemPropertyRule().setProperty("MOCK_BASE_URL", WIRE.baseUrl()))
           .around(dw);
 
   private ClientTestApp app;

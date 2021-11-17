@@ -60,8 +60,22 @@ content should always be reproducible. Note that the [AsyncAPI](../sda-commons-s
 
 ### EnvironmentRule
 
-The [`EnvironmentRule`](./src/main/java/org/sdase/commons/server/testing/EnvironmentRule.java) allows to override or
-unset environment variables in test cases and resets them to the state before the test after the test finished.
+The [`EnvironmentRule`](./src/main/java/org/sdase/commons/server/testing/EnvironmentRule.java) 
+allows to override or unset environment variables in test cases and resets them to the state before 
+the test after the test finished.
+
+**WARNING**
+
+Java considers environment variables to be immutable, so this extension uses reflection to change 
+them. This requires that the SecurityManager allows modifications and can potentially break on 
+different operating systems and Java versions. Be aware that this is a fragile solution and consider
+finding a better one for your specific situation.
+
+Most of the time using the `SystemPropertyRule` should also work for you since our Dropwizard setup
+supports looking up environment variables AND system properties when replacing variables in your
+configuration file.
+
+#### Example
 
 ```java
 public class CustomIT {
@@ -152,8 +166,10 @@ static final SystemPropertyClassExtension PROP =
 
 Set and overwritten values will be reset to their original value once the test has finished.
 
-## JUnit 5
+### JUnit Pioneer
+
 For JUnit 5 we will not supply a replacement for the `EnvironmentRule` and `DropwizardRuleHelper`. 
 
-* The `EnvironmentRule` can be replaced with [JUnit Pioneer](https://junit-pioneer.org/docs/environment-variables/) capabilities.
+* The `EnvironmentRule` can be replaced with [JUnit Pioneer](https://junit-pioneer.org/docs/environment-variables/) 
+  capabilities. **Anyway please read the warning above for overriding environment variables.** 
 * Use `DropwizardAppExtension` directly as a replacement for the `DropwizardRuleHelper`.

@@ -19,23 +19,23 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.security.exception.InsecureConfigurationException;
 import org.sdase.commons.server.security.test.SecurityTestApp;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 /** Tests that the app is not started with insecure configuration. */
 @RunWith(Parameterized.class)
 public class AppStartProhibitedIT {
 
-  private EnvironmentRule env;
+  private SystemPropertyRule env;
   private Class<? extends Throwable> expectedException;
 
   public AppStartProhibitedIT(
       String givenEnvKey,
       String givenEnvValue,
       Class<? extends Throwable> expectedException,
-      Map<String, String> additionalEnvironmentProperties) {
-    this.env = new EnvironmentRule().setEnv(givenEnvKey, givenEnvValue);
-    if (additionalEnvironmentProperties != null) {
-      additionalEnvironmentProperties.forEach(env::setEnv);
+      Map<String, String> additionalSystemProperties) {
+    this.env = new SystemPropertyRule().setProperty(givenEnvKey, givenEnvValue);
+    if (additionalSystemProperties != null) {
+      additionalSystemProperties.forEach(env::setProperty);
     }
     this.expectedException = expectedException;
   }

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.testing.ResourceHelpers;
 import java.io.BufferedReader;
@@ -21,7 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentSubstitutor;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +58,8 @@ public class AuthConfigTest {
   }
 
   @ClassRule
-  public static EnvironmentRule ENV =
-      new EnvironmentRule().setEnv("KEYS", KEYS_JSON).setEnv("ISSUERS", ISSUERS);
+  public static SystemPropertyRule SYSTEM_PROPERTY_RULE =
+      new SystemPropertyRule().setProperty("KEYS", KEYS_JSON).setProperty("ISSUERS", ISSUERS);
 
   @Test
   public void shouldReadConfigFromJsonEnvironment() throws Exception {
@@ -103,7 +103,7 @@ public class AuthConfigTest {
   private String readConfigWithSubstitution(String configPath) throws IOException {
     SubstitutingSourceProvider sourceProvider =
         new SubstitutingSourceProvider(
-            FileInputStream::new, new EnvironmentVariableSubstitutor(false));
+            FileInputStream::new, new SystemPropertyAndEnvironmentSubstitutor(false));
     String config;
     try (BufferedReader reader =
         new BufferedReader(

@@ -13,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.security.SecurityBundle;
 
@@ -25,14 +26,15 @@ public class SecurityTestApp extends Application<Configuration> {
 
   @Override
   public void initialize(Bootstrap<Configuration> bootstrap) {
+    SystemPropertyAndEnvironmentLookup lookup = new SystemPropertyAndEnvironmentLookup();
     bootstrap.addBundle(
         ConfigurationSubstitutionBundle.builder().build()); // needed to update the config in tests
-    if (!"true".equals(System.getenv("DISABLE_BUFFER_CHECK"))) {
+    if (!"true".equals(lookup.lookup("DISABLE_BUFFER_CHECK"))) {
       bootstrap.addBundle(SecurityBundle.builder().build());
     } else {
       bootstrap.addBundle(SecurityBundle.builder().disableBufferLimitValidation().build());
     }
-    if (!"true".equals(System.getenv("DISABLE_JACKSON_CONFIGURATION"))) {
+    if (!"true".equals(lookup.lookup("DISABLE_JACKSON_CONFIGURATION"))) {
       bootstrap.addBundle(
           JacksonConfigurationBundle.builder().build()); // enables custom error handlers
     }

@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
-import org.sdase.commons.server.testing.EnvironmentRule;
 import org.sdase.commons.server.testing.SystemPropertyRule;
 
 /** A test that checks if the jersey client that is used to load keys can use a proxy server */
@@ -33,11 +32,9 @@ public class KeyLoaderProxyIT {
   private static final WireMockClassRule PROXY_WIRE =
       new WireMockClassRule(wireMockConfig().dynamicPort());
 
-  private static final EnvironmentRule ENVIRONMENT_RULE =
-      new EnvironmentRule().setEnv("AUTH_RULE", "{\"keys\": [{}]}");
-
   private static final SystemPropertyRule SYSTEM_PROPERTY =
       new SystemPropertyRule()
+          .setProperty("AUTH_RULE", "{\"keys\": [{}]}")
           .setProperty("http.proxyHost", "localhost")
           .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port())
           .setProperty("http.nonProxyHosts", "localhost");
@@ -51,7 +48,7 @@ public class KeyLoaderProxyIT {
 
   @ClassRule
   public static final RuleChain rule =
-      RuleChain.outerRule(PROXY_WIRE).around(ENVIRONMENT_RULE).around(SYSTEM_PROPERTY).around(DW);
+      RuleChain.outerRule(PROXY_WIRE).around(SYSTEM_PROPERTY).around(DW);
 
   @BeforeClass
   public static void setupWiremock() {

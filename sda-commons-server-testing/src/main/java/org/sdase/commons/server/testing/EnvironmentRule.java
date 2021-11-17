@@ -18,7 +18,11 @@ import org.junit.runners.model.Statement;
  *     &#64;ClassRule public static final ENV = new EnvironmentRule().setEnv("DISABLE_JWT", "true");
  *   }
  * </pre>
+ *
+ * @deprecated changing environment variables is not easily supported in Java 17; please consider
+ *     using {@link SystemPropertyRule} instead
  */
+@Deprecated
 public class EnvironmentRule implements TestRule {
 
   private Map<String, Supplier<String>> envToSet = new HashMap<>();

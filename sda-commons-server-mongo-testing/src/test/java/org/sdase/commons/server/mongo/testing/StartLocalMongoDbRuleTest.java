@@ -19,7 +19,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.sdase.commons.server.testing.EnvironmentRule;
+import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class StartLocalMongoDbRuleTest {
 
@@ -30,8 +30,9 @@ public class StartLocalMongoDbRuleTest {
   private static MongoDbRule RULE;
 
   @ClassRule
-  public static final EnvironmentRule ENV =
-      new EnvironmentRule().unsetEnv(MongoDbRule.OVERRIDE_MONGODB_CONNECTION_STRING_ENV_NAME);
+  public static final SystemPropertyRule ENV =
+      new SystemPropertyRule()
+          .unsetProperty(MongoDbRule.OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME);
 
   @BeforeClass
   public static void initRule() {
