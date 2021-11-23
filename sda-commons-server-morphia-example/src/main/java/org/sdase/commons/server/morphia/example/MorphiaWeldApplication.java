@@ -7,6 +7,7 @@ import io.dropwizard.setup.Environment;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.morphia.MorphiaBundle;
 import org.sdase.commons.server.morphia.example.mongo.CarManager;
 import org.sdase.commons.server.morphia.example.mongo.model.Car;
@@ -35,6 +36,7 @@ public class MorphiaWeldApplication extends Application<MorphiaApplicationConfig
 
   @Override
   public void initialize(Bootstrap<MorphiaApplicationConfiguration> bootstrap) {
+    bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
     bootstrap.addBundle(morphiaBundle); // Add bundle to Dropwizard
   }
 

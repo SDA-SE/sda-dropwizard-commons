@@ -1,7 +1,9 @@
 dependencies {
+  api project(':sda-commons-server-auth')
   api project(':sda-commons-server-morphia')
   api project(':sda-commons-server-weld')
 
+  testImplementation project(':sda-commons-server-auth-testing')
   testImplementation project(':sda-commons-server-mongo-testing')
   testImplementation project(':sda-commons-server-weld-testing')
 }
