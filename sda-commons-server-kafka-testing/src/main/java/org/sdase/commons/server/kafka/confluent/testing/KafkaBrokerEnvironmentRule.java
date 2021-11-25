@@ -4,10 +4,13 @@ import com.salesforce.kafka.test.KafkaBroker;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.JavaVersion;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.sdase.commons.server.testing.Environment;
 
 /**
  * Rule for setting the Environment Variable `BROKER_CONNECTION_STRING`
@@ -35,8 +38,7 @@ public class KafkaBrokerEnvironmentRule implements TestRule, KafkaBrokerRule {
                 new Statement() {
                   @Override
                   public void evaluate() throws Throwable {
-                    System.setProperty(
-                        CONNECTION_STRING_ENV,
+                    setConnectionString(
                         String.format(
                             "[ %s ]",
                             getBrokerConnectStrings().stream()
@@ -45,7 +47,7 @@ public class KafkaBrokerEnvironmentRule implements TestRule, KafkaBrokerRule {
                     try {
                       base1.evaluate();
                     } finally {
-                      System.clearProperty(CONNECTION_STRING_ENV);
+                      clearConnectionString();
                     }
                   }
                 })
@@ -62,5 +64,21 @@ public class KafkaBrokerEnvironmentRule implements TestRule, KafkaBrokerRule {
     return kafka.getKafkaBrokers().stream()
         .map(KafkaBroker::getConnectString)
         .collect(Collectors.toList());
+  }
+
+  private void setConnectionString(String value) {
+    if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_16)) {
+      System.setProperty(CONNECTION_STRING_ENV, value);
+    } else {
+      Environment.setEnv(CONNECTION_STRING_ENV, value);
+    }
+  }
+
+  private void clearConnectionString() {
+    if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_16)) {
+      System.clearProperty(CONNECTION_STRING_ENV);
+    } else {
+      Environment.unsetEnv(CONNECTION_STRING_ENV);
+    }
   }
 }

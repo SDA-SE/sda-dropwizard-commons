@@ -5,6 +5,8 @@ dependencies {
   api 'com.auth0:java-jwt'
   api project(':sda-commons-client-jersey-wiremock-testing')
 
+  api('org.apache.commons:commons-lang3')
+
   // the following modules ship with different versions of the swagger-hal library.
   // since swagger-hal is not needed in these tests, they are excluded from both.
   testImplementation project(':sda-commons-server-openapi'), {

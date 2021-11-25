@@ -8,11 +8,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import org.apache.commons.lang3.JavaVersion;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.auth.config.AuthConfig;
+import org.sdase.commons.server.testing.EnvironmentRule;
 import org.sdase.commons.server.testing.SystemPropertyRule;
 
 /**
@@ -104,9 +107,7 @@ public class AuthRule extends AbstractAuth implements TestRule {
 
   private void initDisabledTestAuth() {
     this.authConfig = new AuthConfig().setDisableAuth(true);
-    delegate =
-        RuleChain.outerRule(
-            new SystemPropertyRule().setProperty(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}"));
+    initTestAuth("{\"disableAuth\": true}");
   }
 
   private void initEnabledTestAuth() {
@@ -114,13 +115,22 @@ public class AuthRule extends AbstractAuth implements TestRule {
     this.authConfig = new AuthConfig().setKeys(singletonList(createKeyLocation()));
 
     try {
-      String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);
-      delegate =
-          RuleChain.outerRule(
-              new SystemPropertyRule().setProperty(AUTH_RULE_ENV_KEY, authKeysConfig));
+      final String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);
+      initTestAuth(authKeysConfig);
     } catch (JsonProcessingException e) {
       fail("Failed to create the config keys: " + e.getMessage());
     }
+  }
+
+  private void initTestAuth(String authConfig) {
+    final TestRule testRule = createTestRule(authConfig);
+    delegate = RuleChain.outerRule(testRule);
+  }
+
+  static TestRule createTestRule(String authConfig) {
+    return SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_16)
+        ? new SystemPropertyRule().setProperty(AUTH_RULE_ENV_KEY, authConfig)
+        : new EnvironmentRule().setEnv(AUTH_RULE_ENV_KEY, authConfig);
   }
 
   //
@@ -128,6 +138,7 @@ public class AuthRule extends AbstractAuth implements TestRule {
   //
 
   public interface AuthRuleBuilder {
+
     AuthRuleBuilder withKeyId(String keyId);
 
     AuthRuleBuilder withIssuer(String issuer);
@@ -143,6 +154,7 @@ public class AuthRule extends AbstractAuth implements TestRule {
   }
 
   public interface DisabledBuilder {
+
     AuthRule build();
   }
 

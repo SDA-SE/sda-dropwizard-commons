@@ -11,6 +11,7 @@ dependencies {
   api 'com.salesforce.kafka.test:kafka-junit5'
   api 'org.apache.kafka:kafka_2.13'
   api 'org.awaitility:awaitility'
+  api 'org.apache.commons:commons-lang3'
 
   // just to check transitive dependency versions
   testImplementation project(':sda-commons-server-dropwizard')

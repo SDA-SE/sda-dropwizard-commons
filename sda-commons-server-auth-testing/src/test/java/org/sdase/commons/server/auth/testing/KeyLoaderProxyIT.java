@@ -34,7 +34,7 @@ public class KeyLoaderProxyIT {
 
   private static final SystemPropertyRule SYSTEM_PROPERTY =
       new SystemPropertyRule()
-          .setProperty("AUTH_RULE", "{\"keys\": [{}]}")
+          .setProperty(AuthRule.AUTH_RULE_ENV_KEY, "{\"keys\": [{}]}")
           .setProperty("http.proxyHost", "localhost")
           .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port())
           .setProperty("http.nonProxyHosts", "localhost");

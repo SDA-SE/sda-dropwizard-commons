@@ -5,16 +5,19 @@ import static org.junit.Assert.fail;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Objects;
+import org.apache.commons.lang3.JavaVersion;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.sdase.commons.server.auth.config.AuthConfig;
+import org.sdase.commons.server.testing.Environment;
 
 public class AuthClassExtension extends AbstractAuth
     implements BeforeAllCallback, AfterAllCallback {
 
-  @SuppressWarnings("WeakerAccess")
-  public static final String AUTH_RULE_ENV_KEY = "AUTH_RULE";
+  private static final String AUTH_RULE_ENV_KEY = "AUTH_RULE";
 
   private static final String DEFAULT_KEY_ID = AuthClassExtension.class.getSimpleName();
   private static final String DEFAULT_ISSUER = "AuthExtension";
@@ -22,11 +25,13 @@ public class AuthClassExtension extends AbstractAuth
   private static final String DEFAULT_INTERNAL_KEY_PATH =
       "/org/sdase/commons/server/auth/testing"; // NOSONAR classpath Url is intentionally hardcoded
   private static final String DEFAULT_PRIVATE_KEY_LOCATION =
-      AuthClassExtension.class
-          .getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-private.key")
+      Objects.requireNonNull(
+              AuthClassExtension.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-private.key"))
           .toString();
   private static final String DEFAULT_CERTIFICATE_LOCATION =
-      AuthClassExtension.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-x.509.pem").toString();
+      Objects.requireNonNull(
+              AuthClassExtension.class.getResource(DEFAULT_INTERNAL_KEY_PATH + "/rsa-x.509.pem"))
+          .toString();
 
   private String valueToRestore;
 
@@ -68,17 +73,17 @@ public class AuthClassExtension extends AbstractAuth
 
   @Override
   public void beforeAll(ExtensionContext context) {
-    valueToRestore = System.getProperty(AUTH_RULE_ENV_KEY);
+    valueToRestore = getCurrentValueForAuthRuleEnv();
   }
 
   @Override
   public void afterAll(ExtensionContext context) {
-    System.setProperty(AUTH_RULE_ENV_KEY, valueToRestore);
+    setValueForAuthRuleEnv(valueToRestore);
   }
 
   private void initDisabledTestAuth() {
     this.authConfig = new AuthConfig().setDisableAuth(true);
-    System.setProperty(AUTH_RULE_ENV_KEY, "{\"disableAuth\": true}");
+    setValueForAuthRuleEnv("{\"disableAuth\": true}");
   }
 
   private void initEnabledTestAuth() {
@@ -87,9 +92,25 @@ public class AuthClassExtension extends AbstractAuth
 
     try {
       String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);
-      System.setProperty(AUTH_RULE_ENV_KEY, authKeysConfig);
+      setValueForAuthRuleEnv(authKeysConfig);
     } catch (JsonProcessingException e) {
       fail("Failed to create the config keys: " + e.getMessage());
+    }
+  }
+
+  private String getCurrentValueForAuthRuleEnv() {
+    if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_16)) {
+      return System.getProperty(AUTH_RULE_ENV_KEY);
+    } else {
+      return System.getenv(AUTH_RULE_ENV_KEY);
+    }
+  }
+
+  private void setValueForAuthRuleEnv(String value) {
+    if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_16)) {
+      System.setProperty(AUTH_RULE_ENV_KEY, value);
+    } else {
+      Environment.setEnv(AUTH_RULE_ENV_KEY, value);
     }
   }
 
