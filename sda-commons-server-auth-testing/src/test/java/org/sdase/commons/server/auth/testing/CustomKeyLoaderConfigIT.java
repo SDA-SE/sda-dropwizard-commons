@@ -22,12 +22,13 @@ import javax.ws.rs.core.Response;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
-import org.sdase.commons.server.testing.SystemPropertyRule;
 
 /** A test that checks if the jersey client that is used to load keys is configurable */
 public class CustomKeyLoaderConfigIT {
+
   public static final WireMockRule WIRE =
       new WireMockRule(new WireMockConfiguration().dynamicPort());
 
@@ -37,8 +38,7 @@ public class CustomKeyLoaderConfigIT {
     WIRE.stubFor(get(anyUrl()).willReturn(okJson("{\"keys\": []}")));
   }
 
-  public static final SystemPropertyRule SYSTEM_PROPERTY_RULE =
-      new SystemPropertyRule().setProperty("AUTH_RULE", "{\"keys\": [{}]}");
+  public static final TestRule AUTH = AuthRule.createTestRule("{\"keys\": [{}]}");
 
   private static final DropwizardAppRule<AuthTestConfig> DW =
       new DropwizardAppRule<>(
@@ -49,8 +49,7 @@ public class CustomKeyLoaderConfigIT {
           config("auth.keys[0].type", "JWKS"),
           config("auth.keys[0].location", () -> WIRE.url("jwks")));
 
-  @ClassRule
-  public static RuleChain RULE = RuleChain.outerRule(WIRE).around(SYSTEM_PROPERTY_RULE).around(DW);
+  @ClassRule public static RuleChain RULE = RuleChain.outerRule(WIRE).around(AUTH).around(DW);
 
   @Test
   public void shouldSendCustomUserAgentInTheJwksRequest() {
