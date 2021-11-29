@@ -1,13 +1,20 @@
 package org.sdase.commons.server.kafka.consumer.strategies;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import org.apache.kafka.clients.consumer.CommitFailedException;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base for MessageListener strategies. A strategy defies the way how records are handled and how
@@ -21,7 +28,11 @@ import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
  */
 public abstract class MessageListenerStrategy<K, V> {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(MessageListenerStrategy.class);
+
   protected ConsumerTopicMessageHistogram consumerProcessedMsgHistogram;
+
+  private Map<TopicPartition, OffsetAndMetadata> offsetsToCommitOnClose = new HashMap<>();
 
   public void init(ConsumerTopicMessageHistogram consumerTopicMessageHistogram) {
     this.consumerProcessedMsgHistogram = consumerTopicMessageHistogram;
@@ -31,11 +42,14 @@ public abstract class MessageListenerStrategy<K, V> {
    * Implementation of processing and commit logic during poll loop of {@link MessageListener}.
    *
    * <p>The strategy should collect the processing duration metric for each entry of records within
-   * the consumerProcessedMsgHistogram.
+   * the {@link #consumerProcessedMsgHistogram}. Furthermore, each record that was processed
+   * successfully should be marked by calling {@link #addOffsetToCommitOnClose} to commit the
+   * current offset in case the application shuts down.
    *
    * <pre>
    * SimpleTimer timer = new SimpleTimer();
    * handler.handle(record);
+   * addOffsetToCommitOnClose(record);
    *
    * // Prometheus
    * double elapsedSeconds = timer.elapsedSeconds();
@@ -47,12 +61,34 @@ public abstract class MessageListenerStrategy<K, V> {
    */
   public abstract void processRecords(ConsumerRecords<K, V> records, KafkaConsumer<K, V> consumer);
 
+  public void resetOffsetsToCommitOnClose() {
+    this.offsetsToCommitOnClose = new HashMap<>();
+  }
+
+  protected void addOffsetToCommitOnClose(ConsumerRecord<K, V> consumerRecord) {
+    offsetsToCommitOnClose.put(
+        new TopicPartition(consumerRecord.topic(), consumerRecord.partition()),
+        new OffsetAndMetadata(consumerRecord.offset() + 1, null));
+  }
+
   /**
    * Invoked if the listener shuts down to eventually commit or not commit messages
    *
    * @param consumer the consumer to communicate with Kafka
    */
-  public abstract void commitOnClose(KafkaConsumer<K, V> consumer);
+  public void commitOnClose(KafkaConsumer<K, V> consumer) {
+    try {
+      if (!offsetsToCommitOnClose.isEmpty()) {
+        LOGGER.info("Committing offsets on close: {}", offsetsToCommitOnClose);
+        consumer.commitAsync(offsetsToCommitOnClose, null);
+      } else {
+        LOGGER.warn("Committing offsets of last poll on close");
+        consumer.commitAsync();
+      }
+    } catch (CommitFailedException e) {
+      LOGGER.error("Commit failed", e);
+    }
+  }
 
   public abstract void verifyConsumerConfig(Map<String, String> config);
 

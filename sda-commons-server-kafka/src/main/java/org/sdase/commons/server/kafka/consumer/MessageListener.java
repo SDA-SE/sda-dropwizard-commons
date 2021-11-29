@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * <p>The listener requires a {@link KafkaConsumer} to connect to Kafka. Additionally a @{@link
  * MessageListenerStrategy} that defines how received @{@link ConsumerRecords} are handled.
  *
- * <p>If some errors occurs during record handling, the stratgey might throw an {@link
+ * <p>If some errors occurs during record handling, the strategy might throw an {@link
  * StopListenerException} what will result in stopping the poll loop and gracefully shutdown the
  * listener.
  *
@@ -74,6 +74,7 @@ public class MessageListener<K, V> implements Runnable {
           LOGGER.trace("Received {} messages from topics [{}]", records.count(), joinedTopics);
         }
 
+        strategy.resetOffsetsToCommitOnClose();
         strategy.processRecords(records, consumer);
 
       } catch (WakeupException w) {

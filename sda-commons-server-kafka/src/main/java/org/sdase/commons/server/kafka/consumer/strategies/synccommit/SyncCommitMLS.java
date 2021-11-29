@@ -41,6 +41,7 @@ public class SyncCommitMLS<K, V> extends MessageListenerStrategy<K, V> {
       try {
         SimpleTimer timer = new SimpleTimer();
         handler.handle(record);
+        addOffsetToCommitOnClose(record);
 
         // Prometheus
         double elapsedSeconds = timer.elapsedSeconds();
@@ -66,15 +67,10 @@ public class SyncCommitMLS<K, V> extends MessageListenerStrategy<K, V> {
         }
       }
     }
-    commit(consumer);
+    commitSync(consumer);
   }
 
-  @Override
-  public void commitOnClose(KafkaConsumer<K, V> consumer) {
-    commit(consumer);
-  }
-
-  private void commit(KafkaConsumer<K, V> consumer) {
+  private void commitSync(KafkaConsumer<K, V> consumer) {
     try {
       consumer.commitSync();
     } catch (CommitFailedException e) {
