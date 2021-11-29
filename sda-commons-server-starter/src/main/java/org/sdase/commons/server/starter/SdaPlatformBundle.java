@@ -45,7 +45,10 @@ import org.sdase.commons.server.trace.TraceTokenBundle;
 /**
  * A {@link ConfiguredBundle} that configures the application with the basics required for a SDA
  * platform compatible microservice.
+ *
+ * @deprecated please migrate to sda-commons-starter's {@code SdaPlatformBundle}
  */
+@Deprecated
 public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
   private SecurityBundle.Builder securityBundleBuilder;

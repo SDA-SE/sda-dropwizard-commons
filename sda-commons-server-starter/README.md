@@ -2,6 +2,11 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-starter/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-starter)
 
+> #### ⚠️ Deprecated ⚠
+>
+> Please migrate to `sda-commons-starter`
+>
+
 The module `sda-commons-server-starter` provides all basics required to build a service for the SDA Platform with
 Dropwizard.
 
