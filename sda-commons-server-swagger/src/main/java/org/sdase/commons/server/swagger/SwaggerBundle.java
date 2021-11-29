@@ -82,7 +82,10 @@ import org.slf4j.LoggerFactory;
  *    }
  *  }
  * </pre>
+ *
+ * @deprecated please migrate to sda-commons-server-openapi's {@code OpenApiBundle}
  */
+@Deprecated
 public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
 
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
