@@ -3,7 +3,6 @@ package org.sdase.commons.server.kafka.consumer.strategies.autocommit;
 import io.prometheus.client.SimpleTimer;
 import java.util.Collections;
 import java.util.Map;
-import org.apache.kafka.clients.consumer.CommitFailedException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -41,6 +40,7 @@ public class AutocommitMLS<K, V> extends MessageListenerStrategy<K, V> {
       try {
         SimpleTimer timer = new SimpleTimer();
         handler.handle(record);
+        addOffsetToCommitOnClose(record);
 
         // Prometheus
         double elapsedSeconds = timer.elapsedSeconds();
@@ -65,15 +65,6 @@ public class AutocommitMLS<K, V> extends MessageListenerStrategy<K, V> {
           throw new StopListenerException(e);
         }
       }
-    }
-  }
-
-  @Override
-  public void commitOnClose(KafkaConsumer<K, V> consumer) {
-    try {
-      consumer.commitSync();
-    } catch (CommitFailedException e) {
-      LOGGER.error("Commit failed", e);
     }
   }
 

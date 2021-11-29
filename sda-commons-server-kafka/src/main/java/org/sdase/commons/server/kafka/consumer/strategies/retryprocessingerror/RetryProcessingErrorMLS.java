@@ -4,7 +4,6 @@ import io.prometheus.client.SimpleTimer;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.kafka.clients.consumer.CommitFailedException;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -58,6 +57,7 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
         handler.handle(record);
         // mark last successful processed record for commit
         lastCommitOffset = new OffsetAndMetadata(record.offset() + 1);
+        addOffsetToCommitOnClose(record);
 
         // Prometheus
         double elapsedSeconds = timer.elapsedSeconds();
@@ -95,15 +95,6 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
     }
     if (lastCommitOffset != null) {
       consumer.commitSync(Collections.singletonMap(partition, lastCommitOffset));
-    }
-  }
-
-  @Override
-  public void commitOnClose(KafkaConsumer<K, V> consumer) {
-    try {
-      consumer.commitSync();
-    } catch (CommitFailedException e) {
-      LOGGER.error("Commit failed", e);
     }
   }
 

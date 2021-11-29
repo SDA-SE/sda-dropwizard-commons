@@ -39,24 +39,27 @@ public class KafkaConfiguration {
     return brokers;
   }
 
-  public void setBrokers(List<String> brokers) {
+  public KafkaConfiguration setBrokers(List<String> brokers) {
     this.brokers = brokers;
+    return this;
   }
 
   public Map<String, String> getConfig() {
     return config;
   }
 
-  public void setConfig(Map<String, String> config) {
+  public KafkaConfiguration setConfig(Map<String, String> config) {
     this.config = config;
+    return this;
   }
 
   public Security getSecurity() {
     return security;
   }
 
-  public void setSecurity(Security security) {
+  public KafkaConfiguration setSecurity(Security security) {
     this.security = security;
+    return this;
   }
 
   public Map<String, ProducerConfig> getProducers() {
@@ -79,32 +82,38 @@ public class KafkaConfiguration {
     return disabled;
   }
 
-  public void setDisabled(boolean disabled) {
+  public KafkaConfiguration setDisabled(boolean disabled) {
     this.disabled = disabled;
+    return this;
   }
 
-  public void setProducers(Map<String, ProducerConfig> producers) {
+  public KafkaConfiguration setProducers(Map<String, ProducerConfig> producers) {
     this.producers = producers;
+    return this;
   }
 
-  public void setConsumers(Map<String, ConsumerConfig> consumers) {
+  public KafkaConfiguration setConsumers(Map<String, ConsumerConfig> consumers) {
     this.consumers = consumers;
+    return this;
   }
 
-  public void setTopics(Map<String, TopicConfig> topics) {
+  public KafkaConfiguration setTopics(Map<String, TopicConfig> topics) {
     this.topics = topics;
+    return this;
   }
 
-  public void setListenerConfig(Map<String, ListenerConfig> listenerConfig) {
+  public KafkaConfiguration setListenerConfig(Map<String, ListenerConfig> listenerConfig) {
     this.listenerConfig = listenerConfig;
+    return this;
   }
 
   public AdminConfig getAdminConfig() {
     return adminConfig;
   }
 
-  public void setAdminConfig(AdminConfig adminConfig) {
+  public KafkaConfiguration setAdminConfig(AdminConfig adminConfig) {
     this.adminConfig = adminConfig;
+    return this;
   }
 
   public HealthCheckConfig getHealthCheck() {
