@@ -2,11 +2,6 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-openapi/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-openapi)
 
-> #### ⚠️ Experimental ⚠
->
-> Please be aware that this API is in an early stage and might change in the future.
->
-
 The module `sda-commons-server-openapi` is the base module to add
 [OpenAPI](https://github.com/swagger-api/swagger-core) support for applications in the
 SDA infrastructure.
