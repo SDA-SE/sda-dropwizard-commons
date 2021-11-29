@@ -20,9 +20,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/** Adds the embeddable resources as query parameter so they can be selected in the swagger ui. */
+/** Adds the embeddable resources as query parameter, so they can be selected in the swagger ui. */
 @OpenAPIDefinition
-@SuppressWarnings("java:S3740") // ignore "Raw types should not be used" introduced by swagger-core
+@SuppressWarnings({"java:S3740", "rawtypes"})
+// ignore "Raw types should not be used" introduced by swagger-core
 public class EmbedParameterModifier implements ReaderListener {
   private static final String EMBEDDED_PROPERTY = "_embedded";
 
@@ -85,8 +86,8 @@ public class EmbedParameterModifier implements ReaderListener {
             });
   }
 
-  private String getOriginalRef(Schema<?> schema) {
-    if (schema.get$ref() != null) {
+  String getOriginalRef(Schema<?> schema) {
+    if (schema != null && schema.get$ref() != null) {
       return schema.get$ref().replaceAll("^#/components/schemas/(.*)", "$1");
     }
 
@@ -106,7 +107,7 @@ public class EmbedParameterModifier implements ReaderListener {
     List<String> nestedRefs =
         definition.getProperties().values().stream()
             // should be an array
-            .filter(es -> es instanceof ArraySchema)
+            .filter(ArraySchema.class::isInstance)
 
             // should have an item that is a reference to a definition
             .map(es -> ((ArraySchema) es).getItems())
