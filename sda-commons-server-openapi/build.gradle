@@ -11,7 +11,7 @@ dependencies {
   api 'commons-io:commons-io'
 
   // swagger-hal >= 2.0.0 supports io.swagger.core.v3
-  api 'io.openapitools.hal:swagger-hal:2.0.0', {
+  api 'io.openapitools.hal:swagger-hal:2.0.2', {
     exclude group: 'io.swagger.core.v3', module: 'swagger-models'
     exclude group: 'org.slf4j', module: 'slf4j-api'
   }
