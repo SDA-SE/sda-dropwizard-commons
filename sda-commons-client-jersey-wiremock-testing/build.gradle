@@ -2,6 +2,11 @@ dependencies {
 
   api "com.github.tomakehurst:wiremock-jre8"
 
+  // Note about 'httpclient': We added the dependency for backwards compatibility
+  // It was pulled in by wiremock-jre8 <= 2.31.0
+  // Wiremock uses 'org.apache.httpcomponents.client5:httpclient5' since 2.32.0
+  api 'org.apache.httpcomponents:httpclient'
+
   api 'org.glassfish.jersey.core:jersey-client'
   api 'org.glassfish.jersey.ext:jersey-proxy-client'
   api 'jakarta.servlet:jakarta.servlet-api'
