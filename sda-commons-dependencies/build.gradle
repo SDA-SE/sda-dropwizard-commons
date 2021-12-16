@@ -42,7 +42,7 @@ dependencies {
     api "org.jboss.logging:jboss-logging:3.4.2.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
     }
-    api "org.yaml:snakeyaml:1.29", {
+    api "org.yaml:snakeyaml:1.30", {
       because "conflict between com.github.ftrossbach:club-topicana-core and com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
     }
     api "net.javacrumbs.json-unit:json-unit-core:$jsonUnitVersion", {
