@@ -8,7 +8,7 @@ dependencies {
   api 'jakarta.servlet:jakarta.servlet-api'
   api 'org.glassfish.jersey.core:jersey-client'
   api 'org.glassfish.jersey.ext:jersey-proxy-client'
-  api 'org.codefetti.proxy:proxy-handler:1.0.1'
+  api 'org.codefetti.proxy:proxy-handler:1.0.2'
   api 'io.opentracing.contrib:opentracing-concurrent'
 
   testImplementation project(':sda-commons-server-testing')
