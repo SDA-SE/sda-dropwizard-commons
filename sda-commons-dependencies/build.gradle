@@ -67,6 +67,14 @@ dependencies {
     // sda-commons-server-circuitbreaker
     api "org.objenesis:objenesis:3.2"
 
+    // sda-commons-server-dropwizard
+    api "io.dropwizard.logback:logback-throttling-appender:1.1.7", {
+      because '''\
+          versions < 1.1.7 of the logback-throttling-appender include duplicate classes from JSR 305
+          this version override can be removed when Dropwizard brings the updated version in 2.0.28
+          '''
+    }
+
     // sda-commons-server-hibernate
     api "org.postgresql:postgresql:42.3.1"
     api "org.flywaydb:flyway-core:8.2.2"
