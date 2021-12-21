@@ -87,7 +87,7 @@ dependencies {
     api "io.jaegertracing:jaeger-client:1.6.0"
 
     // sda-commons-server-mongo-testing
-    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.3"
+    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.4"
 
     // sda-commons-server-morphia
     api "dev.morphia.morphia:core:$morphiaVersion"
