@@ -1,12 +1,11 @@
 package org.sdase.commons.server.opa;
 
+import static java.util.Collections.singletonList;
 import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.registerTracing;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.client.JerseyClientBuilder;
@@ -92,7 +91,12 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     return new Builder<>();
   }
 
-  @VisibleForTesting
+  /**
+   * VisibleForTesting
+   *
+   * @deprecated This method will not be publicly visible anymore; please remove any references
+   */
+  @Deprecated
   @SuppressWarnings("java:S1452") // allow generic wildcard type
   public Map<String, OpaInputExtension<?>> getInputExtensions() {
     return inputExtensions;
@@ -202,7 +206,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   }
 
   private List<String> getSwaggerExcludePatterns() {
-    return Lists.newArrayList("swagger\\.(json|yaml)");
+    return singletonList("swagger\\.(json|yaml)");
   }
 
   private boolean excludeSwagger() {
@@ -218,7 +222,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   }
 
   private List<String> getOpenApiExcludePatterns() {
-    return Lists.newArrayList("openapi\\.(json|yaml)");
+    return singletonList("openapi\\.(json|yaml)");
   }
 
   private boolean excludeOpenApi() {

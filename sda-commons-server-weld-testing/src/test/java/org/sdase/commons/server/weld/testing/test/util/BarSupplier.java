@@ -1,6 +1,6 @@
 package org.sdase.commons.server.weld.testing.test.util;
 
-import com.google.common.base.Supplier;
+import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Named;
 
