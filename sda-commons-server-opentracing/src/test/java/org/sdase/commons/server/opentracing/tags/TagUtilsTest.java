@@ -1,6 +1,5 @@
 package org.sdase.commons.server.opentracing.tags;
 
-import static com.google.common.net.HttpHeaders.TRANSFER_ENCODING;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
@@ -31,7 +30,7 @@ public class TagUtilsTest {
   public void shouldConvertMultipleHeadersToString() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
     headers.put(LOCATION, singletonList("1"));
-    headers.put(TRANSFER_ENCODING, singletonList("2"));
+    headers.put("Transfer-Encoding", singletonList("2"));
 
     String tag = convertHeadersToString(headers);
 

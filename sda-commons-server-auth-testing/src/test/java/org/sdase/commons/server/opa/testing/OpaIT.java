@@ -2,6 +2,8 @@ package org.sdase.commons.server.opa.testing;
 
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,7 +11,6 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
-import com.google.common.collect.Lists;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -85,9 +86,7 @@ public class OpaIT {
     PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
 
     assertThat(principalInfo.getConstraints().getConstraint())
-        .contains(
-            entry("customer_ids", Lists.newArrayList("1", "2")),
-            entry("agent_ids", Lists.newArrayList("A1")));
+        .contains(entry("customer_ids", asList("1", "2")), entry("agent_ids", singletonList("A1")));
     assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
     assertThat(principalInfo.getJwt()).isNull();
   }

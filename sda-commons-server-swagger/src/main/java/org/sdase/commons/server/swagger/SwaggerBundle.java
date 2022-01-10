@@ -1,12 +1,10 @@
 package org.sdase.commons.server.swagger;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
 import static io.swagger.jaxrs.config.SwaggerContextService.*;
 import static java.lang.String.join;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.Validate.notBlank;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.server.AbstractServerFactory;
@@ -161,12 +159,12 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
         beanConfig.getResourcePackage());
   }
 
-  @VisibleForTesting
+  /** VisibleForTesting */
   String getResourcePackages() {
     return resourcePackages;
   }
 
-  @VisibleForTesting
+  /** VisibleForTesting */
   BeanConfig getBeanConfig() {
     return beanConfig;
   }
@@ -480,7 +478,7 @@ public final class SwaggerBundle implements ConfiguredBundle<Configuration> {
       Info info = new Info();
 
       info.setTitle(title);
-      info.setVersion(firstNonNull(version, DEFAULT_VERSION));
+      info.setVersion(version != null ? version : DEFAULT_VERSION);
       info.setDescription(description);
       info.setTermsOfService(termsOfServiceUrl);
       info.setContact(contact);

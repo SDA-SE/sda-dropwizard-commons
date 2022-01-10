@@ -1,7 +1,7 @@
 package org.sdase.commons.server.kafka;
 
-import com.google.common.base.Strings;
 import java.util.Properties;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -75,7 +75,7 @@ public class KafkaProperties extends Properties {
     if (configuration.getAdminConfig() == null
         || configuration.getAdminConfig().getAdminEndpoint() == null
         || configuration.getAdminConfig().getAdminEndpoint().isEmpty()
-        || Strings.isNullOrEmpty(
+        || StringUtils.isBlank(
             String.join(",", configuration.getAdminConfig().getAdminEndpoint()))) {
       props = baseProperties(configuration);
       return props;

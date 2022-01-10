@@ -1,6 +1,5 @@
 package org.sdase.commons.server.opentracing.example;
 
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
@@ -10,6 +9,8 @@ import io.opentracing.Span;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Path;
@@ -154,9 +155,12 @@ public class OpenTracingApplication extends Application<Configuration> {
       // guidance for common tags and logs:
       // https://github.com/opentracing/specification/blob/master/semantic_conventions.md
       Tags.ERROR.set(span, true);
-      span.log(
-          ImmutableMap.of(
-              Fields.EVENT, "error", Fields.ERROR_OBJECT, ex, Fields.MESSAGE, ex.getMessage()));
+
+      Map<String, Object> log = new HashMap<>();
+      log.put(Fields.EVENT, "error");
+      log.put(Fields.ERROR_OBJECT, ex);
+      log.put(Fields.MESSAGE, ex.getMessage());
+      span.log(log);
     } finally {
       // Don't forget to finish your spans!
       span.finish();

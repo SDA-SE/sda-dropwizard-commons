@@ -6,12 +6,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import com.google.common.collect.Lists;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
@@ -116,9 +117,7 @@ public class OpaResponsesIT {
     PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
 
     assertThat(principalInfo.getConstraints().getConstraint())
-        .contains(
-            entry("customer_ids", Lists.newArrayList("1", "2")),
-            entry("agent_ids", Lists.newArrayList("A1")));
+        .contains(entry("customer_ids", asList("1", "2")), entry("agent_ids", singletonList("A1")));
     assertThat(principalInfo.getConstraints().isFullAccess()).isTrue();
     assertThat(principalInfo.getJwt()).isNull();
   }
