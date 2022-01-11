@@ -42,8 +42,8 @@ public class PrometheusMetricsIT {
 
     assertThat(metrics)
         .contains(
-            "# HELP some_operation_success_counter Counts successes occurred when some operation is invoked.")
-        .contains("# TYPE some_operation_success_counter counter");
+            "# HELP some_operation_success_counter_total Counts successes occurred when some operation is invoked.")
+        .contains("# TYPE some_operation_success_counter_total counter");
   }
 
   @Test
@@ -53,8 +53,8 @@ public class PrometheusMetricsIT {
 
     assertThat(metrics)
         .contains(
-            "# HELP some_operation_error_counter Counts errors occurred when some operation is invoked.")
-        .contains("# TYPE some_operation_error_counter counter");
+            "# HELP some_operation_error_counter_total Counts errors occurred when some operation is invoked.")
+        .contains("# TYPE some_operation_error_counter_total counter");
   }
 
   @Test

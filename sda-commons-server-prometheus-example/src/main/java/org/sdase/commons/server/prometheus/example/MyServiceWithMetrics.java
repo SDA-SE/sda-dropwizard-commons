@@ -25,14 +25,14 @@ public class MyServiceWithMetrics {
   // Create a Counter to count events.
   private Counter someOperationSuccessCounter =
       Counter.build(
-              "some_operation_success_counter",
+              "some_operation_success_counter_total",
               "Counts successes occurred when some operation is invoked.")
           .register();
 
   // Create a Counter to count events.
   private Counter someOperationErrorCounter =
       Counter.build(
-              "some_operation_error_counter",
+              "some_operation_error_counter_total",
               "Counts errors occurred when some operation is invoked.")
           .register();
 
