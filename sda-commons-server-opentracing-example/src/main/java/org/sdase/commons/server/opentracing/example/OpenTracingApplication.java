@@ -27,7 +27,7 @@ public class OpenTracingApplication extends Application<Configuration> {
 
   static final Logger LOGGER = LoggerFactory.getLogger(OpenTracingApplication.class);
 
-  private JerseyClientBundle<Configuration> jerseyClientBundle =
+  private final JerseyClientBundle<Configuration> jerseyClientBundle =
       JerseyClientBundle.builder().build();
   private Client searchClient;
   private Client recursiveClient;
@@ -140,6 +140,23 @@ public class OpenTracingApplication extends Application<Configuration> {
     return "Done!";
   }
 
+  @GET
+  @Path("exception")
+  public String getException() {
+    // This is an example of manual instrumentation:
+    Span span = GlobalTracer.get().buildSpan("exceptionWork").start();
+
+    try {
+      badMethod();
+    } catch (Exception ex) {
+      tagException(span, ex); // Let's handle the exception
+    } finally {
+      // Don't forget to finish your spans!
+      span.finish();
+    }
+    return "Done!";
+  }
+
   private void runSubTask(int index) {
     // This custom span has a tag providing additional knowledge about the
     // span.
@@ -150,20 +167,31 @@ public class OpenTracingApplication extends Application<Configuration> {
       LOGGER.info("Before sleep");
       Thread.sleep(25);
       LOGGER.info("After sleep");
-    } catch (Exception ex) {
-      // Add exceptions to your span. See the OpenTracing documentation with
-      // guidance for common tags and logs:
-      // https://github.com/opentracing/specification/blob/master/semantic_conventions.md
-      Tags.ERROR.set(span, true);
-
-      Map<String, Object> log = new HashMap<>();
-      log.put(Fields.EVENT, "error");
-      log.put(Fields.ERROR_OBJECT, ex);
-      log.put(Fields.MESSAGE, ex.getMessage());
-      span.log(log);
+      if (index % 2 == 0) {
+        badMethod();
+      }
+    } catch (Exception ex) { // NOSONAR Ignore InterruptedException
+      tagException(span, ex);
     } finally {
       // Don't forget to finish your spans!
       span.finish();
     }
+  }
+
+  private void tagException(Span span, Exception ex) {
+    // Add exceptions to your span. See the OpenTracing documentation with
+    // guidance for common tags and logs:
+    // https://github.com/opentracing/specification/blob/master/semantic_conventions.md
+    Tags.ERROR.set(span, true);
+
+    Map<String, Object> log = new HashMap<>();
+    log.put(Fields.EVENT, "error");
+    log.put(Fields.ERROR_OBJECT, ex);
+    log.put(Fields.MESSAGE, ex.getMessage());
+    span.log(log);
+  }
+
+  private void badMethod() {
+    throw new IllegalStateException();
   }
 }
