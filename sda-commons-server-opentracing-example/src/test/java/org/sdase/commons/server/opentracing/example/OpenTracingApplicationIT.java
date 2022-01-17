@@ -39,6 +39,18 @@ class OpenTracingApplicationIT {
     assertThat(response.getStatus()).isEqualTo(500);
   }
 
+  @Test
+  void shouldDoException() {
+    Response response = webTarget("/exception").request().get();
+    assertThat(response.getStatus()).isEqualTo(200);
+  }
+
+  @Test
+  void shouldDoRecursive() {
+    Response response = webTarget("/recursive").request().get();
+    assertThat(response.getStatus()).isEqualTo(200);
+  }
+
   private WebTarget webTarget(String path) {
     return APP.client().target("http://localhost:" + APP.getLocalPort()).path(path);
   }
