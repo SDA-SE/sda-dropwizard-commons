@@ -9,6 +9,7 @@ import static org.eclipse.jetty.http.HttpStatus.OK_200;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.nio.charset.StandardCharsets;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -68,6 +69,20 @@ public class OpenApiBundleFileIT {
       assertThat(response.getMediaType()).isEqualTo(MediaType.valueOf("application/yaml"));
 
       OpenApiAssertions.assertValid(response);
+    }
+  }
+
+  @Test
+  @Retry(5)
+  public void shouldProvideYamlInUtf8() {
+    try (Response response = getYamlRequest().get()) {
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getMediaType()).isEqualTo(MediaType.valueOf("application/yaml"));
+
+      byte[] bytes = response.readEntity(byte[].class);
+      String content = new String(bytes, StandardCharsets.UTF_8);
+
+      assertThat(content).contains("\u00f6");
     }
   }
 
