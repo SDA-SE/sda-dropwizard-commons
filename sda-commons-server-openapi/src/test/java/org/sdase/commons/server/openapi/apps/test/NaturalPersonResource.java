@@ -20,7 +20,7 @@ public class NaturalPersonResource extends PartnerResource {
   @Schema(name = "firstName", example = "John")
   private final String firstName;
 
-  @Schema(name = "lastName", example = "Doe")
+  @Schema(name = "lastName", example = "Döe")
   private final String lastName;
 
   @ArraySchema(arraySchema = @Schema(name = "traits", example = "[\"hipster\", \"generous\"]"))
