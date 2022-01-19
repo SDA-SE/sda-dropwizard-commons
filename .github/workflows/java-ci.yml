@@ -44,7 +44,7 @@ jobs:
           max_attempts: 5
           retry_wait_seconds: 10
           warning_on_retry: false
-          command: ./gradlew --parallel --continue javadoc spotlessCheck check
+          command: ./gradlew --parallel --continue check -x spotlessCheck
 
       - name: Generate Test Report
         if: always()
