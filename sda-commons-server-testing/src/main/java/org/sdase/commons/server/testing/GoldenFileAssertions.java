@@ -86,8 +86,9 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
 
       // assert normal text
       Assertions.assertThat(actual)
+          .content(StandardCharsets.UTF_8)
           .as(ASSERTION_TEXT, fileName, fileName, fileName)
-          .hasContent(expected);
+          .isEqualTo(expected);
 
     } finally {
       // always update the file content

@@ -124,7 +124,10 @@ public class GoldenFileAssertionsTest {
         .doesNotThrowAnyException();
 
     // content should still be expected-content
-    assertThat(path).hasContent("key0: v\nkey2:\n  nested2: \u00f6\n  nested1: a\nkey1: w");
+    assertThat(path)
+        .hasBinaryContent(
+            "key0: v\nkey2:\n  nested2: \u00f6\n  nested1: a\nkey1: w"
+                .getBytes(StandardCharsets.UTF_8));
   }
 
   @Test
