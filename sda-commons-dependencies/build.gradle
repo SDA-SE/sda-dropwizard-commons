@@ -28,7 +28,7 @@ dependencies {
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:${kotlinxCoroutinesVersion}")
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion")
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.144")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.146")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
   constraints {
