@@ -1,4 +1,5 @@
 dependencies {
+  api project(':sda-commons-server-hibernate')
   api project(':sda-commons-server-testing')
   api 'com.h2database:h2'
   api 'com.github.database-rider:rider-core', {
