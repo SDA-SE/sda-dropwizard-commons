@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -117,5 +119,23 @@ public class OpenApiBundleTestApp extends Application<Configuration>
               schema = @Schema(implementation = HouseSearchResource.class)))
   public HouseSearchResource searchHouse() {
     return new HouseSearchResource(Collections.emptyList(), 0);
+  }
+
+  @GET
+  @Path("/partners")
+  @Produces(APPLICATION_JSON)
+  @Operation()
+  @ApiResponse(
+      responseCode = "200",
+      description = "get",
+      content =
+          @Content(
+              mediaType = APPLICATION_JSON,
+              schema = @Schema(implementation = PartnerSearchResultResource.class)))
+  public PartnerSearchResultResource searchPartners() {
+    return new PartnerSearchResultResource()
+        .setPartners(Arrays.asList("one", "two"))
+        .setTimestamp(ZonedDateTime.now())
+        .setTotalResults(100);
   }
 }

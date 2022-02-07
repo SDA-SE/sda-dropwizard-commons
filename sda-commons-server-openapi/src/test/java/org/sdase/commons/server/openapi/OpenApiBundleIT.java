@@ -8,24 +8,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.StdIo;
+import org.junitpioneer.jupiter.StdOut;
 import org.sdase.commons.server.openapi.apps.test.OpenApiBundleTestApp;
 import org.sdase.commons.server.openapi.test.OpenApiAssertions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class OpenApiBundleIT {
+class OpenApiBundleIT {
 
   private static final String NATURAL_PERSON_DEFINITION = "NaturalPerson";
   private static final String PARTNER_DEFINITION = "Partner";
   private static final String HOUSE_DEFINITION = "House";
 
-  @ClassRule
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(OpenApiBundleTestApp.class, resourceFilePath("test-config.yaml"));
+  private static final Logger LOGGER = LoggerFactory.getLogger(OpenApiBundleIT.class);
+
+  @RegisterExtension
+  static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(
+          OpenApiBundleTestApp.class, resourceFilePath("test-config.yaml"));
 
   private static Builder getJsonRequest() {
     return DW.client()
@@ -48,7 +55,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldProvideSchemaCompliantJson() {
+  void shouldProvideSchemaCompliantJson() {
     try (Response response = getJsonRequest().get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
       assertThat(response.getMediaType()).isEqualTo(APPLICATION_JSON_TYPE);
@@ -58,7 +65,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldProvideValidYaml() {
+  void shouldProvideValidYaml() {
     try (Response response = getYamlRequest().get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
       assertThat(response.getMediaType()).isEqualTo(MediaType.valueOf("application/yaml"));
@@ -68,7 +75,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldHaveCORSWildcardJson() {
+  void shouldHaveCORSWildcardJson() {
     try (Response response = getJsonRequest().header("Origin", "example.com").get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
       assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
@@ -76,7 +83,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldHaveCORSWildcardYaml() {
+  void shouldHaveCORSWildcardYaml() {
     try (Response response = getYamlRequest().header("Origin", "example.com").get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
       assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
@@ -84,7 +91,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldNotHaveCORSWildcardOnOtherPath() {
+  void shouldNotHaveCORSWildcardOnOtherPath() {
     try (Response response =
         DW.client()
             .target(getTarget())
@@ -100,7 +107,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldIncludeInfo() {
+  void shouldIncludeInfo() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response).inPath("$.info.title").isEqualTo("A test app");
@@ -108,7 +115,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldIncludeServerUrl() {
+  void shouldIncludeServerUrl() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -118,13 +125,13 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldIncludePaths() {
+  void shouldIncludePaths() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
         .inPath("$.paths")
         .isObject()
-        .containsOnlyKeys("/jdoe", "/house", "/houses");
+        .containsOnlyKeys("/jdoe", "/house", "/houses", "/partners");
 
     assertThatJson(response)
         .inPath("$.paths./jdoe")
@@ -137,8 +144,13 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldIncludeSchemas() {
+  @StdIo
+  void shouldIncludeSchemas(StdOut stdOut) {
     String response = getJsonRequest().get(String.class);
+
+    String output = String.join("\n", stdOut.capturedLines());
+    assertThat(output).doesNotContain("java.lang.NullPointerException");
+    LOGGER.info(output);
 
     assertThatJson(response)
         .inPath("$.components.schemas")
@@ -149,7 +161,8 @@ public class OpenApiBundleIT {
             "HALLink",
             "Animal",
             "House",
-            "HouseSearchResource");
+            "HouseSearchResource",
+            "PartnerSearchResultResource");
 
     assertThatJson(response)
         .inPath("$.components.schemas." + PARTNER_DEFINITION + ".properties") // NOSONAR
@@ -163,7 +176,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldIncludePropertyExampleAsJson() {
+  void shouldIncludePropertyExampleAsJson() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -181,7 +194,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldIncludeHALSelfLink() {
+  void shouldIncludeHALSelfLink() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -199,14 +212,14 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldNotUsePropertyDescriptionAsComponentDescription() {
+  void shouldNotUsePropertyDescriptionAsComponentDescription() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response).inPath("$.components.schemas.Partner.description").isAbsent();
   }
 
   @Test
-  public void shouldHaveCustomDescriptionInHALLink() {
+  void shouldHaveCustomDescriptionInHALLink() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -215,7 +228,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldIncludeEmbedParameter() {
+  void shouldIncludeEmbedParameter() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response).inPath("$.paths./house.get.parameters").isArray().isNotEmpty();
@@ -227,7 +240,7 @@ public class OpenApiBundleIT {
   }
 
   @Test
-  public void shouldIncludeEmbedParameterForNestedProperty() {
+  void shouldIncludeEmbedParameterForNestedProperty() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
