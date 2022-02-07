@@ -115,6 +115,7 @@ public class EmbedParameterModifier implements ReaderListener {
 
             // get the model reference name
             .map(this::getOriginalRef)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
     // only when there is a single list entry that supports embedding
