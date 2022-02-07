@@ -222,10 +222,10 @@ public class StartLocalMongoDb {
         artifactStoreBuilder
             .extraction(
                 DirectoryAndExecutableNaming.of(
-                    new PlatformTempDir(), (prefix, postfix) -> "mongod"))
+                    new PropertyOrPlatformTempDir(), (prefix, postfix) -> "mongod"))
             .temp(
                 DirectoryAndExecutableNaming.of(
-                    new PlatformTempDir(), (prefix, postfix) -> "mongod"));
+                    new PropertyOrPlatformTempDir(), (prefix, postfix) -> "mongod"));
       } else {
         artifactStoreBuilder.extraction(
             DirectoryAndExecutableNaming.builder()
