@@ -14,7 +14,7 @@ ext {
   swaggerCoreV3Version = '2.1.13'
   weldVersion = '3.1.8.Final'
   openTracingUtilVersion = '0.33.0'
-  jsonUnitVersion = '2.30.0'
+  jsonUnitVersion = '2.31.0'
   scalaVersion = '2.13.8' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '2.8.1'
   kafkaJunitVersion = '3.2.3' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
