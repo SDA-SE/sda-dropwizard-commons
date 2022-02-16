@@ -68,7 +68,7 @@ dependencies {
     api "org.objenesis:objenesis:3.2"
 
     // sda-commons-server-hibernate
-    api "org.postgresql:postgresql:42.3.2"
+    api "org.postgresql:postgresql:42.3.3"
     api "org.flywaydb:flyway-core:8.5.0"
 
     // sda-commons-server-hibernate-testing
