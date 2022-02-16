@@ -12,7 +12,7 @@ ext {
   prometheusVersion = '0.9.0'
   swaggerCoreVersion = '1.6.5'
   swaggerCoreV3Version = '2.1.13'
-  weldVersion = '3.1.8.Final'
+  weldVersion = '3.1.9.Final'
   openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.31.0'
   scalaVersion = '2.13.8' // align transitive dependency from various modules, keep up to date
