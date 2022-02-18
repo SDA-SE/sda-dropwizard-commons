@@ -1,0 +1,11 @@
+package org.sdase.commons.server.s3.health;
+
+import com.amazonaws.services.s3.AmazonS3;
+import org.sdase.commons.server.healthcheck.ExternalHealthCheck;
+
+@ExternalHealthCheck
+public class ExternalS3HealthCheck extends S3HealthCheck {
+  public ExternalS3HealthCheck(AmazonS3 s3Client, String[] bucketName) {
+    super(s3Client, bucketName);
+  }
+}

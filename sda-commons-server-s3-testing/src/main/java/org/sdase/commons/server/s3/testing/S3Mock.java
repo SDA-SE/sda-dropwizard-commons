@@ -42,6 +42,11 @@ public class S3Mock {
     LOGGER.info("Stopped S3 Mock");
   }
 
+  protected void shutdown() {
+    internalS3Mock.shutdown();
+    LOGGER.info("Shutted down S3 Mock");
+  }
+
   /**
    * Returns the URL to the S3 Mock endpoint.
    *

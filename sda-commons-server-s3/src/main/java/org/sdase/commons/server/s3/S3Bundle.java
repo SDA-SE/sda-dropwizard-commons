@@ -18,16 +18,29 @@ import io.opentracing.Tracer;
 import io.opentracing.contrib.aws.TracingRequestHandler;
 import io.opentracing.util.GlobalTracer;
 import javax.validation.constraints.NotNull;
+import org.sdase.commons.server.s3.health.ExternalS3HealthCheck;
+import org.sdase.commons.server.s3.health.S3HealthCheck;
 
 public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
 
+  public static final String S3_HEALTH_CHECK_NAME = "s3Connection";
+  public static final String S3_EXTERNAL_HEALTH_CHECK_NAME = "s3ConnectionExternal";
+
   private final S3ConfigurationProvider<C> configurationProvider;
   private final Tracer tracer;
+  private final boolean healthCheck;
+  private final String[] bucketName;
   private AmazonS3 s3Client;
 
-  private S3Bundle(S3ConfigurationProvider<C> configurationProvider, Tracer tracer) {
+  private S3Bundle(
+      S3ConfigurationProvider<C> configurationProvider,
+      Tracer tracer,
+      boolean healthCheck,
+      String[] bucketName) {
     this.configurationProvider = configurationProvider;
     this.tracer = tracer;
+    this.healthCheck = healthCheck;
+    this.bucketName = bucketName;
   }
 
   @Override
@@ -62,6 +75,16 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
             .build();
 
     environment.lifecycle().manage(onShutdown(s3Client::shutdown));
+
+    if (healthCheck) {
+      environment
+          .healthChecks()
+          .register(S3_HEALTH_CHECK_NAME, new S3HealthCheck(s3Client, bucketName));
+    } else {
+      environment
+          .healthChecks()
+          .register(S3_EXTERNAL_HEALTH_CHECK_NAME, new ExternalS3HealthCheck(s3Client, bucketName));
+    }
   }
 
   public AmazonS3 getClient() {
@@ -103,6 +126,24 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     FinalBuilder<C> withTracer(Tracer tracer);
 
     /**
+     * Adds an internal health check for an S3 connection against one or more buckets. Should not be
+     * used with {@link #withExternalHealthCheck(String...)}.
+     *
+     * @param bucketNames the bucket to connect to.
+     * @return the same builder instance
+     */
+    FinalBuilder<C> withHealthCheck(String... bucketNames);
+
+    /**
+     * Adds an external health check for an S3 connection against one or more buckets. Should not be
+     * used with {@link #withHealthCheck(String...)}.
+     *
+     * @param bucketNames the bucket to connect to.
+     * @return the same builder instance
+     */
+    FinalBuilder<C> withExternalHealthCheck(String... bucketNames);
+
+    /**
      * Builds the S3 bundle
      *
      * @return S3 bundle
@@ -113,7 +154,10 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
   public static class Builder<T extends Configuration> implements InitialBuilder, FinalBuilder<T> {
 
     private final S3ConfigurationProvider<T> configProvider;
+    private String[] bucketNames;
     private Tracer tracer;
+    private boolean healthCheck;
+    private boolean externalHealthCheck;
 
     private Builder() {
       configProvider = null;
@@ -136,8 +180,28 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     }
 
     @Override
+    public FinalBuilder<T> withHealthCheck(String[] bucketNames) {
+      this.bucketNames = bucketNames;
+      this.healthCheck = true;
+      if (this.externalHealthCheck) {
+        throw new IllegalArgumentException("There is already an external health check defined.");
+      }
+      return this;
+    }
+
+    @Override
+    public FinalBuilder<T> withExternalHealthCheck(String[] bucketNames) {
+      this.bucketNames = bucketNames;
+      this.externalHealthCheck = true;
+      if (this.healthCheck) {
+        throw new IllegalArgumentException("There is already a health check defined.");
+      }
+      return this;
+    }
+
+    @Override
     public S3Bundle<T> build() {
-      return new S3Bundle<>(configProvider, tracer);
+      return new S3Bundle<>(configProvider, tracer, healthCheck, bucketNames);
     }
   }
 }

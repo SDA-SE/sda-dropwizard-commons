@@ -65,7 +65,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
   private final Function<C, KafkaConfiguration> configurationProvider;
   private KafkaConfiguration kafkaConfiguration;
-  private boolean healthCheckDisabled;
+  private final boolean healthCheckDisabled;
 
   private ProducerTopicMessageCounter topicProducerCounterSpec;
   private ConsumerTopicMessageHistogram topicConsumerHistogram;

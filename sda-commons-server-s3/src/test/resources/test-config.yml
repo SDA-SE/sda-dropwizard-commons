@@ -1,0 +1,5 @@
+s3Config:
+  endpoint: http://localhost:9001
+  region:
+  accessKey: accessKey
+  secretKey: secretKey

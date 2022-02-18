@@ -26,3 +26,18 @@ See [`S3BundleTest`](./src/test/java/org/sdase/commons/server/s3/S3BundleTest.ja
 ### Tracing
 
 The bundle comes with [OpenTracing](https://opentracing.io/) instrumentation.
+
+### Health Check
+
+The bundle supports the creation of both internal and external health checks.
+
+```
+private final S3Bundle<Config> s3Bundle =
+    S3Bundle.builder()
+        .withConfigurationProvider(Config::getS3Config)
+        .withHealthCheck("testbucket1", "testbucket2")
+        .build();
+```
+
+For creation of an external health check, use `.withExternalHealthCheck(String bucketName)`
+respectively.
