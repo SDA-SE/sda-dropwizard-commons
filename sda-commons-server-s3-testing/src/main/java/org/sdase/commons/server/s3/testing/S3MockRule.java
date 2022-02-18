@@ -52,6 +52,14 @@ public class S3MockRule extends ExternalResource {
     return s3Mock.getClient();
   }
 
+  public void start() {
+    s3Mock.start();
+  }
+
+  public void stop() {
+    s3Mock.stop();
+  }
+
   //
   // Builder
   //

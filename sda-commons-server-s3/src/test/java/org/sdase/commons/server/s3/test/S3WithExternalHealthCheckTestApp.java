@@ -1,20 +1,23 @@
 package org.sdase.commons.server.s3.test;
 
+import com.codahale.metrics.health.HealthCheckRegistry;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.opentracing.mock.MockTracer;
 import org.sdase.commons.server.s3.S3Bundle;
 
-public class TestApp extends Application<Config> {
+public class S3WithExternalHealthCheckTestApp extends Application<Config> {
 
   private final MockTracer mockTracer = new MockTracer();
+
+  private HealthCheckRegistry healthCheckRegistry;
 
   private S3Bundle<Config> s3Bundle =
       S3Bundle.builder()
           .withConfigurationProvider(Config::getS3Config)
           .withTracer(mockTracer)
-          .withHealthCheck("testbucket")
+          .withExternalHealthCheck("testbucket")
           .build();
 
   @Override
@@ -24,7 +27,7 @@ public class TestApp extends Application<Config> {
 
   @Override
   public void run(Config configuration, Environment environment) {
-    // nothing to run
+    healthCheckRegistry = environment.healthChecks();
   }
 
   public S3Bundle<Config> getS3Bundle() {
@@ -33,5 +36,9 @@ public class TestApp extends Application<Config> {
 
   public MockTracer getMockTracer() {
     return mockTracer;
+  }
+
+  public HealthCheckRegistry healthCheckRegistry() {
+    return healthCheckRegistry;
   }
 }
