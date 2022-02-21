@@ -1,7 +1,7 @@
 package org.sdase.commons.server.mongo.testing.internal;
 
-import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.process.config.store.DownloadConfig;
 import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
 import de.flapdoodle.embed.process.config.store.ImmutableDownloadConfig;
