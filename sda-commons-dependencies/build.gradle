@@ -79,7 +79,7 @@ dependencies {
     api "io.jaegertracing:jaeger-client:1.8.0"
 
     // sda-commons-server-mongo-testing
-    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.3.1"
+    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.1"
     api "de.flapdoodle:de.flapdoodle.os:1.1.5", {
       because '''\
         Flapdoodle 3.3.1 introduced a version conflict.
