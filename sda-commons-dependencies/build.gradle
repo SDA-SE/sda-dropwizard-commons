@@ -69,7 +69,7 @@ dependencies {
 
     // sda-commons-server-hibernate
     api "org.postgresql:postgresql:42.3.3"
-    api "org.flywaydb:flyway-core:8.5.0"
+    api "org.flywaydb:flyway-core:8.5.1"
 
     // sda-commons-server-hibernate-testing
     api "com.github.database-rider:rider-core:$dbRiderVersion"
