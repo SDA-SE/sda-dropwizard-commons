@@ -116,7 +116,9 @@ public class TopicComparer {
                 .filter(topicDescriptions::containsKey)
                 .map(this::topicNameToResource)
                 .collect(toList()))
-        .values().entrySet().stream()
+        .values()
+        .entrySet()
+        .stream()
         .flatMap(
             tc -> {
               Map<String, Config> res = new HashMap<>();
