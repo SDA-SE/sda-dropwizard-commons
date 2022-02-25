@@ -31,13 +31,19 @@ public interface OpaJwtPrincipal extends Principal {
     return new OpaJwtPrincipalImpl(defaultName, jwt, claims, constraints, om);
   }
 
-  /** @return the JWT as string */
+  /**
+   * @return the JWT as string
+   */
   String getJwt();
 
-  /** @return map with the claims decoded from the JWT */
+  /**
+   * @return map with the claims decoded from the JWT
+   */
   Map<String, Claim> getClaims();
 
-  /** @return the constraint object as JSON String */
+  /**
+   * @return the constraint object as JSON String
+   */
   String getConstraints();
 
   /**
