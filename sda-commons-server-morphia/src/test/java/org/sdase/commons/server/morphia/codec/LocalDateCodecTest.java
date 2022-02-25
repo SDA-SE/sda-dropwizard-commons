@@ -1,4 +1,4 @@
-package org.sdase.commons.server.morphia.converter;
+package org.sdase.commons.server.morphia.codec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -6,18 +6,24 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+
+import org.bson.BsonDocument;
+import org.bson.BsonDocumentWriter;
+import org.bson.BsonWriter;
 import org.junit.Test;
 
-public class LocalDateConverterTest {
+public class LocalDateCodecTest {
 
-  private LocalDateConverter localDateConverter = new LocalDateConverter();
+  private LocalDateCodec localDateCodec = new LocalDateCodec();
 
   @Test
   public void shouldEncodeAsIsoLocalDateString() {
 
     LocalDate given = LocalDate.parse("2020-03-15");
 
-    Object actual = localDateConverter.encode(given, null);
+    BsonDocument document = new BsonDocument();
+    BsonWriter writer = new BsonDocumentWriter(document);
+    localDateCodec.encode(writer, given, null);
 
     assertThat(actual).isInstanceOf(String.class).isEqualTo("2020-03-15");
   }
@@ -27,7 +33,7 @@ public class LocalDateConverterTest {
 
     LocalDate given = null;
 
-    Object actual = localDateConverter.encode(given, null);
+    Object actual = localDateCodec.encode(given, null);
 
     assertThat(actual).isNull();
   }
@@ -37,7 +43,7 @@ public class LocalDateConverterTest {
 
     ZonedDateTime given = ZonedDateTime.now();
 
-    assertThatIllegalArgumentException().isThrownBy(() -> localDateConverter.encode(given, null));
+    assertThatIllegalArgumentException().isThrownBy(() -> localDateCodec.encode(given, null));
   }
 
   @Test
@@ -45,7 +51,7 @@ public class LocalDateConverterTest {
 
     String given = "2020-03-15";
 
-    Object actual = localDateConverter.decode(LocalDate.class, given, null);
+    Object actual = localDateCodec.decode(LocalDate.class, given, null);
 
     assertThat(actual).isInstanceOf(LocalDate.class).isEqualTo(LocalDate.parse("2020-03-15"));
   }
@@ -55,7 +61,7 @@ public class LocalDateConverterTest {
 
     String given = "1979-02-08T00:00:00.000"; // this format has been used by Morphia for local date
 
-    Object actual = localDateConverter.decode(LocalDate.class, given, null);
+    Object actual = localDateCodec.decode(LocalDate.class, given, null);
 
     assertThat(actual).isInstanceOf(LocalDate.class).isEqualTo(LocalDate.parse("1979-02-08"));
   }
@@ -65,7 +71,7 @@ public class LocalDateConverterTest {
 
     String given = null;
 
-    Object actual = localDateConverter.decode(LocalDate.class, given, null);
+    Object actual = localDateCodec.decode(LocalDate.class, given, null);
 
     assertThat(actual).isNull();
   }
@@ -76,6 +82,6 @@ public class LocalDateConverterTest {
     long given = Instant.now().toEpochMilli();
 
     assertThatIllegalArgumentException()
-        .isThrownBy(() -> localDateConverter.decode(LocalDate.class, given, null));
+        .isThrownBy(() -> localDateCodec.decode(LocalDate.class, given, null));
   }
 }

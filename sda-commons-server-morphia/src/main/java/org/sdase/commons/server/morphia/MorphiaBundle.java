@@ -24,8 +24,9 @@ import javax.net.ssl.SSLContext;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.sdase.commons.server.morphia.converter.LocalDateConverter;
-import org.sdase.commons.server.morphia.converter.ZonedDateTimeConverter;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.sdase.commons.server.morphia.codec.LocalDateConverter;
+import org.sdase.commons.server.morphia.codec.ZonedDateTimeCodec;
 import org.sdase.commons.server.morphia.health.MongoHealthCheck;
 import org.sdase.commons.server.morphia.internal.MongoClientBuilder;
 import org.sdase.commons.shared.certificates.ca.CaCertificateConfigurationProvider;
@@ -49,7 +50,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
    * dev.morphia.converters.LocalDateConverter} because it actually stores a date time.
    */
   private static final Set<TypeConverter> DEFAULT_CONVERTERS =
-      new LinkedHashSet<>(asList(new ZonedDateTimeConverter(), new LocalDateConverter()));
+      new LinkedHashSet<>(asList(new ZonedDateTimeCodec(), new LocalDateConverter()));
 
   private final Function<C, MongoConfiguration> configurationProvider;
   private final Set<TypeConverter> customConverters = new LinkedHashSet<>();

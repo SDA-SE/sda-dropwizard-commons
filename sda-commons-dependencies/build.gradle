@@ -8,7 +8,7 @@ javaPlatform {
 
 ext {
   dropwizardVersion = '2.0.28'
-  morphiaVersion = '1.6.1'
+  morphiaVersion = '2.3.0-SNAPSHOT'
   prometheusVersion = '0.9.0'
   swaggerCoreVersion = '1.6.5'
   swaggerCoreV3Version = '2.1.13'
@@ -82,9 +82,15 @@ dependencies {
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.2"
 
     // sda-commons-server-morphia
-    api "dev.morphia.morphia:core:$morphiaVersion"
-    api "dev.morphia.morphia:validation:$morphiaVersion"
+    api "dev.morphia.morphia:morphia-core:$morphiaVersion"
+    api "dev.morphia.morphia:morphia-validation:$morphiaVersion"
     api "org.bouncycastle:bcpkix-jdk15on:1.70" // use the same version as bcprov-jdk15on in DW
+    api 'org.mongodb:mongodb-driver-legacy:4.5.0' // same version as Morphia
+    api 'org.jetbrains:annotations:23.0.0', {
+      because '''
+        conflict between org.jetbrains.kotlin:kotlin-stdlib and dev.morphia.morphia:morphia-core
+      '''
+    }
 
     // sda-commons-server-swagger
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9"

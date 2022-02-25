@@ -1,4 +1,4 @@
-package org.sdase.commons.server.morphia.converter;
+package org.sdase.commons.server.morphia.codec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,7 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ZonedDateTimeConverterTest {
+public class ZonedDateTimeCodecTest {
 
   private TimeZone defaultTimeZone;
 
@@ -28,7 +28,7 @@ public class ZonedDateTimeConverterTest {
   @Test
   public void shouldDecodeNull() {
     // given
-    ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
+    ZonedDateTimeCodec converter = new ZonedDateTimeCodec();
 
     // when
     Object result = converter.decode(ZonedDateTime.class, null, null);
@@ -40,7 +40,7 @@ public class ZonedDateTimeConverterTest {
   @Test
   public void shouldDecodeDate() {
     // given
-    ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
+    ZonedDateTimeCodec converter = new ZonedDateTimeCodec();
     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
     cal.clear();
     cal.set(2019, Calendar.MARCH, 21, 17, 22, 53);
@@ -56,7 +56,7 @@ public class ZonedDateTimeConverterTest {
   @Test
   public void shouldDecodeString() {
     // given
-    ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
+    ZonedDateTimeCodec converter = new ZonedDateTimeCodec();
 
     // when
     ZonedDateTime result =
@@ -70,7 +70,7 @@ public class ZonedDateTimeConverterTest {
   @Test
   public void shouldEncodeNull() {
     // given
-    ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
+    ZonedDateTimeCodec converter = new ZonedDateTimeCodec();
 
     // when
     Object result = converter.encode(null, null);
@@ -82,7 +82,7 @@ public class ZonedDateTimeConverterTest {
   @Test
   public void shouldEncodeZonedDateTime() {
     // given
-    ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
+    ZonedDateTimeCodec converter = new ZonedDateTimeCodec();
 
     // when
     Date result =
@@ -96,7 +96,7 @@ public class ZonedDateTimeConverterTest {
   @Test(expected = IllegalArgumentException.class)
   public void shouldFailOnEncodeWrongType() {
     // given
-    ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
+    ZonedDateTimeCodec converter = new ZonedDateTimeCodec();
 
     // when
     converter.encode(new Object(), null);
@@ -105,7 +105,7 @@ public class ZonedDateTimeConverterTest {
   @Test(expected = IllegalArgumentException.class)
   public void shouldFailOnDecodeWrongType() {
     // given
-    ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
+    ZonedDateTimeCodec converter = new ZonedDateTimeCodec();
 
     // when
     converter.decode(ZonedDateTime.class, new Object(), null);

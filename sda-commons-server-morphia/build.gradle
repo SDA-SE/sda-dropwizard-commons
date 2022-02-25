@@ -2,8 +2,8 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-certificates')
 
-  api 'dev.morphia.morphia:core'
-  api 'dev.morphia.morphia:validation', {
+  api 'dev.morphia.morphia:morphia-core'
+  api 'dev.morphia.morphia:morphia-validation', {
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
      * javax.inject.
