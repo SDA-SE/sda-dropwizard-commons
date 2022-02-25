@@ -101,12 +101,16 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
     return !config.isDisableValidation();
   }
 
-  /** @return a set with all known key definition names */
+  /**
+   * @return a set with all known key definition names
+   */
   public Set<String> getKeyDefinitionNames() {
     return keys.keySet();
   }
 
-  /** @return a set with all known key definition names for that mappings exists */
+  /**
+   * @return a set with all known key definition names for that mappings exists
+   */
   public Set<String> getMappingKeyDefinitionNames() {
     return mappings.keySet();
   }
