@@ -115,7 +115,9 @@ public class AuthBuilder {
         || (o instanceof Date);
   }
 
-  /** @return the signed and encoded token, e.g. {@code eyXXX.eyYYY.ZZZ} */
+  /**
+   * @return the signed and encoded token, e.g. {@code eyXXX.eyYYY.ZZZ}
+   */
   public String buildToken() {
     Algorithm algorithm = Algorithm.RSA256(null, privateKey);
     JWTCreator.Builder builder =

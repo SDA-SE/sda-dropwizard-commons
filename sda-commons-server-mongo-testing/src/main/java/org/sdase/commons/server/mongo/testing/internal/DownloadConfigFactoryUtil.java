@@ -35,7 +35,9 @@ public class DownloadConfigFactoryUtil {
     // utility
   }
 
-  /** @return a download config that */
+  /**
+   * @return a download config that
+   */
   public static DownloadConfig createDownloadConfig() {
     ImmutableDownloadConfig.Builder downloadConfigBuilder =
         Defaults.downloadConfigFor(Command.MongoD).proxyFactory(createProxyFactory());

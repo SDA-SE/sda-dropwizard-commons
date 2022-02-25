@@ -73,9 +73,7 @@ subprojects {
   spotless {
     if (!javaPlatformModules.contains(project.name)) {
       java {
-        // Force it to the last version that is compatible with Java 8.
-        // TODO: Cleanup after removal of Java 8 support.
-        googleJavaFormat('1.7')
+        googleJavaFormat('1.14.0')
       }
     }
     groovyGradle {
