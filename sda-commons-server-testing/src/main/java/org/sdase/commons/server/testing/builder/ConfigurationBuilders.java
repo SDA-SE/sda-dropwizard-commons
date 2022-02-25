@@ -30,7 +30,9 @@ public interface ConfigurationBuilders {
      */
     CustomizationBuilder<C> withRootPath(String rootPath);
 
-    /** @return the {@link Configuration} of type {@code C} created with this builder */
+    /**
+     * @return the {@link Configuration} of type {@code C} created with this builder
+     */
     C build();
   }
 

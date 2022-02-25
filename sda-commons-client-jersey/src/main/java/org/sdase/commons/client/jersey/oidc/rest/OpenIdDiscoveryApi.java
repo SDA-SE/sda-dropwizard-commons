@@ -14,7 +14,9 @@ import org.sdase.commons.client.jersey.oidc.rest.model.OpenIdDiscoveryResource;
 @Path("/.well-known/openid-configuration")
 public interface OpenIdDiscoveryApi {
 
-  /** @return the OpenID Connect configuration */
+  /**
+   * @return the OpenID Connect configuration
+   */
   @GET
   @Path("")
   @Produces(APPLICATION_JSON)
