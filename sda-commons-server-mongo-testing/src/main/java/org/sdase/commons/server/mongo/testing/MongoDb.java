@@ -48,16 +48,24 @@ public interface MongoDb {
    */
   String getHosts();
 
-  /** @return the username that must be used to connect to the database. */
+  /**
+   * @return the username that must be used to connect to the database.
+   */
   String getUsername();
 
-  /** @return the password that must be used to connect to the database. */
+  /**
+   * @return the password that must be used to connect to the database.
+   */
   String getPassword();
 
-  /** @return the initialized database */
+  /**
+   * @return the initialized database
+   */
   String getDatabase();
 
-  /** @return the MongoDB options String without leading question mark */
+  /**
+   * @return the MongoDB options String without leading question mark
+   */
   String getOptions();
 
   /**
@@ -68,7 +76,9 @@ public interface MongoDb {
    */
   MongoClient createClient();
 
-  /** @return the version of the MongoDB instance which is associated with this MongoDbRule */
+  /**
+   * @return the version of the MongoDB instance which is associated with this MongoDbRule
+   */
   default String getServerVersion() {
     try (MongoClient client = createClient()) {
       return client

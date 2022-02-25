@@ -49,14 +49,20 @@ public interface MongoDbRule extends MongoDb, TestRule {
 
   final class Builder extends MongoDb.Builder<MongoDbRule> {
 
-    /** @deprecated use {@link MongoDbRule#getUsername()} of the actual rule instance */
+    /**
+     * @deprecated use {@link MongoDbRule#getUsername()} of the actual rule instance
+     */
     @Deprecated public static final String DEFAULT_USER = MongoDb.Builder.DEFAULT_USER;
 
-    /** @deprecated use {@link MongoDbRule#getPassword()} ()} of the actual rule instance */
+    /**
+     * @deprecated use {@link MongoDbRule#getPassword()} ()} of the actual rule instance
+     */
     @Deprecated
     public static final String DEFAULT_PASSWORD = MongoDb.Builder.DEFAULT_PASSWORD; // NOSONAR
 
-    /** @deprecated use {@link MongoDbRule#getDatabase()} of the actual rule instance */
+    /**
+     * @deprecated use {@link MongoDbRule#getDatabase()} of the actual rule instance
+     */
     @Deprecated public static final String DEFAULT_DATABASE = MongoDb.Builder.DEFAULT_DATABASE;
 
     private Builder() {

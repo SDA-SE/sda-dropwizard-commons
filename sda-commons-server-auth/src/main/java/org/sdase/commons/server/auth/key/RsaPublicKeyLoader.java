@@ -26,7 +26,9 @@ public class RsaPublicKeyLoader {
 
   private final Object loadingSemaphore = new Object();
 
-  /** @return All keys that have been registered without kid in the order they have been added. */
+  /**
+   * @return All keys that have been registered without kid in the order they have been added.
+   */
   public List<LoadedPublicKey> getKeysWithoutId() {
     if (keysWithoutKeyId.isEmpty()) {
       // we may need to avoid reloading every time and delay reloads if reloaded keys just moments

@@ -35,7 +35,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/** @author Pavol Loffay */
+/**
+ * @author Pavol Loffay
+ */
 public class SpanLogsAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
   private final Tracer tracer;
