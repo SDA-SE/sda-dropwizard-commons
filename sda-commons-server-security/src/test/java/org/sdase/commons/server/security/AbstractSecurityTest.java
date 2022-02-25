@@ -260,13 +260,17 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
     return (AbstractServerFactory) serverFactory;
   }
 
-  /** @return a {@link WebTarget} pointing to the root of the application port */
+  /**
+   * @return a {@link WebTarget} pointing to the root of the application port
+   */
   @SuppressWarnings("WeakerAccess")
   protected WebTarget getAppClient() {
     return this.appClient;
   }
 
-  /** @return a {@link WebTarget} pointing to the root of the admin port */
+  /**
+   * @return a {@link WebTarget} pointing to the root of the admin port
+   */
   @SuppressWarnings("WeakerAccess")
   protected WebTarget getAdminClient() {
     return this.adminClient;

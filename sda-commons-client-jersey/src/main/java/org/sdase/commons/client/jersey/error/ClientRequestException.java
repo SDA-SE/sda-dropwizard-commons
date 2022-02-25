@@ -23,7 +23,9 @@ public class ClientRequestException extends RuntimeException implements Closeabl
     super(cause);
   }
 
-  /** @return if the response returned with a 4xx client error status code */
+  /**
+   * @return if the response returned with a 4xx client error status code
+   */
   public boolean isClientError() {
     return getResponse()
         .map(Response::getStatus)
@@ -31,7 +33,9 @@ public class ClientRequestException extends RuntimeException implements Closeabl
         .orElse(false);
   }
 
-  /** @return if the response returned with a 5xx server error status code */
+  /**
+   * @return if the response returned with a 5xx server error status code
+   */
   public boolean isServerError() {
     return getResponse()
         .map(Response::getStatus)
@@ -39,13 +43,17 @@ public class ClientRequestException extends RuntimeException implements Closeabl
         .orElse(false);
   }
 
-  /** @return if the request timed out while establishing a connection */
+  /**
+   * @return if the request timed out while establishing a connection
+   */
   public boolean isConnectTimeout() {
     return getCause() instanceof ProcessingException
         && getCause().getCause() instanceof ConnectTimeoutException;
   }
 
-  /** @return if the request timed out while reading from an established connection */
+  /**
+   * @return if the request timed out while reading from an established connection
+   */
   public boolean isReadTimeout() {
     return getCause() instanceof ProcessingException
         && getCause().getCause() instanceof SocketTimeoutException;
