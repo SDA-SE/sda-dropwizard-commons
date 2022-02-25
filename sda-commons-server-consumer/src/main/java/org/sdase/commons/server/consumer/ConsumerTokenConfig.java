@@ -26,12 +26,16 @@ public class ConsumerTokenConfig {
     this.optional = optional;
   }
 
-  /** @return returns a list of regex pattern for paths that are excluded from the filter */
+  /**
+   * @return returns a list of regex pattern for paths that are excluded from the filter
+   */
   public List<String> getExcludePatterns() {
     return excludePatterns;
   }
 
-  /** @param excludePatterns list with pattern that are excluded from the configuration filter */
+  /**
+   * @param excludePatterns list with pattern that are excluded from the configuration filter
+   */
   public void setExcludePatterns(List<String> excludePatterns) {
     this.excludePatterns = excludePatterns;
   }
