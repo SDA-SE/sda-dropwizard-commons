@@ -46,10 +46,10 @@ In a Kubernetes environment where the agent is deployed on each node, use the fo
 
 ```yaml
 - name: JAEGER_AGENT_HOST
-  valueFrom:
-    fieldRef:
-      fieldPath: status.hostIP
+  value: "jaeger-agent.jaeger"
 ```
+
+
 
 
 ### Service Name
