@@ -26,7 +26,7 @@ One way to use this module is:
 A manual written AsyncAPI spec template might look like this and can be stored as a resource:
 
 ```yaml
-asyncapi: '2.0.0'
+asyncapi: '2.3.0'
 id: 'urn:org:sdase:example:cars'
 defaultContentType: application/json
 
