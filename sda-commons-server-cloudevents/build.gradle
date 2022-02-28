@@ -1,0 +1,9 @@
+dependencies {
+  api project(':sda-commons-server-dropwizard')
+  api "io.cloudevents:cloudevents-kafka:2.3.0"
+  api "org.slf4j:slf4j-api"
+  api "com.fasterxml.jackson.core:jackson-databind"
+
+  testImplementation project(':sda-commons-server-kafka')
+  testImplementation project(':sda-commons-server-kafka-testing')
+}
