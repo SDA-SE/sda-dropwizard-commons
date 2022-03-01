@@ -51,7 +51,7 @@ components:
             type: string
             description: Timestamp of event as milliseconds since 1st Jan 1970
       traits:
-        - $ref: "https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/master/sda-commons-shared-asyncapi/cloudevents/traits/v1.0.2/asyncapi-trait.yml"
+        - $ref: "https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/master/sda-commons-shared-asyncapi/cloudevents/v1.0.2/asyncapi-trait.yml"
       payload:
         $ref: './kafkaEvent.json#'
 ```
