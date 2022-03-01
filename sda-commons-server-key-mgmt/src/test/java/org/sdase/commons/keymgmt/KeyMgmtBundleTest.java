@@ -11,6 +11,7 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.client.Entity;
@@ -22,11 +23,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.sdase.commons.keymgmt.manager.KeyManager;
 import org.sdase.commons.keymgmt.manager.KeyMapper;
 import org.sdase.commons.keymgmt.manager.NoKeyKeyManager;
 import org.sdase.commons.keymgmt.manager.PassthroughKeyMapper;
 import org.sdase.commons.keymgmt.validator.PlatformKey;
+import org.sdase.commons.keymgmt.validator.PlatformKeys;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.starter.SdaPlatformBundle;
 
@@ -183,23 +189,50 @@ class KeyMgmtBundleTest {
     assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
   }
 
-  @Test
-  void shouldValidatePlatformKeyFail() {
+  @ParameterizedTest
+  @ValueSource(strings = {"MALE", "MR"})
+  void shouldValidatePlatformKeysSuccess(String input) {
     Response response =
         client
             .path("api")
             .path("validate")
             .request()
-            .post(Entity.entity(new ObjectWithKey().setGenderKey("BLA"), APPLICATION_JSON));
+            .post(
+                Entity.entity(
+                    new ObjectWithKey().setGenderOrSalutationKey(input), APPLICATION_JSON));
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideObjectWithInvalidKey")
+  void shouldValidatePlatformKeyFail(ObjectWithKey objectWithKey, Tuple expectedMessageTuple) {
+    Response response =
+        client
+            .path("api")
+            .path("validate")
+            .request()
+            .post(Entity.entity(objectWithKey, APPLICATION_JSON));
     assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY_422);
     ApiError error = response.readEntity(ApiError.class);
     assertThat(error.getInvalidParams())
         .extracting("field", "reason", "errorCode")
-        .contains(
+        .contains(expectedMessageTuple);
+  }
+
+  private static Stream<Arguments> provideObjectWithInvalidKey() {
+    return Stream.of(
+        Arguments.of(
+            new ObjectWithKey().setGenderKey("BLA"),
             Tuple.tuple(
                 "genderKey",
                 "The attribute does not contain a valid platform key value.",
-                "PLATFORM_KEY"));
+                "PLATFORM_KEY")),
+        Arguments.of(
+            new ObjectWithKey().setGenderKey("MALE").setGenderOrSalutationKey("BLA"),
+            Tuple.tuple(
+                "genderOrSalutationKey",
+                "The attribute does not contain a valid platform key value.",
+                "PLATFORM_KEYS")));
   }
 
   @Test
@@ -310,6 +343,9 @@ class KeyMgmtBundleTest {
     @PlatformKey("GENDER")
     private String genderKey;
 
+    @PlatformKeys(values = {"GENDER", "SALUTATION"})
+    private String genderOrSalutationKey;
+
     private List<@Valid @PlatformKey("GENDER") String> genderList;
 
     public String getGenderKey() {
@@ -318,6 +354,15 @@ class KeyMgmtBundleTest {
 
     public ObjectWithKey setGenderKey(String genderKey) {
       this.genderKey = genderKey;
+      return this;
+    }
+
+    public String getGenderOrSalutationKey() {
+      return genderOrSalutationKey;
+    }
+
+    public ObjectWithKey setGenderOrSalutationKey(String genderOrSalutationKey) {
+      this.genderOrSalutationKey = genderOrSalutationKey;
       return this;
     }
 

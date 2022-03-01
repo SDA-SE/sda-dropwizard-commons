@@ -60,6 +60,13 @@ The annotation `@PlatformKey` will trigger a validator to verify if the received
 private String genderKey
 ```
 
+### @PlatformKeys
+The annotation `@PlatformKeys` will trigger a validator to verify if the received value is a valid key within a list of referenced platform keys.
+```java
+@PlatformKeys(values = {"GENDER, SALUTATION"})
+private String genderOrSalutationKey
+```
+
 ### Key yaml file
 The yaml file or keys may contain one or more [KeyDefinition](src/main/java/org/sdase/commons/keymgmt/model/KeyDefinition.java) documents.
 

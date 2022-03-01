@@ -3,13 +3,13 @@ package org.sdase.commons.keymgmt.validator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class KeyValidator extends AbstractKeysValidator
-    implements ConstraintValidator<PlatformKey, String> {
+public class KeysValidator extends AbstractKeysValidator
+    implements ConstraintValidator<PlatformKeys, String> {
 
   @Override
-  public void initialize(PlatformKey constraintAnnotation) {
+  public void initialize(PlatformKeys constraintAnnotation) {
     ConstraintValidator.super.initialize(constraintAnnotation);
-    super.keyNames = new String[] {constraintAnnotation.value()};
+    super.keyNames = constraintAnnotation.values();
   }
 
   @Override
