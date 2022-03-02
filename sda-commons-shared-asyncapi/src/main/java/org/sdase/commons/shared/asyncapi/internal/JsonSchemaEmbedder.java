@@ -65,7 +65,7 @@ public class JsonSchemaEmbedder {
           e -> {
             if (REF.equals(e.getKey())
                 && e.getValue().isTextual()
-                && !e.getValue().textValue().startsWith("https://")) {
+                && shouldEmbed(e.getValue().textValue())) {
 
               JsonReference ref = JsonReference.parse(e.getValue().asText());
 
@@ -137,5 +137,9 @@ public class JsonSchemaEmbedder {
 
   private String replaceSpecialCharacters(String value) {
     return value.replaceAll("[^a-zA-Z0-9]", "");
+  }
+
+  private boolean shouldEmbed(String value) {
+    return !value.startsWith("https://");
   }
 }
