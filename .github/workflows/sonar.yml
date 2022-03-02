@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_sha }} # checkout commit that triggered this workflow
           fetch-depth: 0 # fetch commit log so that Sonar is able to assign committers to issues
