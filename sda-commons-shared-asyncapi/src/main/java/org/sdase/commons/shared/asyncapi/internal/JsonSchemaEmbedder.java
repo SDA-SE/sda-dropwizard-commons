@@ -63,7 +63,10 @@ public class JsonSchemaEmbedder {
 
       fields.forEach(
           e -> {
-            if (REF.equals(e.getKey()) && e.getValue().isTextual()) {
+            if (REF.equals(e.getKey())
+                && e.getValue().isTextual()
+                && !e.getValue().textValue().startsWith("https://")) {
+
               JsonReference ref = JsonReference.parse(e.getValue().asText());
 
               embedReference(

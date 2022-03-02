@@ -33,4 +33,27 @@ public class JsonSchemaEmbedderTest {
     assertThat(result.at("/definitions/simpleobjectsimplereferencedyaml/$schema").isMissingNode())
         .isTrue();
   }
+
+  @Test
+  public void shouldNotEmbedObjectsAsURLs() {
+    JsonNode input =
+        YamlUtil.load(
+            getClass().getResource("/json_schema_embedder/simple_object_url.yaml"), JsonNode.class);
+    JsonSchemaEmbedder embedder =
+        new JsonSchemaEmbedder(
+            "/definitions",
+            name ->
+                YamlUtil.load(
+                    getClass().getResource("/json_schema_embedder/" + name), JsonNode.class));
+    JsonNode result = embedder.resolve(input);
+
+    assertThat(result.at("/definitions").fieldNames())
+        .toIterable()
+        .containsExactlyInAnyOrder("Person", "simpleobjectsimplereferencedyaml");
+    assertThat(result.at("/definitions/simpleobjectsimplereferencedyaml").isMissingNode())
+        .isFalse();
+    assertThat(result.at("/definitions/address").isMissingNode()).isTrue();
+    assertThat(result.at("/definitions/Person/properties/address/$ref").asText())
+        .isEqualTo("https://sda.se");
+  }
 }
