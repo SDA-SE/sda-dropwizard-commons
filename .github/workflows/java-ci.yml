@@ -73,7 +73,7 @@ jobs:
           path: artifacts
 
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@d0787a9f068cd772424d68efbaad91e6171da8c6
+        uses: EnricoMi/publish-unit-test-result-action@d512bc689c979e673baaa5ad7b437ef1b6271eb8
         with:
           files: artifacts/**/build/test-results/**/*.xml
 
