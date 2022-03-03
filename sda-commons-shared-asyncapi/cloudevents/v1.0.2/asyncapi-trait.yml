@@ -11,56 +11,37 @@ headers:
     ce_id:
       type: string
       minLength: 1
-      description: Identifies the event.
-      examples:
-        - "52D41DC1-5CB2-4FFE-A3B8-0EEFDD74615A"
+      description: "Identifies the event. SDA Example: 52D41DC1-5CB2-4FFE-A3B8-0EEFDD74615A"
     ce_source:
       type: string
       format: uri-reference
       minLength: 1
-      description: Identifies the context in which an event happened.
-      examples:
-        - "/company/domain/system/service"
-        - "/sda-se/consent/partner-consent-stack/consent-configuration-service"
+      description: "Identifies the context in which an event happened. SDA Example: /company/domain/system/service"
     ce_specversion:
       type: string
-      description: The version of the CloudEvents specification which the event uses.
-      examples:
-        - "1.0"
+      description: "The version of the CloudEvents specification which the event uses. SDA Example: 1.0"
       enum:
         - "1.0"
     ce_type:
       type: string
       minLength: 1
-      description: Describes the type of event related to the originating occurrence.
-      examples:
-        - "DOMAIN_ELEMENT_OPERATION"
-        - "CONSENT_VERSION_CREATED"
+      description: "Describes the type of event related to the originating occurrence. SDA Example: DOMAIN_ELEMENT_OPERATION"
     ce_dataschema:
-      type:
-        - string
-        - null
-      format: uri
-      minLength: 1
-      description: Identifies the schema that data adheres to.
+      type: string
+      description: "Identifies the schema that data adheres to."
     ce_subject:
-      type:
-        - string
-        - null
-      minLength": 1
-      description: Describes the subject of the event in the context of the event producer (identified by source).
-      examples:
-        - "mynewfile.jpg"
+      type: string
+      description: "Describes the subject of the event in the context of the event producer (identified by source)."
     ce_time:
-      type:
-        - string
-        - null
-      minLength: 1
+      type: string
       format: date-time
-      description: Timestamp of when the occurrence happened. Must adhere to RFC 3339.
-      examples:
-        - "2018-04-05T17:31:00Z"
+      description: "Timestamp of when the occurrence happened. Must adhere to RFC 3339. SDA Example: 2018-04-05T17:31:00Z"
     content-type:
       type: string
+      enum:
+        - "application/json"
+    ce_datacontenttype:
+      type: string
+      description: "Content type of the data value. Must adhere to RFC 2046 format."
       enum:
         - "application/json"
