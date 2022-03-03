@@ -35,8 +35,3 @@ headers:
       type: string
       enum:
         - "application/json"
-    ce_datacontenttype:
-      type: string
-      description: "Content type of the data value. Must adhere to RFC 2046 format."
-      enum:
-        - "application/json"
