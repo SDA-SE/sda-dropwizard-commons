@@ -50,7 +50,7 @@ dependencies {
     }
 
     // overall testing dependencies
-    api "org.awaitility:awaitility:4.1.1"
+    api "org.awaitility:awaitility:4.2.0"
 
     // sda-commons-client-jersey-wiremock-testing
     api "com.github.tomakehurst:wiremock-jre8:2.32.0"
