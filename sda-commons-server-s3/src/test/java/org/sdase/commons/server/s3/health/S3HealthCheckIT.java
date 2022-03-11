@@ -2,6 +2,8 @@ package org.sdase.commons.server.s3.health;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
+import java.util.HashSet;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -16,7 +18,9 @@ public class S3HealthCheckIT {
 
   @Before
   public void init() {
-    s3HealthCheck = new S3HealthCheck(S3_MOCK.getClient(), new String[] {"testbucket"});
+    s3HealthCheck =
+        new S3HealthCheck(
+            S3_MOCK.getClient(), new HashSet<>(Collections.singletonList("testbucket")));
   }
 
   @Test

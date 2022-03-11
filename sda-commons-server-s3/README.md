@@ -35,9 +35,9 @@ The bundle supports the creation of both internal and external health checks.
 private final S3Bundle<Config> s3Bundle =
     S3Bundle.builder()
         .withConfigurationProvider(Config::getS3Config)
-        .withHealthCheck("testbucket1", "testbucket2")
+        .withHealthCheck(Collections.singleton(Config::getS3Bucket))
         .build();
 ```
 
-For creation of an external health check, use `.withExternalHealthCheck(String bucketName)`
+For creation of an external health check, use `.withExternalHealthCheck(Iterable<BucketNameProvider<C>>)`
 respectively.
