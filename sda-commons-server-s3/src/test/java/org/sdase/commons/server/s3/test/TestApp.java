@@ -14,7 +14,6 @@ public class TestApp extends Application<Config> {
       S3Bundle.builder()
           .withConfigurationProvider(Config::getS3Config)
           .withTracer(mockTracer)
-          .withHealthCheck("testbucket")
           .build();
 
   @Override

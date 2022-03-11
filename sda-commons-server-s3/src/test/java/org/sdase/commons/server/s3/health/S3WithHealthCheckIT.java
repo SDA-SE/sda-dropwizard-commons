@@ -16,21 +16,22 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.sdase.commons.server.s3.S3Bundle;
 import org.sdase.commons.server.s3.test.Config;
-import org.sdase.commons.server.s3.test.S3WithoutHealthCheckTestApp;
+import org.sdase.commons.server.s3.test.S3WithHealthCheckTestApp;
 import org.sdase.commons.server.s3.testing.S3MockRule;
 
-public class S3WithoutHealthCheckIT {
+public class S3WithHealthCheckIT {
   private static final S3MockRule S3_MOCK = S3MockRule.builder().createBucket("testbucket").build();
 
   private static final DropwizardAppRule<Config> DW =
       new DropwizardAppRule<>(
-          S3WithoutHealthCheckTestApp.class,
+          S3WithHealthCheckTestApp.class,
           resourceFilePath("test-config.yml"),
-          config("s3Config.endpoint", S3_MOCK::getEndpoint));
+          config("s3Config.endpoint", S3_MOCK::getEndpoint),
+          config("s3Bucket", "testbucket"));
 
   @ClassRule public static final TestRule CHAIN = RuleChain.outerRule(S3_MOCK).around(DW);
 
-  private S3WithoutHealthCheckTestApp app;
+  private S3WithHealthCheckTestApp app;
   private WebTarget adminTarget;
 
   @Before
@@ -42,7 +43,7 @@ public class S3WithoutHealthCheckIT {
   @Test
   public void healthCheckShouldNotContainS3() {
     SortedSet<String> checks = app.healthCheckRegistry().getNames();
-    assertThat(checks).isNotEmpty().doesNotContain(S3Bundle.S3_HEALTH_CHECK_NAME);
+    assertThat(checks).isNotEmpty().contains(S3Bundle.S3_HEALTH_CHECK_NAME);
   }
 
   @Test
@@ -50,8 +51,7 @@ public class S3WithoutHealthCheckIT {
     Response response = adminTarget.path("healthcheck").request().get();
     assertThat(response.getStatus()).isEqualTo(HTTP_OK);
     assertThat(response.readEntity(String.class))
-        .doesNotContain(
-            "\"" + S3Bundle.S3_HEALTH_CHECK_NAME + "\"",
-            "\"" + S3Bundle.S3_EXTERNAL_HEALTH_CHECK_NAME + "\"");
+        .contains("\"" + S3Bundle.S3_HEALTH_CHECK_NAME + "\"")
+        .doesNotContain("\"" + S3Bundle.S3_EXTERNAL_HEALTH_CHECK_NAME + "\"");
   }
 }
