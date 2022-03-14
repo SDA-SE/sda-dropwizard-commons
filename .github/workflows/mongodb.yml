@@ -25,13 +25,13 @@ jobs:
           cache: 'gradle'
 
       - name: Start MongoDB
-        run: docker run -d -e MONGO_INITDB_ROOT_USERNAME=test -e MONGO_INITDB_ROOT_PASSWORD=example -p 27017:27017 --name test_mongo mongo:4.0
+        run: docker run -d -e MONGO_INITDB_ROOT_USERNAME=test -e MONGO_INITDB_ROOT_PASSWORD=example -p 27017:27017 --name test_mongo mongo:4.4
 
       - name: Test with Gradle
         run: ./gradlew :sda-commons-server-morphia-example:test
 
       - name: Assert use of MongoDB
-        run: "docker logs test_mongo | grep -F 'build index on: testdb.'"
+        run: "docker logs test_mongo | grep -F 'createCollection' | grep -F 'testdb.'"
 
       - name: Stop MongoDB
         run: docker stop test_mongo
