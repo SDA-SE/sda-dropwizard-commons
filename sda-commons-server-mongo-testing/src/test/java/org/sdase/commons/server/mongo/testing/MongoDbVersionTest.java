@@ -50,14 +50,8 @@ public class MongoDbVersionTest {
     MongoDbRule mongoDbRule = MongoDbRule.builder().build();
     if (SystemUtils.IS_OS_WINDOWS) {
       assertThat(mongoDbRule).extracting("version").isEqualTo(MongoDbRule.Builder.WINDOWS_VERSION);
-      assertThat(mongoDbRule)
-          .extracting("version")
-          .isNotEqualTo(MongoDbRule.Builder.DEFAULT_VERSION);
     } else {
       assertThat(mongoDbRule).extracting("version").isEqualTo(MongoDbRule.Builder.DEFAULT_VERSION);
-      assertThat(mongoDbRule)
-          .extracting("version")
-          .isNotEqualTo(MongoDbRule.Builder.WINDOWS_VERSION);
     }
   }
 }

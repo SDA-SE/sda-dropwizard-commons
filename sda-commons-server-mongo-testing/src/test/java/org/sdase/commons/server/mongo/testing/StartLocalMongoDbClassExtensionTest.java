@@ -170,16 +170,10 @@ class StartLocalMongoDbClassExtensionTest {
       assertThat(mongoDbClassExtension)
           .extracting("version")
           .isEqualTo(MongoDbClassExtension.Builder.WINDOWS_VERSION);
-      assertThat(mongoDbClassExtension)
-          .extracting("version")
-          .isNotEqualTo(MongoDbClassExtension.Builder.DEFAULT_VERSION);
     } else {
       assertThat(mongoDbClassExtension)
           .extracting("version")
           .isEqualTo(MongoDbClassExtension.Builder.DEFAULT_VERSION);
-      assertThat(mongoDbClassExtension)
-          .extracting("version")
-          .isNotEqualTo(MongoDbClassExtension.Builder.WINDOWS_VERSION);
     }
   }
 }

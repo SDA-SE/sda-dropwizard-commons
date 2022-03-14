@@ -60,7 +60,7 @@ database using the `MongoClient`.
 
 
 ### JUnit 5
-This module provides the [`MongoDbExtension`](src/main/java/org/sdase/commons/server/mongo/testing/MongoDbExtension.java),
+This module provides the [`MongoDbClassExtension`](src/main/java/org/sdase/commons/server/mongo/testing/MongoDbClassExtension.java),
 a JUnit 5 test extension that is used to automatically bootstrap a MongoDB instance for integration tests.
 
 This is accomplished using [Flapdoodle embedded MongoDB](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo),
@@ -119,18 +119,12 @@ By default, scripting using JavaScript is disabled.
 You should avoid using it, as it can cause security issues.
 If you still need to use it, activate it using the build `enableScripting()`.
 
-### Operating Systems and MongoDB versions
+### MongoDB version
 
-Flapdoodles embedded MongoDB version < 4.x may result in
-`java.lang.IllegalStateException: java.io.IOException: Could not start process: <EOF>` during start-up
-of a MongoDB server instance. Therefore the operating system is determined and the default MongoDB
-version is set.
-
-On Windows systems the version will be set to 4.x and on all other system it will be
-3.6.x. If one needs a specific version the version can be set like this `MongoDbRule.builder().withVersion(specificMongoDbVersion).build()` or
+Flapdoodles embedded MongoDB version is set to 4.4.x by default.
+If one needs a specific version the version can be set like this
+`MongoDbRule.builder().withVersion(specificMongoDbVersion).build()` or
 `MongoDbClassExtension.builder().withVersion(specificMongoDbVersion).build()`.
-
-This is a temporary solution until all systems run on MongoDB >= version 4.x.
 
 ### Configuration in a special CI-environment
 
