@@ -21,13 +21,11 @@ ext {
   dbRiderVersion = '1.32.3'
   kotlinVersion = '1.6.10'
   kotlinxCoroutinesVersion = '1.6.0'
-  jacksonVersion = '2.13.2'
 }
 
 dependencies {
-  api enforcedPlatform("com.fasterxml.jackson:jackson-bom:$jacksonVersion") // override version from dropwizard-bom
-  api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion") // override version from dropwizard-bom
-  api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
+  api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:${kotlinVersion}") // override version from dropwizard-bom
+  api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:${kotlinxCoroutinesVersion}")
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion")
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.181")
