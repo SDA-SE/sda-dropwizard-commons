@@ -79,6 +79,7 @@ dependencies {
 
     // sda-commons-server-jaeger
     api "io.jaegertracing:jaeger-client:1.8.0"
+    api "com.google.code.gson:gson:2.8.9" // fixes vulnerability in transitive dependency 2.8.6
 
     // sda-commons-server-mongo-testing
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.3"
