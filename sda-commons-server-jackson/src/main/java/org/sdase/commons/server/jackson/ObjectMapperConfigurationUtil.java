@@ -15,14 +15,13 @@ import io.dropwizard.jackson.CaffeineModule;
 import io.dropwizard.jackson.GuavaExtrasModule;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.util.JavaVersion;
 import io.openapitools.jackson.dataformat.hal.JacksonHALModule;
 import java.text.DateFormat;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.TimeZone;
 import java.util.function.Consumer;
-import org.apache.commons.lang3.JavaVersion;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,20 +114,17 @@ public class ObjectMapperConfigurationUtil {
           Jackson.newMinimalObjectMapper()
               // .registerModule(new GuavaModule()) in newMinimalObjectMapper
               .registerModule(new GuavaExtrasModule())
+              .registerModule(new CaffeineModule())
               .registerModule(new JodaModule());
-      if (SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11)) {
-        // Afterburner is not compatible with Java 17, see
-        // https://github.com/FasterXML/jackson-modules-base/issues/37
-        objectMapper = objectMapper.registerModule(new AfterburnerModule());
+      if (JavaVersion.isJava8()) {
+        objectMapper.registerModule(new AfterburnerModule());
       }
       // .registerModule(new FuzzyEnumModule()) breaks READ_UNKNOWN_ENUM_VALUES_AS_NULL
-      objectMapper =
-          objectMapper
-              .registerModule(new ParameterNamesModule())
-              .registerModule(new Jdk8Module())
-              .registerModule(new JavaTimeModule())
-              .registerModule(new CaffeineModule())
-              .setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy())
+      objectMapper
+          .registerModule(new ParameterNamesModule())
+          .registerModule(new Jdk8Module())
+          .registerModule(new JavaTimeModule())
+          .setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy())
       // .setSubtypeResolver(new DiscoverableSubtypeResolver()) in  newMinimalObjectMapper
       ;
 
@@ -145,6 +141,8 @@ public class ObjectMapperConfigurationUtil {
       if (!disableHalSupport) {
         objectMapper.registerModule(new JacksonHALModule());
       }
+
+      objectMapper.disable(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE);
 
       return objectMapper;
     }
