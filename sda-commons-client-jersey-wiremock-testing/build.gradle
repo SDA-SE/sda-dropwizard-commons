@@ -1,6 +1,8 @@
 dependencies {
 
-  api "com.github.tomakehurst:wiremock-jre8"
+  api "com.github.tomakehurst:wiremock-jre8", {
+    exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
+  }
 
   // Note about 'httpclient': We added the dependency for backwards compatibility
   // It was pulled in by wiremock-jre8 <= 2.31.0
