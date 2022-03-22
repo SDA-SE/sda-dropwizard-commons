@@ -29,7 +29,13 @@ dependencies {
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion") // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
-  api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion")
+  api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
+    exclude group: 'com.fasterxml.jackson'
+    exclude group: 'com.fasterxml.jackson.dataformat'
+    exclude group: 'com.fasterxml.jackson.datatype'
+    exclude group: 'com.fasterxml.jackson.jaxrs'
+    exclude group: 'com.fasterxml.jackson.module'
+  }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.181")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
@@ -49,6 +55,9 @@ dependencies {
     }
     api "net.javacrumbs.json-unit:json-unit-core:$jsonUnitVersion", {
       because "conflict between com.github.tomakehurst:wiremock-jre8 and net.javacrumbs.json-unit:json-unit-assertj"
+    }
+    api "com.fasterxml.jackson:jackson-bom:$jacksonVersion", {
+      because "wiremock, dropwizard and others use outdated versions"
     }
 
     // overall testing dependencies
