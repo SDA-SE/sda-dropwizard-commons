@@ -180,7 +180,7 @@ dependencies {
     api "org.scala-lang.modules:scala-java8-compat_2.13:1.0.2", {
       because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13 upgrade"
     }
-    api "org.scala-lang.modules:scala-collection-compat_2.13:2.6.0", {
+    api "org.scala-lang.modules:scala-collection-compat_2.13:2.7.0", {
       because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13 upgrade"
     }
     api "org.scala-lang:scala-library:$scalaVersion", {
