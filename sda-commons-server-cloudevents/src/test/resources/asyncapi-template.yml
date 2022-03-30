@@ -1,0 +1,46 @@
+asyncapi: '2.3.0'
+id: 'urn:org:sdase:example:cars'
+defaultContentType: application/json
+
+info:
+  title: CloudEvents Test App
+  description: This example demonstrates how CloudEvents are documented.
+  version: '1.0.0'
+
+channels:
+  'partner-created':
+    publish:
+      operationId: publishPartnerCreatedEvents
+      summary: Partner Created Events
+      description: A new partner was created
+      message:
+        oneOf:
+          - $ref: '#/components/messages/PartnerCreatedEvent'
+  'contract-created':
+    publish:
+      operationId: publishContractCreatedEvents
+      summary: Contract Created Events
+      description: A new contract was created
+      message:
+        oneOf:
+          - $ref: '#/components/messages/ContractCreatedEvent'
+
+
+
+components:
+  messages:
+    PlainCloudEvent:
+      title: Plain CloudEvent
+      description: The basic CloudEvent
+      payload:
+        $ref: '/PlainCloudEvent#'
+    PartnerCreatedEvent:
+      title: Partner Created
+      description: An event that represents when a new partner was created
+      payload:
+        $ref: '/PartnerCreatedEvent#'
+    ContractCreatedEvent:
+      title: Contract Created
+      description: An event that represents when a new contract was created
+      payload:
+        $ref: '/ContractCreatedEvent#'

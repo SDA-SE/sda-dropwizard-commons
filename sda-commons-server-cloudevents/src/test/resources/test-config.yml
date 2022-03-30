@@ -1,0 +1,26 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+kafka:
+  # brokers: OVERRIDDEN
+  consumers:
+    contract-created:
+      group: contract-created-group
+      clientId: contract-created-id
+
+  producers:
+    partner-created:
+
+  listenerConfig:
+    contract-created:
+      topicMissingRetryMs: 40000
+
+  topics:
+    partner-created:
+      name: partner-created
+    contract-created:
+      name: contract-created
