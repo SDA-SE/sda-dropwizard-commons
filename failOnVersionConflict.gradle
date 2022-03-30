@@ -1,0 +1,137 @@
+/**
+ * This task will parse all dependency files in 'build/deps' and tries to find version conflicts.
+ * Our assumption is: Version should be aligned by enforcing versions from our platform module
+ * 'sda-commons-dependencies'. We don't care if we find different versions as long as Gradle is
+ * able to choose the right version from 'sda-commons-dependencies'.
+ */
+task failOnVersionConflict {
+  doLast {
+    // Only these scopes will be considered
+    var relevantScopes = new HashSet<String>(
+        Arrays.asList("api",
+        "compileClasspath",
+        "compileOnly",
+        "compileOnlyApi",
+        "implementation",
+        "runtimeClasspath",
+        "testCompileClasspath",
+        "testCompileOnly",
+        "testImplementation",
+        "testRuntimeClasspath",
+        "testRuntimeOnly",
+        ))
+
+    // Add some dependencies that can be ignored
+    var ignoredDuplicates = new HashSet<String>(
+        Arrays.asList("io.openapitools.hal:swagger-hal")
+        )
+
+    var baseDir = new File("${rootProject.buildDir}/deps")
+    var deps = new HashMap<String, String>();
+    for (file in baseDir.listFiles()) {
+      // var listFilesMock = List.of(new File("${rootProject.buildDir}/deps", "sda-commons-starter.txt"))
+      // for (file in listFilesMock) {
+      logger.info("File: $file")
+      var currentConfig = null;
+      var skip = true
+      file.eachLine {
+
+        // Check if a new scope is declared, e.g.
+        // runtimeClasspath - Runtime classpath of source set 'main'.
+        if (it.matches("^[a-z].*")) {
+          currentConfig = it.takeBefore(" ")
+          logger.debug("Found config: $currentConfig")
+          skip = !relevantScopes.contains(currentConfig)
+        }
+
+        if (skip) {
+          return
+        }
+
+        // Start parsing the file content
+        String line = null
+        if (it.contains("+--- ")) {
+          line = it.takeAfter("+--- ")
+        }
+        else if (it.contains("\\---")) {
+          line = it.takeAfter("\\--- ")
+        }
+        if (line != null) {
+          // ignore dependencies to other subprojects
+          if (line.startsWith("project")) {
+            return
+          }
+
+          // Extract groupId / artifactId / version
+          logger.debug("Line: $line")
+          var indexOfFirstColon = line.indexOf(':');
+          var groupId = line.substring(0, indexOfFirstColon)
+          var artifactId = line.substring(indexOfFirstColon + 1)
+          var version = null;
+          if (artifactId.contains(" -> ")) {
+            var oldArtifactId = artifactId
+            artifactId = oldArtifactId.takeBefore(' -> ')
+            version = oldArtifactId.takeAfter(' -> ')
+          }
+          else if (artifactId.contains(' (')) {
+            var oldArtifactId = artifactId
+            artifactId = oldArtifactId.takeBefore(' (')
+          }
+
+          if (artifactId.contains(':')) {
+            var oldArtifactId = artifactId
+            artifactId = oldArtifactId.takeBefore(':')
+            if (version == null) {
+              version = oldArtifactId.takeAfter(':')
+            }
+          }
+
+          if (version?.contains(' ')) {
+            version = version.takeBefore(' ')
+          }
+
+          logger.debug("g=$groupId")
+          logger.debug("a=$artifactId")
+          logger.debug("v=$version")
+
+          // Store coordinates in map to find duplicates
+          var key = "$groupId:$artifactId".toString()
+          if (!deps.containsKey(key)) {
+            deps.put(key, version)
+          }
+          else {
+            var otherVersion = deps.get(key)
+            if (otherVersion == null) {
+              deps.put(key, version)
+            }
+            else if (version != null && otherVersion != version) {
+              var message = "Version conflict for $key between versions $version and $otherVersion for scope $currentConfig";
+              if (ignoredDuplicates.contains(key.toString())) {
+                logger.debug( "Ignoring: $message")
+              }
+              else {
+                throw new GradleException(message)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Write all unique dependencies to a file
+    var depsSorted = deps.keySet().sort();
+    new File("${rootProject.buildDir}/deps", "__all.txt")
+        .withWriter('utf-8') {
+          for (dep in depsSorted) {
+            var version = deps.get(dep)
+            it.writeLine("$dep:$version")
+          }
+        }
+  }
+}
+
+// Make sure we can find the dependency files for all subprojects
+failOnVersionConflict.dependsOn(subprojects.allDeps)
+
+// execute task with 'check'
+check.dependsOn failOnVersionConflict

@@ -9,6 +9,7 @@ dependencies {
   api project(':sda-commons-server-auth')
   api project(':sda-commons-server-auth-testing')
   api project(':sda-commons-server-circuitbreaker')
+  api project(':sda-commons-server-cloudevents')
   api project(':sda-commons-server-consumer')
   api project(':sda-commons-server-cors')
   api project(':sda-commons-server-key-mgmt')
