@@ -21,25 +21,47 @@ ext {
   dbRiderVersion = '1.32.3'
   kotlinVersion = '1.6.10'
   kotlinxCoroutinesVersion = '1.6.0'
+  jacksonBomVersion = '2.13.2.20220328'
   jacksonVersion = '2.13.2'
+  jacksonDatabindVersion = '2.13.2.2'
 }
 
 dependencies {
-  api enforcedPlatform("com.fasterxml.jackson:jackson-bom:$jacksonVersion") // override version from dropwizard-bom
+  api enforcedPlatform("com.fasterxml.jackson:jackson-bom:$jacksonBomVersion") // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion") // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'com.fasterxml.jackson'
+    exclude group: 'com.fasterxml.jackson.core'
     exclude group: 'com.fasterxml.jackson.dataformat'
     exclude group: 'com.fasterxml.jackson.datatype'
     exclude group: 'com.fasterxml.jackson.jaxrs'
     exclude group: 'com.fasterxml.jackson.module'
+    exclude group: 'org.awaitility', module: 'awaitility'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.191")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
   constraints {
+    api "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+    api "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:$jacksonVersion"
+    api "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion"
+    api "com.fasterxml.jackson.module:jackson-module-afterburner:$jacksonVersion"
+    api "com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion"
+    api "com.fasterxml.jackson.module:jackson-module-parameter-names:$jacksonVersion"
+    api "com.fasterxml.jackson.module:jackson-module-scala_2.13:$jacksonVersion"
+
     // overall conflicts
     api "commons-codec:commons-codec:1.15", {
       because "conflict between org.apache.httpcomponents:httpclient:4.5.12 and org.dbunit:dbunit:2.7.0"
@@ -56,7 +78,7 @@ dependencies {
     api "net.javacrumbs.json-unit:json-unit-core:$jsonUnitVersion", {
       because "conflict between com.github.tomakehurst:wiremock-jre8 and net.javacrumbs.json-unit:json-unit-assertj"
     }
-    api "com.fasterxml.jackson:jackson-bom:$jacksonVersion", {
+    api "com.fasterxml.jackson:jackson-bom:$jacksonBomVersion", {
       because "wiremock, dropwizard and others use outdated versions"
     }
 
@@ -97,6 +119,9 @@ dependencies {
     api "dev.morphia.morphia:core:$morphiaVersion"
     api "dev.morphia.morphia:validation:$morphiaVersion"
     api "org.bouncycastle:bcpkix-jdk15on:1.70" // use the same version as bcprov-jdk15on in DW
+
+    // sda-commons-server-openapi
+    api "com.jayway.jsonpath:json-path:2.6.0"
 
     // sda-commons-server-swagger
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9"
