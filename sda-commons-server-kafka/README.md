@@ -657,3 +657,7 @@ A health check with the name kafkaConnection is automatically registered to test
 ## Testing
 [`sda-commons-server-kafka-testing`](../sda-commons-server-kafka-testing/README.md) provides support for integration testing with Kafka with JUnit 4.
 
+## Eventing
+
+If you want to use Kafka in the context of eventing when consuming or producing messages, you 
+might check out our module [`sda-commons-server-cloudevents`](../sda-commons-server-cloudevents/README.md).
