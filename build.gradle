@@ -18,7 +18,6 @@ allprojects {
   idea.module.inheritOutputDirs = true
 }
 
-// we need a repository for the combination of jacoco and sonarcloud
 repositories {
   mavenCentral()
 }
@@ -54,6 +53,11 @@ subprojects {
 
   repositories {
     mavenCentral()
+  }
+
+  // create file that includes all dependencies in "build/deps"
+  task allDeps(type: DependencyReportTask) {
+    outputFile(new File("${rootProject.buildDir}/deps", "${project.name}.txt"))
   }
 
   // Disable publication of Gradle Module Metadata
@@ -179,6 +183,13 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     options.encoding = 'UTF-8'
   }
 
+  // https://docs.gradle.org/current/userguide/resolution_strategy_tuning.html#sec:java_consistency
+  java {
+    consistentResolution {
+       useCompileClasspathVersions()
+    }
+  }
+
   // Configure JaCoCo to export the reports in XML format
   jacocoTestReport {
     reports {
@@ -213,13 +224,6 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     all*.exclude group: 'commons-logging', module: 'commons-logging' // prefer jcl-over-slf4j
   }
 
-  configurations.all {
-    resolutionStrategy {
-      // fail eagerly on version conflict (includes transitive dependencies)
-      // e.g. multiple different versions of the same dependency (group and name are equal)
-      failOnVersionConflict()
-    }
-  }
   test {
     useJUnitPlatform()
   }
