@@ -87,7 +87,7 @@ dependencies {
 
     // sda-commons-client-jersey-wiremock-testing
     api "com.github.tomakehurst:wiremock-jre8:2.32.0"
-    api "org.ow2.asm:asm:9.2", {
+    api "org.ow2.asm:asm:9.3", {
       because "version conflict within Wiremock"
     }
 
