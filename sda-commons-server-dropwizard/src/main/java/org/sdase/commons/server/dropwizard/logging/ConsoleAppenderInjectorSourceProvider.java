@@ -178,6 +178,12 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
     if ("true".equals(new SystemPropertyAndEnvironmentLookup().lookup("ENABLE_JSON_LOGGING"))) {
       consoleAppender.putIfAbsent("layout", createRequestLogConsoleAppenderLayout());
     }
+
+    if ("true"
+        .equals(new SystemPropertyAndEnvironmentLookup().lookup("DISABLE_HEALTHCHECK_LOGS"))) {
+      consoleAppender.putIfAbsent(
+          "filterFactories", createRequestLogConsoleAppenderFilterFactories());
+    }
   }
 
   private Map<String, Object> createRequestLogConsoleAppenderLayout() {
@@ -186,5 +192,15 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
     consoleAppenderLayout.put("requestHeaders", asList("Trace-Token", "Consumer-Token"));
     consoleAppenderLayout.put("responseHeaders", singletonList("Trace-Token"));
     return consoleAppenderLayout;
+  }
+
+  private List<Map<String, Object>> createRequestLogConsoleAppenderFilterFactories() {
+    List<Map<String, Object>> filterFactories = new ArrayList<>();
+    Map<String, Object> uriFilter = new HashMap<>();
+    uriFilter.put("type", "uri");
+    uriFilter.put("uris", asList("/ping", "/healthcheck/internal"));
+    filterFactories.add(uriFilter);
+
+    return filterFactories;
   }
 }
