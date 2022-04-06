@@ -85,3 +85,8 @@ public void initialize(Bootstrap<Configuration> bootstrap) {
 To enable [JSON logging](https://www.dropwizard.io/en/latest/manual/core.html#logging), set the environment variable `ENABLE_JSON_LOGGING` to `"true"`.
 We recommend JSON logging in production as they are better parsable by tools.
 However they are hard to read for human beings, so better deactivate them when working with a service locally.
+
+### Healthcheck Request Logging
+By default, Dropwizard logs all incoming requests to the console, this includes healthchecks like `/ping` and `/healthcheck/internal`.
+As these are very frequent and can quickly pollute the logs, they can be disabled by setting the environment variable `DISABLE_HEALTHCHECK_LOGS` to `"true"`.
+This will be overwritten by any manual configuration to the FilterFactories.
