@@ -3,23 +3,8 @@ dependencies {
   api "com.github.tomakehurst:wiremock-jre8", {
     // conflict with jetty from dropwizard
     exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-bom'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-util-ajax'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-continuation'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-xml'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-client'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-client'
-    exclude group: 'org.eclipse.jetty.http2', module: 'http2-common'
-    exclude group: 'org.eclipse.jetty.http2', module: 'http2-hpack'
     exclude group: 'net.minidev', module:'json-smart'
   }
-  api 'org.eclipse.jetty:jetty-util-ajax'
-  api 'org.eclipse.jetty:jetty-continuation'
-  api 'org.eclipse.jetty:jetty-xml'
-  api 'org.eclipse.jetty:jetty-client'
-  api 'org.eclipse.jetty:jetty-alpn-client'
-  api 'org.eclipse.jetty.http2:http2-common'
-  api 'org.eclipse.jetty.http2:http2-hpack'
   api 'net.minidev:json-smart'
 
   // Note about 'httpclient': We added the dependency for backwards compatibility
