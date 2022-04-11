@@ -90,6 +90,9 @@ dependencies {
     api "org.ow2.asm:asm:9.3", {
       because "version conflict within Wiremock"
     }
+    api "net.minidev:json-smart:2.4.8", {
+      because 'conflict between json-path 2.7.0 (2.4.7) and wirmock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
+    }
 
     // sda-commons-shared-asyncapi
     api "com.kjetland:mbknor-jackson-jsonschema_2.13:1.0.39"

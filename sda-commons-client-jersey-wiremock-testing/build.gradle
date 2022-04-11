@@ -11,6 +11,7 @@ dependencies {
     exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-client'
     exclude group: 'org.eclipse.jetty.http2', module: 'http2-common'
     exclude group: 'org.eclipse.jetty.http2', module: 'http2-hpack'
+    exclude group: 'net.minidev', module:'json-smart'
   }
   api 'org.eclipse.jetty:jetty-util-ajax'
   api 'org.eclipse.jetty:jetty-continuation'
@@ -19,6 +20,7 @@ dependencies {
   api 'org.eclipse.jetty:jetty-alpn-client'
   api 'org.eclipse.jetty.http2:http2-common'
   api 'org.eclipse.jetty.http2:http2-hpack'
+  api 'net.minidev:json-smart'
 
   // Note about 'httpclient': We added the dependency for backwards compatibility
   // It was pulled in by wiremock-jre8 <= 2.31.0
