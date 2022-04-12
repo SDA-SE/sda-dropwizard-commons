@@ -13,7 +13,6 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.junitpioneer.jupiter.StdIo;
 import org.junitpioneer.jupiter.StdOut;
@@ -22,40 +21,48 @@ import org.sdase.commons.server.dropwizard.bundles.test.RequestLoggingTestApp;
 @SetSystemProperty(key = "DISABLE_HEALTHCHECK_LOGS", value = "true")
 class DefaultLoggingConfigurationBundleWithRequestLogFilterTest {
 
-  @RegisterExtension
-  static final DropwizardAppExtension<Configuration> DW =
-      new DropwizardAppExtension<>(
-          RequestLoggingTestApp.class, resourceFilePath("without-appenders-key-config.yaml"));
-
   @Test
   @StdIo
-  void shouldApplyRequestLogFilterFactories(StdOut out) {
-    RequestLoggingTestApp app = DW.getApplication();
+  void shouldApplyRequestLogFilterFactories(StdOut out) throws Exception {
 
-    DefaultServerFactory serverFactory =
-        (DefaultServerFactory) app.getConfiguration().getServerFactory();
-    LogbackAccessRequestLogFactory requestLogFactory =
-        (LogbackAccessRequestLogFactory) serverFactory.getRequestLogFactory();
+    // FIXME junit-pioneer changed that @SetSystemProperty is applied as beforeEach since 1.7.0
+    // So the property is not available when the app extension is used as class extension.
+    // See https://github.com/junit-pioneer/junit-pioneer/issues/623
+    DropwizardAppExtension<Configuration> dw =
+        new DropwizardAppExtension<>(
+            RequestLoggingTestApp.class, resourceFilePath("without-appenders-key-config.yaml"));
+    try {
+      dw.before();
 
-    assertThat(requestLogFactory.getAppenders()).isNotEmpty();
-    ConsoleAppenderFactory consoleAppenderFactory =
-        (ConsoleAppenderFactory) requestLogFactory.getAppenders().get(0);
+      RequestLoggingTestApp app = dw.getApplication();
 
-    assertThat(consoleAppenderFactory.getFilterFactories()).isNotEmpty();
-    UriFilterFactory uriFilterFactory =
-        (UriFilterFactory) consoleAppenderFactory.getFilterFactories().get(0);
+      DefaultServerFactory serverFactory =
+          (DefaultServerFactory) app.getConfiguration().getServerFactory();
+      LogbackAccessRequestLogFactory requestLogFactory =
+          (LogbackAccessRequestLogFactory) serverFactory.getRequestLogFactory();
 
-    Response response =
-        createAdminTarget().path("healthcheck/internal").request().buildGet().invoke();
+      assertThat(requestLogFactory.getAppenders()).isNotEmpty();
+      ConsoleAppenderFactory<?> consoleAppenderFactory =
+          (ConsoleAppenderFactory<?>) requestLogFactory.getAppenders().get(0);
 
-    assertThat(uriFilterFactory).isNotNull();
-    assertThat(uriFilterFactory.getUris()).containsExactly("/ping", "/healthcheck/internal");
+      assertThat(consoleAppenderFactory.getFilterFactories()).isNotEmpty();
+      UriFilterFactory uriFilterFactory =
+          (UriFilterFactory) consoleAppenderFactory.getFilterFactories().get(0);
 
-    assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
-    assertThat(out.capturedLines()).noneMatch(line -> line.contains("/healthcheck/internal"));
+      Response response =
+          createAdminTarget(dw).path("healthcheck/internal").request().buildGet().invoke();
+
+      assertThat(uriFilterFactory).isNotNull();
+      assertThat(uriFilterFactory.getUris()).containsExactly("/ping", "/healthcheck/internal");
+
+      assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
+      assertThat(out.capturedLines()).noneMatch(line -> line.contains("/healthcheck/internal"));
+    } finally {
+      dw.after();
+    }
   }
 
-  private WebTarget createAdminTarget() {
-    return DW.client().target(String.format("http://localhost:%d/", DW.getAdminPort()));
+  private WebTarget createAdminTarget(DropwizardAppExtension<?> dw) {
+    return dw.client().target(String.format("http://localhost:%d/", dw.getAdminPort()));
   }
 }
