@@ -20,7 +20,7 @@ jobs:
           cache: 'gradle'
 
       - name: Install Fossa
-        run: "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
+        run: "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/v3.2.8/install-latest.sh | sudo bash"
 
       - name: Fossa Analyze
         env:
@@ -30,4 +30,4 @@ jobs:
       - name: Fossa Test
         env:
           FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
-        run: fossa test --project "sda-dropwizard-commons" --branch "$GITHUB_REF" --debug
+        run: fossa test --project "sda-dropwizard-commons" --debug
