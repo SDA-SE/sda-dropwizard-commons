@@ -70,11 +70,13 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   private ProducerTopicMessageCounter topicProducerCounterSpec;
   private ConsumerTopicMessageHistogram topicConsumerHistogram;
 
-  private List<MessageListener<?, ?>> messageListeners = new ArrayList<>();
-  private List<ThreadedMessageListener<?, ?>> threadedMessageListeners = new ArrayList<>();
-  private List<KafkaMessageProducer<?, ?>> messageProducers = new ArrayList<>();
+  private final List<MessageListener<?, ?>> messageListeners = new ArrayList<>();
+  private final List<ThreadedMessageListener<?, ?>> threadedMessageListeners = new ArrayList<>();
+  private final List<KafkaMessageProducer<?, ?>> messageProducers = new ArrayList<>();
 
-  private Map<String, ExpectedTopicConfiguration> topics = new HashMap<>();
+  private final Map<String, ExpectedTopicConfiguration> topics = new HashMap<>();
+
+  private KafkaHealthCheck kafkaHealthCheck;
 
   private KafkaBundle(
       KafkaConfigurationProvider<C> configurationProvider, boolean healthCheckDisabled) {
@@ -98,13 +100,11 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     kafkaConfiguration.getTopics().forEach((k, v) -> topics.put(k, createTopicDescription(v)));
     if (!kafkaConfiguration.isDisabled()) {
       if (healthCheckDisabled) {
-        environment
-            .healthChecks()
-            .register(EXTERNAL_HEALTHCHECK_NAME, new ExternalKafkaHealthCheck(kafkaConfiguration));
+        kafkaHealthCheck = new ExternalKafkaHealthCheck(kafkaConfiguration);
+        environment.healthChecks().register(EXTERNAL_HEALTHCHECK_NAME, kafkaHealthCheck);
       } else {
-        environment
-            .healthChecks()
-            .register(HEALTHCHECK_NAME, new KafkaHealthCheck(kafkaConfiguration));
+        kafkaHealthCheck = new KafkaHealthCheck(kafkaConfiguration);
+        environment.healthChecks().register(HEALTHCHECK_NAME, kafkaHealthCheck);
       }
     }
     topicProducerCounterSpec = new ProducerTopicMessageCounter();
@@ -559,6 +559,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
                 () -> {
                   shutdownConsumerThreads();
                   stopProducers();
+                  shutdownKafkaHealthCheck();
                 }));
   }
 
@@ -592,6 +593,12 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
         });
 
     topicConsumerHistogram.unregister();
+  }
+
+  private void shutdownKafkaHealthCheck() {
+    if (kafkaHealthCheck != null) {
+      kafkaHealthCheck.shutdown();
+    }
   }
 
   public interface InitialBuilder {
