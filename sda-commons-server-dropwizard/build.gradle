@@ -5,4 +5,5 @@ dependencies {
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-server-healthcheck')
+  testImplementation('org.awaitility:awaitility')
 }
