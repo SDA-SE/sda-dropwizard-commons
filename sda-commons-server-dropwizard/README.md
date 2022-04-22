@@ -90,3 +90,9 @@ However they are hard to read for human beings, so better deactivate them when w
 By default, Dropwizard logs all incoming requests to the console, this includes healthchecks like `/ping` and `/healthcheck/internal`.
 As these are very frequent and can quickly pollute the logs, they can be disabled by setting the environment variable `DISABLE_HEALTHCHECK_LOGS` to `"true"`.
 This will be overwritten by any manual configuration to the FilterFactories.
+With `DISABLE_HEALTHCHECK_LOGS` active request logs for all paths related to monitoring are disabled:
+- `/ping`
+- `/healthcheck`
+- `/healthcheck/internal`
+- `/metrics`
+- `/metrics/prometheus`

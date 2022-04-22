@@ -43,7 +43,6 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
   public InputStream open(String path) throws IOException {
     try (final InputStream in = delegate.open(path)) {
       Yaml yaml = new Yaml();
-      @SuppressWarnings("unchecked")
       Map<String, Object> root = yaml.load(in);
 
       try {
@@ -70,10 +69,15 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
   }
 
   private void applyLoggingAppenders(Map<String, Object> logging) {
+    List<Object> appenders = createAppendersListIfAbsent(logging);
+    applyLoggingConsoleAppender(appenders);
+  }
+
+  private List<Object> createAppendersListIfAbsent(Map<String, Object> logging) {
     logging.putIfAbsent("appenders", new ArrayList<>());
     @SuppressWarnings("unchecked")
     List<Object> appenders = (List<Object>) logging.get("appenders");
-    applyLoggingConsoleAppender(appenders);
+    return appenders;
   }
 
   private void applyLoggingConsoleAppender(List<Object> appenders) {
@@ -84,7 +88,7 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
             @SuppressWarnings("unchecked")
             Map<String, Object> appender = (Map<String, Object>) a;
 
-            if ("console".equals((appender).get("type"))) {
+            if (isConsoleAppenderType(appender)) {
               applyLoggingConsoleAppenderDefaults(appender);
               foundConsoleAppender.set(true);
             }
@@ -140,9 +144,7 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
   }
 
   private void applyRequestLogAppenders(Map<String, Object> requestLog) {
-    requestLog.putIfAbsent("appenders", new ArrayList<>());
-    @SuppressWarnings("unchecked")
-    List<Object> appenders = (List<Object>) requestLog.get("appenders");
+    List<Object> appenders = createAppendersListIfAbsent(requestLog);
     applyRequestLogConsoleAppender(appenders);
   }
 
@@ -154,7 +156,7 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
             @SuppressWarnings("unchecked")
             Map<String, Object> appender = (Map<String, Object>) a;
 
-            if ("console".equals((appender).get("type"))) {
+            if (isConsoleAppenderType(appender)) {
               applyRequestLogConsoleAppenderDefaults(appender);
               foundConsoleAppender.set(true);
             }
@@ -162,16 +164,14 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
         });
 
     if (!foundConsoleAppender.get()) {
-      Map<String, Object> consoleAppender = createRequestLogConsoleAppender();
+      Map<String, Object> consoleAppender = createLoggingConsoleAppender();
       applyRequestLogConsoleAppenderDefaults(consoleAppender);
       appenders.add(consoleAppender);
     }
   }
 
-  private Map<String, Object> createRequestLogConsoleAppender() {
-    Map<String, Object> consoleAppender = new HashMap<>();
-    consoleAppender.put("type", "console");
-    return consoleAppender;
+  private boolean isConsoleAppenderType(Map<String, Object> appender) {
+    return "console".equals(appender.get("type"));
   }
 
   private void applyRequestLogConsoleAppenderDefaults(Map<String, Object> consoleAppender) {
@@ -198,7 +198,10 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
     List<Map<String, Object>> filterFactories = new ArrayList<>();
     Map<String, Object> uriFilter = new HashMap<>();
     uriFilter.put("type", "uri");
-    uriFilter.put("uris", asList("/ping", "/healthcheck/internal"));
+    uriFilter.put(
+        "uris",
+        asList(
+            "/ping", "/healthcheck", "/healthcheck/internal", "/metrics", "/metrics/prometheus"));
     filterFactories.add(uriFilter);
 
     return filterFactories;
