@@ -8,6 +8,7 @@ dependencies {
   api 'jakarta.servlet:jakarta.servlet-api'
 
   api 'com.auth0:java-jwt'
+  api 'org.bouncycastle:bcpkix-jdk15on'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')

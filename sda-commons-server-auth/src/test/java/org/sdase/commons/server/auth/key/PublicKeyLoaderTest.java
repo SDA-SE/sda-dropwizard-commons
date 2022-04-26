@@ -11,9 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class RsaPublicKeyLoaderTest {
+public class PublicKeyLoaderTest {
 
-  private RsaPublicKeyLoader keyLoader = new RsaPublicKeyLoader();
+  private PublicKeyLoader keyLoader = new PublicKeyLoader();
 
   @Test
   public void shouldAddKeyWithoutKid() {
@@ -22,7 +22,7 @@ public class RsaPublicKeyLoaderTest {
         new KeySource() {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
-            return singletonList(new LoadedPublicKey(null, mockKey, this, null));
+            return singletonList(new LoadedPublicKey(null, mockKey, this, null, null));
           }
         };
 
@@ -40,7 +40,7 @@ public class RsaPublicKeyLoaderTest {
         new KeySource() {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
-            return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null));
+            return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null, "RS256"));
           }
         };
 
@@ -60,9 +60,9 @@ public class RsaPublicKeyLoaderTest {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
             if (numberOfCalls.getAndIncrement() < 1) {
-              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null));
+              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null, "RS256"));
             } else {
-              return singletonList(new LoadedPublicKey("newKid", newMockKey, this, null));
+              return singletonList(new LoadedPublicKey("newKid", newMockKey, this, null, "RS256"));
             }
           }
         };
@@ -93,11 +93,11 @@ public class RsaPublicKeyLoaderTest {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
             if (numberOfCalls.getAndIncrement() < 1) {
-              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null));
+              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null, "RS256"));
             } else {
               return Arrays.asList(
-                  new LoadedPublicKey("exampleKid", mockKey, this, null),
-                  new LoadedPublicKey("newKid", newMockKey, this, null));
+                  new LoadedPublicKey("exampleKid", mockKey, this, null, "RS256"),
+                  new LoadedPublicKey("newKid", newMockKey, this, null, "RS256"));
             }
           }
         };
@@ -127,7 +127,7 @@ public class RsaPublicKeyLoaderTest {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
             if (numberOfCalls.getAndIncrement() < 1) {
-              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null));
+              return singletonList(new LoadedPublicKey("exampleKid", mockKey, this, null, "RS256"));
             } else {
               throw new KeyLoadFailedException("Test error");
             }
@@ -157,7 +157,7 @@ public class RsaPublicKeyLoaderTest {
         new KeySource() {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
-            return singletonList(new LoadedPublicKey(null, mockKey, this, null));
+            return singletonList(new LoadedPublicKey(null, mockKey, this, null, "RS256"));
           }
         };
 
@@ -178,8 +178,8 @@ public class RsaPublicKeyLoaderTest {
           @Override
           public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
             return Arrays.asList(
-                new LoadedPublicKey(null, mockKey, this, null),
-                new LoadedPublicKey("exampleKid", mockKey, this, null));
+                new LoadedPublicKey(null, mockKey, this, null, "RS256"),
+                new LoadedPublicKey("exampleKid", mockKey, this, null, "RS256"));
           }
         };
 
@@ -196,7 +196,7 @@ public class RsaPublicKeyLoaderTest {
   public void shouldNotRemoveKeysIfReloadingFailed() {
     AtomicBoolean loaded = new AtomicBoolean();
     AtomicBoolean thrown = new AtomicBoolean();
-    RsaPublicKeyLoader rsaPublicKeyLoader = new RsaPublicKeyLoader();
+    PublicKeyLoader rsaPublicKeyLoader = new PublicKeyLoader();
     KeySource keySource =
         new KeySource() {
           @Override
@@ -206,7 +206,8 @@ public class RsaPublicKeyLoaderTest {
               throw new KeyLoadFailedException();
             }
             return singletonList(
-                new LoadedPublicKey("the-kid", Mockito.mock(RSAPublicKey.class), this, null));
+                new LoadedPublicKey(
+                    "the-kid", Mockito.mock(RSAPublicKey.class), this, null, "RS256"));
           }
         };
 

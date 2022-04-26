@@ -57,7 +57,10 @@ public class OpenIdProviderDiscoveryKeySource implements KeySource {
       List<LoadedPublicKey> loadedPublicKeys =
           new JwksKeySource(discovery.getJwksUri(), client, requiredIssuer).loadKeysFromSource();
       return loadedPublicKeys.stream()
-          .map(k -> new LoadedPublicKey(k.getKid(), k.getPublicKey(), this, requiredIssuer))
+          .map(
+              k ->
+                  new LoadedPublicKey(
+                      k.getKid(), k.getPublicKey(), this, requiredIssuer, k.getSigAlgorithm()))
           .collect(Collectors.toList());
     } catch (KeyLoadFailedException e) {
       throw e;

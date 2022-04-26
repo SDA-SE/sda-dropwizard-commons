@@ -1,6 +1,6 @@
 package org.sdase.commons.server.auth.key;
 
-import java.security.interfaces.RSAPublicKey;
+import java.security.PublicKey;
 import java.util.Objects;
 
 public class LoadedPublicKey {
@@ -9,7 +9,10 @@ public class LoadedPublicKey {
   private String kid;
 
   /** The public key that has been loaded. */
-  private RSAPublicKey publicKey;
+  private PublicKey publicKey;
+
+  /* Intended sign algorithm*/
+  private String sigAlgorithm;
 
   /** The source where the key has been loaded from. */
   private KeySource keySource;
@@ -18,18 +21,23 @@ public class LoadedPublicKey {
   private String requiredIssuer;
 
   public LoadedPublicKey(
-      String kid, RSAPublicKey publicKey, KeySource keySource, String requiredIssuer) {
+      String kid,
+      PublicKey publicKey,
+      KeySource keySource,
+      String requiredIssuer,
+      String sigAlgorithm) {
     this.kid = kid;
     this.publicKey = publicKey;
     this.keySource = keySource;
     this.requiredIssuer = requiredIssuer;
+    this.sigAlgorithm = sigAlgorithm;
   }
 
   public String getKid() {
     return kid;
   }
 
-  public RSAPublicKey getPublicKey() {
+  public PublicKey getPublicKey() {
     return publicKey;
   }
 
@@ -48,11 +56,16 @@ public class LoadedPublicKey {
     LoadedPublicKey that = (LoadedPublicKey) o;
     return Objects.equals(kid, that.kid)
         && Objects.equals(publicKey, that.publicKey)
+        && Objects.equals(sigAlgorithm, that.sigAlgorithm)
         && Objects.equals(keySource, that.keySource);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(kid, publicKey, keySource);
+  }
+
+  public String getSigAlgorithm() {
+    return sigAlgorithm;
   }
 }

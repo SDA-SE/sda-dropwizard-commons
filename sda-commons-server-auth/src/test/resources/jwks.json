@@ -23,6 +23,24 @@
       "e": "AQAB"
     },
     {
+      "kty": "EC",
+      "use": "sig",
+      "crv": "P-256",
+      "kid": "jwx-hn1U7ho3DC-pWxliI1Oqo5-_hksg3TzPPfSsi68",
+      "x": "OZHkPicFMsh0vxHHbadHU2HdHA0O6bIKjEo6Hd2YSCg",
+      "y": "2I86KwgT1OYXA6ZhuA7aKh_yq6u3Su3tvOEcz9C9NYI",
+      "alg": "ES256"
+    },
+    {
+      "kty": "EC",
+      "use": "sig",
+      "crv": "P-521",
+      "kid": "46hiaXZquU4w-O6OIWUM1V6WXd4mbPoB6ZugPSrayR8",
+      "x": "AKale3fvlHVbFM9t6LbWgEz7gpK_vMvhwitTJKBYopqEl9MQcEYhg2ZN-hRw28ggRugtzKKOATFrwrmqJB5mKzUP",
+      "y": "ANnC-U8FHHzop3sa_TQxtl3IUqwsU36Bb8QF2HZr15a4esRZ4MTKgHA1r7DSmRq1iT-1soNQMzhHFV1oTck0Uenz",
+      "alg": "ES512"
+    },
+    {
       "kid": "pk82qxxLwy1wn6KTfAcyosSvwJ3uanZdChAvQYynq00",
       "kty": "RSA",
       "alg": "RS512",

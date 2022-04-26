@@ -6,34 +6,34 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RsaKeyLoaderScheduler {
-  private static final Logger LOGGER = LoggerFactory.getLogger(RsaKeyLoaderScheduler.class);
+public class KeyLoaderScheduler {
+  private static final Logger LOGGER = LoggerFactory.getLogger(KeyLoaderScheduler.class);
   private static final int DEFAULT_INITIAL_DELAY = 5;
   private static final int DEFAULT_PERIOD = 5;
   private static final TimeUnit DEFAULT_TIMEUNIT = TimeUnit.MINUTES;
 
   private ScheduledExecutorService reloadKeysExecutorService;
-  private RsaPublicKeyLoader keyLoader;
+  private PublicKeyLoader keyLoader;
 
-  private RsaKeyLoaderScheduler(
-      RsaPublicKeyLoader keyLoader, ScheduledExecutorService reloadKeysExecutorService) {
+  private KeyLoaderScheduler(
+      PublicKeyLoader keyLoader, ScheduledExecutorService reloadKeysExecutorService) {
     this.keyLoader = keyLoader;
     this.reloadKeysExecutorService = reloadKeysExecutorService;
   }
 
-  public static RsaKeyLoaderScheduler create(
-      RsaPublicKeyLoader keyLoader, ScheduledExecutorService reloadKeysExecutorService) {
+  public static KeyLoaderScheduler create(
+      PublicKeyLoader keyLoader, ScheduledExecutorService reloadKeysExecutorService) {
     Validate.notNull(keyLoader, "keyLoader should not be null");
     Validate.notNull(reloadKeysExecutorService, "executorService should not be null");
-    return new RsaKeyLoaderScheduler(keyLoader, reloadKeysExecutorService);
+    return new KeyLoaderScheduler(keyLoader, reloadKeysExecutorService);
   }
 
-  public RsaKeyLoaderScheduler start() {
+  public KeyLoaderScheduler start() {
     return internalStart(DEFAULT_INITIAL_DELAY, DEFAULT_PERIOD, DEFAULT_TIMEUNIT);
   }
 
   // please only call once!
-  RsaKeyLoaderScheduler internalStart(int initialDelay, int period, TimeUnit timeUnit) {
+  KeyLoaderScheduler internalStart(int initialDelay, int period, TimeUnit timeUnit) {
     Runnable reloadKeysTask =
         () -> {
           try {

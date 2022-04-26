@@ -1,16 +1,23 @@
 package org.sdase.commons.server.auth.key;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.dropwizard.util.Sets;
 import java.math.BigInteger;
+import java.security.AlgorithmParameters;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.interfaces.RSAPublicKey;
+import java.security.spec.ECGenParameterSpec;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPoint;
+import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
@@ -26,7 +33,14 @@ import org.slf4j.LoggerFactory;
  * Set</a>.
  */
 public class JwksKeySource implements KeySource {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(JwksKeySource.class);
+
+  private static final String RSA_KTY = "RSA";
+  private static final String EC_KTY = "EC";
+  private static final Set<String> SUPPORTED_KTY = Sets.of(RSA_KTY, EC_KTY);
+  private static final Set<String> SUPPORTED_ALG =
+      Sets.of("RS256", "RS384", "RS512", "ES256", "ES384", "ES512");
 
   private final String jwksUri;
 
@@ -57,8 +71,8 @@ public class JwksKeySource implements KeySource {
       return jwks.getKeys().stream()
           .filter(Objects::nonNull)
           .filter(this::isForSigning)
-          .filter(this::isRsaKeyType)
-          .filter(this::isRsa256Key)
+          .filter(this::isSupportedKeyType)
+          .filter(this::isSupportedAlg)
           .map(this::toPublicKey)
           .collect(Collectors.toList());
     } catch (KeyLoadFailedException e) {
@@ -97,37 +111,71 @@ public class JwksKeySource implements KeySource {
     return StringUtils.isBlank(key.getUse()) || "sig".equals(key.getUse());
   }
 
-  private boolean isRsaKeyType(Key key) {
-    return "RSA".equals(key.getKty());
+  private boolean isSupportedKeyType(Key key) {
+    return SUPPORTED_KTY.contains(key.getKty());
   }
 
-  private boolean isRsa256Key(Key key) {
-    // We only support RSA256, if blank we assume it to be RS256.
-    return StringUtils.isBlank(key.getAlg()) || "RS256".equals(key.getAlg());
+  private boolean isSupportedAlg(Key key) {
+    return SUPPORTED_ALG.contains(key.getAlg());
+  }
+
+  private static String mapCrvToStdName(String crv) {
+    switch (crv) {
+      case "P-256":
+        return "secp256r1";
+      case "P-384":
+        return "secp384r1";
+      case "P-521":
+        return "secp521r1";
+      default:
+        throw new KeyLoadFailedException(
+            "EC keys are supported but loaded an unsupported EC curve: '" + crv + "'");
+    }
   }
 
   private LoadedPublicKey toPublicKey(Key key) throws KeyLoadFailedException { // NOSONAR
     try {
-      String kid = key.getKid();
       String keyType = key.getKty();
       KeyFactory keyFactory = KeyFactory.getInstance(keyType);
-
-      BigInteger modulus = readBase64AsBigInt(key.getN());
-      BigInteger exponent = readBase64AsBigInt(key.getE());
-
-      PublicKey publicKey = keyFactory.generatePublic(new RSAPublicKeySpec(modulus, exponent));
-      if (publicKey instanceof RSAPublicKey) {
-        return new LoadedPublicKey(kid, (RSAPublicKey) publicKey, this, requiredIssuer);
-      } else {
-        throw new KeyLoadFailedException(
-            "Only RSA keys are supported but loaded a "
-                + publicKey.getClass()
-                + " from "
-                + jwksUri);
+      switch (keyType) {
+        case RSA_KTY:
+          return toRsaPublicKey(key, keyFactory);
+        case EC_KTY:
+          return toEcPublicKey(key, keyFactory);
+        default:
+          throw new KeyLoadFailedException(
+              "Unsupported key: " + key.getClass() + " from " + jwksUri);
       }
-    } catch (NullPointerException | InvalidKeySpecException | NoSuchAlgorithmException e) {
+    } catch (NullPointerException
+        | InvalidKeySpecException
+        | NoSuchAlgorithmException
+        | InvalidParameterSpecException e) {
       throw new KeyLoadFailedException(e);
     }
+  }
+
+  private LoadedPublicKey toRsaPublicKey(Key key, KeyFactory keyFactory)
+      throws InvalidKeySpecException {
+    BigInteger modulus = readBase64AsBigInt(key.getN());
+    BigInteger exponent = readBase64AsBigInt(key.getE());
+    PublicKey publicKey = keyFactory.generatePublic(new RSAPublicKeySpec(modulus, exponent));
+    return new LoadedPublicKey(key.getKid(), publicKey, this, requiredIssuer, key.getAlg());
+  }
+
+  private LoadedPublicKey toEcPublicKey(Key key, KeyFactory keyFactory)
+      throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidParameterSpecException {
+
+    BigInteger x = readBase64AsBigInt(key.getX());
+    BigInteger y = readBase64AsBigInt(key.getY());
+
+    AlgorithmParameters parameters = AlgorithmParameters.getInstance(EC_KTY);
+    parameters.init(new ECGenParameterSpec(mapCrvToStdName(key.getCrv())));
+
+    PublicKey publicKey =
+        keyFactory.generatePublic(
+            new ECPublicKeySpec(
+                new ECPoint(x, y), parameters.getParameterSpec(ECParameterSpec.class)));
+    return new LoadedPublicKey(key.getKid(), publicKey, this, requiredIssuer, key.getAlg());
   }
 
   private static BigInteger readBase64AsBigInt(String encodedBigInt) {
@@ -156,6 +204,9 @@ public class JwksKeySource implements KeySource {
     private String use;
     private String n;
     private String e;
+    private String x;
+    private String y;
+    private String crv;
 
     public String getKid() {
       return kid;
@@ -208,6 +259,33 @@ public class JwksKeySource implements KeySource {
 
     public Key setE(String e) {
       this.e = e;
+      return this;
+    }
+
+    public String getX() {
+      return x;
+    }
+
+    public Key setX(String x) {
+      this.x = x;
+      return this;
+    }
+
+    public String getY() {
+      return y;
+    }
+
+    public Key setY(String y) {
+      this.y = y;
+      return this;
+    }
+
+    public String getCrv() {
+      return crv;
+    }
+
+    public Key setCrv(String crv) {
+      this.crv = crv;
       return this;
     }
   }

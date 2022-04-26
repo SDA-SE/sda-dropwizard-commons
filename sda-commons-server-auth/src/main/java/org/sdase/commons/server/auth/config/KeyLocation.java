@@ -39,6 +39,14 @@ public class KeyLocation {
   private String pemKeyId;
 
   /**
+   * Optional <a
+   * href="https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key-41#section-4.4">signing
+   * algorithm</a> used only if the {@link #type} is {@link KeyUriType#PEM}. If not set, RS265 is
+   * expected.
+   */
+  private String pemSignAlg;
+
+  /**
    * Optional <a href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken">iss</a> that
    * specifies the required issuer of the jwt token, if not empty.
    */
@@ -77,6 +85,15 @@ public class KeyLocation {
 
   public KeyLocation setRequiredIssuer(String requiredIssuer) {
     this.requiredIssuer = requiredIssuer;
+    return this;
+  }
+
+  public String getPemSignAlg() {
+    return pemSignAlg;
+  }
+
+  public KeyLocation setPemSignAlg(String pemSignAlg) {
+    this.pemSignAlg = pemSignAlg;
     return this;
   }
 }

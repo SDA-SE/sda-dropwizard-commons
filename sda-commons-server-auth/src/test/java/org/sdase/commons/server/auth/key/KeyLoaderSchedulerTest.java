@@ -16,7 +16,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RsaKeyLoaderSchedulerTest {
+public class KeyLoaderSchedulerTest {
   private static final int RELOAD_PERIOD = 1;
 
   // test data
@@ -27,11 +27,11 @@ public class RsaKeyLoaderSchedulerTest {
   private final AtomicInteger numberOfReloads = new AtomicInteger(0);
 
   // setup
-  private final RsaPublicKeyLoader keyLoader = new RsaPublicKeyLoader();
+  private final PublicKeyLoader keyLoader = new PublicKeyLoader();
   private final ScheduledExecutorService executorService =
       Executors.newSingleThreadScheduledExecutor();
-  private final RsaKeyLoaderScheduler keyLoaderScheduler =
-      RsaKeyLoaderScheduler.create(keyLoader, executorService);
+  private final KeyLoaderScheduler keyLoaderScheduler =
+      KeyLoaderScheduler.create(keyLoader, executorService);
   private final KeySource keySource =
       () -> {
         numberOfReloads.incrementAndGet();
@@ -61,8 +61,9 @@ public class RsaKeyLoaderSchedulerTest {
     RSAPublicKey keyToBeRevoked = mock(RSAPublicKey.class);
 
     // initially, two known keys are published
-    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null));
-    actualKeys.add(new LoadedPublicKey("kidForKeyToBeRevoked", keyToBeRevoked, keySource, null));
+    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null, "RS256"));
+    actualKeys.add(
+        new LoadedPublicKey("kidForKeyToBeRevoked", keyToBeRevoked, keySource, null, "RS256"));
 
     waitForNextReload();
     assertThatKeyIsKnown("kidForValidKey", validKey);
@@ -80,7 +81,7 @@ public class RsaKeyLoaderSchedulerTest {
   public void shouldKeepKeysOnLoadingFailure() {
     final RSAPublicKey validKey = mock(RSAPublicKey.class);
 
-    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null));
+    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null, "RS256"));
 
     waitForNextReload();
     assertThatKeyIsKnown("kidForValidKey", validKey);
@@ -105,7 +106,7 @@ public class RsaKeyLoaderSchedulerTest {
 
     // expect more schedules
     actualInvocationFails.set(false);
-    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null));
+    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null, "RS256"));
 
     waitForNextReload();
     assertThatKeyIsKnown("kidForValidKey", validKey);

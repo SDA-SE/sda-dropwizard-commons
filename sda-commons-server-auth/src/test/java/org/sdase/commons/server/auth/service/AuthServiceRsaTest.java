@@ -12,9 +12,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPublicKeySpec;
@@ -27,34 +31,36 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.auth.error.JwtAuthException;
-import org.sdase.commons.server.auth.key.RsaPublicKeyLoader;
+import org.sdase.commons.server.auth.key.PublicKeyLoader;
 import org.sdase.commons.server.auth.service.testsources.JwksTestKeySource;
 
 /**
  * This will validate the AuthRSA256Service by this unit test with the inclusion of the token issuer
  */
-class AuthRSA256ServiceTest {
+class AuthServiceRsaTest {
 
   public static final String CLAIM_ISSUER = "iss";
   public static final String CLAIM_NOT_BEFORE = "nbf";
   public static final String CLAIM_EXPIRE = "exp";
   public static final String RSA_PRIVATE_KEY = "rsa-private.key";
-  private AuthRSA256Service service;
-  private RsaPublicKeyLoader keyLoader;
+  private static final String RSA_ALG = "RS256";
+  private AuthService service;
+  private PublicKeyLoader keyLoader;
   public static final String ISSUER = "https://localhost.com/issuer";
   public static final String KEY_ID = "myKeyId";
 
   @BeforeEach
   void setUp() {
-    this.keyLoader = new RsaPublicKeyLoader();
-    this.service = new AuthRSA256Service(this.keyLoader, 0);
+    this.keyLoader = new PublicKeyLoader();
+    this.service = new AuthService(this.keyLoader, 0);
   }
 
   @Test
   void validTokenWithKeyIdAndNoIssuerAndRequiredIssuerButJwks() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(null, keyPair.getRight(), ISSUER, KEY_ID));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(null, keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -65,9 +71,9 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithoutIssuerAndRequiredIssuerButJwks() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(null, keyPair.getRight(), ISSUER, null));
+    keyLoader.addKeySource(new JwksTestKeySource(null, keyPair.getRight(), ISSUER, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -78,9 +84,10 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithKeyIdAndNoIssuerButConfiguredRequiredIssuer() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, null, KEY_ID, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -91,9 +98,9 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithoutIssuerButConfiguredRequiredIssuer() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, null, null, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null));
+    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -104,9 +111,10 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithKeyIdAndIssuerAndNoConfiguredRequiredIssuer() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -117,9 +125,9 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithIssuerAndNoConfiguredRequiredIssuer() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null));
+    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -130,9 +138,10 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithKeyIdAndIssuerAndAndFutureNotBeforeFailed() throws InterruptedException {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, KEY_ID, 2, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
     TimeUnit.SECONDS.sleep(2);
@@ -145,9 +154,10 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithIssuerAndAndFutureNotBeforeFailed() throws InterruptedException {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 2, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
     TimeUnit.SECONDS.sleep(2);
@@ -160,9 +170,10 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithKeyIdAndIssuerAndWillExpire() throws InterruptedException {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, KEY_ID, 0, 2);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
     final Map<String, Claim> claims = this.service.auth(token);
     assertThat(claims.get(CLAIM_ISSUER).asString()).isEqualTo(ISSUER);
     assertThat(claims.get(CLAIM_NOT_BEFORE).asLong() * 1000L).isLessThan(new Date().getTime());
@@ -173,9 +184,10 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithIssuerAndWillExpire() throws InterruptedException {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 2);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, RSA_ALG));
     final Map<String, Claim> claims = this.service.auth(token);
     assertThat(claims.get(CLAIM_ISSUER).asString()).isEqualTo(ISSUER);
     assertThat(claims.get(CLAIM_NOT_BEFORE).asLong() * 1000L).isLessThan(new Date().getTime());
@@ -186,9 +198,10 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithKeyIdAndIssuerAndConfiguredRequiredIssuer() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -199,9 +212,10 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithIssuerAndConfiguredRequiredIssuer() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -212,48 +226,51 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithKeyIdAndWrongIssuerAndCorrectConfiguredRequiredIssuer() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, "https://www.google.de", KEY_ID, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
 
   @Test
   void validTokenWithWrongIssuerAndCorrectConfiguredRequiredIssuer() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, "https://www.google.de", null, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
 
   @Test
   void validTokenWithKeyIdAndCorrectIssuerAndWrongConfiguredRequiredIssuer() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), "https://www.google.de", KEY_ID));
+        new JwksTestKeySource(
+            ISSUER, keyPair.getRight(), "https://www.google.de", KEY_ID, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
 
   @Test
   void validTokenWithCorrectIssuerAndWrongConfiguredRequiredIssuer() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), "https://www.google.de", null));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), "https://www.google.de", null, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
 
   @Test
   void validTokenWithKeyIdAndCorrectIssuerAndSameJwksSourceHostButDifferentPath() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER + "/subpath", keyPair.getRight(), ISSUER, KEY_ID));
+        new JwksTestKeySource(ISSUER + "/subpath", keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -264,10 +281,10 @@ class AuthRSA256ServiceTest {
 
   @Test
   void validTokenWithCorrectIssuerAndSameJwksSourceHostButDifferentPath() {
-    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createKeyPair(RSA_PRIVATE_KEY);
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER + "/subpath", keyPair.getRight(), ISSUER, null));
+        new JwksTestKeySource(ISSUER + "/subpath", keyPair.getRight(), ISSUER, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -315,15 +332,40 @@ class AuthRSA256ServiceTest {
    * @param privateKeyFileLocation The location of the private key file.
    * @return the {@link Pair} containing the private and public key.
    */
-  private Pair<RSAPrivateKey, RSAPublicKey> createKeyPair(String privateKeyFileLocation) {
+  private Pair<RSAPrivateKey, RSAPublicKey> createRsaKeyPair(String privateKeyFileLocation) {
     try {
       final String privateKeyLocation = ResourceHelpers.resourceFilePath(privateKeyFileLocation);
 
-      RSAPrivateCrtKey privateKey = (RSAPrivateCrtKey) loadPrivateKey(privateKeyLocation);
+      RSAPrivateCrtKey privateKey = (RSAPrivateCrtKey) loadRsaPrivateKey(privateKeyLocation);
       RSAPublicKeySpec publicKeySpec =
           new RSAPublicKeySpec(privateKey.getModulus(), privateKey.getPublicExponent());
       KeyFactory keyFactory = KeyFactory.getInstance("RSA");
       RSAPublicKey publicKey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
+
+      return Pair.of(privateKey, publicKey);
+    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Load a private key from the provided file location and generate the matching public key and
+   * returns the two keys as {@link Pair}.
+   *
+   * @param privateKeyFileLocation The location of the private key file.
+   * @return the {@link Pair} containing the private and public key.
+   */
+  private Pair<ECPrivateKey, ECPublicKey> createEcKeyPair(String privateKeyFileLocation) {
+    try {
+      final String privateKeyLocation = ResourceHelpers.resourceFilePath(privateKeyFileLocation);
+
+      ECPrivateKey privateKey = loadEcPrivateKey(privateKeyLocation);
+      ECParameterSpec parameterSpec = privateKey.getParams();
+
+      ECPublicKeySpec publicKeySpec =
+          new ECPublicKeySpec(parameterSpec.getGenerator(), parameterSpec);
+      KeyFactory keyFactory = KeyFactory.getInstance("EC");
+      ECPublicKey publicKey = (ECPublicKey) keyFactory.generatePublic(publicKeySpec);
 
       return Pair.of(privateKey, publicKey);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -337,13 +379,31 @@ class AuthRSA256ServiceTest {
    * @param privateKeyLocation the path of the key file as {@link String}
    * @return a {@link RSAPrivateKey} created from the binary key file.
    */
-  private RSAPrivateKey loadPrivateKey(String privateKeyLocation) {
+  private RSAPrivateKey loadRsaPrivateKey(String privateKeyLocation) {
     byte[] keyBytes;
     try {
       keyBytes = Files.readAllBytes(Paths.get(privateKeyLocation));
       PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
       KeyFactory kf = KeyFactory.getInstance("RSA");
       return (RSAPrivateKey) kf.generatePrivate(spec);
+    } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Load a private key from a binary file
+   *
+   * @param privateKeyLocation the path of the key file as {@link String}
+   * @return a {@link ECPrivateKey} created from the binary key file.
+   */
+  private ECPrivateKey loadEcPrivateKey(String privateKeyLocation) {
+    byte[] keyBytes;
+    try {
+      keyBytes = Files.readAllBytes(Paths.get(privateKeyLocation));
+      PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+      KeyFactory kf = KeyFactory.getInstance("EC");
+      return (ECPrivateKey) kf.generatePrivate(spec);
     } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
       throw new RuntimeException(e);
     }

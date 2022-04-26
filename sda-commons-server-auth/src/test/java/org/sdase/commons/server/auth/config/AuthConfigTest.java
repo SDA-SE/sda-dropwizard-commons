@@ -36,7 +36,7 @@ public class AuthConfigTest {
   private static String initKeys() {
     List<KeyLocation> keys = new ArrayList<>();
     KeyLocation pem = new KeyLocation();
-    String pemLocation = ResourceHelpers.resourceFilePath("example.pem");
+    String pemLocation = ResourceHelpers.resourceFilePath("rsa-example.pem");
     pem.setLocation(new File(pemLocation).toURI());
     pem.setType(KeyUriType.PEM);
     pem.setPemKeyId("example");
@@ -80,7 +80,7 @@ public class AuthConfigTest {
         .containsExactly(
             tuple(
                 KeyUriType.PEM,
-                new File(ResourceHelpers.resourceFilePath("example.pem")).toURI(),
+                new File(ResourceHelpers.resourceFilePath("rsa-example.pem")).toURI(),
                 "example",
                 "http://localhost/dex"),
             tuple(

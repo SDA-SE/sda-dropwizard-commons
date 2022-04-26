@@ -16,11 +16,11 @@ import org.slf4j.LoggerFactory;
 public class JwtAuthenticator implements Authenticator<Optional<String>, JwtPrincipal> {
   private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticator.class);
 
-  private AuthService authService;
+  private TokenAuthorizer tokenAuthorizer;
   private boolean disabled;
 
-  public JwtAuthenticator(AuthService authService, boolean disabled) {
-    this.authService = authService;
+  public JwtAuthenticator(TokenAuthorizer tokenAuthorizer, boolean disabled) {
+    this.tokenAuthorizer = tokenAuthorizer;
     this.disabled = disabled;
   }
 
@@ -36,7 +36,7 @@ public class JwtAuthenticator implements Authenticator<Optional<String>, JwtPrin
       LOGGER.info("No access token received");
       return Optional.empty();
     }
-    final Map<String, Claim> claims = authService.auth(credentials.get());
+    final Map<String, Claim> claims = tokenAuthorizer.auth(credentials.get());
     return Optional.of(JwtPrincipal.verifiedPrincipal(credentials.get(), claims));
   }
 }
