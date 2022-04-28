@@ -13,6 +13,7 @@ import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -62,9 +63,8 @@ class DefaultLoggingConfigurationBundleWithRequestLogFilterTest {
             "ping", "healthcheck", "healthcheck/internal", "metrics", "metrics/prometheus");
     List<Response> responses = new ArrayList<>();
     try {
-      pathsExpectingNoLogEntry.forEach(
-          p -> createAdminTarget().path(p).request().buildGet().invoke());
-      responses.add(createWebTarget().path("test").request().buildGet().invoke());
+      pathsExpectingNoLogEntry.forEach(p -> createAdminTarget().path(p).request().get());
+      responses.add(createWebTarget().path("test").request().get());
 
       assertThat(responses)
           .extracting(Response::getStatus)
@@ -74,6 +74,31 @@ class DefaultLoggingConfigurationBundleWithRequestLogFilterTest {
           .untilAsserted(() -> assertThat(out.capturedLines()).anyMatch(l -> l.contains("/test")));
 
       assertThat(String.join("\n", out.capturedLines())).doesNotContain(pathsExpectingNoLogEntry);
+    } finally {
+      responses.forEach(Response::close);
+    }
+  }
+
+  @StdIo
+  @Test
+  void verifyDeprecatedEndpointIsLogged(StdOut out) {
+    List<String> deprecatedPaths = Collections.singletonList("healthcheck/prometheus");
+    List<Response> responses = new ArrayList<>();
+    try {
+      // invoke deprecated paths
+      deprecatedPaths.forEach(p -> createAdminTarget().path(p).request().get());
+
+      // invoke "test" to definitely get some output
+      responses.add(createWebTarget().path("test").request().get());
+
+      assertThat(responses)
+          .extracting(Response::getStatus)
+          .allMatch(sc -> sc == OK.getStatusCode());
+
+      await()
+          .untilAsserted(() -> assertThat(out.capturedLines()).anyMatch(l -> l.contains("/test")));
+
+      assertThat(String.join("\n", out.capturedLines())).contains(deprecatedPaths);
     } finally {
       responses.forEach(Response::close);
     }
