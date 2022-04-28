@@ -181,8 +181,7 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
 
     if ("true"
         .equals(new SystemPropertyAndEnvironmentLookup().lookup("DISABLE_HEALTHCHECK_LOGS"))) {
-      consoleAppender.putIfAbsent(
-          "filterFactories", createRequestLogConsoleAppenderFilterFactories());
+      consoleAppender.putIfAbsent("filterFactories", createHealthCheckFilterFactories());
     }
   }
 
@@ -194,14 +193,19 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
     return consoleAppenderLayout;
   }
 
-  private List<Map<String, Object>> createRequestLogConsoleAppenderFilterFactories() {
+  private List<Map<String, Object>> createHealthCheckFilterFactories() {
     List<Map<String, Object>> filterFactories = new ArrayList<>();
     Map<String, Object> uriFilter = new HashMap<>();
     uriFilter.put("type", "uri");
     uriFilter.put(
         "uris",
         asList(
-            "/ping", "/healthcheck", "/healthcheck/internal", "/metrics", "/metrics/prometheus"));
+            "/ping",
+            "/healthcheck",
+            "/healthcheck/internal",
+            // "/healthcheck/prometheus", this endpoint is deprecated and should be logged!
+            "/metrics",
+            "/metrics/prometheus"));
     filterFactories.add(uriFilter);
 
     return filterFactories;
