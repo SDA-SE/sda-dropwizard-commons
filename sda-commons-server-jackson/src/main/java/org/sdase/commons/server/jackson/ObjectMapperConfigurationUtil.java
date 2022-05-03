@@ -8,14 +8,13 @@ import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import io.dropwizard.jackson.AnnotationSensitivePropertyNamingStrategy;
 import io.dropwizard.jackson.CaffeineModule;
 import io.dropwizard.jackson.GuavaExtrasModule;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.util.JavaVersion;
 import io.openapitools.jackson.dataformat.hal.JacksonHALModule;
 import java.text.DateFormat;
 import java.time.ZoneOffset;
@@ -115,10 +114,8 @@ public class ObjectMapperConfigurationUtil {
               // .registerModule(new GuavaModule()) in newMinimalObjectMapper
               .registerModule(new GuavaExtrasModule())
               .registerModule(new CaffeineModule())
-              .registerModule(new JodaModule());
-      if (JavaVersion.isJava8()) {
-        objectMapper.registerModule(new AfterburnerModule());
-      }
+              .registerModule(new JodaModule())
+              .registerModule(new BlackbirdModule());
       // .registerModule(new FuzzyEnumModule()) breaks READ_UNKNOWN_ENUM_VALUES_AS_NULL
       objectMapper
           .registerModule(new ParameterNamesModule())
