@@ -40,7 +40,7 @@ dependencies {
     exclude group: 'com.fasterxml.jackson.module'
     exclude group: 'org.awaitility', module: 'awaitility'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.210")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.211")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
   constraints {
