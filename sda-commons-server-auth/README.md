@@ -111,10 +111,12 @@ auth:
     # A public key derived from a PEM certificate that is provided from a http server
     # The pemKeyId must match the 'kid' the signing authority sets in the token.
     # It may be null if the 'kid' in the token is not set by the signing authority.
-    # The pemKeyId is only considered for type: PEM
+    # The pemSignAlg must match the signing algorithm used in the PEM. Defaults to RS256.
+    # The pemKeyId and pemSignAlg is only considered for type: PEM
   - type: PEM
     location: http://example.com/keys/example.pem
     pemKeyId: example.com
+    pemSignAlg: RS256
     # Public keys will be loaded from the OpenID provider using discovery.
   - type: OPEN_ID_DISCOVERY
     location: https://keycloak.example.com/auth/realms/my-realm

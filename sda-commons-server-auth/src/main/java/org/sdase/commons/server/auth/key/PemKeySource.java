@@ -12,13 +12,20 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +35,15 @@ public class PemKeySource implements KeySource {
 
   private final String kid;
 
+  private final String alg;
+
   private final URI pemKeyLocation;
 
   private final String requiredIssuer;
 
-  public PemKeySource(String kid, URI pemKeyLocation, String requiredIssuer) {
+  public PemKeySource(String kid, String alg, URI pemKeyLocation, String requiredIssuer) {
     this.kid = kid;
+    this.alg = StringUtils.isNotBlank(alg) ? alg : "RS256";
     this.pemKeyLocation = pemKeyLocation;
     this.requiredIssuer = requiredIssuer;
   }
@@ -43,13 +53,15 @@ public class PemKeySource implements KeySource {
     try {
       LOG.info("Loading public key for token signature verification from PEM {}", pemKeyLocation);
       if (isPublicKey(pemKeyLocation)) {
-        RSAPublicKey publicKey = loadPublicKey(pemKeyLocation);
-        return Collections.singletonList(new LoadedPublicKey(kid, publicKey, this, requiredIssuer));
+        PublicKey publicKey = loadPublicKey(pemKeyLocation);
+        return Collections.singletonList(
+            new LoadedPublicKey(kid, publicKey, this, requiredIssuer, alg));
       } else {
         X509Certificate cer = loadCertificate(pemKeyLocation);
-        RSAPublicKey publicKey = extractRsaPublicKeyFromCertificate(cer);
+        PublicKey publicKey = extractPublicKeyFromCertificate(cer);
         LOG.info("Loaded public key for token signature verification from PEM {}", pemKeyLocation);
-        return Collections.singletonList(new LoadedPublicKey(kid, publicKey, this, requiredIssuer));
+        return Collections.singletonList(
+            new LoadedPublicKey(kid, publicKey, this, requiredIssuer, alg));
       }
     } catch (IOException | CertificateException | NullPointerException | ClassCastException e) {
 
@@ -92,20 +104,17 @@ public class PemKeySource implements KeySource {
     }
   }
 
-  private RSAPublicKey extractRsaPublicKeyFromCertificate(X509Certificate certificate)
+  private PublicKey extractPublicKeyFromCertificate(X509Certificate certificate)
       throws KeyLoadFailedException { // NOSONAR
-    RSAPublicKey publicKey;
     PublicKey cerPublicKey = certificate.getPublicKey();
-    if (cerPublicKey instanceof RSAPublicKey) {
-      publicKey = (RSAPublicKey) cerPublicKey;
-    } else {
+    if (!(cerPublicKey instanceof RSAPublicKey || cerPublicKey instanceof ECPublicKey)) {
       throw new KeyLoadFailedException(
-          "Only RSA keys are supported but loaded a "
+          "Only RSA/EC keys are supported but loaded a "
               + cerPublicKey.getClass()
               + " from "
               + pemKeyLocation);
     }
-    return publicKey;
+    return cerPublicKey;
   }
 
   private boolean isPublicKey(URI pemKeyLocation) {
@@ -118,7 +127,7 @@ public class PemKeySource implements KeySource {
     }
   }
 
-  private RSAPublicKey loadPublicKey(URI pemKeyLocation) {
+  private PublicKey loadPublicKey(URI pemKeyLocation) {
     LOG.info("Loading public key for token signature verification from PEM {}", pemKeyLocation);
     try (InputStream is = pemKeyLocation.toURL().openStream()) {
       String pemPublicKeyContent = readContent(is);
@@ -130,8 +139,18 @@ public class PemKeySource implements KeySource {
 
       byte[] encoded = Base64.decodeBase64(publicKeyPem);
       X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
-      final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-      return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+
+      String publicKeyOid =
+          Optional.of(SubjectPublicKeyInfo.getInstance(encoded))
+              .map(SubjectPublicKeyInfo::getAlgorithm) // Algorithm Identifier
+              .map(AlgorithmIdentifier::getAlgorithm)
+              .map(ASN1ObjectIdentifier::toString) // ASN1 Object Identifier
+              .orElseThrow(
+                  () -> new KeyLoadFailedException("Could not resolve algorithm of public key."));
+
+      final KeyFactory keyFactory =
+          KeyFactory.getInstance(publicKeyOid, new BouncyCastleProvider());
+      return keyFactory.generatePublic(keySpec);
     } catch (ClassCastException
         | IOException
         | NoSuchAlgorithmException

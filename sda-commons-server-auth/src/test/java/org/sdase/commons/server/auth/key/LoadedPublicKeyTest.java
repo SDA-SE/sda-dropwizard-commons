@@ -13,8 +13,8 @@ public class LoadedPublicKeyTest {
   @Test
   public void shouldBeEqualWithDifferentKeyInstances() {
 
-    URI pemKeyLocation = new File(ResourceHelpers.resourceFilePath("example.pem")).toURI();
-    PemKeySource pemKeySource = new PemKeySource(null, pemKeyLocation, null);
+    URI pemKeyLocation = new File(ResourceHelpers.resourceFilePath("rsa-example.pem")).toURI();
+    PemKeySource pemKeySource = new PemKeySource(null, null, pemKeyLocation, null);
 
     List<LoadedPublicKey> loadedPublicKeys1 = pemKeySource.loadKeysFromSource();
     List<LoadedPublicKey> loadedPublicKeys2 = pemKeySource.loadKeysFromSource();

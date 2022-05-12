@@ -43,10 +43,17 @@ public class KeyProviderTestApp extends Application<Configuration> implements Co
   }
 
   @GET
-  @Path("/key.pem")
+  @Path("/rsa-key.pem")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  public Response getPemKey() {
-    return Response.ok(getClass().getResourceAsStream("/example.pem")).build();
+  public Response getRsaPemKey() {
+    return Response.ok(getClass().getResourceAsStream("/rsa-example.pem")).build();
+  }
+
+  @GET
+  @Path("/ec-key.pem")
+  @Produces(MediaType.APPLICATION_OCTET_STREAM)
+  public Response getEcPemKey() {
+    return Response.ok(getClass().getResourceAsStream("/ec-example.pem")).build();
   }
 
   @GET

@@ -24,14 +24,14 @@ import org.sdase.commons.server.auth.error.ForbiddenExceptionMapper;
 import org.sdase.commons.server.auth.error.JwtAuthExceptionMapper;
 import org.sdase.commons.server.auth.filter.JwtAuthFilter;
 import org.sdase.commons.server.auth.key.JwksKeySource;
+import org.sdase.commons.server.auth.key.KeyLoaderScheduler;
 import org.sdase.commons.server.auth.key.KeySource;
 import org.sdase.commons.server.auth.key.OpenIdProviderDiscoveryKeySource;
 import org.sdase.commons.server.auth.key.PemKeySource;
-import org.sdase.commons.server.auth.key.RsaKeyLoaderScheduler;
-import org.sdase.commons.server.auth.key.RsaPublicKeyLoader;
-import org.sdase.commons.server.auth.service.AuthRSA256Service;
+import org.sdase.commons.server.auth.key.PublicKeyLoader;
 import org.sdase.commons.server.auth.service.AuthService;
 import org.sdase.commons.server.auth.service.JwtAuthenticator;
+import org.sdase.commons.server.auth.service.TokenAuthorizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,18 +71,17 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
     Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
 
     Client client = createKeyLoaderClient(environment, config, currentTracer);
-    RsaPublicKeyLoader keyLoader = new RsaPublicKeyLoader();
+    PublicKeyLoader keyLoader = new PublicKeyLoader();
     config.getKeys().stream()
         .map(k -> this.createKeySources(k, client))
         .forEach(keyLoader::addKeySource);
 
     ScheduledExecutorService executorService =
         environment.lifecycle().scheduledExecutorService("reloadKeysExecutorService").build();
-    RsaKeyLoaderScheduler.create(keyLoader, executorService).start();
+    KeyLoaderScheduler.create(keyLoader, executorService).start();
 
-    AuthService authRSA256Service = new AuthRSA256Service(keyLoader, config.getLeeway());
-    JwtAuthenticator authenticator =
-        new JwtAuthenticator(authRSA256Service, config.isDisableAuth());
+    TokenAuthorizer authService = new AuthService(keyLoader, config.getLeeway());
+    JwtAuthenticator authenticator = new JwtAuthenticator(authService, config.isDisableAuth());
 
     JwtAuthFilter<JwtPrincipal> authFilter =
         new JwtAuthFilter.Builder<JwtPrincipal>()
@@ -128,7 +127,10 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
     switch (keyLocation.getType()) {
       case PEM:
         return new PemKeySource(
-            keyLocation.getPemKeyId(), keyLocation.getLocation(), keyLocation.getRequiredIssuer());
+            keyLocation.getPemKeyId(),
+            keyLocation.getPemSignAlg(),
+            keyLocation.getLocation(),
+            keyLocation.getRequiredIssuer());
       case OPEN_ID_DISCOVERY:
         validateKeyLocation(keyLocation.getLocation(), keyLocation.getRequiredIssuer());
         return new OpenIdProviderDiscoveryKeySource(

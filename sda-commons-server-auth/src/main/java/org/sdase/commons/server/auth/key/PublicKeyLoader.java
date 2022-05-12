@@ -14,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Loads public keys from various locations, converts them to Java Keys and caches them. */
-public class RsaPublicKeyLoader {
+public class PublicKeyLoader {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(RsaPublicKeyLoader.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PublicKeyLoader.class);
 
   private Map<String, LoadedPublicKey> keysByKid = new ConcurrentHashMap<>();
 
