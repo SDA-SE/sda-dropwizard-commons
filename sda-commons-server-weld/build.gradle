@@ -80,5 +80,5 @@ dependencies {
     exclude group: 'jakarta.el', module: 'jakarta.el-api'
   }
   api 'javax.transaction:javax.transaction-api'
-  api 'org.glassfish.jersey.ext.cdi:jersey-cdi1x'
+  api 'org.glassfish.jersey.ext.cdi:jersey-cdi1x-servlet'
 }
