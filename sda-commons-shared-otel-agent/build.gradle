@@ -1,0 +1,54 @@
+plugins{
+  id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+ext {
+  openTelemetryVersion= '1.13.0'
+  openTelemetryAlphaVersion = '1.13.0-alpha'
+  otelAgentVersion = '1.12.1'
+  otelAgentAlphaVersion = '1.12.1-alpha'
+
+  autoservice= dependencies.create(group: 'com.google.auto.service', name: 'auto-service', version: '1.0')
+}
+
+configurations {
+  agents
+}
+
+dependencies {
+
+  // JAVA Agent for the auto instrumentation
+  agents "io.opentelemetry.javaagent:opentelemetry-javaagent:$otelAgentVersion"
+
+  // Interfaces and SPIs for extending the agent.
+  compileOnly("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api:$otelAgentAlphaVersion")
+
+  //Provides @AutoService annotation to register SPIs
+  compileOnly autoservice
+  annotationProcessor autoservice
+
+
+  //Produces a copy of upstream javaagent with this extension jar included inside it
+  //The location of extension directory inside agent jar is hard-coded in the agent source code
+  task extendedAgent(type: Jar) {
+    dependsOn(configurations.agents)
+    archiveFileName = "opentelemetry-javaagent.jar"
+    from zipTree(configurations.agents.singleFile)
+    from(tasks.shadowJar.archiveFile) {
+      into "extensions"
+    }
+
+    //Preserve MANIFEST.MF file from the upstream javaagent
+    doFirst {
+      manifest.from(
+          zipTree(configurations.agents.singleFile).matching {
+            include 'META-INF/MANIFEST.MF'
+          }.singleFile
+          )
+    }
+  }
+
+  project.tasks.findByName("build").finalizedBy("extendedAgent")
+
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
