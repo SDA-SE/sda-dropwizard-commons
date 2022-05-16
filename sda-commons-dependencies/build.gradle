@@ -21,7 +21,7 @@ ext {
   dbRiderVersion = '1.32.3'
   kotlinVersion = '1.6.21'
   kotlinxCoroutinesVersion = '1.6.1'
-  jacksonBomVersion = '2.13.2.20220328'
+  jacksonBomVersion = '2.13.3'
   jacksonVersion = '2.13.2'
   jacksonDatabindVersion = '2.13.2.2'
 }
