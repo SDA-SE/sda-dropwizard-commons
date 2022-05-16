@@ -22,7 +22,7 @@ ext {
   kotlinVersion = '1.6.21'
   kotlinxCoroutinesVersion = '1.6.1'
   jacksonBomVersion = '2.13.2.20220328'
-  jacksonVersion = '2.13.2'
+  jacksonVersion = '2.13.3'
   jacksonDatabindVersion = '2.13.2.2'
 }
 
