@@ -1,7 +1,6 @@
 package org.sdase.commons.shared.otel.agent;
 
 import com.google.auto.service.AutoService;
-import io.opentelemetry.api.internal.StringUtils;
 import io.opentelemetry.javaagent.extension.config.ConfigPropertySource;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +13,7 @@ import java.util.Map;
  */
 @AutoService(ConfigPropertySource.class)
 public final class SdaConfigPropertyProvider implements ConfigPropertySource {
-  private static final String JAEGER_SERVER_NAME_ENV_VAR = "JAEGER_SERVICE_NAME";
+  private static final String JAEGER_SERVICE_NAME_ENV_VAR = "JAEGER_SERVICE_NAME";
 
   @Override
   public Map<String, String> getProperties() {
@@ -23,14 +22,13 @@ public final class SdaConfigPropertyProvider implements ConfigPropertySource {
     // default otel collector gateway endpoint 4317 used for grpc (TBD)
     properties.put("otel.exporter.otlp.endpoint", "http://otel-collector-gateway:4317");
 
-    // 'jaeger' header formats are used by the deprecated libraries
-    // 'tracecontext' 'baggage' formats are recommended defaults and used by most external
-    // distributed systems.
+    // 'jaeger' header formats are used by the deprecated libraries.
+    // 'tracecontext' 'baggage' formats are recommended defaults and used by most external systems.
     properties.put("otel.propagators", "tracecontext,baggage,jaeger");
 
     // use environment legacy env variable defined by jaeger client by default
-    String jaegerServiceName = System.getenv(JAEGER_SERVER_NAME_ENV_VAR);
-    if (!StringUtils.isNullOrEmpty(jaegerServiceName)) {
+    String jaegerServiceName = System.getenv(JAEGER_SERVICE_NAME_ENV_VAR);
+    if (jaegerServiceName != null && !jaegerServiceName.isEmpty()) {
       properties.put("otel.service.name", jaegerServiceName);
     }
     return properties;

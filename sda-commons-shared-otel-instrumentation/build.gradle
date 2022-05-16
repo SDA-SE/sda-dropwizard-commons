@@ -1,0 +1,12 @@
+ext {
+  otelContribVersion= '1.13.0'
+  otelContribAlphaVersion = '1.13.0-alpha'
+}
+
+dependencies {
+
+  implementation project(':sda-commons-server-dropwizard')
+
+  // Utils for attaching the agent to the JVM at runtime
+  implementation ("io.opentelemetry.contrib:opentelemetry-runtime-attach:$otelContribAlphaVersion")
+}

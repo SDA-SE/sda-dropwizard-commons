@@ -32,6 +32,8 @@ dependencies {
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.267")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
+  api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
+  api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:$openTelemetryAlphaVersion")
 
   constraints {
     // overall conflicts
@@ -157,6 +159,9 @@ dependencies {
 
     // sda-commons-shared-*
     api 'commons-io:commons-io:2.11.0'
+
+    // sda-commons-shared-otel-instrumentation
+    api 'net.bytebuddy:byte-buddy-agent:1.12.10'
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
