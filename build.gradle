@@ -226,6 +226,14 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   test {
     useJUnitPlatform()
   }
+
+  configurations.all {
+    resolutionStrategy {
+      // fail eagerly on version conflict (includes transitive dependencies)
+      // e.g. multiple different versions of the same dependency (group and name are equal)
+      failOnVersionConflict()
+    }
+  }
 }
 
 /**
@@ -350,4 +358,4 @@ sonarqube {
   }
 }
 
-apply from: 'failOnVersionConflict.gradle'
+// apply from: 'failOnVersionConflict.gradle'
