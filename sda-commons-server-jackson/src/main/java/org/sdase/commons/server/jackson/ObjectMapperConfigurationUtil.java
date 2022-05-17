@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import io.dropwizard.jackson.AnnotationSensitivePropertyNamingStrategy;
 import io.dropwizard.jackson.CaffeineModule;
@@ -114,8 +113,9 @@ public class ObjectMapperConfigurationUtil {
               // .registerModule(new GuavaModule()) in newMinimalObjectMapper
               .registerModule(new GuavaExtrasModule())
               .registerModule(new CaffeineModule())
-              .registerModule(new JodaModule())
-              .registerModule(new BlackbirdModule());
+              .registerModule(new JodaModule());
+      // Decided against Afterburner/Blackbird in favour of less complexity
+      // .registerModule(new BlackbirdModule());
       // .registerModule(new FuzzyEnumModule()) breaks READ_UNKNOWN_ENUM_VALUES_AS_NULL
       objectMapper
           .registerModule(new ParameterNamesModule())
