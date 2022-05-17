@@ -30,7 +30,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void omShouldHaveSameModulesAsDefaultFromDropwizardButNoFuzzyEnumModule() {
+  public void omShouldHaveSameModulesAsDefaultFromDropwizardButNoFuzzyEnumAndBlackbirdModules() {
     Bootstrap<Configuration> standardBootstrap =
         new Bootstrap<>(
             new Application<Configuration>() {
@@ -39,6 +39,7 @@ public class TolerantObjectMapperTest {
             });
     ObjectMapper dropwizardStandardOm = standardBootstrap.getObjectMapper();
     String unwantedFuzzyEnumModule = "io.dropwizard.jackson.FuzzyEnumModule";
+    String unwantedBlackbirdModule = "com.fasterxml.jackson.module.blackbird.BlackbirdModule";
 
     Set<Object> expected = new HashSet<>(dropwizardStandardOm.getRegisteredModuleIds());
 
@@ -46,9 +47,10 @@ public class TolerantObjectMapperTest {
     // io.dropwizard.jackson.Jackson.newObjectMapper() or the default
     // ObjectMapper provided by Bootstrap instead of customizing the ObjectMapper
     // instantiation in JacksonConfigurationBundle#initialize(Bootstrap)
-    assertThat(expected).contains(unwantedFuzzyEnumModule);
+    assertThat(expected).contains(unwantedFuzzyEnumModule, unwantedBlackbirdModule);
 
     expected.remove(unwantedFuzzyEnumModule);
+    expected.remove(unwantedBlackbirdModule);
 
     assertThat(om.getRegisteredModuleIds())
         .containsAll(expected)
