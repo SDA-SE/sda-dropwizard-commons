@@ -19,8 +19,8 @@ public final class SdaConfigPropertyProvider implements ConfigPropertySource {
   public Map<String, String> getProperties() {
     Map<String, String> properties = new HashMap<>();
 
-    // default otel collector gateway endpoint 4317 used for grpc (TBD)
-    properties.put("otel.exporter.otlp.endpoint", "http://otel-collector-gateway:4317");
+    // default otel collector gateway endpoint 4317 used for grpc
+    properties.put("otel.exporter.otlp.endpoint", "http://otel-collector-gateway.jaeger:4317");
 
     // 'jaeger' header formats are used by the deprecated libraries.
     // 'tracecontext' 'baggage' formats are recommended defaults and used by most external systems.
