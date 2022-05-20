@@ -9,4 +9,9 @@ dependencies {
 
   // Utils for attaching the agent to the JVM at runtime
   implementation ("io.opentelemetry.contrib:opentelemetry-runtime-attach:$otelContribAlphaVersion")
+
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-shared-otel-agent')
+  testImplementation project(':sda-commons-client-jersey-wiremock-testing')
+  testImplementation 'org.assertj:assertj-core'
 }
