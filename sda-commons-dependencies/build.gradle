@@ -86,7 +86,7 @@ dependencies {
     api "com.google.code.gson:gson:2.9.0" // fixes vulnerability in transitive dependency 2.8.6
 
     // sda-commons-server-mongo-testing
-    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.5"
+    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.6"
 
     // sda-commons-server-morphia
     api "dev.morphia.morphia:core:$morphiaVersion"
