@@ -1,5 +1,5 @@
 dependencies {
-  implementation project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-dropwizard')
   api ("io.opentelemetry:opentelemetry-api")
 
   testImplementation project(':sda-commons-server-testing')

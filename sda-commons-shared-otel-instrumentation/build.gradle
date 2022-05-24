@@ -5,10 +5,10 @@ ext {
 
 dependencies {
 
-  implementation project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-server-dropwizard')
 
   // Utils for attaching the agent to the JVM at runtime
-  implementation ("io.opentelemetry.contrib:opentelemetry-runtime-attach:$otelContribAlphaVersion")
+  api ("io.opentelemetry.contrib:opentelemetry-runtime-attach:$otelContribAlphaVersion")
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-shared-otel-agent')
