@@ -10,9 +10,13 @@ ext {
 
 configurations {
   agents
+  // Interfaces that to compile the SPI are also needed for testing
+  testImplementation.extendsFrom compileOnly
 }
 
 dependencies {
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation 'org.assertj:assertj-core'
 
   // JAVA Agent for the auto instrumentation
   agents "io.opentelemetry.javaagent:opentelemetry-javaagent:$otelAgentVersion"
