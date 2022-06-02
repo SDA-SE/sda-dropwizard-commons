@@ -38,4 +38,17 @@ public class SecurityBuilderTest {
     bundleAssertion.assertBundleConfiguredByPlatformBundle(
         bundle, SecurityBundle.builder().disableBufferLimitValidation().build());
   }
+
+  @Test
+  public void frontendSupportSecuritySettings() {
+    SdaPlatformBundle<SdaPlatformConfiguration> bundle =
+        SdaPlatformBundle.builder()
+            .usingSdaPlatformConfiguration()
+            .addOpenApiResourcePackageClass(this.getClass())
+            .withFrontendSupport()
+            .build();
+
+    bundleAssertion.assertBundleConfiguredByPlatformBundle(
+        bundle, SecurityBundle.builder().withFrontendSupport().build());
+  }
 }
