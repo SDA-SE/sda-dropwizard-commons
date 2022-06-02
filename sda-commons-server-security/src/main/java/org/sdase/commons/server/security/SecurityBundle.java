@@ -5,12 +5,15 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.sdase.commons.server.security.filter.WebSecurityHeaderFilter;
+import org.sdase.commons.server.security.filter.WebSecurityApiOnlyHeaderFilter;
+import org.sdase.commons.server.security.filter.WebSecurityFrontendSupportHeaderFilter;
 import org.sdase.commons.server.security.handler.ObscuringErrorHandler;
 import org.sdase.commons.server.security.validation.BufferLimitsAdvice;
 import org.sdase.commons.server.security.validation.CustomErrorHandlerSecurityAdvice;
 import org.sdase.commons.server.security.validation.HttpConnectorSecurityAdvice;
 import org.sdase.commons.server.security.validation.ServerFactorySecurityAdvice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link ConfiguredBundle} that enforces common rules for secure REST applications.
@@ -27,13 +30,17 @@ import org.sdase.commons.server.security.validation.ServerFactorySecurityAdvice;
  */
 public class SecurityBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
+  private static final Logger LOG = LoggerFactory.getLogger(SecurityBundle.class);
+
   public static Builder builder() {
     return new Builder();
   }
 
   private Bootstrap<?> bootstrap;
 
-  private boolean disableBufferLimitValidation;
+  private final boolean disableBufferLimitValidation;
+
+  private final boolean supportFrontend;
 
   /**
    * Use {@code SecurityBundle.builder().build();}
@@ -41,8 +48,9 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
    * @param disableBufferLimitValidation if buffer limit violations should only produce a log
    *     instead of failing
    */
-  private SecurityBundle(boolean disableBufferLimitValidation) {
+  private SecurityBundle(boolean disableBufferLimitValidation, boolean supportFrontend) {
     this.disableBufferLimitValidation = disableBufferLimitValidation;
+    this.supportFrontend = supportFrontend;
   }
 
   @Override
@@ -60,7 +68,14 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
 
     environment.getApplicationContext().setErrorHandler(createNewErrorHandler(environment));
     environment.getAdminContext().setErrorHandler(createNewErrorHandler(environment));
-    environment.jersey().register(WebSecurityHeaderFilter.class);
+    if (supportFrontend) {
+      LOG.info(
+          "Content-Security-Policy headers are configured to support frontends. "
+              + "Services that only serve APIs don't enable this feature.");
+      environment.jersey().register(WebSecurityFrontendSupportHeaderFilter.class);
+    } else {
+      environment.jersey().register(WebSecurityApiOnlyHeaderFilter.class);
+    }
   }
 
   private ObscuringErrorHandler createNewErrorHandler(Environment environment) {
@@ -69,7 +84,8 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
 
   public static class Builder {
 
-    private boolean disableBufferLimitValidation = false;
+    private boolean disableBufferLimitValidation;
+    private boolean supportFrontend;
 
     /**
      * Switches from suppressing the application start to a warn logging for violated buffer limits.
@@ -83,8 +99,21 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
       return this;
     }
 
+    /**
+     * If a service is configured with frontend support, the {@code Content-Security-Policy} header
+     * allows the same domain as source for scripts, images, styles and fonts. Otherwise, only API
+     * endpoints can be served and {@code Content-Security-Policy} does not allow any sources.
+     *
+     * @return this builder instance
+     * @see <a href="https://en.wikipedia.org/wiki/Content_Security_Policy">CSP header</a>
+     */
+    public Builder withFrontendSupport() {
+      this.supportFrontend = true;
+      return this;
+    }
+
     public SecurityBundle<Configuration> build() {
-      return new SecurityBundle<>(disableBufferLimitValidation);
+      return new SecurityBundle<>(disableBufferLimitValidation, supportFrontend);
     }
   }
 }

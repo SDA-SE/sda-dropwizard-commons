@@ -22,7 +22,7 @@ import javax.ws.rs.container.ContainerResponseFilter;
  *   <li>"Risiko: Nachladen von Inhalten in Flash und PDFs"
  * </ul>
  */
-public class WebSecurityHeaderFilter implements ContainerResponseFilter {
+public class WebSecurityApiOnlyHeaderFilter implements ContainerResponseFilter {
 
   private static final Map<String, String> WEB_SECURITY_HEADERS = initWebSecurityHeaders();
 

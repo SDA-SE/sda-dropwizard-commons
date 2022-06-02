@@ -16,17 +16,17 @@ import org.junit.runners.Parameterized.Parameters;
 import org.sdase.commons.server.security.test.SecurityTestApp;
 
 @RunWith(Parameterized.class)
-public class WebSecurityHeaderFilterIT {
+public class WebSecurityApiOnlyHeaderFilterIT {
 
   @ClassRule
   public static final DropwizardAppRule<Configuration> DW =
       new DropwizardAppRule<>(
           SecurityTestApp.class, ResourceHelpers.resourceFilePath("test-config-no-settings.yaml"));
 
-  private String requiredHeaderName;
-  private String requiredHeaderValue;
+  private final String requiredHeaderName;
+  private final String requiredHeaderValue;
 
-  public WebSecurityHeaderFilterIT(String requiredHeaderName, String requiredHeaderValue) {
+  public WebSecurityApiOnlyHeaderFilterIT(String requiredHeaderName, String requiredHeaderValue) {
     this.requiredHeaderName = requiredHeaderName;
     this.requiredHeaderValue = requiredHeaderValue;
   }

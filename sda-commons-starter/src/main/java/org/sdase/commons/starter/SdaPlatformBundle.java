@@ -39,12 +39,12 @@ import org.sdase.commons.starter.builder.PlatformBundleBuilder;
  */
 public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
-  private SecurityBundle.Builder securityBundleBuilder;
-  private JacksonConfigurationBundle.Builder jacksonConfigurationBundleBuilder;
-  private AuthBundle.AuthBuilder<C> authBundleBuilder;
-  private OpaBuilder<C> opaBundleBuilder;
-  private CorsBundle.FinalBuilder<C> corsBundleBuilder;
-  private OpenApiBundle.FinalBuilder openApiBundleBuilder;
+  private final SecurityBundle.Builder securityBundleBuilder;
+  private final JacksonConfigurationBundle.Builder jacksonConfigurationBundleBuilder;
+  private final AuthBundle.AuthBuilder<C> authBundleBuilder;
+  private final OpaBuilder<C> opaBundleBuilder;
+  private final CorsBundle.FinalBuilder<C> corsBundleBuilder;
+  private final OpenApiBundle.FinalBuilder openApiBundleBuilder;
 
   private SdaPlatformBundle(
       SecurityBundle.Builder securityBundleBuilder,
@@ -94,7 +94,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
       configuredBundles.add(corsBundleBuilder.build());
     }
     configuredBundles.add(ConsumerTokenBundle.builder().withOptionalConsumerToken().build());
-    configuredBundles.stream().map(b -> (ConfiguredBundle) b).forEach(bootstrap::addBundle);
+    configuredBundles.stream().map(ConfiguredBundle.class::cast).forEach(bootstrap::addBundle);
   }
 
   @Override
@@ -113,7 +113,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     private AuthBundle.AuthBuilder<C> authBundleBuilder;
     private OpaBundle.OpaBuilder<C> opaBundleBuilder;
     private SecurityBundle.Builder securityBundleBuilder = SecurityBundle.builder();
-    private JacksonConfigurationBundle.Builder jacksonBundleBuilder =
+    private final JacksonConfigurationBundle.Builder jacksonBundleBuilder =
         JacksonConfigurationBundle.builder();
     private CorsBundle.FinalBuilder<C> corsBundleBuilder;
     private OpenApiBundle.FinalBuilder openApiBundleBuilder;
@@ -198,7 +198,13 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
     @Override
     public PlatformBundleBuilder<C> disableBufferLimitValidationSecurityFeature() {
-      this.securityBundleBuilder = SecurityBundle.builder().disableBufferLimitValidation();
+      this.securityBundleBuilder = this.securityBundleBuilder.disableBufferLimitValidation();
+      return this;
+    }
+
+    @Override
+    public PlatformBundleBuilder<C> withFrontendSupport() {
+      this.securityBundleBuilder = this.securityBundleBuilder.withFrontendSupport();
       return this;
     }
 
