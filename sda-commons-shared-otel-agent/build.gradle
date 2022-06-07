@@ -10,7 +10,7 @@ ext {
 
 configurations {
   agents
-  // Interfaces that to compile the SPI are also needed for testing
+  // Interfaces that are used to compile the SPI are also needed for testing
   testImplementation.extendsFrom compileOnly
 }
 
