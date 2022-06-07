@@ -16,3 +16,5 @@ oidc:
   clientSecret: secret
   issuerUrl: url
   grantType: client_credentials
+  cache:
+    autoRefresh: true

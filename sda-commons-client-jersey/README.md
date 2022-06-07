@@ -265,6 +265,7 @@ oidc:
   issuerUrl: ${OIDC_ISSUER_URL}
   cache:
     disabled: ${OIDC_CACHE_DISABLED:-false}
+    autoRefresh: ${OIDC_CACHE_AUTOREFRESH:-false}
 ```
 
 - _OIDC_DISABLED_
@@ -299,6 +300,10 @@ oidc:
 
 - _OIDC_CACHE_DISABLED_
   * Disable the caching of retrieved tokens.
+  * Default: `false`
+
+- _OIDC_CACHE_AUTOREFRESH_
+  * Automatically refresh tokens when they expire.
   * Default: `false`
     
 The grant type `password` is no longer allowed in OAuth2/2.1 and the support for it in this module will be deprecated at some point.

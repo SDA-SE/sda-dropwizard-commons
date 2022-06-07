@@ -132,4 +132,22 @@ public class OidcClientTest {
         postRequestedFor(urlEqualTo("/token"))
             .withBasicAuth(new BasicCredentials(CLIENT_ID, CLIENT_SECRET)));
   }
+
+  @Test
+  public void shouldAutoRefreshAfterCacheEviction() {
+    OidcResult oidcResult = app.getOidcClient().createAccessToken();
+
+    given()
+        .pollDelay(4, SECONDS) // A new token is created every 3 seconds
+        .await()
+        .untilAsserted(
+            () -> {
+              // Token endpoint should be called twice
+              WIRE.verify(
+                  2,
+                  postRequestedFor(urlEqualTo("/token"))
+                      .withBasicAuth(new BasicCredentials(CLIENT_ID, CLIENT_SECRET)));
+              assertThat(oidcResult.getState()).isEqualTo(OidcState.OK);
+            });
+  }
 }

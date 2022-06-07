@@ -2,6 +2,7 @@ package org.sdase.commons.client.jersey.oidc;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Scheduler;
 import org.sdase.commons.client.jersey.ClientFactory;
 import org.sdase.commons.client.jersey.oidc.cache.AfterCreateExpiry;
 import org.sdase.commons.client.jersey.oidc.model.OidcResult;
@@ -37,7 +38,18 @@ public class OidcClient {
       return;
     }
 
-    this.cache = Caffeine.newBuilder().expireAfter(new AfterCreateExpiry()).build();
+    this.cache =
+        Caffeine.newBuilder()
+            .scheduler(Scheduler.systemScheduler())
+            .expireAfter(new AfterCreateExpiry())
+            .removalListener(
+                (key, value, cause) -> {
+                  if (config.getCache().isAutoRefresh() && cause.wasEvicted()) {
+                    LOGGER.info("Cache entry expired, creating new access token");
+                    createAccessToken();
+                  }
+                })
+            .build();
   }
 
   /**
