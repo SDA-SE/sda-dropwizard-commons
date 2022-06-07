@@ -1,0 +1,15 @@
+dependencies {
+
+  api ("io.opentelemetry:opentelemetry-api")
+  // provides some conventional static attributes that are recommended for manual instrumentation.
+  api 'io.opentelemetry:opentelemetry-semconv:1.14.0-alpha'
+  api project(':sda-commons-shared-otel-instrumentation')
+  runtimeOnly project(':sda-commons-shared-otel-agent')
+  api project(':sda-commons-client-jersey')
+
+  testImplementation project(':sda-commons-server-testing')
+  // provides some testing extensions for the tracing api
+  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation 'org.assertj:assertj-core'
+}
