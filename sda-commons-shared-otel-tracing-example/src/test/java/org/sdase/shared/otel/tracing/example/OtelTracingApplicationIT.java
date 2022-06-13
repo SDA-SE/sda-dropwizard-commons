@@ -12,7 +12,6 @@ import io.opentelemetry.sdk.trace.data.StatusData;
 import java.util.List;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,11 +28,9 @@ class OtelTracingApplicationIT {
   @BeforeEach
   void setUp() throws IllegalAccessException {
     // use InMemory Exporter for testing
-    FieldUtils.writeField(
-        APP.getApplication(),
-        "tracer",
-        otelTesting.getOpenTelemetry().getTracer(OtelTracingApplicationIT.class.getName()),
-        true);
+    APP.<OtelTracingApplication>getApplication()
+        .setTracer(
+            otelTesting.getOpenTelemetry().getTracer(OtelTracingApplicationIT.class.getName()));
   }
 
   @Test

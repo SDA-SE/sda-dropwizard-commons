@@ -36,7 +36,7 @@ This can be useful for testing, in this case a [`MockTracer`](https://github.com
 ## Instrumentation
 
 In most cases the existing instrumentation of sda-commons should be sufficient.
-However to observe internal behavior of a service, manual instrumentation might be required.
+However, to observe internal behavior of a service, manual instrumentation might be required.
 Manual instrumentation can be done using the [opentracing-java](https://github.com/opentracing/opentracing-java) package.
 An example of manual instrumentation is available in [`sda-commons-server-opentracing-example`](../sda-commons-server-opentracing-example/README.md).
  

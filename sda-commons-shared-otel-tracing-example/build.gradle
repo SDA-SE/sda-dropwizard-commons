@@ -1,8 +1,8 @@
 dependencies {
 
-  api ("io.opentelemetry:opentelemetry-api")
+  api "io.opentelemetry:opentelemetry-api"
   // provides some conventional static attributes that are recommended for manual instrumentation.
-  api 'io.opentelemetry:opentelemetry-semconv:1.14.0-alpha'
+  api 'io.opentelemetry:opentelemetry-semconv'
   api project(':sda-commons-shared-otel-instrumentation')
   runtimeOnly project(':sda-commons-shared-otel-agent')
   api project(':sda-commons-client-jersey')

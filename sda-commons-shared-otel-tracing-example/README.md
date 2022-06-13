@@ -2,7 +2,7 @@
 
 This module is an example for a service with manual instrumentation using [OpenTelemetry](https://opentelemetry.io/).
 
-The usage of the modules [sda-commons-server-opentracing](../sda-commons-server-opentracing/README.md) and [sda-commons-shared-otel-agent](../sda-commons-shared-otel-agent/README.md) for custom manual instrumentation.
+It also provides an example of usage of the modules [sda-commons-shared-otel-instrumentation](../sda-commons-shared-otel-instrumentation/README.md) and [sda-commons-shared-otel-agent](../sda-commons-shared-otel-agent/README.md) and how to add custom manual instrumentation in case it is needed.
 See the [`OtelTracingApplication`](./src/main/java/org/sdase/shared/otel/tracing/example/OtelTracingApplication.java) for the examples.
 
 ## How to run the example

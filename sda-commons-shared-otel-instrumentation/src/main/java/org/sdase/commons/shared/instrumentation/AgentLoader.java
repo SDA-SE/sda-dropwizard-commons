@@ -1,6 +1,7 @@
 package org.sdase.commons.shared.instrumentation;
 
 import io.opentelemetry.contrib.attach.RuntimeAttach;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,8 +17,8 @@ public class AgentLoader {
   private static final Logger LOG = LoggerFactory.getLogger(AgentLoader.class);
 
   public static void load() {
-    String jaegerSamplerType = System.getenv("JAEGER_SAMPLER_TYPE");
-    String jaegerSamplerParam = System.getenv("JAEGER_SAMPLER_PARAM");
+    String jaegerSamplerType = getProperty("JAEGER_SAMPLER_TYPE");
+    String jaegerSamplerParam = getProperty("JAEGER_SAMPLER_PARAM");
 
     // Skip loading the agent if tracing is disabled.
     if ("const".equals(jaegerSamplerType) && "0".equals(jaegerSamplerParam)) {
@@ -32,5 +33,9 @@ public class AgentLoader {
       // Do not prevent startup.
       LOG.error("Agent failed to attach. ", e);
     }
+  }
+
+  private static String getProperty(String name) {
+    return new SystemPropertyAndEnvironmentLookup().lookup(name);
   }
 }

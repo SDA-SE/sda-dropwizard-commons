@@ -59,6 +59,12 @@ public class OtelTracingApplication extends Application<Configuration> {
     tracer = tracer == null ? openTelemetry.getTracer(INSTRUMENTATION_NAME) : tracer;
   }
 
+  // just for testing
+  public OtelTracingApplication setTracer(Tracer tracer) {
+    this.tracer = tracer;
+    return this;
+  }
+
   @GET
   public String getHelloWorld() {
     // This call has nothing special, but you don't have to do anything to see

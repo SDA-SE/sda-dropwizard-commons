@@ -1,34 +1,29 @@
 plugins{
   id "com.github.johnrengelman.shadow" version "7.1.2"
 }
-ext {
-  otelAgentVersion = '1.13.1'
-  otelAgentAlphaVersion = '1.13.1-alpha'
-
-  autoservice= dependencies.create(group: 'com.google.auto.service', name: 'auto-service', version: '1.0')
-}
 
 configurations {
   agents
-  // Interfaces that are used to compile the SPI are also needed for testing
-  testImplementation.extendsFrom compileOnly
 }
 
 dependencies {
+  agents platform(project(':sda-commons-dependencies'))
+  annotationProcessor platform(project(':sda-commons-dependencies'))
+
+  // Interfaces and SPIs for extending the agent.
+  compileOnly("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api")
+
+  //Provides @AutoService annotation to register SPIs
+  compileOnly "com.google.auto.service:auto-service"
+  annotationProcessor "com.google.auto.service:auto-service"
+
+  // JAVA Agent for the auto instrumentation
+  agents "io.opentelemetry.javaagent:opentelemetry-javaagent"
+
+  testImplementation("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api")
   testImplementation project(':sda-commons-server-testing')
   testImplementation 'org.assertj:assertj-core'
 
-  // JAVA Agent for the auto instrumentation
-  agents "io.opentelemetry.javaagent:opentelemetry-javaagent:$otelAgentVersion"
-
-  // Interfaces and SPIs for extending the agent.
-  compileOnly("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api:$otelAgentAlphaVersion"){
-    exclude group: 'io.opentelemetry' , module: 'opentelemetry-sdk'
-  }
-
-  //Provides @AutoService annotation to register SPIs
-  compileOnly autoservice
-  annotationProcessor autoservice
 
 
   //Produces a copy of upstream javaagent with this extension jar included inside it
