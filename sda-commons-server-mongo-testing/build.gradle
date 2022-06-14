@@ -49,5 +49,5 @@ dependencies {
   api 'de.flapdoodle.embed:de.flapdoodle.embed.process:3.1.11', {
     exclude group: 'de.flapdoodle', module: 'de.flapdoodle.os'
   }
-  api 'de.flapdoodle:de.flapdoodle.os:1.1.9'
+  api 'de.flapdoodle:de.flapdoodle.os:1.1.10'
 }
