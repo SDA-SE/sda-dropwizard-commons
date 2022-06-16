@@ -10,6 +10,7 @@ dependencies {
   api 'io.swagger.parser.v3:swagger-parser-v3', {
     exclude group: 'io.swagger.core.v3', module: 'swagger-core'
     exclude group: 'commons-io', module: 'commons-io'
+    exclude group: 'org.slf4j', module: 'slf4j-simple' // they removed "test" scope in v2.1.0 which brings us this unwanted dependency
   }
   api 'commons-io:commons-io'
 
