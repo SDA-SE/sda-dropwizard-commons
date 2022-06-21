@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servlet that provides only the <b>internal</b> health check data of the application as JSON
@@ -30,6 +32,9 @@ public class OnlyInternalHealthCheckServlet extends HttpServlet {
 
   private static final String HEALTH_CHECK_EXECUTOR =
       HealthCheckServlet.class.getCanonicalName() + ".executor";
+
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(OnlyInternalHealthCheckServlet.class);
 
   private final transient HealthCheckRegistry healthCheckRegistry;
   private transient ExecutorService executorService;
@@ -75,6 +80,14 @@ public class OnlyInternalHealthCheckServlet extends HttpServlet {
       if (isAllHealthy(results)) {
         resp.setStatus(SC_OK);
       } else {
+        results.entrySet().stream()
+            .filter(entry -> !entry.getValue().isHealthy())
+            .forEach(
+                entry ->
+                    LOGGER.warn(
+                        "Internal healthcheck failed: {}, message: {}",
+                        entry.getKey(),
+                        entry.getValue().getMessage()));
         resp.setStatus(SC_INTERNAL_SERVER_ERROR);
       }
 

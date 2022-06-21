@@ -21,7 +21,7 @@ public class InternalHealthCheckEndpointBundle implements ConfiguredBundle<Confi
   public void run(Configuration configuration, Environment environment) {
     // Register a new endpoints that provides only the internal health checks
     // The default healthcheck endpoint '/healthcheck' provides both, internal and external
-    // helthchecks
+    // health checks
     environment
         .admin()
         .addServlet(
