@@ -3,30 +3,30 @@ package org.sdase.commons.server.healthcheck.servlet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.health.HealthCheck;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.healthcheck.ExternalHealthCheck;
 
-public class OnlyInternalHealthCheckFilterTest {
+class OnlyInternalHealthCheckFilterTest {
 
-  private OnlyInternalHealthCheckFilter filter = new OnlyInternalHealthCheckFilter();
+  private final OnlyInternalHealthCheckFilter filter = new OnlyInternalHealthCheckFilter();
 
   @Test
-  public void ignoreNull() {
+  void ignoreNull() {
     assertThat(filter.matches("null", null)).isFalse();
   }
 
   @Test
-  public void identifyAnnotatedCheckAsExternal() {
+  void identifyAnnotatedCheckAsExternal() {
     assertThat(filter.matches("external", new ExternalBaseHealthCheck())).isFalse();
   }
 
   @Test
-  public void identifySubclassOfAnnotatedCheckAsExternal() {
+  void identifySubclassOfAnnotatedCheckAsExternal() {
     assertThat(filter.matches("childOfExternal", new ExternalCustomHealthCheck())).isFalse();
   }
 
   @Test
-  public void identifyDefaultHealthCheckAsInternal() {
+  void identifyDefaultHealthCheckAsInternal() {
     assertThat(filter.matches("defaultIsInternal", new InternalHealthCheck())).isTrue();
   }
 
