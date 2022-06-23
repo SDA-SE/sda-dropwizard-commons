@@ -7,7 +7,6 @@ import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.opa.OpaBundle;
 import org.sdase.commons.server.openapi.OpenApiBundle;
-import org.sdase.commons.server.swagger.SwaggerBundle;
 
 public class OpaBundleTestApp extends Application<OpaBundeTestAppConfiguration> {
 
@@ -18,11 +17,6 @@ public class OpaBundleTestApp extends Application<OpaBundeTestAppConfiguration> 
         AuthBundle.builder()
             .withAuthConfigProvider(OpaBundeTestAppConfiguration::getAuth)
             .withExternalAuthorization()
-            .build());
-    bootstrap.addBundle(
-        SwaggerBundle.builder()
-            .withTitle("Test")
-            .addResourcePackageClass(OpaBundleTestApp.class)
             .build());
     bootstrap.addBundle(
         OpenApiBundle.builder().addResourcePackageClass(OpaBundleTestApp.class).build());
