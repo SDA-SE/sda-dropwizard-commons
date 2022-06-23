@@ -68,10 +68,11 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
   public void initialize(Bootstrap<?> bootstrap) {
 
     // add normal bundles
+    bootstrap.addBundle(InstrumentationBundle.builder().build());
     bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
     bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
     bootstrap.addBundle(InternalHealthCheckEndpointBundle.builder().build());
-    bootstrap.addBundle(InstrumentationBundle.builder().build());
+
     bootstrap.addBundle(PrometheusBundle.builder().build());
     bootstrap.addBundle(TraceTokenBundle.builder().build());
 

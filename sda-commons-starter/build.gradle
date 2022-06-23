@@ -12,6 +12,7 @@ dependencies {
   api project(':sda-commons-shared-certificates')
   api project(':sda-commons-shared-otel-instrumentation')
   runtimeOnly project(':sda-commons-shared-otel-agent')
+  api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-server-auth-testing')

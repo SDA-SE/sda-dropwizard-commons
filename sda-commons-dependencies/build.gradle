@@ -23,10 +23,10 @@ ext {
   kotlinxCoroutinesVersion = '1.6.4'
   openTelemetryVersion= '1.15.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
   openTelemetryAlphaVersion = '1.15.0-alpha'
-  otelAgentVersion = '1.14.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java-instrumentation
-  otelAgentAlphaVersion = '1.14.0-alpha'
-  otelContribVersion= '1.14.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java-contrib
-  otelContribAlphaVersion = '1.14.0-alpha'
+  otelAgentVersion = '1.15.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java-instrumentation
+  otelAgentAlphaVersion = '1.15.0-alpha'
+  otelContribVersion= '1.15.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java-contrib
+  otelContribAlphaVersion = '1.15.0-alpha'
   autoServiceVersion = '1.0'
 }
 

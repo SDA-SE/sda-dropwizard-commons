@@ -47,7 +47,6 @@ dependencies {
   api project(':sda-commons-server-weld-testing')
   api project(':sda-commons-shared-asyncapi')
   api project(':sda-commons-shared-certificates')
-  api project(':sda-commons-shared-otel-tracing')
   api project(':sda-commons-shared-otel-instrumentation')
   api project(':sda-commons-shared-otel-agent')
   api project(':sda-commons-shared-error')

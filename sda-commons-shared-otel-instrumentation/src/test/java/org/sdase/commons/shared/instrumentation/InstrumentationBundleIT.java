@@ -14,16 +14,25 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.Header;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
+import org.junitpioneer.jupiter.SetSystemProperty;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class InstrumentationBundleIT {
   private DropwizardTestSupport<Configuration> DW;
+  private static final String MAIN_METHOD_CHECK_PROP =
+      "otel.javaagent.testing.runtime-attach.main-method-check";
+
+  @BeforeAll
+  static void disableMainThreadCheck() {
+    System.setProperty(MAIN_METHOD_CHECK_PROP, "false");
+  }
 
   @BeforeEach
   void setUp() throws Exception {
@@ -55,6 +64,11 @@ class InstrumentationBundleIT {
 
   @Test
   @Order(2)
+  @SetEnvironmentVariable(key = "OTEL_TRACES_EXPORTER", value = "logging")
+  @SetEnvironmentVariable(key = "OTEL_JAVAAGENT_DEBUG", value = "true")
+  @SetEnvironmentVariable(key = "OTEL_INSTRUMENTATION_APACHE_HTTPCLIENT_ENABLED", value = "true")
+  @SetEnvironmentVariable(key = "OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED", value = "false")
+  @SetSystemProperty(key = MAIN_METHOD_CHECK_PROP, value = "false")
   void shouldUseDefaultHeaders() throws IOException {
     List<Header> headers = makeHttpCallAndReturnHeaders();
     // jaeger headers should be used by default along with W3C headers.
