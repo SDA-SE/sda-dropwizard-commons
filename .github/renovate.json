@@ -1,0 +1,31 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":semanticPrefixFixDepsChoreOthers"
+  ],
+  "dependencyDashboard": true,
+  "packageRules": [
+    {
+      "matchDepTypes": ["testImplementation"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "commitMessageAction": "bump",
+      "commitMessageExtra": "all dev dependencies",
+      "commitBody": "{{{releaseNotes}}}",
+      "groupName": "devDependencies (non-major)"
+    },
+    {
+      "matchDepTypes": ["testImplementation"],
+      "matchUpdateTypes": ["major"],
+      "commitMessageAction": "bump",
+      "commitMessageExtra": "from {{{currentValue}}} to {{#if isMajor}}{{{newMajor}}}{{else}}{{#if isSingleVersion}}{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}{{/if}}",
+      "commitBody": "{{{releaseNotes}}}"
+    },
+    {
+      "matchDepTypes": ["api","implementation"],
+      "commitMessageAction": "bump",
+      "commitMessageExtra": "from {{{currentValue}}} to {{#if isMajor}}{{{newMajor}}}{{else}}{{#if isSingleVersion}}{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}{{/if}}",
+      "commitBody": "{{{releaseNotes}}}"
+    }
+  ]
+}
