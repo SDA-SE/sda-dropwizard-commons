@@ -1,6 +1,0 @@
-auth:
-  disableAuth: true
-
-cors:
-  allowedOrigins:
-  - "*"
