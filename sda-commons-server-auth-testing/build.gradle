@@ -7,14 +7,7 @@ dependencies {
 
   api('org.apache.commons:commons-lang3')
 
-  // the following modules ship with different versions of the swagger-hal library.
-  // since swagger-hal is not needed in these tests, they are excluded from both.
-  testImplementation project(':sda-commons-server-openapi'), {
-    exclude group: 'io.openapitools.hal', module: 'swagger-hal'
-  }
-  testImplementation project(':sda-commons-server-swagger'), {
-    exclude group: 'io.openapitools.hal', module: 'swagger-hal'
-  }
+  testImplementation project(':sda-commons-server-openapi')
 
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
