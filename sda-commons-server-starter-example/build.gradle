@@ -1,8 +1,0 @@
-dependencies {
-  api project(':sda-commons-server-starter')
-
-  testImplementation project(':sda-commons-server-testing')
-  testImplementation project(':sda-commons-server-auth-testing')
-
-  testImplementation 'org.assertj:assertj-core'
-}

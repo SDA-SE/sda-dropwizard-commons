@@ -126,11 +126,8 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
     WebTarget policyTarget = client.target(buildUrl(config));
 
-    // exclude swagger
+    // exclude OpenAPI
     List<String> excludePattern = new ArrayList<>();
-    if (excludeSwagger()) {
-      excludePattern.addAll(getSwaggerExcludePatterns());
-    }
     if (excludeOpenApi()) {
       excludePattern.addAll(getOpenApiExcludePatterns());
     }
@@ -203,22 +200,6 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
         .disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)
         .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
     return objectMapper;
-  }
-
-  private List<String> getSwaggerExcludePatterns() {
-    return singletonList("swagger\\.(json|yaml)");
-  }
-
-  private boolean excludeSwagger() {
-    try {
-      if (getClass().getClassLoader().loadClass("org.sdase.commons.server.swagger.SwaggerBundle")
-          != null) {
-        return true;
-      }
-    } catch (ClassNotFoundException e) {
-      // silently ignored
-    }
-    return false;
   }
 
   private List<String> getOpenApiExcludePatterns() {
