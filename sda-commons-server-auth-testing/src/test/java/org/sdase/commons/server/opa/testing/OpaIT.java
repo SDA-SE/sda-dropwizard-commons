@@ -155,19 +155,6 @@ public class OpaIT {
 
   @Test
   @Retry(5)
-  public void shouldNotInvokeSwaggerUrls() {
-    // given
-    String excludedPath = "swagger.json";
-    OPA_RULE.mock(onRequest().withHttpMethod("GET").withPath(excludedPath).allow());
-    // when
-    Response response = doGetRequest(excludedPath);
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    OPA_RULE.verify(0, "GET", excludedPath);
-  }
-
-  @Test
-  @Retry(5)
   public void shouldNotInvokeOpenApiUrls() {
     // given
     String excludedPath = "openapi.json";
