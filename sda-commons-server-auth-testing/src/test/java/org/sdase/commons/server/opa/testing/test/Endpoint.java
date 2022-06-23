@@ -1,6 +1,5 @@
 package org.sdase.commons.server.opa.testing.test;
 
-import io.swagger.annotations.Api;
 import java.io.IOException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -11,7 +10,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import org.sdase.commons.server.opa.OpaJwtPrincipal;
 
-@Api
 @Path("/")
 public class Endpoint {
 
