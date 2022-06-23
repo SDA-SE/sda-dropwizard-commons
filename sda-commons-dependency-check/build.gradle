@@ -29,18 +29,6 @@ dependencies {
   api project(':sda-commons-server-s3')
   api project(':sda-commons-server-s3-testing')
   api project(':sda-commons-server-security')
-  api project(':sda-commons-server-starter'), {
-    // we intentionally allow this conflict. the swagger and openapi module can't be used in one project.
-    // since the sda-commons-server-starter will be replaced by sda-commons-starter in the future, we
-    // don't check the swagger-related dependencies anymore.
-    exclude group: 'io.openapitools.hal', module: 'swagger-hal'
-  }
-  api project(':sda-commons-server-swagger'), {
-    // we intentionally allow this conflict. the swagger and openapi module can't be used in one project.
-    // since the sda-commons-server-swagger will be replaced by sda-commons-server-openapi in the
-    // future, we don't check the swagger-related dependencies anymore.
-    exclude group: 'io.openapitools.hal', module: 'swagger-hal'
-  }
   api project(':sda-commons-server-testing')
   api project(':sda-commons-server-trace')
   api project(':sda-commons-server-weld')
