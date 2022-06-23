@@ -1,5 +1,40 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
+  ],
+  "dependencyDashboard": true,
+  "labels": ["dependencies"],
+  "commitMessageAction": "bump",
+  "commitMessageExtra": "from {{{currentValue}}} to {{#if isMajor}}{{{newMajor}}}{{else}}{{#if isSingleVersion}}{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}{{/if}}",
+  "commitBody": "{{{releaseNotes}}}",
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "org.sonarqube",
+        "com.diffplug.spotless",
+        "io.codearte.nexus-staging"
+      ],
+      "extends": [":semanticCommitTypeAll(chore)"],
+      "commitMessageAction": "bump",
+      "commitMessageExtra": "all Gradle Plugins",
+      "commitBody": "{{{releaseNotes}}}",
+      "groupName": "Gradle Plugins",
+      "labels": ["dependencies", "plugins"]
+    },
+    {
+      "matchManagers": ["gradle-wrapper"],
+      "extends": [":semanticCommitTypeAll(chore)"],
+      "labels": ["dependencies", "gradle"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "extends": [":semanticCommitTypeAll(chore)", "helpers:pinGitHubActionDigests"],
+      "commitMessageAction": "bump",
+      "commitMessageExtra": "all GitHub Actions",
+      "commitBody": "{{{releaseNotes}}}",
+      "groupName": "GitHub Actions",
+      "labels": ["dependencies", "build"]
+    }
   ]
 }
