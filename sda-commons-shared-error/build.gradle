@@ -1,5 +1,4 @@
 dependencies {
-  compileOnly 'io.swagger:swagger-annotations'
   compileOnly 'io.swagger.core.v3:swagger-annotations'
 
   testImplementation 'junit:junit'

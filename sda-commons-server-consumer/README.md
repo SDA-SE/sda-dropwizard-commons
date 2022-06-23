@@ -54,10 +54,10 @@ the resource path to exclude it.
 E.g. in `http://localhost:8080/api/projects/1`, `http://localhost:8080/api/` is the base path
 and `projects/1` is the resource path. 
  
-#### swagger.json and swagger.yaml
-When the `SwaggerBundle` from [`sda-commons-server-swagger`](../sda-commons-server-swagger/README.md) is in the 
-classpath, excludes for _swagger.json_ and _swagger.yaml_ are added automatically using the regular expression 
-`swagger\.(json|yaml)` to allow clients to load the swagger definition without providing a consumer token.
+#### openapi.json and openapi.yaml
+When the `OpenApiBundle` from [`sda-commons-server-openapi`](../sda-commons-server-openapi/README.md) is in the 
+classpath, excludes for _openapi.json_ and _openapi.yaml_ are added automatically using the regular expression 
+`openapi\.(json|yaml)` to allow clients to load the OpenAPI definition without providing a consumer token.
 
 ## Configuration
 
