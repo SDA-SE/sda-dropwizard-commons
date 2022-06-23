@@ -97,11 +97,6 @@ dependencies {
     // sda-commons-server-openapi
     api "com.jayway.jsonpath:json-path:2.7.0"
 
-    // sda-commons-server-swagger
-    api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9"
-    api "io.swagger:swagger-annotations:$swaggerCoreVersion"
-    api "io.swagger:swagger-jaxrs:$swaggerCoreVersion"
-
     // sda-commons-server-opentracing
     api "io.opentracing:opentracing-util:$openTracingUtilVersion"
     api "io.opentracing:opentracing-util:$openTracingUtilVersion:tests"
@@ -113,6 +108,7 @@ dependencies {
     api "io.opentracing.contrib:opentracing-web-servlet-filter:0.4.1"
 
     // sda-commons-server-openapi
+    api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9" // TODO Needed for OpenAPI?
     api "io.swagger.core.v3:swagger-jaxrs2:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations:$swaggerCoreV3Version"
