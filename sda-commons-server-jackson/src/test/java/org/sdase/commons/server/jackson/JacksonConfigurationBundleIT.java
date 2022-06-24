@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +17,8 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.assertj.core.groups.Tuple;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.jackson.test.JacksonConfigurationTestApp;
 import org.sdase.commons.server.jackson.test.NameSearchFilterResource;
 import org.sdase.commons.server.jackson.test.NestedNestedResource;
@@ -29,17 +29,17 @@ import org.sdase.commons.server.jackson.test.ValidationResource;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.shared.api.error.ApiInvalidParam;
 
-public class JacksonConfigurationBundleIT {
+class JacksonConfigurationBundleIT {
 
   private static final String VALIDATION_ERROR_MESSAGE = "Request parameters are not valid.";
 
-  @ClassRule
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(JacksonConfigurationTestApp.class, null, randomPorts());
+  @RegisterExtension
+  public static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(JacksonConfigurationTestApp.class, null, randomPorts());
 
   // Validation and Error Tests
   @Test
-  public void shouldGetError() {
+  void shouldGetError() {
     try {
       DW.client()
           .target("http://localhost:" + DW.getLocalPort())
@@ -60,47 +60,47 @@ public class JacksonConfigurationBundleIT {
 
   // Validation and Error Tests
   @Test
-  public void shouldGenerateApiErrorForJaxRsNotFoundException() {
+  void shouldGenerateApiErrorForJaxRsNotFoundException() {
     testJaxRsException("NotFound", 404, emptyList());
   }
 
   @Test
-  public void shouldGenerateApiErrorForJaxRsBadRequestException() {
+  void shouldGenerateApiErrorForJaxRsBadRequestException() {
     testJaxRsException("BadRequest", 400, emptyList());
   }
 
   @Test
-  public void shouldGenerateApiErrorForJaxRsForbiddenException() {
+  void shouldGenerateApiErrorForJaxRsForbiddenException() {
     testJaxRsException("Forbidden", 403, emptyList());
   }
 
   @Test
-  public void shouldGenerateApiErrorForJaxRsNotAcceptableException() {
+  void shouldGenerateApiErrorForJaxRsNotAcceptableException() {
     testJaxRsException("NotAcceptable", 406, emptyList());
   }
 
   @Test
-  public void shouldGenerateApiErrorForJaxRsNotAllowedException() {
+  void shouldGenerateApiErrorForJaxRsNotAllowedException() {
     testJaxRsException("NotAllowed", 405, Collections.singletonList("Allow"));
   }
 
   @Test
-  public void shouldGenerateApiErrorForJaxRsNotAuthorizedException() {
+  void shouldGenerateApiErrorForJaxRsNotAuthorizedException() {
     testJaxRsException("NotAuthorized", 401, Collections.singletonList("WWW-Authenticate"));
   }
 
   @Test
-  public void shouldGenerateApiErrorForJaxRsNotSupportedException() {
+  void shouldGenerateApiErrorForJaxRsNotSupportedException() {
     testJaxRsException("NotSupported", 415, emptyList());
   }
 
   @Test
-  public void shouldGenerateApiErrorForJaxRsServiceUnavailableException() {
+  void shouldGenerateApiErrorForJaxRsServiceUnavailableException() {
     testJaxRsException("ServiceUnavailable", 503, Collections.singletonList("Retry-After"));
   }
 
   @Test
-  public void shouldGenerateApiErrorForJaxRsInternalServerErrorException() {
+  void shouldGenerateApiErrorForJaxRsInternalServerErrorException() {
     testJaxRsException("InternalServerError", 500, emptyList());
   }
 
@@ -120,7 +120,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldUseJsonPropertyNames() {
+  void shouldUseJsonPropertyNames() {
     HashMap<String, Object> message = new HashMap<>();
     message.put("name", "last");
     HashMap<String, Object> nested = new HashMap<>();
@@ -147,7 +147,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldSupportCustomValidators() {
+  void shouldSupportCustomValidators() {
     ValidationResource validationResource = new ValidationResource();
     validationResource.setFirstName("Maximilian");
     validationResource.setGender("f");
@@ -172,7 +172,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldGetSeveralValidationInformation() {
+  void shouldGetSeveralValidationInformation() {
     ValidationResource validationResource = new ValidationResource();
     validationResource.setFirstName(null);
     validationResource.setGender("z");
@@ -198,7 +198,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldGetCustomValidationException() {
+  void shouldGetCustomValidationException() {
     ValidationResource validationResource = new ValidationResource();
     validationResource.setFirstName("Asb");
     validationResource.setLastName("Asb");
@@ -224,7 +224,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldGetValidationExceptionWithInvalidFieldOfExtendingResource() {
+  void shouldGetValidationExceptionWithInvalidFieldOfExtendingResource() {
     NameSearchFilterResource emptyNameSearchFilterResource = new NameSearchFilterResource();
     emptyNameSearchFilterResource.setNestedResource(
         new NestedResource().setAnotherNestedResource(new NestedNestedResource()));
@@ -248,7 +248,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldReturnDetailsForValidationMethods() {
+  void shouldReturnDetailsForValidationMethods() {
     ValidationResource validationResource = new ValidationResource();
     validationResource.setFirstName("noname");
     validationResource.setGender("f");
@@ -267,7 +267,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldMapValidationException() {
+  void shouldMapValidationException() {
     ValidationResource validationResource = new ValidationResource();
     validationResource.setFirstName("validationException");
     validationResource.setGender("f");
@@ -286,7 +286,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldReturnApiErrorWhenJsonNotReadable() {
+  void shouldReturnApiErrorWhenJsonNotReadable() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -300,7 +300,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldReturnApiErrorWhenJsonNotProcessable() {
+  void shouldReturnApiErrorWhenJsonNotProcessable() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -321,7 +321,7 @@ public class JacksonConfigurationBundleIT {
 
   // Jackson tests
   @Test
-  public void shouldGetJohnDoe() {
+  void shouldGetJohnDoe() {
     PersonResource johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -344,7 +344,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldRenderEmbeddedResource() {
+  void shouldRenderEmbeddedResource() {
     Map<String, Object> johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -367,7 +367,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldNotRenderOmittedFields() {
+  void shouldNotRenderOmittedFields() {
     Map<String, Object> johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -383,7 +383,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldFilterField() {
+  void shouldFilterField() {
     PersonResource johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -404,7 +404,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldFilterFieldsByMultipleParams() {
+  void shouldFilterFieldsByMultipleParams() {
     PersonResource johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -426,7 +426,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldFilterFieldsBySingleParams() {
+  void shouldFilterFieldsBySingleParams() {
     PersonResource johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -447,7 +447,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldFilterNickName() {
+  void shouldFilterNickName() {
     PersonWithChildrenResource johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -469,7 +469,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldFilterNickNameInList() {
+  void shouldFilterNickNameInList() {
     List<PersonWithChildrenResource> people =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -495,7 +495,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldFilterNotInNestedList() {
+  void shouldFilterNotInNestedList() {
     List<PersonWithChildrenResource> people =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -523,7 +523,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldFilterNickNameButNotInNestedList() {
+  void shouldFilterNickNameButNotInNestedList() {
     PersonWithChildrenResource johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -552,7 +552,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldGetErrorForRuntimeException() {
+  void shouldGetErrorForRuntimeException() {
     try {
       DW.client()
           .target("http://localhost:" + DW.getLocalPort())
@@ -568,7 +568,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldGetQueryParameter() {
+  void shouldGetQueryParameter() {
     String q =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -581,7 +581,7 @@ public class JacksonConfigurationBundleIT {
   }
 
   @Test
-  public void shouldGetErrorForMissingQueryParameter() {
+  void shouldGetErrorForMissingQueryParameter() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
