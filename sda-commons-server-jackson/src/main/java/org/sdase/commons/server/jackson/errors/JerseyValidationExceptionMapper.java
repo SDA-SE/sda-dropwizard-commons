@@ -2,7 +2,7 @@ package org.sdase.commons.server.jackson.errors;
 
 import static org.glassfish.jersey.model.Parameter.Source.QUERY;
 
-import com.google.common.base.CaseFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies.UpperSnakeCaseStrategy;
 import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.JerseyViolationException;
 import io.dropwizard.util.Lists;
@@ -38,6 +38,8 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
 
   private static final String VALIDATION_EXCEPTION_MESSAGE = "Request parameters are not valid.";
 
+  private static final UpperSnakeCaseStrategy ERROR_CODE_TRANSLATOR = new UpperSnakeCaseStrategy();
+
   @Override
   public Response toResponse(JerseyViolationException e) {
 
@@ -56,9 +58,7 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
                   new ApiInvalidParam(
                       propertyPath,
                       cv.getMessage(),
-                      CaseFormat.UPPER_CAMEL.to(
-                          CaseFormat.UPPER_UNDERSCORE,
-                          annotation.substring(annotation.lastIndexOf('.') + 1)));
+                      camelToUpperSnakeCase(annotation.substring(annotation.lastIndexOf('.') + 1)));
               invalidParameters.add(invalidParameter);
             });
 
@@ -91,5 +91,20 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
     }
 
     return Optional.empty();
+  }
+
+  static String camelToUpperSnakeCase(String camelCase) {
+    String normalizedToMatchGuava = camelCase;
+    boolean allNormalized = false;
+    while (!allNormalized) {
+      String newNormalized = normalizeToMatchGuava(normalizedToMatchGuava);
+      allNormalized = newNormalized.equals(normalizedToMatchGuava);
+      normalizedToMatchGuava = newNormalized;
+    }
+    return ERROR_CODE_TRANSLATOR.translate(normalizedToMatchGuava);
+  }
+
+  private static String normalizeToMatchGuava(String normalizedToMatchGuava) {
+    return normalizedToMatchGuava.replaceAll("([A-Z])([A-Z])", "$1_$2");
   }
 }
