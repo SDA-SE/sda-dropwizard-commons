@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.ForbiddenException;
@@ -194,5 +195,23 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
   public Response createRequiredQueryValidationResource(
       @QueryParam("q") @Valid @NotEmpty String searchString) {
     return Response.ok(searchString).build();
+  }
+
+  @POST
+  @Path("/subtypes")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response createSubType(@Valid @NotNull AbstractResource requestBody) {
+    return Response.created(URI.create("/subtypes/" + requestBody.getType())).build();
+  }
+
+  @POST
+  @Path("/subtypesTolerant")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response createSubTypeAllowNull(@Valid AbstractResource requestBody) {
+    if (requestBody == null) {
+      // real implementations may do some individual error handling or logging here
+      throw ApiException.builder().httpCode(422).title("Invalid type").build();
+    }
+    return Response.created(URI.create("/subtypesTolerant/" + requestBody.getType())).build();
   }
 }

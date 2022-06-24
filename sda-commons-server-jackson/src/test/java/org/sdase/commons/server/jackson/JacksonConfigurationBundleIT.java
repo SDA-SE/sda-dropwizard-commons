@@ -597,4 +597,80 @@ class JacksonConfigurationBundleIT {
         .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
         .containsExactly(tuple("q", "NOT_EMPTY"));
   }
+
+  @Test
+  void shouldAcceptSubtypeOne() {
+    try (Response response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("subtypes")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(Collections.singletonMap("type", "ONE")))) {
+      assertThat(response.getStatus()).isEqualTo(201);
+      assertThat(response.getLocation().getPath()).isEqualTo("/subtypes/ONE");
+    }
+  }
+
+  @Test
+  void shouldAcceptSubtypeTwo() {
+    try (Response response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("subtypes")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(Collections.singletonMap("type", "TWO")))) {
+      assertThat(response.getStatus()).isEqualTo(201);
+      assertThat(response.getLocation().getPath()).isEqualTo("/subtypes/TWO");
+    }
+  }
+
+  @Test
+  void shouldNotAcceptSubtypeUndefinedSubtypeThree() {
+    try (Response response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("subtypes")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(Collections.singletonMap("type", "THREE")))) {
+      assertThat(response.getStatus()).isEqualTo(422);
+    }
+  }
+
+  @Test
+  void shouldAcceptSubtypeOneFaultTolerant() {
+    try (Response response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("subtypesTolerant")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(Collections.singletonMap("type", "ONE")))) {
+      assertThat(response.getStatus()).isEqualTo(201);
+      assertThat(response.getLocation().getPath()).isEqualTo("/subtypesTolerant/ONE");
+    }
+  }
+
+  @Test
+  void shouldAcceptSubtypeTwoFaultTolerant() {
+    try (Response response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("subtypesTolerant")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(Collections.singletonMap("type", "TWO")))) {
+      assertThat(response.getStatus()).isEqualTo(201);
+      assertThat(response.getLocation().getPath()).isEqualTo("/subtypesTolerant/TWO");
+    }
+  }
+
+  @Test
+  void shouldNotAcceptSubtypeUndefinedSubtypeThreeFaultTolerant() {
+    try (Response response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("subtypesTolerant")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(Collections.singletonMap("type", "THREE")))) {
+      assertThat(response.getStatus()).isEqualTo(422);
+    }
+  }
 }
