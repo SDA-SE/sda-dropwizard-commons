@@ -14,6 +14,7 @@ dependencies {
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')
   testImplementation project(':sda-commons-server-trace')
+  testImplementation project(':sda-commons-server-jackson')
   testImplementation project(':sda-commons-shared-forms')
 
   testImplementation 'org.awaitility:awaitility'

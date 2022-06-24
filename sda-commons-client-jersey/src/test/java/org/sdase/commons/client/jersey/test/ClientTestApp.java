@@ -9,6 +9,7 @@ import io.opentracing.mock.MockTracer;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
 import org.sdase.commons.client.jersey.oidc.OidcClient;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
+import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.trace.TraceTokenBundle;
 
 public class ClientTestApp extends Application<ClientTestConfig> {
@@ -30,6 +31,7 @@ public class ClientTestApp extends Application<ClientTestConfig> {
   public void initialize(Bootstrap<ClientTestConfig> bootstrap) {
     bootstrap.getObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
+    bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
     bootstrap.addBundle(TraceTokenBundle.builder().build());
     bootstrap.addBundle(jerseyClientBundle);
     bootstrap.addBundle(new MultiPartBundle());
