@@ -1,6 +1,7 @@
 package org.sdase.commons.dependency.check;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
@@ -14,11 +15,12 @@ import java.nio.file.Path;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NoGuavaTest {
+class NoGuavaTest {
 
   private static final Logger LOG = LoggerFactory.getLogger(NoGuavaTest.class);
   private static final String[] IMPORT_COM_GOOGLE = {
@@ -31,7 +33,8 @@ public class NoGuavaTest {
    * changes from time to time.
    */
   @Test
-  public void discourageUseOfGoogleCode() {
+  @DisabledOnOs(WINDOWS)
+  void discourageUseOfGoogleCode() {
     ClassInfoList allClasses = new ClassGraph().enableClassInfo().scan().getAllClasses();
     ClassInfoList classFilesInClasspath =
         allClasses
