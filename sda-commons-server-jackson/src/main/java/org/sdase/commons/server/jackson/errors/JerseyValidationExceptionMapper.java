@@ -94,6 +94,7 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
   }
 
   static String camelToUpperSnakeCase(String camelCase) {
+    // changing the input so that the result matches the way Guava (used before) created camel case
     String normalizedToMatchGuava = camelCase;
     boolean allNormalized = false;
     while (!allNormalized) {
@@ -101,6 +102,7 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
       allNormalized = newNormalized.equals(normalizedToMatchGuava);
       normalizedToMatchGuava = newNormalized;
     }
+    // end of backward compatibility implementation to match Guava transformation
     return ERROR_CODE_TRANSLATOR.translate(normalizedToMatchGuava);
   }
 
