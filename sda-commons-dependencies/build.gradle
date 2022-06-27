@@ -28,6 +28,7 @@ dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
+    exclude group: 'org.assertj', module: 'assertj-core'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.332")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
@@ -53,6 +54,7 @@ dependencies {
 
     // overall testing dependencies
     api "org.awaitility:awaitility:4.2.0"
+    api 'org.assertj:assertj-core:3.23.1'
 
     // sda-commons-client-jersey-wiremock-testing
     api "com.github.tomakehurst:wiremock-jre8:2.35.0"
