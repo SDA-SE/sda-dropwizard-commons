@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.google.common.base.CaseFormat;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import java.util.stream.Stream;
@@ -30,14 +29,6 @@ class JerseyValidationExceptionMapperTest {
     String expected = new PropertyNamingStrategies.UpperSnakeCaseStrategy().translate(given);
     // would fail on: EAN, ISBN, URL, CNPJ, CPF, NIP, PESEL, REGON, INN
     assumeThat(actual).isEqualTo(expected);
-  }
-
-  @ParameterizedTest
-  @MethodSource("realTestData")
-  void shouldConvertToSnakeCaseLikeGuava(String given) {
-    String actual = JerseyValidationExceptionMapper.camelToUpperSnakeCase(given);
-    String expectedGuava = CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, given);
-    assertThat(actual).isEqualTo(expectedGuava);
   }
 
   static Stream<Arguments> testData() {
