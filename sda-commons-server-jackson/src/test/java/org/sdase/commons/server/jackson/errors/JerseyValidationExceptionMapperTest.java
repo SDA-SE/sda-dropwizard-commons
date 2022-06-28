@@ -45,7 +45,9 @@ class JerseyValidationExceptionMapperTest {
     String javaxConstraintsPackageName = NotNull.class.getPackage().getName();
     String hibernateConstraintsPackageName = ISBN.class.getPackage().getName();
     return new ClassGraph()
-        .enableClassInfo().scan().getAllClasses()
+            .enableClassInfo()
+            .scan()
+            .getAllClasses()
             .filter(
                 classInfo ->
                     classInfo.getPackageName().startsWith(javaxConstraintsPackageName)
