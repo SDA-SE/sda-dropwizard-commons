@@ -9,7 +9,7 @@ javaPlatform {
 ext {
   dropwizardVersion = '2.1.0'
   morphiaVersion = '1.6.1'
-  prometheusVersion = '0.9.0'
+  prometheusVersion = '0.16.0'
   swaggerCoreVersion = '1.6.6'
   swaggerCoreV3Version = '2.2.1'
   weldVersion = '3.1.9.Final'
@@ -30,7 +30,7 @@ dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.249")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.250")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
   constraints {
@@ -42,7 +42,7 @@ dependencies {
     api "io.github.classgraph:classgraph:4.8.147", {
       because "conflict between io.swagger.core.v3:swagger-jaxrs2, io.swagger.core.v3:swagger-integration, dev.morphia.morphia:core and com.kjetland:mbknor-jackson-jsonschema_2.13 upgrade"
     }
-    api "org.jboss.logging:jboss-logging:3.4.3.Final", {
+    api "org.jboss.logging:jboss-logging:3.5.0.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
     }
     api "org.yaml:snakeyaml:1.30", {
@@ -153,7 +153,7 @@ dependencies {
       because "Dropwizard does not use the jakarta version yet so we replace it in weld with the javax version that comes as transitive dependency without explicit version."
     }
 
-    api "org.junit-pioneer:junit-pioneer:1.6.2"
+    api "org.junit-pioneer:junit-pioneer:1.7.1"
 
     // sda-commons-shared-*
     api 'commons-io:commons-io:2.11.0'
@@ -161,11 +161,11 @@ dependencies {
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.5.9"
+    api "org.apache.zookeeper:zookeeper:3.8.0"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
     api "com.salesforce.kafka.test:kafka-junit4:$kafkaJunitVersion"
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
-    api "org.apache.curator:curator-test:5.2.0", {
+    api "org.apache.curator:curator-test:5.2.1", {
       because '''\
           Upgrade because kafka-junit still uses curator 2.12.0.
           The older version does not work when executing tests parallel because it starts the
