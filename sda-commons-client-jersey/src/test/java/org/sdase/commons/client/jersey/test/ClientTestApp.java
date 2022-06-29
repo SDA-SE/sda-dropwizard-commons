@@ -1,6 +1,5 @@
 package org.sdase.commons.client.jersey.test;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import io.dropwizard.Application;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -29,7 +28,6 @@ public class ClientTestApp extends Application<ClientTestConfig> {
 
   @Override
   public void initialize(Bootstrap<ClientTestConfig> bootstrap) {
-    bootstrap.getObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
     bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
     bootstrap.addBundle(TraceTokenBundle.builder().build());
