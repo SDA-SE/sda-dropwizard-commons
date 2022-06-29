@@ -23,8 +23,9 @@
       "labels": ["dependencies", "plugins"]
     },
     {
-      "matchManagers": ["gradle-wrapper"],
+      "matchPackageNames": ["gradle"],
       "extends": [":semanticCommitTypeAll(chore)"],
+      "groupName": "Gradle",
       "labels": ["dependencies", "gradle"]
     },
     {
