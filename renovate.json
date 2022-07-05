@@ -16,10 +16,10 @@
       "groupSlug": null
     },
     {
-      "matchPackageNames": [
-        "org.sonarqube",
-        "com.diffplug.spotless",
-        "io.codearte.nexus-staging"
+      "matchPackagePatterns": [
+        "^org\\.sonarqube$",
+        "^com\\.diffplug\\.spotless$",
+        "^io\\.codearte\\.nexus-staging$"
       ],
       "extends": [":semanticCommitTypeAll(chore)"],
       "commitMessageAction": "bump",
@@ -29,7 +29,7 @@
       "labels": ["dependencies", "plugins"]
     },
     {
-      "matchPackageNames": ["gradle"],
+      "matchPackagePatterns": ["^gradle$"],
       "extends": [":semanticCommitTypeAll(chore)"],
       "groupName": "Gradle",
       "labels": ["dependencies", "gradle"]
