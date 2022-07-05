@@ -16,22 +16,20 @@
       "groupSlug": null
     },
     {
-      "matchPackagePatterns": [
-        "^org\\.sonarqube$",
-        "^com\\.diffplug\\.spotless$",
-        "^io\\.codearte\\.nexus-staging$"
-      ],
+      "matchDepTypes": ["plugin"],
       "extends": [":semanticCommitTypeAll(chore)"],
       "commitMessageAction": "bump",
       "commitMessageExtra": "all Gradle Plugins",
       "commitBody": "{{{releaseNotes}}}",
       "groupName": "Gradle Plugins",
+      "groupSlug": "gradle-plugins",
       "labels": ["dependencies", "plugins"]
     },
     {
       "matchPackagePatterns": ["^gradle$"],
       "extends": [":semanticCommitTypeAll(chore)"],
       "groupName": "Gradle",
+      "groupSlug": "gradle",
       "labels": ["dependencies", "gradle"]
     },
     {
