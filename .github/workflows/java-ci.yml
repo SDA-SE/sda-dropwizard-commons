@@ -73,9 +73,9 @@ jobs:
           path: artifacts
 
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@f00bb47e1d89c6d98071d1b69e16a2b63c7fbfc1
+        uses: EnricoMi/publish-unit-test-result-action@7a453e7e81ac3190db44d6a0cf3ab2811b12cf11
         with:
-          files: artifacts/**/build/test-results/**/*.xml
+          junit_files: artifacts/**/build/test-results/**/*.xml
 
   # create release and publish the artifacts
   semantic-release:
