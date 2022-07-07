@@ -10,6 +10,10 @@ The [`JacksonConfigurationBundle`](./src/main/java/org/sdase/commons/server/jack
 used to configure the JSON serializer. It adds various error mappers to support the SDA error message standard. These
 replace the default Dropwizard error mappers but also additional new mappers are added, e.g. mapping JaxRs Exceptions, 
 such as NotFound and NotAuthorized. All mappers do log the errors when mapping.
+The framework already provides a predefined exception mapper for `InvalidTypeException` if the framework default
+for feature `FAIL_ON_INVALID_SUBTYPE` is customized. See section [`Customize the ObjectMapper`](#customize-the-objectmapper) below for details
+about customizing the default object mapper settings. If the feature is enabled the [`InvalidTypeIdExceptionMapper`](./src/main/java/org/sdase/commons/server/jackson/errors/InvalidTypeIdExceptionMapper.java)
+produces a response in the common error format.
 
 The [`ObjectMapperConfigurationUtil`](./src/main/java/org/sdase/commons/server/jackson/ObjectMapperConfigurationUtil.java)
 can be used to receive an `ObjectMapper` with the recommended settings for usage outside of a Dropwizard application.  
