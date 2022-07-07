@@ -9,14 +9,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.time.ZonedDateTime;
 import java.util.function.Consumer;
-import org.sdase.commons.server.jackson.errors.ApiExceptionMapper;
-import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
-import org.sdase.commons.server.jackson.errors.JacksonPropertyNodeNameProvider;
-import org.sdase.commons.server.jackson.errors.JerseyValidationExceptionMapper;
-import org.sdase.commons.server.jackson.errors.JsonProcessingExceptionMapper;
-import org.sdase.commons.server.jackson.errors.RuntimeExceptionMapper;
-import org.sdase.commons.server.jackson.errors.ValidationExceptionMapper;
-import org.sdase.commons.server.jackson.errors.WebApplicationExceptionMapper;
+import org.sdase.commons.server.jackson.errors.*;
 import org.sdase.commons.server.jackson.filter.JacksonFieldFilterModule;
 import org.sdase.commons.server.jackson.hal.HalLinkProvider;
 import org.slf4j.Logger;
@@ -107,6 +100,7 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
     environment.jersey().register(JsonProcessingExceptionMapper.class);
     environment.jersey().register(WebApplicationExceptionMapper.class);
     environment.jersey().register(RuntimeExceptionMapper.class);
+    environment.jersey().register(InvalidTypeIdExceptionMapper.class);
   }
 
   /**
