@@ -11,7 +11,7 @@ import io.prometheus.client.Counter;
 public class ProducerTopicMessageCounter {
 
   /** The counter name as it is published to Prometheus. */
-  private static final String METRIC_NAME = "kafka_producer_topic_message_total";
+  private static final String METRIC_NAME = "kafka_producer_topic_message";
 
   /** The help message description that describes the Histogram. */
   private static final String HELP = "Amount of messages published by Kafka producers.";

@@ -104,7 +104,7 @@ public class KafkaPrometheusMonitoringIT {
         Collections.list(CollectorRegistry.defaultRegistry.metricFamilySamples());
 
     String[] metrics = {
-      "kafka_producer_topic_message_total",
+      "kafka_producer_topic_message",
       "kafka_consumer_topic_message_duration",
       "kafka_consumer_records_lag"
     };
