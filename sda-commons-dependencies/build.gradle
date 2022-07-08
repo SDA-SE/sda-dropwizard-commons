@@ -82,7 +82,7 @@ dependencies {
     api "com.github.database-rider:rider-junit5:$dbRiderVersion"
 
     // sda-commons-server-jaeger
-    api "io.jaegertracing:jaeger-client:1.8.0"
+    api "io.jaegertracing:jaeger-client:1.8.1"
     api "com.google.code.gson:gson:2.9.0" // fixes vulnerability in transitive dependency 2.8.6
     api "com.squareup.okhttp3:okhttp:4.10.0" // fixes CVE-2021-0341 (bump from 4.9.0 used in jaeger-thrift:1.8.0)
 
