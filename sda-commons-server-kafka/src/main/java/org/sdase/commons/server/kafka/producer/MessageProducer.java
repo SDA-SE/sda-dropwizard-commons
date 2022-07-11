@@ -22,4 +22,6 @@ public interface MessageProducer<K, V> {
   Future<RecordMetadata> send(K key, V value);
 
   Future<RecordMetadata> send(K key, V value, Headers headers);
+
+  void flush();
 }
