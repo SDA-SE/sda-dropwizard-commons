@@ -19,7 +19,7 @@ ext {
   kafkaVersion = '2.8.1'
   kafkaJunitVersion = '3.2.4' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.32.3'
-  kotlinVersion = '1.7.0'
+  kotlinVersion = '1.7.10'
   kotlinxCoroutinesVersion = '1.6.3'
 }
 
@@ -30,7 +30,7 @@ dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.249")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.260")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
   constraints {
