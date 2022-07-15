@@ -4,6 +4,8 @@ dependencies {
     // conflict with jetty from dropwizard
     exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
     exclude group: 'net.minidev', module:'json-smart'
+    // prefer managed version from dropwizard
+    exclude group: 'org.eclipse.jetty', module: 'jetty-bom'
   }
   api 'net.minidev:json-smart'
 

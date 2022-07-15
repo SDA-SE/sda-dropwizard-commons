@@ -77,7 +77,9 @@ public class ConsumerTokenBuilderTest {
 
       List<Object> registeredFilters = jerseyRegistrationCaptor.getAllValues();
       assertThat(registeredFilters.get(0))
-          .isEqualToComparingFieldByFieldRecursively(registeredFilters.get(1));
+          .usingRecursiveComparison()
+          .usingOverriddenEquals()
+          .isEqualTo(registeredFilters.get(1));
     } catch (InstantiationException | IllegalAccessException e) {
       fail("Fail to instantiate config class.", e);
     }

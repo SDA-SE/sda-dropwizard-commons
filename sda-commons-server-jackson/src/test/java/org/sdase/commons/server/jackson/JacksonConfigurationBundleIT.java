@@ -26,6 +26,7 @@ import org.sdase.commons.server.jackson.test.NestedResource;
 import org.sdase.commons.server.jackson.test.PersonResource;
 import org.sdase.commons.server.jackson.test.PersonWithChildrenResource;
 import org.sdase.commons.server.jackson.test.ValidationResource;
+import org.sdase.commons.server.testing.DropwizardLegacyHelper;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.shared.api.error.ApiInvalidParam;
 
@@ -41,7 +42,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldGetError() {
     try {
-      DW.client()
+      DropwizardLegacyHelper.client(DW.getObjectMapper())
           .target("http://localhost:" + DW.getLocalPort())
           .path("/exception")
           .request(MediaType.APPLICATION_JSON)
@@ -105,18 +106,19 @@ class JacksonConfigurationBundleIT {
   }
 
   private void testJaxRsException(String exceptionType, int expectedError, List<String> header) {
-    Response response =
-        DW.client()
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("jaxrsexception")
             .queryParam("type", exceptionType)
             .request(MediaType.APPLICATION_JSON)
-            .get();
+            .get()) {
 
-    ApiError error = response.readEntity(ApiError.class);
-    assertThat(header.stream().allMatch(h -> response.getHeaders().containsKey(h))).isTrue();
-    assertThat(error.getTitle()).isNotEmpty();
-    assertThat(response.getStatus()).isEqualTo(expectedError);
+      ApiError error = response.readEntity(ApiError.class);
+      assertThat(header.stream().allMatch(h -> response.getHeaders().containsKey(h))).isTrue();
+      assertThat(error.getTitle()).isNotEmpty();
+      assertThat(response.getStatus()).isEqualTo(expectedError);
+    }
   }
 
   @Test
@@ -128,22 +130,23 @@ class JacksonConfigurationBundleIT {
     nested.put("myNestedResource", nestedNested);
     message.put("myNestedResource", nested);
 
-    Response response =
-        DW.client()
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("validation")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json(message));
+            .post(Entity.json(message))) {
 
-    ApiError error = response.readEntity(ApiError.class);
-    assertThat(response.getStatus()).isEqualTo(422);
-    assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
+      ApiError error = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
 
-    assertThat(error.getInvalidParams())
-        .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
-        .containsExactlyInAnyOrder(
-            tuple("myNestedResource.myNestedField", "NOT_EMPTY"),
-            tuple("myNestedResource.myNestedResource.anotherNestedField", "NOT_EMPTY"));
+      assertThat(error.getInvalidParams())
+          .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
+          .containsExactlyInAnyOrder(
+              tuple("myNestedResource.myNestedField", "NOT_EMPTY"),
+              tuple("myNestedResource.myNestedResource.anotherNestedField", "NOT_EMPTY"));
+    }
   }
 
   @Test
@@ -154,21 +157,22 @@ class JacksonConfigurationBundleIT {
     validationResource.setLastName("Mustermann");
     validationResource.setSalutation("herr");
 
-    Response response =
-        DW.client()
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("validation")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json(validationResource));
+            .post(Entity.json(validationResource))) {
 
-    ApiError error = response.readEntity(ApiError.class);
-    assertThat(response.getStatus()).isEqualTo(422);
-    assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
-    assertThat(error.getInvalidParams())
-        .extracting(
-            ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode)
-        .containsExactlyInAnyOrder(
-            new Tuple("salutation", "All letters must be UPPER CASE only.", "UPPER_CASE"));
+      ApiError error = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
+      assertThat(error.getInvalidParams())
+          .extracting(
+              ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode)
+          .containsExactlyInAnyOrder(
+              new Tuple("salutation", "All letters must be UPPER CASE only.", "UPPER_CASE"));
+    }
   }
 
   @Test
@@ -178,23 +182,24 @@ class JacksonConfigurationBundleIT {
     validationResource.setGender("z");
     validationResource.setLastName("asb");
 
-    Response response =
-        DW.client()
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("validation")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json(validationResource));
+            .post(Entity.json(validationResource))) {
 
-    ApiError apiError = response.readEntity(ApiError.class);
-    assertThat(response.getStatus()).isEqualTo(422);
-    assertThat(apiError.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
-    assertThat(apiError.getInvalidParams().size()).isEqualTo(3);
-    assertThat(apiError.getInvalidParams())
-        .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
-        .containsExactlyInAnyOrder(
-            new Tuple("name", "NOT_EMPTY"),
-            new Tuple("gender", "ONE_OF"),
-            new Tuple("lastName", "PATTERN"));
+      ApiError apiError = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(apiError.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
+      assertThat(apiError.getInvalidParams().size()).isEqualTo(3);
+      assertThat(apiError.getInvalidParams())
+          .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
+          .containsExactlyInAnyOrder(
+              new Tuple("name", "NOT_EMPTY"),
+              new Tuple("gender", "ONE_OF"),
+              new Tuple("lastName", "PATTERN"));
+    }
   }
 
   @Test
@@ -203,24 +208,28 @@ class JacksonConfigurationBundleIT {
     validationResource.setFirstName("Asb");
     validationResource.setLastName("Asb");
 
-    Response response =
-        DW.client()
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("validation")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json(validationResource));
+            .post(Entity.json(validationResource))) {
 
-    ApiError apiError = response.readEntity(ApiError.class);
-    assertThat(response.getStatus()).isEqualTo(422);
-    assertThat(apiError.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
-    assertThat(apiError.getInvalidParams().size()).isEqualTo(2);
-    assertThat(apiError.getInvalidParams())
-        .extracting(
-            ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode)
-        .containsExactlyInAnyOrder(
-            new Tuple("name", "First name and last name must be different.", "CHECK_NAME_REPEATED"),
-            new Tuple(
-                "lastName", "First name and last name must be different.", "CHECK_NAME_REPEATED"));
+      ApiError apiError = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(apiError.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
+      assertThat(apiError.getInvalidParams().size()).isEqualTo(2);
+      assertThat(apiError.getInvalidParams())
+          .extracting(
+              ApiInvalidParam::getField, ApiInvalidParam::getReason, ApiInvalidParam::getErrorCode)
+          .containsExactlyInAnyOrder(
+              new Tuple(
+                  "name", "First name and last name must be different.", "CHECK_NAME_REPEATED"),
+              new Tuple(
+                  "lastName",
+                  "First name and last name must be different.",
+                  "CHECK_NAME_REPEATED"));
+    }
   }
 
   @Test
@@ -229,22 +238,23 @@ class JacksonConfigurationBundleIT {
     emptyNameSearchFilterResource.setNestedResource(
         new NestedResource().setAnotherNestedResource(new NestedNestedResource()));
 
-    Response response =
-        DW.client()
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("searchValidation")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json(emptyNameSearchFilterResource));
+            .post(Entity.json(emptyNameSearchFilterResource))) {
 
-    ApiError apiError = response.readEntity(ApiError.class);
-    assertThat(response.getStatus()).isEqualTo(422);
-    assertThat(apiError.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
-    assertThat(apiError.getInvalidParams())
-        .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
-        .containsExactlyInAnyOrder(
-            tuple("name", "NOT_NULL"),
-            tuple("nestedResource.myNestedField", "NOT_EMPTY"),
-            tuple("nestedResource.myNestedResource.anotherNestedField", "NOT_EMPTY"));
+      ApiError apiError = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(apiError.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
+      assertThat(apiError.getInvalidParams())
+          .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
+          .containsExactlyInAnyOrder(
+              tuple("name", "NOT_NULL"),
+              tuple("nestedResource.myNestedField", "NOT_EMPTY"),
+              tuple("nestedResource.myNestedResource.anotherNestedField", "NOT_EMPTY"));
+    }
   }
 
   @Test
@@ -254,16 +264,17 @@ class JacksonConfigurationBundleIT {
     validationResource.setGender("f");
     validationResource.setLastName("Test");
 
-    Response response =
-        DW.client()
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("validation")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json(validationResource));
+            .post(Entity.json(validationResource))) {
 
-    ApiError apiError = response.readEntity(ApiError.class);
-    assertThat(response.getStatus()).isEqualTo(422);
-    assertThat(apiError.getInvalidParams().size()).isEqualTo(1);
+      ApiError apiError = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(apiError.getInvalidParams().size()).isEqualTo(1);
+    }
   }
 
   @Test
@@ -273,57 +284,60 @@ class JacksonConfigurationBundleIT {
     validationResource.setGender("f");
     validationResource.setLastName("Test");
 
-    Response response =
-        DW.client()
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("validation")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json(validationResource));
+            .post(Entity.json(validationResource))) {
 
-    ApiError apiError = response.readEntity(ApiError.class);
-    assertThat(response.getStatus()).isEqualTo(500);
-    assertThat(apiError.getTitle()).isEqualTo("Failed to validate message.");
+      ApiError apiError = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(500);
+      assertThat(apiError.getTitle()).isEqualTo("Failed to validate message.");
+    }
   }
 
   @Test
   void shouldReturnApiErrorWhenJsonNotReadable() {
-    Response response =
-        DW.client()
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("validation")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json("Nothing"));
+            .post(Entity.json("Nothing"))) {
 
-    assertThat(response.getStatus()).isEqualTo(400);
-    ApiError apiError = response.readEntity(ApiError.class);
-    assertThat(apiError.getTitle()).startsWith("Failed to process json:");
+      assertThat(response.getStatus()).isEqualTo(400);
+      ApiError apiError = response.readEntity(ApiError.class);
+      assertThat(apiError.getTitle()).startsWith("Failed to process json:");
+    }
   }
 
   @Test
   void shouldReturnApiErrorWhenJsonNotProcessable() {
-    Response response =
-        DW.client()
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("/validation")
             .request(MediaType.APPLICATION_JSON)
             .post(
                 Entity.json(
                     "{\"gender\": \"m\", \"firstName\": \"Hans\", \n"
-                        + "\"myNestedResource\": { \"myNestedField\": \"test\", \"someNumber\": \"twenty\" } }"));
+                        + "\"myNestedResource\": { \"myNestedField\": \"test\", \"someNumber\": \"twenty\" } }"))) {
 
-    assertThat(response.getStatus()).isEqualTo(400);
-    ApiError apiError = response.readEntity(ApiError.class);
-    assertThat(apiError.getTitle())
-        .isEqualTo(
-            "Failed to process json: "
-                + "Location 'line: 2, column: 62'; FieldName 'myNestedResource.someNumber'");
+      assertThat(response.getStatus()).isEqualTo(400);
+      ApiError apiError = response.readEntity(ApiError.class);
+      assertThat(apiError.getTitle())
+          .isEqualTo(
+              "Failed to process json: "
+                  + "Location 'line: 2, column: 62'; FieldName 'myNestedResource.someNumber'");
+    }
   }
 
   // Jackson tests
   @Test
   void shouldGetJohnDoe() {
     PersonResource johnny =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
             .path("jdoe") // NOSONAR
@@ -346,7 +360,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldRenderEmbeddedResource() {
     Map<String, Object> johnny =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
             .path("jdoe")
@@ -369,7 +383,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldNotRenderOmittedFields() {
     Map<String, Object> johnny =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
             .path("jdoe")
@@ -385,7 +399,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldFilterField() {
     PersonResource johnny =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
             .path("jdoe")
@@ -406,7 +420,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldFilterFieldsByMultipleParams() {
     PersonResource johnny =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
             .path("jdoe")
@@ -428,7 +442,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldFilterFieldsBySingleParams() {
     PersonResource johnny =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
             .path("jdoe")
@@ -449,7 +463,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldFilterNickName() {
     PersonWithChildrenResource johnny =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
             .path("jdoe-and-children")
@@ -471,7 +485,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldFilterNickNameInList() {
     List<PersonWithChildrenResource> people =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
             .queryParam("fields", "nickName")
@@ -497,7 +511,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldFilterNotInNestedList() {
     List<PersonWithChildrenResource> people =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
             .queryParam("fields", "nickName,children")
@@ -525,7 +539,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldFilterNickNameButNotInNestedList() {
     PersonWithChildrenResource johnny =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
             .path("jdoe-and-children")
@@ -554,7 +568,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldGetErrorForRuntimeException() {
     try {
-      DW.client()
+      DropwizardLegacyHelper.client(DW.getObjectMapper())
           .target("http://localhost:" + DW.getLocalPort())
           .path("/runtimeException")
           .request(MediaType.APPLICATION_JSON)
@@ -570,7 +584,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldGetQueryParameter() {
     String q =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("requiredQuery")
             .queryParam("q", "My Value")
@@ -583,7 +597,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldGetErrorForMissingQueryParameter() {
     Response response =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("requiredQuery")
             .request(MediaType.APPLICATION_JSON)
@@ -601,7 +615,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldAcceptSubtypeOne() {
     try (Response response =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("subtypes")
             .request(MediaType.APPLICATION_JSON)
@@ -614,7 +628,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldAcceptSubtypeTwo() {
     try (Response response =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("subtypes")
             .request(MediaType.APPLICATION_JSON)
@@ -627,7 +641,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldNotAcceptSubtypeUndefinedSubtypeThree() {
     try (Response response =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("subtypes")
             .request(MediaType.APPLICATION_JSON)
@@ -639,7 +653,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldAcceptSubtypeOneFaultTolerant() {
     try (Response response =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("subtypesTolerant")
             .request(MediaType.APPLICATION_JSON)
@@ -652,7 +666,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldAcceptSubtypeTwoFaultTolerant() {
     try (Response response =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("subtypesTolerant")
             .request(MediaType.APPLICATION_JSON)
@@ -665,7 +679,7 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldNotAcceptSubtypeUndefinedSubtypeThreeFaultTolerant() {
     try (Response response =
-        DW.client()
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("subtypesTolerant")
             .request(MediaType.APPLICATION_JSON)
