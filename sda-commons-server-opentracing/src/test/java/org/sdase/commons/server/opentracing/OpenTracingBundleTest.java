@@ -140,7 +140,7 @@ class OpenTracingBundleTest {
 
   @Test
   void shouldDecorateJaxRsSpanWithHeaders() {
-    Response r = createClient().path("respond/test").request().get();
+    Response r = createClient().path("respond/test").request().header("Accept", "text/html").get();
 
     // Make sure to wait till the request is completed:
     r.readEntity(String.class);

@@ -2,8 +2,10 @@ package org.sdase.commons.server.consumer.filter;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import javax.annotation.Priority;
@@ -22,16 +24,17 @@ public class ConsumerTokenServerFilter implements ContainerRequestFilter {
   private final boolean requireIdentifiedConsumer;
   private final List<Pattern> excludePatterns;
 
+  private final List<String> excludeRegex;
+
   /**
    * @param requireIdentifiedConsumer if an identified customer is required to fulfill requests
    * @param excludeRegex a list of regex pattern for paths that are excluded from the filter
    */
   public ConsumerTokenServerFilter(boolean requireIdentifiedConsumer, List<String> excludeRegex) {
     this.requireIdentifiedConsumer = requireIdentifiedConsumer;
-    this.excludePatterns =
-        excludeRegex == null
-            ? Collections.emptyList()
-            : excludeRegex.stream().map(Pattern::compile).collect(toList());
+    this.excludeRegex =
+        excludeRegex == null ? Collections.emptyList() : new ArrayList<>(excludeRegex);
+    this.excludePatterns = this.excludeRegex.stream().map(Pattern::compile).collect(toList());
   }
 
   @Override
@@ -88,5 +91,19 @@ public class ConsumerTokenServerFilter implements ContainerRequestFilter {
   private void addConsumerNameToRequest(
       ContainerRequestContext requestContext, String consumerName) {
     requestContext.setProperty(ConsumerTracing.NAME_ATTRIBUTE, consumerName);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ConsumerTokenServerFilter that = (ConsumerTokenServerFilter) o;
+    return requireIdentifiedConsumer == that.requireIdentifiedConsumer
+        && Objects.equals(this.excludeRegex, that.excludeRegex);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(requireIdentifiedConsumer, excludeRegex);
   }
 }

@@ -1,7 +1,13 @@
 package org.sdase.commons.server.starter;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.function.Consumer;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +68,7 @@ public class JacksonBuilderTest {
   }
 
   @Test
-  public void alwaysWithMillis() {
+  public void alwaysWithMillis() throws JsonProcessingException {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -72,12 +78,19 @@ public class JacksonBuilderTest {
             .alwaysWriteZonedDateTimeWithMillisInJson()
             .build();
 
-    bundleAssertion.assertBundleConfiguredByPlatformBundle(
-        bundle, JacksonConfigurationBundle.builder().alwaysWriteZonedDateTimeWithMillis().build());
+    ObjectMapper om = bundleAssertion.getObjectMapper(bundle);
+    FooWithZonedDateTime fooObject = new FooWithZonedDateTime();
+    assertThat(fooObject.getNow().getNano()).isNotZero();
+    String fooString = om.writeValueAsString(fooObject);
+
+    FooWithZonedDateTime deserializedFoo = om.readValue(fooString, FooWithZonedDateTime.class);
+    assertThat(deserializedFoo.getNow().getNano()).isNotZero();
+    assertThat(deserializedFoo.getNow())
+        .isCloseTo(fooObject.getNow(), within(1, ChronoUnit.MILLIS));
   }
 
   @Test
-  public void alwaysWithoutMillis() {
+  public void alwaysWithoutMillis() throws JsonProcessingException {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -87,9 +100,15 @@ public class JacksonBuilderTest {
             .alwaysWriteZonedDateTimeWithoutMillisInJson()
             .build();
 
-    bundleAssertion.assertBundleConfiguredByPlatformBundle(
-        bundle,
-        JacksonConfigurationBundle.builder().alwaysWriteZonedDateTimeWithoutMillis().build());
+    ObjectMapper om = bundleAssertion.getObjectMapper(bundle);
+    FooWithZonedDateTime fooObject = new FooWithZonedDateTime();
+    assertThat(fooObject.getNow().getNano()).isNotZero();
+    String fooString = om.writeValueAsString(fooObject);
+
+    FooWithZonedDateTime deserializedFoo = om.readValue(fooString, FooWithZonedDateTime.class);
+    assertThat(deserializedFoo.getNow().getNano()).isZero();
+    assertThat(deserializedFoo.getNow())
+        .isCloseTo(fooObject.getNow(), within(1, ChronoUnit.SECONDS));
   }
 
   @Test
@@ -107,7 +126,21 @@ public class JacksonBuilderTest {
             .withObjectMapperCustomization(omc)
             .build();
 
-    bundleAssertion.assertBundleConfiguredByPlatformBundle(
-        bundle, JacksonConfigurationBundle.builder().withCustomization(omc).build());
+    ObjectMapper om = bundleAssertion.getObjectMapper(bundle);
+    assertThat(om.isEnabled(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)).isFalse();
+  }
+
+  static class FooWithZonedDateTime {
+
+    private ZonedDateTime now = ZonedDateTime.now();
+
+    public ZonedDateTime getNow() {
+      return now;
+    }
+
+    public FooWithZonedDateTime setNow(ZonedDateTime now) {
+      this.now = now;
+      return this;
+    }
   }
 }
