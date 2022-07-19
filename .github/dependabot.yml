@@ -14,18 +14,3 @@ updates:
     include: scope
   labels:
     - 'dependencies'
-- package-ecosystem: github-actions
-  directory: "/"
-  schedule:
-    interval: weekly
-    day: wednesday
-    time: "08:00"
-    timezone: Europe/Berlin
-  open-pull-requests-limit: 15
-  target-branch: master
-  commit-message:
-    prefix: chore
-    prefix-development: chore
-    include: scope
-  labels:
-    - 'dependencies'
