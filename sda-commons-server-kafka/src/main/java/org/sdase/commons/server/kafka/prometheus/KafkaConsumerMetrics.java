@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.MetricName;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
@@ -70,6 +71,7 @@ public class KafkaConsumerMetrics extends Collector {
     Arrays.stream(KAFKA_METRICS)
         .forEach(
             metricName -> list.add(collectKafkaMetric(metricByNameOrNull(metrics, metricName))));
+    list.removeIf(Objects::isNull);
     return list;
   }
 
