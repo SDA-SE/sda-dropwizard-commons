@@ -4,7 +4,7 @@ dependencies {
   api 'org.javassist:javassist'
   api 'io.github.resilience4j:resilience4j-circuitbreaker'
   api 'io.github.resilience4j:resilience4j-prometheus', {
-    // version clash with latest client 0.9.0 -> 0.15.0
+    // version clash with latest client 0.9.0 -> 0.16.0
     exclude group: 'io.prometheus', module: 'simpleclient_common'
   }
   api 'io.prometheus:simpleclient_common'
