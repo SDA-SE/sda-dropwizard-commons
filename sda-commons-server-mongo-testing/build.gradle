@@ -46,7 +46,7 @@ dependencies {
     //           \--- org.sdase.commons:sda-commons-server-mongo-testing:2.48.1
     exclude group: 'de.flapdoodle.embed', module: 'de.flapdoodle.embed.process'
   }
-  api 'de.flapdoodle.embed:de.flapdoodle.embed.process:3.1.11', {
+  api 'de.flapdoodle.embed:de.flapdoodle.embed.process:3.1.13', {
     exclude group: 'de.flapdoodle', module: 'de.flapdoodle.os'
   }
   api 'de.flapdoodle:de.flapdoodle.os:1.1.10'
