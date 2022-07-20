@@ -16,7 +16,7 @@ ext {
   openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.35.0'
   scalaVersion = '2.13.8' // align transitive dependency from various modules, keep up to date
-  kafkaVersion = '2.8.1'
+  kafkaVersion = '3.2.0'
   kafkaJunitVersion = '3.2.4' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.32.3'
   kotlinVersion = '1.7.10'
