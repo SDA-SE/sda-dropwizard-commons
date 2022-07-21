@@ -1,7 +1,6 @@
 package org.sdase.commons.server.kafka.producer;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ class KafkaMessageProducerTest {
     // given
     KafkaMessageProducer<String, String> kafkaMessageProducer =
         new KafkaMessageProducer<>(
-            "topicName", mockProducer, new ProducerTopicMessageCounter(), "producerName");
+            "topicName", mockProducer, mock(ProducerTopicMessageCounter.class), "producerName");
     // when
     kafkaMessageProducer.flush();
     // then
