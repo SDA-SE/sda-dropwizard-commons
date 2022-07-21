@@ -230,9 +230,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
         public Future<RecordMetadata> send(K key, V value, Headers headers) {
           return null;
         }
-
-        @Override
-        public void flush() {}
       };
     }
 

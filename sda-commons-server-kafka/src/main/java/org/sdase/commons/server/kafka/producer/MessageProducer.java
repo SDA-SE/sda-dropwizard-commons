@@ -23,5 +23,10 @@ public interface MessageProducer<K, V> {
 
   Future<RecordMetadata> send(K key, V value, Headers headers);
 
-  void flush();
+  /**
+   * This method is a blank default implementation in order to avoid it being a breaking change. The
+   * implementing class must override this to add behaviour to it. The implementation should call
+   * the flush() method of the producer.
+   */
+  default void flush() {}
 }
