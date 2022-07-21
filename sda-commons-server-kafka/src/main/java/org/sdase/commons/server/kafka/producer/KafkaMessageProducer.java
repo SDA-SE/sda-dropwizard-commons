@@ -48,6 +48,6 @@ public class KafkaMessageProducer<K, V> implements MessageProducer<K, V> {
 
   @Override
   public void flush() {
-    this.producer.flush();
+    producer.flush();
   }
 }
