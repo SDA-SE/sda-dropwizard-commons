@@ -87,7 +87,7 @@ dependencies {
     api "com.squareup.okhttp3:okhttp:4.10.0" // fixes CVE-2021-0341 (bump from 4.9.0 used in jaeger-thrift:1.8.0)
 
     // sda-commons-server-mongo-testing
-    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.7"
+    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.8"
 
     // sda-commons-server-morphia
     api "dev.morphia.morphia:core:$morphiaVersion"
