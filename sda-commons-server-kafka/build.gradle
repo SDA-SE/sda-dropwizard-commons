@@ -8,6 +8,8 @@ dependencies {
   api 'io.prometheus:simpleclient'
 
   testImplementation 'org.mockito:mockito-core'
+  testImplementation 'org.mockito:mockito-junit-jupiter'
+  testImplementation 'org.objenesis:objenesis'
 
   testImplementation 'org.assertj:assertj-core'
 
