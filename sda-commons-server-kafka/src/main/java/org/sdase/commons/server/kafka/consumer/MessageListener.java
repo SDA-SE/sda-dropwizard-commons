@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -36,7 +37,10 @@ import org.slf4j.LoggerFactory;
 public class MessageListener<K, V> implements Runnable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MessageListener.class);
-  private final long pollInterval;
+  private final long configuredPollIntervalMillis;
+  private final long maxPollIntervalMillis;
+  private final AtomicLong currentPollIntervalMillis;
+  private final long pollIntervalFactorOnError;
   private final long topicMissingRetryMs;
   private final MessageListenerStrategy<K, V> strategy;
   private final Collection<String> topics;
@@ -55,8 +59,11 @@ public class MessageListener<K, V> implements Runnable {
     this.consumer = consumer;
     consumer.subscribe(topics);
     this.strategy = strategy;
-    this.pollInterval = listenerConfig.getPollInterval();
+    this.configuredPollIntervalMillis = listenerConfig.getPollInterval();
     this.topicMissingRetryMs = listenerConfig.getTopicMissingRetryMs();
+    this.currentPollIntervalMillis = new AtomicLong(this.configuredPollIntervalMillis);
+    this.pollIntervalFactorOnError = listenerConfig.getPollIntervalFactorOnError();
+    this.maxPollIntervalMillis = listenerConfig.getMaxPollInterval();
   }
 
   @Override
@@ -66,7 +73,8 @@ public class MessageListener<K, V> implements Runnable {
     while (!shouldStop.get()) {
       // return immediately and resubmit Runnable
       try {
-        ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(pollInterval));
+        ConsumerRecords<K, V> records =
+            consumer.poll(Duration.ofMillis(currentPollIntervalMillis.get()));
 
         if (records.count() > 0) {
           LOGGER.debug("Received {} messages from topics [{}]", records.count(), joinedTopics);
@@ -77,6 +85,7 @@ public class MessageListener<K, V> implements Runnable {
         strategy.resetOffsetsToCommitOnClose();
         strategy.processRecords(records, consumer);
 
+        configureAfterSuccess();
       } catch (WakeupException w) {
         if (shouldStop.get()) {
           LOGGER.info("Woke up to stop consuming.");
@@ -88,6 +97,7 @@ public class MessageListener<K, V> implements Runnable {
         break;
       } catch (RuntimeException re) {
         LOGGER.error("Unauthorized or other runtime exception.", re);
+        configureAfterError();
       }
     }
     LOGGER.info("MessageListener closing Consumer for [{}]", joinedTopics);
@@ -148,5 +158,18 @@ public class MessageListener<K, V> implements Runnable {
   @Override
   public String toString() {
     return "ML ".concat(String.join("", topics));
+  }
+
+  private void configureAfterSuccess() {
+    long oldValue = currentPollIntervalMillis.getAndSet(configuredPollIntervalMillis);
+    if (oldValue != configuredPollIntervalMillis) {
+      LOGGER.info("Resetting poll interval to {}ms after success", currentPollIntervalMillis);
+    }
+  }
+
+  private void configureAfterError() {
+    long nextPollIntervalAfterError = currentPollIntervalMillis.get() * pollIntervalFactorOnError;
+    currentPollIntervalMillis.set(Math.min(maxPollIntervalMillis, nextPollIntervalAfterError));
+    LOGGER.info("Setting poll interval to {}ms after error", currentPollIntervalMillis);
   }
 }
