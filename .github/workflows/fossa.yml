@@ -1,7 +1,12 @@
 # This workflow scans the licenses with Fossa and waits until the license test finished
 name: Fossa License Scan
 
-on: [push]
+on:
+  workflow_run:
+    workflows:
+      - Push Workflow Trigger
+    types:
+      - completed
 
 jobs:
   fossa-license-analyze:

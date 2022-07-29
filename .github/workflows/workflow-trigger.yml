@@ -1,0 +1,10 @@
+name: Push Workflow Trigger
+
+on:
+  push
+
+jobs:
+  check-dependabot:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Push event occured, subsequently workflows will be triggered."
