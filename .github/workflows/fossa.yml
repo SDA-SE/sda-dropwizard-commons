@@ -46,9 +46,11 @@ jobs:
       - name: Fossa Analyze
         env:
           FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
-        run: fossa analyze --project "sda-dropwizard-commons" --branch "$GITHUB_REF"
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: fossa analyze --project "sda-dropwizard-commons" --branch "$BRANCH"
 
       - name: Fossa Test
         env:
           FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
-        run: fossa test --project "sda-dropwizard-commons" --debug
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: fossa test --project "sda-dropwizard-commons" --branch "$BRANCH" --debug
