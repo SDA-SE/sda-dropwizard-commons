@@ -17,7 +17,6 @@ jobs:
       - name: Initiate check
         env:
           SHA: "${{ github.event.workflow_run.head_sha }}"
-          RUN_ID: "${{ github.event.workflow.id }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: >-
           gh api
@@ -25,7 +24,7 @@ jobs:
           -H "Accept: application/vnd.github+json"
           /repos/SDA-SE/sda-dropwizard-commons/statuses/${SHA}
           -f state='pending'
-          -f target_url=https://github.com/SDA-SE/sda-dropwizard-commons/runs/${RUN_ID}
+          -f target_url=https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
           -f description='Checking Licenses'
           -f context='fossa-license-analyze'
         continue-on-error: true
@@ -57,7 +56,6 @@ jobs:
         if: success()
         env:
           SHA: "${{ github.event.workflow_run.head_sha }}"
-          RUN_ID: "${{ github.event.workflow.id }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: >-
           gh api
@@ -65,7 +63,7 @@ jobs:
           -H "Accept: application/vnd.github+json"
           /repos/SDA-SE/sda-dropwizard-commons/statuses/${SHA}
           -f state='success'
-          -f target_url=https://github.com/SDA-SE/sda-dropwizard-commons/runs/${RUN_ID}
+          -f target_url=https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
           -f description='License approved'
           -f context='fossa-license-analyze'
         continue-on-error: true
@@ -73,7 +71,6 @@ jobs:
         if: failure()
         env:
           SHA: "${{ github.event.workflow_run.head_sha }}"
-          RUN_ID: "${{ github.event.workflow.id }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: >-
           gh api
@@ -81,7 +78,7 @@ jobs:
           -H "Accept: application/vnd.github+json"
           /repos/SDA-SE/sda-dropwizard-commons/statuses/${SHA}
           -f state='failure'
-          -f target_url=https://github.com/SDA-SE/sda-dropwizard-commons/runs/${RUN_ID}
+          -f target_url=https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
           -f description='License check failed'
           -f context='fossa-license-analyze'
         continue-on-error: true
