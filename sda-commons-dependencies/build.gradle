@@ -21,12 +21,10 @@ ext {
   dbRiderVersion = '1.32.3'
   kotlinVersion = '1.7.10'
   kotlinxCoroutinesVersion = '1.6.4'
-  openTelemetryVersion= '1.15.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
-  openTelemetryAlphaVersion = '1.15.0-alpha'
-  otelAgentVersion = '1.15.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java-instrumentation
-  otelAgentAlphaVersion = '1.15.0-alpha'
-  otelContribVersion= '1.15.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java-contrib
-  otelContribAlphaVersion = '1.15.0-alpha'
+  openTelemetryVersion= '1.16.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
+  openTelemetryAlphaVersion = '1.16.0-alpha'
+  otelAgentVersion = '1.16.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java-instrumentation
+  otelAgentAlphaVersion = '1.16.0-alpha'
   autoServiceVersion = '1.0'
 }
 
@@ -168,8 +166,7 @@ dependencies {
     api 'commons-io:commons-io:2.11.0'
 
     // sda-commons-shared-otel-instrumentation
-    api "io.opentelemetry.contrib:opentelemetry-runtime-attach:$otelContribAlphaVersion"
-    api 'net.bytebuddy:byte-buddy-agent:1.12.10'
+    api 'net.bytebuddy:byte-buddy-agent:1.12.13'
 
     // sda-commons-shared-otel-agent
     api "com.google.auto.service:auto-service:$autoServiceVersion"

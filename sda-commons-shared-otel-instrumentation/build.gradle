@@ -3,10 +3,16 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
 
   // Utils for attaching the agent to the JVM at runtime
-  api ("io.opentelemetry.contrib:opentelemetry-runtime-attach")
+  implementation 'net.bytebuddy:byte-buddy-agent'
+  api project(':sda-commons-shared-otel-agent')
+  compileOnly("io.opentelemetry.javaagent:opentelemetry-javaagent")
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-shared-otel-agent')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')
   testImplementation 'org.assertj:assertj-core'
+}
+
+test{
+  forkEvery = 1
 }

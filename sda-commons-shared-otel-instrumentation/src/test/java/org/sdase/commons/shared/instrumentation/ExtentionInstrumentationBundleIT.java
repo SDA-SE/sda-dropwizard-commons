@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
-class InstrumentationBundleIT {
+class ExtentionInstrumentationBundleIT {
   private DropwizardTestSupport<Configuration> DW;
 
   @BeforeEach
@@ -29,24 +29,16 @@ class InstrumentationBundleIT {
 
   @Test
   @SetEnvironmentVariable(key = "MAIN_THREAD_CHECK_ENABLED", value = "false")
-  @SetEnvironmentVariable(key = "JAEGER_SAMPLER_TYPE", value = "const")
-  @SetEnvironmentVariable(key = "JAEGER_SAMPLER_PARAM", value = "0")
-  void shouldNotLoadForLegacyParams() throws IOException {
+  @SetEnvironmentVariable(key = "OTEL_TRACES_EXPORTER", value = "logging")
+  @SetEnvironmentVariable(key = "OTEL_JAVAAGENT_DEBUG", value = "true")
+  @SetEnvironmentVariable(key = "OTEL_INSTRUMENTATION_APACHE_HTTPCLIENT_ENABLED", value = "true")
+  @SetEnvironmentVariable(key = "OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED", value = "false")
+  void shouldUseDefaultHeaders() throws IOException {
     List<Header> headers = makeHttpCallAndReturnHeaders();
-    assertThat(System.getenv("JAEGER_SAMPLER_TYPE")).isEqualTo("const");
-    assertThat(System.getenv("JAEGER_SAMPLER_PARAM")).isEqualTo("0");
-    assertThat(headers).isEmpty();
-  }
-
-  @Test
-  @SetEnvironmentVariable(key = "MAIN_THREAD_CHECK_ENABLED", value = "false")
-  @SetEnvironmentVariable(key = "OTEL_JAVAAGENT_ENABLED", value = "false")
-  void shouldNotLoad() throws IOException {
-    List<Header> headers = makeHttpCallAndReturnHeaders();
-    assertThat(System.getenv("JAEGER_SAMPLER_TYPE")).isBlank();
-    assertThat(System.getenv("JAEGER_SAMPLER_PARAM")).isBlank();
-    assertThat(System.getenv("OTEL_JAVAAGENT_ENABLED")).isEqualTo("false");
-    assertThat(headers).isEmpty();
+    // jaeger headers should be used by default along with W3C headers.
+    assertThat(headers)
+        .extracting(Header::getName)
+        .containsExactlyInAnyOrder("traceparent", "uber-trace-id");
   }
 
   private static List<Header> makeHttpCallAndReturnHeaders() throws IOException {
