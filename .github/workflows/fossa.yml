@@ -25,7 +25,7 @@ jobs:
           -H "Accept: application/vnd.github+json"
           /repos/SDA-SE/sda-dropwizard-commons/statuses/${SHA}
           -f state='pending'
-          -f target_url='https://github.com/SDA-SE/sda-dropwizard-commons/runs/${RUN_ID}'
+          -f target_url=https://github.com/SDA-SE/sda-dropwizard-commons/runs/${RUN_ID}
           -f description='Checking Licenses'
           -f context='fossa-license-analyze'
         continue-on-error: true
@@ -52,8 +52,7 @@ jobs:
       - name: Fossa Test
         env:
           FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
-        run: fossa test --project "sda-dropwizard-commons" --branch "$BRANCH" --debug
+        run: fossa test --project "sda-dropwizard-commons" --debug
       - name: Successful check
         if: success()
         env:
@@ -66,7 +65,7 @@ jobs:
           -H "Accept: application/vnd.github+json"
           /repos/SDA-SE/sda-dropwizard-commons/statuses/${SHA}
           -f state='success'
-          -f target_url='https://github.com/SDA-SE/sda-dropwizard-commons/runs/${RUN_ID}'
+          -f target_url=https://github.com/SDA-SE/sda-dropwizard-commons/runs/${RUN_ID}
           -f description='License approved'
           -f context='fossa-license-analyze'
         continue-on-error: true
@@ -82,7 +81,7 @@ jobs:
           -H "Accept: application/vnd.github+json"
           /repos/SDA-SE/sda-dropwizard-commons/statuses/${SHA}
           -f state='failure'
-          -f target_url='https://github.com/SDA-SE/sda-dropwizard-commons/runs/${RUN_ID}'
+          -f target_url=https://github.com/SDA-SE/sda-dropwizard-commons/runs/${RUN_ID}
           -f description='License check failed'
           -f context='fossa-license-analyze'
         continue-on-error: true
