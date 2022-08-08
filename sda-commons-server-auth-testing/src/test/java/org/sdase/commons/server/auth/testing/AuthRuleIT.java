@@ -11,7 +11,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.auth0.jwt.impl.PublicClaims;
+import com.auth0.jwt.RegisteredClaims;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.Date;
@@ -159,7 +159,8 @@ public class AuthRuleIT {
         createWebTarget()
             .path("/secure") // NOSONAR
             .request(APPLICATION_JSON)
-            .headers(AUTH.auth().addClaim(PublicClaims.EXPIRES_AT, new Date(0)).buildAuthHeader())
+            .headers(
+                AUTH.auth().addClaim(RegisteredClaims.EXPIRES_AT, new Date(0)).buildAuthHeader())
             .get();
 
     assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
