@@ -91,7 +91,7 @@ class AuthServiceEcTest {
 
     final Map<String, Claim> claims = this.service.auth(token);
 
-    assertThat(claims.get(CLAIM_ISSUER)).isNull();
+    assertThat(claims.get(CLAIM_ISSUER).isNull()).isTrue();
     assertThat(claims.get(CLAIM_NOT_BEFORE).asLong() * 1000L).isLessThan(new Date().getTime());
     assertThat(claims.get(CLAIM_EXPIRE).asLong() * 1000L).isGreaterThan(new Date().getTime());
   }
@@ -105,7 +105,7 @@ class AuthServiceEcTest {
 
     final Map<String, Claim> claims = this.service.auth(token);
 
-    assertThat(claims.get(CLAIM_ISSUER)).isNull();
+    assertThat(claims.get(CLAIM_ISSUER).isNull()).isTrue();
     assertThat(claims.get(CLAIM_NOT_BEFORE).asLong() * 1000L).isLessThan(new Date().getTime());
     assertThat(claims.get(CLAIM_EXPIRE).asLong() * 1000L).isGreaterThan(new Date().getTime());
   }
