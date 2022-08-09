@@ -38,7 +38,7 @@ jobs:
           cache: 'gradle'
 
       - name: Test with Gradle
-        uses: nick-invision/retry@e88a9994b039653512d697de1bce46b00bfe11b5 # tag=v2
+        uses: nick-invision/retry@7f8f3d9f0f62fe5925341be21c2e8314fd4f7c7c # tag=v2
         with:
           timeout_minutes: 30
           max_attempts: 5
@@ -73,7 +73,7 @@ jobs:
           path: artifacts
 
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@f00bb47e1d89c6d98071d1b69e16a2b63c7fbfc1 # tag=v1.39
+        uses: EnricoMi/publish-unit-test-result-action@b9f6c61d965bcaa18acc02d6daf706373a448f02 # tag=v1.40
         with:
           junit_files: artifacts/**/build/test-results/**/*.xml
 

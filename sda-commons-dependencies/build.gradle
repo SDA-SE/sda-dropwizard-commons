@@ -18,7 +18,7 @@ ext {
   scalaVersion = '2.13.8' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '2.8.1'
   kafkaJunitVersion = '3.2.4' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
-  dbRiderVersion = '1.32.3'
+  dbRiderVersion = '1.33.0'
   kotlinVersion = '1.7.10'
   kotlinxCoroutinesVersion = '1.6.4'
 }
@@ -30,7 +30,7 @@ dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.267")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.276")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
   constraints {
@@ -71,11 +71,11 @@ dependencies {
     api "com.auth0:java-jwt:3.19.2"
 
     // sda-commons-server-circuitbreaker
-    api "org.objenesis:objenesis:3.2"
+    api "org.objenesis:objenesis:3.3"
 
     // sda-commons-server-hibernate
-    api "org.postgresql:postgresql:42.4.0"
-    api "org.flywaydb:flyway-core:9.0.1"
+    api "org.postgresql:postgresql:42.4.1"
+    api "org.flywaydb:flyway-core:9.1.2"
 
     // sda-commons-server-hibernate-testing
     api "com.github.database-rider:rider-core:$dbRiderVersion"
@@ -83,7 +83,6 @@ dependencies {
 
     // sda-commons-server-jaeger
     api "io.jaegertracing:jaeger-client:1.8.1"
-    api "com.google.code.gson:gson:2.9.0" // fixes vulnerability in transitive dependency 2.8.6
     api "com.squareup.okhttp3:okhttp:4.10.0" // fixes CVE-2021-0341 (bump from 4.9.0 used in jaeger-thrift:1.8.0)
 
     // sda-commons-server-mongo-testing
@@ -179,7 +178,7 @@ dependencies {
     api "org.scala-lang.modules:scala-java8-compat_2.13:1.0.2", {
       because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13 upgrade"
     }
-    api "org.scala-lang.modules:scala-collection-compat_2.13:2.8.0", {
+    api "org.scala-lang.modules:scala-collection-compat_2.13:2.8.1", {
       because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13 upgrade"
     }
     api "org.scala-lang:scala-library:$scalaVersion", {
