@@ -45,4 +45,9 @@ public class KafkaMessageProducer<K, V> implements MessageProducer<K, V> {
   public void close() {
     producer.close();
   }
+
+  @Override
+  public void flush() {
+    producer.flush();
+  }
 }
