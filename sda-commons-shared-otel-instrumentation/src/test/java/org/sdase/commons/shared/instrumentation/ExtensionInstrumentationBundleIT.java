@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
-class ExtentionInstrumentationBundleIT {
+class ExtensionInstrumentationBundleIT {
   private DropwizardTestSupport<Configuration> DW;
 
   @BeforeEach

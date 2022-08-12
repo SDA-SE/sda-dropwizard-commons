@@ -40,6 +40,15 @@ class InstrumentationBundleIT {
 
   @Test
   @SetEnvironmentVariable(key = "MAIN_THREAD_CHECK_ENABLED", value = "false")
+  @SetEnvironmentVariable(key = "RUNTIME_ATTACH_ENABLED", value = "false")
+  void shouldNotLoadForRunTimeDisabled() throws IOException {
+    List<Header> headers = makeHttpCallAndReturnHeaders();
+    assertThat(System.getenv("RUNTIME_ATTACH_ENABLED")).isEqualTo("false");
+    assertThat(headers).isEmpty();
+  }
+
+  @Test
+  @SetEnvironmentVariable(key = "MAIN_THREAD_CHECK_ENABLED", value = "false")
   @SetEnvironmentVariable(key = "OTEL_JAVAAGENT_ENABLED", value = "false")
   void shouldNotLoad() throws IOException {
     List<Header> headers = makeHttpCallAndReturnHeaders();
