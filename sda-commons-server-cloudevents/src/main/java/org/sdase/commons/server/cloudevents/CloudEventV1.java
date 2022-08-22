@@ -77,14 +77,20 @@ public class CloudEventV1<T> extends BaseCloudEvent {
           + "information such as the version of the type - see Versioning of Attributes in the Primer "
           + "for more information.\n"
           + "\n"
-          + "**SDA**: If you don't have any other guidelines defined by your company we recommend \n"
-          + "the following pattern:\n"
-          + "`DOMAIN_ELEMENT_OPERATION`, e.g. `CONSENT_VERSION_CREATED`\n"
+          + "In compliance with the "
+          + "[Cloud Events specification](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#type) "
+          + "the value SHOULD be prefixed with a reverse-DNS name. "
+          + "The prefixed domain dictates the organization which defines the semantics of this "
+          + "event type."
           + "\n"
-          + "⚠️ Please be careful if you want to use the classname of your event as `type` because "
-          + "it makes it harder to refactor/rename your class. We definitely do not recommend to "
-          + "use the fully qualified classname that includes the package.")
-  @JsonSchemaExamples("CONSENT_VERSION_CREATED")
+          + "⚠️ Be careful if you want to derive the event type automatically from a class or "
+          + "package name, because it makes it harder to refactor/rename your class without "
+          + "changing your API.")
+  @JsonSchemaExamples({
+    "com.sdase.relocation.service.customer.moved",
+    "com.sdase.consent.service.consent.agreed",
+    "com.sdase.offer.service.contract.offered"
+  })
   @NotEmpty
   private String type;
 
