@@ -107,19 +107,21 @@ components:
           type: "string"
           default: "CONTRACT_CREATED"
           examples:
-          - "CONSENT_VERSION_CREATED"
+          - "com.sdase.relocation.service.customer.moved"
+          - "com.sdase.consent.service.consent.agreed"
+          - "com.sdase.offer.service.contract.offered"
           minLength: 1
           description: "This attribute contains a value describing the type of event\
             \ related to the originating occurrence. Often this attribute is used\
             \ for routing, observability, policy enforcement, etc. The format of this\
             \ is producer defined and might include information such as the version\
             \ of the type - see Versioning of Attributes in the Primer for more information.\n\
-            \n**SDA**: If you don't have any other guidelines defined by your company\
-            \ we recommend \nthe following pattern:\n`DOMAIN_ELEMENT_OPERATION`, e.g.\
-            \ `CONSENT_VERSION_CREATED`\n\n⚠️ Please be careful if you want to use\
-            \ the classname of your event as `type` because it makes it harder to\
-            \ refactor/rename your class. We definitely do not recommend to use the\
-            \ fully qualified classname that includes the package."
+            \nIn compliance with the [Cloud Events specification](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#type)\
+            \ the value SHOULD be prefixed with a reverse-DNS name. The prefixed domain\
+            \ dictates the organization which defines the semantics of this event\
+            \ type.\n⚠️ Be careful if you want to derive the event type automatically\
+            \ from a class or package name, because it makes it harder to refactor/rename\
+            \ your class without changing your API."
         subject:
           type: "string"
           examples:
@@ -251,7 +253,9 @@ components:
           type: "string"
           default: "PARTNER_CREATED"
           examples:
-          - "CONSENT_VERSION_CREATED"
+          - "com.sdase.relocation.service.customer.moved"
+          - "com.sdase.consent.service.consent.agreed"
+          - "com.sdase.offer.service.contract.offered"
           minLength: 1
           description: "`PARTNER_CREATED`"
         subject:
@@ -373,19 +377,21 @@ components:
         type:
           type: "string"
           examples:
-          - "CONSENT_VERSION_CREATED"
+          - "com.sdase.relocation.service.customer.moved"
+          - "com.sdase.consent.service.consent.agreed"
+          - "com.sdase.offer.service.contract.offered"
           minLength: 1
           description: "This attribute contains a value describing the type of event\
             \ related to the originating occurrence. Often this attribute is used\
             \ for routing, observability, policy enforcement, etc. The format of this\
             \ is producer defined and might include information such as the version\
             \ of the type - see Versioning of Attributes in the Primer for more information.\n\
-            \n**SDA**: If you don't have any other guidelines defined by your company\
-            \ we recommend \nthe following pattern:\n`DOMAIN_ELEMENT_OPERATION`, e.g.\
-            \ `CONSENT_VERSION_CREATED`\n\n⚠️ Please be careful if you want to use\
-            \ the classname of your event as `type` because it makes it harder to\
-            \ refactor/rename your class. We definitely do not recommend to use the\
-            \ fully qualified classname that includes the package."
+            \nIn compliance with the [Cloud Events specification](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#type)\
+            \ the value SHOULD be prefixed with a reverse-DNS name. The prefixed domain\
+            \ dictates the organization which defines the semantics of this event\
+            \ type.\n⚠️ Be careful if you want to derive the event type automatically\
+            \ from a class or package name, because it makes it harder to refactor/rename\
+            \ your class without changing your API."
         subject:
           type: "string"
           examples:
