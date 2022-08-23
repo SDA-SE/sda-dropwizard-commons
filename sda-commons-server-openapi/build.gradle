@@ -8,25 +8,28 @@ dependencies {
   api 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider'
   api 'io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2'
   api 'io.swagger.parser.v3:swagger-parser-v3', {
-    exclude group: 'io.swagger.core.v3', module: 'swagger-core'
-    exclude group: 'commons-io', module: 'commons-io'
+    // we manage a later version than 2.13.2.2 in swagger-parser-v3:2.1.2
+    exclude group: "com.fasterxml.jackson.core", module: "jackson-databind"
+    // we manage a later version than 2.13.2 in swagger-parser-v3:2.1.2
+    exclude group: "com.fasterxml.jackson.core", module: "jackson-annotations"
+    // we manage a later version than 2.13.2 in swagger-parser-v3:2.1.2
+    exclude group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml"
   }
-  api 'commons-io:commons-io'
+  api 'com.fasterxml.jackson.core:jackson-databind'
+  api 'com.fasterxml.jackson.core:jackson-annotations'
+  api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
   // swagger-hal >= 2.0.0 supports io.swagger.core.v3
   api 'io.openapitools.hal:swagger-hal:2.0.2', {
     exclude group: 'io.swagger.core.v3', module: 'swagger-models'
-    exclude group: 'org.slf4j', module: 'slf4j-api'
     exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
   }
-  api 'io.swagger.core.v3:swagger-core'
   api 'io.swagger.core.v3:swagger-models'
 
   api 'io.openapitools.jackson.dataformat:jackson-dataformat-hal', {
-    exclude group: 'org.slf4j', module: 'slf4j-api'
     exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
   }
-  api 'org.slf4j:slf4j-api'
+  api 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation 'net.javacrumbs.json-unit:json-unit-assertj'
