@@ -13,7 +13,7 @@ public class ContractCreatedEvent extends CloudEventV1<ContractCreatedEvent.Cont
     return super.getSource();
   }
 
-  @JsonSchemaDefault("CONTRACT_CREATED")
+  @JsonSchemaDefault("com.sdase.contract.foo.contract.created")
   @Override
   public String getType() {
     return super.getType();

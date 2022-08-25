@@ -19,7 +19,7 @@ public class PartnerCreatedMessageProducer {
                 .setData(new PartnerCreatedEvent.PartnerCreated().setId(partner.getId()))
                 .setSource(URI.create("/SDA-SE/partner/partner-example/partner-example-service"))
                 .setSubject(partner.getId())
-                .setType("PARTNER_CREATED");
+                .setType("com.sdase.partner.ods.partner.created");
 
     producer.send(partner.getId(), cloudEvent);
   }
