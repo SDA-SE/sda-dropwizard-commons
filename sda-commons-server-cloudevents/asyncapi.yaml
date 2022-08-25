@@ -105,7 +105,7 @@ components:
             \ the service, e.g. `consent-configuration-service`"
         type:
           type: "string"
-          default: "CONTRACT_CREATED"
+          default: "com.sdase.contract.foo.contract.created"
           examples:
           - "com.sdase.relocation.service.customer.moved"
           - "com.sdase.consent.service.consent.agreed"
@@ -251,13 +251,13 @@ components:
             \ the service, e.g. `consent-configuration-service`"
         type:
           type: "string"
-          default: "PARTNER_CREATED"
+          default: "com.sdase.partner.ods.partner.created"
           examples:
           - "com.sdase.relocation.service.customer.moved"
           - "com.sdase.consent.service.consent.agreed"
           - "com.sdase.offer.service.contract.offered"
           minLength: 1
-          description: "`PARTNER_CREATED`"
+          description: "`com.sdase.partner.ods.partner.created`"
         subject:
           type: "string"
           examples:

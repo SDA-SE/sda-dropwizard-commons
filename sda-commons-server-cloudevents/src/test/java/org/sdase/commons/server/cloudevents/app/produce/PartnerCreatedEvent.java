@@ -13,8 +13,8 @@ public class PartnerCreatedEvent extends CloudEventV1<PartnerCreatedEvent.Partne
     return super.getSource();
   }
 
-  @JsonPropertyDescription("`PARTNER_CREATED`")
-  @JsonSchemaDefault("PARTNER_CREATED")
+  @JsonPropertyDescription("`com.sdase.partner.ods.partner.created`")
+  @JsonSchemaDefault("com.sdase.partner.ods.partner.created")
   @Override
   public String getType() {
     return super.getType();

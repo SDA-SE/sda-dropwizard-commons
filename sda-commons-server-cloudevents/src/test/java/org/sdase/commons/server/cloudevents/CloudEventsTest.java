@@ -102,7 +102,7 @@ class CloudEventsTest {
             new ContractCreatedEvent()
                 .setData(event)
                 .setSource(URI.create("/SDA-SE/contract/contract-foo/test"))
-                .setType("CONTRACT_CREATED")
+                .setType("com.sdase.contract.foo.contract.created")
                 .setSubject(event.getContractId());
 
     Map<byte[], byte[]> records = new HashMap<>();
