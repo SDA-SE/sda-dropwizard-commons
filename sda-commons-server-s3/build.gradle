@@ -3,10 +3,10 @@ dependencies {
   api project(':sda-commons-server-healthcheck')
   api 'com.amazonaws:aws-java-sdk-s3'
   api 'org.slf4j:jcl-over-slf4j'
-  api 'io.opentracing.contrib:opentracing-aws-sdk-1'
-  api 'io.opentracing:opentracing-util'
+
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11:1.16.0-alpha'
 
   testImplementation project(':sda-commons-server-s3-testing')
   testImplementation 'org.assertj:assertj-core'
-  testImplementation 'io.opentracing:opentracing-mock'
+  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing:1.16.0'
 }
