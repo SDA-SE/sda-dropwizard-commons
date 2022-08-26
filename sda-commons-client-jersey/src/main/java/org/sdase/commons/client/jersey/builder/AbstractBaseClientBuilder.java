@@ -1,11 +1,9 @@
 package org.sdase.commons.client.jersey.builder;
 
-import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.registerTracing;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.OpenTelemetry;
 import java.net.ProxySelector;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -35,8 +33,8 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
 
   private HttpClientConfiguration httpClientConfiguration;
   private JerseyClientBuilder jerseyClientBuilder;
-  private final Tracer tracer;
   private final ObjectMapper objectMapper;
+  private OpenTelemetry openTelemetry;
 
   private List<ClientRequestFilter> filters;
   private List<Feature> features;
@@ -48,10 +46,14 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
   private boolean followRedirects;
 
   AbstractBaseClientBuilder(
-      Environment environment, HttpClientConfiguration httpClientConfiguration, Tracer tracer) {
+      Environment environment,
+      HttpClientConfiguration httpClientConfiguration,
+      OpenTelemetry openTelemetry) {
     this.httpClientConfiguration = httpClientConfiguration;
     this.jerseyClientBuilder = new JerseyClientBuilder(environment);
-    this.tracer = tracer;
+    this.openTelemetry = openTelemetry;
+    this.jerseyClientBuilder.setApacheHttpClientBuilder(
+        new OtelHttpClientBuilder(environment).usingTelemetryInstance(this.openTelemetry));
     this.objectMapper = environment.getObjectMapper();
     this.filters = new ArrayList<>();
     this.features = new ArrayList<>();
@@ -173,7 +175,6 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
     features.forEach(client::register);
     client.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
     registerMultiPartIfAvailable(client);
-    registerTracing(client, tracer);
     return client;
   }
 

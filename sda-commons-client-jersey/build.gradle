@@ -20,4 +20,7 @@ dependencies {
   testImplementation 'org.awaitility:awaitility'
   testImplementation 'org.assertj:assertj-core'
   testImplementation 'io.opentracing:opentracing-mock'
+
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:1.16.0-alpha'
+  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
 }
