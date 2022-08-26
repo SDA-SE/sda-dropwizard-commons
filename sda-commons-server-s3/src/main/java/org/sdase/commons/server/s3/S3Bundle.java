@@ -17,9 +17,8 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.aws.TracingRequestHandler;
-import io.opentracing.util.GlobalTracer;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
@@ -37,18 +36,18 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
   public static final String S3_EXTERNAL_HEALTH_CHECK_NAME = "s3ConnectionExternal";
 
   private final S3ConfigurationProvider<C> configurationProvider;
-  private final Tracer tracer;
+  private final OpenTelemetry openTelemetry;
   private final S3HealthCheckType s3HealthCheckType;
   private final Iterable<BucketNameProvider<C>> bucketNameProviders;
   private AmazonS3 s3Client;
 
   private S3Bundle(
       S3ConfigurationProvider<C> configurationProvider,
-      Tracer tracer,
+      OpenTelemetry openTelemetry,
       S3HealthCheckType s3HealthCheckType,
       Iterable<BucketNameProvider<C>> bucketNameProviders) {
     this.configurationProvider = configurationProvider;
-    this.tracer = tracer;
+    this.openTelemetry = openTelemetry;
     this.s3HealthCheckType = s3HealthCheckType;
     this.bucketNameProviders = bucketNameProviders;
   }
@@ -72,11 +71,12 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     ClientConfiguration clientConfiguration = new ClientConfiguration();
     clientConfiguration.setSignerOverride(s3Configuration.getSignerOverride());
 
-    Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
-
+    // Initialize a telemetry instance if not set.
+    OpenTelemetry currentTelemetryInstance =
+        this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
     s3Client =
         AmazonS3ClientBuilder.standard()
-            .withRequestHandlers(new TracingRequestHandler(currentTracer))
+            .withRequestHandlers(new TracingRequestHandler(currentTelemetryInstance))
             .withEndpointConfiguration(
                 new AwsClientBuilder.EndpointConfiguration(s3Configuration.getEndpoint(), region))
             .withPathStyleAccessEnabled(true)
@@ -180,13 +180,13 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
   public interface FinalBuilder<C extends Configuration> {
 
     /**
-     * Specifies a custom tracer to use. If no tracer is specified, the {@link GlobalTracer} is
-     * used.
+     * Specifies a custom telemetry instance to use. If no instance is specified, the {@link
+     * GlobalOpenTelemetry} is used.
      *
-     * @param tracer The tracer to use
+     * @param openTelemetry The telemetry instance to use
      * @return the same builder
      */
-    FinalBuilder<C> withTracer(Tracer tracer);
+    FinalBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry);
 
     /**
      * Builds the S3 bundle
@@ -202,7 +202,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     private final S3ConfigurationProvider<T> configProvider;
     private S3HealthCheckType s3HealthCheckType = NONE;
     private Iterable<BucketNameProvider<T>> bucketNameProviders;
-    private Tracer tracer;
+    private OpenTelemetry openTelemetry;
 
     private Builder() {
       configProvider = null;
@@ -219,14 +219,14 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     }
 
     @Override
-    public FinalBuilder<T> withTracer(Tracer tracer) {
-      this.tracer = tracer;
+    public FinalBuilder<T> withTelemetryInstance(OpenTelemetry openTelemetry) {
+      this.openTelemetry = openTelemetry;
       return this;
     }
 
     @Override
     public S3Bundle<T> build() {
-      return new S3Bundle<>(configProvider, tracer, s3HealthCheckType, bucketNameProviders);
+      return new S3Bundle<>(configProvider, openTelemetry, s3HealthCheckType, bucketNameProviders);
     }
 
     @Override

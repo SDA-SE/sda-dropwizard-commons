@@ -3,17 +3,16 @@ package org.sdase.commons.server.s3.test;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.opentracing.mock.MockTracer;
+import io.opentelemetry.api.OpenTelemetry;
 import org.sdase.commons.server.s3.S3Bundle;
 
 public class TestApp extends Application<Config> {
-
-  private final MockTracer mockTracer = new MockTracer();
+  OpenTelemetry openTelemetry;
 
   private S3Bundle<Config> s3Bundle =
       S3Bundle.builder()
           .withConfigurationProvider(Config::getS3Config)
-          .withTracer(mockTracer)
+          .withTelemetryInstance(openTelemetry)
           .build();
 
   @Override
@@ -28,9 +27,5 @@ public class TestApp extends Application<Config> {
 
   public S3Bundle<Config> getS3Bundle() {
     return s3Bundle;
-  }
-
-  public MockTracer getMockTracer() {
-    return mockTracer;
   }
 }

@@ -4,13 +4,21 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.opentracing.mock.MockTracer;
+import io.opentelemetry.api.OpenTelemetry;
 import java.util.Collections;
 import org.sdase.commons.server.s3.S3Bundle;
 
 public class S3WithExternalHealthCheckTestApp extends Application<Config> {
+  public OpenTelemetry getOpenTelemetry() {
+    return openTelemetry;
+  }
 
-  private final MockTracer mockTracer = new MockTracer();
+  public S3WithExternalHealthCheckTestApp setOpenTelemetry(OpenTelemetry openTelemetry) {
+    this.openTelemetry = openTelemetry;
+    return this;
+  }
+
+  private OpenTelemetry openTelemetry;
 
   private HealthCheckRegistry healthCheckRegistry;
 
@@ -18,7 +26,7 @@ public class S3WithExternalHealthCheckTestApp extends Application<Config> {
       S3Bundle.builder()
           .withConfigurationProvider(Config::getS3Config)
           .withExternalHealthCheck(Collections.singleton(Config::getS3Bucket))
-          .withTracer(mockTracer)
+          .withTelemetryInstance(openTelemetry)
           .build();
 
   @Override
