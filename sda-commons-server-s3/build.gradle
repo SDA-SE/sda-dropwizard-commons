@@ -4,7 +4,7 @@ dependencies {
   api 'com.amazonaws:aws-java-sdk-s3'
   api 'org.slf4j:jcl-over-slf4j'
 
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11:1.16.0-alpha'
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11'
 
   testImplementation project(':sda-commons-server-s3-testing')
   testImplementation 'org.assertj:assertj-core'
