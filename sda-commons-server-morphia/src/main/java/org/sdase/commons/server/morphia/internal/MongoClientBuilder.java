@@ -85,7 +85,8 @@ public class MongoClientBuilder {
     // Initialize a telemetry instance if not set.
     OpenTelemetry currentTelemetryInstance =
         this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
-    TracingCommandListener tracingCommandListener = new TracingCommandListener(currentTelemetryInstance);
+    TracingCommandListener tracingCommandListener =
+        new TracingCommandListener(currentTelemetryInstance);
     mongoClientOptionsBuilder.addCommandListener(tracingCommandListener);
 
     return new MongoClient(

@@ -21,6 +21,6 @@ dependencies {
   testImplementation 'org.assertj:assertj-core'
   testImplementation 'io.opentracing:opentracing-mock'
 
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:1.16.0-alpha'
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3'
   testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
 }
