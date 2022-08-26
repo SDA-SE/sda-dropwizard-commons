@@ -4,8 +4,8 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.opentracing.Tracer;
-import io.opentracing.util.GlobalTracer;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
 import java.util.function.Function;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
 import org.sdase.commons.client.jersey.error.ClientRequestExceptionMapper;
@@ -19,15 +19,16 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
   private boolean initialized;
 
   private Function<C, String> consumerTokenProvider;
-  private final Tracer tracer;
+  private OpenTelemetry openTelemetry;
 
   public static InitialBuilder<Configuration> builder() {
     return new Builder<>();
   }
 
-  private JerseyClientBundle(Function<C, String> consumerTokenProvider, Tracer tracer) {
+  private JerseyClientBundle(
+      Function<C, String> consumerTokenProvider, OpenTelemetry openTelemetry) {
     this.consumerTokenProvider = consumerTokenProvider;
-    this.tracer = tracer;
+    this.openTelemetry = openTelemetry;
   }
 
   @Override
@@ -37,9 +38,13 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
 
   @Override
   public void run(C configuration, Environment environment) {
-    Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
+    // Initialize a telemetry instance if not set.
+    OpenTelemetry currentTelemetryInstance =
+        this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
+
     this.clientFactory =
-        new ClientFactory(environment, consumerTokenProvider.apply(configuration), currentTracer);
+        new ClientFactory(
+            environment, consumerTokenProvider.apply(configuration), currentTelemetryInstance);
     environment.jersey().register(ContainerRequestContextHolder.class);
     environment.jersey().register(ClientRequestExceptionMapper.class);
     initialized = true;
@@ -80,10 +85,13 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
 
   public interface FinalBuilder<C extends Configuration> {
     /**
-     * @param tracer A custom tracer. If no tracer is provided, the {@link GlobalTracer} is used
-     * @return a builder instance for further configuration
+     * Specifies a custom telemetry instance to use. If no instance is specified, the {@link
+     * GlobalOpenTelemetry} is used.
+     *
+     * @param openTelemetry The telemetry instance to use
+     * @return the same builder
      */
-    JerseyClientBundle.FinalBuilder<C> withTracer(Tracer tracer);
+    JerseyClientBundle.FinalBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry);
 
     JerseyClientBundle<C> build();
   }
@@ -92,7 +100,7 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
       implements InitialBuilder<C>, FinalBuilder<C> {
 
     private ConsumerTokenProvider<C> consumerTokenProvider = (C c) -> null;
-    private Tracer tracer;
+    private OpenTelemetry openTelemetry;
 
     private Builder() {}
 
@@ -107,14 +115,14 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
     }
 
     @Override
-    public JerseyClientBundle.FinalBuilder<C> withTracer(Tracer tracer) {
-      this.tracer = tracer;
+    public JerseyClientBundle.FinalBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry) {
+      this.openTelemetry = openTelemetry;
       return this;
     }
 
     @Override
     public JerseyClientBundle<C> build() {
-      return new JerseyClientBundle<>(consumerTokenProvider, tracer);
+      return new JerseyClientBundle<>(consumerTokenProvider, openTelemetry);
     }
   }
 
