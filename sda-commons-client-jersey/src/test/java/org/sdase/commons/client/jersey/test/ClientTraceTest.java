@@ -8,22 +8,28 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static com.github.tomakehurst.wiremock.http.RequestMethod.GET;
 import static com.github.tomakehurst.wiremock.matching.RequestPatternBuilder.newRequestPattern;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static io.opentracing.tag.Tags.COMPONENT;
-import static io.opentracing.tag.Tags.HTTP_URL;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
-import static org.sdase.commons.server.opentracing.tags.TagUtils.HTTP_REQUEST_HEADERS;
 
+import io.dropwizard.Application;
+import io.dropwizard.forms.MultiPartBundle;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import io.opentracing.mock.MockSpan;
-import io.opentracing.mock.MockTracer;
+import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
+import io.opentelemetry.sdk.trace.data.SpanData;
+import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
+import java.util.List;
 import javax.ws.rs.client.Client;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.client.jersey.JerseyClientBundle;
 import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
+import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
+import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
+import org.sdase.commons.server.trace.TraceTokenBundle;
 
 class ClientTraceTest {
 
@@ -36,6 +42,8 @@ class ClientTraceTest {
   @Order(1)
   private static final DropwizardAppExtension<ClientTestConfig> dw =
       new DropwizardAppExtension<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
+
+  @RegisterExtension static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
   private ClientTestApp app;
 
@@ -54,15 +62,14 @@ class ClientTraceTest {
         app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("test");
     client.target(WIRE.baseUrl()).request().header(LOCATION, "1").header(LOCATION, "2").get();
 
-    MockTracer tracer = app.getTracer();
-    assertThat(tracer.finishedSpans()).hasSize(1);
-    MockSpan span = tracer.finishedSpans().get(0);
-    assertThat(span.operationName()).isEqualTo("GET");
-    assertThat(span.tags())
-        .contains(
-            entry(COMPONENT.getKey(), "jaxrs"),
-            entry(HTTP_URL.getKey(), WIRE.baseUrl()),
-            entry(HTTP_REQUEST_HEADERS.getKey(), "[Location = '1', '2']"));
+    List<SpanData> spans = OTEL.getSpans();
+    assertThat(spans).hasSize(1).first().extracting(SpanData::getName).isEqualTo("HTTP GET");
+
+    assertThat(spans.get(0).getAttributes())
+        .extracting(
+            att -> att.get(SemanticAttributes.HTTP_URL),
+            att -> att.get(SemanticAttributes.HTTP_METHOD))
+        .contains(WIRE.baseUrl(), "GET");
   }
 
   @Test
@@ -72,9 +79,38 @@ class ClientTraceTest {
     client.target(WIRE.baseUrl()).request().get();
 
     WIRE.verify(
-        1,
-        newRequestPattern(GET, urlEqualTo("/"))
-            .withHeader("traceid", matching(".+"))
-            .withHeader("spanid", matching(".+")));
+        1, newRequestPattern(GET, urlEqualTo("/")).withHeader("traceparent", matching(".+")));
+  }
+
+  public static class ClientTestApp extends Application<ClientTestConfig> {
+
+    private final JerseyClientBundle<ClientTestConfig> jerseyClientBundle =
+        JerseyClientBundle.builder()
+            .withConsumerTokenProvider(ClientTestConfig::getConsumerToken)
+            .withTelemetryInstance(OTEL.getOpenTelemetry())
+            .build();
+
+    @Override
+    public void initialize(Bootstrap<ClientTestConfig> bootstrap) {
+      bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
+      bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
+      bootstrap.addBundle(TraceTokenBundle.builder().build());
+      bootstrap.addBundle(jerseyClientBundle);
+      bootstrap.addBundle(new MultiPartBundle());
+    }
+
+    @Override
+    public void run(ClientTestConfig configuration, Environment environment) {
+      environment.jersey().register(this);
+      environment
+          .jersey()
+          .register(
+              new ClientTestEndPoint(
+                  jerseyClientBundle.getClientFactory(), configuration.getMockBaseUrl()));
+    }
+
+    public JerseyClientBundle<ClientTestConfig> getJerseyClientBundle() {
+      return jerseyClientBundle;
+    }
   }
 }

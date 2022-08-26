@@ -17,7 +17,7 @@ public class ClientTestApp extends Application<ClientTestConfig> {
   private final JerseyClientBundle<ClientTestConfig> jerseyClientBundle =
       JerseyClientBundle.builder()
           .withConsumerTokenProvider(ClientTestConfig::getConsumerToken)
-          .withTracer(tracer)
+          //          .withTracer(tracer)
           .build();
 
   private OidcClient oidcClient;
