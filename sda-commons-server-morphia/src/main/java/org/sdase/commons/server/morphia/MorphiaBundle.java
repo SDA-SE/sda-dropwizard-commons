@@ -14,8 +14,8 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.opentracing.Tracer;
-import io.opentracing.util.GlobalTracer;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -60,7 +60,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
 
   private final boolean ensureIndexes;
   private final boolean forceEnsureIndexes;
-  private final Tracer tracer;
+  private final OpenTelemetry openTelemetry;
   /** Activate JSR303 validation. */
   private final boolean activateValidation;
 
@@ -79,10 +79,10 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
       boolean ensureIndexes,
       boolean forceEnsureIndexes,
       boolean activateValidation,
-      Tracer tracer,
+      OpenTelemetry openTelemetry,
       CaCertificatesBundle.FinalBuilder<C> caCertificatesBundleBuilder) {
     this.configurationProvider = configProvider;
-    this.tracer = tracer;
+    this.openTelemetry = openTelemetry;
     this.packagesToScan.addAll(packagesToScan);
     this.entityClasses.addAll(entityClasses);
     this.customConverters.addAll(customConverters);
@@ -177,7 +177,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   private MongoClient createClient(Environment environment, MongoConfiguration mongoConfiguration) {
     return new MongoClientBuilder(mongoConfiguration)
         .withSSlContext(sslContext)
-        .withTracer(tracer)
+        .withTelemetryInstance(openTelemetry)
         .build(environment);
   }
 
@@ -355,13 +355,13 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     FinalBuilder<C> withoutValidation();
 
     /**
-     * Specifies a custom tracer to use. If no tracer is specified, the {@link GlobalTracer} is
-     * used.
+     * Specifies a custom telemetry instance to use. If no instance is specified, the {@link
+     * GlobalOpenTelemetry} is used.
      *
-     * @param tracer The tracer to use
+     * @param openTelemetry The telemetry instance to use
      * @return the same builder
      */
-    FinalBuilder<C> withTracer(Tracer tracer);
+    FinalBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry);
 
     /**
      * Builds the mongo bundle
@@ -392,7 +392,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     private boolean ensureIndexes = true;
     private boolean forceEnsureIndexes = false;
     private boolean activateValidation = false;
-    private Tracer tracer;
+    private OpenTelemetry openTelemetry;
 
     private Builder() {
       configProvider = null;
@@ -468,15 +468,16 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     }
 
     @Override
+    public FinalBuilder<T> withTelemetryInstance(OpenTelemetry openTelemetry) {
+      this.openTelemetry = openTelemetry;
+      return this;
+    }
+
+    @Override
     public FinalBuilder<T> withCaCertificateConfigProvider(
         CaCertificateConfigurationProvider<T> configProvider) {
       this.caCertificatesBundleBuilder =
           CaCertificatesBundle.builder().withCaCertificateConfigProvider(configProvider);
-      return this;
-    }
-
-    public FinalBuilder<T> withTracer(Tracer tracer) {
-      this.tracer = tracer;
       return this;
     }
 
@@ -490,7 +491,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
           ensureIndexes,
           forceEnsureIndexes,
           activateValidation,
-          tracer,
+          openTelemetry,
           caCertificatesBundleBuilder);
     }
   }

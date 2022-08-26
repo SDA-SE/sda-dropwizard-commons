@@ -27,10 +27,10 @@ dependencies {
   api 'org.glassfish.hk2.external:aopalliance-repackaged'
 
   api 'org.bouncycastle:bcpkix-jdk15on'
-  api 'io.opentracing.contrib:opentracing-mongo-driver'
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:1.16.0-alpha'
 
   testImplementation project(':sda-commons-server-mongo-testing')
   testImplementation 'commons-io:commons-io'
   testImplementation 'org.assertj:assertj-core'
-  testImplementation 'io.opentracing:opentracing-mock'
+  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
 }

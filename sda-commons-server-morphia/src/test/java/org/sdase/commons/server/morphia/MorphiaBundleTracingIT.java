@@ -9,15 +9,15 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import io.opentracing.mock.MockSpan;
-import io.opentracing.mock.MockTracer;
-import io.opentracing.tag.Tags;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
+import io.opentelemetry.sdk.trace.data.SpanData;
+import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.rules.RuleChain;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.morphia.test.Config;
@@ -38,21 +38,23 @@ public class MorphiaBundleTracingIT {
 
   @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(MONGODB).around(DW);
 
+  @RegisterExtension static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
+
   @Test
   public void shouldHaveInstrumentation() {
     Datastore datastore = getDatastore();
     Person person = new Person().setAge(18).setName("Max");
     datastore.save(person);
 
-    MockTracer tracer = getMockTracer();
-    assertThat(tracer.finishedSpans())
-        .extracting(MockSpan::operationName)
-        .contains("createIndexes", "insert");
+    List<SpanData> spans = OTEL.getSpans();
+    assertThat(spans)
+        .extracting(SpanData::getName)
+        .contains("createIndexes default_db.people", "insert default_db.people");
     assertThat(
-            tracer.finishedSpans().stream()
-                .map(s -> s.tags().keySet())
-                .flatMap(Set::stream)
-                .filter(Tags.DB_STATEMENT.getKey()::equals))
+            spans.stream()
+                .map(SpanData::getAttributes)
+                .map(attributes -> attributes.get(SemanticAttributes.DB_STATEMENT))
+                .collect(Collectors.toList()))
         .isNotEmpty();
   }
 
@@ -62,22 +64,19 @@ public class MorphiaBundleTracingIT {
     Person person = new Person().setAge(18).setName("Max");
     datastore.save(person);
 
-    MockTracer tracer = getMockTracer();
-    assertThat(tracer.finishedSpans())
-        .extracting(MockSpan::operationName)
-        .contains("createIndexes", "insert");
+    List<SpanData> spans = OTEL.getSpans();
+    assertThat(spans)
+        .extracting(SpanData::getName)
+        .contains("createIndexes default_db.people", "insert default_db.people");
     List<String> dbStatements =
-        tracer.finishedSpans().stream()
-            .map(MockSpan::tags)
-            .map(Map::entrySet)
-            .flatMap(Set::stream)
-            .filter(e -> Tags.DB_STATEMENT.getKey().equals(e.getKey()))
-            .map(Map.Entry::getValue)
-            .map(Object::toString)
+        spans.stream()
+            .map(SpanData::getAttributes)
+            .map(attributes -> attributes.get(SemanticAttributes.DB_STATEMENT))
             .collect(Collectors.toList());
     assertThat(dbStatements)
-        .anyMatch(v -> v.contains("\"name\": \"…\""))
-        .anyMatch(v -> v.contains("\"age\": \"…\""))
+        .isNotEmpty()
+        .anyMatch(v -> v.contains("\"name\": \"?\""))
+        .anyMatch(v -> v.contains("\"age\": \"?\""))
         .noneMatch(v -> v.contains("\"age\": 18"))
         .noneMatch(v -> v.contains("\"name\": \"Max\""));
   }
@@ -86,19 +85,15 @@ public class MorphiaBundleTracingIT {
     return DW.<MorphiaTestApp>getApplication().getMorphiaBundle().datastore();
   }
 
-  private MockTracer getMockTracer() {
-    return DW.<MorphiaTestApp>getApplication().getMockTracer();
-  }
-
   public static class MorphiaTestApp extends Application<Config> {
 
-    private MockTracer mockTracer = new MockTracer();
+    private OpenTelemetry openTelemetry = OTEL.getOpenTelemetry();
 
     private MorphiaBundle<Config> morphiaBundle =
         MorphiaBundle.builder()
             .withConfigurationProvider(Config::getMongo)
             .withEntity(Person.class)
-            .withTracer(mockTracer)
+            .withTelemetryInstance(openTelemetry)
             .build();
 
     @Override
@@ -113,10 +108,6 @@ public class MorphiaBundleTracingIT {
 
     MorphiaBundle<Config> getMorphiaBundle() {
       return morphiaBundle;
-    }
-
-    MockTracer getMockTracer() {
-      return mockTracer;
     }
   }
 }

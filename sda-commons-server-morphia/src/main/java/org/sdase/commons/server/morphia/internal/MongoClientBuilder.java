@@ -1,15 +1,12 @@
 package org.sdase.commons.server.morphia.internal;
 
-import static java.util.Arrays.asList;
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 import static org.sdase.commons.server.morphia.internal.ConnectionStringUtil.createConnectionString;
 
 import com.mongodb.*;
 import io.dropwizard.setup.Environment;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.mongo.common.SpanDecorator;
-import io.opentracing.contrib.mongo.common.TracingCommandListener;
-import io.opentracing.util.GlobalTracer;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
 import java.security.KeyStore;
 import javax.net.ssl.SSLContext;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +24,7 @@ public class MongoClientBuilder {
 
   private final MongoConfiguration configuration;
   private final MongoClientOptions.Builder mongoClientOptionsBuilder;
-  private Tracer tracer;
+  private OpenTelemetry openTelemetry;
   private SSLContext sslContext;
 
   public MongoClientBuilder(MongoConfiguration configuration) {
@@ -40,8 +37,8 @@ public class MongoClientBuilder {
     this.mongoClientOptionsBuilder = mongoClientOptionsBuilder;
   }
 
-  public MongoClientBuilder withTracer(Tracer tracer) {
-    this.tracer = tracer;
+  public MongoClientBuilder withTelemetryInstance(OpenTelemetry openTelemetry) {
+    this.openTelemetry = openTelemetry;
     return this;
   }
 
@@ -85,13 +82,11 @@ public class MongoClientBuilder {
       }
     }
 
-    // Initialize a tracer that traces all calls to the MongoDB server.
-    Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
-    TracingCommandListener listener =
-        new TracingCommandListener.Builder(currentTracer)
-            .withSpanDecorators(asList(SpanDecorator.DEFAULT, new NoStatementSpanDecorator()))
-            .build();
-    mongoClientOptionsBuilder.addCommandListener(listener);
+    // Initialize a telemetry instance if not set.
+    OpenTelemetry currentTelemetryInstance =
+        this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
+    TracingCommandListener tracingCommandListener = new TracingCommandListener(currentTelemetryInstance);
+    mongoClientOptionsBuilder.addCommandListener(tracingCommandListener);
 
     return new MongoClient(
         new MongoClientURI(createConnectionString(configuration), mongoClientOptionsBuilder));
