@@ -56,6 +56,9 @@ dependencies {
     api "org.awaitility:awaitility:4.2.0"
     api 'org.assertj:assertj-core:3.23.1'
 
+    // sda-commons-jersey-client
+    api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:$otelAgentAlphaVersion"
+
     // sda-commons-client-jersey-wiremock-testing
     api "com.github.tomakehurst:wiremock-jre8:2.35.0"
     api "org.ow2.asm:asm:9.4", {
@@ -90,6 +93,7 @@ dependencies {
 
     // sda-commons-server-mongo-testing
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.2"
+    api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:$otelAgentAlphaVersion"
 
     // sda-commons-server-openapi
     api "com.jayway.jsonpath:json-path:2.7.0"
@@ -121,6 +125,7 @@ dependencies {
 
     // sda-commons-server-s3-testing
     api "io.findify:s3mock_2.13:0.2.6"
+    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11:$otelAgentAlphaVersion"
 
     // sda-commons-server-swagger
     api "com.github.java-json-tools:json-schema-validator:2.2.14"
