@@ -2,7 +2,9 @@ package org.sdase.commons.shared.otel.agent;
 
 import com.google.auto.service.AutoService;
 import io.opentelemetry.javaagent.extension.config.ConfigPropertySource;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +35,21 @@ public final class SdaConfigPropertyProvider implements ConfigPropertySource {
     if (jaegerServiceName != null && !jaegerServiceName.isEmpty()) {
       properties.put("otel.service.name", jaegerServiceName);
     }
+
+    // include only some instrumentations
+    properties.put("otel.instrumentation.common.default-enabled", "false");
+    getEnabledInstrumentationModules().forEach(lib -> properties.put(lib, "true"));
+
     return properties;
+  }
+
+  private List<String> getEnabledInstrumentationModules() {
+    return Arrays.asList(
+        "otel.instrumentation.jaxrs.enabled",
+        "otel.instrumentation.jersey.enabled",
+        "otel.instrumentation.mongo.enabled",
+        "otel.instrumentation.apache-httpclient.enabled",
+        "otel.instrumentation.kafka.enabled",
+        "otel.instrumentation.aws-sdk.enabled");
   }
 }
