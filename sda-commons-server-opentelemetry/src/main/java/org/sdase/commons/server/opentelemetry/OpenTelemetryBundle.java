@@ -9,9 +9,11 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import java.util.EnumSet;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
+import org.sdase.commons.server.opentelemetry.autoconfig.SdaConfigPropertyProvider;
 import org.sdase.commons.server.opentelemetry.jaxrs.JerseyExceptionListener;
 import org.sdase.commons.server.opentelemetry.jaxrs.ServerTracingFilter;
 import org.sdase.commons.server.opentelemetry.servlet.TracingFilter;
@@ -26,7 +28,7 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
   }
 
   @Override
-  public void run(Configuration configuration, Environment environment) throws Exception {
+  public void run(Configuration configuration, Environment environment) {
     // Initialize a telemetry instance if not set.
     OpenTelemetry currentTelemetryInstance =
         this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
@@ -54,16 +56,19 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     jersey.register(new ServerTracingFilter());
   }
 
-  private OpenTelemetry bootstrapConfiguredTelemetrySdk() {
-    return AutoConfiguredOpenTelemetrySdk.initialize().getOpenTelemetrySdk();
+  private static OpenTelemetry bootstrapConfiguredTelemetrySdk() {
+    return AutoConfiguredOpenTelemetrySdk.builder()
+        .addPropertiesSupplier(SdaConfigPropertyProvider::getProperties)
+        .setResultAsGlobal(true)
+        .build()
+        .getOpenTelemetrySdk();
   }
 
-  public static FinalBuilder builder() {
+  public static InitialBuilder builder() {
     return new Builder();
   }
 
-  public interface FinalBuilder {
-
+  public interface InitialBuilder {
     /**
      * Specifies a custom telemetry instance to use. If no instance is specified, the {@link
      * GlobalOpenTelemetry} is used.
@@ -73,6 +78,16 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
      */
     FinalBuilder withTelemetryInstance(OpenTelemetry openTelemetry);
 
+    /**
+     * Enables the bundle to setup an auto configured instance of OpenTelemetry Sdk, and register it
+     * as Global.
+     *
+     * @return the same builder
+     */
+    FinalBuilder withAutoConfiguredTelemetryInstance();
+  }
+
+  public interface FinalBuilder {
     /**
      * Specifies a pattern where all traces for the matching urls will be suppressed. By default all
      * requests with any url is traced.
@@ -85,16 +100,16 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     OpenTelemetryBundle build();
   }
 
-  public static class Builder implements FinalBuilder {
+  public static class Builder implements FinalBuilder, InitialBuilder {
 
-    private OpenTelemetry openTelemetry;
+    private Supplier<OpenTelemetry> openTelemetryProvider;
     private Pattern excludedUrlPatterns;
 
     private Builder() {}
 
     @Override
     public FinalBuilder withTelemetryInstance(OpenTelemetry openTelemetry) {
-      this.openTelemetry = openTelemetry;
+      this.openTelemetryProvider = () -> openTelemetry;
       return this;
     }
 
@@ -105,8 +120,14 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     }
 
     @Override
+    public FinalBuilder withAutoConfiguredTelemetryInstance() {
+      this.openTelemetryProvider = OpenTelemetryBundle::bootstrapConfiguredTelemetrySdk;
+      return this;
+    }
+
+    @Override
     public OpenTelemetryBundle build() {
-      return new OpenTelemetryBundle(openTelemetry, excludedUrlPatterns);
+      return new OpenTelemetryBundle(openTelemetryProvider.get(), excludedUrlPatterns);
     }
   }
 }

@@ -1,4 +1,4 @@
-package org.sdase.commons.server.opentelemetry.servlet;
+package org.sdase.commons.server.opentelemetry;
 
 import java.net.URI;
 import javax.ws.rs.GET;
