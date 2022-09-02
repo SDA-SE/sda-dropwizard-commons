@@ -1,0 +1,17 @@
+dependencies {
+  api project(':sda-commons-server-dropwizard')
+
+  api "io.opentelemetry:opentelemetry-api"
+  // provides some conventional static attributes that are recommended for manual instrumentation.
+  api 'io.opentelemetry:opentelemetry-semconv'
+
+  // provides some testing extensions for the tracing api
+  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
+
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation 'org.assertj:assertj-core'
+}
+
+test {
+  useJUnitPlatform()
+}
