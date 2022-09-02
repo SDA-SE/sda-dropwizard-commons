@@ -49,3 +49,6 @@ include 'sda-commons-starter'
 include 'sda-commons-starter-example'
 include 'sda-commons-server-key-mgmt'
 include 'sda-commons-server-spring-data-mongo'
+include 'sda-commons-shared-otel-tracing-example'
+include 'sda-commons-server-opentelemetry'
+
