@@ -13,12 +13,17 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 import org.sdase.commons.server.opentelemetry.autoconfig.SdaConfigPropertyProvider;
 import org.sdase.commons.server.opentelemetry.jaxrs.JerseyExceptionListener;
 import org.sdase.commons.server.opentelemetry.jaxrs.ServerTracingFilter;
 import org.sdase.commons.server.opentelemetry.servlet.TracingFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
+  private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryBundle.class);
+  private static final String MAIN_THREAD_CHECK_ENABLED = "MAIN_THREAD_CHECK_ENABLED";
   private final OpenTelemetry openTelemetry;
   private final Pattern excludedUrlPatterns;
 
@@ -29,12 +34,8 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
 
   @Override
   public void run(Configuration configuration, Environment environment) {
-    // Initialize a telemetry instance if not set.
-    OpenTelemetry currentTelemetryInstance =
-        this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
-
     registerJaxrsTracer(environment.jersey());
-    registerServletTracer(environment, currentTelemetryInstance);
+    registerServletTracer(environment, this.openTelemetry);
   }
 
   @Override
@@ -57,9 +58,10 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
   }
 
   private static OpenTelemetry bootstrapConfiguredTelemetrySdk() {
+    LOG.info("No OpenTelemetry sdk instance is provided, using autoConfigured instance.");
     return AutoConfiguredOpenTelemetrySdk.builder()
         .addPropertiesSupplier(SdaConfigPropertyProvider::getProperties)
-        .setResultAsGlobal(true)
+        .setResultAsGlobal(shouldSetAsGlobal())
         .build()
         .getOpenTelemetrySdk();
   }
@@ -70,10 +72,10 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
 
   public interface InitialBuilder {
     /**
-     * Specifies a custom telemetry instance to use. If no instance is specified, the {@link
-     * GlobalOpenTelemetry} is used.
+     * Specifies a custom telemetry instance to use. If this builder is used, this module will only
+     * be a consumer, and the provider needs to take care of registering this instance as global.
      *
-     * @param openTelemetry The telemetry instance to use
+     * @param openTelemetry The telemetry instance to use.
      * @return the same builder
      */
     FinalBuilder withTelemetryInstance(OpenTelemetry openTelemetry);
@@ -82,7 +84,7 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
      * Enables the bundle to setup an auto configured instance of OpenTelemetry Sdk, and register it
      * as Global.
      *
-     * @return the same builder
+     * @return the same builder.
      */
     FinalBuilder withAutoConfiguredTelemetryInstance();
   }
@@ -129,5 +131,28 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     public OpenTelemetryBundle build() {
       return new OpenTelemetryBundle(openTelemetryProvider.get(), excludedUrlPatterns);
     }
+  }
+
+  /**
+   * Decides if the {@link OpenTelemetry} instance created by {@link AutoConfiguredOpenTelemetrySdk}
+   * should be registered as the global instance. It can be troublesome for consumers of the module
+   * and will break many tests, as they have to explicitly unregister this for tests using {@link
+   * GlobalOpenTelemetry#resetForTest()} in their tests.
+   *
+   * @return the decision
+   */
+  private static boolean shouldSetAsGlobal() {
+    // Skip loading the agent if not triggered from the main thread.
+    boolean isMainThreadCheckDisabled = "false".equals(getProperty(MAIN_THREAD_CHECK_ENABLED));
+    boolean isMainThread = "main".equals(Thread.currentThread().getName());
+    if (!isMainThreadCheckDisabled && !isMainThread) {
+      LOG.warn("Skipping setting the TelemetrySdk as global.");
+      return false;
+    }
+    return true;
+  }
+
+  private static String getProperty(String name) {
+    return new SystemPropertyAndEnvironmentLookup().lookup(name);
   }
 }
