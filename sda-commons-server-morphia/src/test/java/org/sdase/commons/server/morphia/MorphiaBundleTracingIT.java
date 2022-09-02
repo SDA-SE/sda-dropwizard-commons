@@ -9,7 +9,6 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
@@ -87,13 +86,11 @@ public class MorphiaBundleTracingIT {
 
   public static class MorphiaTestApp extends Application<Config> {
 
-    private OpenTelemetry openTelemetry = OTEL.getOpenTelemetry();
-
     private MorphiaBundle<Config> morphiaBundle =
         MorphiaBundle.builder()
             .withConfigurationProvider(Config::getMongo)
             .withEntity(Person.class)
-            .withTelemetryInstance(openTelemetry)
+            .withTelemetryInstance(OTEL.getOpenTelemetry())
             .build();
 
     @Override

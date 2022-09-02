@@ -10,7 +10,6 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.SpanData;
@@ -72,12 +71,10 @@ public class S3BundleTest {
   }
 
   public static class TestApp extends Application<Config> {
-    OpenTelemetry openTelemetry = OTEL.getOpenTelemetry();
-
     private S3Bundle<Config> s3Bundle =
         S3Bundle.builder()
             .withConfigurationProvider(Config::getS3Config)
-            .withTelemetryInstance(openTelemetry)
+            .withTelemetryInstance(OTEL.getOpenTelemetry())
             .build();
 
     @Override
