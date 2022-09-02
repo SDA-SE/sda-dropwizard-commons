@@ -162,6 +162,9 @@ dependencies {
     // sda-commons-shared-*
     api 'commons-io:commons-io:2.11.0'
 
+    // sda-commons-server-opentelemetry
+    api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:$openTelemetryAlphaVersion"
+
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
