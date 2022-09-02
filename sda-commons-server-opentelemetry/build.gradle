@@ -5,11 +5,21 @@ dependencies {
   // provides some conventional static attributes that are recommended for manual instrumentation.
   api 'io.opentelemetry:opentelemetry-semconv'
 
-  // provides some testing extensions for the tracing api
-  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
+  // this module provides provides a builder to setup an instance sdk
+  api 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure'
+
+  implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+  // TODO delete after testing the snapshot
+  implementation 'io.opentelemetry:opentelemetry-exporter-jaeger'
+
+  // Provides support for jaeger baggage
+  implementation 'io.opentelemetry:opentelemetry-extension-trace-propagators'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation 'org.assertj:assertj-core'
+  // provides some testing extensions for the tracing api
+  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
+  testImplementation 'io.opentelemetry:opentelemetry-exporter-logging'
 }
 
 test {
