@@ -17,8 +17,6 @@ public class TracingAsyncListener implements AsyncListener {
 
   @Override
   public void onComplete(AsyncEvent event) {
-    event.getSuppliedRequest();
-    // TODO add more tags to the current span
     serverSpan.end();
   }
 

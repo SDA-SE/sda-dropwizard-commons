@@ -1,4 +1,4 @@
-package org.sdase.commons.server.opentelemetry.servlet;
+package org.sdase.commons.server.opentelemetry;
 
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static javax.servlet.http.HttpServletResponse.SC_CREATED;
@@ -22,7 +22,6 @@ import javax.ws.rs.core.Response;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.sdase.commons.server.opentelemetry.OpenTelemetryBundle;
 import org.sdase.commons.server.opentelemetry.decorators.HeadersUtils;
 
 class OpenTelemetryBundleTest {
@@ -37,7 +36,6 @@ class OpenTelemetryBundleTest {
   void shouldInstrumentServlets() {
     Response r = createClient().path("base/respond/test").request().get();
 
-    // Make sure to wait till the request is completed:
     r.readEntity(String.class);
 
     List<SpanData> spans = OTEL.getSpans();
@@ -59,7 +57,6 @@ class OpenTelemetryBundleTest {
             .header("traceparent", traceParent)
             .get();
 
-    // Make sure to wait till the request is completed:
     r.readEntity(String.class);
 
     assertThat(r.getStatus()).isEqualTo(SC_OK);
@@ -79,7 +76,6 @@ class OpenTelemetryBundleTest {
     for (int i = 0; i < 10; ++i) {
       Response r = createClient().path("base/error").request().get();
 
-      // Make sure to wait till the request is completed:
       r.readEntity(String.class);
 
       assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
@@ -94,7 +90,6 @@ class OpenTelemetryBundleTest {
   void shouldTraceAndLogExceptions() {
     Response r = createClient().path("base/error").request().get();
 
-    // Make sure to wait till the request is completed:
     r.readEntity(String.class);
 
     assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
