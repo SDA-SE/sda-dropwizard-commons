@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.assertj.core.groups.Tuple;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.opentelemetry.decorators.HeadersUtils;
@@ -31,13 +30,10 @@ import org.sdase.commons.server.opentelemetry.decorators.HeadersUtils;
 class OpenTelemetryBundleTest {
 
   @RegisterExtension
-  @Order(1)
-  static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
-
-  @RegisterExtension
-  @Order(0)
   public static final DropwizardAppExtension<Configuration> DW =
       new DropwizardAppExtension<>(TraceTestApp.class, null, randomPorts());
+
+  @RegisterExtension static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
   @Test
   void shouldInstrumentServlets() {
@@ -64,9 +60,7 @@ class OpenTelemetryBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_OK);
 
-    List<SpanData> spans = OTEL.getSpans();
-
-    assertThat(spans)
+    assertThat(OTEL.getSpans())
         .isNotEmpty()
         .hasSize(1)
         .first()
@@ -82,9 +76,7 @@ class OpenTelemetryBundleTest {
       assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
     }
 
-    List<SpanData> spans = OTEL.getSpans();
-
-    assertThat(spans).as("10 requests should cause 10 root spans").hasSize(10);
+    assertThat(OTEL.getSpans()).as("10 requests should cause 10 root spans").hasSize(10);
   }
 
   @Test
@@ -93,9 +85,7 @@ class OpenTelemetryBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
 
-    List<SpanData> spans = OTEL.getSpans();
-
-    assertThat(spans)
+    assertThat(OTEL.getSpans())
         .isNotEmpty()
         .hasSize(1)
         .extracting(SpanData::getStatus)
@@ -159,15 +149,13 @@ class OpenTelemetryBundleTest {
   @Test
   void shouldTraceAdminTasks() {
     Response someResponse = createAdminClient().path("/tasks/doSomething").request().post(null);
-    Response secondResponse = createAdminClient().path("/tasks/doSomething").request().post(null);
-    // no trace for this task
     Response skippedResponse = createAdminClient().path("/tasks/skip").request().post(null);
+    // no trace for this task
 
     assertThat(someResponse.getStatus()).isEqualTo(SC_OK);
-    assertThat(secondResponse.getStatus()).isEqualTo(SC_OK);
     assertThat(skippedResponse.getStatus()).isEqualTo(SC_OK);
     assertThat(OTEL.getSpans())
-        .hasSize(2)
+        .hasSize(1)
         .extracting(SpanData::getName)
         .contains("POST /tasks/doSomething")
         .doesNotContain("POST /tasks/skip");
