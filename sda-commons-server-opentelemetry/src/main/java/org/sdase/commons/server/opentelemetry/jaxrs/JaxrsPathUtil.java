@@ -1,5 +1,7 @@
 package org.sdase.commons.server.opentelemetry.jaxrs;
 
+import java.io.File;
+
 public final class JaxrsPathUtil {
   private JaxrsPathUtil() {}
 
@@ -8,7 +10,7 @@ public final class JaxrsPathUtil {
     if (path == null || "/".equals(path)) {
       path = "";
     } else if (!path.startsWith("/")) {
-      path = "/" + path;
+      path = File.separator + path;
     }
     // remove trailing /
     if (path.endsWith("/")) {
