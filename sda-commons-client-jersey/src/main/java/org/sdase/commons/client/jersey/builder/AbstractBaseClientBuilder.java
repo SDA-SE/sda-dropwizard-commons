@@ -13,6 +13,7 @@ import javax.ws.rs.core.Feature;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
+import org.sdase.commons.server.opentelemetry.client.TracedHttpClientInitialBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
     this.jerseyClientBuilder = new JerseyClientBuilder(environment);
     this.openTelemetry = openTelemetry;
     this.jerseyClientBuilder.setApacheHttpClientBuilder(
-        new OtelHttpClientBuilder(environment).usingTelemetryInstance(this.openTelemetry));
+        new TracedHttpClientInitialBuilder(environment).usingTelemetryInstance(this.openTelemetry));
     this.objectMapper = environment.getObjectMapper();
     this.filters = new ArrayList<>();
     this.features = new ArrayList<>();
