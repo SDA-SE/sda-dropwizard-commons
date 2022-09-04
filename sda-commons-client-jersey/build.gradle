@@ -3,6 +3,7 @@ dependencies {
   api project(':sda-commons-server-opentracing')
   api project(':sda-commons-shared-tracing')
   api project(':sda-commons-shared-error')
+  api project(':sda-commons-server-opentelemetry')
 
   api 'io.dropwizard:dropwizard-client'
   api 'jakarta.servlet:jakarta.servlet-api'
