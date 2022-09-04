@@ -1,7 +1,7 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-error')
-  api project(':sda-commons-server-opentracing')
+  api project(':sda-commons-server-opentelemetry')
   api project(':sda-commons-shared-tracing')
   api 'io.dropwizard:dropwizard-auth'
   api 'io.dropwizard:dropwizard-client'

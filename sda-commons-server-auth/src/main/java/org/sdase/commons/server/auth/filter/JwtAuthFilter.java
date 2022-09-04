@@ -1,13 +1,11 @@
 package org.sdase.commons.server.auth.filter;
 
-import static io.opentracing.tag.Tags.COMPONENT;
-
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
-import io.opentracing.Scope;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
-import io.opentracing.noop.NoopTracerFactory;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -42,14 +40,10 @@ public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<Stri
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    Span span =
-        tracer
-            .buildSpan("validateToken")
-            .withTag(COMPONENT, "JwtAuthFilter")
-            .withTag(AUTHENTICATED, false)
-            .start();
+    Span span = tracer.spanBuilder("validateToken").setAttribute(AUTHENTICATED, false).startSpan();
+    //            .withTag(COMPONENT, "JwtAuthFilter")
 
-    try (Scope ignored = tracer.scopeManager().activate(span)) {
+    try (Scope ignored = span.makeCurrent()) {
       final MultivaluedMap<String, String> headers = requestContext.getHeaders();
       final String jwt = extractAuthorizationToken(headers);
 
@@ -57,13 +51,13 @@ public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<Stri
       boolean authenticated =
           authenticate(requestContext, Optional.ofNullable(jwt), SecurityContext.BASIC_AUTH);
 
-      span.setTag(AUTHENTICATED, authenticated);
+      span.setAttribute(AUTHENTICATED, authenticated);
 
       if (!acceptAnonymous && !authenticated) {
         throw new JwtAuthException("Credentials are required to access this resource.");
       }
     } finally {
-      span.finish();
+      span.end();
     }
   }
 
@@ -80,7 +74,7 @@ public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<Stri
       extends AuthFilterBuilder<Optional<String>, P, JwtAuthFilter<P>> {
 
     private boolean acceptAnonymous;
-    private Tracer tracer = NoopTracerFactory.create();
+    private Tracer tracer = OpenTelemetry.noop().getTracer(JwtAuthFilter.class.getName());
 
     @Override
     protected JwtAuthFilter<P> newInstance() {
