@@ -59,7 +59,7 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     FilterRegistration.Dynamic adminFilterRegistration =
         environment.admin().addFilter("AdminTracingFilter", adminTracingFilter);
     adminFilterRegistration.addMappingForUrlPatterns(
-        EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC), false, "/*");
+        EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC), false, "*");
   }
 
   public void registerJaxrsTracer(JerseyEnvironment jersey) {

@@ -59,7 +59,7 @@ class AutoConfigurationTest {
         .isNotEmpty()
         .anyMatch(
             l ->
-                l.contains("[tracer: sda-commons-servlet:]")
+                l.contains("[tracer: sda-commons.servlet:]")
                     && l.contains(
                         "io.opentelemetry.exporter.logging.LoggingSpanExporter: 'GET /base/respond/{value}'"));
   }
