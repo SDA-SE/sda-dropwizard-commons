@@ -1,7 +1,6 @@
 package org.sdase.commons.server.opa;
 
 import static java.util.Collections.singletonList;
-import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.registerTracing;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,8 +11,8 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.opentracing.Tracer;
-import io.opentracing.util.GlobalTracer;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import org.sdase.commons.server.opa.filter.OpaAuthFilter;
 import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
 import org.sdase.commons.server.opa.internal.OpaJwtPrincipalFactory;
+import org.sdase.commons.server.opentelemetry.client.TracedHttpClientInitialBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,18 +70,19 @@ import org.slf4j.LoggerFactory;
 public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
   private static final Logger LOG = LoggerFactory.getLogger(OpaBundle.class);
+  private static final String INSTRUMENTATION_NAME = "sda-commons.opa-bundle";
 
   private final OpaConfigProvider<T> configProvider;
   private final Map<String, OpaInputExtension<?>> inputExtensions;
-  private final Tracer tracer;
+  private final OpenTelemetry openTelemetry;
 
   private OpaBundle(
       OpaConfigProvider<T> configProvider,
       Map<String, OpaInputExtension<?>> inputExtensions,
-      Tracer tracer) {
+      OpenTelemetry openTelemetry) {
     this.configProvider = configProvider;
     this.inputExtensions = inputExtensions;
-    this.tracer = tracer;
+    this.openTelemetry = openTelemetry;
   }
 
   //
@@ -110,14 +111,16 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
       LOG.warn("Authorization is disabled. This setting should NEVER be used in production.");
     }
 
-    Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
+    // Initialize a telemetry instance if not set.
+    OpenTelemetry currentTelemetryInstance =
+        this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
 
     // create own object mapper to be independent from changes in jackson
     // bundle
     ObjectMapper objectMapper = createObjectMapper();
 
     // disable GZIP format since OPA cannot handle GZIP
-    Client client = createClient(environment, config, objectMapper, currentTracer);
+    Client client = createClient(environment, config, objectMapper, currentTelemetryInstance);
 
     WebTarget policyTarget = client.target(buildUrl(config));
 
@@ -137,7 +140,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
                 excludePattern,
                 objectMapper,
                 inputExtensions,
-                currentTracer));
+                currentTelemetryInstance.getTracer(INSTRUMENTATION_NAME)));
 
     // register health check
     if (!config.isDisableOpa()) {
@@ -163,19 +166,18 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
   }
 
   private Client createClient(
-      Environment environment, OpaConfig config, ObjectMapper objectMapper, Tracer tracer) {
+      Environment environment,
+      OpaConfig config,
+      ObjectMapper objectMapper,
+      OpenTelemetry openTelemetry) {
     OpaClientConfiguration clientConfig =
         config.getOpaClient() == null ? new OpaClientConfiguration() : config.getOpaClient();
 
-    Client client =
-        new JerseyClientBuilder(environment)
-            .using(clientConfig)
-            .using(objectMapper)
-            .build("opaClient");
+    JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
+    jerseyClientBuilder.setApacheHttpClientBuilder(
+        new TracedHttpClientInitialBuilder(environment).usingTelemetryInstance(openTelemetry));
 
-    registerTracing(client, tracer);
-
-    return client;
+    return jerseyClientBuilder.using(clientConfig).using(objectMapper).build("opaClient");
   }
 
   private ObjectMapper createObjectMapper() {
@@ -255,7 +257,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
      */
     <T> OpaBuilder<C> withInputExtension(String namespace, OpaInputExtension<T> extension);
 
-    OpaBuilder<C> withTracer(Tracer tracer);
+    OpaBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry);
 
     OpaBundle<C> build();
   }
@@ -264,7 +266,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
       implements ProviderBuilder, OpaExtensionsBuilder<C>, OpaBuilder<C> {
 
     private OpaConfigProvider<C> opaConfigProvider;
-    private Tracer tracer;
+    private OpenTelemetry openTelemetry;
     private final Map<String, OpaInputExtension<?>> inputExtensions = new HashMap<>();
     private boolean addHeadersExtension = true; // on by default
 
@@ -306,8 +308,8 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     }
 
     @Override
-    public OpaBuilder<C> withTracer(Tracer tracer) {
-      this.tracer = tracer;
+    public OpaBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry) {
+      this.openTelemetry = openTelemetry;
       return this;
     }
 
@@ -317,7 +319,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
         withInputExtension("headers", OpaInputHeadersExtension.builder().build());
       }
 
-      return new OpaBundle<>(opaConfigProvider, inputExtensions, tracer);
+      return new OpaBundle<>(opaConfigProvider, inputExtensions, openTelemetry);
     }
   }
 
