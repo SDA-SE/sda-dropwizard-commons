@@ -19,6 +19,8 @@ ext {
   dbRiderVersion = '1.35.0'
   kotlinVersion = '1.7.21'
   kotlinxCoroutinesVersion = '1.6.4'
+  otelAgentAlphaVersion = '1.16.0-alpha'
+  openTelemetryAlphaVersion = '1.16.0-alpha'
 }
 
 dependencies {
@@ -158,6 +160,11 @@ dependencies {
 
     // sda-commons-server-opentelemetry
     api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:$openTelemetryAlphaVersion"
+    api 'io.opentelemetry:opentelemetry-exporter-otlp:1.16.0'
+    api 'io.opentelemetry:opentelemetry-exporter-jaeger:1.16.0'
+    api 'io.opentelemetry:opentelemetry-extension-trace-propagators:1.16.0'
+    api 'io.opentelemetry:opentelemetry-sdk-testing:1.16.0'
+    api 'io.opentelemetry:opentelemetry-exporter-logging:1.16.0'
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
