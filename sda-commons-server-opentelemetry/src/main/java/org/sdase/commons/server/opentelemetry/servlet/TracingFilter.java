@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.sdase.commons.server.opentelemetry.decorators.ServerSpanDecorator;
 
 public class TracingFilter implements Filter {
-  private static final String INSTRUMENTATION_NAME = "sda-commons-servlet";
+  private static final String INSTRUMENTATION_NAME = "sda-commons.servlet";
   private final OpenTelemetry openTelemetry;
   private final Pattern skipPattern;
 
