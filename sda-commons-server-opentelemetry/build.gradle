@@ -1,14 +1,13 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
-
+  api 'io.dropwizard:dropwizard-client'
+  api 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3'
   api "io.opentelemetry:opentelemetry-api"
   // provides some conventional static attributes that are recommended for manual instrumentation.
   api 'io.opentelemetry:opentelemetry-semconv'
-
   // this module provides provides a builder to setup an instance sdk
   api 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure'
-
-  implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+  api 'io.opentelemetry:opentelemetry-exporter-otlp'
   // TODO delete after testing the snapshot
   implementation 'io.opentelemetry:opentelemetry-exporter-jaeger'
 
