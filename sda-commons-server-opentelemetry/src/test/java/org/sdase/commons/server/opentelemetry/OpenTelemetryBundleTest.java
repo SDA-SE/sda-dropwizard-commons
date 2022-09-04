@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
@@ -15,11 +16,14 @@ import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.data.StatusData;
+import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.assertj.core.groups.Tuple;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.opentelemetry.decorators.HeadersUtils;
@@ -27,16 +31,17 @@ import org.sdase.commons.server.opentelemetry.decorators.HeadersUtils;
 class OpenTelemetryBundleTest {
 
   @RegisterExtension
+  @Order(1)
+  static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
+
+  @RegisterExtension
+  @Order(0)
   public static final DropwizardAppExtension<Configuration> DW =
       new DropwizardAppExtension<>(TraceTestApp.class, null, randomPorts());
-
-  @RegisterExtension static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
   @Test
   void shouldInstrumentServlets() {
     Response r = createClient().path("base/respond/test").request().get();
-
-    r.readEntity(String.class);
 
     List<SpanData> spans = OTEL.getSpans();
 
@@ -57,8 +62,6 @@ class OpenTelemetryBundleTest {
             .header("traceparent", traceParent)
             .get();
 
-    r.readEntity(String.class);
-
     assertThat(r.getStatus()).isEqualTo(SC_OK);
 
     List<SpanData> spans = OTEL.getSpans();
@@ -76,8 +79,6 @@ class OpenTelemetryBundleTest {
     for (int i = 0; i < 10; ++i) {
       Response r = createClient().path("base/error").request().get();
 
-      r.readEntity(String.class);
-
       assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
     }
 
@@ -89,8 +90,6 @@ class OpenTelemetryBundleTest {
   @Test
   void shouldTraceAndLogExceptions() {
     Response r = createClient().path("base/error").request().get();
-
-    r.readEntity(String.class);
 
     assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
 
@@ -114,9 +113,6 @@ class OpenTelemetryBundleTest {
             .header("Authorization", "Bearer eyXXX.yyy.zzz")
             .get();
 
-    // Make sure to wait till the request is completed:
-    r.readEntity(String.class);
-
     assertThat(r.getStatus()).isEqualTo(SC_OK);
 
     List<SpanData> spans = OTEL.getSpans();
@@ -136,21 +132,13 @@ class OpenTelemetryBundleTest {
   void shouldSkipConfiguredUrls() {
     Response r = createClient().path("base/respond/skip").request().get();
 
-    // Make sure to wait till the request is completed:
-    r.readEntity(String.class);
-
     assertThat(r.getStatus()).isEqualTo(SC_OK);
-
-    List<SpanData> spans = OTEL.getSpans();
-    assertThat(spans).isEmpty();
+    assertThat(OTEL.getSpans()).isEmpty();
   }
 
   @Test
   void shouldDecorateJaxRsSpansWithResponseHeaders() {
     Response r = createClient().path("base/respond").request().post(null);
-
-    // Make sure to wait till the request is completed:
-    r.readEntity(String.class);
 
     assertThat(r.getStatus()).isEqualTo(SC_CREATED);
 
@@ -161,8 +149,36 @@ class OpenTelemetryBundleTest {
     assertThat(spanHeaders).isNotEmpty().asList().contains("[Location = 'http://sdase/id']");
   }
 
+  @Test
+  void shouldSkipAdminConfiguredPatterns() {
+    Response r = createAdminClient().path("/tasks/skip").request().post(null);
+    assertThat(r.getStatus()).isEqualTo(SC_OK);
+    assertThat(OTEL.getSpans()).isEmpty();
+  }
+
+  @Test
+  void shouldTraceAdminTasks() {
+    Response someResponse = createAdminClient().path("/tasks/doSomething").request().post(null);
+    Response secondResponse = createAdminClient().path("/tasks/doSomething").request().post(null);
+    // no trace for this task
+    Response skippedResponse = createAdminClient().path("/tasks/skip").request().post(null);
+
+    assertThat(someResponse.getStatus()).isEqualTo(SC_OK);
+    assertThat(secondResponse.getStatus()).isEqualTo(SC_OK);
+    assertThat(skippedResponse.getStatus()).isEqualTo(SC_OK);
+    assertThat(OTEL.getSpans())
+        .hasSize(2)
+        .extracting(SpanData::getName)
+        .contains("POST /tasks/doSomething")
+        .doesNotContain("POST /tasks/skip");
+  }
+
   private WebTarget createClient() {
     return DW.client().target("http://localhost:" + DW.getLocalPort());
+  }
+
+  private WebTarget createAdminClient() {
+    return DW.client().target("http://localhost:" + DW.getAdminPort());
   }
 
   public static class TraceTestApp extends Application<Configuration> {
@@ -172,13 +188,29 @@ class OpenTelemetryBundleTest {
       bootstrap.addBundle(
           OpenTelemetryBundle.builder()
               .withTelemetryInstance(OTEL.getOpenTelemetry())
-              .withExcludedUrlsPattern(Pattern.compile("/base/respond/skip"))
+              .withExcludedUrlsPattern(Pattern.compile("/base/respond/skip|/tasks/skip"))
               .build());
     }
 
     @Override
     public void run(Configuration configuration, Environment environment) {
       environment.jersey().register(new TestApi());
+      environment
+          .admin()
+          .addTask(
+              new PostBodyTask("skip") {
+                @Override
+                public void execute(
+                    Map<String, List<String>> parameters, String body, PrintWriter output) {}
+              });
+      environment
+          .admin()
+          .addTask(
+              new PostBodyTask("doSomething") {
+                @Override
+                public void execute(
+                    Map<String, List<String>> parameters, String body, PrintWriter output) {}
+              });
     }
   }
 }

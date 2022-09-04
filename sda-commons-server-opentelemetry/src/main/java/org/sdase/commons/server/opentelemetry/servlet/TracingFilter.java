@@ -110,7 +110,7 @@ public class TracingFilter implements Filter {
   protected boolean isTraced(HttpServletRequest httpServletRequest) {
     // skip URLs matching skip pattern
     // e.g. pattern is defined as '/metrics/prometheus' then URL
-    // 'http://localhost:5000/metrics/prometheus' won't be traced
+    // 'http://localhost:8081/metrics/prometheus' won't be traced
     if (skipPattern != null) {
       int contextLength =
           httpServletRequest.getContextPath() == null
