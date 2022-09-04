@@ -15,7 +15,7 @@ public class HttpRequestKeyMapGetter implements TextMapGetter<HttpServletRequest
   @Override
   public String get(@Nullable HttpServletRequest carrier, String key) {
     if (carrier == null) {
-      throw new AssertionError();
+      throw new IllegalStateException("Could not extract headers from the http request");
     }
     return carrier.getHeader(key);
   }
