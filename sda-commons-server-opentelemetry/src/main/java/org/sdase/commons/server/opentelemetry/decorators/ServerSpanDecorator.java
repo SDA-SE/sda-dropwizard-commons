@@ -28,9 +28,11 @@ public class ServerSpanDecorator {
   public static void decorateRequest(HttpServletRequest request, Span span) {
     span.setAttribute(SemanticAttributes.HTTP_METHOD, request.getMethod());
     span.setAttribute(SemanticAttributes.HTTP_SCHEME, request.getScheme());
-    span.setAttribute(SemanticAttributes.HTTP_HOST, request.getRemoteHost());
-    span.setAttribute(SemanticAttributes.HTTP_TARGET, request.getContextPath());
+    span.setAttribute(
+        SemanticAttributes.HTTP_HOST,
+        String.format("%s:%s", request.getRemoteHost(), request.getServerPort()));
     span.setAttribute(SemanticAttributes.HTTP_URL, request.getRequestURI());
+    span.setAttribute(SemanticAttributes.HTTP_FLAVOR, request.getProtocol());
   }
 
   public static void decorateResponse(ContainerResponseContext responseContext, Span span) {

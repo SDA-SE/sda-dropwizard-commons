@@ -36,6 +36,7 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
   public void run(Configuration configuration, Environment environment) {
     registerJaxrsTracer(environment.jersey());
     registerServletTracer(environment, this.openTelemetry);
+    registerAdminTracer(environment, this.openTelemetry);
   }
 
   @Override
@@ -50,6 +51,15 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
         environment.servlets().addFilter("TracingFilter", tracingFilter);
     filterRegistration.addMappingForUrlPatterns(
         EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC), false, "*");
+  }
+
+  public void registerAdminTracer(Environment environment, OpenTelemetry openTelemetry) {
+    TracingFilter adminTracingFilter = new TracingFilter(openTelemetry, excludedUrlPatterns);
+
+    FilterRegistration.Dynamic adminFilterRegistration =
+        environment.admin().addFilter("AdminTracingFilter", adminTracingFilter);
+    adminFilterRegistration.addMappingForUrlPatterns(
+        EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC), false, "/*");
   }
 
   public void registerJaxrsTracer(JerseyEnvironment jersey) {
