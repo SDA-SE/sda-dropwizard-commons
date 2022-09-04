@@ -1,15 +1,13 @@
 package org.sdase.commons.server.auth;
 
-import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.registerTracing;
-
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.opentracing.Tracer;
-import io.opentracing.util.GlobalTracer;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,26 +30,30 @@ import org.sdase.commons.server.auth.key.PublicKeyLoader;
 import org.sdase.commons.server.auth.service.AuthService;
 import org.sdase.commons.server.auth.service.JwtAuthenticator;
 import org.sdase.commons.server.auth.service.TokenAuthorizer;
+import org.sdase.commons.server.opentelemetry.client.TracedHttpClientInitialBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AuthBundle.class);
+  private static final String INSTRUMENTATION_NAME = "sda-commons.auth-bundle";
 
   private AuthConfigProvider<T> configProvider;
   private boolean useAnnotatedAuthorization;
-  private final Tracer tracer;
+  private final OpenTelemetry openTelemetry;
 
   public static ProviderBuilder builder() {
     return new Builder<>();
   }
 
   private AuthBundle(
-      AuthConfigProvider<T> configProvider, boolean useAnnotatedAuthorization, Tracer tracer) {
+      AuthConfigProvider<T> configProvider,
+      boolean useAnnotatedAuthorization,
+      OpenTelemetry openTelemetry) {
     this.configProvider = configProvider;
     this.useAnnotatedAuthorization = useAnnotatedAuthorization;
-    this.tracer = tracer;
+    this.openTelemetry = openTelemetry;
   }
 
   @Override
@@ -68,9 +70,11 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
       LOG.warn("Authentication is disabled. This setting should NEVER be used in production.");
     }
 
-    Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
+    // Initialize a telemetry instance if not set.
+    OpenTelemetry currentTelemetryInstance =
+        this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
 
-    Client client = createKeyLoaderClient(environment, config, currentTracer);
+    Client client = createKeyLoaderClient(environment, config, currentTelemetryInstance);
     PublicKeyLoader keyLoader = new PublicKeyLoader();
     config.getKeys().stream()
         .map(k -> this.createKeySources(k, client))
@@ -85,7 +89,7 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
     JwtAuthFilter<JwtPrincipal> authFilter =
         new JwtAuthFilter.Builder<JwtPrincipal>()
-            .withTracer(currentTracer)
+            .withTracer(currentTelemetryInstance.getTracer(INSTRUMENTATION_NAME))
             .setAcceptAnonymous(!useAnnotatedAuthorization)
             .setAuthenticator(authenticator)
             .buildAuthFilter();
@@ -103,7 +107,8 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
     environment.jersey().register(ForbiddenExceptionMapper.class);
   }
 
-  private Client createKeyLoaderClient(Environment environment, AuthConfig config, Tracer tracer) {
+  private Client createKeyLoaderClient(
+      Environment environment, AuthConfig config, OpenTelemetry openTelemetry) {
     JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
 
     // a specific proxy configuration always overrides the system proxy
@@ -117,10 +122,9 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
       jerseyClientBuilder.using(config.getKeyLoaderClient());
     }
 
-    Client client = jerseyClientBuilder.build("keyLoader");
-
-    registerTracing(client, tracer);
-    return client;
+    jerseyClientBuilder.setApacheHttpClientBuilder(
+        new TracedHttpClientInitialBuilder(environment).usingTelemetryInstance(openTelemetry));
+    return jerseyClientBuilder.build("keyLoader");
   }
 
   private KeySource createKeySources(KeyLocation keyLocation, Client client) {
@@ -201,7 +205,7 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
   public interface AuthBuilder<C extends Configuration> {
 
-    AuthBuilder<C> withTracer(Tracer tracer);
+    AuthBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry);
 
     AuthBundle<C> build();
   }
@@ -211,7 +215,7 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
     private AuthConfigProvider<C> authConfigProvider;
     private boolean useAnnotatedAuthorization = true;
-    private Tracer tracer;
+    private OpenTelemetry openTelemetry;
 
     private Builder() {}
 
@@ -238,14 +242,14 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
     }
 
     @Override
-    public AuthBuilder<C> withTracer(Tracer tracer) {
-      this.tracer = tracer;
+    public AuthBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry) {
+      this.openTelemetry = openTelemetry;
       return this;
     }
 
     @Override
     public AuthBundle<C> build() {
-      return new AuthBundle<>(authConfigProvider, useAnnotatedAuthorization, tracer);
+      return new AuthBundle<>(authConfigProvider, useAnnotatedAuthorization, openTelemetry);
     }
   }
 }

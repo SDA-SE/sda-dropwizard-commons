@@ -1,15 +1,14 @@
 package org.sdase.commons.server.opa.filter;
 
-import static io.opentracing.tag.Tags.COMPONENT;
 import static java.util.stream.Collectors.toList;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentracing.Scope;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
@@ -68,6 +67,7 @@ import org.slf4j.LoggerFactory;
 public class OpaAuthFilter implements ContainerRequestFilter {
 
   private static final Logger LOG = LoggerFactory.getLogger(OpaAuthFilter.class);
+  private static final String OPA_ALLOW_ATTRIBUTE = "opa.allow";
 
   private final WebTarget webTarget;
   private final boolean isDisabled;
@@ -98,12 +98,12 @@ public class OpaAuthFilter implements ContainerRequestFilter {
   public void filter(ContainerRequestContext requestContext) {
     Span span =
         tracer
-            .buildSpan("authorizeUsingOpa")
-            .withTag("opa.allow", false)
-            .withTag(COMPONENT, "OpaAuthFilter")
-            .start();
+            .spanBuilder("authorizeUsingOpa")
+            .setAttribute(OPA_ALLOW_ATTRIBUTE, false)
+            .startSpan();
+    //            .withTag(COMPONENT, "OpaAuthFilter")
 
-    try (Scope ignored = tracer.scopeManager().activate(span)) {
+    try (Scope ignored = span.makeCurrent()) {
       // collect input parameters for Opa request
       UriInfo uriInfo = requestContext.getUriInfo();
       String method = requestContext.getMethod();
@@ -147,7 +147,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
       OpaJwtPrincipal principal = OpaJwtPrincipal.create(jwt, claims, constraints, om);
       replaceSecurityContext(requestContext, securityContext, principal);
     } finally {
-      span.finish();
+      span.end();
     }
   }
 
@@ -220,7 +220,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
       throw new ForbiddenException("Not authorized");
     }
 
-    span.setTag("opa.allow", resp.isAllow());
+    span.setAttribute(OPA_ALLOW_ATTRIBUTE, resp.isAllow());
 
     if (!resp.isAllow()) {
       throw new ForbiddenException("Not authorized");

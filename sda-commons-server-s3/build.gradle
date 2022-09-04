@@ -8,5 +8,5 @@ dependencies {
 
   testImplementation project(':sda-commons-server-s3-testing')
   testImplementation 'org.assertj:assertj-core'
-  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing:1.16.0'
+  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
 }
