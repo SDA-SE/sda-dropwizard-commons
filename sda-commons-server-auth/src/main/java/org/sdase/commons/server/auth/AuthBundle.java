@@ -110,6 +110,9 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
   private Client createKeyLoaderClient(
       Environment environment, AuthConfig config, OpenTelemetry openTelemetry) {
     JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
+    // should be set as soon as creating the builder
+    jerseyClientBuilder.setApacheHttpClientBuilder(
+        new TracedHttpClientInitialBuilder(environment).usingTelemetryInstance(openTelemetry));
 
     // a specific proxy configuration always overrides the system proxy
     if (config.getKeyLoaderClient() == null
@@ -122,8 +125,6 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
       jerseyClientBuilder.using(config.getKeyLoaderClient());
     }
 
-    jerseyClientBuilder.setApacheHttpClientBuilder(
-        new TracedHttpClientInitialBuilder(environment).usingTelemetryInstance(openTelemetry));
     return jerseyClientBuilder.build("keyLoader");
   }
 
