@@ -8,11 +8,10 @@ dependencies {
   // this module provides provides a builder to setup an instance sdk
   api 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure'
   api 'io.opentelemetry:opentelemetry-exporter-otlp'
+  api 'io.opentelemetry:opentelemetry-exporter-jaeger'
   // Provides support for jaeger baggage
   api 'io.opentelemetry:opentelemetry-extension-trace-propagators'
 
-  // TODO delete after testing the snapshot
-  implementation 'io.opentelemetry:opentelemetry-exporter-jaeger'
 
 
   testImplementation project(':sda-commons-server-testing')
