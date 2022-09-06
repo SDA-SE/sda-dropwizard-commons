@@ -13,7 +13,10 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.junitpioneer.jupiter.StdIo;
@@ -21,6 +24,7 @@ import org.junitpioneer.jupiter.StdOut;
 
 @SetEnvironmentVariable(key = "OTEL_TRACES_EXPORTER", value = "logging")
 @SetEnvironmentVariable(key = "MAIN_THREAD_CHECK_ENABLED", value = "false")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AutoConfigurationTest {
 
   @RegisterExtension
@@ -33,11 +37,8 @@ class AutoConfigurationTest {
   }
 
   @Test
+  @Order(2)
   void shouldUseDefaults() {
-    Response r = createClient().path("base/respond/test").request().get();
-
-    r.readEntity(String.class);
-    assertThat(r.getStatus()).isEqualTo(SC_OK);
     assertThat(GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().fields())
         .isNotEmpty()
         .contains("traceparent", "baggage", "uber-trace-id");
@@ -45,6 +46,7 @@ class AutoConfigurationTest {
 
   @Test
   @StdIo
+  @Order(3)
   void shouldUseEnvironmentVariablesForConfiguration(StdOut out) {
     assertThat(System.getenv("OTEL_TRACES_EXPORTER")).isEqualTo("logging");
 

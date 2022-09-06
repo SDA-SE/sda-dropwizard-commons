@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
   private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryBundle.class);
   private static final String MAIN_THREAD_CHECK_ENABLED = "MAIN_THREAD_CHECK_ENABLED";
+  private static final String JAEGER_SAMPLER_TYPE = "JAEGER_SAMPLER_TYPE";
+  private static final String JAEGER_SAMPLER_PARAM = "JAEGER_SAMPLER_PARAM";
   private final OpenTelemetry openTelemetry;
   private final Pattern excludedUrlPatterns;
 
@@ -133,6 +135,10 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
 
     @Override
     public FinalBuilder withAutoConfiguredTelemetryInstance() {
+      if (shouldSkipTracing()) {
+        this.openTelemetryProvider = OpenTelemetry::noop;
+        return this;
+      }
       this.openTelemetryProvider = OpenTelemetryBundle::bootstrapConfiguredTelemetrySdk;
       return this;
     }
@@ -160,6 +166,19 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
       return false;
     }
     return true;
+  }
+
+  private static boolean shouldSkipTracing() {
+    // Skip loading the agent if tracing is disabled.
+    String jaegerSamplerType = getProperty(JAEGER_SAMPLER_TYPE);
+    String jaegerSamplerParam = getProperty(JAEGER_SAMPLER_PARAM);
+    boolean isDisabledUsingLegacyVars =
+        "const".equals(jaegerSamplerType) && "0".equals(jaegerSamplerParam);
+    if (isDisabledUsingLegacyVars) {
+      LOG.warn("Tracing is disabled using deprecated configuration.");
+      return true;
+    }
+    return false;
   }
 
   private static String getProperty(String name) {
