@@ -1,0 +1,14 @@
+dependencies {
+  // apis for instrumentation
+  api "io.opentelemetry:opentelemetry-api"
+  // provides some conventional static attributes that are recommended for manual instrumentation.
+  api 'io.opentelemetry:opentelemetry-semconv'
+  api project(':sda-commons-client-jersey')
+  api project(':sda-commons-server-opentelemetry')
+
+  testImplementation project(':sda-commons-server-testing')
+  // provides some testing extensions for the tracing api
+  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation 'org.assertj:assertj-core'
+}
