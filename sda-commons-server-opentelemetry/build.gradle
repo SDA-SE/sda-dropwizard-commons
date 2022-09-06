@@ -20,4 +20,5 @@ dependencies {
   // provides some testing extensions for the tracing api
   testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
   testImplementation 'io.opentelemetry:opentelemetry-exporter-logging'
+  testImplementation 'org.awaitility:awaitility'
 }
