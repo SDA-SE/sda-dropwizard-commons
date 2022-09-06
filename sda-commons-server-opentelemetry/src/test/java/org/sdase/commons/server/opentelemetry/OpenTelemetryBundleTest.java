@@ -5,6 +5,7 @@ import static javax.servlet.http.HttpServletResponse.SC_CREATED;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
@@ -60,12 +61,15 @@ class OpenTelemetryBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_OK);
 
-    assertThat(OTEL.getSpans())
-        .isNotEmpty()
-        .hasSize(1)
-        .first()
-        .extracting(SpanData::getParentSpanId)
-        .isEqualTo(parentId);
+    await()
+        .untilAsserted(
+            () ->
+                assertThat(OTEL.getSpans())
+                    .isNotEmpty()
+                    .hasSize(1)
+                    .first()
+                    .extracting(SpanData::getParentSpanId)
+                    .isEqualTo(parentId));
   }
 
   @Test
@@ -76,7 +80,12 @@ class OpenTelemetryBundleTest {
       assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
     }
 
-    assertThat(OTEL.getSpans()).as("10 requests should cause 10 root spans").hasSize(10);
+    await()
+        .untilAsserted(
+            () ->
+                assertThat(OTEL.getSpans())
+                    .as("10 requests should cause 10 root spans")
+                    .hasSize(10));
   }
 
   @Test
@@ -85,12 +94,15 @@ class OpenTelemetryBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
 
-    assertThat(OTEL.getSpans())
-        .isNotEmpty()
-        .hasSize(1)
-        .extracting(SpanData::getStatus)
-        .extracting(StatusData::getStatusCode, StatusData::getDescription)
-        .contains(Tuple.tuple(StatusCode.ERROR, "Something went wrong"));
+    await()
+        .untilAsserted(
+            () ->
+                assertThat(OTEL.getSpans())
+                    .isNotEmpty()
+                    .hasSize(1)
+                    .extracting(SpanData::getStatus)
+                    .extracting(StatusData::getStatusCode, StatusData::getDescription)
+                    .contains(Tuple.tuple(StatusCode.ERROR, "Something went wrong")));
   }
 
   @Test
@@ -105,17 +117,25 @@ class OpenTelemetryBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_OK);
 
-    List<SpanData> spans = OTEL.getSpans();
-    assertThat(spans)
-        .hasSize(1)
-        .extracting(SpanData::getName)
-        .contains("GET /base/respond/{value}");
+    await()
+        .untilAsserted(
+            () -> {
+              List<SpanData> spans = OTEL.getSpans();
 
-    List<String> spanHeaders = spans.get(0).getAttributes().get(HeadersUtils.HTTP_REQUEST_HEADERS);
-    assertThat(spanHeaders)
-        .asList()
-        .doesNotContain("[Authorization = 'Bearer eyXXX.yyy.zzz']")
-        .contains("[Accept = 'text/html']", "[Authorization = 'Bearer ?']");
+              await()
+                  .untilAsserted(
+                      () ->
+                          assertThat(spans)
+                              .hasSize(1)
+                              .extracting(SpanData::getName)
+                              .contains("GET /base/respond/{value}"));
+              List<String> spanHeaders =
+                  spans.get(0).getAttributes().get(HeadersUtils.HTTP_REQUEST_HEADERS);
+              assertThat(spanHeaders)
+                  .asList()
+                  .doesNotContain("[Authorization = 'Bearer eyXXX.yyy.zzz']")
+                  .contains("[Accept = 'text/html']", "[Authorization = 'Bearer ?']");
+            });
   }
 
   @Test
@@ -132,11 +152,21 @@ class OpenTelemetryBundleTest {
 
     assertThat(r.getStatus()).isEqualTo(SC_CREATED);
 
-    List<SpanData> spans = OTEL.getSpans();
-    assertThat(spans).isNotEmpty().extracting(SpanData::getName).contains("POST /base/respond");
-
-    List<String> spanHeaders = spans.get(0).getAttributes().get(HeadersUtils.HTTP_RESPONSE_HEADERS);
-    assertThat(spanHeaders).isNotEmpty().asList().contains("[Location = 'http://sdase/id']");
+    await()
+        .untilAsserted(
+            () -> {
+              List<SpanData> spans = OTEL.getSpans();
+              assertThat(OTEL.getSpans())
+                  .isNotEmpty()
+                  .extracting(SpanData::getName)
+                  .contains("POST /base/respond");
+              List<String> spanHeaders =
+                  spans.get(0).getAttributes().get(HeadersUtils.HTTP_RESPONSE_HEADERS);
+              assertThat(spanHeaders)
+                  .isNotEmpty()
+                  .asList()
+                  .contains("[Location = 'http://sdase/id']");
+            });
   }
 
   @Test
@@ -154,11 +184,14 @@ class OpenTelemetryBundleTest {
 
     assertThat(someResponse.getStatus()).isEqualTo(SC_OK);
     assertThat(skippedResponse.getStatus()).isEqualTo(SC_OK);
-    assertThat(OTEL.getSpans())
-        .hasSize(1)
-        .extracting(SpanData::getName)
-        .contains("POST /tasks/doSomething")
-        .doesNotContain("POST /tasks/skip");
+    await()
+        .untilAsserted(
+            () ->
+                assertThat(OTEL.getSpans())
+                    .hasSize(1)
+                    .extracting(SpanData::getName)
+                    .contains("POST /tasks/doSomething")
+                    .doesNotContain("POST /tasks/skip"));
   }
 
   private WebTarget createClient() {
