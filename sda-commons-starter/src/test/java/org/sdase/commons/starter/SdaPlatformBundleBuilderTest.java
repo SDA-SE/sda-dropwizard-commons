@@ -74,7 +74,7 @@ public class SdaPlatformBundleBuilderTest {
           softly
               .assertThat(bundleAssertion.getBundleOfType(bundle, ConsumerTokenBundle.class))
               .isNotNull();
-          softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(14);
+          softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(13);
         });
   }
 }
