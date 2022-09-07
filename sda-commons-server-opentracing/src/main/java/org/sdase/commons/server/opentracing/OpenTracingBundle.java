@@ -28,7 +28,14 @@ import org.sdase.commons.server.opentracing.servlet.AdminServletSpanDecorator;
 import org.sdase.commons.server.opentracing.servlet.CustomServletSpanDecorator;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated This bundle is deprecated. Consider using <a
+ *     href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-opentelemetry">OpenTelemetry
+ *     bundle</a>.
+ */
+@Deprecated
 public class OpenTracingBundle implements ConfiguredBundle<Configuration> {
+  private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(OpenTracingBundle.class);
 
   private final Tracer tracer;
 
@@ -43,6 +50,8 @@ public class OpenTracingBundle implements ConfiguredBundle<Configuration> {
 
   @Override
   public void run(Configuration configuration, Environment environment) {
+    LOG.warn(
+        "This 'sda-commons-server-opentracing' is deprecated, consider migrating to 'sda-commons-server-opentelemetry'.");
     Tracer currentTracer = tracer == null ? GlobalTracer.get() : tracer;
 
     registerLogAppender(currentTracer);

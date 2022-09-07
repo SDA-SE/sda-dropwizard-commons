@@ -1,6 +1,8 @@
-# SDA Commons Server Open Tracing
+# SDA Commons Server Open Tracing `Deprecated`
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-opentracing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-opentracing)
+
+>**_NOTE:_** This module is deprecated in favour of [sda-commons-server-opentelemetry](../sda-commons-server-opentelemetry).
 
 This module provides the [`OpenTracingBundle`](./src/main/java/org/sdase/commons/server/opentracing/OpenTracingBundle.java) used to instrument using [OpenTracing](https://opentracing.io/).
 

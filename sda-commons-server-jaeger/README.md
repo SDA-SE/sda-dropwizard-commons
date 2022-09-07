@@ -1,6 +1,8 @@
-# SDA Commons Server Jaeger
+# SDA Commons Server Jaeger `Deprecated`
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-jaeger/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-jaeger)
+
+> **_NOTE:_** This module is deprecated in favour of [sda-commons-server-opentelemetry](../sda-commons-server-opentelemetry).
 
 This module provides the [`JaegerBundle`](./src/main/java/org/sdase/commons/server/jaeger/JaegerBundle.java) used to collect [OpenTracing](https://opentracing.io/) traces to [Jaeger](https://www.jaegertracing.io/).
 When traces are generated, the `JaegerBundle` forwards the traces to the Jaeger agent.

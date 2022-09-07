@@ -21,6 +21,10 @@ ext {
   kotlinxCoroutinesVersion = '1.6.4'
   otelAgentAlphaVersion = '1.16.0-alpha'
   openTelemetryAlphaVersion = '1.16.0-alpha'
+  openTelemetryVersion= '1.16.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
+  openTelemetryAlphaVersion = '1.16.0-alpha'
+  otelInstrumentationVersion = '1.16.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java-instrumentation
+  otelInstrumentationAlphaVersion = '1.16.0-alpha'
 }
 
 dependencies {
@@ -34,6 +38,8 @@ dependencies {
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.346")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
+  api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
+  api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:$openTelemetryAlphaVersion")
 
   constraints {
     // overall conflicts
@@ -58,8 +64,6 @@ dependencies {
     api "org.awaitility:awaitility:4.2.0"
     api 'org.assertj:assertj-core:3.23.1'
 
-    // sda-commons-jersey-client
-    api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:$otelAgentAlphaVersion"
 
     // sda-commons-client-jersey-wiremock-testing
     api "com.github.tomakehurst:wiremock-jre8:2.35.0"
@@ -109,6 +113,7 @@ dependencies {
     api "io.opentracing.contrib:opentracing-jaxrs2:1.0.0"
     api "io.opentracing.contrib:opentracing-concurrent:0.4.0"
     api "io.opentracing.contrib:opentracing-web-servlet-filter:0.4.1"
+    api 'io.opentracing:opentracing-api:0.33.0'
 
     // sda-commons-server-openapi
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9" // TODO Needed for OpenAPI?
@@ -127,7 +132,7 @@ dependencies {
 
     // sda-commons-server-s3-testing
     api "io.findify:s3mock_2.13:0.2.6"
-    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11:$otelAgentAlphaVersion"
+    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11:$otelInstrumentationAlphaVersion"
 
     // sda-commons-server-swagger
     api "com.github.java-json-tools:json-schema-validator:2.2.14"
@@ -160,11 +165,12 @@ dependencies {
 
     // sda-commons-server-opentelemetry
     api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:$openTelemetryAlphaVersion"
-    api 'io.opentelemetry:opentelemetry-exporter-otlp:1.16.0'
-    api 'io.opentelemetry:opentelemetry-exporter-jaeger:1.16.0'
-    api 'io.opentelemetry:opentelemetry-extension-trace-propagators:1.16.0'
-    api 'io.opentelemetry:opentelemetry-sdk-testing:1.16.0'
-    api 'io.opentelemetry:opentelemetry-exporter-logging:1.16.0'
+    api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:$otelInstrumentationAlphaVersion"
+    api "io.opentelemetry:opentelemetry-exporter-otlp:$openTelemetryVersion"
+    api "io.opentelemetry:opentelemetry-exporter-jaeger:$openTelemetryVersion"
+    api "io.opentelemetry:opentelemetry-extension-trace-propagators:$openTelemetryVersion"
+    api "io.opentelemetry:opentelemetry-sdk-testing:$openTelemetryVersion"
+    api "io.opentelemetry:opentelemetry-exporter-logging:$openTelemetryVersion"
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"

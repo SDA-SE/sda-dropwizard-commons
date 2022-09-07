@@ -179,8 +179,8 @@ class OpenTelemetryBundleTest {
   @Test
   void shouldTraceAdminTasks() {
     Response someResponse = createAdminClient().path("/tasks/doSomething").request().post(null);
-    Response skippedResponse = createAdminClient().path("/tasks/skip").request().post(null);
     // no trace for this task
+    Response skippedResponse = createAdminClient().path("/tasks/skip").request().post(null);
 
     assertThat(someResponse.getStatus()).isEqualTo(SC_OK);
     assertThat(skippedResponse.getStatus()).isEqualTo(SC_OK);
