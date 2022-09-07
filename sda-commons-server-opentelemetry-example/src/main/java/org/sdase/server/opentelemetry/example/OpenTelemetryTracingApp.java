@@ -12,78 +12,75 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import javax.ws.rs.GET;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.client.Client;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
+import org.sdase.commons.server.opentelemetry.OpenTelemetryBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/")
-public class OtelTracingApplication extends Application<Configuration> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(OtelTracingApplication.class);
-  private static final String INSTRUMENTATION_NAME = OtelTracingApplication.class.getName();
+public class OpenTelemetryTracingApp extends Application<Configuration> {
+  private static final Logger LOGGER = LoggerFactory.getLogger(OpenTelemetryTracingApp.class);
+  private static final String INSTRUMENTATION_NAME = OpenTelemetryTracingApp.class.getName();
+  private OpenTelemetry openTelemetry;
   private Tracer tracer;
 
   private final JerseyClientBundle<Configuration> jerseyClientBundle =
       JerseyClientBundle.builder().build();
-  private Client searchClient;
   private Client recursiveClient;
 
   public static void main(String[] args) throws Exception {
-    new OtelTracingApplication().run(args);
+    new OpenTelemetryTracingApp().run(args);
   }
 
   @Override
   public void initialize(Bootstrap<Configuration> bootstrap) {
-    this.tracer = GlobalOpenTelemetry.getTracer("org.sdase.example-app");
     bootstrap.addBundle(jerseyClientBundle);
+    openTelemetry = GlobalOpenTelemetry.get();
+    bootstrap.addBundle(OpenTelemetryBundle.builder().withTelemetryInstance(openTelemetry).build());
   }
 
   @Override
   public void run(Configuration configuration, Environment environment) {
-    // it is recommended to only have one instance
-    environment.jersey().register(this);
 
-    searchClient =
-        jerseyClientBundle.getClientFactory().externalClient().buildGenericClient("search");
+    environment.jersey().register(this);
     recursiveClient =
         jerseyClientBundle.getClientFactory().platformClient().buildGenericClient("recursive");
-    // setup a global Tracer instance
-    // It is recommended to create only one instance OpenTelemetry and use it to create
-    // all needed tracers in the application.
-    OpenTelemetry openTelemetry = GlobalOpenTelemetry.get();
+    // get a global telemetry instance
+    // The instance should be setup once and registered as global and used everywhere.
+    // aquire the globally registered instance
+    // create a tracer, the name reflects the lib name and optionally the version(major is enough)
+    openTelemetry.getTracer("org.sdase.example-app");
     tracer = tracer == null ? openTelemetry.getTracer(INSTRUMENTATION_NAME) : tracer;
   }
 
-  // just for testing
-  public OtelTracingApplication setTracer(Tracer tracer) {
+  // only for testing
+  public OpenTelemetryTracingApp setTracer(Tracer tracer) {
     this.tracer = tracer;
     return this;
   }
 
   @GET
-  public String getHelloWorld() {
-    // This call has nothing special, but you don't have to do anything to see
-    // it in traces.
-    return "Hello World";
+  @Path("param/{value}")
+  public String doParam(@PathParam("value") String test) {
+    // This call should have only one span with name "GET param/{test}"
+    return test;
   }
 
   @GET
-  @Path("search")
-  public String doSearch() {
-    // This call calls an external service, you can see the GET call in the
-    // traces.
-    return searchClient.target("http://google.de/").request().get().readEntity(String.class);
+  public String getHelloWorld() {
+    // this call is not traced
+    return "This api is not traced";
   }
 
   @GET
   @Path("recursive")
   public String doRecursive() {
-    // This call calls another service (itself) that is also instrumented with
-    // OpenTracing. You can see the GET call and all inner spans inside the
-    // called service.
+    // this call s also using other apis that are also instrumented,
+    // which means that you should expect a parent span in addition to multiple child spans for the
+    // nested calls.
     return recursiveClient
         .target("http://localhost:8080/instrumented")
         .request()
@@ -92,27 +89,15 @@ public class OtelTracingApplication extends Application<Configuration> {
   }
 
   @GET
-  @Path("error")
-  public String doError() {
-    // This call fails with an exceptions. Failed spans are tagged as errors
-    // and automatically receive a log entry with the exception.
-    throw new InternalServerErrorException("Test");
-  }
-
-  @GET
-  @Path("param/{test}")
-  public String doParam(@PathParam("test") String test) {
-    // This call has path parameters. Path parameters are excluded from the
-    // operation name, but the full url is still visible inside the tags.
-    return test;
-  }
-
-  @GET
   @Path("instrumented")
   public String getInstrumented() {
     // This is an example of manual instrumentation:
-    // You can create custom spans from the GlobalTracer. A active span has a
-    // scope, which is auto closeable. Remember to finish the span after the scope is completed!
+    // You can create custom span from initialized tracer, make it as current to set the current
+    // scope, which is auto closeable. It will be then set automatically as the parent and child
+    // spans can be created easily. It is important to set the scope so that child spans are not
+    // exported as detached without a parent. would result into:
+    // ----instrumentedWork---------------------------------end
+    // --someWork---someWork--someWork--someWork--someWork--end
     Span span = tracer.spanBuilder("instrumentedWork").startSpan();
 
     try (Scope ignored = span.makeCurrent()) {
@@ -130,7 +115,9 @@ public class OtelTracingApplication extends Application<Configuration> {
   @GET
   @Path("exception")
   public String getException() {
-    // This is an example of manual instrumentation:
+    // This is an example of manual for handling exceptions. The exception stacktrace will be added
+    // to the span and can be seen by any tracing backend.
+    // can optionally be set as current
     Span span = tracer.spanBuilder("exceptionWork").startSpan();
 
     try {
