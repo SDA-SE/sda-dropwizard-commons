@@ -147,6 +147,19 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     public OpenTelemetryBundle build() {
       return new OpenTelemetryBundle(openTelemetryProvider.get(), excludedUrlPatterns);
     }
+
+    private static boolean shouldSkipTracing() {
+      // Skip loading the agent if tracing is disabled.
+      String jaegerSamplerType = getProperty(JAEGER_SAMPLER_TYPE);
+      String jaegerSamplerParam = getProperty(JAEGER_SAMPLER_PARAM);
+      boolean isDisabledUsingLegacyVars =
+          "const".equals(jaegerSamplerType) && "0".equals(jaegerSamplerParam);
+      if (isDisabledUsingLegacyVars) {
+        LOG.warn("Tracing is disabled using deprecated configuration.");
+        return true;
+      }
+      return false;
+    }
   }
 
   /**
@@ -166,19 +179,6 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
       return false;
     }
     return true;
-  }
-
-  private static boolean shouldSkipTracing() {
-    // Skip loading the agent if tracing is disabled.
-    String jaegerSamplerType = getProperty(JAEGER_SAMPLER_TYPE);
-    String jaegerSamplerParam = getProperty(JAEGER_SAMPLER_PARAM);
-    boolean isDisabledUsingLegacyVars =
-        "const".equals(jaegerSamplerType) && "0".equals(jaegerSamplerParam);
-    if (isDisabledUsingLegacyVars) {
-      LOG.warn("Tracing is disabled using deprecated configuration.");
-      return true;
-    }
-    return false;
   }
 
   private static String getProperty(String name) {
