@@ -54,6 +54,6 @@ include 'sda-commons-shared-yaml'
 include 'sda-commons-starter'
 include 'sda-commons-starter-example'
 include 'sda-commons-server-key-mgmt'
-include 'sda-commons-shared-otel-tracing-example'
 include 'sda-commons-server-opentelemetry'
+include 'sda-commons-server-opentelemetry-example'
 

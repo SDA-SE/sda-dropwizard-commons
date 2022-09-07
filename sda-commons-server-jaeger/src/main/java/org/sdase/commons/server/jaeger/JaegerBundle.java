@@ -17,11 +17,14 @@ import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentL
 import org.sdase.commons.server.jaeger.metrics.PrometheusMetricsFactory;
 
 /**
- * Configures the Jaeger client to sample to Jaeger. Configuration is done via environment
- * variables.
- *
+ * @deprecated Consider using <a
+ *     href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-opentelemetry">OpenTelemetry
+ *     bundle</a>.
+ *     <p>Configures the Jaeger client to sample to Jaeger. Configuration is done via environment
+ *     variables.
  * @see <a href="https://www.jaegertracing.io/docs/1.16/client-features/">Jaeger Configuration</a>
  */
+@Deprecated
 public class JaegerBundle implements ConfiguredBundle<io.dropwizard.Configuration> {
 
   private static final String JAEGER_SERVICE_NAME = "JAEGER_SERVICE_NAME";
