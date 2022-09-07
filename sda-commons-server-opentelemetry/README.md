@@ -75,5 +75,26 @@ Setting `OTEL_EXPERIMENTAL_SDK_ENABLED` to false will force the instrumented mod
 
 ## Manual instrumentation
 
-If more tracing are needed by final applications, an OpenTelemetry instance can be acquired using `GlobalOpenTelemetry.get()`.
-Some examples for manual tracing can be found in [OpenTelemetry manual tracing example](../sda-commons-shared-otel-tracing-example).
+Sda commons already offers the necessary instrumentation for the server and some clients, to insure a better overview about service to service interaction.
+It is advised to avoid unnecessary tracing for interaction with external systems and expect/rely on and generic instrumentation provided by sda-commons.
+
+If additional internal behaviour should to be traced, an OpenTelemetry instance can be acquired using `GlobalOpenTelemetry.get()`.
+A very basic skeleton for a creating more traces:
+```java
+
+public class Component {
+  // ...
+  public void doSomething() {
+    // ...
+    var tracer = GlobalTelemetry.get().getTracer("sda-commons.component");
+    Span span = tracer.spanBuilder("doSomething").startSpan();
+    try (Scope ignored = span.makeCurrent()) {
+      // The actual work
+    } finally {
+      span.end();
+    }
+  }
+}
+```
+
+Some examples for manual tracing can be found in [OpenTelemetry manual tracing example](../sda-commons-server-opentelemetry-example).

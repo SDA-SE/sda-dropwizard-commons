@@ -12,23 +12,19 @@ import java.util.List;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.assertj.core.groups.Tuple;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-class OtelTracingApplicationIT {
+class OpenTelemetryTracingAppIT {
   @RegisterExtension
+  @Order(1)
   private static final DropwizardAppExtension<Configuration> APP =
-      new DropwizardAppExtension<>(OtelTracingApplication.class, new Configuration());
+      new DropwizardAppExtension<>(OpenTelemetryTracingApp.class, new Configuration());
 
-  @RegisterExtension static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
-
-  @BeforeEach
-  void setUp() {
-    // use InMemory Exporter for testing
-    APP.<OtelTracingApplication>getApplication()
-        .setTracer(OTEL.getOpenTelemetry().getTracer(OtelTracingApplicationIT.class.getName()));
-  }
+  @RegisterExtension
+  @Order(0)
+  private static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
   @Test
   void shouldGetInstrumented() {
@@ -36,29 +32,24 @@ class OtelTracingApplicationIT {
     assertThat(response).isEqualTo("Done!");
     assertThat(OTEL.getSpans())
         .isNotEmpty()
-        .hasSize(6)
+        .hasSize(7)
         .extracting(SpanData::getName)
-        // contains 5 nested tasks with span "someWork" and one parent "instrumentedWork
+        // contains 5 nested tasks with span "someWork" and one parent "instrumentedWork" and one
+        // parent server "GET /instrumented"
         .containsExactly(
-            "someWork", "someWork", "someWork", "someWork", "someWork", "instrumentedWork");
-  }
-
-  @Test
-  void shouldDoParam() {
-    String response = webTarget("/param/foo").request().get(String.class);
-    assertThat(response).isEqualTo("foo");
+            "someWork",
+            "someWork",
+            "someWork",
+            "someWork",
+            "someWork",
+            "instrumentedWork",
+            "GET /instrumented");
   }
 
   @Test
   void shouldGetHelloWorld() {
     String response = webTarget("/").request().get(String.class);
-    assertThat(response).isEqualTo("Hello World");
-  }
-
-  @Test
-  void shouldDoError() {
-    Response response = webTarget("/error").request().get();
-    assertThat(response.getStatus()).isEqualTo(500);
+    assertThat(response).isEqualTo("This api is not traced");
   }
 
   @Test
@@ -68,16 +59,30 @@ class OtelTracingApplicationIT {
     List<SpanData> spans = OTEL.getSpans();
     assertThat(spans)
         .isNotEmpty()
-        .hasSize(1)
+        .hasSize(2)
         .extracting(SpanData::getStatus)
         .extracting(StatusData::getStatusCode, StatusData::getDescription)
         .contains(Tuple.tuple(StatusCode.ERROR, "Something bad happened!"));
   }
 
   @Test
+  void shouldDoParam() {
+    String response = webTarget("/param/foo").request().get(String.class);
+    assertThat(response).isEqualTo("foo");
+    List<SpanData> spans = OTEL.getSpans();
+    assertThat(spans)
+        .isNotEmpty()
+        .hasSize(1)
+        .extracting(SpanData::getName)
+        .containsExactly("GET /param/{value}");
+  }
+
+  @Test
   void shouldDoRecursive() {
     Response response = webTarget("/recursive").request().get();
     assertThat(response.getStatus()).isEqualTo(200);
+    List<SpanData> spans = OTEL.getSpans();
+    assertThat(spans).isNotEmpty().hasSizeGreaterThan(2);
   }
 
   private WebTarget webTarget(String path) {

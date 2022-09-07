@@ -3,7 +3,7 @@
 This module is an example for a service with manual instrumentation using [OpenTelemetry](https://opentelemetry.io/).
 
 It also provides an example for how to add custom manual instrumentation in case it is needed.
-See the [`OtelTracingApplication`](./src/main/java/org/sdase/server/opentelemetry/example/OtelTracingApplication.java) for the examples.
+See the [`OpenTelemetryTracingApp`](./src/main/java/org/sdase/server/opentelemetry/example/OpenTelemetryTracingApp.java) for the examples.
 
 ## How to run the example
 
