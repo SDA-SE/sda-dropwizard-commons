@@ -8,7 +8,6 @@ javaPlatform {
 
 ext {
   dropwizardVersion = '2.1.4'
-  morphiaVersion = '1.6.1'
   prometheusVersion = '0.16.0'
   swaggerCoreV3Version = '2.2.7'
   weldVersion = '3.1.9.Final'
@@ -69,6 +68,7 @@ dependencies {
     api "com.kjetland:mbknor-jackson-jsonschema_2.13:1.0.39"
 
     // sda-commons-server-auth
+    api "org.bouncycastle:bcpkix-jdk15on:1.70" // same as version from DW
     api "com.auth0:java-jwt:4.2.1"
     api "org.bouncycastle:bcpkix-jdk15on:1.70" // use the same version as bcprov-jdk15on in DW
 

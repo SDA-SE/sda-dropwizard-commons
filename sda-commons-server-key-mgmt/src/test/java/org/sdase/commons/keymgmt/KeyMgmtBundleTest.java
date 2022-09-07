@@ -180,43 +180,46 @@ class KeyMgmtBundleTest {
 
   @Test
   void shouldValidatePlatformKeySuccess() {
-    Response response =
+    try (Response response =
         client
             .path("api")
             .path("validate")
             .request()
-            .post(Entity.entity(new ObjectWithKey().setGenderKey("MALE"), APPLICATION_JSON));
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+            .post(Entity.entity(new ObjectWithKey().setGenderKey("MALE"), APPLICATION_JSON))) {
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+    }
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"MALE", "MR"})
   void shouldValidatePlatformKeysSuccess(String input) {
-    Response response =
+    try (Response response =
         client
             .path("api")
             .path("validate")
             .request()
             .post(
                 Entity.entity(
-                    new ObjectWithKey().setGenderOrSalutationKey(input), APPLICATION_JSON));
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+                    new ObjectWithKey().setGenderOrSalutationKey(input), APPLICATION_JSON))) {
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+    }
   }
 
   @ParameterizedTest
   @MethodSource("provideObjectWithInvalidKey")
   void shouldValidatePlatformKeyFail(ObjectWithKey objectWithKey, Tuple expectedMessageTuple) {
-    Response response =
+    try (Response response =
         client
             .path("api")
             .path("validate")
             .request()
-            .post(Entity.entity(objectWithKey, APPLICATION_JSON));
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY_422);
-    ApiError error = response.readEntity(ApiError.class);
-    assertThat(error.getInvalidParams())
-        .extracting("field", "reason", "errorCode")
-        .contains(expectedMessageTuple);
+            .post(Entity.entity(objectWithKey, APPLICATION_JSON))) {
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY_422);
+      ApiError error = response.readEntity(ApiError.class);
+      assertThat(error.getInvalidParams())
+          .extracting("field", "reason", "errorCode")
+          .contains(expectedMessageTuple);
+    }
   }
 
   private static Stream<Arguments> provideObjectWithInvalidKey() {
@@ -237,18 +240,19 @@ class KeyMgmtBundleTest {
 
   @Test
   void shouldValidatePlatformKeyNullSuccess() {
-    Response response =
+    try (Response response =
         client
             .path("api")
             .path("validate")
             .request()
-            .post(Entity.entity(new ObjectWithKey().setGenderKey(null), APPLICATION_JSON));
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+            .post(Entity.entity(new ObjectWithKey().setGenderKey(null), APPLICATION_JSON))) {
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+    }
   }
 
   @Test
   void shouldValidateAsListElements() {
-    Response response =
+    try (Response response =
         client
             .path("api")
             .path("validate")
@@ -256,13 +260,14 @@ class KeyMgmtBundleTest {
             .post(
                 Entity.entity(
                     new ObjectWithKey().setGenderList(Arrays.asList("MALE", "FEMALE")),
-                    APPLICATION_JSON));
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+                    APPLICATION_JSON))) {
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+    }
   }
 
   @Test
   void shouldValidateAsListElementsFail() {
-    Response response =
+    try (Response response =
         client
             .path("api")
             .path("validate")
@@ -270,8 +275,9 @@ class KeyMgmtBundleTest {
             .post(
                 Entity.entity(
                     new ObjectWithKey().setGenderList(Arrays.asList("MALE", "NOVALID")),
-                    APPLICATION_JSON));
-    assertThat(response.getStatus()).isEqualTo(422);
+                    APPLICATION_JSON))) {
+      assertThat(response.getStatus()).isEqualTo(422);
+    }
   }
 
   @Test

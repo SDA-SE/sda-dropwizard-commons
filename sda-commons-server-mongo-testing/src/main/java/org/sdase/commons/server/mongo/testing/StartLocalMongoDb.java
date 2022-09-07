@@ -177,7 +177,7 @@ public class StartLocalMongoDb {
   }
 
   public String getOptions() {
-    return "";
+    return "authSource=" + getDatabase();
   }
 
   public String getConnectionString() {
