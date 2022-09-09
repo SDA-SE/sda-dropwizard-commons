@@ -41,7 +41,6 @@ public class JwtAuthFilter<P extends Principal> extends AuthFilter<Optional<Stri
   @Override
   public void filter(ContainerRequestContext requestContext) {
     Span span = tracer.spanBuilder("validateToken").setAttribute(AUTHENTICATED, false).startSpan();
-    //            .withTag(COMPONENT, "JwtAuthFilter")
 
     try (Scope ignored = span.makeCurrent()) {
       final MultivaluedMap<String, String> headers = requestContext.getHeaders();

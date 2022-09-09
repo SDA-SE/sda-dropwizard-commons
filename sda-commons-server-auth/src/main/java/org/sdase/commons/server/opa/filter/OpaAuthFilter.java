@@ -101,7 +101,6 @@ public class OpaAuthFilter implements ContainerRequestFilter {
             .spanBuilder("authorizeUsingOpa")
             .setAttribute(OPA_ALLOW_ATTRIBUTE, false)
             .startSpan();
-    //            .withTag(COMPONENT, "OpaAuthFilter")
 
     try (Scope ignored = span.makeCurrent()) {
       // collect input parameters for Opa request

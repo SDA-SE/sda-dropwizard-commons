@@ -206,7 +206,7 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
   public interface AuthBuilder<C extends Configuration> {
 
-    AuthBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry);
+    AuthBuilder<C> withOpenTelemetry(OpenTelemetry openTelemetry);
 
     AuthBundle<C> build();
   }
@@ -243,7 +243,7 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
     }
 
     @Override
-    public AuthBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry) {
+    public AuthBuilder<C> withOpenTelemetry(OpenTelemetry openTelemetry) {
       this.openTelemetry = openTelemetry;
       return this;
     }

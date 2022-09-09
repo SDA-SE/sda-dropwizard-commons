@@ -186,7 +186,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
      * @param openTelemetry The telemetry instance to use
      * @return the same builder
      */
-    FinalBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry);
+    FinalBuilder<C> withOpenTelemetry(OpenTelemetry openTelemetry);
 
     /**
      * Builds the S3 bundle
@@ -219,7 +219,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     }
 
     @Override
-    public FinalBuilder<T> withTelemetryInstance(OpenTelemetry openTelemetry) {
+    public FinalBuilder<T> withOpenTelemetry(OpenTelemetry openTelemetry) {
       this.openTelemetry = openTelemetry;
       return this;
     }

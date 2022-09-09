@@ -257,7 +257,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
      */
     <T> OpaBuilder<C> withInputExtension(String namespace, OpaInputExtension<T> extension);
 
-    OpaBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry);
+    OpaBuilder<C> withOpenTelemetry(OpenTelemetry openTelemetry);
 
     OpaBundle<C> build();
   }
@@ -308,7 +308,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     }
 
     @Override
-    public OpaBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry) {
+    public OpaBuilder<C> withOpenTelemetry(OpenTelemetry openTelemetry) {
       this.openTelemetry = openTelemetry;
       return this;
     }

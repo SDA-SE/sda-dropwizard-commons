@@ -9,8 +9,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.DropwizardTestSupport;
 import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.api.OpenTelemetry;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -18,27 +17,26 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
-@SetEnvironmentVariable(key = "MAIN_THREAD_CHECK_ENABLED", value = "false")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DisableTracingTest {
-  private DropwizardTestSupport<Configuration> DW;
 
-  @AfterAll
-  static void afterAll() {
+  @AfterEach
+  void tearDown() {
     GlobalOpenTelemetry.resetForTest();
   }
 
   @BeforeEach
   void setUp() throws Exception {
-    DW = new DropwizardTestSupport<>(TestApp.class, null, randomPorts());
+    DropwizardTestSupport<Configuration> DW =
+        new DropwizardTestSupport<>(TestApp.class, null, randomPorts());
     DW.before();
   }
 
   @Test
   @Order(0)
-  @SetEnvironmentVariable(key = "OTEL_EXPERIMENTAL_SDK_ENABLED", value = "false")
+  @SetEnvironmentVariable(key = "OTEL_DISABLED", value = "true")
   void shouldDisableTracing() {
-    assertThat(System.getenv("OTEL_EXPERIMENTAL_SDK_ENABLED")).isEqualTo("false");
+    assertThat(System.getenv("OTEL_DISABLED")).isEqualTo("true");
     assertThat(GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().fields())
         .isEmpty();
   }
@@ -50,9 +48,8 @@ class DisableTracingTest {
   void shouldDisableTracingWithLegacyParams() {
     assertThat(System.getenv("JAEGER_SAMPLER_TYPE")).isEqualTo("const");
     assertThat(System.getenv("JAEGER_SAMPLER_PARAM")).isEqualTo("0");
-    OpenTelemetry openTelemetry = GlobalOpenTelemetry.get();
-
-    assertThat(openTelemetry.getPropagators().getTextMapPropagator().fields()).isEmpty();
+    assertThat(GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().fields())
+        .isEmpty();
   }
 
   public static class TestApp extends Application<Configuration> {

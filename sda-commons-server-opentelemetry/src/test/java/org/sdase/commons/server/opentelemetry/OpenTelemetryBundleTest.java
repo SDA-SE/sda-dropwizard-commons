@@ -208,7 +208,7 @@ class OpenTelemetryBundleTest {
     public void initialize(Bootstrap<Configuration> bootstrap) {
       bootstrap.addBundle(
           OpenTelemetryBundle.builder()
-              .withTelemetryInstance(OTEL.getOpenTelemetry())
+              .withOpenTelemetry(OTEL.getOpenTelemetry())
               .withExcludedUrlsPattern(Pattern.compile("/base/respond/skip|/tasks/skip"))
               .build());
     }
