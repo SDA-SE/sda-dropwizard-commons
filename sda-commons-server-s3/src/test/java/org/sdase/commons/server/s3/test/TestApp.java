@@ -12,7 +12,7 @@ public class TestApp extends Application<Config> {
   private S3Bundle<Config> s3Bundle =
       S3Bundle.builder()
           .withConfigurationProvider(Config::getS3Config)
-          .withTelemetryInstance(openTelemetry)
+          .withOpenTelemetry(openTelemetry)
           .build();
 
   @Override

@@ -8,7 +8,7 @@ An extensive documentation can be found in [OpenTelemetry Java documentation](ht
 
 ## Usage
 
-The bundle must be initialized with higher priority in the dependent applications, as it is responsible for providing tracers that are used by other bundles.
+The bundle must be initialized before other bundles in the dependent applications, as it is responsible for initializing the openTelemetry Sdk and registering the created instance as global, so that dependent bundles can use it.
 
 ```groovy
   api project(':sda-commons-server-opentelemetry')
@@ -70,8 +70,8 @@ To export traces in Jaeger format, to a [Jaeger collector](https://hub.docker.co
 
 ## Disable Tracing
 
-In order to disable tracing in the applications that are using this bundle, or the [starter bundle](../sda-commons-starter), the environment variable `OTEL_EXPERIMENTAL_SDK_ENABLED=false` can be used.
-Setting `OTEL_EXPERIMENTAL_SDK_ENABLED` to false will force the instrumented modules provided by sda-commons to use a no-op instance.
+In order to disable tracing in the applications that are using this bundle, or the [starter bundle](../sda-commons-starter), the environment variable `OTEL_DISABLED=true` can be used.
+Setting `OTEL_DISABLED` to false will force the instrumented modules provided by sda-commons to use a no-op instance.
 
 ## Manual instrumentation
 

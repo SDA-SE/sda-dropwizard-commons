@@ -39,7 +39,7 @@ public class OpenTelemetryTracingApp extends Application<Configuration> {
   public void initialize(Bootstrap<Configuration> bootstrap) {
     bootstrap.addBundle(jerseyClientBundle);
     openTelemetry = GlobalOpenTelemetry.get();
-    bootstrap.addBundle(OpenTelemetryBundle.builder().withTelemetryInstance(openTelemetry).build());
+    bootstrap.addBundle(OpenTelemetryBundle.builder().withOpenTelemetry(openTelemetry).build());
   }
 
   @Override
@@ -50,9 +50,8 @@ public class OpenTelemetryTracingApp extends Application<Configuration> {
         jerseyClientBundle.getClientFactory().platformClient().buildGenericClient("recursive");
     // get a global telemetry instance
     // The instance should be setup once and registered as global and used everywhere.
-    // aquire the globally registered instance
+    // acquire the globally registered instance
     // create a tracer, the name reflects the lib name and optionally the version(major is enough)
-    openTelemetry.getTracer("org.sdase.example-app");
     tracer = tracer == null ? openTelemetry.getTracer(INSTRUMENTATION_NAME) : tracer;
   }
 

@@ -26,7 +26,7 @@ public class S3WithExternalHealthCheckTestApp extends Application<Config> {
       S3Bundle.builder()
           .withConfigurationProvider(Config::getS3Config)
           .withExternalHealthCheck(Collections.singleton(Config::getS3Bucket))
-          .withTelemetryInstance(openTelemetry)
+          .withOpenTelemetry(openTelemetry)
           .build();
 
   @Override

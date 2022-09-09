@@ -2,6 +2,7 @@ package org.sdase.commons.server.opentelemetry.autoconfig;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 
 /**
  * This config source provider is used to define custom defaults that are relevant for sda services.
@@ -29,7 +30,8 @@ public final class SdaConfigPropertyProvider {
     properties.put("otel.propagators", "tracecontext,baggage,jaeger");
 
     // use environment legacy env variable defined by jaeger client by default
-    String jaegerServiceName = System.getenv(JAEGER_SERVICE_NAME_ENV_VAR);
+    String jaegerServiceName =
+        new SystemPropertyAndEnvironmentLookup().lookup(JAEGER_SERVICE_NAME_ENV_VAR);
     if (jaegerServiceName != null && !jaegerServiceName.isEmpty()) {
       properties.put("otel.service.name", jaegerServiceName);
     }

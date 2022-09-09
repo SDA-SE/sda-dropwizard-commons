@@ -91,7 +91,7 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
      * @param openTelemetry The telemetry instance to use
      * @return the same builder
      */
-    JerseyClientBundle.FinalBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry);
+    JerseyClientBundle.FinalBuilder<C> withOpenTelemetry(OpenTelemetry openTelemetry);
 
     JerseyClientBundle<C> build();
   }
@@ -115,7 +115,7 @@ public class JerseyClientBundle<C extends Configuration> implements ConfiguredBu
     }
 
     @Override
-    public JerseyClientBundle.FinalBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry) {
+    public JerseyClientBundle.FinalBuilder<C> withOpenTelemetry(OpenTelemetry openTelemetry) {
       this.openTelemetry = openTelemetry;
       return this;
     }
