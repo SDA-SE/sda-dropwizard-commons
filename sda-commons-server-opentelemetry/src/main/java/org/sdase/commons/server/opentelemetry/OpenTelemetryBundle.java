@@ -7,7 +7,9 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.opentracingshim.OpenTracingShim;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
+import io.opentracing.util.GlobalTracer;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -136,16 +138,18 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     @Override
     public FinalBuilder withAutoConfiguredTelemetryInstance() {
       if (shouldSkipTracing()) {
-        this.openTelemetryProvider = OpenTelemetry::noop;
+        openTelemetryProvider = OpenTelemetry::noop;
         return this;
       }
-      this.openTelemetryProvider = OpenTelemetryBundle::bootstrapConfiguredTelemetrySdk;
+      openTelemetryProvider = OpenTelemetryBundle::bootstrapConfiguredTelemetrySdk;
       return this;
     }
 
     @Override
     public OpenTelemetryBundle build() {
-      return new OpenTelemetryBundle(openTelemetryProvider.get(), excludedUrlPatterns);
+      OpenTelemetry openTelemetry = openTelemetryProvider.get();
+      createOpenTracingBridge(openTelemetry);
+      return new OpenTelemetryBundle(openTelemetry, excludedUrlPatterns);
     }
 
     private static boolean shouldSkipTracing() {
@@ -159,6 +163,13 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
         return true;
       }
       return false;
+    }
+
+    private static void createOpenTracingBridge(OpenTelemetry openTelemetry) {
+      if (shouldSkipTracing()) {
+        return;
+      }
+      GlobalTracer.registerIfAbsent(OpenTracingShim.createTracerShim(openTelemetry));
     }
   }
 

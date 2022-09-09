@@ -10,6 +10,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.DropwizardTestSupport;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentracing.util.GlobalTracerTestUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -26,6 +27,8 @@ class DisableTracingTest {
   @AfterAll
   static void afterAll() {
     GlobalOpenTelemetry.resetForTest();
+    // resets the global tracer initialized with the global OpenTelemetry instance.
+    GlobalTracerTestUtil.resetGlobalTracer();
   }
 
   @BeforeEach

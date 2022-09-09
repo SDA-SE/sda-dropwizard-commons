@@ -156,7 +156,7 @@ class OpenTelemetryBundleTest {
         .untilAsserted(
             () -> {
               List<SpanData> spans = OTEL.getSpans();
-              assertThat(OTEL.getSpans())
+              assertThat(spans)
                   .isNotEmpty()
                   .extracting(SpanData::getName)
                   .contains("POST /base/respond");
@@ -166,6 +166,41 @@ class OpenTelemetryBundleTest {
                   .isNotEmpty()
                   .asList()
                   .contains("[Location = 'http://sdase/id']");
+            });
+  }
+
+  @Test
+  void shouldExportOpenTracingManualTraces() {
+    Response r = createClient().path("base/openTracing").request().get();
+
+    assertThat(r.getStatus()).isEqualTo(SC_OK);
+
+    await()
+        .untilAsserted(
+            () -> {
+              List<SpanData> spans = OTEL.getSpans();
+              assertThat(spans)
+                  .isNotEmpty()
+                  .extracting(SpanData::getName)
+                  .contains("GET /base/openTracing", "openTracing-span");
+              SpanData openTracingSpan =
+                  spans.stream()
+                      .filter(s -> s.getName().equals("openTracing-span"))
+                      .findFirst()
+                      .orElse(null);
+              SpanData serverSpan =
+                  spans.stream()
+                      .filter(s -> s.getName().equals("GET /base/openTracing"))
+                      .findFirst()
+                      .orElse(null);
+              // assert that the openTracing span is a child of the server span
+              assertThat(openTracingSpan)
+                  .extracting(SpanData::getParentSpanId)
+                  .isEqualTo(serverSpan.getSpanId());
+              // assert both spans belong to the same trace
+              assertThat(openTracingSpan)
+                  .extracting(SpanData::getTraceId)
+                  .isEqualTo(serverSpan.getTraceId());
             });
   }
 

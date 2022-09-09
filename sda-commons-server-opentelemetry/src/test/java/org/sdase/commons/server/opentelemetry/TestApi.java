@@ -1,5 +1,8 @@
 package org.sdase.commons.server.opentelemetry;
 
+import io.opentracing.Scope;
+import io.opentracing.Span;
+import io.opentracing.util.GlobalTracer;
 import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.InternalServerErrorException;
@@ -36,6 +39,24 @@ public class TestApi {
   @Path("respond")
   public Response doSave() {
     return Response.created(URI.create("http://sdase/id")).build();
+  }
+
+  @GET
+  @Path("openTracing")
+  public String getInstrumented() {
+    // This is an example of manual instrumentation:
+    // You can create custom spans from the GlobalTracer. A active span has a
+    // scope, which is auto closeable. Remember to finish the span after the scope is completed!
+    Span span = GlobalTracer.get().buildSpan("openTracing-span").start();
+
+    try (Scope ignored = GlobalTracer.get().scopeManager().activate(span)) {
+      span.setTag("legacy-traced-tag", "legacy-traced-tag-value");
+    } finally {
+      // Don't forget to finish your spans!
+      span.finish();
+    }
+
+    return "Done!";
   }
 
   @GET

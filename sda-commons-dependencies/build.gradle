@@ -169,6 +169,7 @@ dependencies {
 
     // sda-commons-server-opentelemetry
     api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:$openTelemetryAlphaVersion"
+    api "io.opentelemetry:io.opentelemetry.opentracingshim:$openTelemetryAlphaVersion"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:$otelInstrumentationAlphaVersion"
 
     // Kafka

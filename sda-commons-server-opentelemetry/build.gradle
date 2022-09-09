@@ -12,7 +12,12 @@ dependencies {
   // Provides support for jaeger baggage
   api 'io.opentelemetry:opentelemetry-extension-trace-propagators'
 
-
+  /**
+   * Used to register a global tracer to support manual instrumentation using OpenTracing.
+   */
+  api 'io.opentelemetry:opentelemetry-opentracing-shim'
+  api 'io.opentracing:opentracing-util'
+  testImplementation group: 'io.opentracing', name: 'opentracing-util', classifier: 'tests'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation 'org.assertj:assertj-core'
