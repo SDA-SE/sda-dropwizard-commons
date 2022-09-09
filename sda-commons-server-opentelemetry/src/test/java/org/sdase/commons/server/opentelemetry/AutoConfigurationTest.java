@@ -12,7 +12,6 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -23,18 +22,12 @@ import org.junitpioneer.jupiter.StdIo;
 import org.junitpioneer.jupiter.StdOut;
 
 @SetEnvironmentVariable(key = "OTEL_TRACES_EXPORTER", value = "logging")
-@SetEnvironmentVariable(key = "MAIN_THREAD_CHECK_ENABLED", value = "false")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AutoConfigurationTest {
 
   @RegisterExtension
   public static final DropwizardAppExtension<Configuration> DW =
       new DropwizardAppExtension<>(TraceTestApp.class, null, randomPorts());
-
-  @AfterEach
-  void tearDown() {
-    GlobalOpenTelemetry.resetForTest();
-  }
 
   @Test
   @Order(2)

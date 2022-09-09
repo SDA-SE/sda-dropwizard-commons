@@ -1,5 +1,7 @@
 package org.sdase.commons.server.opentelemetry;
 
+import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
+
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -23,22 +25,31 @@ import org.slf4j.LoggerFactory;
 
 public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
   private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryBundle.class);
-  private static final String MAIN_THREAD_CHECK_ENABLED = "MAIN_THREAD_CHECK_ENABLED";
+  private static final String OTEL_DISABLED = "OTEL_DISABLED";
   private static final String JAEGER_SAMPLER_TYPE = "JAEGER_SAMPLER_TYPE";
   private static final String JAEGER_SAMPLER_PARAM = "JAEGER_SAMPLER_PARAM";
-  private final OpenTelemetry openTelemetry;
+  private final Supplier<OpenTelemetry> openTelemetryProvider;
   private final Pattern excludedUrlPatterns;
 
-  public OpenTelemetryBundle(OpenTelemetry openTelemetry, Pattern excludedUrlPatterns) {
-    this.openTelemetry = openTelemetry;
+  public OpenTelemetryBundle(
+      Supplier<OpenTelemetry> openTelemetryProvider, Pattern excludedUrlPatterns) {
+    this.openTelemetryProvider = openTelemetryProvider;
     this.excludedUrlPatterns = excludedUrlPatterns;
   }
 
   @Override
   public void run(Configuration configuration, Environment environment) {
+    OpenTelemetry openTelemetry =
+        isOpenTelemetryDisabled() ? OpenTelemetry.noop() : openTelemetryProvider.get();
+    // set this instance as global
+    GlobalOpenTelemetry.set(openTelemetry);
+
+    // add server instrumentations
     registerJaxrsTracer(environment.jersey());
-    registerServletTracer(environment, this.openTelemetry);
-    registerAdminTracer(environment, this.openTelemetry);
+    registerServletTracer(environment, openTelemetry);
+    registerAdminTracer(environment, openTelemetry);
+
+    environment.lifecycle().manage(onShutdown(GlobalOpenTelemetry::resetForTest));
   }
 
   @Override
@@ -73,7 +84,8 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     LOG.info("No OpenTelemetry sdk instance is provided, using autoConfigured instance.");
     return AutoConfiguredOpenTelemetrySdk.builder()
         .addPropertiesSupplier(SdaConfigPropertyProvider::getProperties)
-        .setResultAsGlobal(shouldSetAsGlobal())
+        .setResultAsGlobal(
+            false) // setting this instance as global is handled during the run method
         .build()
         .getOpenTelemetrySdk();
   }
@@ -90,7 +102,7 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
      * @param openTelemetry The telemetry instance to use.
      * @return the same builder
      */
-    FinalBuilder withTelemetryInstance(OpenTelemetry openTelemetry);
+    FinalBuilder withOpenTelemetry(OpenTelemetry openTelemetry);
 
     /**
      * Enables the bundle to setup an auto configured instance of OpenTelemetry Sdk, and register it
@@ -122,7 +134,7 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     private Builder() {}
 
     @Override
-    public FinalBuilder withTelemetryInstance(OpenTelemetry openTelemetry) {
+    public FinalBuilder withOpenTelemetry(OpenTelemetry openTelemetry) {
       this.openTelemetryProvider = () -> openTelemetry;
       return this;
     }
@@ -135,50 +147,27 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
 
     @Override
     public FinalBuilder withAutoConfiguredTelemetryInstance() {
-      if (shouldSkipTracing()) {
-        this.openTelemetryProvider = OpenTelemetry::noop;
-        return this;
-      }
       this.openTelemetryProvider = OpenTelemetryBundle::bootstrapConfiguredTelemetrySdk;
       return this;
     }
 
     @Override
     public OpenTelemetryBundle build() {
-      return new OpenTelemetryBundle(openTelemetryProvider.get(), excludedUrlPatterns);
-    }
-
-    private static boolean shouldSkipTracing() {
-      // Skip loading the agent if tracing is disabled.
-      String jaegerSamplerType = getProperty(JAEGER_SAMPLER_TYPE);
-      String jaegerSamplerParam = getProperty(JAEGER_SAMPLER_PARAM);
-      boolean isDisabledUsingLegacyVars =
-          "const".equals(jaegerSamplerType) && "0".equals(jaegerSamplerParam);
-      if (isDisabledUsingLegacyVars) {
-        LOG.warn("Tracing is disabled using deprecated configuration.");
-        return true;
-      }
-      return false;
+      return new OpenTelemetryBundle(openTelemetryProvider, excludedUrlPatterns);
     }
   }
 
-  /**
-   * Decides if the {@link OpenTelemetry} instance created by {@link AutoConfiguredOpenTelemetrySdk}
-   * should be registered as the global instance. It can be troublesome for consumers of the module
-   * and will break many tests, as they have to explicitly unregister this for tests using {@link
-   * GlobalOpenTelemetry#resetForTest()} in their tests.
-   *
-   * @return the decision
-   */
-  private static boolean shouldSetAsGlobal() {
-    // Skip loading the agent if not triggered from the main thread.
-    boolean isMainThreadCheckDisabled = "false".equals(getProperty(MAIN_THREAD_CHECK_ENABLED));
-    boolean isMainThread = "main".equals(Thread.currentThread().getName());
-    if (!isMainThreadCheckDisabled && !isMainThread) {
-      LOG.warn("Skipping setting the TelemetrySdk as global.");
-      return false;
+  private static boolean isOpenTelemetryDisabled() {
+    // Skip loading the agent if tracing is disabled.
+    String jaegerSamplerType = getProperty(JAEGER_SAMPLER_TYPE);
+    String jaegerSamplerParam = getProperty(JAEGER_SAMPLER_PARAM);
+    boolean isDisabledUsingLegacyVars =
+        "const".equals(jaegerSamplerType) && "0".equals(jaegerSamplerParam);
+    if (isDisabledUsingLegacyVars) {
+      LOG.warn("Tracing is disabled using deprecated configuration.");
+      return true;
     }
-    return true;
+    return "true".equals(getProperty(OTEL_DISABLED));
   }
 
   private static String getProperty(String name) {

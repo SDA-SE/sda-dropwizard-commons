@@ -50,6 +50,10 @@ class OpenTelemetryTracingAppIT {
   void shouldGetHelloWorld() {
     String response = webTarget("/").request().get(String.class);
     assertThat(response).isEqualTo("This api is not traced");
+    assertThat(OTEL.getSpans())
+        .isNotEmpty()
+        .extracting(SpanData::getName, s -> s.getInstrumentationScopeInfo().getName())
+        .contains(Tuple.tuple("GET /", "sda-commons.servlet"));
   }
 
   @Test

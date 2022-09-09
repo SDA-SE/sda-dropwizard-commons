@@ -77,7 +77,7 @@ class S3BundleTest {
     private S3Bundle<Config> s3Bundle =
         S3Bundle.builder()
             .withConfigurationProvider(Config::getS3Config)
-            .withTelemetryInstance(openTelemetry)
+            .withOpenTelemetry(OTEL.getOpenTelemetry())
             .build();
 
     @Override
