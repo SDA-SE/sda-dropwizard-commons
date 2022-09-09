@@ -6,8 +6,10 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
@@ -44,6 +46,9 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
   private final OpaBuilder<C> opaBundleBuilder;
   private final CorsBundle.FinalBuilder<C> corsBundleBuilder;
   private final OpenApiBundle.FinalBuilder openApiBundleBuilder;
+  private final List<String> excludedTracingUrls =
+      Arrays.asList(
+          "/ping", "/healthcheck", "/healthcheck/internal", "/metrics", "/metrics/prometheus");
 
   private SdaPlatformBundle(
       SecurityBundle.Builder securityBundleBuilder,
@@ -69,7 +74,10 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
     // add normal bundles
     bootstrap.addBundle(
-        OpenTelemetryBundle.builder().withAutoConfiguredTelemetryInstance().build());
+        OpenTelemetryBundle.builder()
+            .withAutoConfiguredTelemetryInstance()
+            .withExcludedUrlsPattern(Pattern.compile(String.join("|", excludedTracingUrls)))
+            .build());
     bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
     bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
     bootstrap.addBundle(InternalHealthCheckEndpointBundle.builder().build());
