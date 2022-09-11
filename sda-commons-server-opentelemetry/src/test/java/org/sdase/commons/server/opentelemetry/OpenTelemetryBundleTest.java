@@ -156,7 +156,7 @@ class OpenTelemetryBundleTest {
         .untilAsserted(
             () -> {
               List<SpanData> spans = OTEL.getSpans();
-              assertThat(OTEL.getSpans())
+              assertThat(spans)
                   .isNotEmpty()
                   .extracting(SpanData::getName)
                   .contains("POST /base/respond");
