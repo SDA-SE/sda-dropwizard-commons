@@ -8,6 +8,7 @@ import static org.apache.commons.lang3.StringUtils.join;
 import io.opentelemetry.api.common.AttributeKey;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -33,8 +34,8 @@ public class HeadersUtils {
       AttributeKey.stringArrayKey("http.response_headers");
 
   /**
-   * Convert a given {@link MultivaluedMap} with {@link String} keys to the format [key0 = 'value0',
-   * 'value1']; [key1 = 'value2']; ...
+   * Convert a given {@link MultivaluedMap} with {@link String} keys to a list of strings in the
+   * format [[key0 = 'value0', 'value1'], [key1 = 'value2'], ...]
    *
    * @param headers The {@link MultivaluedMap} with {@link String} keys
    * @return Formatted {@link String} of header keys and values or {@code null}, if {@code null} was
@@ -45,19 +46,25 @@ public class HeadersUtils {
       MultivaluedMap<String, ?> sanitizedHeaders = sanitizeHeaders(headers);
 
       return sanitizedHeaders.entrySet().stream()
-          .map(
-              entry ->
-                  join(
-                      "[",
-                      entry.getKey(),
-                      " = '",
-                      entry.getValue().stream()
-                          .map(Object::toString)
-                          .collect(Collectors.joining("', '")),
-                      "']"))
+          .map(HeadersUtils::convertToString)
           .collect(Collectors.toList());
     }
     return Collections.emptyList();
+  }
+
+  /**
+   * Converts a header entry to a formatted string representation. [key0 = 'value0', 'value1']
+   *
+   * @param entry The header entry
+   * @return The formatted string representation.
+   */
+  private static String convertToString(Map.Entry<String, ? extends List<?>> entry) {
+    return join(
+        "[",
+        entry.getKey(),
+        " = '",
+        entry.getValue().stream().map(Object::toString).collect(Collectors.joining("', '")),
+        "']");
   }
 
   public static <T> MultivaluedMap<String, T> sanitizeHeaders(MultivaluedMap<String, T> headers) {
