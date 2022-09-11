@@ -40,9 +40,7 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
   @Override
   public void run(Configuration configuration, Environment environment) {
     OpenTelemetry openTelemetry =
-        isOpenTelemetryDisabled() ? OpenTelemetry.noop() : openTelemetryProvider.get();
-    // set this instance as global
-    GlobalOpenTelemetry.set(openTelemetry);
+        isOpenTelemetryDisabled() ? setupNoopOpenTelemetry() : openTelemetryProvider.get();
 
     // add server instrumentations
     registerJaxrsTracer(environment.jersey());
@@ -84,10 +82,15 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     LOG.info("No OpenTelemetry sdk instance is provided, using autoConfigured instance.");
     return AutoConfiguredOpenTelemetrySdk.builder()
         .addPropertiesSupplier(SdaConfigPropertyProvider::getProperties)
-        .setResultAsGlobal(
-            false) // setting this instance as global is handled during the run method
+        .setResultAsGlobal(true)
         .build()
         .getOpenTelemetrySdk();
+  }
+
+  private OpenTelemetry setupNoopOpenTelemetry() {
+    OpenTelemetry noop = OpenTelemetry.noop();
+    GlobalOpenTelemetry.set(noop);
+    return noop;
   }
 
   public static InitialBuilder builder() {
@@ -97,7 +100,8 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
   public interface InitialBuilder {
     /**
      * Specifies a custom telemetry instance to use. If this builder is used, this module will only
-     * be a consumer, and the provider needs to take care of registering this instance as global.
+     * be a consumer of the given OpenTelemetry instance, and the provider must care about
+     * registering this instance as global or not.
      *
      * @param openTelemetry The telemetry instance to use.
      * @return the same builder
