@@ -11,11 +11,6 @@ dependencies {
   api project(':sda-commons-server-trace')
   api project(':sda-commons-shared-certificates')
   api project(':sda-commons-server-opentelemetry')
-
-  // Deprecated: this should be removed later.
-  // Just for that services using the openTracing
-  api project(':sda-commons-server-opentracing')
-  api project(':sda-commons-server-jaeger')
   // Provided indirectly by the openTracing bundle and used by some services (provides for e.g '@Nullable' annotation)
   api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 

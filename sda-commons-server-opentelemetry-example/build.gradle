@@ -11,4 +11,5 @@ dependencies {
   testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
   testImplementation project(':sda-commons-server-testing')
   testImplementation 'org.assertj:assertj-core'
+  testImplementation 'org.awaitility:awaitility'
 }
