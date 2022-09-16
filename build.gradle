@@ -37,6 +37,10 @@ List<String> javaPlatformModules = Arrays.asList("sda-commons-bom", "sda-commons
 List<String> unpublishedModules = javaPlatformModules + Arrays.asList("sda-commons-dependency-check")
 project.ext.unpublishedModules = unpublishedModules
 
+project.ext {
+  sdaCommonsVersion = 'PR-1791-SNAPSHOT'
+}
+
 spotless {
   groovyGradle {
     greclipse()

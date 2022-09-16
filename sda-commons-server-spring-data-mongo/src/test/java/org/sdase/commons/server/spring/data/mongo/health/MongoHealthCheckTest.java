@@ -8,8 +8,8 @@ import com.codahale.metrics.health.HealthCheck;
 import com.mongodb.MongoExecutionTimeoutException;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
@@ -20,7 +20,7 @@ public class MongoHealthCheckTest {
 
   private MongoDatabase dbMock;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     dbMock = mock(MongoDatabase.class, Mockito.RETURNS_DEEP_STUBS);
   }

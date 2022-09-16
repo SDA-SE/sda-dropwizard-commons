@@ -17,11 +17,9 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.junitpioneer.jupiter.StdIo;
 import org.junitpioneer.jupiter.StdOut;
 
-@SetEnvironmentVariable(key = "OTEL_TRACES_EXPORTER", value = "logging")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AutoConfigurationTest {
 

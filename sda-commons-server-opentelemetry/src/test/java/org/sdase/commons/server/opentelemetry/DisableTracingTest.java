@@ -15,7 +15,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junitpioneer.jupiter.SetEnvironmentVariable;
+import org.junitpioneer.jupiter.SetSystemProperty;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DisableTracingTest {
@@ -34,20 +34,20 @@ class DisableTracingTest {
 
   @Test
   @Order(0)
-  @SetEnvironmentVariable(key = "OTEL_DISABLED", value = "true")
+  @SetSystemProperty(key = "OTEL_DISABLED", value = "true")
   void shouldDisableTracing() {
-    assertThat(System.getenv("OTEL_DISABLED")).isEqualTo("true");
+    assertThat(System.getProperty("OTEL_DISABLED")).isEqualTo("true");
     assertThat(GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().fields())
         .isEmpty();
   }
 
   @Test
   @Order(1)
-  @SetEnvironmentVariable(key = "JAEGER_SAMPLER_TYPE", value = "const")
-  @SetEnvironmentVariable(key = "JAEGER_SAMPLER_PARAM", value = "0")
+  @SetSystemProperty(key = "JAEGER_SAMPLER_TYPE", value = "const")
+  @SetSystemProperty(key = "JAEGER_SAMPLER_PARAM", value = "0")
   void shouldDisableTracingWithLegacyParams() {
-    assertThat(System.getenv("JAEGER_SAMPLER_TYPE")).isEqualTo("const");
-    assertThat(System.getenv("JAEGER_SAMPLER_PARAM")).isEqualTo("0");
+    assertThat(System.getProperty("JAEGER_SAMPLER_TYPE")).isEqualTo("const");
+    assertThat(System.getProperty("JAEGER_SAMPLER_PARAM")).isEqualTo("0");
     assertThat(GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().fields())
         .isEmpty();
   }

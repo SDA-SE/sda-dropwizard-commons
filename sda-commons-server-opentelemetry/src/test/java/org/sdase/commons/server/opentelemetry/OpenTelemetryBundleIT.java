@@ -15,20 +15,23 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
+import io.opentelemetry.sdk.trace.data.EventData;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.data.StatusData;
+import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.opentelemetry.decorators.HeadersUtils;
 
-class OpenTelemetryBundleTest {
+class OpenTelemetryBundleIT {
 
   @RegisterExtension
   public static final DropwizardAppExtension<Configuration> DW =
@@ -96,13 +99,32 @@ class OpenTelemetryBundleTest {
 
     await()
         .untilAsserted(
-            () ->
-                assertThat(OTEL.getSpans())
-                    .isNotEmpty()
-                    .hasSize(1)
-                    .extracting(SpanData::getStatus)
-                    .extracting(StatusData::getStatusCode, StatusData::getDescription)
-                    .contains(Tuple.tuple(StatusCode.ERROR, "Something went wrong")));
+            () -> {
+              List<SpanData> spans = OTEL.getSpans();
+              assertThat(OTEL.getSpans())
+                  .isNotEmpty()
+                  .hasSize(1)
+                  .extracting(SpanData::getStatus)
+                  .extracting(StatusData::getStatusCode, StatusData::getDescription)
+                  .contains(Tuple.tuple(StatusCode.ERROR, "Something went wrong"));
+
+              // assert the exception is recorded
+              List<EventData> events = spans.get(0).getEvents();
+              assertThat(events)
+                  .isNotEmpty()
+                  .extracting(EventData::getAttributes)
+                  .anyMatch(
+                      attributes ->
+                          StringUtils.contains(
+                                  attributes.get(SemanticAttributes.EXCEPTION_TYPE),
+                                  "javax.ws.rs.InternalServerErrorException")
+                              && StringUtils.contains(
+                                  attributes.get(SemanticAttributes.EXCEPTION_MESSAGE),
+                                  "Something went wrong")
+                              && StringUtils.contains(
+                                  attributes.get(SemanticAttributes.EXCEPTION_STACKTRACE),
+                                  "javax.ws.rs.InternalServerErrorException: Something went wrong"));
+            });
   }
 
   @Test

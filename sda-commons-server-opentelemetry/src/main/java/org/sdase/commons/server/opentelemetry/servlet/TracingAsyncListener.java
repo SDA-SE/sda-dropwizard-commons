@@ -3,11 +3,12 @@ package org.sdase.commons.server.opentelemetry.servlet;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
-import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
 
 public class TracingAsyncListener implements AsyncListener {
+  public static final AttributeKey<Long> REQUEST_TIMEOUT_ATTRIBUTE_KEY =
+      AttributeKey.longKey("http.request.timeout.ms");
 
   private final Span serverSpan;
 
@@ -23,15 +24,12 @@ public class TracingAsyncListener implements AsyncListener {
   @Override
   public void onTimeout(AsyncEvent event) {
     serverSpan.setStatus(StatusCode.ERROR);
-    serverSpan.setAttribute(SemanticAttributes.EXCEPTION_EVENT_NAME, "Timeout exceeded");
-    serverSpan.setAttribute(
-        AttributeKey.longKey("http.request.timeout.ms"), event.getAsyncContext().getTimeout());
+    serverSpan.setAttribute(REQUEST_TIMEOUT_ATTRIBUTE_KEY, event.getAsyncContext().getTimeout());
   }
 
   @Override
   public void onError(AsyncEvent event) {
     serverSpan.setStatus(StatusCode.ERROR);
-    serverSpan.setAttribute(SemanticAttributes.EXCEPTION_EVENT_NAME, "Async servlet error");
     serverSpan.recordException(event.getThrowable());
   }
 
