@@ -1,3 +1,7 @@
+test {
+  environment "OTEL_TRACES_EXPORTER", "logging"
+}
+
 dependencies {
   api project(':sda-commons-server-dropwizard')
   api 'io.dropwizard:dropwizard-client'
