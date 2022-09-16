@@ -56,7 +56,7 @@ dependencies {
     api "org.awaitility:awaitility:4.2.0"
 
     // sda-commons-client-jersey-wiremock-testing
-    api "com.github.tomakehurst:wiremock-jre8:2.33.2"
+    api "com.github.tomakehurst:wiremock-jre8:2.34.0"
     api "org.ow2.asm:asm:9.3", {
       because "version conflict within Wiremock"
     }
