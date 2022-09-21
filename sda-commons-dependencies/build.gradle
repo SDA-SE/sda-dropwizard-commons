@@ -15,7 +15,7 @@ ext {
   weldVersion = '3.1.9.Final'
   openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.35.0'
-  scalaVersion = '2.13.8' // align transitive dependency from various modules, keep up to date
+  scalaVersion = '2.13.9' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '2.8.1'
   kafkaJunitVersion = '3.2.4' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.34.0'
@@ -30,7 +30,7 @@ dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.297")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.307")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
   constraints {
