@@ -59,6 +59,9 @@ public interface MongoDb {
   /** @return the MongoDB options String without leading question mark */
   String getOptions();
 
+  /** @return the MongoDB connection String */
+  String getConnectionString();
+
   /**
    * Creates a MongoClient that is connected to the database. The caller is responsible for closing
    * the connection.

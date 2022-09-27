@@ -91,7 +91,8 @@ The database connection is configured in the `config.yaml` of the application.
 Example config for **production** to be used with environment variables of the cluster configuration:
 ```yaml
 mongo:
-  hosts: "${MONGODB_HOSTS}"
+  connectionString: "${MONGODB_CONNECTION_STRING:-}"
+  hosts: "${MONGODB_HOSTS:-}"
   database: "${MONGODB_DATABASE:-}"
   options: "${MONGODB_OPTIONS:-}"
   username: "${MONGODB_USERNAME:-}"
@@ -99,13 +100,20 @@ mongo:
   useSsl: ${MONGODB_USE_SSL:-true}
   caCertificate: "${MONGODB_CA_CERTIFICATE:-}"
 ```
+
 _Please note the double quotes around the values.
  Without them for `caCertificate`, Dropwizard will not be able to load the certificate correctly because the `MONGODB_CA_CERTIFICATE` variable contains line breaks.  
  Omitting the double quotes for other values like `password` can cause trouble in case of certain special characters (e.g. colon)_
 
+You can use the `connectionString` to specify the connection to the MongoDB server. That property
+has higher priority compared to single properties `hosts`, `database` etc. The `connectionString`
+offers higher flexibility, e.g. it supports the `mongodb+srv://` scheme. Take a look at the
+[official documentation](https://www.mongodb.com/docs/manual/reference/connection-string/#connection-string-uri-format) 
+of the connection string.
+
 Example config for **developer** machines using [local-infra](https://github.com/SDA-SE/local-infra):
 ```yaml
-database:
+mongo:
   hosts: mongo-1:27118,mongo-2:27119,mongo-3:27120
   options: replicaSet=sda-replica-set-1
   database: myAppName

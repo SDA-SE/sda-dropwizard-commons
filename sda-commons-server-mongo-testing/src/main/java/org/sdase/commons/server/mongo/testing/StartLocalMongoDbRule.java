@@ -72,6 +72,11 @@ public class StartLocalMongoDbRule extends ExternalResource implements MongoDbRu
     return "";
   }
 
+  @Override
+  public String getConnectionString() {
+    return startLocalMongoDb.getConnectionString();
+  }
+
   /**
    * @return the version of the MongoDB instance which is associated with this MongoDbRule
    * @deprecated because this is specific to flap doodle, use {@link #getServerVersion()}
