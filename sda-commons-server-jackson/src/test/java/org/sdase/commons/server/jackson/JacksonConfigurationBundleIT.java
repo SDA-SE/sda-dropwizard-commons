@@ -7,16 +7,20 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import java.io.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.assertj.core.groups.Tuple;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.jackson.test.JacksonConfigurationTestApp;
@@ -685,6 +689,51 @@ class JacksonConfigurationBundleIT {
             .request(MediaType.APPLICATION_JSON)
             .post(Entity.json(Collections.singletonMap("type", "THREE")))) {
       assertThat(response.getStatus()).isEqualTo(422);
+    }
+  }
+
+  @Test
+  void shouldGetErrorForInvalidFormParameter() {
+    Form form = new Form();
+    form.param("foo", "");
+
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("requiredForm")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE))) {
+
+      ApiError error = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
+
+      assertThat(error.getInvalidParams())
+          .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
+          .containsExactly(tuple("foo", "NOT_BLANK"));
+    }
+  }
+
+  @Test
+  void shouldGetErrorForMissingMultipartFormDataParameter() {
+    FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
+    formDataMultiPart.field("text", "foo");
+
+    try (Response response =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
+            .register(MultiPartFeature.class)
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("requiredFormData")
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA_TYPE))) {
+
+      ApiError error = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
+
+      assertThat(error.getInvalidParams())
+          .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
+          .containsExactly(tuple("file", "NOT_NULL"));
     }
   }
 }

@@ -5,6 +5,7 @@ dependencies {
   api 'io.openapitools.jackson.dataformat:jackson-dataformat-hal'
 
   testImplementation project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-shared-forms')
   testImplementation 'com.kjetland:mbknor-jackson-jsonschema_2.13', {
     /**
      * Dropwizard comes with jakarta.validation-api instead of javax.validation-api.
