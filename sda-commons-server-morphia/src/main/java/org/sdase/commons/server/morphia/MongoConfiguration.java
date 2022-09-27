@@ -1,8 +1,15 @@
 package org.sdase.commons.server.morphia;
 
-import javax.validation.constraints.NotEmpty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mongodb.MongoClientURI;
+import javax.validation.constraints.AssertTrue;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MongoConfiguration {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(MongoConfiguration.class);
 
   /**
    * Comma separated list of hosts with their port that build the MongoDB cluster:
@@ -18,7 +25,7 @@ public class MongoConfiguration {
    * href="https://docs.mongodb.com/manual/reference/connection-string/">connection string
    * documentation</a> for host1 to hostN.
    */
-  @NotEmpty private String hosts;
+  private String hosts;
 
   /**
    * The name of the mongo database to access.
@@ -27,7 +34,7 @@ public class MongoConfiguration {
    * href="https://docs.mongodb.com/manual/reference/connection-string/">connection string
    * documentation</a> for database.
    */
-  @NotEmpty private String database;
+  private String database;
 
   /**
    * Additional options for the connection.
@@ -84,7 +91,19 @@ public class MongoConfiguration {
    */
   @Deprecated private String caCertificate;
 
+  /**
+   * Connection string that includes all necessary information to establish a connection with the
+   * MongoDB cluster.
+   *
+   * @see <a href="https://www.mongodb.com/docs/manual/reference/connection-string/">Official
+   *     Documentation</a>
+   */
+  private String connectionString;
+
   public String getHosts() {
+    if (StringUtils.isBlank(hosts) && StringUtils.isNotBlank(connectionString)) {
+      return String.join(",", new MongoClientURI(connectionString).getHosts());
+    }
     return hosts;
   }
 
@@ -94,6 +113,9 @@ public class MongoConfiguration {
   }
 
   public String getDatabase() {
+    if (StringUtils.isBlank(database) && StringUtils.isNotBlank(connectionString)) {
+      return new MongoClientURI(connectionString).getDatabase();
+    }
     return database;
   }
 
@@ -103,6 +125,9 @@ public class MongoConfiguration {
   }
 
   public String getOptions() {
+    if (StringUtils.isBlank(options) && StringUtils.isNotBlank(connectionString)) {
+      // TODO what should be returned?
+    }
     return options;
   }
 
@@ -112,6 +137,9 @@ public class MongoConfiguration {
   }
 
   public String getUsername() {
+    if (StringUtils.isBlank(username) && StringUtils.isNotBlank(connectionString)) {
+      return new MongoClientURI(connectionString).getUsername();
+    }
     return username;
   }
 
@@ -121,6 +149,9 @@ public class MongoConfiguration {
   }
 
   public String getPassword() {
+    if (StringUtils.isBlank(password) && StringUtils.isNotBlank(connectionString)) {
+      return new String(new MongoClientURI(connectionString).getPassword());
+    }
     return password;
   }
 
@@ -170,5 +201,38 @@ public class MongoConfiguration {
   public MongoConfiguration setCaCertificate(String caCertificate) {
     this.caCertificate = caCertificate;
     return this;
+  }
+
+  public String getConnectionString() {
+    return connectionString;
+  }
+
+  public MongoConfiguration setConnectionString(String connectionString) {
+    this.connectionString = connectionString;
+    return this;
+  }
+
+  /**
+   * We either need the
+   *
+   * <ul>
+   *   <li>'connectionString'
+   *   <li>'hosts' and 'database'
+   * </ul>
+   *
+   * @return true if the configuration is valid
+   */
+  @AssertTrue
+  @JsonIgnore
+  public boolean isValid() {
+    if (StringUtils.isNotBlank(connectionString)) {
+      return true;
+    }
+    if (StringUtils.isBlank(hosts) || StringUtils.isBlank(database)) {
+      LOGGER.error("Please specify either 'connectionString' or 'hosts' and 'database'");
+      return false;
+    }
+
+    return true;
   }
 }

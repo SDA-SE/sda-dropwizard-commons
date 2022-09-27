@@ -33,6 +33,7 @@ import de.flapdoodle.embed.process.store.ImmutableExtractedArtifactStore;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
@@ -55,6 +56,7 @@ public class StartLocalMongoDb {
   protected final String username;
   protected final String password;
   protected final String database;
+  protected String connectionString;
 
   protected StartLocalMongoDb(
       String username,
@@ -78,12 +80,24 @@ public class StartLocalMongoDb {
     }
 
     try {
+      String hostName = Network.getLocalHost().getHostName();
+      int serverPort = Network.getFreeServerPort();
+      this.connectionString =
+          "mongodb://"
+              + username
+              + ":"
+              + password
+              + "@"
+              + hostName
+              + ":"
+              + serverPort
+              + "/"
+              + database;
+      if (StringUtils.isNotBlank(getOptions())) {
+        this.connectionString += "?" + getOptions();
+      }
       ImmutableMongodConfig.Builder mongodConfigBuilder =
-          MongodConfig.builder()
-              .version(version)
-              .net(
-                  new Net(
-                      Network.getLocalHost().getHostName(), Network.getFreeServerPort(), false));
+          MongodConfig.builder().version(version).net(new Net(hostName, serverPort, false));
 
       if (!enableScripting) {
         mongodConfigBuilder.putArgs("--noscripting", "");
@@ -164,6 +178,10 @@ public class StartLocalMongoDb {
 
   public String getOptions() {
     return "";
+  }
+
+  public String getConnectionString() {
+    return connectionString;
   }
 
   /**

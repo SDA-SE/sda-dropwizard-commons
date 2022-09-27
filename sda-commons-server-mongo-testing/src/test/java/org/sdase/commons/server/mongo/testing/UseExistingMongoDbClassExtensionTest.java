@@ -80,4 +80,12 @@ class UseExistingMongoDbClassExtensionTest {
     assertThat(actualResult).hasSize(1);
     assertThat(actualResult.first()).extracting("property").isEqualTo("example");
   }
+
+  @Test
+  void shouldReturnConnectionString() {
+    assertThat(useExistingMongoDbClassExtension.getConnectionString())
+        .isNotEmpty()
+        .contains(EXTERNAL_DB.getHosts())
+        .contains(EXTERNAL_DB.getDatabase());
+  }
 }

@@ -20,7 +20,10 @@ public class UseExistingMongoDb {
   private final String options;
   private final MongoClientURI mongoClientUri;
 
+  private String connectionString;
+
   public UseExistingMongoDb(String mongoDbConnectionString) {
+    this.connectionString = mongoDbConnectionString;
     mongoClientUri = new MongoClientURI(mongoDbConnectionString);
     hosts = String.join(",", mongoClientUri.getHosts());
     database = mongoClientUri.getDatabase();
@@ -47,6 +50,10 @@ public class UseExistingMongoDb {
 
   public String getPassword() {
     return password;
+  }
+
+  public String getConnectionString() {
+    return connectionString;
   }
 
   public MongoClient createClient() {

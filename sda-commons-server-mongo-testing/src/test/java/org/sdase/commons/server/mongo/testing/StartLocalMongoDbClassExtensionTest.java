@@ -176,4 +176,12 @@ class StartLocalMongoDbClassExtensionTest {
           .isEqualTo(MongoDbClassExtension.Builder.DEFAULT_VERSION);
     }
   }
+
+  @Test
+  void shouldReturnConnectionString() {
+    assertThat(MONGO_DB_EXTENSION.getConnectionString())
+        .isNotEmpty()
+        .contains(MONGO_DB_EXTENSION.getHosts())
+        .contains(MONGO_DB_EXTENSION.getDatabase());
+  }
 }

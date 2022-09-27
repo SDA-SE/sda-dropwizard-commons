@@ -42,6 +42,11 @@ public class UseExistingMongoDbRule extends ExternalResource implements MongoDbR
   }
 
   @Override
+  public String getConnectionString() {
+    return mongoDb.getConnectionString();
+  }
+
+  @Override
   public MongoClient createClient() {
     return mongoDb.createClient();
   }

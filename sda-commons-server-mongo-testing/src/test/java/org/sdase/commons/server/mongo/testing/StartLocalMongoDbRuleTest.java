@@ -150,4 +150,12 @@ public class StartLocalMongoDbRuleTest {
       assertThat(db.listCollectionNames()).doesNotContain("clearDatabaseTest");
     }
   }
+
+  @Test
+  public void shouldReturnConnectionString() {
+    assertThat(RULE.getConnectionString())
+        .isNotEmpty()
+        .contains(RULE.getHosts())
+        .contains(RULE.getDatabase());
+  }
 }
