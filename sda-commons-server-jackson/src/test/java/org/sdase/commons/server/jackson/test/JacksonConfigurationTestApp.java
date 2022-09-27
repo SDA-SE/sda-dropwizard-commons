@@ -1,38 +1,29 @@
 package org.sdase.commons.server.jackson.test;
 
 import static java.util.Collections.singletonList;
+import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.openapitools.jackson.dataformat.hal.HALLink;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.GET;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotAcceptableException;
-import javax.ws.rs.NotAllowedException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.NotSupportedException;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.assertj.core.util.Lists;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.shared.api.error.ApiException;
@@ -50,6 +41,7 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
   @Override
   public void initialize(Bootstrap<Configuration> bootstrap) {
     bootstrap.addBundle(JacksonConfigurationBundle.builder().build());
+    bootstrap.addBundle(new io.dropwizard.forms.MultiPartBundle());
   }
 
   @Override
@@ -195,6 +187,39 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
   public Response createRequiredQueryValidationResource(
       @QueryParam("q") @Valid @NotEmpty String searchString) {
     return Response.ok(searchString).build();
+  }
+
+  @POST
+  @Path("/requiredForm")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response createRequiredFormValidationResource(@NotBlank @FormParam("foo") String foo) {
+    return Response.created(
+            uriInfo
+                .getBaseUriBuilder()
+                .path(JacksonConfigurationTestApp.class)
+                .path(JacksonConfigurationTestApp.class, "createRequiredFormValidationResource")
+                .path("1")
+                .build())
+        .build();
+  }
+
+  @POST
+  @Path("/requiredFormData")
+  @Consumes(MULTIPART_FORM_DATA)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response createRequiredFormDataValidationResource(
+      @NotNull @FormDataParam("text") String text,
+      @NotNull @Valid @FormDataParam("file") InputStream file,
+      @Valid @FormDataParam("file") FormDataContentDisposition fileDisposition) {
+    return Response.created(
+            uriInfo
+                .getBaseUriBuilder()
+                .path(JacksonConfigurationTestApp.class)
+                .path(JacksonConfigurationTestApp.class, "createRequiredFormDataValidationResource")
+                .path("1")
+                .build())
+        .build();
   }
 
   @POST

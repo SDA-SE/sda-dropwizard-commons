@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies.UpperSnakeCaseStr
 import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.JerseyViolationException;
 import io.dropwizard.util.Lists;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,6 +39,9 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
 
   private static final String VALIDATION_EXCEPTION_MESSAGE = "Request parameters are not valid.";
 
+  private static final String FORM_DATA_PARAM_ANNOTATION = "FormDataParam";
+  private static final String FORM_PARAM_ANNOTATION = "FormParam";
+
   private static final UpperSnakeCaseStrategy ERROR_CODE_TRANSLATOR = new UpperSnakeCaseStrategy();
 
   @Override
@@ -49,8 +53,9 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
         .forEach(
             cv -> {
               String propertyPath =
-                  ConstraintMessage.isRequestEntity(cv, e.getInvocable())
-                      .orElse(isQueryParameter(cv, e.getInvocable()).orElse("N/A"));
+                  isQueryParameterOrFormParameter(cv, e.getInvocable())
+                      .orElse(
+                          ConstraintMessage.isRequestEntity(cv, e.getInvocable()).orElse("N/A"));
               String annotation =
                   cv.getConstraintDescriptor().getAnnotation().annotationType().toString();
 
@@ -73,7 +78,7 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
    *
    * <p>The implementation is based on {@link ConstraintMessage#isRequestEntity}.
    */
-  private static Optional<String> isQueryParameter(
+  private static Optional<String> isQueryParameterOrFormParameter(
       ConstraintViolation<?> violation, Invocable invocable) {
     final Collection<Node> propertyPath = Lists.of(violation.getPropertyPath());
     final Path.Node parent = propertyPath.stream().skip(1L).findFirst().orElse(null);
@@ -85,7 +90,11 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
     if (parent.getKind() == ElementKind.PARAMETER) {
       final Parameter param =
           parameters.get(parent.as(Path.ParameterNode.class).getParameterIndex());
-      if (param.getSource().equals(QUERY)) {
+      final Class<? extends Annotation> annotation = param.getSourceAnnotation().annotationType();
+
+      if (param.getSource().equals(QUERY)
+          || FORM_DATA_PARAM_ANNOTATION.equals(annotation.getSimpleName())
+          || FORM_PARAM_ANNOTATION.equals(annotation.getSimpleName())) {
         return Optional.of(param.getSourceName());
       }
     }
