@@ -18,7 +18,18 @@ public class MongoConfiguration {
    * href="https://docs.mongodb.com/manual/reference/connection-string/">connection string
    * documentation</a> for host1 to hostN.
    */
-  @NotEmpty private String hosts;
+  private String hosts;
+
+  /**
+   * Full connection string as defined in the MongoDB documentation:
+   *
+   * <pre>{@code mongodb://username:password@mongodb.mongodb:27017/admin?ssl=false}</pre>
+   *
+   * <p>Details in the <a
+   * href="https://www.mongodb.com/docs/manual/reference/connection-string/#standard-connection-string-format">connection
+   * string documentation</a>.
+   */
+  private String connectionString = "";
 
   /**
    * The name of the mongo database to access.
@@ -90,6 +101,15 @@ public class MongoConfiguration {
 
   public MongoConfiguration setHosts(String hosts) {
     this.hosts = hosts;
+    return this;
+  }
+
+  public String getConnectionString() {
+    return connectionString;
+  }
+
+  public MongoConfiguration setConnectionString(String connectionString) {
+    this.connectionString = connectionString;
     return this;
   }
 

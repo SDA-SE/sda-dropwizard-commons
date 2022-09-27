@@ -55,6 +55,17 @@ public class ConnectionStringUtilTest {
         .isEqualTo("mongodb://dbuser:sda123@db1.example.net:27017,db2.example.net:2500/default_db");
   }
 
+  @Test
+  public void testUriBuilderWithConnectionString() {
+    MongoConfiguration mongoConfiguration = createValidConfigurationWithConnectionString();
+
+    String connectionString = createConnectionString(mongoConfiguration);
+
+    assertThat(connectionString)
+        .isNotNull()
+        .isEqualTo("mongodb://username:password@mongodb.mongodb:27017/admin?ssl=false");
+  }
+
   private static MongoConfiguration createValidConfiguration() {
 
     MongoConfiguration mongoConfiguration = new MongoConfiguration();
@@ -64,6 +75,16 @@ public class ConnectionStringUtilTest {
     mongoConfiguration.setOptions("replicaSet=test");
     mongoConfiguration.setUsername("dbuser");
     mongoConfiguration.setPassword("sda123");
+
+    return mongoConfiguration;
+  }
+
+  private static MongoConfiguration createValidConfigurationWithConnectionString() {
+
+    MongoConfiguration mongoConfiguration = createValidConfiguration();
+
+    mongoConfiguration.setConnectionString(
+        "mongodb://username:password@mongodb.mongodb:27017/admin?ssl=false");
 
     return mongoConfiguration;
   }

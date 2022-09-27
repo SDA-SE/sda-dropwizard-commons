@@ -13,15 +13,19 @@ class ConnectionStringUtil {
 
     StringBuilder connectionStringBuilder = new StringBuilder();
 
-    connectionStringBuilder
-        .append("mongodb://")
-        .append(buildCredentialsUriPartIfNeeded(configuration))
-        .append(configuration.getHosts())
-        .append("/")
-        .append(configuration.getDatabase());
+    if (StringUtils.isNotBlank(configuration.getConnectionString())) {
+      connectionStringBuilder.append(configuration.getConnectionString());
+    } else {
+      connectionStringBuilder
+          .append("mongodb://")
+          .append(buildCredentialsUriPartIfNeeded(configuration))
+          .append(configuration.getHosts())
+          .append("/")
+          .append(configuration.getDatabase());
 
-    if (StringUtils.isNotBlank(configuration.getOptions())) {
-      connectionStringBuilder.append("?").append(configuration.getOptions());
+      if (StringUtils.isNotBlank(configuration.getOptions())) {
+        connectionStringBuilder.append("?").append(configuration.getOptions());
+      }
     }
 
     return connectionStringBuilder.toString();
