@@ -16,7 +16,7 @@ ext {
   openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.35.0'
   scalaVersion = '2.13.9' // align transitive dependency from various modules, keep up to date
-  kafkaVersion = '2.8.2'
+  kafkaVersion = '3.3.0'
   kafkaJunitVersion = '3.2.4' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.34.0'
   kotlinVersion = '1.7.10'
@@ -45,7 +45,7 @@ dependencies {
     api "org.jboss.logging:jboss-logging:3.4.3.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
     }
-    api "org.yaml:snakeyaml:1.32", {
+    api "org.yaml:snakeyaml:1.33", {
       because "conflict between com.github.ftrossbach:club-topicana-core and com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
     }
     api "net.javacrumbs.json-unit:json-unit-core:$jsonUnitVersion", {
