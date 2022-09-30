@@ -67,7 +67,9 @@ public interface MongoDb {
    */
   String getOptions();
 
-  /** @return the MongoDB connection String */
+  /**
+   * @return the MongoDB connection String
+   */
   String getConnectionString();
 
   /**
