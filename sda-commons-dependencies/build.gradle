@@ -16,7 +16,7 @@ ext {
   openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.36.0'
   scalaVersion = '2.13.9' // align transitive dependency from various modules, keep up to date
-  kafkaVersion = '2.8.2'
+  kafkaVersion = '3.2.3'
   kafkaJunitVersion = '3.2.4' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.34.0'
   kotlinVersion = '1.7.20'
@@ -185,6 +185,9 @@ dependencies {
       because "conflict between org.apache.kafka:kafka_2.13, io.findify:s3mock_2.13 and com.kjetland:mbknor-jackson-jsonschema_2.13:+ upgrade"
     }
     api "org.scala-lang:scala-reflect:$scalaVersion", {
+      because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13"
+    }
+    api "com.typesafe.scala-logging:scala-logging_2.13:3.9.4", {
       because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13"
     }
   }
