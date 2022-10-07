@@ -7,9 +7,17 @@ dependencies {
 
   api project(':sda-commons-server-testing')
 
-  api 'com.salesforce.kafka.test:kafka-junit4'
-  api 'com.salesforce.kafka.test:kafka-junit5'
   api 'org.apache.kafka:kafka_2.13'
+  api 'com.salesforce.kafka.test:kafka-junit4', {
+    exclude group: 'org.apache.curator', module: 'curator-test'
+  }
+  api 'com.salesforce.kafka.test:kafka-junit5', {
+    exclude group: 'org.apache.curator', module: 'curator-test'
+  }
+  api 'org.apache.curator:curator-test', {
+    exclude group: 'org.xerial.snappy', module: 'snappy-java'
+  }
+  api 'org.xerial.snappy:snappy-java'
   api 'org.awaitility:awaitility'
   api 'org.apache.commons:commons-lang3'
 
