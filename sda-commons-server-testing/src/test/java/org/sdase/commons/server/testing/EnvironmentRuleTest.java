@@ -3,7 +3,10 @@ package org.sdase.commons.server.testing;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.*;
+import org.junit.jupiter.api.condition.DisabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 
+@DisabledForJreRange(min = JRE.JAVA_16)
 public class EnvironmentRuleTest {
 
   @Rule
