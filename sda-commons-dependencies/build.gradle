@@ -68,7 +68,7 @@ dependencies {
     api "com.kjetland:mbknor-jackson-jsonschema_2.13:1.0.39"
 
     // sda-commons-server-auth
-    api "com.auth0:java-jwt:4.0.0"
+    api "com.auth0:java-jwt:4.1.0"
 
     // sda-commons-server-circuitbreaker
     api "org.objenesis:objenesis:3.3"
