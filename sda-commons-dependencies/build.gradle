@@ -10,7 +10,7 @@ ext {
   dropwizardVersion = '2.1.3'
   morphiaVersion = '1.6.1'
   prometheusVersion = '0.16.0'
-  swaggerCoreVersion = '1.6.7'
+  swaggerCoreVersion = '1.6.8'
   swaggerCoreV3Version = '2.2.3'
   weldVersion = '3.1.9.Final'
   openTracingUtilVersion = '0.33.0'
