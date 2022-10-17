@@ -38,7 +38,7 @@ jobs:
           cache: 'gradle'
 
       - name: Test with Gradle
-        uses: nick-invision/retry@7f8f3d9f0f62fe5925341be21c2e8314fd4f7c7c # tag=v2
+        uses: nick-invision/retry@3e91a01664abd3c5cd539100d10d33b9c5b68482 # tag=v2
         with:
           timeout_minutes: 30
           max_attempts: 5
@@ -86,7 +86,7 @@ jobs:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@969bd2663942d722d85b6a8626225850c2f7be4b # tag=v3
+        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # tag=v3
         with:
           node-version: 14
 
