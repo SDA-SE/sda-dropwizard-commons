@@ -1,8 +1,13 @@
 dependencies {
-  api group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml'
-  api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
-  api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8'
-  api group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names'
+  api "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", {
+    exclude group: 'org.yaml', module: 'snakeyaml'
+  }
+  api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+  api "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
+  api "com.fasterxml.jackson.module:jackson-module-parameter-names", {
+    exclude group: 'org.yaml', module: 'snakeyaml'
+  }
+  api "org.yaml:snakeyaml"
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation 'commons-io:commons-io'

@@ -17,7 +17,10 @@ dependencies {
   }
   api 'com.fasterxml.jackson.core:jackson-databind'
   api 'com.fasterxml.jackson.core:jackson-annotations'
-  api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+  api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml', {
+    exclude group: 'org.yaml', module: 'snakeyaml'
+  }
+  api "org.yaml:snakeyaml"
 
   // swagger-hal >= 2.0.0 supports io.swagger.core.v3
   api 'io.openapitools.hal:swagger-hal:2.0.2', {
