@@ -40,7 +40,7 @@ jobs:
                   -H "Content-Type:application/xml" \
                   https://oss.sonatype.org/service/local/staging/profiles/$SONATYPE_PROFILE_ID/start \
               | sed -n 's:.*<stagedRepositoryId>\(.*\)</stagedRepositoryId>.*:\1:p'`
-          echo "::set-output name=STAGING_PROFILE_ID::$ID"
+          echo "STAGING_PROFILE_ID=$ID" >> $GITHUB_OUTPUT
         env:
           SDA_SONATYPE_USER: ${{ secrets.SDA_SONATYPE_USER }}
           SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
