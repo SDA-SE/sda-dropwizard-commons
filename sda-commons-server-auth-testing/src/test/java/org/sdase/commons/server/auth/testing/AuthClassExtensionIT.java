@@ -82,7 +82,7 @@ class AuthClassExtensionIT {
 
     assertThat(stringObjectMap)
         .containsOnly(
-            entry("title", "The token was expected to have 3 parts, but got 0."),
+            entry("title", "The token was expected to have 3 parts, but got 2."),
             entry("invalidParams", emptyList()));
   }
 
