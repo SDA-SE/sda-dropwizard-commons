@@ -69,7 +69,7 @@ public class AppDisabledKafkaServerIT {
         bundle.registerProducer(
             ProducerRegistration.builder()
                 .forTopic("Topic")
-                .createTopicIfMissing()
+                .createTopicIfMissing() // Deprecated. It will be removed in next releases
                 .withDefaultProducer()
                 .build());
     assertNull(producer.send("test", "test"));

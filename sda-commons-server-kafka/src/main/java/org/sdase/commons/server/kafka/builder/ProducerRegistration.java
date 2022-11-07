@@ -34,6 +34,12 @@ public class ProducerRegistration<K, V> {
     return checkTopicConfiguration;
   }
 
+  /**
+   * @deprecated Using this method is highly discouraged, since it will be removed in the next
+   *     version. You should now create the kafka topic manually. Check README for more detailed
+   *     explanation
+   */
+  @Deprecated
   public boolean isCreateTopicIfMissing() {
     return createTopicIfMissing;
   }
@@ -80,10 +86,13 @@ public class ProducerRegistration<K, V> {
     ProducerBuilder<K, V> checkTopicConfiguration();
 
     /**
-     * defines that the topic should be created if it does not exist
-     *
+     * @deprecated Using this method is highly discouraged, since it will be removed in the next
+     *     version. You should now create the kafka topic manually. Check README for more detailed
+     *     explanation
+     *     <p>defines that the topic should be created if it does not exist
      * @return builder
      */
+    @Deprecated
     ProducerBuilder<K, V> createTopicIfMissing();
 
     /**
@@ -225,6 +234,14 @@ public class ProducerRegistration<K, V> {
       return this;
     }
 
+    /**
+     * @deprecated Using this method is highly discouraged, since it will be removed in the next
+     *     version. You should now create the kafka topic manually. Check README for more detailed
+     *     explanation
+     *     <p>defines that the topic should be created if it does not exist
+     * @return builder
+     */
+    @Deprecated
     @Override
     public ProducerBuilder<K, V> createTopicIfMissing() {
       this.createTopicIfMissing = true;

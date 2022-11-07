@@ -235,6 +235,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
     checkInit();
 
+    // this functionality will be removed in the next releases
     if (registration.isCreateTopicIfMissing()) {
       createNotExistingTopics(Collections.singletonList(registration.getTopic()));
     }
