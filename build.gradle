@@ -246,38 +246,19 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
 configure(subprojects.findAll {
   !unpublishedModules.contains(it.name) && !it.name.endsWith("-example")
 }) {
-  task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allJava
+  java {
+    withJavadocJar();
+    withSourcesJar();
   }
 
   javadoc {
     options.addStringOption('encoding', 'UTF-8')
   }
 
-  task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveClassifier = 'javadoc'
-    from javadoc.destinationDir
-  }
-
-  artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-  }
-
   publishing {
     publications {
       maven(MavenPublication) {
         from components.java
-
-        artifact(sourcesJar) {
-          classifier = 'sources'
-        }
-
-        artifact(javadocJar) {
-          classifier = 'javadoc'
-        }
       }
     }
   }
