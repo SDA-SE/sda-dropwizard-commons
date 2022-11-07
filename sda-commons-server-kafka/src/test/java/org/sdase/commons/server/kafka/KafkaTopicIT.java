@@ -150,7 +150,7 @@ class KafkaTopicIT {
         bundle.registerProducer(
             ProducerRegistration.builder()
                 .forTopic(topic)
-                .createTopicIfMissing()
+                .createTopicIfMissing() // Deprecated. It will be removed in next releases
                 .withDefaultProducer()
                 .build());
     assertThat(producer).isNotNull();
@@ -163,7 +163,7 @@ class KafkaTopicIT {
         bundle.registerProducer(
             ProducerRegistration.builder()
                 .forTopic(topicName)
-                .createTopicIfMissing()
+                .createTopicIfMissing() // Deprecated. It will be removed in next releases
                 .withDefaultProducer()
                 .build());
     assertThat(producer).isNotNull();
@@ -184,7 +184,7 @@ class KafkaTopicIT {
                 bundle.registerProducer(
                     ProducerRegistration.builder()
                         .forTopic(topic)
-                        .createTopicIfMissing()
+                        .createTopicIfMissing() // Deprecated. It will be removed in next releases
                         .withDefaultProducer()
                         .build()))
         .isInstanceOf(TopicCreationException.class);
@@ -330,7 +330,7 @@ class KafkaTopicIT {
         bundle.registerProducer(
             ProducerRegistration.builder()
                 .forTopic(topic)
-                .createTopicIfMissing()
+                .createTopicIfMissing() // Deprecated. It will be removed in next releases
                 .withDefaultProducer()
                 .build());
     assertThat(producer).isNotNull();

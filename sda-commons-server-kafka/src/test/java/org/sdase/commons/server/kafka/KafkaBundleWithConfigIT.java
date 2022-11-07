@@ -137,7 +137,7 @@ public class KafkaBundleWithConfigIT {
         kafkaBundle.registerProducer(
             ProducerRegistration.builder()
                 .forTopic(kafkaBundle.getTopicConfiguration("topicId2"))
-                .createTopicIfMissing()
+                .createTopicIfMissing() // Deprecated. It will be removed in next releases
                 .withDefaultProducer()
                 .withKeySerializer(new StringSerializer())
                 .withValueSerializer(new StringSerializer())

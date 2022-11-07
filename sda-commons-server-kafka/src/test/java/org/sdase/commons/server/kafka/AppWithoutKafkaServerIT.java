@@ -61,7 +61,7 @@ public class AppWithoutKafkaServerIT {
     bundle.registerProducer(
         ProducerRegistration.builder()
             .forTopic(topicName)
-            .createTopicIfMissing()
+            .createTopicIfMissing() // Deprecated. It will be removed in next releases
             .withDefaultProducer()
             .build());
   }

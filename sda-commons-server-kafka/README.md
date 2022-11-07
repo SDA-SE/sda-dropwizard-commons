@@ -142,8 +142,8 @@ public class DemoApplication {
       // The handler implements the actual logic for the message processing
 
       // replace with your handler implementation
-      MessageHandler<String, String> handler = record -> results.add(record.value();
-      ErrorHandler<Sting, String> errorHandler = new IgnoreAndProceedErrorHandler<>()
+      MessageHandler<String, String> handler = record -> results.add(record.value());
+      ErrorHandler<Sting, String> errorHandler = new IgnoreAndProceedErrorHandler<>();
 
       kafkaBundle.createMessageListener(MessageListenerRegistration.<String, String> builder()
                 .withDefaultListenerConfig()
@@ -179,13 +179,13 @@ public class DemoApplication {
                   .withPartitionCount(2)
                   .withConfig(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT).build())
                   .checkTopicConfiguration() // enforces that topic must be configured exactly as defined above
-                  .createTopicIfMissing()    // creates the topic if no topic has been found
+                  .createTopicIfMissing()    // creates the topic if no topic has been found. Deprecated. It will be removed in the next releases
                   .withProducerConfig("producer1") // use producer config from config yaml
                   .build());
 
       // JSON Example
-      MessageHandler<String, SimpleEntity> jsonHandler = record -> jsonResults.add(record.value();
-      ErrorHandler<Sting, SimpleEntity> errorHandler = new IgnoreAndProceedErrorHandler<>()
+      MessageHandler<String, SimpleEntity> jsonHandler = record -> jsonResults.add(record.value());
+      ErrorHandler<Sting, SimpleEntity> errorHandler = new IgnoreAndProceedErrorHandler<>();
 
       List<MessageListener> jsonListener = kafkaBundle
             .createMessageListener(MessageListenerRegistration.builder()
@@ -240,20 +240,23 @@ strategy.
 
 ```java
 public class DemoApplication {
-   private final KafkaBundle<AppConfiguration> kafkaBundle = KafkaBundle.builder().withConfigurationProvider(AppConfiguration::getKafka).build();
-   private final MessageProducer<String, ProductBundle> producer;
 
-   public void initialize(Bootstrap<AppConfiguration> bootstrap) {
-      bootstrap.addBundle(kafkaBundle);
-   }
+  private final KafkaBundle<AppConfiguration> kafkaBundle = KafkaBundle.builder()
+      .withConfigurationProvider(AppConfiguration::getKafka).build();
+  private final MessageProducer<String, ProductBundle> producer;
 
-   public void run(AppConfiguration configuration, Environment environment) throws Exception {
-      // register with default consumer and listener config
-      // The handler implements the actual logic for the message processing
+  public void initialize(Bootstrap<AppConfiguration> bootstrap) {
+    bootstrap.addBundle(kafkaBundle);
+  }
+
+  public void run(AppConfiguration configuration, Environment environment) throws Exception {
+    // register with default consumer and listener config
+    // The handler implements the actual logic for the message processing
       ...
 
-      // JSON Example with wrapped Deserializer to avoid DeseriliazationException, see Note below
-      List<MessageListener> jsonListener = kafkaBundle.registerMessageHandler(MessageHandlerRegistration
+    // JSON Example with wrapped Deserializer to avoid DeseriliazationException, see Note below
+    List<MessageListener> jsonListener = kafkaBundle.registerMessageHandler(
+        MessageHandlerRegistration
             .builder()
             .withDefaultListenerConfig()
             .forTopic(topic)
@@ -261,10 +264,12 @@ public class DemoApplication {
             .withValueDeserializer(
                 new WrappedNoSerializationErrorDeserializer<>(
                     new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)))
-            .withListenerStrategy(new AutocommitMLS<String, SimpleEntity>(jsonHandler, errorHandler))
+            .withListenerStrategy(
+                new AutocommitMLS<String, SimpleEntity>(jsonHandler, errorHandler))
             .build()
-      );
-   }
+    );
+  }
+}
 ```
 
 ## Configuration
@@ -601,6 +606,10 @@ records. The next poll will retry the records on this partition starting with th
 To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config YAML or
 by specifying a configuration in code. The user takes over the full responsibility and have to ensure that the consumer is closed when not
 longer used.
+
+## Deprecation of `createTopicIfMissing` method
+This method will be removed in the next releases. Instead of creating the topic programmatically, now the developers are responsible to create the topics manually, or request to the DevOps team to do that.
+This approach will prevent misconfiguration of topics and give the teams better control of created resources.
 
 ## Migration information (from kafka-commons)
 
