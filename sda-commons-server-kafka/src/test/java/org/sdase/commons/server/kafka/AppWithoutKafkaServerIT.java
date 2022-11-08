@@ -56,17 +56,6 @@ public class AppWithoutKafkaServerIT {
   }
 
   @Test(expected = TimeoutException.class)
-  public void checkProducerWithCreationThrowsException() {
-    String topicName = "checkProducerWithCreationThrowsException";
-    bundle.registerProducer(
-        ProducerRegistration.builder()
-            .forTopic(topicName)
-            .createTopicIfMissing() // Deprecated. It will be removed in next releases
-            .withDefaultProducer()
-            .build());
-  }
-
-  @Test(expected = TimeoutException.class)
   public void checkProducerWithCheckThrowsException() {
     String topicName = "checkProducerWithCreationThrowsException";
     bundle.registerProducer(
