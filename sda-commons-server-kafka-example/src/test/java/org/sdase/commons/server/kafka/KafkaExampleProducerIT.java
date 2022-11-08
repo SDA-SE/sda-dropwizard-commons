@@ -88,7 +88,7 @@ class KafkaExampleProducerIT {
     application.sendExampleWithConfiguration(1L, 2L);
 
     // then
-    List<ConsumerRecord<byte[], byte[]>> consumerRecords = new ArrayList<>();
+    List<ConsumerRecord<byte[], byte[]>> records = new ArrayList<>();
     await()
         .atMost(10, TimeUnit.SECONDS)
         .untilAsserted(
@@ -96,10 +96,10 @@ class KafkaExampleProducerIT {
               List<ConsumerRecord<byte[], byte[]>> consumerRecords =
                   KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic("exampleTopicConfiguration");
               assertThat(consumerRecords).isNotEmpty();
-              consumerRecords.addAll(consumerRecords);
+              records.addAll(consumerRecords);
             });
 
-    ConsumerRecord<byte[], byte[]> record = consumerRecors.get(0);
+    ConsumerRecord<byte[], byte[]> record = records.get(0);
 
     assertThat(getLong(record.key())).isEqualTo(1L);
     assertThat(getLong(record.value())).isEqualTo(2L);
