@@ -47,6 +47,8 @@ class KafkaExampleProducerIT {
   void testUseProducer() throws JsonProcessingException {
     // given
     KafkaExampleProducerApplication application = DW.getApplication();
+    // creating topic manually since the createTopicIfMissing method was removed
+    KAFKA.getKafkaTestUtils().createTopic(TOPIC_NAME, 1, Short.valueOf("1"));
     final String key = "key";
     final String v1 = "v1";
     final String v2 = "v2";
@@ -79,12 +81,14 @@ class KafkaExampleProducerIT {
   void testUseProducerWithConfiguration() {
     // given
     KafkaExampleProducerApplication application = DW.getApplication();
+    // creating topic manually since the createTopicIfMissing method was removed
+    KAFKA.getKafkaTestUtils().createTopic("exampleTopicConfiguration", 1, Short.valueOf("1"));
 
     // when
     application.sendExampleWithConfiguration(1L, 2L);
 
     // then
-    List<ConsumerRecord<byte[], byte[]>> records = new ArrayList<>();
+    List<ConsumerRecord<byte[], byte[]>> consumerRecords = new ArrayList<>();
     await()
         .atMost(10, TimeUnit.SECONDS)
         .untilAsserted(
@@ -92,10 +96,10 @@ class KafkaExampleProducerIT {
               List<ConsumerRecord<byte[], byte[]>> consumerRecords =
                   KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic("exampleTopicConfiguration");
               assertThat(consumerRecords).isNotEmpty();
-              records.addAll(consumerRecords);
+              consumerRecords.addAll(consumerRecords);
             });
 
-    ConsumerRecord<byte[], byte[]> record = records.get(0);
+    ConsumerRecord<byte[], byte[]> record = consumerRecors.get(0);
 
     assertThat(getLong(record.key())).isEqualTo(1L);
     assertThat(getLong(record.value())).isEqualTo(2L);
