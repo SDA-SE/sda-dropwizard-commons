@@ -47,7 +47,6 @@ class KafkaExampleProducerIT {
   void testUseProducer() throws JsonProcessingException {
     // given
     KafkaExampleProducerApplication application = DW.getApplication();
-    // creating topic manually since the createTopicIfMissing method was removed
     KAFKA.getKafkaTestUtils().createTopic(TOPIC_NAME, 1, Short.valueOf("1"));
     final String key = "key";
     final String v1 = "v1";
@@ -81,7 +80,6 @@ class KafkaExampleProducerIT {
   void testUseProducerWithConfiguration() {
     // given
     KafkaExampleProducerApplication application = DW.getApplication();
-    // creating topic manually since the createTopicIfMissing method was removed
     KAFKA.getKafkaTestUtils().createTopic("exampleTopicConfiguration", 1, Short.valueOf("1"));
 
     // when
