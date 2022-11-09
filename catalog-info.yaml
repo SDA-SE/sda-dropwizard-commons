@@ -22,7 +22,7 @@ spec:
   type: library
   lifecycle: production
   system: sda-dropwizard-commons
-  owner: platform-team
+  owner: bedrock
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
@@ -45,4 +45,4 @@ metadata:
       icon: code
 spec:
   domain: platform
-  owner: platform-team
+  owner: bedrock
