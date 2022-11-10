@@ -49,7 +49,6 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
     return kafka.registerProducer(
         ProducerRegistration.builder()
             .forTopic(kafka.getTopicConfiguration("example0"))
-            .createTopicIfMissing() // Deprecated. It will be removed in next releases
             .withDefaultProducer()
             .withKeySerializer(new KafkaJsonSerializer<Key>(configuredObjectMapper))
             .withValueSerializer(new KafkaJsonSerializer<Value>(configuredObjectMapper))
@@ -65,7 +64,6 @@ public class KafkaExampleProducerApplication extends Application<KafkaExampleCon
     return kafka.registerProducer(
         ProducerRegistration.builder()
             .forTopic(kafka.getTopicConfiguration("example1"))
-            .createTopicIfMissing() // Deprecated. It will be removed in next releases
             .withDefaultProducer()
             .withKeySerializer(new LongSerializer())
             .withValueSerializer(new LongSerializer())
