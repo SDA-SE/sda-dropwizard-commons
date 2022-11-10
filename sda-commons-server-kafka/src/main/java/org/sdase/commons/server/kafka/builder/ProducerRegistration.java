@@ -16,7 +16,6 @@ public class ProducerRegistration<K, V> {
   private boolean checkTopicConfiguration;
   private ProducerConfig producerConfig;
   private String producerName;
-  private boolean createTopicIfMissing;
 
   public String getProducerConfigName() {
     return producerName;
@@ -32,16 +31,6 @@ public class ProducerRegistration<K, V> {
 
   public boolean isCheckTopicConfiguration() {
     return checkTopicConfiguration;
-  }
-
-  /**
-   * @deprecated Using this method is highly discouraged, since it will be removed in the next
-   *     version. You should now create the kafka topic manually. Check README for more detailed
-   *     explanation
-   */
-  @Deprecated
-  public boolean isCreateTopicIfMissing() {
-    return createTopicIfMissing;
   }
 
   public Serializer<K> getKeySerializer() {
@@ -84,16 +73,6 @@ public class ProducerRegistration<K, V> {
      * @return builder
      */
     ProducerBuilder<K, V> checkTopicConfiguration();
-
-    /**
-     * @deprecated Using this method is highly discouraged, since it will be removed in the next
-     *     version. You should now create the kafka topic manually. Check README for more detailed
-     *     explanation
-     *     <p>defines that the topic should be created if it does not exist
-     * @return builder
-     */
-    @Deprecated
-    ProducerBuilder<K, V> createTopicIfMissing();
 
     /**
      * defines that the default producer should be used
@@ -196,7 +175,6 @@ public class ProducerRegistration<K, V> {
 
     private ExpectedTopicConfiguration topic;
     private boolean checkTopicConfiguration = false;
-    private boolean createTopicIfMissing = false;
     private ProducerConfig producerConfig;
     private String producerName = null;
 
@@ -205,7 +183,6 @@ public class ProducerRegistration<K, V> {
     static <K, V, K2, V2> InitialBuilder<K2, V2> clone(InitialBuilder<K, V> source) {
       InitialBuilder<K2, V2> target = new InitialBuilder<>();
       target.checkTopicConfiguration = source.checkTopicConfiguration;
-      target.createTopicIfMissing = source.createTopicIfMissing;
       target.topic = source.topic;
       target.producerConfig = source.producerConfig;
       target.producerName = source.producerName;
@@ -231,20 +208,6 @@ public class ProducerRegistration<K, V> {
     @Override
     public ProducerBuilder<K, V> checkTopicConfiguration() {
       this.checkTopicConfiguration = true;
-      return this;
-    }
-
-    /**
-     * @deprecated Using this method is highly discouraged, since it will be removed in the next
-     *     version. You should now create the kafka topic manually. Check README for more detailed
-     *     explanation
-     *     <p>defines that the topic should be created if it does not exist
-     * @return builder
-     */
-    @Deprecated
-    @Override
-    public ProducerBuilder<K, V> createTopicIfMissing() {
-      this.createTopicIfMissing = true;
       return this;
     }
 
@@ -282,7 +245,6 @@ public class ProducerRegistration<K, V> {
     build.valueSerializer = valueSerializer;
     build.topic = initialBuilder.topic;
     build.checkTopicConfiguration = initialBuilder.checkTopicConfiguration;
-    build.createTopicIfMissing = initialBuilder.createTopicIfMissing;
     build.producerConfig = initialBuilder.producerConfig;
     build.producerName = initialBuilder.producerName;
 
