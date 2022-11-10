@@ -94,10 +94,7 @@ public class HalLinkProvider implements Feature {
         HalLinkInvocationStateUtility.loadMethodInvocationState();
     try {
       if (invocation != null || !methodInvocationState.isProcessed()) {
-        // Deprecated type needed for backward compatibility until deprecated package is removed
-        // afterwards the class from this package can be used
-        throw new org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException(
-            "No proxied method invocation processed.");
+        throw new HalLinkMethodInvocationException("No proxied method invocation processed.");
       }
       final UriBuilder uriBuilder =
           baseUriBuilder()
@@ -111,8 +108,7 @@ public class HalLinkProvider implements Feature {
       HalLinkInvocationStateUtility.unloadMethodInvocationState();
       return linkResult;
     } catch (IllegalArgumentException e) {
-      throw new org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException(
-          "Could not build URI.", e);
+      throw new HalLinkMethodInvocationException("Could not build URI.", e);
     }
   }
 
