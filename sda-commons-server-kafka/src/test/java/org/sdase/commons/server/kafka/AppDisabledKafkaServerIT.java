@@ -67,11 +67,7 @@ public class AppDisabledKafkaServerIT {
   public void checkRegisterProducerReturnsDummy() {
     MessageProducer<Object, Object> producer =
         bundle.registerProducer(
-            ProducerRegistration.builder()
-                .forTopic("Topic")
-                .createTopicIfMissing() // Deprecated. It will be removed in next releases
-                .withDefaultProducer()
-                .build());
+            ProducerRegistration.builder().forTopic("Topic").withDefaultProducer().build());
     assertNull(producer.send("test", "test"));
   }
 
