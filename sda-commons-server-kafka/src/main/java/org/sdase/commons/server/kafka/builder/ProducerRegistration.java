@@ -3,7 +3,6 @@ package org.sdase.commons.server.kafka.builder;
 import javax.validation.constraints.NotNull;
 import org.apache.kafka.common.serialization.Serializer;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
-import org.sdase.commons.server.kafka.config.TopicConfig;
 import org.sdase.commons.server.kafka.exception.TopicMissingException;
 import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
@@ -17,18 +16,11 @@ public class ProducerRegistration<K, V> {
   private boolean checkTopicConfiguration;
   private ProducerConfig producerConfig;
   private String producerName;
-  private boolean createTopicIfMissing;
 
   public String getProducerConfigName() {
     return producerName;
   }
 
-  /**
-   * @deprecated the {@link ExpectedTopicConfiguration} will be removed, hence, this method will be
-   *     replaced by {@link TopicConfig} getTopic()
-   * @return topic
-   */
-  @Deprecated
   public ExpectedTopicConfiguration getTopic() {
     return topic;
   }
@@ -37,23 +29,8 @@ public class ProducerRegistration<K, V> {
     return topic.getTopicName();
   }
 
-  /**
-   * @deprecated this feature will be removed in v3 because services can't really decide on proper
-   *     topic configurations.
-   */
-  @Deprecated
   public boolean isCheckTopicConfiguration() {
     return checkTopicConfiguration;
-  }
-
-  /**
-   * @deprecated Using this method is highly discouraged, since it will be removed in the next
-   *     version. You should now create the kafka topic manually. Check README for more detailed
-   *     explanation
-   */
-  @Deprecated
-  public boolean isCreateTopicIfMissing() {
-    return createTopicIfMissing;
   }
 
   public Serializer<K> getKeySerializer() {
@@ -79,14 +56,11 @@ public class ProducerRegistration<K, V> {
     }
 
     /**
-     * @param topic detailed definition of the topic for that messages will be produced. These
+     * @param topic detailed definition of the topic for that messages will be produced. This
      *     details are used when topic existence should be checked or topic should be created if
      *     missing. If topic differs, a {@link TopicMissingException} is thrown.
      * @return builder
-     * @deprecated the {@link ExpectedTopicConfiguration} will be removed, hence, this method will
-     *     be replaced by forTopic({@link TopicConfig})
      */
-    @Deprecated
     ProducerBuilder<K, V> forTopic(ExpectedTopicConfiguration topic);
   }
 
@@ -97,21 +71,8 @@ public class ProducerRegistration<K, V> {
      * existence is checked.
      *
      * @return builder
-     * @deprecated this feature will be removed in v3 because services can't really decide on proper
-     *     topic configurations.
      */
-    @Deprecated
     ProducerBuilder<K, V> checkTopicConfiguration();
-
-    /**
-     * @return builder
-     * @deprecated Using this method is highly discouraged, since it will be removed in the next
-     *     version. You should now create the kafka topic manually. Check README for more detailed
-     *     explanation
-     *     <p>defines that the topic should be created if it does not exist
-     */
-    @Deprecated
-    ProducerBuilder<K, V> createTopicIfMissing();
 
     /**
      * defines that the default producer should be used
@@ -214,7 +175,6 @@ public class ProducerRegistration<K, V> {
 
     private ExpectedTopicConfiguration topic;
     private boolean checkTopicConfiguration = false;
-    private boolean createTopicIfMissing = false;
     private ProducerConfig producerConfig;
     private String producerName = null;
 
@@ -223,22 +183,12 @@ public class ProducerRegistration<K, V> {
     static <K, V, K2, V2> InitialBuilder<K2, V2> clone(InitialBuilder<K, V> source) {
       InitialBuilder<K2, V2> target = new InitialBuilder<>();
       target.checkTopicConfiguration = source.checkTopicConfiguration;
-      target.createTopicIfMissing = source.createTopicIfMissing;
       target.topic = source.topic;
       target.producerConfig = source.producerConfig;
       target.producerName = source.producerName;
       return target;
     }
 
-    /**
-     * @param topic detailed definition of the topic for that messages will be produced. These
-     *     details are used when topic existence should be checked or topic should be created if
-     *     missing. If topic differs, a {@link TopicMissingException} is thrown.
-     * @return builder
-     * @deprecated the {@link ExpectedTopicConfiguration} will be removed, hence, this method will
-     *     be replaced by forTopic({@link TopicConfig})
-     */
-    @Deprecated
     @Override
     public ProducerBuilder<K, V> forTopic(@NotNull ExpectedTopicConfiguration topic) {
       this.topic = topic;
@@ -255,27 +205,9 @@ public class ProducerRegistration<K, V> {
       return new FinalBuilder<>(InitialBuilder.clone(this), null, valueSerializer);
     }
 
-    /**
-     * @deprecated this feature will be removed in v3 because services can't really decide on proper
-     *     topic configurations.
-     */
-    @Deprecated
     @Override
     public ProducerBuilder<K, V> checkTopicConfiguration() {
       this.checkTopicConfiguration = true;
-      return this;
-    }
-
-    /**
-     * @deprecated Using this method is highly discouraged, since it will be removed in the next
-     *     version. You should now create the kafka topic manually. Check README for more detailed
-     *     explanation
-     *     <p>defines that the topic should be created if it does not exist
-     */
-    @Deprecated
-    @Override
-    public ProducerBuilder<K, V> createTopicIfMissing() {
-      this.createTopicIfMissing = true;
       return this;
     }
 
@@ -313,7 +245,6 @@ public class ProducerRegistration<K, V> {
     build.valueSerializer = valueSerializer;
     build.topic = initialBuilder.topic;
     build.checkTopicConfiguration = initialBuilder.checkTopicConfiguration;
-    build.createTopicIfMissing = initialBuilder.createTopicIfMissing;
     build.producerConfig = initialBuilder.producerConfig;
     build.producerName = initialBuilder.producerName;
 
