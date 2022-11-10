@@ -70,6 +70,7 @@ dependencies {
 
     // sda-commons-server-auth
     api "com.auth0:java-jwt:4.2.1"
+    api "org.bouncycastle:bcpkix-jdk15on:1.70" // use the same version as bcprov-jdk15on in DW
 
     // sda-commons-server-circuitbreaker
     api "org.objenesis:objenesis:3.3"
@@ -88,11 +89,6 @@ dependencies {
 
     // sda-commons-server-mongo-testing
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.2"
-
-    // sda-commons-server-morphia
-    api "dev.morphia.morphia:core:$morphiaVersion"
-    api "dev.morphia.morphia:validation:$morphiaVersion"
-    api "org.bouncycastle:bcpkix-jdk15on:1.70" // use the same version as bcprov-jdk15on in DW
 
     // sda-commons-server-openapi
     api "com.jayway.jsonpath:json-path:2.7.0"
