@@ -65,9 +65,7 @@ public class HalLinkInvocationStateUtility {
           Proxy.newProxyInstance(
               type.getClassLoader(), new Class[] {type}, METHOD_PROCESSING_INVOCATION_HANDLER);
     } catch (IllegalArgumentException | SecurityException | NullPointerException e) {
-      // Deprecated type needed for backward compatibility until deprecated package is removed
-      // afterwards the the class from this package can be used
-      throw new org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException(
+      throw new HalLinkMethodInvocationException(
           String.format("Could not create proxy instance of type '%s' for method invocation", type),
           e);
     }
