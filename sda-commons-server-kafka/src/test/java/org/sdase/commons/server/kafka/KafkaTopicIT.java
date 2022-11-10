@@ -30,7 +30,6 @@ import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
-import org.sdase.commons.server.kafka.exception.TopicCreationException;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.topicana.ComparisonResult;
 import org.sdase.commons.server.kafka.topicana.ComparisonResult.Comparison;
@@ -148,11 +147,7 @@ class KafkaTopicIT {
 
     MessageProducer<Object, Object> producer =
         bundle.registerProducer(
-            ProducerRegistration.builder()
-                .forTopic(topic)
-                .createTopicIfMissing() // Deprecated. It will be removed in next releases
-                .withDefaultProducer()
-                .build());
+            ProducerRegistration.builder().forTopic(topic).withDefaultProducer().build());
     assertThat(producer).isNotNull();
   }
 
@@ -161,33 +156,8 @@ class KafkaTopicIT {
     String topicName = "createSimpleTopicNameOnly";
     MessageProducer<Object, Object> producer =
         bundle.registerProducer(
-            ProducerRegistration.builder()
-                .forTopic(topicName)
-                .createTopicIfMissing() // Deprecated. It will be removed in next releases
-                .withDefaultProducer()
-                .build());
+            ProducerRegistration.builder().forTopic(topicName).withDefaultProducer().build());
     assertThat(producer).isNotNull();
-  }
-
-  @Test
-  void createTopicException() {
-    String topicName = "createTopicException";
-    ExpectedTopicConfiguration topic =
-        TopicConfigurationBuilder.builder(topicName)
-            .withPartitionCount(2)
-            .withReplicationFactor(2)
-            .withConfig("delete.retention.ms", "2000")
-            .withConfig("some.bullshit", "2000")
-            .build();
-    assertThatCode(
-            () ->
-                bundle.registerProducer(
-                    ProducerRegistration.builder()
-                        .forTopic(topic)
-                        .createTopicIfMissing() // Deprecated. It will be removed in next releases
-                        .withDefaultProducer()
-                        .build()))
-        .isInstanceOf(TopicCreationException.class);
   }
 
   @Test
@@ -328,11 +298,7 @@ class KafkaTopicIT {
             .build();
     MessageProducer<Object, Object> producer =
         bundle.registerProducer(
-            ProducerRegistration.builder()
-                .forTopic(topic)
-                .createTopicIfMissing() // Deprecated. It will be removed in next releases
-                .withDefaultProducer()
-                .build());
+            ProducerRegistration.builder().forTopic(topic).withDefaultProducer().build());
     assertThat(producer).isNotNull();
   }
 }
