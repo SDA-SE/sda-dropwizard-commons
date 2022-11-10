@@ -22,7 +22,6 @@ dependencies {
   api project(':sda-commons-server-kafka')
   api project(':sda-commons-server-kafka-testing')
   api project(':sda-commons-server-mongo-testing')
-  api project(':sda-commons-server-morphia')
   api project(':sda-commons-server-openapi')
   api project(':sda-commons-server-opentracing')
   api project(':sda-commons-server-prometheus')
