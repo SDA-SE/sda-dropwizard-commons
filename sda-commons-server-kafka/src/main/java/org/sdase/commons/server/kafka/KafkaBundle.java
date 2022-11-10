@@ -13,14 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.CreateTopicsResult;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -38,7 +33,6 @@ import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.config.TopicConfig;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
-import org.sdase.commons.server.kafka.exception.TopicCreationException;
 import org.sdase.commons.server.kafka.health.ExternalKafkaHealthCheck;
 import org.sdase.commons.server.kafka.health.KafkaHealthCheck;
 import org.sdase.commons.server.kafka.producer.KafkaMessageProducer;
@@ -47,7 +41,6 @@ import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 import org.sdase.commons.server.kafka.prometheus.KafkaConsumerMetrics;
 import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
 import org.sdase.commons.server.kafka.topicana.ComparisonResult;
-import org.sdase.commons.server.kafka.topicana.EvaluationException;
 import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException;
 import org.sdase.commons.server.kafka.topicana.TopicComparer;
@@ -235,11 +228,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
     checkInit();
 
-    // this functionality will be removed in the next releases
-    if (registration.isCreateTopicIfMissing()) {
-      createNotExistingTopics(Collections.singletonList(registration.getTopic()));
-    }
-
     if (registration.isCheckTopicConfiguration()) {
       ComparisonResult comparisonResult =
           checkTopics(Collections.singletonList(registration.getTopic()));
@@ -261,25 +249,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   }
 
   /**
-   * Checks or creates a collection of topics with respect to its configuration
-   *
-   * @param topics Collection of topic configurations that should be checked
-   */
-  private void createNotExistingTopics(Collection<ExpectedTopicConfiguration> topics) {
-    if (kafkaConfiguration.isDisabled()) {
-      return;
-    }
-    // find out what topics are missing
-    ComparisonResult comparisonResult = checkTopics(topics);
-    if (!comparisonResult.getMissingTopics().isEmpty()) {
-      createTopics(
-          topics.stream()
-              .filter(t -> comparisonResult.getMissingTopics().contains(t.getTopicName()))
-              .collect(Collectors.toList()));
-    }
-  }
-
-  /**
    * Checks if the defined topics are available on the broker for the provided credentials
    *
    * @param topics list of topics to test
@@ -290,45 +259,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     }
     TopicComparer topicComparer = new TopicComparer();
     return topicComparer.compare(topics, kafkaConfiguration);
-  }
-
-  private void createTopics(Collection<ExpectedTopicConfiguration> topics) {
-    try (final AdminClient adminClient =
-        AdminClient.create(KafkaProperties.forAdminClient(kafkaConfiguration))) {
-      List<NewTopic> topicList =
-          topics.stream()
-              .map(
-                  t -> {
-                    int partitions = 1;
-                    int replications = 1;
-                    if (!t.getPartitions().isSpecified()) {
-                      LOGGER.warn(
-                          "Partitions for topic '{}' is not specified. Using default value 1",
-                          t.getTopicName());
-                    } else {
-                      partitions = t.getPartitions().count();
-                    }
-
-                    if (!t.getReplicationFactor().isSpecified()) {
-                      LOGGER.warn(
-                          "Replication factor for topic '{}' is not specified. Using default value 1",
-                          t.getTopicName());
-                    } else {
-                      replications = t.getReplicationFactor().count();
-                    }
-
-                    return new NewTopic(t.getTopicName(), partitions, (short) replications)
-                        .configs(t.getProps());
-                  })
-              .collect(Collectors.toList());
-      CreateTopicsResult result = adminClient.createTopics(topicList);
-      result.all().get();
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new EvaluationException("Exception during adminClient.createTopics", e);
-    } catch (ExecutionException e) {
-      throw new TopicCreationException("TopicConfig creation failed", e);
-    }
   }
 
   @SuppressWarnings("static-method")

@@ -47,6 +47,7 @@ class KafkaExampleProducerIT {
   void testUseProducer() throws JsonProcessingException {
     // given
     KafkaExampleProducerApplication application = DW.getApplication();
+    KAFKA.getKafkaTestUtils().createTopic(TOPIC_NAME, 1, Short.valueOf("1"));
     final String key = "key";
     final String v1 = "v1";
     final String v2 = "v2";
@@ -79,6 +80,7 @@ class KafkaExampleProducerIT {
   void testUseProducerWithConfiguration() {
     // given
     KafkaExampleProducerApplication application = DW.getApplication();
+    KAFKA.getKafkaTestUtils().createTopic("exampleTopicConfiguration", 1, Short.valueOf("1"));
 
     // when
     application.sendExampleWithConfiguration(1L, 2L);
