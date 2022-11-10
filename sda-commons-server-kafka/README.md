@@ -179,7 +179,6 @@ public class DemoApplication {
                   .withPartitionCount(2)
                   .withConfig(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT).build())
                   .checkTopicConfiguration() // enforces that topic must be configured exactly as defined above
-                  .createTopicIfMissing()    // creates the topic if no topic has been found. Deprecated. It will be removed in the next releases
                   .withProducerConfig("producer1") // use producer config from config yaml
                   .build());
 
@@ -606,10 +605,6 @@ records. The next poll will retry the records on this partition starting with th
 To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config YAML or
 by specifying a configuration in code. The user takes over the full responsibility and have to ensure that the consumer is closed when not
 longer used.
-
-## Deprecation of `createTopicIfMissing` method
-This method will be removed in the next releases. Instead of creating the topic programmatically, now the developers are responsible to create the topics manually, or request to the DevOps team to do that.
-This approach will prevent misconfiguration of topics and give the teams better control of created resources.
 
 ## Migration information (from kafka-commons)
 
