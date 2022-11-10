@@ -2,8 +2,8 @@ package org.sdase.commons.server.jackson.hal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.sda.commons.server.jackson.hal.HalLinkProvider.linkTo;
-import static org.sda.commons.server.jackson.hal.HalLinkProvider.methodOn;
+import static org.sdase.commons.server.jackson.hal.HalLinkProvider.linkTo;
+import static org.sdase.commons.server.jackson.hal.HalLinkProvider.methodOn;
 
 import io.openapitools.jackson.dataformat.hal.HALLink;
 import java.net.URI;
@@ -13,48 +13,43 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import org.junit.Test;
-import org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException;
-import org.sda.commons.server.jackson.hal.LinkResult;
 
 public class HalLinkProviderTest {
 
   @Test
   public void shouldProvideHalLinkForNormalPathParams() {
-    final org.sda.commons.server.jackson.hal.LinkResult linkResult =
-        linkTo(methodOn(TestApi.class).testMethod("TEST"));
+    final LinkResult linkResult = linkTo(methodOn(TestApi.class).testMethod("TEST"));
     assertLinkResult(linkResult, "/testPath/TEST");
   }
 
   @Test
   public void shouldFailWhenNoInterfaceIsProvided() {
     assertThatThrownBy(() -> linkTo(methodOn(TestController.class).testMethod("FAIL")))
-        .isInstanceOf(org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException.class);
+        .isInstanceOf(HalLinkMethodInvocationException.class);
   }
 
   @Test
   public void shouldProvideHalLinkForQueryParam() {
-    final org.sda.commons.server.jackson.hal.LinkResult linkResult =
-        linkTo(methodOn(TestApi.class).testMethodQueryParam("TEST"));
+    final LinkResult linkResult = linkTo(methodOn(TestApi.class).testMethodQueryParam("TEST"));
     assertLinkResult(linkResult, "/testPath?testRequestParam=TEST");
   }
 
   @Test
   public void shouldProvideHalLinkIgnoringCookieParam() {
-    final org.sda.commons.server.jackson.hal.LinkResult linkResult =
-        linkTo(methodOn(TestApi.class).testMethodCookieParam("TEST"));
+    final LinkResult linkResult = linkTo(methodOn(TestApi.class).testMethodCookieParam("TEST"));
     assertLinkResult(linkResult, "/testPath");
   }
 
   @Test
   public void shouldProvideHalLinkForDetailed() {
-    final org.sda.commons.server.jackson.hal.LinkResult linkResult =
+    final LinkResult linkResult =
         linkTo(methodOn(TestApi.class).testMethodDetail("TEST", 1, "testTheQuery"));
     assertLinkResult(linkResult, "/testPath/TEST/detail/testTheQuery?query=1");
   }
 
   @Test
   public void shouldProvideHalLinkForDetailedAndIgnoreQueryParamWithNullValue() {
-    final org.sda.commons.server.jackson.hal.LinkResult linkResult =
+    final LinkResult linkResult =
         linkTo(methodOn(TestApi.class).testMethodDetail("TEST", null, "testTheQuery"));
     assertLinkResult(linkResult, "/testPath/TEST/detail/testTheQuery");
   }
@@ -63,20 +58,19 @@ public class HalLinkProviderTest {
   public void shouldFailWithoutAnnotation() {
     assertThatThrownBy(
             () -> linkTo(methodOn(TestApi.class).testMethodWithoutPathParamAnnotation("FAIL")))
-        .isInstanceOf(org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException.class);
+        .isInstanceOf(HalLinkMethodInvocationException.class);
   }
 
   @Test
   public void shouldDoNothingWhenNoParamsAreProvided() {
-    final org.sda.commons.server.jackson.hal.LinkResult linkResult =
-        linkTo(methodOn(TestApi.class).testMethodWithoutParams());
+    final LinkResult linkResult = linkTo(methodOn(TestApi.class).testMethodWithoutParams());
     assertLinkResult(linkResult, "/testPathWithNoParams");
   }
 
   @Test
   public void shouldFailWithNonProxiedMethod() {
     assertThatThrownBy(() -> linkTo("testMethod"))
-        .isInstanceOf(org.sda.commons.server.jackson.hal.HalLinkMethodInvocationException.class);
+        .isInstanceOf(HalLinkMethodInvocationException.class);
   }
 
   @Test
