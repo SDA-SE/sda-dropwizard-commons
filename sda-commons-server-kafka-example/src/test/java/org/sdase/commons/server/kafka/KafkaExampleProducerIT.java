@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -18,8 +19,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.model.Key;
 import org.sdase.commons.server.kafka.model.Value;
+import org.sdase.commons.server.kafka.testing.CreateKafkaTopicsClassExtension;
 
 class KafkaExampleProducerIT {
+  private static final String TOPIC_NAME = "exampleTopic";
 
   @RegisterExtension
   @Order(0)
@@ -35,13 +38,17 @@ class KafkaExampleProducerIT {
 
   @RegisterExtension
   @Order(1)
+  static final CreateKafkaTopicsClassExtension TOPICS =
+      new CreateKafkaTopicsClassExtension(
+          KAFKA, Arrays.asList(TOPIC_NAME, "exampleTopicConfiguration"));
+
+  @RegisterExtension
+  @Order(2)
   static final DropwizardAppExtension<KafkaExampleConfiguration> DW =
       new DropwizardAppExtension<>(
           KafkaExampleProducerApplication.class,
           resourceFilePath("test-config-producer.yml"),
           config("kafka.brokers", KAFKA::getKafkaConnectString));
-
-  private static final String TOPIC_NAME = "exampleTopic";
 
   @Test
   void testUseProducer() throws JsonProcessingException {
