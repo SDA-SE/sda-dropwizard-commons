@@ -54,40 +54,7 @@ public class MyTestIT {
 There is also a `assertThat(...).hasYamlContentAndUpdateGolden(...)` variant that interprets the content as
 YAML or JSON and ignores the order of keys. If possible, prefer the other variant since the written
 content should always be reproducible. Note that the [AsyncAPI](../sda-commons-shared-asyncapi) and
-[OpenAPI](../sda-commons-server-openapi) generations export reproducible content. 
-
-## Provided JUnit 4 Rules
-
-### EnvironmentRule
-
-The [`EnvironmentRule`](./src/main/java/org/sdase/commons/server/testing/EnvironmentRule.java) 
-allows to override or unset environment variables in test cases and resets them to the state before 
-the test after the test finished.
-
-**WARNING**
-
-Java considers environment variables to be immutable, so this extension uses reflection to change 
-them. This requires that the SecurityManager allows modifications and can potentially break on 
-different operating systems and Java versions. Be aware that this is a fragile solution and consider
-finding a better one for your specific situation.
-
-Most of the time using the `SystemPropertyRule` should also work for you since our Dropwizard setup
-supports looking up environment variables AND system properties when replacing variables in your
-configuration file.
-
-#### Example
-
-```java
-public class CustomIT {
-
-    @ClassRule
-    public static final EnvironmentRule ENV = new EnvironmentRule()
-            .setEnv("DISABLE_AUTH", Boolean.TRUE.toString())
-            .unsetEnv("USER_NAME");
-
-    // ...
-}
-```
+[OpenAPI](../sda-commons-server-openapi) generations export reproducible content.
 
 ### SystemPropertyRule
 
