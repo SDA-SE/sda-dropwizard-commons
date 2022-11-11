@@ -6,13 +6,10 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Objects;
-import org.apache.commons.lang3.JavaVersion;
-import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.sdase.commons.server.auth.config.AuthConfig;
-import org.sdase.commons.server.testing.Environment;
 
 public class AuthClassExtension extends AbstractAuth
     implements BeforeAllCallback, AfterAllCallback {
@@ -99,19 +96,11 @@ public class AuthClassExtension extends AbstractAuth
   }
 
   private String getCurrentValueForAuthRuleEnv() {
-    if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_16)) {
-      return System.getProperty(AUTH_RULE_ENV_KEY);
-    } else {
-      return System.getenv(AUTH_RULE_ENV_KEY);
-    }
+    return System.getProperty(AUTH_RULE_ENV_KEY);
   }
 
   private void setValueForAuthRuleEnv(String value) {
-    if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_16)) {
-      System.setProperty(AUTH_RULE_ENV_KEY, value);
-    } else {
-      Environment.setEnv(AUTH_RULE_ENV_KEY, value);
-    }
+    System.setProperty(AUTH_RULE_ENV_KEY, value);
   }
 
   //
