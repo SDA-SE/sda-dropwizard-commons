@@ -8,14 +8,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import org.apache.commons.lang3.JavaVersion;
-import org.apache.commons.lang3.SystemUtils;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.auth.config.AuthConfig;
-import org.sdase.commons.server.testing.EnvironmentRule;
 import org.sdase.commons.server.testing.SystemPropertyRule;
 
 /**
@@ -128,9 +125,7 @@ public class AuthRule extends AbstractAuth implements TestRule {
   }
 
   static TestRule createTestRule(String authConfig) {
-    return SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_16)
-        ? new SystemPropertyRule().setProperty(AUTH_RULE_ENV_KEY, authConfig)
-        : new EnvironmentRule().setEnv(AUTH_RULE_ENV_KEY, authConfig);
+    return new SystemPropertyRule().setProperty(AUTH_RULE_ENV_KEY, authConfig);
   }
 
   //
