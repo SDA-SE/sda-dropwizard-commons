@@ -2,11 +2,11 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka-testing)
 
-The module `sda-commons-server-kafka-testing` is the base module to add unit and integrations test for Kafka broker usage.
+The module `sda-commons-server-kafka-testing` is the base module to add unit and integration test for Kafka broker usage.
 
 It includes the dependencies to [sda-commons-server-testing](../sda-commons-server-testing/README.md) module.
 
-## Use with Kafka-Unit 4
+## Use with JUnit 4
 
 The kafka-junit4 library provides means for easily setting up a Kafka broker that can be reconfigured easily by using the following class rule:
 ```java
@@ -35,7 +35,7 @@ private static final DropwizardAppRule<KafkaTestConfiguration> DW =
       );
 ```
 
-## Usage with Kafka-Unit 5
+## Usage with JUnit 5
 
 The same things can be done if you prefer JUnit 5. You just have to replace the class rule
 by the extension of the same name from package `com.salesforce.kafka.test.junit5` and use 
@@ -65,4 +65,30 @@ class KafkaJUnit5IT {
       );
 
 }
+```
+
+## Create topics
+
+When setting up your test class you might have problems if producers or consumers want to register
+with a topic that does not exist. Do ease the creation of topics you can use the following
+Junit 5 extension. Make sure that this class extension is executed **after** the Kafka server was
+started but **before** your application starts up. Example:
+
+```java
+  @RegisterExtension
+  @Order(0)
+  static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
+
+  @RegisterExtension
+  @Order(1)
+  static final CreateKafkaTopicsClassExtension TOPICS =
+      new CreateKafkaTopicsClassExtension(KAFKA, Arrays.asList("foo", "bar"));
+
+  @RegisterExtension
+  @Order(2)
+  static final DropwizardAppExtension<KafkaExampleConfiguration> DW =
+      new DropwizardAppExtension<>(
+          KafkaExampleProducerApplication.class,
+          resourceFilePath("test-config-producer.yml"),
+          config("kafka.brokers", KAFKA::getKafkaConnectString));
 ```
