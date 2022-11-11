@@ -4,13 +4,10 @@ import com.salesforce.kafka.test.KafkaBroker;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.JavaVersion;
-import org.apache.commons.lang3.SystemUtils;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.sdase.commons.server.testing.Environment;
 
 /**
  * Rule for setting the Environment Variable `BROKER_CONNECTION_STRING`
@@ -67,18 +64,10 @@ public class KafkaBrokerEnvironmentRule implements TestRule, KafkaBrokerRule {
   }
 
   private void setConnectionString(String value) {
-    if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_16)) {
-      System.setProperty(CONNECTION_STRING_ENV, value);
-    } else {
-      Environment.setEnv(CONNECTION_STRING_ENV, value);
-    }
+    System.setProperty(CONNECTION_STRING_ENV, value);
   }
 
   private void clearConnectionString() {
-    if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_16)) {
-      System.clearProperty(CONNECTION_STRING_ENV);
-    } else {
-      Environment.unsetEnv(CONNECTION_STRING_ENV);
-    }
+    System.clearProperty(CONNECTION_STRING_ENV);
   }
 }
