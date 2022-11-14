@@ -15,7 +15,6 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
 
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import javax.ws.rs.client.Client;
@@ -81,11 +80,13 @@ public class GenericClientTimeoutTest {
   @Test
   @Retry(5)
   public void runIntoConfiguredConnectionTimeout() {
+    HttpClientConfiguration clientConfiguration = new HttpClientConfiguration();
+    clientConfiguration.setConnectionTimeout(io.dropwizard.util.Duration.seconds(2));
+
     Client client =
         app.getJerseyClientBundle()
             .getClientFactory()
-            .externalClient()
-            .withConnectionTimeout(Duration.ofSeconds(2))
+            .externalClient(clientConfiguration)
             .buildGenericClient("test");
 
     CompletableFuture<Response> future =
@@ -140,11 +141,12 @@ public class GenericClientTimeoutTest {
     WIRE.stubFor(
         get("/timeout").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(5000)));
 
+    HttpClientConfiguration clientConfiguration = new HttpClientConfiguration();
+    clientConfiguration.setTimeout(io.dropwizard.util.Duration.seconds(4));
     Client client =
         app.getJerseyClientBundle()
             .getClientFactory()
-            .externalClient()
-            .withReadTimeout(Duration.ofSeconds(4))
+            .externalClient(clientConfiguration)
             .buildGenericClient("test");
 
     CompletableFuture<Response> future =
