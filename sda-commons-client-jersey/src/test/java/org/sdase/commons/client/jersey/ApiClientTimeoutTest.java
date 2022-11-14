@@ -16,7 +16,6 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
 import com.codahale.metrics.MetricFilter;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -84,11 +83,13 @@ public class ApiClientTimeoutTest {
   @Test
   @Retry(5)
   public void runIntoConfiguredConnectionTimeout() {
+    HttpClientConfiguration clientConfiguration = new HttpClientConfiguration();
+    clientConfiguration.setConnectionTimeout(io.dropwizard.util.Duration.seconds(2));
+
     MockApiClient client =
         app.getJerseyClientBundle()
             .getClientFactory()
-            .externalClient()
-            .withConnectionTimeout(Duration.ofSeconds(2))
+            .externalClient(clientConfiguration)
             .api(MockApiClient.class)
             .atTarget("http://192.168.123.123");
 
@@ -137,11 +138,12 @@ public class ApiClientTimeoutTest {
     WIRE.stubFor(
         get("/api/cars").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(5000)));
 
+    HttpClientConfiguration clientConfiguration = new HttpClientConfiguration();
+    clientConfiguration.setTimeout(io.dropwizard.util.Duration.seconds(4));
     MockApiClient client =
         app.getJerseyClientBundle()
             .getClientFactory()
-            .externalClient()
-            .withReadTimeout(Duration.ofSeconds(4))
+            .externalClient(clientConfiguration)
             .api(MockApiClient.class)
             .atTarget(WIRE.baseUrl());
 
