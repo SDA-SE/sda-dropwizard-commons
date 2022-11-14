@@ -7,7 +7,6 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
 import io.opentracing.Tracer;
 import java.net.ProxySelector;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.client.Client;
@@ -24,7 +23,7 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> the type of the subclass
  */
-abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
+abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseClientBuilder.class);
   /**
@@ -33,17 +32,13 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
    */
   private static final boolean DEFAULT_FOLLOW_REDIRECTS = true;
 
-  private HttpClientConfiguration httpClientConfiguration;
-  private JerseyClientBuilder jerseyClientBuilder;
+  private final HttpClientConfiguration httpClientConfiguration;
+  private final JerseyClientBuilder jerseyClientBuilder;
   private final Tracer tracer;
   private final ObjectMapper objectMapper;
 
-  private List<ClientRequestFilter> filters;
-  private List<Feature> features;
-
-  private Integer connectionTimeoutMillis;
-
-  private Integer readTimeoutMillis;
+  private final List<ClientRequestFilter> filters;
+  private final List<Feature> features;
 
   private boolean followRedirects;
 
@@ -89,59 +84,13 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
   }
 
   /**
-   * Sets the connection timeout for the clients that are built with this instance. The connection
-   * timeout is the amount of time to wait until the connection to the server is established. The
-   * default is {@value
-   * org.sdase.commons.client.jersey.HttpClientConfiguration#DEFAULT_CONNECTION_TIMEOUT_MS}ms.
-   *
-   * <p>If the connection timeout is overdue a {@link javax.ws.rs.ProcessingException} wrapping a
-   * {@link org.apache.http.conn.ConnectTimeoutException} is thrown by the client.
-   *
-   * @param connectionTimeout the time to wait until a connection to the remote service is
-   *     established
-   * @return this builder instance
-   * @deprecated The client is now configurable with the Dropwizard configuration. Please use {@link
-   *     HttpClientConfiguration#setConnectionTimeout} instead.
-   */
-  @Deprecated
-  public T withConnectionTimeout(Duration connectionTimeout) {
-    this.connectionTimeoutMillis = (int) connectionTimeout.toMillis();
-    //noinspection unchecked
-    return (T) this;
-  }
-
-  /**
-   * Sets the read timeout for the clients that are built with this instance. The read timeout is
-   * the timeout to wait for data in an established connection. Usually this timeout is violated
-   * when the client has sent the request and is waiting for the first byte of the response while
-   * the server is doing calculations, accessing a database or delegating to other services. The
-   * default is {@value
-   * org.sdase.commons.client.jersey.HttpClientConfiguration#DEFAULT_TIMEOUT_MS}ms. The read timeout
-   * should be set wisely according to the use case considering how long a user is willing to wait
-   * and how long backend operations need.
-   *
-   * <p>If the connection timeout is overdue a {@link javax.ws.rs.ProcessingException} wrapping a
-   * {@link java.net.SocketTimeoutException} is thrown by the client.
-   *
-   * @param readTimeout the time to wait for content in an established connection
-   * @return this builder instance
-   * @deprecated The client is now configurable with the Dropwizard configuration. Please use {@link
-   *     HttpClientConfiguration#setTimeout} instead.
-   */
-  @Deprecated
-  public T withReadTimeout(Duration readTimeout) {
-    this.readTimeoutMillis = (int) readTimeout.toMillis();
-    //noinspection unchecked
-    return (T) this;
-  }
-
-  /**
    * Set this client to not follow redirects and therewith automatically resolve 3xx status codes
    *
    * @return this builder instance
    */
   public T disableFollowRedirects() {
     this.followRedirects = false;
+    //noinspection unchecked
     return (T) this;
   }
 
@@ -155,18 +104,6 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder> {
     // Create a copy of the configuration
     final HttpClientConfiguration configuration =
         objectMapper.convertValue(httpClientConfiguration, httpClientConfiguration.getClass());
-
-    // This is a legacy option that should be removed if the connectionTimeout is no longer
-    // configurable directly.
-    if (connectionTimeoutMillis != null) {
-      configuration.setConnectionTimeout(
-          io.dropwizard.util.Duration.milliseconds(connectionTimeoutMillis));
-    }
-    // This is a legacy option that should be removed if the readTimeout is no longer configurable
-    // directly.
-    if (readTimeoutMillis != null) {
-      configuration.setTimeout(io.dropwizard.util.Duration.milliseconds(readTimeoutMillis));
-    }
 
     Client client = jerseyClientBuilder.using(configuration).build(name);
     filters.forEach(client::register);
