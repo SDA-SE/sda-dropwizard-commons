@@ -5,12 +5,12 @@ import static org.glassfish.jersey.model.Parameter.Source.QUERY;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.UpperSnakeCaseStrategy;
 import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.JerseyViolationException;
-import io.dropwizard.util.Lists;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Path;
@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Maps {@link JerseyViolationException}s to the error structure defined within the rest guidelines.
- * For each {@link javax.validation.ConstraintViolation}, one InvalidParam entry is generated. As
- * error code, the validation name is used as Error Code
+ * For each {@link javax.validation.ConstraintViolation}, one {@link ApiInvalidParam} entry is
+ * generated. As error code, the validation name is used as error code
  */
 @Provider
 public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyViolationException> {
@@ -80,8 +80,9 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
    */
   private static Optional<String> isQueryParameterOrFormParameter(
       ConstraintViolation<?> violation, Invocable invocable) {
-    final Collection<Node> propertyPath = Lists.of(violation.getPropertyPath());
-    final Path.Node parent = propertyPath.stream().skip(1L).findFirst().orElse(null);
+    final Stream<Node> propertyPathStream =
+        StreamSupport.stream(violation.getPropertyPath().spliterator(), false);
+    final Path.Node parent = propertyPathStream.skip(1L).findFirst().orElse(null);
     if (parent == null) {
       return Optional.empty();
     }
@@ -103,19 +104,6 @@ public class JerseyValidationExceptionMapper implements ExceptionMapper<JerseyVi
   }
 
   static String camelToUpperSnakeCase(String camelCase) {
-    // changing the input so that the result matches the way Guava (used before) created camel case
-    String normalizedToMatchGuava = camelCase;
-    boolean allNormalized = false;
-    while (!allNormalized) {
-      String newNormalized = normalizeToMatchGuava(normalizedToMatchGuava);
-      allNormalized = newNormalized.equals(normalizedToMatchGuava);
-      normalizedToMatchGuava = newNormalized;
-    }
-    // end of backward compatibility implementation to match Guava transformation
-    return ERROR_CODE_TRANSLATOR.translate(normalizedToMatchGuava);
-  }
-
-  private static String normalizeToMatchGuava(String normalizedToMatchGuava) {
-    return normalizedToMatchGuava.replaceAll("([A-Z])([A-Z])", "$1_$2");
+    return ERROR_CODE_TRANSLATOR.translate(camelCase);
   }
 }
