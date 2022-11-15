@@ -23,19 +23,6 @@ public class OpaConfig {
    */
   @NotNull private String policyPackage = "";
 
-  /**
-   * readTimeout for opa requests in milliseconds
-   *
-   * @deprecated The client that is used to call the OPA is now configurable. Prefer to configure
-   *     {@code opaClient.timeout} instead:
-   *     <pre>{@code
-   * opa:
-   *   opaClient:
-   *     timeout: 500ms
-   * }</pre>
-   */
-  @Deprecated private Integer readTimeout;
-
   public OpaClientConfiguration getOpaClient() {
     return opaClient;
   }
@@ -69,36 +56,6 @@ public class OpaConfig {
 
   public OpaConfig setPolicyPackage(String policyPackage) {
     this.policyPackage = policyPackage;
-    return this;
-  }
-
-  /**
-   * @deprecated The client that is used to call the OPA is now configurable. Prefer to configure
-   *     {@code opaClient.timeout} instead:
-   *     <pre>{@code
-   * opa:
-   *   opaClient:
-   *     timeout: 500ms
-   * }</pre>
-   */
-  @Deprecated
-  public Integer getReadTimeout() {
-    return readTimeout;
-  }
-
-  /**
-   * @param readTimeout the read timeout
-   * @deprecated The client that is used to call the OPA is now configurable. Prefer to configure
-   *     {@code opaClient.timeout} instead:
-   *     <pre>{@code
-   * opa:
-   *   opaClient:
-   *     timeout: 500ms
-   * }</pre>
-   */
-  @Deprecated
-  public OpaConfig setReadTimeout(Integer readTimeout) {
-    this.readTimeout = readTimeout;
     return this;
   }
 
