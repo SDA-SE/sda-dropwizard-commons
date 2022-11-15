@@ -7,43 +7,45 @@ import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.notMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.MetricFilter;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 /** Test that http client configuration is correct. */
-public class ApiClientConfigurationTest {
+class ApiClientConfigurationTest {
 
-  public static final WireMockRule WIRE =
-      new WireMockRule(new WireMockConfiguration().dynamicPort());
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  public static final DropwizardAppRule<ClientTestConfig> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<ClientTestConfig> DW =
+      new DropwizardAppExtension<>(
           ClientTestApp.class,
           resourceFilePath("test-config.yaml"),
           config("mockBaseUrl", WIRE::baseUrl));
 
-  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(WIRE).around(DW);
-
   private ClientTestApp app;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     WIRE.resetAll();
     app = DW.getApplication();
 
@@ -52,7 +54,7 @@ public class ApiClientConfigurationTest {
   }
 
   @Test
-  public void disableGzip() {
+  void disableGzip() {
     HttpClientConfiguration config = new HttpClientConfiguration();
     config.setGzipEnabled(false);
 
@@ -72,7 +74,7 @@ public class ApiClientConfigurationTest {
   }
 
   @Test
-  public void enableGzipForRequests() {
+  void enableGzipForRequests() {
     HttpClientConfiguration config = new HttpClientConfiguration();
     config.setGzipEnabledForRequests(true);
 
@@ -94,7 +96,7 @@ public class ApiClientConfigurationTest {
   }
 
   @Test
-  public void enableChunkedEncoding() {
+  void enableChunkedEncoding() {
     HttpClientConfiguration config = new HttpClientConfiguration();
     config.setChunkedEncodingEnabled(true);
 

@@ -1,6 +1,13 @@
 package org.sdase.commons.client.jersey.oidc;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.FixtureHelpers.fixture;
@@ -13,40 +20,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.MetricFilter;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
-import com.github.tomakehurst.wiremock.jetty9.JettyHttpServerFactory;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.client.jersey.oidc.model.OidcResult;
 import org.sdase.commons.client.jersey.oidc.model.OidcState;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
-public class OidcClientCacheDisabledTest {
+class OidcClientCacheDisabledTest {
   private static final String CLIENT_ID = "id";
   private static final String CLIENT_SECRET = "secret";
   private static final String GRANT_TYPE = "client_credentials";
 
-  public static final WireMockClassRule WIRE =
-      new WireMockClassRule(
-          wireMockConfig().dynamicPort().httpServerFactory(new JettyHttpServerFactory()));
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final DropwizardAppRule<ClientTestConfig> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<ClientTestConfig> DW =
+      new DropwizardAppExtension<>(
           ClientTestApp.class,
           resourceFilePath("test-config.yaml"),
           config("oidc.issuerUrl", () -> WIRE.baseUrl() + "/issuer"),
           config("oidc.cache.disabled", "true"));
 
-  @ClassRule public static final RuleChain RULE = RuleChain.outerRule(WIRE).around(DW);
-
   private ClientTestApp app;
 
-  @Before
-  public void before() {
+  @BeforeEach
+  void before() {
     WIRE.resetAll();
     app = DW.getApplication();
     app.getOidcClient().clearCache();
@@ -78,7 +85,7 @@ public class OidcClientCacheDisabledTest {
   }
 
   @Test
-  public void shouldCallEndpointsForEachToken() {
+  void shouldCallEndpointsForEachToken() {
     OidcResult firstResult = app.getOidcClient().createAccessToken();
     assertThat(firstResult.getState()).isEqualTo(OidcState.OK);
 
