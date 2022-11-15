@@ -12,7 +12,6 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Duration;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import java.util.ArrayList;
@@ -37,7 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The OPA bundle enables support for the Open Policy Agent (http://openpolicyagent.org).
+ * The OPA bundle enables support for the <a href="http://openpolicyagent.org">Open Policy
+ * Agent</a>.
  *
  * <p>Note, the OPA bundle is not an alternative for the @{@link
  * org.sdase.commons.server.auth.AuthBundle} it is an addition for authorization. The {@link
@@ -91,14 +91,9 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     return new Builder<>();
   }
 
-  /**
-   * VisibleForTesting
-   *
-   * @deprecated This method will not be publicly visible anymore; please remove any references
-   */
-  @Deprecated
+  /** VisibleForTesting */
   @SuppressWarnings("java:S1452") // allow generic wildcard type
-  public Map<String, OpaInputExtension<?>> getInputExtensions() {
+  Map<String, OpaInputExtension<?>> getInputExtensions() {
     return inputExtensions;
   }
 
@@ -171,12 +166,6 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
       Environment environment, OpaConfig config, ObjectMapper objectMapper, Tracer tracer) {
     OpaClientConfiguration clientConfig =
         config.getOpaClient() == null ? new OpaClientConfiguration() : config.getOpaClient();
-
-    // set read timeout if complex decisions are necessary. This is a legacy option that should be
-    // removed if the readTimeout is no longer configurable directly.
-    if (config.getReadTimeout() != null) {
-      clientConfig.setTimeout(Duration.milliseconds(config.getReadTimeout()));
-    }
 
     Client client =
         new JerseyClientBuilder(environment)
