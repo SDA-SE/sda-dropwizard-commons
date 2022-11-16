@@ -24,7 +24,7 @@ import org.sdase.commons.server.opa.testing.test.ConstraintModel;
 
 class OpaClassExtensionIT {
 
-  @RegisterExtension static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
+  @RegisterExtension private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
   private final String path = "resources";
   private final String method = "GET";
