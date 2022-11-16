@@ -19,11 +19,11 @@ public class OpaClassExtensionProgrammaticIT {
 
   @RegisterExtension
   @Order(0)
-  static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
+  private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
   @RegisterExtension
   @Order(1)
-  static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
       new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
           resourceFilePath("test-opa-config.yaml"),
