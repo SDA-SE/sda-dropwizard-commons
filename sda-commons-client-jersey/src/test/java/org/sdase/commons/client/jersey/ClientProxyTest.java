@@ -7,53 +7,62 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.SetSystemProperty;
+import org.junitpioneer.jupiter.SetSystemProperty.SetSystemProperties;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
-import org.sdase.commons.server.testing.SystemPropertyRule;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
+import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 
 /** A test that checks if the proxy can be configured via system properties */
-public class ClientProxyTest {
-  private static final WireMockClassRule CONTENT_WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+@SetSystemProperties({
+  @SetSystemProperty(key = "http.proxyHost", value = "0.0.0.0"),
+  @SetSystemProperty(key = "http.nonProxyHosts", value = "localhost")
+})
+class ClientProxyTest {
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension CONTENT_WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final WireMockClassRule PROXY_WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  @Order(1)
+  private static final WireMockClassExtension PROXY_WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final SystemPropertyRule PROP =
-      new SystemPropertyRule()
-          .setProperty("http.proxyHost", "localhost")
-          .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port())
-          .setProperty("http.nonProxyHosts", "localhost");
+  @RegisterExtension
+  @Order(2)
+  private static final SystemPropertyClassExtension PROP =
+      new SystemPropertyClassExtension()
+          .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port());
 
-  private static final DropwizardAppRule<ClientTestConfig> DW =
-      new DropwizardAppRule<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
+  @RegisterExtension
+  @Order(3)
+  static final DropwizardAppExtension<ClientTestConfig> DW =
+      new DropwizardAppExtension<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
 
-  @ClassRule
-  public static final RuleChain rule =
-      RuleChain.outerRule(CONTENT_WIRE).around(PROXY_WIRE).around(PROP).around(DW);
-
-  @Before
-  public void before() {
+  @BeforeEach
+  void before() {
     CONTENT_WIRE.resetAll();
     PROXY_WIRE.resetAll();
   }
 
   @Test
-  public void shouldUseProxy() {
+  void shouldUseProxy() {
     // given: expect that the proxy receives the request
     PROXY_WIRE.stubFor(get("/").withHeader(HttpHeaders.HOST, equalTo("sda.se")).willReturn(ok()));
 
@@ -70,8 +79,8 @@ public class ClientProxyTest {
   }
 
   @Test
-  public void shouldNotUseProxy() {
-    String url = String.format("localhost:%d", CONTENT_WIRE.port());
+  void shouldNotUseProxy() {
+    String url = format("localhost:%d", CONTENT_WIRE.port());
 
     // given: expect that the proxy is skipped
     CONTENT_WIRE.stubFor(
