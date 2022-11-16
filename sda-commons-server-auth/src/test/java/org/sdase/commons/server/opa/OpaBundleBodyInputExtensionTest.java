@@ -12,12 +12,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -29,49 +28,47 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.extension.OpaInputExtension;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class OpaBundleBodyInputExtensionTest {
-  private static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+class OpaBundleBodyInputExtensionTest {
 
-  private static final DropwizardAppRule<TestConfiguration> DW_WITH_EXTENSION =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
+
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<TestConfiguration> DW_WITH_EXTENSION =
+      new DropwizardAppExtension<>(
           TestApplicationWithExtension.class,
           null,
           randomPorts(),
           config("opa.baseUrl", WIRE::baseUrl),
           config("opa.policyPackage", "with"),
-
           // relax the timeout to make tests more stable
           config("opa.opaClient.timeout", "1s"));
 
-  private static final DropwizardAppRule<TestConfiguration> DW_WITHOUT_EXTENSION =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(2)
+  private static final DropwizardAppExtension<TestConfiguration> DW_WITHOUT_EXTENSION =
+      new DropwizardAppExtension<>(
           TestApplicationWithoutExtension.class,
           null,
           randomPorts(),
           config("opa.baseUrl", WIRE::baseUrl),
           config("opa.policyPackage", "without"),
-
           // relax the timeout to make tests more stable
           config("opa.opaClient.timeout", "1s"));
 
-  @ClassRule
-  public static RuleChain CHAIN =
-      RuleChain.outerRule(WIRE).around(DW_WITH_EXTENSION).around(DW_WITHOUT_EXTENSION);
-
-  @Rule public final RetryRule retryRule = new RetryRule();
-
-  @BeforeClass
+  @BeforeAll
   public static void before() {
     WIRE.resetAll();
 
@@ -95,8 +92,8 @@ public class OpaBundleBodyInputExtensionTest {
   }
 
   @Test
-  @Retry(5)
-  public void testFailureWhenExtensionIsActivated() {
+  @RetryingTest(5)
+  void testFailureWhenExtensionIsActivated() {
     // given
     WIRE.resetRequests();
 
@@ -115,8 +112,8 @@ public class OpaBundleBodyInputExtensionTest {
   }
 
   @Test
-  @Retry(5)
-  public void testSuccessWhenExtensionIsNotActivated() {
+  @RetryingTest(5)
+  void testSuccessWhenExtensionIsNotActivated() {
     // given
     WIRE.resetRequests();
 

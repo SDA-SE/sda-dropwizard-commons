@@ -9,27 +9,26 @@ import java.util.Optional;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.sdase.commons.server.auth.JwtPrincipal;
 import org.sdase.commons.server.auth.error.JwtAuthException;
 import org.sdase.commons.server.auth.filter.JwtAuthFilter.Builder;
 
-public class JwtAuthFilterTest {
+@ExtendWith(MockitoExtension.class)
+class JwtAuthFilterTest {
   @Mock ContainerRequestContext requestContext;
   @Mock Authenticator<Optional<String>, JwtPrincipal> authenticator;
 
   @Captor ArgumentCaptor<Optional<String>> credentialsCaptor;
 
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-  @Test(expected = JwtAuthException.class)
-  public void throwsOnDefaultEmpty() throws AuthenticationException {
+  @Test
+  void throwsOnDefaultEmpty() throws AuthenticationException {
     // given
     MultivaluedStringMap headers = new MultivaluedStringMap();
 
@@ -40,11 +39,15 @@ public class JwtAuthFilterTest {
         new Builder<JwtPrincipal>().setAuthenticator(authenticator).buildAuthFilter();
 
     // when
-    authFilter.filter(requestContext);
+    Assertions.assertThrows(
+        JwtAuthException.class,
+        () -> {
+          authFilter.filter(requestContext);
+        });
   }
 
   @Test
-  public void shouldAcceptOnDefaultPayload() throws AuthenticationException {
+  void shouldAcceptOnDefaultPayload() throws AuthenticationException {
     // given
     MultivaluedStringMap headers = new MultivaluedStringMap();
     headers.add(HttpHeaders.AUTHORIZATION, "Bearer MY_JWT");
@@ -64,7 +67,7 @@ public class JwtAuthFilterTest {
   }
 
   @Test
-  public void shouldAcceptOnAnonymousEmpty() throws AuthenticationException {
+  void shouldAcceptOnAnonymousEmpty() throws AuthenticationException {
     // given
     MultivaluedStringMap headers = new MultivaluedStringMap();
 
@@ -85,7 +88,7 @@ public class JwtAuthFilterTest {
   }
 
   @Test
-  public void shouldAcceptOnAnonymousPayload() throws AuthenticationException {
+  void shouldAcceptOnAnonymousPayload() throws AuthenticationException {
     // given
     MultivaluedStringMap headers = new MultivaluedStringMap();
     headers.add(HttpHeaders.AUTHORIZATION, "Bearer MY_JWT");

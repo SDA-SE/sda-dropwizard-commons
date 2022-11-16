@@ -7,11 +7,11 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.Resource;
 import io.github.classgraph.ResourceList;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DuplicateClassesTest {
+class DuplicateClassesTest {
 
   /**
    * Number of duplicates seen in the GitHub action build. This number may be different in other
@@ -34,7 +34,7 @@ public class DuplicateClassesTest {
    * href="https://stackoverflow.com/a/52639079">Stackoverflow</a>
    */
   @Test
-  public void checkForDuplicateClasses() {
+  void checkForDuplicateClasses() {
     int numberOfDuplicates = 0;
     ResourceList allResourcesInClasspath = new ClassGraph().scan().getAllResources();
     ResourceList classFilesInClasspath =

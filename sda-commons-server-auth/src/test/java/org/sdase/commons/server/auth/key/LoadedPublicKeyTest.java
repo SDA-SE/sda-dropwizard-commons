@@ -6,12 +6,12 @@ import io.dropwizard.testing.ResourceHelpers;
 import java.io.File;
 import java.net.URI;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LoadedPublicKeyTest {
 
   @Test
-  public void shouldBeEqualWithDifferentKeyInstances() {
+  void shouldBeEqualWithDifferentKeyInstances() {
 
     URI pemKeyLocation = new File(ResourceHelpers.resourceFilePath("rsa-example.pem")).toURI();
     PemKeySource pemKeySource = new PemKeySource(null, null, pemKeyLocation, null);

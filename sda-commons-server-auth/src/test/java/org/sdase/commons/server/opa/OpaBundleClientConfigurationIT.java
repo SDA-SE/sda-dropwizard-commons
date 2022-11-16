@@ -6,6 +6,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -13,13 +14,11 @@ import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
@@ -28,44 +27,44 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.opa.config.OpaConfig;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class OpaBundleClientConfigurationIT {
-  public static final WireMockRule WIRE =
-      new WireMockRule(new WireMockConfiguration().dynamicPort());
+class OpaBundleClientConfigurationIT {
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final DropwizardAppRule<TestConfiguration> DW =
-      new DropwizardAppRule<>(
+  ;
+
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<TestConfiguration> DW =
+      new DropwizardAppExtension<>(
           TestApplication.class,
           null,
           randomPorts(),
           config("opa.baseUrl", WIRE::baseUrl),
           config("opa.policyPackage", "test"),
           config("opa.opaClient.userAgent", "my-user-agent"),
-
           // relax the timeout to make tests more stable
           config("opa.opaClient.timeout", "1s"));
 
-  @ClassRule public static RuleChain RULE = RuleChain.outerRule(WIRE).around(DW);
-
-  @Rule public final RetryRule retryRule = new RetryRule();
-
-  @BeforeClass
-  public static void beforeClass() {
+  @BeforeAll
+  public static void beforeAll() {
     WIRE.resetAll();
     WIRE.stubFor(post(anyUrl()).willReturn(okJson("{\"result\": {\"allow\": true}}")));
   }
 
   @Test
-  @Retry(5)
-  public void shouldSendCustomUserAgentInTheOpaRequest() {
+  @RetryingTest(5)
+  void shouldSendCustomUserAgentInTheOpaRequest() {
     Response response = createWebTarget().request(APPLICATION_JSON).get();
 
     assertThat(response.getStatus()).isEqualTo(SC_OK);
