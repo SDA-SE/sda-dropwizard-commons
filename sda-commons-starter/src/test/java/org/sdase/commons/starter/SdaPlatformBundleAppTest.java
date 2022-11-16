@@ -6,22 +6,22 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Map;
 import javax.ws.rs.core.GenericType;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.starter.test.StarterApp;
 
-public class SdaPlatformBundleAppTest {
+class SdaPlatformBundleAppTest {
 
-  @ClassRule
-  public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  public static final DropwizardAppExtension<SdaPlatformConfiguration> DW =
+      new DropwizardAppExtension<>(
           StarterApp.class, resourceFilePath("test-config.yaml"), config("opa.disableOpa", "true"));
 
   @Test
-  public void pongForPing() {
+  void pongForPing() {
     Map<String, String> actual =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
