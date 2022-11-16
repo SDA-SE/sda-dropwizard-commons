@@ -1,21 +1,21 @@
 package org.sdase.commons.starter;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.openapi.OpenApiBundle;
 import org.sdase.commons.starter.test.BundleAssertion;
 
-public class OpenAPIBuilderTest {
+class OpenAPIBuilderTest {
 
   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     bundleAssertion = new BundleAssertion<>();
   }
 
   @Test
-  public void simplestConfig() {
+  void simplestConfig() {
 
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
@@ -28,7 +28,7 @@ public class OpenAPIBuilderTest {
   }
 
   @Test
-  public void multipleResourcePackages() {
+  void multipleResourcePackages() {
 
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
@@ -46,7 +46,7 @@ public class OpenAPIBuilderTest {
   }
 
   @Test
-  public void withExistingOpenAPIFromClasspathResource() {
+  void withExistingOpenAPIFromClasspathResource() {
 
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
@@ -60,7 +60,7 @@ public class OpenAPIBuilderTest {
   }
 
   @Test
-  public void withoutOpenApiBundle() {
+  void withoutOpenApiBundle() {
 
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder().usingSdaPlatformConfiguration().build();
