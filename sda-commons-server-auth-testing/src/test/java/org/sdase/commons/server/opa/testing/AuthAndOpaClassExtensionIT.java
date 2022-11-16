@@ -30,15 +30,15 @@ public class AuthAndOpaClassExtensionIT {
 
   @RegisterExtension
   @Order(0)
-  static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
-
-  @RegisterExtension
-  @Order(0)
-  static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
+  private static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
   @RegisterExtension
   @Order(1)
-  static final DropwizardAppExtension<AuthAndOpaBundeTestAppConfiguration> DW =
+  private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
+
+  @RegisterExtension
+  @Order(2)
+  private static final DropwizardAppExtension<AuthAndOpaBundeTestAppConfiguration> DW =
       new DropwizardAppExtension<>(
           AuthAndOpaBundleTestApp.class,
           resourceFilePath("test-config.yaml"),
@@ -49,7 +49,7 @@ public class AuthAndOpaClassExtensionIT {
   private String jwt;
 
   @BeforeEach
-  public void before() {
+  void before() {
     jwt = AUTH.auth().buildToken();
     OPA_EXTENSION.reset();
   }
