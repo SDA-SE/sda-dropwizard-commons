@@ -12,12 +12,12 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class JwksKeySourceTest {
+class JwksKeySourceTest {
 
   @Test
-  public void shouldRethrowSameKeyloadFailedException() {
+  void shouldRethrowSameKeyloadFailedException() {
 
     KeyLoadFailedException keyLoadFailedException = new KeyLoadFailedException();
 
@@ -32,7 +32,7 @@ public class JwksKeySourceTest {
   }
 
   @Test
-  public void shouldCloseWebApplicationExceptionResponse() {
+  void shouldCloseWebApplicationExceptionResponse() {
 
     Response response = mock(Response.class);
     Client client = mock(Client.class);
@@ -48,7 +48,7 @@ public class JwksKeySourceTest {
   }
 
   @Test
-  public void shouldHandleExceptionOnCloseWebApplicationException() {
+  void shouldHandleExceptionOnCloseWebApplicationException() {
 
     Response response = mock(Response.class);
     Client client = mock(Client.class);
@@ -64,7 +64,7 @@ public class JwksKeySourceTest {
   }
 
   @Test
-  public void shouldWrapWebApplicationExceptionInKeyloadFailedException() {
+  void shouldWrapWebApplicationExceptionInKeyloadFailedException() {
 
     Response response = mock(Response.class);
     Client client = mock(Client.class);
@@ -79,7 +79,7 @@ public class JwksKeySourceTest {
   }
 
   @Test
-  public void shouldWrapAnyExceptionInKeyloadFailedException() {
+  void shouldWrapAnyExceptionInKeyloadFailedException() {
 
     Exception e = new IllegalArgumentException();
 

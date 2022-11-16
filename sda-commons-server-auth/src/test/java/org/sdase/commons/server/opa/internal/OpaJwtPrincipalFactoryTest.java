@@ -8,17 +8,17 @@ import com.auth0.jwt.interfaces.Claim;
 import java.security.Principal;
 import java.util.Map;
 import javax.ws.rs.core.SecurityContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.opa.OpaJwtPrincipal;
 
-public class OpaJwtPrincipalFactoryTest {
+class OpaJwtPrincipalFactoryTest {
 
   private SecurityContext securityContextMock = mock(SecurityContext.class);
   private OpaJwtPrincipalFactory opaJwtPrincipalFactory =
       new OpaJwtPrincipalFactory(securityContextMock);
 
   @Test
-  public void shouldProvideOpaJwtPrincipalFromSecurityContext() {
+  void shouldProvideOpaJwtPrincipalFromSecurityContext() {
 
     Principal given = emptyOpaJwtPrincipal();
     when(securityContextMock.getUserPrincipal()).thenReturn(given);
@@ -29,7 +29,7 @@ public class OpaJwtPrincipalFactoryTest {
   }
 
   @Test
-  public void shouldSkipOtherTypeOfPrincipal() {
+  void shouldSkipOtherTypeOfPrincipal() {
 
     Principal given = emptyGenericPrincipal();
     when(securityContextMock.getUserPrincipal()).thenReturn(given);
@@ -40,7 +40,7 @@ public class OpaJwtPrincipalFactoryTest {
   }
 
   @Test
-  public void shouldReturnNullIfNoPrincipal() {
+  void shouldReturnNullIfNoPrincipal() {
 
     when(securityContextMock.getUserPrincipal()).thenReturn(null);
 

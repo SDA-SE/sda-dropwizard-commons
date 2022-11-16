@@ -3,9 +3,10 @@ package org.sdase.commons.server.auth.key;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.math.BigInteger;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
@@ -14,18 +15,18 @@ import java.security.spec.ECPoint;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.auth.test.KeyProviderTestApp;
 
-public class OpenIdProviderDiscoveryKeySourceIT {
+class OpenIdProviderDiscoveryKeySourceIT {
 
-  @ClassRule
-  public static DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(KeyProviderTestApp.class, null, randomPorts());
+  @RegisterExtension
+  private static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(KeyProviderTestApp.class, null, randomPorts());
 
   @Test
-  public void shouldLoadKeysFromHttp() {
+  void shouldLoadKeysFromHttp() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "";
     OpenIdProviderDiscoveryKeySource keySource =
@@ -82,21 +83,29 @@ public class OpenIdProviderDiscoveryKeySourceIT {
     return rsaKey;
   }
 
-  @Test(expected = KeyLoadFailedException.class)
-  public void shouldThrowKeyLoadFailedExceptionOnFailure() {
+  @Test
+  void shouldThrowKeyLoadFailedExceptionOnFailure() {
     String location = "http://localhost:" + DW.getLocalPort() + "/test";
     OpenIdProviderDiscoveryKeySource keySource =
         new OpenIdProviderDiscoveryKeySource(location, DW.client(), null);
 
-    keySource.loadKeysFromSource();
+    assertThrows(
+        KeyLoadFailedException.class,
+        () -> {
+          keySource.loadKeysFromSource();
+        });
   }
 
-  @Test(expected = KeyLoadFailedException.class)
-  public void shouldThrowKeyLoadFailedExceptionOnConnectionError() {
+  @Test
+  void shouldThrowKeyLoadFailedExceptionOnConnectionError() {
     String location = "http://unknownhost/test";
     OpenIdProviderDiscoveryKeySource keySource =
         new OpenIdProviderDiscoveryKeySource(location, DW.client(), null);
 
-    keySource.loadKeysFromSource();
+    assertThrows(
+        KeyLoadFailedException.class,
+        () -> {
+          keySource.loadKeysFromSource();
+        });
   }
 }

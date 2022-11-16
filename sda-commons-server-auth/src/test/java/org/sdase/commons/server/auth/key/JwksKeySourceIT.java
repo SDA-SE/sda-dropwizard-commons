@@ -3,9 +3,10 @@ package org.sdase.commons.server.auth.key;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.math.BigInteger;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
@@ -14,18 +15,18 @@ import java.security.spec.ECPoint;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.auth.test.KeyProviderTestApp;
 
-public class JwksKeySourceIT {
+class JwksKeySourceIT {
 
-  @ClassRule
-  public static DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(KeyProviderTestApp.class, null, randomPorts());
+  @RegisterExtension
+  private static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(KeyProviderTestApp.class, null, randomPorts());
 
   @Test
-  public void shouldLoadKeysFromHttp() {
+  void shouldLoadKeysFromHttp() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
     JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
@@ -43,7 +44,7 @@ public class JwksKeySourceIT {
   }
 
   @Test
-  public void shouldLoadRsaPublicKey() {
+  void shouldLoadRsaPublicKey() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
     JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
@@ -66,7 +67,7 @@ public class JwksKeySourceIT {
   }
 
   @Test
-  public void shouldLoadEcPublicKey() {
+  void shouldLoadEcPublicKey() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
     JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
@@ -97,7 +98,7 @@ public class JwksKeySourceIT {
   }
 
   @Test
-  public void shouldLoadNotKeyWithoutAlg() {
+  void shouldLoadNotKeyWithoutAlg() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
     JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
@@ -111,7 +112,7 @@ public class JwksKeySourceIT {
   }
 
   @Test
-  public void shouldNotLoadKeyWithWrongKeyType() {
+  void shouldNotLoadKeyWithWrongKeyType() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
     JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
@@ -125,7 +126,7 @@ public class JwksKeySourceIT {
   }
 
   @Test
-  public void shouldNotLoadKeyWithWrongAlg() {
+  void shouldNotLoadKeyWithWrongAlg() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
     JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
@@ -139,7 +140,7 @@ public class JwksKeySourceIT {
   }
 
   @Test
-  public void shouldConsiderSameKeyLoadedTwiceAsEqual() {
+  void shouldConsiderSameKeyLoadedTwiceAsEqual() {
 
     String location = "http://localhost:" + DW.getLocalPort() + "/jwks";
     JwksKeySource keySource = new JwksKeySource(location, DW.client(), null);
@@ -152,20 +153,28 @@ public class JwksKeySourceIT {
     assertThat(key1.getPublicKey()).isNotSameAs(key2.getPublicKey());
   }
 
-  @Test(expected = KeyLoadFailedException.class)
-  public void shouldFailWithKeyLoadFailedException() {
+  @Test
+  void shouldFailWithKeyLoadFailedException() {
     String location = "http://localhost:" + DW.getLocalPort() + "/invalid-path";
-    new JwksKeySource(location, DW.client(), null).loadKeysFromSource();
-  }
-
-  @Test(expected = KeyLoadFailedException.class)
-  public void shouldFailWithKeyLoadFailedExceptionOnTimeout() {
-    String location = "http://unknownhost/invalid-path";
-    new JwksKeySource(location, DW.client(), null).loadKeysFromSource();
+    assertThrows(
+        KeyLoadFailedException.class,
+        () -> {
+          new JwksKeySource(location, DW.client(), null).loadKeysFromSource();
+        });
   }
 
   @Test
-  public void shouldNotFailOnReload() {
+  void shouldFailWithKeyLoadFailedExceptionOnTimeout() {
+    String location = "http://unknownhost/invalid-path";
+    assertThrows(
+        KeyLoadFailedException.class,
+        () -> {
+          new JwksKeySource(location, DW.client(), null).loadKeysFromSource();
+        });
+  }
+
+  @Test
+  void shouldNotFailOnReload() {
     String location = "http://localhost:" + DW.getLocalPort() + "/invalid-path";
     Optional<List<LoadedPublicKey>> keys =
         new JwksKeySource(location, DW.client(), null).reloadKeysFromSource();
