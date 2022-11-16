@@ -1,8 +1,8 @@
 package org.sdase.commons.starter;
 
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
 import org.sdase.commons.server.cors.CorsBundle;
@@ -19,17 +19,17 @@ import org.sdase.commons.server.security.SecurityBundle;
 import org.sdase.commons.server.trace.TraceTokenBundle;
 import org.sdase.commons.starter.test.BundleAssertion;
 
-public class SdaPlatformBundleBuilderTest {
+class SdaPlatformBundleBuilderTest {
 
   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     bundleAssertion = new BundleAssertion<>();
   }
 
   @Test
-  public void allBundlesRegistered() {
+  void allBundlesRegistered() {
 
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
