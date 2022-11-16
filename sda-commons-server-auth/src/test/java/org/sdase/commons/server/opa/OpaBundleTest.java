@@ -5,16 +5,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.dropwizard.Configuration;
 import javax.ws.rs.container.ContainerRequestContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.opa.OpaBundle.DuplicatePropertyException;
 import org.sdase.commons.server.opa.OpaBundle.HiddenOriginalPropertyException;
 import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.extension.OpaInputExtension;
 import org.sdase.commons.server.opa.extension.OpaInputHeadersExtension;
 
-public class OpaBundleTest {
+class OpaBundleTest {
   @Test
-  public void shouldThrowExceptionIfNamespaceCollidesWithOriginalProperty() {
+  void shouldThrowExceptionIfNamespaceCollidesWithOriginalProperty() {
     assertThatThrownBy(
             () ->
                 OpaBundle.builder()
@@ -26,7 +26,7 @@ public class OpaBundleTest {
   }
 
   @Test
-  public void shouldThrowExceptionIfNamespaceCollidesWithOtherExtension() {
+  void shouldThrowExceptionIfNamespaceCollidesWithOtherExtension() {
     assertThatThrownBy(
             () ->
                 OpaBundle.builder()
@@ -40,7 +40,7 @@ public class OpaBundleTest {
   }
 
   @Test
-  public void shouldActivateHeadersExtensionByDefault() {
+  void shouldActivateHeadersExtensionByDefault() {
     OpaBundle<TestConfiguration> bundle =
         OpaBundle.builder().withOpaConfigProvider(TestConfiguration::getOpa).build();
 
@@ -50,7 +50,7 @@ public class OpaBundleTest {
   }
 
   @Test
-  public void shouldNotActivateHeadersExtensionWhenDisabled() {
+  void shouldNotActivateHeadersExtensionWhenDisabled() {
     OpaBundle<TestConfiguration> bundle =
         OpaBundle.builder()
             .withOpaConfigProvider(TestConfiguration::getOpa)
