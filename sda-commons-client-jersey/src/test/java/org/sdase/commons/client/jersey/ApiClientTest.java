@@ -31,13 +31,12 @@ import com.codahale.metrics.MetricFilter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.jetty9.JettyHttpServerFactory;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.NotFoundException;
@@ -48,45 +47,47 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.assertj.core.util.Lists;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.client.jersey.error.ClientErrorUtil;
 import org.sdase.commons.client.jersey.error.ClientRequestException;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.shared.api.error.ApiException;
 
 public class ApiClientTest {
 
-  public static final WireMockClassRule WIRE =
-      new WireMockClassRule(
-          wireMockConfig().dynamicPort().httpServerFactory(new JettyHttpServerFactory()));
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   public static final Car LIGHT_BLUE_CAR =
       new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
   private static final ObjectMapper OM = new ObjectMapper();
   private static final Car BRIGHT_BLUE_CAR =
       new Car().setSign("HH XX 1234").setColor("bright blue"); // NOSONAR
-  private static final DropwizardAppRule<ClientTestConfig> DW =
-      new DropwizardAppRule<>(
+
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<ClientTestConfig> DW =
+      new DropwizardAppExtension<>(
           ClientTestApp.class,
           resourceFilePath("test-config.yaml"),
           config("mockBaseUrl", WIRE::baseUrl));
 
-  @ClassRule public static final RuleChain RULE = RuleChain.outerRule(WIRE).around(DW);
-
   private ClientTestApp app;
 
-  @Before
-  public void before() throws JsonProcessingException {
+  @BeforeEach
+  void before() throws JsonProcessingException {
     WIRE.resetAll();
     app = DW.getApplication();
 
@@ -135,7 +136,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void sendMultipart() throws IOException {
+  void sendMultipart() throws IOException {
     try (FormDataMultiPart multiPart =
         new FormDataMultiPart()
             .field("test", "test-value", MediaType.TEXT_PLAIN_TYPE)
@@ -184,7 +185,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void sendMultipartWithApiClient() throws IOException {
+  void sendMultipartWithApiClient() throws IOException {
     try (FormDataMultiPart multiPart =
         new FormDataMultiPart()
             .field("test", "test-value", MediaType.TEXT_PLAIN_TYPE)
@@ -222,7 +223,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void loadCars() {
+  void loadCars() {
     List<Car> cars = createMockApiClient().getCars();
 
     assertThat(cars)
@@ -231,7 +232,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void loadCarsWithResponseDetails() {
+  void loadCarsWithResponseDetails() {
     Response response = createMockApiClient().requestCars();
 
     assertThat(response.getStatus()).isEqualTo(200);
@@ -242,7 +243,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void loadCarsWithBasicAuthAndResponseDetails() {
+  void loadCarsWithBasicAuthAndResponseDetails() {
     Response response = createMockApiClientWithBasicAuth().requestCars();
 
     assertThat(response.getStatus()).isEqualTo(200);
@@ -253,7 +254,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void addConsumerToken() {
+  void addConsumerToken() {
     Response response = createMockApiClient().requestCars();
 
     assertThat(response.getStatus()).isEqualTo(200);
@@ -264,7 +265,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void postNewCar() {
+  void postNewCar() {
     try (Response response =
         createMockApiClient().createCar(new Car().setSign("HH AB 1234").setColor("white"))) {
 
@@ -278,7 +279,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void notAddConsumerTokenIfAlreadySet() {
+  void notAddConsumerTokenIfAlreadySet() {
     try (Response response =
         createMockApiClient().requestCarsWithCustomConsumerToken("my-custom-consumer")) {
 
@@ -292,7 +293,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void addReceivedTraceTokenToHeadersToPlatformCall() {
+  void addReceivedTraceTokenToHeadersToPlatformCall() {
     int status =
         dwClient()
             .path("api")
@@ -310,7 +311,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void addReceivedAuthHeaderToPlatformCall() {
+  void addReceivedAuthHeaderToPlatformCall() {
     int status =
         dwClient()
             .path("api")
@@ -329,7 +330,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void notAddingReceivedTraceTokenToHeadersOfExternalCall() {
+  void notAddingReceivedTraceTokenToHeadersOfExternalCall() {
     int status =
         dwClient()
             .path("api")
@@ -346,7 +347,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void notAddingReceivedAuthorizationToHeadersOfExternalCall() {
+  void notAddingReceivedAuthorizationToHeadersOfExternalCall() {
     int status =
         dwClient()
             .path("api")
@@ -363,7 +364,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void loadSingleCar() {
+  void loadSingleCar() {
     Car car = createMockApiClient().getCar("HH XY 4321");
     assertThat(car)
         .extracting(Car::getSign, Car::getColor)
@@ -371,7 +372,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void loadSingleCarWithFieldFilterAllFields() {
+  void loadSingleCarWithFieldFilterAllFields() {
     createMockApiClient().getCarWithFilteredFields("HH XY 4321", asList("sign", "color"));
     verify(
         RequestPatternBuilder.newRequestPattern(
@@ -379,7 +380,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void loadSingleCarWithFieldFilterOneField() {
+  void loadSingleCarWithFieldFilterOneField() {
     createMockApiClient().getCarWithFilteredFields("HH XY 4321", singletonList("color"));
     verify(
         RequestPatternBuilder.newRequestPattern(
@@ -387,7 +388,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void loadLightBlueCarThroughDefaultMethod() {
+  void loadLightBlueCarThroughDefaultMethod() {
     try (Response response = createMockApiClient().getLightBlueCar()) {
       assertThat(response.getStatus()).isEqualTo(200);
       assertThat(response.readEntity(Car.class))
@@ -397,7 +398,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void handle404ErrorInDefaultMethod() {
+  void handle404ErrorInDefaultMethod() {
     WIRE.stubFor(
         get("/api/cars/UNKNOWN")
             .willReturn(
@@ -409,7 +410,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void handleClientErrorInDefaultMethod() {
+  void handleClientErrorInDefaultMethod() {
     WIRE.stubFor(
         get("/api/cars/UNKNOWN")
             .willReturn(
@@ -423,14 +424,14 @@ public class ApiClientTest {
   }
 
   @Test
-  public void failOnLoadingMissingCar() {
+  void failOnLoadingMissingCar() {
     assertThatExceptionOfType(ClientRequestException.class)
         .isThrownBy(() -> createMockApiClient().getCar("HH AA 4444"))
         .withCauseInstanceOf(NotFoundException.class);
   }
 
   @Test
-  public void demonstrateToCloseException() {
+  void demonstrateToCloseException() {
     WIRE.stubFor(
         get("/api/cars/HH%20AA%204444")
             .willReturn(
@@ -449,14 +450,14 @@ public class ApiClientTest {
   }
 
   @Test
-  public void return404ForMissingCar() {
+  void return404ForMissingCar() {
     try (Response response = createMockApiClient().getCarResponse("HH AA 5555")) {
       assertThat(response.getStatus()).isEqualTo(404);
     }
   }
 
   @Test
-  public void return404ForMissingCarWithGenericClient() {
+  void return404ForMissingCarWithGenericClient() {
     try (Response response =
         app.getJerseyClientBundle()
             .getClientFactory()
@@ -473,7 +474,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void return500ForDelegatedMissingCar() {
+  void return500ForDelegatedMissingCar() {
     try (Response response =
         dwClient()
             .path("api")
@@ -487,12 +488,12 @@ public class ApiClientTest {
               entry(
                   "title",
                   "Request could not be fulfilled: Received status '404' from another service."),
-              entry("invalidParams", Lists.emptyList()));
+              entry("invalidParams", Collections.emptyList()));
     }
   }
 
   @Test
-  public void addCustomFiltersToPlatformClient() {
+  void addCustomFiltersToPlatformClient() {
     MockApiClient mockApiClient =
         app.getJerseyClientBundle()
             .getClientFactory()
@@ -512,7 +513,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void addCustomFiltersToExternalClient() {
+  void addCustomFiltersToExternalClient() {
     MockApiClient mockApiClient =
         app.getJerseyClientBundle()
             .getClientFactory()
@@ -531,7 +532,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void failOnReadJsonWithGenericClient() {
+  void failOnReadJsonWithGenericClient() {
 
     WIRE.stubFor(
         get("/badJsonResponse")
@@ -559,7 +560,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void failOnReadJsonWithApiClient() {
+  void failOnReadJsonWithApiClient() {
 
     WIRE.stubFor(
         get("/api/cars/123")
@@ -582,7 +583,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void seeOtherAfterPost() {
+  void seeOtherAfterPost() {
     WIRE.stubFor(
         post("/api/cars")
             .withRequestBody(
@@ -614,7 +615,7 @@ public class ApiClientTest {
   }
 
   @Test
-  public void disableRedirectsForSeeOther() {
+  void disableRedirectsForSeeOther() {
     WIRE.stubFor(
         post("/api/cars")
             .withRequestBody(equalToJson("{ \"sign\": \"HH XY 1234\", \"color\": \"yellow\" }"))

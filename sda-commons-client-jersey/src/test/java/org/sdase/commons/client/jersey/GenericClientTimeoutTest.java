@@ -13,50 +13,46 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.readTimeoutError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.timeoutError;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
-import org.sdase.commons.server.testing.SystemPropertyRule;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 /** Tests that timeouts are correctly mapped. */
-public class GenericClientTimeoutTest {
+class GenericClientTimeoutTest {
 
-  @ClassRule
-  public static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private final DropwizardAppRule<ClientTestConfig> dw =
-      new DropwizardAppRule<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
-
-  @Rule
-  public final RuleChain rule =
-      RuleChain.outerRule(new RetryRule())
-          .around(new SystemPropertyRule().setProperty("MOCK_BASE_URL", WIRE.baseUrl()))
-          .around(dw);
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<ClientTestConfig> dw =
+      new DropwizardAppExtension<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
 
   private ClientTestApp app;
 
-  @Before
-  public void resetRequests() {
+  @BeforeEach
+  void resetRequests() {
     WIRE.resetRequests();
     app = dw.getApplication();
+    // removing client metrics to allow creation of new clients with same id
+    dw.getEnvironment().metrics().removeMatching((name, metric) -> name.contains(".test."));
   }
 
   @Test
-  @Retry(5)
-  public void runIntoDefaultConnectionTimeoutOf500Millis() {
+  @RetryingTest(5)
+  void runIntoDefaultConnectionTimeoutOf500Millis() {
     Client client =
         app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("test");
 
@@ -78,11 +74,10 @@ public class GenericClientTimeoutTest {
   }
 
   @Test
-  @Retry(5)
-  public void runIntoConfiguredConnectionTimeout() {
+  @RetryingTest(5)
+  void runIntoConfiguredConnectionTimeout() {
     HttpClientConfiguration clientConfiguration = new HttpClientConfiguration();
     clientConfiguration.setConnectionTimeout(io.dropwizard.util.Duration.seconds(2));
-
     Client client =
         app.getJerseyClientBundle()
             .getClientFactory()
@@ -108,8 +103,8 @@ public class GenericClientTimeoutTest {
   }
 
   @Test
-  @Retry(5)
-  public void runIntoDefaultReadTimeoutOf2Seconds() {
+  @RetryingTest(5)
+  void runIntoDefaultReadTimeoutOf2Seconds() {
     WIRE.stubFor(
         get("/timeout").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(3000)));
 
@@ -135,8 +130,8 @@ public class GenericClientTimeoutTest {
   }
 
   @Test
-  @Retry(5)
-  public void runIntoConfiguredReadTimeout() {
+  @RetryingTest(5)
+  void runIntoConfiguredReadTimeout() {
 
     WIRE.stubFor(
         get("/timeout").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(5000)));

@@ -27,20 +27,17 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.assertj.core.api.Condition;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-public class ClientRequestExceptionTest {
-
-  @Rule public final MockitoRule mockitoRule = MockitoJUnit.rule();
-
+@ExtendWith(MockitoExtension.class)
+class ClientRequestExceptionTest {
   @Mock Condition<ClientRequestException> condition;
 
   @Test
-  public void identifyClientRequestException() {
+  void identifyClientRequestException() {
     when(condition.matches(any())).thenReturn(true);
 
     assertThatExceptionOfType(Throwable.class)
@@ -54,7 +51,7 @@ public class ClientRequestExceptionTest {
   }
 
   @Test
-  public void ignoreNonClientRequestException() {
+  void ignoreNonClientRequestException() {
     assertThatExceptionOfType(Throwable.class)
         .isThrownBy(
             () -> {
@@ -66,7 +63,7 @@ public class ClientRequestExceptionTest {
   }
 
   @Test
-  public void identifyClientError() {
+  void identifyClientError() {
     assertThatExceptionOfType(ClientRequestException.class)
         .isThrownBy(
             () -> {
@@ -77,7 +74,7 @@ public class ClientRequestExceptionTest {
   }
 
   @Test
-  public void identifyServerError() {
+  void identifyServerError() {
     assertThatExceptionOfType(ClientRequestException.class)
         .isThrownBy(
             () -> {
@@ -88,7 +85,7 @@ public class ClientRequestExceptionTest {
   }
 
   @Test
-  public void identifyConnectTimeout() {
+  void identifyConnectTimeout() {
     assertThatExceptionOfType(ClientRequestException.class)
         .isThrownBy(
             () -> {
@@ -101,7 +98,7 @@ public class ClientRequestExceptionTest {
   }
 
   @Test
-  public void identifyReadTimeout() {
+  void identifyReadTimeout() {
     assertThatExceptionOfType(ClientRequestException.class)
         .isThrownBy(
             () -> {
@@ -114,7 +111,7 @@ public class ClientRequestExceptionTest {
   }
 
   @Test
-  public void identifyProcessing() {
+  void identifyProcessing() {
     assertThatExceptionOfType(ClientRequestException.class)
         .isThrownBy(
             () -> {
@@ -126,7 +123,7 @@ public class ClientRequestExceptionTest {
   }
 
   @Test
-  public void doNotFailOnCloseIfNoResponseIsAvailable() {
+  void doNotFailOnCloseIfNoResponseIsAvailable() {
     ClientRequestException clientRequestException =
         new ClientRequestException(new RuntimeException());
     assertThat(clientRequestException.getResponse()).isNotPresent();
@@ -134,7 +131,7 @@ public class ClientRequestExceptionTest {
   }
 
   @Test
-  public void doNotFailOnCloseException() { // NOSONAR
+  void doNotFailOnCloseException() { // NOSONAR
     Response mockResponse = mock(Response.class);
     doThrow(new RuntimeException()).when(mockResponse).close();
     when(mockResponse.getStatusInfo()).thenReturn(Response.Status.OK);

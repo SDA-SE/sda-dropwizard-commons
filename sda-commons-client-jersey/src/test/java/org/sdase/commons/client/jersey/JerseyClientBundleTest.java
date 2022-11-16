@@ -8,12 +8,12 @@ import static org.mockito.Mockito.mock;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class JerseyClientBundleTest {
+class JerseyClientBundleTest {
 
   @Test
-  public void doNotAccessClientBuilderBeforeInitialize() {
+  void doNotAccessClientBuilderBeforeInitialize() {
 
     JerseyClientBundle<Configuration> clientBundle =
         JerseyClientBundle.builder().withConsumerTokenProvider(c -> "test").build();
@@ -23,7 +23,7 @@ public class JerseyClientBundleTest {
   }
 
   @Test
-  public void doNotAccessClientBuilderBeforeRun() {
+  void doNotAccessClientBuilderBeforeRun() {
 
     JerseyClientBundle<Configuration> clientBundle =
         JerseyClientBundle.builder().withConsumerTokenProvider(c -> "test").build();
@@ -35,7 +35,7 @@ public class JerseyClientBundleTest {
   }
 
   @Test
-  public void accessClientBuilderAfterRun() {
+  void accessClientBuilderAfterRun() {
 
     JerseyClientBundle<Configuration> clientBundle =
         JerseyClientBundle.builder().withConsumerTokenProvider(c -> "test").build();

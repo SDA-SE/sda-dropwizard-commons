@@ -14,43 +14,41 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.timeoutError;
 
 import com.codahale.metrics.MetricFilter;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 /** Test that timeouts are correctly mapped. */
-public class ApiClientTimeoutTest {
+class ApiClientTimeoutTest {
 
-  public static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final DropwizardAppRule<ClientTestConfig> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<ClientTestConfig> DW =
+      new DropwizardAppExtension<>(
           ClientTestApp.class,
           resourceFilePath("test-config.yaml"),
           config("mockBaseUrl", WIRE::baseUrl));
 
-  @ClassRule public static final RuleChain rule = RuleChain.outerRule(WIRE).around(DW);
-
-  @Rule public final RetryRule retryRule = new RetryRule();
-
   private ClientTestApp app;
 
-  @Before
-  public void resetRequests() {
+  @BeforeEach
+  void resetRequests() {
     WIRE.resetRequests();
     app = DW.getApplication();
 
@@ -59,8 +57,8 @@ public class ApiClientTimeoutTest {
   }
 
   @Test
-  @Retry(5)
-  public void runIntoDefaultConnectionTimeoutOf500Millis() {
+  @RetryingTest(5)
+  void runIntoDefaultConnectionTimeoutOf500Millis() {
     MockApiClient client =
         app.getJerseyClientBundle()
             .getClientFactory()
@@ -81,8 +79,8 @@ public class ApiClientTimeoutTest {
   }
 
   @Test
-  @Retry(5)
-  public void runIntoConfiguredConnectionTimeout() {
+  @RetryingTest(5)
+  void runIntoConfiguredConnectionTimeout() {
     HttpClientConfiguration clientConfiguration = new HttpClientConfiguration();
     clientConfiguration.setConnectionTimeout(io.dropwizard.util.Duration.seconds(2));
 
@@ -107,8 +105,8 @@ public class ApiClientTimeoutTest {
   }
 
   @Test
-  @Retry(5)
-  public void runIntoDefaultReadTimeoutOf2Seconds() {
+  @RetryingTest(5)
+  void runIntoDefaultReadTimeoutOf2Seconds() {
     WIRE.stubFor(
         get("/api/cars").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(3000)));
 
@@ -133,8 +131,8 @@ public class ApiClientTimeoutTest {
   }
 
   @Test
-  @Retry(5)
-  public void runIntoConfiguredReadTimeout() {
+  @RetryingTest(5)
+  void runIntoConfiguredReadTimeout() {
     WIRE.stubFor(
         get("/api/cars").willReturn(aResponse().withStatus(200).withBody("").withFixedDelay(5000)));
 

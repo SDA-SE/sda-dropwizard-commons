@@ -7,28 +7,28 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import java.util.Optional;
 import javax.ws.rs.client.WebTarget;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 public class AddRequestHeaderFilterTest {
 
-  @ClassRule
-  public static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  @Before
-  public void resetRequests() {
+  @BeforeEach
+  void resetRequests() {
     WIRE.resetAll();
   }
 
   @Test
-  public void addMultipleHeadersWithAnonymousImplementations() {
+  void addMultipleHeadersWithAnonymousImplementations() {
 
     WIRE.stubFor(get("/").willReturn(aResponse().withStatus(200).withBody("")));
 
