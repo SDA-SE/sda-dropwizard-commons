@@ -5,31 +5,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class OidcConfigurationTest {
+class OidcConfigurationTest {
 
   private Validator validator;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     validator = factory.getValidator();
   }
 
   @Test
-  public void shouldValidateDisabled() {
+  void shouldValidateDisabled() {
     assertThat(validator.validate(new OidcConfiguration().setDisabled(true))).isEmpty();
   }
 
   @Test
-  public void shouldValidateMandatoryFields() {
+  void shouldValidateMandatoryFields() {
     assertThat(validator.validate(new OidcConfiguration().setDisabled(false))).isNotEmpty();
   }
 
   @Test
-  public void shouldValidateGrantTypeClientCredentials() {
+  void shouldValidateGrantTypeClientCredentials() {
     assertThat(
             validator.validate(
                 new OidcConfiguration()
@@ -42,7 +42,7 @@ public class OidcConfigurationTest {
   }
 
   @Test
-  public void shouldValidateGrantTypePassword() {
+  void shouldValidateGrantTypePassword() {
     assertThat(
             validator.validate(
                 new OidcConfiguration()

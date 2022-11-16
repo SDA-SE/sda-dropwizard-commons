@@ -27,12 +27,12 @@ import org.sdase.commons.client.jersey.wiremock.testing.WireMockExtension;
 
 class SubtypeMappingAndValidationTest {
 
-  @Order(1)
   @RegisterExtension
+  @Order(0)
   final WireMockExtension wire = new WireMockExtension();
 
-  @Order(1)
   @RegisterExtension
+  @Order(1)
   static final DropwizardAppExtension<ClientTestConfig> dw =
       new DropwizardAppExtension<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
 

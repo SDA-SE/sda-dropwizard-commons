@@ -15,43 +15,41 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.sdase.commons.server.opentracing.tags.TagUtils.HTTP_REQUEST_HEADERS;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
 import javax.ws.rs.client.Client;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.sdase.commons.server.testing.SystemPropertyRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
-public class ClientTraceTest {
+class ClientTraceTest {
 
-  @ClassRule
-  public static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private final DropwizardAppRule<ClientTestConfig> dw =
-      new DropwizardAppRule<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
-
-  @Rule
-  public final RuleChain rule =
-      RuleChain.outerRule(new SystemPropertyRule().setProperty("MOCK_BASE_URL", WIRE.baseUrl()))
-          .around(dw);
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<ClientTestConfig> dw =
+      new DropwizardAppExtension<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
 
   private ClientTestApp app;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     WIRE.resetAll();
     WIRE.stubFor(get("/").willReturn(noContent()));
     app = dw.getApplication();
+    // removing client metrics to allow creation of new clients with same id
+    dw.getEnvironment().metrics().removeMatching((name, metric) -> name.contains(".test."));
   }
 
   @Test
-  public void traceClientRequests() {
+  void traceClientRequests() {
     Client client =
         app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("test");
     client.target(WIRE.baseUrl()).request().header(LOCATION, "1").header(LOCATION, "2").get();
@@ -68,7 +66,7 @@ public class ClientTraceTest {
   }
 
   @Test
-  public void passTraceIdInHeaders() {
+  void passTraceIdInHeaders() {
     Client client =
         app.getJerseyClientBundle().getClientFactory().externalClient().buildGenericClient("test");
     client.target(WIRE.baseUrl()).request().get();
