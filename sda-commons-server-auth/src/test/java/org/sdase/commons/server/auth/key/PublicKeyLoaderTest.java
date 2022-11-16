@@ -8,15 +8,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class PublicKeyLoaderTest {
+class PublicKeyLoaderTest {
 
   private PublicKeyLoader keyLoader = new PublicKeyLoader();
 
   @Test
-  public void shouldAddKeyWithoutKid() {
+  void shouldAddKeyWithoutKid() {
     RSAPublicKey mockKey = Mockito.mock(RSAPublicKey.class);
     KeySource keySource =
         new KeySource() {
@@ -34,7 +34,7 @@ public class PublicKeyLoaderTest {
   }
 
   @Test
-  public void shouldAddKeyWithKid() {
+  void shouldAddKeyWithKid() {
     RSAPublicKey mockKey = Mockito.mock(RSAPublicKey.class);
     KeySource keySource =
         new KeySource() {
@@ -51,7 +51,7 @@ public class PublicKeyLoaderTest {
   }
 
   @Test
-  public void shouldReloadIfKeyIsNotFoundAndRemoveOutdatedKeys() {
+  void shouldReloadIfKeyIsNotFoundAndRemoveOutdatedKeys() {
     RSAPublicKey mockKey = Mockito.mock(RSAPublicKey.class);
     RSAPublicKey newMockKey = Mockito.mock(RSAPublicKey.class);
     AtomicInteger numberOfCalls = new AtomicInteger();
@@ -84,7 +84,7 @@ public class PublicKeyLoaderTest {
   }
 
   @Test
-  public void shouldReloadIfKeyIsNotFound() {
+  void shouldReloadIfKeyIsNotFound() {
     RSAPublicKey mockKey = Mockito.mock(RSAPublicKey.class);
     RSAPublicKey newMockKey = Mockito.mock(RSAPublicKey.class);
     AtomicInteger numberOfCalls = new AtomicInteger();
@@ -119,7 +119,7 @@ public class PublicKeyLoaderTest {
   }
 
   @Test
-  public void shouldNotRemoveIfReloadFails() {
+  void shouldNotRemoveIfReloadFails() {
     RSAPublicKey mockKey = Mockito.mock(RSAPublicKey.class);
     AtomicInteger numberOfCalls = new AtomicInteger();
     KeySource keySource =
@@ -151,7 +151,7 @@ public class PublicKeyLoaderTest {
   }
 
   @Test
-  public void shouldCountSources() {
+  void shouldCountSources() {
     RSAPublicKey mockKey = Mockito.mock(RSAPublicKey.class);
     KeySource keySource =
         new KeySource() {
@@ -171,7 +171,7 @@ public class PublicKeyLoaderTest {
   }
 
   @Test
-  public void shouldCountAllKeys() {
+  void shouldCountAllKeys() {
     RSAPublicKey mockKey = Mockito.mock(RSAPublicKey.class);
     KeySource keySource =
         new KeySource() {
@@ -193,7 +193,7 @@ public class PublicKeyLoaderTest {
   }
 
   @Test
-  public void shouldNotRemoveKeysIfReloadingFailed() {
+  void shouldNotRemoveKeysIfReloadingFailed() {
     AtomicBoolean loaded = new AtomicBoolean();
     AtomicBoolean thrown = new AtomicBoolean();
     PublicKeyLoader rsaPublicKeyLoader = new PublicKeyLoader();

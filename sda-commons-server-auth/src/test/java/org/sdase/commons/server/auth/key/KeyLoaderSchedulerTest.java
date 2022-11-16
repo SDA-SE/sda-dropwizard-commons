@@ -12,11 +12,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class KeyLoaderSchedulerTest {
+class KeyLoaderSchedulerTest {
   private static final int RELOAD_PERIOD = 1;
 
   // test data
@@ -41,21 +41,21 @@ public class KeyLoaderSchedulerTest {
         return actualKeys;
       };
 
-  @Before
-  public void startKeyLoader() {
+  @BeforeEach
+  void startKeyLoader() {
     keyLoader.addKeySource(keySource);
     keyLoaderScheduler.internalStart(0, RELOAD_PERIOD, TimeUnit.SECONDS);
     // wait for initial load
     waitForNextReload();
   }
 
-  @After
-  public void shutdownExecutorService() {
+  @AfterEach
+  void shutdownExecutorService() {
     executorService.shutdown();
   }
 
   @Test
-  public void shouldRemoveRevokedKey() {
+  void shouldRemoveRevokedKey() {
     // given
     RSAPublicKey validKey = mock(RSAPublicKey.class);
     RSAPublicKey keyToBeRevoked = mock(RSAPublicKey.class);
@@ -78,7 +78,7 @@ public class KeyLoaderSchedulerTest {
   }
 
   @Test
-  public void shouldKeepKeysOnLoadingFailure() {
+  void shouldKeepKeysOnLoadingFailure() {
     final RSAPublicKey validKey = mock(RSAPublicKey.class);
 
     actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null, "RS256"));
@@ -94,7 +94,7 @@ public class KeyLoaderSchedulerTest {
   }
 
   @Test
-  public void shouldContinueScheduleAfterLoadFailure() {
+  void shouldContinueScheduleAfterLoadFailure() {
     final RSAPublicKey validKey = mock(RSAPublicKey.class);
 
     // start empty
