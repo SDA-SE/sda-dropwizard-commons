@@ -9,13 +9,13 @@ import java.net.SocketTimeoutException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.client.jersey.error.ClientRequestException;
 
-public class SuppressProcessingErrorsToNullTest {
+class SuppressProcessingErrorsToNullTest {
 
   @Test
-  public void shouldSuppressForObjectReturnType() {
+  void shouldSuppressForObjectReturnType() {
     ProcessingErrorsSuppressed given =
         createProxy(
             ProcessingErrorsSuppressed.class,
@@ -26,7 +26,7 @@ public class SuppressProcessingErrorsToNullTest {
   }
 
   @Test
-  public void shouldNotSuppressReadTimeoutForObjectReturnType() {
+  void shouldNotSuppressReadTimeoutForObjectReturnType() {
     ProcessingErrorsSuppressed given =
         createProxy(
             ProcessingErrorsSuppressed.class,
@@ -37,7 +37,7 @@ public class SuppressProcessingErrorsToNullTest {
   }
 
   @Test
-  public void shouldNotSuppressConnectTimeoutForObjectReturnType() {
+  void shouldNotSuppressConnectTimeoutForObjectReturnType() {
     ProcessingErrorsSuppressed given =
         createProxy(
             ProcessingErrorsSuppressed.class,
@@ -48,7 +48,7 @@ public class SuppressProcessingErrorsToNullTest {
   }
 
   @Test
-  public void shouldNotSuppressHttpErrorForObjectReturnType() {
+  void shouldNotSuppressHttpErrorForObjectReturnType() {
     ProcessingErrorsSuppressed given =
         createProxy(
             ProcessingErrorsSuppressed.class,
