@@ -3,52 +3,48 @@ package org.sdase.commons.client.jersey.proxy.annotation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sdase.commons.client.jersey.proxy.ApiClientInvocationHandler.createProxy;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 import javax.ws.rs.WebApplicationException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.sdase.commons.client.jersey.error.ClientRequestException;
 
-@RunWith(Parameterized.class)
-public class SuppressHttpErrorsToNullTest<T extends SuppressHttpErrorsToNullTest.TestApi> {
+@ExtendWith(MockitoExtension.class)
+class SuppressHttpErrorsToNullTest<T extends SuppressHttpErrorsToNullTest.TestApi> {
 
-  private final TestApi testApiImpl;
-  private final boolean expectException;
+  private static Stream<Arguments> data() {
+    return Stream.of(
+        arguments(ClientErrorsSuppressed.class, 404, false),
+        arguments(ClientErrorsSuppressed.class, 500, true),
+        arguments(ServerErrorsSuppressed.class, 500, false),
+        arguments(ServerErrorsSuppressed.class, 400, true),
+        arguments(ServerErrorsAndNotFoundSuppressed.class, 500, false),
+        arguments(ServerErrorsAndNotFoundSuppressed.class, 404, false),
+        arguments(ServerErrorsAndNotFoundSuppressed.class, 400, true),
+        arguments(NotFoundAndForbiddenSuppressed.class, 403, false),
+        arguments(NotFoundAndForbiddenSuppressed.class, 404, false),
+        arguments(NotFoundAndForbiddenSuppressed.class, 400, true),
+        arguments(RedirectErrorsSuppressed.class, 303, false),
+        arguments(RedirectErrorsSuppressed.class, 400, true));
+  }
 
-  public SuppressHttpErrorsToNullTest(
-      Class<T> testApi, int givenHttpError, boolean expectException) {
+  @ParameterizedTest
+  @MethodSource("data")
+  void exceptionForObject(Class<T> testApi, int givenHttpError, boolean expectException) {
     WebApplicationException error = new WebApplicationException(givenHttpError);
-    this.testApiImpl = createProxy(testApi, createDelegate(testApi, error));
-    this.expectException = expectException;
-  }
+    T mockApi = mock(testApi);
+    when(mockApi.suppressed()).thenThrow(error);
+    var testApiImpl = createProxy(testApi, mockApi);
 
-  @Parameters(name = "{0}: {1}")
-  public static Collection<Object[]> data() {
-    return Arrays.asList(
-        new Object[] {ClientErrorsSuppressed.class, 404, false},
-        new Object[] {ClientErrorsSuppressed.class, 500, true},
-        new Object[] {ServerErrorsSuppressed.class, 500, false},
-        new Object[] {ServerErrorsSuppressed.class, 400, true},
-        new Object[] {ServerErrorsAndNotFoundSuppressed.class, 500, false},
-        new Object[] {ServerErrorsAndNotFoundSuppressed.class, 404, false},
-        new Object[] {ServerErrorsAndNotFoundSuppressed.class, 400, true},
-        new Object[] {NotFoundAndForbiddenSuppressed.class, 403, false},
-        new Object[] {NotFoundAndForbiddenSuppressed.class, 404, false},
-        new Object[] {NotFoundAndForbiddenSuppressed.class, 400, true},
-        new Object[] {RedirectErrorsSuppressed.class, 303, false},
-        new Object[] {RedirectErrorsSuppressed.class, 400, true});
-  }
-
-  @Test
-  public void exceptionForObject() {
     if (expectException) {
       assertThatExceptionOfType(ClientRequestException.class).isThrownBy(testApiImpl::suppressed);
     } else {
@@ -56,8 +52,14 @@ public class SuppressHttpErrorsToNullTest<T extends SuppressHttpErrorsToNullTest
     }
   }
 
-  @Test
-  public void exceptionForVoid() {
+  @ParameterizedTest
+  @MethodSource("data")
+  void exceptionForVoid(Class<T> testApi, int givenHttpError, boolean expectException) {
+    WebApplicationException error = new WebApplicationException(givenHttpError);
+    T mockApi = mock(testApi);
+    doThrow(error).when(mockApi).suppressedForVoid();
+    var testApiImpl = createProxy(testApi, mockApi);
+
     if (expectException) {
       assertThatExceptionOfType(ClientRequestException.class)
           .isThrownBy(testApiImpl::suppressedForVoid);
@@ -113,12 +115,5 @@ public class SuppressHttpErrorsToNullTest<T extends SuppressHttpErrorsToNullTest
 
     @SuppressHttpErrorsToNull(allRedirectErrors = true)
     void suppressedForVoid();
-  }
-
-  private T createDelegate(Class<T> testApi, WebApplicationException error) {
-    T mock = mock(testApi);
-    when(mock.suppressed()).thenThrow(error);
-    Mockito.doThrow(error).when(mock).suppressedForVoid();
-    return mock;
   }
 }
