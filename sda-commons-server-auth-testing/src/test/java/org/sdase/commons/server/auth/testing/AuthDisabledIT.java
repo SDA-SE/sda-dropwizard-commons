@@ -1,30 +1,32 @@
 package org.sdase.commons.server.auth.testing;
 
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 
-public class AuthDisabledIT {
+class AuthDisabledIT {
 
-  private static DropwizardAppRule<AuthTestConfig> DW =
-      new DropwizardAppRule<>(
-          AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
+  @RegisterExtension
+  @Order(0)
+  private static AuthClassExtension AUTH = AuthClassExtension.builder().withDisabledAuth().build();
 
-  private static AuthRule AUTH = AuthRule.builder().withDisabledAuth().build();
-
-  @ClassRule public static RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
+  @Order(1)
+  @RegisterExtension
+  private static final DropwizardAppExtension<AuthTestConfig> DW =
+      new DropwizardAppExtension<>(AuthTestApp.class, resourceFilePath("test-config.yaml"));
 
   @Test
-  public void shouldAccessOpenEndPointWithoutToken() {
+  void shouldAccessOpenEndPointWithoutToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -37,7 +39,7 @@ public class AuthDisabledIT {
   }
 
   @Test
-  public void shouldAccessSecureEndPointWithoutToken() {
+  void shouldAccessSecureEndPointWithoutToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -48,8 +50,8 @@ public class AuthDisabledIT {
     assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void shouldThrowExceptionIfRequestingTokenWhileAuthIsDisabled() {
-    AUTH.auth().buildToken();
+  @Test
+  void shouldThrowExceptionIfRequestingTokenWhileAuthIsDisabled() {
+    assertThrows(IllegalStateException.class, () -> AUTH.auth().buildToken());
   }
 }

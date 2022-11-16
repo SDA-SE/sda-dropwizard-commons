@@ -12,46 +12,52 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpHeaders;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.SetSystemProperty;
+import org.junitpioneer.jupiter.SetSystemProperty.SetSystemProperties;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
-import org.sdase.commons.server.testing.SystemPropertyRule;
+import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 
 /** A test that checks if the jersey client that is used to load keys can use a proxy server */
-public class KeyLoaderProxyIT {
-  private static final WireMockClassRule PROXY_WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+@SetSystemProperties({
+  @SetSystemProperty(key = AuthRule.AUTH_RULE_ENV_KEY, value = "{\"keys\": [{}]}"),
+  @SetSystemProperty(key = "http.proxyHost", value = "localhost"),
+  @SetSystemProperty(key = "http.nonProxyHosts", value = "localhost")
+})
+class KeyLoaderProxyIT {
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension PROXY_WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final SystemPropertyRule SYSTEM_PROPERTY =
-      new SystemPropertyRule()
-          .setProperty(AuthRule.AUTH_RULE_ENV_KEY, "{\"keys\": [{}]}")
-          .setProperty("http.proxyHost", "localhost")
-          .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port())
-          .setProperty("http.nonProxyHosts", "localhost");
+  @RegisterExtension
+  @Order(1)
+  private static final SystemPropertyClassExtension PROP =
+      new SystemPropertyClassExtension()
+          .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port());
 
-  private static final DropwizardAppRule<AuthTestConfig> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(2)
+  private static final DropwizardAppExtension<AuthTestConfig> DW =
+      new DropwizardAppExtension<>(
           AuthTestApp.class,
           ResourceHelpers.resourceFilePath("test-config.yaml"),
           config("auth.keys[0].type", "JWKS"),
           config("auth.keys[0].location", "http://sda.se/jwks"));
 
-  @ClassRule
-  public static final RuleChain rule =
-      RuleChain.outerRule(PROXY_WIRE).around(SYSTEM_PROPERTY).around(DW);
-
-  @BeforeClass
-  public static void setupWiremock() {
+  @BeforeAll
+  static void beforeAll() {
     // expect that the proxy receives the request
     PROXY_WIRE.stubFor(
         get("/jwks")
@@ -60,7 +66,7 @@ public class KeyLoaderProxyIT {
   }
 
   @Test
-  public void shouldUseProxy() {
+  void shouldUseProxy() {
     // given
     final String tokenWithUnknownKid =
         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImNHV1RlQUJwWnYyN3RfWDFnTW92NEVlRWhEOXRBMWVhcUgzVzFmMXE4Y28ifQ.eyJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0In0.nHN-k_uvKNl8Nh5lXctQkL8KrWKggGiBQ-jaR0xIq_TAWBbhz5zkGXQTiNZwjPFOIcjyuL1xMCqzLPAKiI0Jy0hwOa4xcqukrWr4UwhKC50dnJiFqUgpGM0xLyT1D8JKdSNiVtYL0k-E5XCcpDEqOjHOG3Gw03VoZ0iRNeU2X49Rko8646l5j2g4QbuuOSn1a5G4ICMCAY7C6Vb55dgJtG_WAvkhFdBd_ShQEp_XfWJh6uq0E95_8yfzBx4UuK1Q-TLuWrXKxOlYNCuCH90NYG-3oF9w0gFtdXtYOFzPIEVIkU0Ra6sk_s0IInrEMD_3Q4fgE2PqOzqpuVaD_lHdAA";
@@ -76,7 +82,6 @@ public class KeyLoaderProxyIT {
     // then
     assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
 
-    // one call on startup, one call from the request
     PROXY_WIRE.verify(
         2,
         RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/jwks"))

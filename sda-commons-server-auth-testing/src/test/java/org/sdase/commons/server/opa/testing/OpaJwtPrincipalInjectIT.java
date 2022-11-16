@@ -5,45 +5,46 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Collections;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.sdase.commons.server.auth.testing.AuthRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
+import org.sdase.commons.server.auth.testing.AuthClassExtension;
 import org.sdase.commons.server.opa.testing.test.OpaJwtPrincipalInjectApp;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class OpaJwtPrincipalInjectIT {
+class OpaJwtPrincipalInjectIT {
 
-  private static final AuthRule AUTH = AuthRule.builder().build();
-  private static final OpaRule OPA = new OpaRule();
+  @RegisterExtension
+  @Order(0)
+  private static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
-  private static final DropwizardAppRule<OpaJwtPrincipalInjectApp.Config> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final OpaClassExtension OPA = new OpaClassExtension();
+
+  @RegisterExtension
+  @Order(2)
+  private static final DropwizardAppExtension<OpaJwtPrincipalInjectApp.Config> DW =
+      new DropwizardAppExtension<>(
           OpaJwtPrincipalInjectApp.class,
           resourceFilePath("test-config.yaml"),
           config("opa.baseUrl", OPA::getUrl));
 
-  @ClassRule public static RuleChain CHAIN = RuleChain.outerRule(AUTH).around(OPA).around(DW);
-
-  @Rule public final RetryRule retryRule = new RetryRule();
-
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     OPA.reset();
   }
 
   @Test
-  @Retry(5)
-  public void shouldInjectPrincipalWithConstraints() {
+  @RetryingTest(5)
+  void shouldInjectPrincipalWithConstraints() {
 
     String token = AUTH.auth().buildToken();
     OPA.mock(
@@ -65,8 +66,8 @@ public class OpaJwtPrincipalInjectIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldProvideConstraintsWithoutUserContext() {
+  @RetryingTest(5)
+  void shouldProvideConstraintsWithoutUserContext() {
 
     OPA.mock(
         OpaRule.onAnyRequest()
@@ -86,8 +87,8 @@ public class OpaJwtPrincipalInjectIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldRejectWithForbiddenWithoutUserContext() {
+  @RetryingTest(5)
+  void shouldRejectWithForbiddenWithoutUserContext() {
 
     OPA.mock(OpaRule.onAnyRequest().deny());
 
@@ -102,8 +103,8 @@ public class OpaJwtPrincipalInjectIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldCreateSeparateContextForEachRequest() {
+  @RetryingTest(5)
+  void shouldCreateSeparateContextForEachRequest() {
 
     String token1 = AUTH.auth().addClaim("foo", "bar").buildToken();
     String token2 = AUTH.auth().addClaim("bar", "foo").buildToken();
