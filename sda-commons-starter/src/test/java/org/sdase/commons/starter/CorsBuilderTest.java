@@ -1,22 +1,24 @@
 package org.sdase.commons.starter;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.cors.CorsBundle;
 import org.sdase.commons.starter.test.BundleAssertion;
 
-public class CorsBuilderTest {
+class CorsBuilderTest {
 
   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     bundleAssertion = new BundleAssertion<>();
   }
 
   @Test
-  public void defaultCorsSettings() {
+  void defaultCorsSettings() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -29,7 +31,7 @@ public class CorsBuilderTest {
   }
 
   @Test
-  public void customCorsSettings() {
+  void customCorsSettings() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -49,13 +51,16 @@ public class CorsBuilderTest {
             .build());
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void noCorsConfigurationIfCorsDisabled() {
-    SdaPlatformBundle.builder()
-        .usingCustomConfig(SdaPlatformConfiguration.class)
-        .withAuthConfigProvider(c -> new AuthConfig())
-        .withoutCorsSupport()
-        .addOpenApiResourcePackageClass(this.getClass())
-        .withCorsAdditionalExposedHeaders("x-foo");
+  @Test
+  void noCorsConfigurationIfCorsDisabled() {
+    assertThatCode(
+            () ->
+                SdaPlatformBundle.builder()
+                    .usingCustomConfig(SdaPlatformConfiguration.class)
+                    .withAuthConfigProvider(c -> new AuthConfig())
+                    .withoutCorsSupport()
+                    .addOpenApiResourcePackageClass(this.getClass())
+                    .withCorsAdditionalExposedHeaders("x-foo"))
+        .isInstanceOf(IllegalStateException.class);
   }
 }

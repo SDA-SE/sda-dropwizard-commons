@@ -1,7 +1,7 @@
 package org.sdase.commons.starter;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
@@ -10,17 +10,17 @@ import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.config.OpaConfigProvider;
 import org.sdase.commons.starter.test.BundleAssertion;
 
-public class AuthBuilderTest {
+class AuthBuilderTest {
 
   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     bundleAssertion = new BundleAssertion<>();
   }
 
   @Test
-  public void defaultAuth() {
+  void defaultAuth() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -36,7 +36,7 @@ public class AuthBuilderTest {
   }
 
   @Test
-  public void defaultOpa() {
+  void defaultOpa() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -49,7 +49,7 @@ public class AuthBuilderTest {
   }
 
   @Test
-  public void customAuthConfigProvider() {
+  void customAuthConfigProvider() {
 
     AuthConfigProvider<SdaPlatformConfiguration> acp = c -> new AuthConfig();
 
@@ -67,7 +67,7 @@ public class AuthBuilderTest {
   }
 
   @Test
-  public void disableAuth() {
+  void disableAuth() {
 
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
@@ -81,7 +81,7 @@ public class AuthBuilderTest {
   }
 
   @Test
-  public void opaAuthorization() {
+  void opaAuthorization() {
 
     AuthConfigProvider<SdaPlatformConfiguration> acp = c -> new AuthConfig();
     OpaConfigProvider<SdaPlatformConfiguration> ocp = c -> new OpaConfig();
