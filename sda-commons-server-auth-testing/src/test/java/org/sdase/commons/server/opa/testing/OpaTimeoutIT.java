@@ -4,47 +4,46 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class OpaTimeoutIT {
+class OpaTimeoutIT {
 
-  private static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+      new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
-          resourceFilePath("test-opa-config.yaml"),
+          ResourceHelpers.resourceFilePath("test-opa-config.yaml"),
           config("opa.baseUrl", WIRE::baseUrl),
           config("opa.policyPackage", "my.policy"),
           config("opa.opaClient.timeout", "100ms"));
 
-  @ClassRule public static final RuleChain chain = RuleChain.outerRule(WIRE).around(DW);
-  @Rule public final RetryRule retryRule = new RetryRule();
-
-  @Before
-  public void before() {
+  @BeforeEach
+  void before() {
     WIRE.resetAll();
   }
 
   @Test
-  @Retry(5)
-  public void shouldDenyAccess() {
+  @RetryingTest(5)
+  void shouldDenyAccess() {
     WIRE.stubFor(
         post("/v1/data/my/policy")
             .willReturn(
@@ -65,8 +64,8 @@ public class OpaTimeoutIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldGrantAccess() {
+  @RetryingTest(5)
+  void shouldGrantAccess() {
     WIRE.stubFor(
         post("/v1/data/my/policy")
             .willReturn(
