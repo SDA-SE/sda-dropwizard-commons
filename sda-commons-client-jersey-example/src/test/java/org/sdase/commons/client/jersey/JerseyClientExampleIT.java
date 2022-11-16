@@ -14,29 +14,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import org.apache.http.HttpHeaders;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.client.jersey.clients.apia.Car;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
-public class JerseyClientExampleIT {
+class JerseyClientExampleIT {
 
-  public static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final DropwizardAppRule<JerseyClientExampleConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<JerseyClientExampleConfiguration> DW =
+      new DropwizardAppExtension<>(
           JerseyClientExampleApplication.class,
           resourceFilePath("test-config.yaml"),
           config("servicea", () -> WIRE.url("api")));
-
-  @ClassRule public static final RuleChain rule = RuleChain.outerRule(WIRE).around(DW);
 
   private JerseyClientExampleApplication app;
   private static final ObjectMapper OM = new ObjectMapper();
@@ -45,13 +47,13 @@ public class JerseyClientExampleIT {
   private static final Car LIGHT_BLUE_CAR =
       new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
 
-  @Before
-  public void resetRequests() {
+  @BeforeEach
+  void resetRequests() {
     WIRE.resetRequests();
     app = DW.getApplication();
   }
 
-  @BeforeClass
+  @BeforeAll
   public static void initWires() throws JsonProcessingException {
     WIRE.stubFor(
         get("/api/cars") // NOSONAR
@@ -80,17 +82,17 @@ public class JerseyClientExampleIT {
   }
 
   @Test
-  public void shouldUsePlatformClient() {
+  void shouldUsePlatformClient() {
     assertThat(app.usePlatformClient()).isEqualTo(200);
   }
 
   @Test
-  public void shouldUseExternalClient() {
+  void shouldUseExternalClient() {
     assertThat(app.useExternalClient()).isEqualTo(200);
   }
 
   @Test
-  public void shouldUseConfiguredExternalClient() {
+  void shouldUseConfiguredExternalClient() {
     assertThat(app.useConfiguredExternalClient()).isEqualTo(200);
     WIRE.verify(
         RequestPatternBuilder.newRequestPattern(RequestMethod.GET, urlEqualTo("/api/cars"))
@@ -98,7 +100,7 @@ public class JerseyClientExampleIT {
   }
 
   @Test
-  public void shouldUseApiClient() {
+  void shouldUseApiClient() {
     assertThat(app.useApiClient()).isNotEmpty();
   }
 }
