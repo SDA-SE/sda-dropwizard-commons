@@ -11,50 +11,49 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
 import org.sdase.commons.server.opa.testing.test.ConstraintModel;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class OpaIT {
+class OpaIT {
 
-  private static final OpaRule OPA_RULE = new OpaRule();
+  @RegisterExtension
+  @Order(0)
+  private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
-  private static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+      new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
           resourceFilePath("test-opa-config.yaml"),
-          config("opa.baseUrl", OPA_RULE::getUrl));
+          config("opa.baseUrl", OPA_EXTENSION::getUrl));
 
-  @ClassRule public static final RuleChain chain = RuleChain.outerRule(OPA_RULE).around(DW);
-  @Rule public final RetryRule retryRule = new RetryRule();
+  private static final String path = "resources";
+  private static final String method = "GET";
 
-  private static String path = "resources";
-  private static String method = "GET";
-
-  @Before
-  public void before() {
-    OPA_RULE.reset();
+  @BeforeEach
+  void before() {
+    OPA_EXTENSION.reset();
   }
 
   @Test
-  @Retry(5)
-  public void shouldAllowAccess() {
+  @RetryingTest(5)
+  void shouldAllowAccess() {
     // given
-    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).allow());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).allow());
     // when
     Response response = doGetRequest();
     // then
@@ -66,10 +65,10 @@ public class OpaIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldAllowAccessWithConstraints() {
+  @RetryingTest(5)
+  void shouldAllowAccessWithConstraints() {
     // given
-    OPA_RULE.mock(
+    OPA_EXTENSION.mock(
         onRequest()
             .withHttpMethod(method)
             .withPath(path)
@@ -92,10 +91,10 @@ public class OpaIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldDenyAccess() {
+  @RetryingTest(5)
+  void shouldDenyAccess() {
     // given
-    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).deny());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).deny());
     // when
     Response response = doGetRequest();
     // then
@@ -103,10 +102,10 @@ public class OpaIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldDenyAccessWithConstraints() {
+  @RetryingTest(5)
+  void shouldDenyAccessWithConstraints() {
     // given
-    OPA_RULE.mock(
+    OPA_EXTENSION.mock(
         onRequest()
             .withHttpMethod(method)
             .withPath(path)
@@ -119,10 +118,10 @@ public class OpaIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldDenyAccessIfOpaResponseIsBroken() {
+  @RetryingTest(5)
+  void shouldDenyAccessIfOpaResponseIsBroken() {
     // given
-    OPA_RULE.mock(onAnyRequest().serverError());
+    OPA_EXTENSION.mock(onAnyRequest().serverError());
     // when
     Response response = doGetRequest();
     // then
@@ -130,10 +129,10 @@ public class OpaIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldDenyAccessIfOpaResponseEmpty() {
+  @RetryingTest(5)
+  void shouldDenyAccessIfOpaResponseEmpty() {
     // given
-    OPA_RULE.mock(onAnyRequest().emptyResponse());
+    OPA_EXTENSION.mock(onAnyRequest().emptyResponse());
     // when
     Response response = doGetRequest();
     // then
@@ -141,34 +140,34 @@ public class OpaIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldAllowAccessForLongerPathAndPost() {
+  @RetryingTest(5)
+  void shouldAllowAccessForLongerPathAndPost() {
     // given
     String longerPath = "resources/actions";
-    OPA_RULE.mock(onRequest().withHttpMethod("POST").withPath(longerPath).allow());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod("POST").withPath(longerPath).allow());
     // when
     Response response = doPostRequest(longerPath);
     // then
     assertThat(response.getStatus()).isEqualTo(SC_OK);
-    OPA_RULE.verify(1, "POST", longerPath);
+    OPA_EXTENSION.verify(1, "POST", longerPath);
   }
 
   @Test
-  @Retry(5)
-  public void shouldNotInvokeOpenApiUrls() {
+  @RetryingTest(5)
+  void shouldNotInvokeOpenApiUrls() {
     // given
     String excludedPath = "openapi.json";
-    OPA_RULE.mock(onRequest().withHttpMethod("GET").withPath(excludedPath).allow());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod("GET").withPath(excludedPath).allow());
     // when
     Response response = doGetRequest(excludedPath);
     // then
     assertThat(response.getStatus()).isEqualTo(SC_OK);
-    OPA_RULE.verify(0, "GET", excludedPath);
+    OPA_EXTENSION.verify(0, "GET", excludedPath);
   }
 
   @Test
-  @Retry(5)
-  public void shouldIncludeHealthCheck() {
+  @RetryingTest(5)
+  void shouldIncludeHealthCheck() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getAdminPort()) // NOSONAR

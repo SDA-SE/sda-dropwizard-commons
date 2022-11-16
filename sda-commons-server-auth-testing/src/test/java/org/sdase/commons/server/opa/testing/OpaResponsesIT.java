@@ -5,45 +5,44 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class OpaResponsesIT {
+class OpaResponsesIT {
 
-  private static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+      new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
-          resourceFilePath("test-opa-config.yaml"),
+          ResourceHelpers.resourceFilePath("test-opa-config.yaml"),
           config("opa.baseUrl", WIRE::baseUrl),
           config("opa.policyPackage", "my.policy"));
 
-  @ClassRule public static final RuleChain chain = RuleChain.outerRule(WIRE).around(DW);
-  @Rule public RetryRule retryRule = new RetryRule();
-
-  @Before
-  public void before() {
+  @BeforeEach
+  void before() {
     WIRE.resetAll();
   }
 
@@ -70,8 +69,8 @@ public class OpaResponsesIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldAllowAccess() {
+  @RetryingTest(5)
+  void shouldAllowAccess() {
     // given
     mock(
         200,
@@ -93,8 +92,8 @@ public class OpaResponsesIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldAllowAccessWithConstraints() {
+  @RetryingTest(5)
+  void shouldAllowAccessWithConstraints() {
     // given
     mock(
         200,
@@ -123,8 +122,8 @@ public class OpaResponsesIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldDenyAccess() {
+  @RetryingTest(5)
+  void shouldDenyAccess() {
     // given
     mock(200, "{\n" + "  \"result\": {\n" + "    \"allow\": false\n" + "    }\n" + "  }\n" + "}");
 
@@ -136,8 +135,8 @@ public class OpaResponsesIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldDenyAccessWithNonMatchingConstraintResponse() {
+  @RetryingTest(5)
+  void shouldDenyAccessWithNonMatchingConstraintResponse() {
     // given
     mock(
         200,
@@ -157,8 +156,8 @@ public class OpaResponsesIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldAllowAccessWithNonMatchingConstraintResponse() {
+  @RetryingTest(5)
+  void shouldAllowAccessWithNonMatchingConstraintResponse() {
     // given
     mock(
         200,
@@ -182,8 +181,8 @@ public class OpaResponsesIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldDenyAccessIfOpaResponseIsBroken() {
+  @RetryingTest(5)
+  void shouldDenyAccessIfOpaResponseIsBroken() {
     // given
     mock(500, "");
 
@@ -195,9 +194,8 @@ public class OpaResponsesIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldDenyAccessIfOpaResponseEmpty() {
-    // given
+  @RetryingTest(5)
+  void shouldDenyAccessIfOpaResponseEmpty() {
     // given
     mock(200, "");
 

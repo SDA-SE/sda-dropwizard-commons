@@ -5,31 +5,32 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
 
-public class AuthRuleProgrammaticIT {
+class AuthRuleProgrammaticIT {
 
-  private static AuthRule AUTH = AuthRule.builder().build();
+  @RegisterExtension
+  @Order(0)
+  private static AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
-  @ClassRule
-  public static DropwizardAppRule<AuthTestConfig> DW =
-      DropwizardRuleHelper.dropwizardTestAppFrom(AuthTestApp.class)
-          .withConfigFrom(AuthTestConfig::new)
-          .withRandomPorts()
-          .withConfigurationModifier(AUTH.applyConfig(AuthTestConfig::setAuth))
-          .build();
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<AuthTestConfig> DW =
+      new DropwizardAppExtension<>(
+          AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
   @Test
-  public void shouldAccessOpenEndPointWithoutToken() {
+  void shouldAccessOpenEndPointWithoutToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -42,7 +43,7 @@ public class AuthRuleProgrammaticIT {
   }
 
   @Test
-  public void shouldNotAccessSecureEndPointWithoutToken() {
+  void shouldNotAccessSecureEndPointWithoutToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -54,7 +55,7 @@ public class AuthRuleProgrammaticIT {
   }
 
   @Test
-  public void shouldAccessSecureEndPointWithToken() {
+  void shouldAccessSecureEndPointWithToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -65,11 +66,11 @@ public class AuthRuleProgrammaticIT {
 
     assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
     assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
-        .contains(entry("iss", "AuthRule"), entry("sub", "test"));
+        .contains(entry("iss", "AuthExtension"), entry("sub", "test"));
   }
 
   @Test
-  public void shouldGetClaimsFromSecureEndPointWithToken() {
+  void shouldGetClaimsFromSecureEndPointWithToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -85,7 +86,7 @@ public class AuthRuleProgrammaticIT {
     assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
     assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
         .contains(
-            entry("iss", "AuthRule"),
+            entry("iss", "AuthExtension"),
             entry("sub", "test"),
             entry("test", "testClaim"),
             entry("mapKey", "testClaimFromMap"));

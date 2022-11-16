@@ -15,15 +15,15 @@ import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 
-public class OpaDisabledJUnit5IT {
+class OpaDisabledJUnit5IT {
 
   @RegisterExtension
   @Order(0)
-  static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
+  private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
   @RegisterExtension
   @Order(1)
-  static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
       new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
           resourceFilePath("test-opa-config.yaml"),
@@ -31,7 +31,7 @@ public class OpaDisabledJUnit5IT {
           config("opa.disableOpa", "true"));
 
   @RetryingTest(5)
-  public void shouldAllowAccess() {
+  void shouldAllowAccess() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
@@ -43,7 +43,7 @@ public class OpaDisabledJUnit5IT {
   }
 
   @RetryingTest(5)
-  public void shouldNotIncludeHealthCheck() {
+  void shouldNotIncludeHealthCheck() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getAdminPort()) // NOSONAR

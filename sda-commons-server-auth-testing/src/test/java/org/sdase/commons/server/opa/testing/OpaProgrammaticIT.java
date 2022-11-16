@@ -1,51 +1,46 @@
 package org.sdase.commons.server.opa.testing;
 
+import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
-import org.sdase.commons.server.testing.DropwizardRuleHelper;
-import org.sdase.commons.server.testing.LazyRule;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class OpaProgrammaticIT {
+class OpaProgrammaticIT {
 
-  private static final OpaRule OPA_RULE = new OpaRule();
+  @RegisterExtension
+  @Order(0)
+  private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
-  private static final LazyRule<DropwizardAppRule<OpaBundeTestAppConfiguration>> DW =
-      new LazyRule<>(
-          () ->
-              DropwizardRuleHelper.dropwizardTestAppFrom(OpaBundleTestApp.class)
-                  .withConfigFrom(OpaBundeTestAppConfiguration::new)
-                  .withRandomPorts()
-                  .withConfigurationModifier(c -> c.getOpa().setBaseUrl(OPA_RULE.getUrl()))
-                  .build());
-
-  @ClassRule public static final RuleChain chain = RuleChain.outerRule(OPA_RULE).around(DW);
-  @Rule public RetryRule rule = new RetryRule();
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+      new DropwizardAppExtension<>(
+          OpaBundleTestApp.class,
+          resourceFilePath("test-config.yaml"),
+          config("opa.baseUrl", OPA_EXTENSION::getUrl));
 
   // only one test since this is for demonstration with programmatic config
   @Test
-  @Retry(5)
+  @RetryingTest(5)
   public void shouldAllowAccess() {
     // given
-    OPA_RULE.mock(onRequest().withHttpMethod("GET").withPath("resources").allow());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod("GET").withPath("resources").allow());
 
     // when
     Response response =
-        DW.getRule()
-            .client()
-            .target("http://localhost:" + DW.getRule().getLocalPort()) // NOSONAR
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
             .path("resources")
             .request()
             .get(); // NOSONAR

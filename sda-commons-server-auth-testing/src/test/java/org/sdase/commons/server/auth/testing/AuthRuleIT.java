@@ -13,29 +13,32 @@ import static org.assertj.core.api.Assertions.entry;
 
 import com.auth0.jwt.RegisteredClaims;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Date;
 import java.util.Map;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 
-public class AuthRuleIT {
-  private static final DropwizardAppRule<AuthTestConfig> DW =
-      new DropwizardAppRule<>(
+class AuthRuleIT {
+
+  @RegisterExtension
+  @Order(0)
+  private static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
+
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<AuthTestConfig> DW =
+      new DropwizardAppExtension<>(
           AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-  private static final AuthRule AUTH = AuthRule.builder().build();
-
-  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
-
   @Test
-  public void shouldAccessOpenEndPointWithoutToken() {
+  void shouldAccessOpenEndPointWithoutToken() {
     Response response =
         createWebTarget()
             .path("/open") // NOSONAR
@@ -47,7 +50,7 @@ public class AuthRuleIT {
   }
 
   @Test
-  public void shouldAccessOpenEndPointWithInvalidToken() {
+  void shouldAccessOpenEndPointWithInvalidToken() {
     final String invalidTokenWithoutKid =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
     Response response =
@@ -63,7 +66,7 @@ public class AuthRuleIT {
   }
 
   @Test
-  public void shouldBeUnauthorizedIfAccessedWithNonJwt() {
+  void shouldBeUnauthorizedIfAccessedWithNonJwt() {
     Response response =
         createWebTarget()
             .path("/secure") // NOSONAR
@@ -84,7 +87,7 @@ public class AuthRuleIT {
   }
 
   @Test
-  public void shouldBeUnauthorizedIfAccessedWithTokenFromWrongIdp() {
+  void shouldBeUnauthorizedIfAccessedWithTokenFromWrongIdp() {
     final String tokenWithUnknownKid =
         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImNHV1RlQUJwWnYyN3RfWDFnTW92NEVlRWhEOXRBMWVhcUgzVzFmMXE4Y28ifQ.eyJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0In0.nHN-k_uvKNl8Nh5lXctQkL8KrWKggGiBQ-jaR0xIq_TAWBbhz5zkGXQTiNZwjPFOIcjyuL1xMCqzLPAKiI0Jy0hwOa4xcqukrWr4UwhKC50dnJiFqUgpGM0xLyT1D8JKdSNiVtYL0k-E5XCcpDEqOjHOG3Gw03VoZ0iRNeU2X49Rko8646l5j2g4QbuuOSn1a5G4ICMCAY7C6Vb55dgJtG_WAvkhFdBd_ShQEp_XfWJh6uq0E95_8yfzBx4UuK1Q-TLuWrXKxOlYNCuCH90NYG-3oF9w0gFtdXtYOFzPIEVIkU0Ra6sk_s0IInrEMD_3Q4fgE2PqOzqpuVaD_lHdAA";
     Response response =
@@ -104,7 +107,7 @@ public class AuthRuleIT {
   }
 
   @Test
-  public void shouldAccessOpenEndPointWithToken() {
+  void shouldAccessOpenEndPointWithToken() {
     Response response =
         createWebTarget()
             .path("/open")
@@ -117,7 +120,7 @@ public class AuthRuleIT {
   }
 
   @Test
-  public void shouldNotAccessSecureEndPointWithoutToken() {
+  void shouldNotAccessSecureEndPointWithoutToken() {
     Response response =
         createWebTarget()
             .path("/secure") // NOSONAR
@@ -134,7 +137,7 @@ public class AuthRuleIT {
   }
 
   @Test
-  public void shouldNotAccessSecureEndPointWithInvalidToken() {
+  void shouldNotAccessSecureEndPointWithInvalidToken() {
     Response response =
         createWebTarget()
             .path("/secure") // NOSONAR
@@ -154,7 +157,7 @@ public class AuthRuleIT {
   }
 
   @Test
-  public void shouldNotAccessSecureEndPointWithExpiredToken() {
+  void shouldNotAccessSecureEndPointWithExpiredToken() {
     Response response =
         createWebTarget()
             .path("/secure") // NOSONAR
@@ -172,7 +175,7 @@ public class AuthRuleIT {
   }
 
   @Test
-  public void shouldAccessSecureEndPointWithToken() {
+  void shouldAccessSecureEndPointWithToken() {
     Response response =
         createWebTarget()
             .path("/secure")
@@ -182,11 +185,11 @@ public class AuthRuleIT {
 
     assertThat(response.getStatus()).isEqualTo(SC_OK);
     assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
-        .contains(entry("iss", "AuthRule"), entry("sub", "test"));
+        .contains(entry("iss", "AuthExtension"), entry("sub", "test"));
   }
 
   @Test
-  public void shouldGetClaimsFromSecureEndPointWithToken() {
+  void shouldGetClaimsFromSecureEndPointWithToken() {
     Response response =
         createWebTarget()
             .path("/secure")
@@ -201,7 +204,7 @@ public class AuthRuleIT {
     assertThat(response.getStatus()).isEqualTo(SC_OK);
     assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
         .contains(
-            entry("iss", "AuthRule"),
+            entry("iss", "AuthExtension"),
             entry("sub", "test"),
             entry("test", "testClaim"),
             entry("mapKey", "testClaimFromMap"));
