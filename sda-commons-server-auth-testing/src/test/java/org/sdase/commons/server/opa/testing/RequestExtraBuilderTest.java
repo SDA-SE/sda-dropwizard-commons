@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 
-public class RequestExtraBuilderTest {
+class RequestExtraBuilderTest {
 
   private String lastReceivedJwt;
   private boolean withJwtCalled;
@@ -56,7 +56,7 @@ public class RequestExtraBuilderTest {
   // tests for withJwtHeaderValue(String)
 
   @Test
-  public void shouldStripBearerFromHeaderValue() {
+  void shouldStripBearerFromHeaderValue() {
 
     String given = "Bearer ey...ey...sig";
 
@@ -66,7 +66,7 @@ public class RequestExtraBuilderTest {
   }
 
   @Test
-  public void shouldStripBearerInLowerCaseFromHeaderValue() {
+  void shouldStripBearerInLowerCaseFromHeaderValue() {
 
     String given = "bearer ey...ey...sig";
 
@@ -76,7 +76,7 @@ public class RequestExtraBuilderTest {
   }
 
   @Test
-  public void shouldStripBearerWithManySpacesFromHeaderValue() {
+  void shouldStripBearerWithManySpacesFromHeaderValue() {
 
     String given = "Bearer   ey...ey...sig";
 
@@ -86,21 +86,21 @@ public class RequestExtraBuilderTest {
   }
 
   @Test
-  public void shouldSilentlyIgnoreNullHeaderValue() {
+  void shouldSilentlyIgnoreNullHeaderValue() {
 
     assertThatCode(() -> dummyImpl.withJwtFromHeaderValue(null)).doesNotThrowAnyException();
     assertThat(withJwtCalled).isFalse();
   }
 
   @Test
-  public void shouldSilentlyIgnoreBlankHeaderValue() {
+  void shouldSilentlyIgnoreBlankHeaderValue() {
 
     assertThatCode(() -> dummyImpl.withJwtFromHeaderValue("   ")).doesNotThrowAnyException();
     assertThat(withJwtCalled).isFalse();
   }
 
   @Test
-  public void shouldReturnImplementationInstanceOnHeaderValue() {
+  void shouldReturnImplementationInstanceOnHeaderValue() {
 
     OpaRule.RequestExtraBuilder requestExtraBuilder =
         dummyImpl.withJwtFromHeaderValue("Bearer ey...ey...sig");
@@ -109,7 +109,7 @@ public class RequestExtraBuilderTest {
   }
 
   @Test
-  public void shouldReturnImplementationInstanceOnIgnoreHeaderValue() {
+  void shouldReturnImplementationInstanceOnIgnoreHeaderValue() {
 
     OpaRule.RequestExtraBuilder requestExtraBuilder = dummyImpl.withJwtFromHeaderValue(null);
 
@@ -119,7 +119,7 @@ public class RequestExtraBuilderTest {
   // tests for withJwtFromHeaders(MultivaluedMap) with single value
 
   @Test
-  public void shouldStripBearerFromHeaders() {
+  void shouldStripBearerFromHeaders() {
 
     String given = "Bearer ey...ey...sig";
 
@@ -132,7 +132,7 @@ public class RequestExtraBuilderTest {
   }
 
   @Test
-  public void shouldStripBearerInLowerCaseFromHeaders() {
+  void shouldStripBearerInLowerCaseFromHeaders() {
 
     String given = "bearer ey...ey...sig";
 
@@ -145,7 +145,7 @@ public class RequestExtraBuilderTest {
   }
 
   @Test
-  public void shouldStripBearerWithManySpacesFromHeaders() {
+  void shouldStripBearerWithManySpacesFromHeaders() {
 
     String given = "Bearer   ey...ey...sig";
 
@@ -158,7 +158,7 @@ public class RequestExtraBuilderTest {
   }
 
   @Test
-  public void shouldSilentlyIgnoreEmptyHeaders() {
+  void shouldSilentlyIgnoreEmptyHeaders() {
 
     MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
 
@@ -167,7 +167,7 @@ public class RequestExtraBuilderTest {
   }
 
   @Test
-  public void shouldReturnImplementationInstanceOnHeaders() {
+  void shouldReturnImplementationInstanceOnHeaders() {
 
     MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
     headers.add("Authorization", "Bearer ey...ey...sig");
@@ -178,7 +178,7 @@ public class RequestExtraBuilderTest {
   }
 
   @Test
-  public void shouldReturnImplementationInstanceOnIgnoreHeaders() {
+  void shouldReturnImplementationInstanceOnIgnoreHeaders() {
 
     MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
 

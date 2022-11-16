@@ -12,77 +12,80 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.filter.model.OpaRequest;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.sdase.commons.server.opa.testing.test.ConstraintModel;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class OpaRuleIT {
+class OpaRuleIT {
 
-  @ClassRule public static final OpaRule OPA_RULE = new OpaRule();
-  @Rule public RetryRule rule = new RetryRule();
+  @RegisterExtension private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
   private String path = "resources";
   private String method = "GET";
   private String jwt = "aaaa.bbbb.cccc";
 
-  @Before
-  public void before() {
-    OPA_RULE.reset();
+  @BeforeEach
+  void before() {
+    OPA_EXTENSION.reset();
   }
 
   @Test
-  @Retry(5)
-  public void shouldReturnResponseOnMatchWithLegacyOnRequest() {
+  @RetryingTest(5)
+  void shouldReturnResponseOnMatchWithLegacyOnRequest() {
     // given
-    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).allow());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).allow());
     // when
     Response response = requestMock(request(method, path));
     // then
     assertThat(response.getStatus()).isEqualTo(SC_OK);
     assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
-    OPA_RULE.verify(1, method, path);
+    OPA_EXTENSION.verify(1, method, path);
   }
 
   @Test
-  @Retry(5)
-  public void shouldReturnResponseOnMatch() {
+  @RetryingTest(5)
+  void shouldReturnResponseOnMatch() {
     // given
-    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
     // when
     Response response = requestMock(requestWithJwt(jwt, method, path));
     // then
     assertThat(response.getStatus()).isEqualTo(SC_OK);
     assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
-    OPA_RULE.verify(1, onRequest().withHttpMethod(method).withPath(path).withJwt(jwt));
-  }
-
-  @Test(expected = VerificationException.class)
-  public void shouldThrowExceptionIfNotVerified() {
-    OPA_RULE.verify(1, method, path);
-  }
-
-  @Test(expected = VerificationException.class)
-  public void shouldThrowExceptionIfUnexpectedToken() {
-    // given
-    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
-    // when
-    requestMock(requestWithJwt("INVALID", method, path));
-    // then
-    OPA_RULE.verify(1, onRequest().withHttpMethod(method).withPath(path).withJwt(jwt));
+    OPA_EXTENSION.verify(1, onRequest().withHttpMethod(method).withPath(path).withJwt(jwt));
   }
 
   @Test
-  @Retry(5)
-  public void shouldReturnServerError() {
+  void shouldThrowExceptionIfNotVerified() {
+    Assertions.assertThrows(
+        VerificationException.class, () -> OPA_EXTENSION.verify(1, method, path));
+  }
+
+  @Test
+  void shouldThrowExceptionIfUnexpectedToken() {
     // given
-    OPA_RULE.mock(onAnyRequest().serverError());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
+    // when
+    requestMock(requestWithJwt("INVALID", method, path));
+    // then
+    Assertions.assertThrows(
+        VerificationException.class,
+        () ->
+            OPA_EXTENSION.verify(
+                1, onRequest().withHttpMethod(method).withPath(path).withJwt(jwt)));
+  }
+
+  @Test
+  @RetryingTest(5)
+  void shouldReturnServerError() {
+    // given
+    OPA_EXTENSION.mock(onAnyRequest().serverError());
     // when
     Response response = requestMock(request(method, path));
     // then
@@ -90,10 +93,10 @@ public class OpaRuleIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldReturnEmptyResponse() {
+  @RetryingTest(5)
+  void shouldReturnEmptyResponse() {
     // given
-    OPA_RULE.mock(onAnyRequest().emptyResponse());
+    OPA_EXTENSION.mock(onAnyRequest().emptyResponse());
     // when
     Response response = requestMock(request(method, path));
     // then
@@ -102,10 +105,10 @@ public class OpaRuleIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldMockLongPathSuccessfully() {
+  @RetryingTest(5)
+  void shouldMockLongPathSuccessfully() {
     // given
-    OPA_RULE.mock(onRequest().withHttpMethod("GET").withPath("/p1/p2").allow());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod("GET").withPath("/p1/p2").allow());
 
     // when
     Response response = requestMock(request("GET", "p1", "p2"));
@@ -115,10 +118,10 @@ public class OpaRuleIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldMockLongPathWithTrailingSlashSuccessfully() {
+  @RetryingTest(5)
+  void shouldMockLongPathWithTrailingSlashSuccessfully() {
     // given
-    OPA_RULE.mock(onRequest().withHttpMethod("GET").withPath("/p1/p2//").allow());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod("GET").withPath("/p1/p2//").allow());
 
     // when
     Response response = requestMock(request("GET", "p1", "p2"));
@@ -128,25 +131,25 @@ public class OpaRuleIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldReturnDifferentResponsesInOneTest() {
+  @RetryingTest(5)
+  void shouldReturnDifferentResponsesInOneTest() {
     // given
     ConstraintModel constraintModel = new ConstraintModel().addConstraint("key", "A", "B");
-    OPA_RULE.mock(
+    OPA_EXTENSION.mock(
         onRequest()
             .withHttpMethod("GET")
             .withPath("pathA")
             .allow()
             .withConstraint(constraintModel));
-    OPA_RULE.mock(onRequest().withHttpMethod("POST").withPath("pathB").deny());
-    OPA_RULE.mock(
+    OPA_EXTENSION.mock(onRequest().withHttpMethod("POST").withPath("pathB").deny());
+    OPA_EXTENSION.mock(
         onRequest()
             .withHttpMethod("POST")
             .withPath("pathC")
             .withJwt(jwt)
             .allow()
             .withConstraint(constraintModel));
-    OPA_RULE.mock(onRequest().withHttpMethod("POST").withPath("pathD").withJwt(null).deny());
+    OPA_EXTENSION.mock(onRequest().withHttpMethod("POST").withPath("pathD").withJwt(null).deny());
     // when
     Response response = requestMock(request("GET", "pathA"));
     Response response2 = requestMock(request("POST", "pathB"));
@@ -163,12 +166,12 @@ public class OpaRuleIT {
     assertThat(opaResponse3.isAllow()).isTrue();
     OpaResponse opaResponse4 = response4.readEntity(OpaResponse.class);
     assertThat(opaResponse4.isAllow()).isFalse();
-    OPA_RULE.verify(1, onRequest().withHttpMethod("POST").withPath("pathC").withJwt(jwt));
-    OPA_RULE.verify(1, onRequest().withHttpMethod("POST").withPath("pathD").withJwt(null));
+    OPA_EXTENSION.verify(1, onRequest().withHttpMethod("POST").withPath("pathC").withJwt(jwt));
+    OPA_EXTENSION.verify(1, onRequest().withHttpMethod("POST").withPath("pathD").withJwt(null));
   }
 
   @Test()
-  public void shouldSplitPath() {
+  void shouldSplitPath() {
     assertThat(OpaRule.StubBuilder.splitPath("a")).containsExactly("a");
     assertThat(OpaRule.StubBuilder.splitPath("b/c")).containsExactly("b", "c");
     assertThat(OpaRule.StubBuilder.splitPath("/d")).containsExactly("d");
@@ -178,7 +181,7 @@ public class OpaRuleIT {
 
   private Response requestMock(OpaRequest request) {
     return JerseyClientBuilder.createClient()
-        .target(OPA_RULE.getUrl())
+        .target(OPA_EXTENSION.getUrl())
         .path("/v1/data/policy")
         .request(MediaType.APPLICATION_JSON_TYPE)
         .post(Entity.json(request));
