@@ -11,7 +11,7 @@ import static org.assertj.core.util.Lists.newArrayList;
 import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.GenericType;
@@ -20,49 +20,48 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.sdase.commons.server.auth.testing.AuthRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
+import org.sdase.commons.server.auth.testing.AuthClassExtension;
 import org.sdase.commons.server.opa.testing.test.AuthAndOpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.AuthAndOpaBundleTestApp;
 import org.sdase.commons.server.opa.testing.test.ConstraintModel;
 import org.sdase.commons.server.opa.testing.test.PrincipalInfo;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class AuthAndOpaIT {
+class AuthAndOpaIT {
 
-  private static final AuthRule AUTH = AuthRule.builder().build();
+  @RegisterExtension
+  @Order(0)
+  private static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
-  private static final OpaRule OPA_RULE = new OpaRule();
+  @RegisterExtension
+  @Order(1)
+  private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
-  private static final DropwizardAppRule<AuthAndOpaBundeTestAppConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(2)
+  private static final DropwizardAppExtension<AuthAndOpaBundeTestAppConfiguration> DW =
+      new DropwizardAppExtension<>(
           AuthAndOpaBundleTestApp.class,
           resourceFilePath("test-config.yaml"),
-          config("opa.baseUrl", OPA_RULE::getUrl));
+          config("opa.baseUrl", OPA_EXTENSION::getUrl));
 
-  @ClassRule
-  public static final RuleChain chain = RuleChain.outerRule(AUTH).around(OPA_RULE).around(DW);
-
-  @Rule public final RetryRule retryRule = new RetryRule();
-
-  private static String path = "resources";
-  private static String method = "GET";
+  private static final String path = "resources";
+  private static final String method = "GET";
   private String jwt;
 
-  @Before
-  public void before() {
+  @BeforeEach
+  void before() {
     jwt = AUTH.auth().buildToken();
-    OPA_RULE.reset();
+    OPA_EXTENSION.reset();
   }
 
   @Test
-  @Retry(5)
-  public void shouldNotAccessSimpleWithInvalidToken() {
+  @RetryingTest(5)
+  void shouldNotAccessSimpleWithInvalidToken() {
     Response response =
         getResources(
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
@@ -72,13 +71,13 @@ public class AuthAndOpaIT {
     assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
     assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
         .containsKeys("title", "invalidParams");
-    OPA_RULE.verify(0, onAnyRequest());
+    OPA_EXTENSION.verify(0, onAnyRequest());
   }
 
   @Test
-  @Retry(5)
-  public void shouldAllowAccessSimple() {
-    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
+  @RetryingTest(5)
+  void shouldAllowAccessSimple() {
+    OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
 
     Response response = getResources(true);
 
@@ -90,9 +89,9 @@ public class AuthAndOpaIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldAllowAccessConstraints() {
-    OPA_RULE.mock(
+  @RetryingTest(5)
+  void shouldAllowAccessConstraints() {
+    OPA_EXTENSION.mock(
         onRequest()
             .withHttpMethod(method)
             .withPath(path)
@@ -115,9 +114,9 @@ public class AuthAndOpaIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldAllowAccessWithoutTokenSimple() {
-    OPA_RULE.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(null).allow());
+  @RetryingTest(5)
+  void shouldAllowAccessWithoutTokenSimple() {
+    OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(null).allow());
 
     Response response = getResources(false);
 
@@ -129,9 +128,9 @@ public class AuthAndOpaIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldAllowAccessWithoutTokenConstraints() {
-    OPA_RULE.mock(
+  @RetryingTest(5)
+  void shouldAllowAccessWithoutTokenConstraints() {
+    OPA_EXTENSION.mock(
         onRequest()
             .withHttpMethod(method)
             .withPath(path)
