@@ -6,28 +6,30 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.sdase.commons.server.opa.testing.OpaRule;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.server.opa.testing.OpaClassExtension;
 import org.sdase.commons.starter.test.StarterApp;
 
-public class FilterPriorityTest {
+class FilterPriorityTest {
 
-  public static final OpaRule OPA = new OpaRule();
+  @RegisterExtension
+  @Order(0)
+  public static final OpaClassExtension OPA = new OpaClassExtension();
 
-  public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  public static final DropwizardAppExtension<SdaPlatformConfiguration> DW =
+      new DropwizardAppExtension<>(
           StarterApp.class,
           resourceFilePath("test-config.yaml"),
           config("opa.baseUrl", OPA::getUrl));
 
-  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(OPA).around(DW);
-
   @Test
-  public void corsFromSwaggerHasHigherPriority() {
+  void corsFromSwaggerHasHigherPriority() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -42,7 +44,7 @@ public class FilterPriorityTest {
   }
 
   @Test
-  public void traceTokenFilterHasHighestPriority() {
+  void traceTokenFilterHasHighestPriority() {
     // Make sure that trace token filter is even executed when authentication fails
     Response response =
         DW.client()
@@ -57,7 +59,7 @@ public class FilterPriorityTest {
   }
 
   @Test
-  public void errorsInConsumerTokenFilterTrackedByPrometheus() {
+  void errorsInConsumerTokenFilterTrackedByPrometheus() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -80,7 +82,7 @@ public class FilterPriorityTest {
   }
 
   @Test
-  public void errorsInAuthenticationFilterAreTrackedByPrometheus() {
+  void errorsInAuthenticationFilterAreTrackedByPrometheus() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
