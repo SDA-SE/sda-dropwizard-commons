@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.tuple;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.NotFoundException;
@@ -26,32 +25,33 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.client.jersey.error.ClientErrorUtil;
 import org.sdase.commons.client.jersey.error.ClientRequestException;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.shared.api.error.ApiInvalidParam;
 
-public class ClientErrorUtilTest {
+class ClientErrorUtilTest {
 
-  @ClassRule
-  public static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   private static final ObjectMapper OM = new ObjectMapper();
 
   private WebTarget webTarget;
 
-  @Before
-  public void resetRequests() {
+  @BeforeEach
+  void resetRequests() {
     WIRE.resetAll();
     webTarget = JerseyClientBuilder.createClient().target(WIRE.baseUrl());
   }
 
   @Test
-  public void catchNotFoundException() {
+  void catchNotFoundException() {
     WIRE.stubFor(
         get("/")
             .withHeader(ACCEPT, equalTo(APPLICATION_JSON))
@@ -72,7 +72,7 @@ public class ClientErrorUtilTest {
   }
 
   @Test
-  public void passThroughTheResponseEntity() throws JsonProcessingException {
+  void passThroughTheResponseEntity() throws JsonProcessingException {
     WIRE.stubFor(
         get("/")
             .withHeader(ACCEPT, equalTo(APPLICATION_JSON))
@@ -93,7 +93,7 @@ public class ClientErrorUtilTest {
   }
 
   @Test
-  public void readErrorEntityWithJacksonReference() throws JsonProcessingException {
+  void readErrorEntityWithJacksonReference() throws JsonProcessingException {
     WIRE.stubFor(
         get("/")
             .withHeader(ACCEPT, equalTo(APPLICATION_JSON))
@@ -121,7 +121,7 @@ public class ClientErrorUtilTest {
   }
 
   @Test
-  public void readErrorEntityWithJaxRsReference() throws JsonProcessingException {
+  void readErrorEntityWithJaxRsReference() throws JsonProcessingException {
     WIRE.stubFor(
         get("/")
             .withHeader(ACCEPT, equalTo(APPLICATION_JSON))
@@ -147,7 +147,7 @@ public class ClientErrorUtilTest {
   }
 
   @Test
-  public void readErrorEntityWithClassReference() {
+  void readErrorEntityWithClassReference() {
     WIRE.stubFor(
         get("/")
             .withHeader(ACCEPT, equalTo(APPLICATION_JSON))
@@ -173,7 +173,7 @@ public class ClientErrorUtilTest {
   }
 
   @Test
-  public void readDefaultErrorEntityFromException() throws JsonProcessingException {
+  void readDefaultErrorEntityFromException() throws JsonProcessingException {
     ApiError givenError =
         new ApiError(
             "An error for testing", // NOSONAR
@@ -213,7 +213,7 @@ public class ClientErrorUtilTest {
   }
 
   @Test
-  public void readDefaultErrorEntityFromResponse() throws JsonProcessingException {
+  void readDefaultErrorEntityFromResponse() throws JsonProcessingException {
     ApiError givenError =
         new ApiError(
             "An error for testing",
@@ -244,8 +244,7 @@ public class ClientErrorUtilTest {
   }
 
   @Test
-  public void readNoErrorEntityAsTypeReferenceFromSuccessfulResponse()
-      throws JsonProcessingException {
+  void readNoErrorEntityAsTypeReferenceFromSuccessfulResponse() throws JsonProcessingException {
     WIRE.stubFor(
         get("/")
             .withHeader(ACCEPT, equalTo(APPLICATION_JSON))
@@ -263,8 +262,7 @@ public class ClientErrorUtilTest {
   }
 
   @Test
-  public void readNoErrorEntityAsGenericTypeFromSuccessfulResponse()
-      throws JsonProcessingException {
+  void readNoErrorEntityAsGenericTypeFromSuccessfulResponse() throws JsonProcessingException {
     WIRE.stubFor(
         get("/")
             .withHeader(ACCEPT, equalTo(APPLICATION_JSON))
@@ -282,7 +280,7 @@ public class ClientErrorUtilTest {
   }
 
   @Test
-  public void readNoErrorEntityAsClassFromSuccessfulResponse() {
+  void readNoErrorEntityAsClassFromSuccessfulResponse() {
     WIRE.stubFor(
         get("/")
             .withHeader(ACCEPT, equalTo(TEXT_PLAIN))
