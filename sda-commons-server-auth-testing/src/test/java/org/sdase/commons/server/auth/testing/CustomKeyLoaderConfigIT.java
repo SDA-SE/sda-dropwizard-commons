@@ -6,6 +6,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
@@ -13,35 +14,37 @@ import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.SetSystemProperty;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 
 /** A test that checks if the jersey client that is used to load keys is configurable */
-public class CustomKeyLoaderConfigIT {
+@SetSystemProperty(key = "AUTH_RULE", value = "{\"keys\": [{}]}")
+class CustomKeyLoaderConfigIT {
 
-  public static final WireMockRule WIRE =
-      new WireMockRule(new WireMockConfiguration().dynamicPort());
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   static {
     // the stub needs to be registered before the application starts.
-    // A @BeforeClass method might be too late.
+    // A @BeforeAll method might be too late.
     WIRE.stubFor(get(anyUrl()).willReturn(okJson("{\"keys\": []}")));
   }
 
-  public static final TestRule AUTH = AuthRule.createTestRule("{\"keys\": [{}]}");
-
-  private static final DropwizardAppRule<AuthTestConfig> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(2)
+  private static final DropwizardAppExtension<AuthTestConfig> DW =
+      new DropwizardAppExtension<>(
           AuthTestApp.class,
           ResourceHelpers.resourceFilePath("test-config.yaml"),
           // add a custom keyLoader config
@@ -49,10 +52,8 @@ public class CustomKeyLoaderConfigIT {
           config("auth.keys[0].type", "JWKS"),
           config("auth.keys[0].location", () -> WIRE.url("jwks")));
 
-  @ClassRule public static RuleChain RULE = RuleChain.outerRule(WIRE).around(AUTH).around(DW);
-
   @Test
-  public void shouldSendCustomUserAgentInTheJwksRequest() {
+  void shouldSendCustomUserAgentInTheJwksRequest() {
     final String token =
         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.e30.sJ38ARdiqW5NDXRzkwPGD_XVVBL_q50ytQr3CezUaWCUlDgOwa49G_GuiriVbAAhllyETulropgTvCxbsDdXOHW4YrQWrJ1rn-HLqceoNxSX_Z2HaR5CeNtUmGL2pX-kv_9rYmyjRVwcOMRsQx_a7DPl-Bo5RrKXHka1nnaQ1a55W4PPOSiCCq4oEYH6RerxODh7uvfB9cYruUMH60f-kZeMVVzKuFpwBdI8xCYEZxXcBPtERsOVBTnGpr8S2_2xpaP6vfLsY4M63GwRNsTL9e8Ghm5n7VMuMrJESCHSrCTMMAK90S_iA3VwbVSUMyrJNdeccAc4lBqizUb7JuBygA";
     Response response =

@@ -1,6 +1,7 @@
 package org.sdase.commons.server.auth.testing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.Claim;
@@ -10,49 +11,49 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class AuthBuilderTest {
+class AuthBuilderTest {
 
-  private AuthBuilder authBuilder = AuthRule.builder().build().auth();
+  private AuthBuilder authBuilder = AuthClassExtension.builder().build().auth();
 
   @Test
-  public void shouldAddIntegerClaim() {
+  void shouldAddIntegerClaim() {
     String token = authBuilder.addClaim("testKey", 42).buildToken();
     Claim claim = JWT.decode(token).getClaim("testKey");
     assertThat(claim.asInt()).isEqualTo(42);
   }
 
   @Test
-  public void shouldAddLongClaim() {
+  void shouldAddLongClaim() {
     String token = authBuilder.addClaim("testKey", 2L + Integer.MAX_VALUE).buildToken();
     Claim claim = JWT.decode(token).getClaim("testKey");
     assertThat(claim.asLong()).isEqualTo(2147483649L);
   }
 
   @Test
-  public void shouldAddStringClaim() {
+  void shouldAddStringClaim() {
     String token = authBuilder.addClaim("testKey", "hello").buildToken();
     Claim claim = JWT.decode(token).getClaim("testKey");
     assertThat(claim.asString()).isEqualTo("hello");
   }
 
   @Test
-  public void shouldAddBooleanClaim() {
+  void shouldAddBooleanClaim() {
     String token = authBuilder.addClaim("testKey", true).buildToken();
     Claim claim = JWT.decode(token).getClaim("testKey");
     assertThat(claim.asBoolean()).isTrue();
   }
 
   @Test
-  public void shouldAddDoubleClaim() {
+  void shouldAddDoubleClaim() {
     String token = authBuilder.addClaim("testKey", 3.141D).buildToken();
     Claim claim = JWT.decode(token).getClaim("testKey");
     assertThat(claim.asDouble()).isEqualTo(3.141D);
   }
 
   @Test
-  public void shouldAddDateClaim() {
+  void shouldAddDateClaim() {
     Date testDate = new Date();
     String token = authBuilder.addClaim("testKey", testDate).buildToken();
     Claim claim = JWT.decode(token).getClaim("testKey");
@@ -60,28 +61,28 @@ public class AuthBuilderTest {
   }
 
   @Test
-  public void shouldAddStringArrayClaim() {
+  void shouldAddStringArrayClaim() {
     String token = authBuilder.addClaim("testKey", new String[] {"Hello", "World"}).buildToken();
     Claim claim = JWT.decode(token).getClaim("testKey");
     assertThat(claim.asList(String.class)).containsExactly("Hello", "World");
   }
 
   @Test
-  public void shouldAddLongArrayClaim() {
+  void shouldAddLongArrayClaim() {
     String token = authBuilder.addClaim("testKey", new Long[] {1L, 2L}).buildToken();
     Claim claim = JWT.decode(token).getClaim("testKey");
     assertThat(claim.asList(Long.class)).containsExactly(1L, 2L);
   }
 
   @Test
-  public void shouldAddIntArrayClaim() {
+  void shouldAddIntArrayClaim() {
     String token = authBuilder.addClaim("testKey", new Integer[] {1, 2}).buildToken();
     Claim claim = JWT.decode(token).getClaim("testKey");
     assertThat(claim.asList(Integer.class)).containsExactly(1, 2);
   }
 
   @Test
-  public void shouldAddAllSupportedTypesWithOneCall() {
+  void shouldAddAllSupportedTypesWithOneCall() {
     Date dateValue = new Date();
     Map<String, Object> claims = new HashMap<>();
     claims.put("s", "Hello");
@@ -106,8 +107,8 @@ public class AuthBuilderTest {
     assertThat(jwt.getClaims().get("date").asDate()).isEqualToIgnoringMillis(dateValue);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void shouldFailForAnyClaimOfInvalidType() {
+  @Test
+  void shouldFailForAnyClaimOfInvalidType() {
     Date dateValue = new Date();
     Map<String, Object> claims = new LinkedHashMap<>();
     claims.put("s", "Hello");
@@ -120,11 +121,11 @@ public class AuthBuilderTest {
     claims.put("l[]", new Long[] {1L, 2L});
     claims.put("date", dateValue);
     claims.put("invalid", Instant.now());
-    authBuilder.addClaims(claims).buildToken();
+    assertThrows(IllegalArgumentException.class, () -> authBuilder.addClaims(claims).buildToken());
   }
 
   @Test
-  public void shouldOverwriteClaimOnMultipleAddCalls() {
+  void shouldOverwriteClaimOnMultipleAddCalls() {
     String token =
         authBuilder.addClaim("test", 1L).addClaim("test", 2).addClaim("test", "foo").buildToken();
     DecodedJWT jwt = JWT.decode(token);

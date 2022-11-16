@@ -4,46 +4,45 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.io.IOException;
 import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.sdase.commons.server.auth.testing.AuthRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
+import org.sdase.commons.server.auth.testing.AuthClassExtension;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class OpaRequestsIT {
+class OpaRequestsIT {
 
-  private static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  @Order(0)
+  private static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
-  private static final AuthRule AUTH = AuthRule.builder().build();
+  @RegisterExtension
+  @Order(1)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final DropwizardAppRule<OpaBundeTestAppConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(2)
+  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+      new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
-          resourceFilePath("test-config.yaml"),
+          ResourceHelpers.resourceFilePath("test-config.yaml"),
           config("opa.baseUrl", WIRE::baseUrl),
           config("opa.policyPackage", "my.policy"));
-
-  @ClassRule
-  public static final RuleChain chain = RuleChain.outerRule(WIRE).around(AUTH).around(DW);
-
-  @Rule public RetryRule retryRule = new RetryRule();
 
   private void mock() {
     WIRE.stubFor(
@@ -60,22 +59,21 @@ public class OpaRequestsIT {
                             + "}")));
   }
 
-  @Before
-  public void before() {
+  @BeforeEach
+  void before() {
     WIRE.resetAll();
     mock();
   }
 
   @Test
-  @Retry(5)
-  public void shouldSerializePathAndMethodCorrectly() throws IOException {
+  @RetryingTest(5)
+  void shouldSerializePathAndMethodCorrectly() throws IOException {
     // when
     doGetRequest(null);
 
     // then
     String body = WIRE.getAllServeEvents().get(0).getRequest().getBodyAsString();
-    Map<String, Object> opaInput =
-        new ObjectMapper().readValue(body, new TypeReference<Map<String, Object>>() {});
+    Map<String, Object> opaInput = new ObjectMapper().readValue(body, new TypeReference<>() {});
 
     basicAssertions(opaInput);
     assertThat(opaInput).extracting("input").extracting("trace").isNull(); // NOSONAR
@@ -83,16 +81,15 @@ public class OpaRequestsIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldSerializeJwtCorrectly() throws IOException {
+  @RetryingTest(5)
+  void shouldSerializeJwtCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
     doGetRequest(headers);
 
     // then
     String body = WIRE.getAllServeEvents().get(0).getRequest().getBodyAsString();
-    Map<String, Object> opaInput =
-        new ObjectMapper().readValue(body, new TypeReference<Map<String, Object>>() {});
+    Map<String, Object> opaInput = new ObjectMapper().readValue(body, new TypeReference<>() {});
 
     basicAssertions(opaInput);
     assertThat(opaInput).extracting("input").extracting("trace").isNull();
@@ -103,8 +100,8 @@ public class OpaRequestsIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldSerializeTraceTokenCorrectly() throws IOException {
+  @RetryingTest(5)
+  void shouldSerializeTraceTokenCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
     headers.add("Trace-Token", "myTrace");
@@ -112,16 +109,15 @@ public class OpaRequestsIT {
 
     // then
     String body = WIRE.getAllServeEvents().get(0).getRequest().getBodyAsString();
-    Map<String, Object> opaInput =
-        new ObjectMapper().readValue(body, new TypeReference<Map<String, Object>>() {});
+    Map<String, Object> opaInput = new ObjectMapper().readValue(body, new TypeReference<>() {});
 
     basicAssertions(opaInput);
     assertThat(opaInput).extracting("input").extracting("trace").isEqualTo("myTrace");
   }
 
   @Test
-  @Retry(5)
-  public void shouldSerializeAdditionalHeaderCorrectly() throws IOException {
+  @RetryingTest(5)
+  void shouldSerializeAdditionalHeaderCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
     headers.add("Simple", "SimpleValue");
@@ -131,8 +127,7 @@ public class OpaRequestsIT {
 
     // then
     String body = WIRE.getAllServeEvents().get(0).getRequest().getBodyAsString();
-    Map<String, Object> opaInput =
-        new ObjectMapper().readValue(body, new TypeReference<Map<String, Object>>() {});
+    Map<String, Object> opaInput = new ObjectMapper().readValue(body, new TypeReference<>() {});
 
     basicAssertions(opaInput);
     //noinspection unchecked,ConstantConditions
