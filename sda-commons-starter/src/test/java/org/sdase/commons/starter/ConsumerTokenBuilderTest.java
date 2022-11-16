@@ -10,28 +10,28 @@ import static org.mockito.Mockito.verify;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
 import org.sdase.commons.starter.test.BundleAssertion;
 
-public class ConsumerTokenBuilderTest {
+class ConsumerTokenBuilderTest {
 
   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
   private Environment environmentMock;
   private ArgumentCaptor<Object> jerseyRegistrationCaptor;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     bundleAssertion = new BundleAssertion<>();
     environmentMock = mock(Environment.class, RETURNS_DEEP_STUBS);
     jerseyRegistrationCaptor = ArgumentCaptor.forClass(Object.class);
   }
 
   @Test
-  public void withOptionalConsumerTokenByDefault() {
+  void withOptionalConsumerTokenByDefault() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -43,7 +43,7 @@ public class ConsumerTokenBuilderTest {
   }
 
   @Test
-  public void withRequiredConsumerToken() {
+  void withRequiredConsumerToken() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
