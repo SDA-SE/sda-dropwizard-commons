@@ -10,13 +10,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.glassfish.jersey.internal.MapPropertiesDelegate;
 import org.glassfish.jersey.server.ContainerRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
-public class ContainerRequestContextHolderTest {
+class ContainerRequestContextHolderTest {
 
   @Test
-  public void shouldTransferRequestContextToThreadForRunnable()
+  void shouldTransferRequestContextToThreadForRunnable()
       throws InterruptedException, ExecutionException {
     initializeContext();
 
@@ -35,7 +35,7 @@ public class ContainerRequestContextHolderTest {
   }
 
   @Test
-  public void shouldTransferRequestContextToThreadForCallable()
+  void shouldTransferRequestContextToThreadForCallable()
       throws ExecutionException, InterruptedException {
     initializeContext();
 
@@ -58,7 +58,7 @@ public class ContainerRequestContextHolderTest {
   }
 
   @Test
-  public void shouldCleanupAfterTransferRequestContextToThreadForRunnable()
+  void shouldCleanupAfterTransferRequestContextToThreadForRunnable()
       throws InterruptedException, ExecutionException {
     initializeContext();
 
@@ -77,7 +77,7 @@ public class ContainerRequestContextHolderTest {
   }
 
   @Test
-  public void shouldCleanupAfterTransferRequestContextToThreadForCallable()
+  void shouldCleanupAfterTransferRequestContextToThreadForCallable()
       throws ExecutionException, InterruptedException {
     initializeContext();
 

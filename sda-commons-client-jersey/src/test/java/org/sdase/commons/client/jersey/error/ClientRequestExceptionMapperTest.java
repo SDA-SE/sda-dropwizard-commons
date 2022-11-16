@@ -14,16 +14,16 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.shared.api.error.ApiError;
 
-public class ClientRequestExceptionMapperTest {
+class ClientRequestExceptionMapperTest {
 
   private ClientRequestExceptionMapper clientRequestExceptionMapper =
       new ClientRequestExceptionMapper();
 
   @Test
-  public void mapNotFound() {
+  void mapNotFound() {
     ClientRequestException exception = new ClientRequestException(new NotFoundException());
 
     Response response = clientRequestExceptionMapper.toResponse(exception);
@@ -40,7 +40,7 @@ public class ClientRequestExceptionMapperTest {
   }
 
   @Test
-  public void mapInternalServerError() {
+  void mapInternalServerError() {
     ClientRequestException exception =
         new ClientRequestException(new InternalServerErrorException());
 
@@ -58,7 +58,7 @@ public class ClientRequestExceptionMapperTest {
   }
 
   @Test
-  public void mapUnknownClientError() {
+  void mapUnknownClientError() {
     ClientRequestException exception = new ClientRequestException(new ClientErrorException(418));
 
     Response response = clientRequestExceptionMapper.toResponse(exception);
@@ -75,7 +75,7 @@ public class ClientRequestExceptionMapperTest {
   }
 
   @Test
-  public void jsonProcessing() {
+  void jsonProcessing() {
     ClientRequestException exception =
         new ClientRequestException(
             new ProcessingException(new JsonParseException(mock(JsonParser.class), "No message")));
@@ -94,7 +94,7 @@ public class ClientRequestExceptionMapperTest {
   }
 
   @Test
-  public void mapConnectionTimeout() {
+  void mapConnectionTimeout() {
     ClientRequestException exception =
         new ClientRequestException(new ProcessingException(new ConnectTimeoutException()));
 
@@ -113,7 +113,7 @@ public class ClientRequestExceptionMapperTest {
   }
 
   @Test
-  public void mapReadTimeout() {
+  void mapReadTimeout() {
     ClientRequestException exception =
         new ClientRequestException(new ProcessingException(new SocketTimeoutException()));
 
