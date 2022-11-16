@@ -6,27 +6,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 
-public class AuthRuleCustomizationIT {
+class AuthRuleCustomizationIT {
 
-  private static final DropwizardAppRule<AuthTestConfig> DW =
-      new DropwizardAppRule<>(
-          AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
-
-  private static final AuthRule AUTH =
-      AuthRule.builder()
+  @RegisterExtension
+  @Order(0)
+  private static AuthClassExtension AUTH =
+      AuthClassExtension.builder()
           .withKeyId(null)
           .withIssuer("customIssuer") // NOSONAR
           .withSubject("customSubject") // NOSONAR
@@ -35,10 +33,14 @@ public class AuthRuleCustomizationIT {
               AuthRuleCustomizationIT.class.getResource("/test.key").toString())
           .build();
 
-  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(AUTH).around(DW);
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<AuthTestConfig> DW =
+      new DropwizardAppExtension<>(
+          AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
   @Test
-  public void shouldAccessOpenEndPointWithoutToken() {
+  void shouldAccessOpenEndPointWithoutToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
@@ -51,7 +53,7 @@ public class AuthRuleCustomizationIT {
   }
 
   @Test
-  public void shouldNotAccessSecureEndPointWithoutToken() {
+  void shouldNotAccessSecureEndPointWithoutToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -63,7 +65,7 @@ public class AuthRuleCustomizationIT {
   }
 
   @Test
-  public void shouldAccessSecureEndPointWithToken() {
+  void shouldAccessSecureEndPointWithToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -78,7 +80,7 @@ public class AuthRuleCustomizationIT {
   }
 
   @Test
-  public void shouldDenyAccessWhenTokenExpires() {
+  void shouldDenyAccessWhenTokenExpires() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -95,7 +97,7 @@ public class AuthRuleCustomizationIT {
   }
 
   @Test
-  public void shouldGetClaimsFromSecureEndPointWithToken() {
+  void shouldGetClaimsFromSecureEndPointWithToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
