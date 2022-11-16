@@ -1,21 +1,21 @@
 package org.sdase.commons.starter;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.security.SecurityBundle;
 import org.sdase.commons.starter.test.BundleAssertion;
 
-public class SecurityBuilderTest {
+class SecurityBuilderTest {
 
   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     bundleAssertion = new BundleAssertion<>();
   }
 
   @Test
-  public void defaultSecuritySettings() {
+  void defaultSecuritySettings() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -27,7 +27,7 @@ public class SecurityBuilderTest {
   }
 
   @Test
-  public void customizableLimitsSecuritySettings() {
+  void customizableLimitsSecuritySettings() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -40,7 +40,7 @@ public class SecurityBuilderTest {
   }
 
   @Test
-  public void frontendSupportSecuritySettings() {
+  void frontendSupportSecuritySettings() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
