@@ -18,14 +18,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentSubstitutor;
-import org.sdase.commons.server.testing.SystemPropertyRule;
+import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AuthConfigTest {
+class AuthConfigTest {
 
   private static final Logger LOG = LoggerFactory.getLogger(AuthConfigTest.class);
 
@@ -57,12 +57,14 @@ public class AuthConfigTest {
     }
   }
 
-  @ClassRule
-  public static SystemPropertyRule SYSTEM_PROPERTY_RULE =
-      new SystemPropertyRule().setProperty("KEYS", KEYS_JSON).setProperty("ISSUERS", ISSUERS);
+  @RegisterExtension
+  private static final SystemPropertyClassExtension PROP =
+      new SystemPropertyClassExtension()
+          .setProperty("KEYS", KEYS_JSON)
+          .setProperty("ISSUERS", ISSUERS);
 
   @Test
-  public void shouldReadConfigFromJsonEnvironment() throws Exception {
+  void shouldReadConfigFromJsonEnvironment() throws Exception {
     String configPath = "test-config.yaml";
     String config = readConfigWithSubstitution(configPath);
     TestConfig testConfig =
