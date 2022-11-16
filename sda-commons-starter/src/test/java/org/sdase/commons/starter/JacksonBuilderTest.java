@@ -9,22 +9,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.function.Consumer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.starter.test.BundleAssertion;
 
-public class JacksonBuilderTest {
+class JacksonBuilderTest {
 
   private BundleAssertion<SdaPlatformConfiguration> bundleAssertion;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     bundleAssertion = new BundleAssertion<>();
   }
 
   @Test
-  public void defaultJacksonConfig() {
+  void defaultJacksonConfig() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -36,7 +36,7 @@ public class JacksonBuilderTest {
   }
 
   @Test
-  public void noHalSupport() {
+  void noHalSupport() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -49,7 +49,7 @@ public class JacksonBuilderTest {
   }
 
   @Test
-  public void noFieldFilter() {
+  void noFieldFilter() {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -62,7 +62,7 @@ public class JacksonBuilderTest {
   }
 
   @Test
-  public void alwaysWithMillis() throws JsonProcessingException {
+  void alwaysWithMillis() throws JsonProcessingException {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -82,7 +82,7 @@ public class JacksonBuilderTest {
   }
 
   @Test
-  public void alwaysWithoutMillis() throws JsonProcessingException {
+  void alwaysWithoutMillis() throws JsonProcessingException {
     SdaPlatformBundle<SdaPlatformConfiguration> bundle =
         SdaPlatformBundle.builder()
             .usingSdaPlatformConfiguration()
@@ -102,7 +102,7 @@ public class JacksonBuilderTest {
   }
 
   @Test
-  public void withCustomizer() {
+  void withCustomizer() {
 
     Consumer<ObjectMapper> omc =
         om -> om.disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
