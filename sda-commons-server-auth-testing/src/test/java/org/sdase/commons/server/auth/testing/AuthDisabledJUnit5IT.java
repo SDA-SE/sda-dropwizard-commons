@@ -18,11 +18,11 @@ class AuthDisabledJUnit5IT {
 
   @Order(0)
   @RegisterExtension
-  static AuthClassExtension AUTH = AuthClassExtension.builder().withDisabledAuth().build();
+  private static AuthClassExtension AUTH = AuthClassExtension.builder().withDisabledAuth().build();
 
   @Order(1)
   @RegisterExtension
-  static final DropwizardAppExtension<AuthTestConfig> DW =
+  private static final DropwizardAppExtension<AuthTestConfig> DW =
       new DropwizardAppExtension<>(
           AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
