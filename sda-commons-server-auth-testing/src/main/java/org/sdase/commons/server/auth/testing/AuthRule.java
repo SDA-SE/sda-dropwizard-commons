@@ -1,7 +1,7 @@
 package org.sdase.commons.server.auth.testing;
 
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
