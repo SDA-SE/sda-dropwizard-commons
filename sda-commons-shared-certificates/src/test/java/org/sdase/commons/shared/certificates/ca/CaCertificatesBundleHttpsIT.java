@@ -14,17 +14,17 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.shared.certificates.ca.ssl.CertificateReader;
 import org.sdase.commons.shared.certificates.ca.ssl.SslUtil;
 
-public class CaCertificatesBundleHttpsIT {
+class CaCertificatesBundleHttpsIT {
   private static final String DEFAULT_SSL_PROTOCOL = "TLSv1.2";
 
   private static final String securedHost = "https://google.com";
 
   @Test
-  public void shouldFailWithCustomTrustStore() throws Exception {
+  void shouldFailWithCustomTrustStore() throws Exception {
 
     CertificateReader certificateReader =
         new CertificateReader(Paths.get("src", "test", "resources").toString());
@@ -38,7 +38,7 @@ public class CaCertificatesBundleHttpsIT {
   }
 
   @Test
-  public void shouldMakeHttpsOK200withCustomTrustStore() throws Exception {
+  void shouldMakeHttpsOK200withCustomTrustStore() throws Exception {
 
     CertificateReader certificateReader =
         new CertificateReader(Paths.get("src", "test", "resources").toString());
@@ -52,7 +52,7 @@ public class CaCertificatesBundleHttpsIT {
         .isEqualTo(200);
   }
 
-  public static CloseableHttpResponse callSecureEndpointWithSSLContext(SSLContext sslContext)
+  static CloseableHttpResponse callSecureEndpointWithSSLContext(SSLContext sslContext)
       throws IOException {
     CloseableHttpClient httpclient = HttpClients.custom().setSSLContext(sslContext).build();
     return httpclient.execute(new HttpGet(securedHost));
