@@ -20,7 +20,10 @@ import org.junit.rules.TestRule;
  *     .withPassword("my_s3cr3t")
  *     .build();
  * </pre>
+ *
+ * @deprecated Please update to JUnit 5 and use {@link MongoDbClassExtension}
  */
+@Deprecated
 public interface MongoDbRule extends MongoDb, TestRule {
 
   static Builder builder() {

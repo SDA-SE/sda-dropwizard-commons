@@ -10,6 +10,8 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.testing.SystemPropertyRule;
 
+/** @deprecated Please update to JUnit 5 and use {@link OpaClassExtension} */
+@Deprecated
 @SuppressWarnings("WeakerAccess")
 public class OpaRule extends AbstractOpa implements TestRule {
 

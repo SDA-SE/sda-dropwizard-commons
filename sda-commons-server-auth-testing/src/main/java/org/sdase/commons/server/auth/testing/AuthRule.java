@@ -24,7 +24,10 @@ import org.sdase.commons.server.testing.SystemPropertyRule;
  * AuthRule#auth() a builder} for creation of tokens with optional custom claims. The rule may be
  * used with custom issuer, subject, certificate and public key. Issuer and subject may be
  * customized for each token.
+ *
+ * @deprecated Please update to JUnit 5 and use {@link AuthClassExtension}
  */
+@Deprecated
 public class AuthRule extends AbstractAuth implements TestRule {
 
   @SuppressWarnings("WeakerAccess")

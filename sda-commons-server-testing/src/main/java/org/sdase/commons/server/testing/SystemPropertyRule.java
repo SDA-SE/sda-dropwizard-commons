@@ -18,7 +18,11 @@ import org.junit.runners.model.Statement;
  *     &#64;ClassRule public static final SystemPropertyRule PROP = new SystemPropertyRule().setProperty("DISABLE_JWT", "true");
  *   }
  * </pre>
+ *
+ * @deprecated Please update to JUnit 5 and use {@link SystemPropertyClassExtension} or JUnit
+ *     Pioneer's {@link org.junitpioneer.jupiter.SetSystemProperty}
  */
+@Deprecated
 public class SystemPropertyRule implements TestRule {
 
   private final Map<String, Supplier<String>> propertiesToSet = new HashMap<>();
