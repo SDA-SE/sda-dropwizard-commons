@@ -10,15 +10,15 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.shared.asyncapi.AsyncApiGenerator.SchemaBuilder;
 import org.sdase.commons.shared.asyncapi.models.BaseEvent;
 import org.sdase.commons.shared.yaml.YamlUtil;
 
-public class AsyncApiGeneratorTest {
+class AsyncApiGeneratorTest {
 
   @Test
-  public void shouldGenerateAsyncApi() throws IOException, URISyntaxException {
+  void shouldGenerateAsyncApi() throws IOException, URISyntaxException {
     String actual =
         AsyncApiGenerator.builder()
             .withAsyncApiBase(getClass().getResource("/asyncapi_template.yaml"))
@@ -35,7 +35,7 @@ public class AsyncApiGeneratorTest {
   }
 
   @Test
-  public void shouldNotGenerateAsyncApi() {
+  void shouldNotGenerateAsyncApi() {
     final SchemaBuilder schemaBuilder =
         AsyncApiGenerator.builder()
             .withAsyncApiBase(getClass().getResource("/asyncapi_template.yaml"))
@@ -44,7 +44,7 @@ public class AsyncApiGeneratorTest {
   }
 
   @Test
-  public void shouldSortSchemas() {
+  void shouldSortSchemas() {
     JsonNode actual =
         AsyncApiGenerator.builder()
             .withAsyncApiBase(getClass().getResource("/asyncapi_template.yaml"))
