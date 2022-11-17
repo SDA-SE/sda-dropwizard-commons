@@ -3,13 +3,13 @@ package org.sdase.commons.shared.asyncapi.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.shared.yaml.YamlUtil;
 
-public class JsonSchemaEmbedderTest {
+class JsonSchemaEmbedderTest {
 
   @Test
-  public void shouldEmbedObject() {
+  void shouldEmbedObject() {
     JsonNode input =
         YamlUtil.load(
             getClass().getResource("/json_schema_embedder/simple_object_input.yaml"),
@@ -35,7 +35,7 @@ public class JsonSchemaEmbedderTest {
   }
 
   @Test
-  public void shouldNotEmbedObjectsAsURLs() {
+  void shouldNotEmbedObjectsAsURLs() {
     JsonNode input =
         YamlUtil.load(
             getClass().getResource("/json_schema_embedder/simple_object_url.yaml"), JsonNode.class);
