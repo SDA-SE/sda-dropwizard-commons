@@ -10,12 +10,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TestYamlUtil {
+class TestYamlUtil {
 
   @Test
-  public void testLoadYaml() {
+  void testLoadYaml() {
     // given
     URL resource = this.getClass().getClassLoader().getResource("datasets/testbean2.yml");
 
@@ -29,7 +29,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadYamlTolerantReader() {
+  void testLoadYamlTolerantReader() {
     // given
     URL resource = this.getClass().getClassLoader().getResource("datasets/testbean3.yml");
 
@@ -43,7 +43,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadYamlWithMemberUsingInputStream() {
+  void testLoadYamlWithMemberUsingInputStream() {
     // given
     InputStream resource =
         this.getClass().getClassLoader().getResourceAsStream("datasets/testbean1.yml");
@@ -59,7 +59,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadYamlWithMemberUsingString() {
+  void testLoadYamlWithMemberUsingString() {
     // given
     String resource = "---\nmessage: \"Hello\"\nattribute: \"attribute1\"\n";
 
@@ -73,7 +73,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testWriteValueAsString() {
+  void testWriteValueAsString() {
     // given
     TestBean2 tb = new TestBean2();
     tb.setAttribute("attribute1");
@@ -87,7 +87,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testReadListOfBean2FromInputStream() throws IOException {
+  void testReadListOfBean2FromInputStream() throws IOException {
 
     try (InputStream resourceAsStream =
         getClass().getResourceAsStream("/datasets/test-list.yaml")) { // NOSONAR
@@ -104,7 +104,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testReadListOfBean2FromStringContent() throws IOException {
+  void testReadListOfBean2FromStringContent() throws IOException {
 
     try (InputStream resourceAsStream =
         getClass().getResourceAsStream("/datasets/test-list.yaml")) {
@@ -120,7 +120,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testReadListOfBean2FromStringUri() {
+  void testReadListOfBean2FromStringUri() {
 
     List<TestBean2> actual =
         YamlUtil.load(
@@ -134,7 +134,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadZonedDateTimeUtc() {
+  void testLoadZonedDateTimeUtc() {
     TimeAwareBean actual =
         YamlUtil.load("time: 2019-02-18T11:06:11.634310066Z", TimeAwareBean.class);
 
@@ -142,7 +142,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadZonedDateTimeBerlin() {
+  void testLoadZonedDateTimeBerlin() {
     TimeAwareBean actual =
         YamlUtil.load("time: 2019-02-18T11:06:11.634310066+01:00", TimeAwareBean.class);
 
@@ -150,7 +150,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadYamlWithMultipleFilesURLClass() {
+  void testLoadYamlWithMultipleFilesURLClass() {
     List<TestBean2> actual =
         YamlUtil.loadList(
             getClass().getResource("/datasets/test-multiple-files.yml"), TestBean2.class);
@@ -162,7 +162,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadYamlWithMultipleFilesURLTypeReference() {
+  void testLoadYamlWithMultipleFilesURLTypeReference() {
     List<TestBean2> actual =
         YamlUtil.loadList(
             getClass().getResource("/datasets/test-multiple-files.yml"),
@@ -175,7 +175,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadYamlWithMultipleFilesInputStreamClass() throws IOException {
+  void testLoadYamlWithMultipleFilesInputStreamClass() throws IOException {
     try (InputStream resourceAsStream =
         getClass().getResourceAsStream("/datasets/test-multiple-files.yml")) { // NOSONAR
       List<TestBean2> actual = YamlUtil.loadList(resourceAsStream, TestBean2.class);
@@ -188,7 +188,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadYamlWithMultipleFilesInputStreamTypeReference() throws IOException {
+  void testLoadYamlWithMultipleFilesInputStreamTypeReference() throws IOException {
     try (InputStream resourceAsStream =
         getClass().getResourceAsStream("/datasets/test-multiple-files.yml")) { // NOSONAR
       List<TestBean2> actual =
@@ -202,7 +202,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadYamlWithMultipleFilesStringClass() throws IOException {
+  void testLoadYamlWithMultipleFilesStringClass() throws IOException {
     try (InputStream resourceAsStream =
         getClass().getResourceAsStream("/datasets/test-multiple-files.yml")) { // NOSONAR
       String content = IOUtils.toString(resourceAsStream, UTF_8);
@@ -216,7 +216,7 @@ public class TestYamlUtil {
   }
 
   @Test
-  public void testLoadYamlWithMultipleFilesStringTypeReference() throws IOException {
+  void testLoadYamlWithMultipleFilesStringTypeReference() throws IOException {
     try (InputStream resourceAsStream =
         getClass().getResourceAsStream("/datasets/test-multiple-files.yml")) { // NOSONAR
       String content = IOUtils.toString(resourceAsStream, UTF_8);
