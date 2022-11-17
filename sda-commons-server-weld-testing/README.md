@@ -6,53 +6,42 @@
 `DropwizardAppRule` during testing and provides CDI support for Servlets, listeners and resources.
 
 **Info:**
-We at SDA SE do not use CDI in our microservices any more.
+We at SDA SE do not use CDI in our microservices anymore.
 We believe that dependency injection is not helpful for small services.
-Therefore this module is not actively maintained by SDA SE developers.
+Therefore, this module is not actively maintained by SDA SE developers.
 Automated security upgrades are enabled.
 Contributions of new features and bug fixes are welcome.
-
 
 ## Usage
 
 ### Testing
 
-To start a Dropwizard application during testing the [`WeldAppRule`](./src/main/java/org/sdase/commons/server/weld/testing/WeldAppRule.java) can be used:
+To start a Dropwizard application during testing the [`WeldAppExtension`](./src/main/java/org/sdase/commons/server/weld/testing/WeldAppExtension.java) can be used:
 
 ```java
-public class WeldAppIT {
+public class WeldAppITest {
 
-   @ClassRule
-   public static final WeldAppRule<AppConfiguration> RULE = new WeldAppRule<>(
-         Application.class, ResourceHelpers.resourceFilePath("config.yml"));
+  @RegisterExtension
+  static final WeldAppExtension<AppConfiguration> APP =
+      new WeldAppExtension<>(Application.class, ResourceHelpers.resourceFilePath("config.yml"));
 
     // ...
 } 
 ```
  
-The `WeldAppRule` is a shortcut for creating a `DropwizardAppRule` in combination with the [`WeldTestSupport`](./src/main/java/org/sdase/commons/server/weld/testing/WeldTestSupport.java):
- 
-```java
-public class WeldAppIT {
-
-   @ClassRule
-   public static final DropwizardAppRule<AppConfiguration> RULE = new DropwizardAppRule<>(
-         new WeldTestSupport<>(MyApplication.class, ResourceHelpers.resourceFilePath("config.yml")));
-
-    // ...
-} 
-```
+The `WeldAppExtension` is a shortcut for creating a `DropwizardAppExtension` in combination with the
+[`WeldTestSupport`](./src/main/java/org/sdase/commons/server/weld/testing/WeldTestSupport.java).
 
 It may also be used with programmatic configuration omitting a `config.yaml`:
 
 ```java
-public class WeldAppIT {
+public class WeldAppITest {
 
-   @ClassRule
-   public static final DropwizardAppRule<AppConfiguration> RULE = new WeldAppRule<>(
-         WeldExampleApplication.class,
-         configFrom(AppConfiguration::new).withPorts(4567, 0).withRootPath("/api/*").build());
+  @RegisterExtension
+  static final DropwizardAppRule<AppConfiguration> APP = new WeldAppExtension<>(
+      MyApplication.class,
+      configFrom(AppConfiguration::new).withPorts(4567, 0).withRootPath("/api/*").build());
 
-    // ...
+  // ...
 }
 ```
