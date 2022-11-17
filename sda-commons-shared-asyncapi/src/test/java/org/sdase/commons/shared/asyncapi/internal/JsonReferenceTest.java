@@ -3,12 +3,12 @@ package org.sdase.commons.shared.asyncapi.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class JsonReferenceTest {
+class JsonReferenceTest {
 
   @Test
-  public void shouldParseInternalRef() {
+  void shouldParseInternalRef() {
     JsonReference reference = JsonReference.parse("#/parse/internal");
 
     assertThat(reference.url).isNull();
@@ -16,7 +16,7 @@ public class JsonReferenceTest {
   }
 
   @Test
-  public void shouldParseExternalRef() {
+  void shouldParseExternalRef() {
     JsonReference reference = JsonReference.parse("schema.json#/parse/external");
 
     assertThat(reference.url).isEqualTo("schema.json");
@@ -24,18 +24,18 @@ public class JsonReferenceTest {
   }
 
   @Test
-  public void shouldNotParseInvalidRef() {
+  void shouldNotParseInvalidRef() {
     assertThatThrownBy(() -> JsonReference.parse("/parse/invalid"))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
-  public void shouldFormatInternalRefToString() {
+  void shouldFormatInternalRefToString() {
     assertThat(JsonReference.parse("#/format/internal")).hasToString("#/format/internal");
   }
 
   @Test
-  public void shouldFormatExternalRefToString() {
+  void shouldFormatExternalRefToString() {
     assertThat(JsonReference.parse("schema.json#/format/external"))
         .hasToString("schema.json#/format/external");
   }
