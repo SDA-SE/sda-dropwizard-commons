@@ -1,4 +1,4 @@
-package org.sdase.commons.server.weld.testing;
+package org.sdase.commons.server.weld.testing.junit4;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,51 +7,55 @@ import static org.mockito.Mockito.when;
 
 import io.dropwizard.cli.Cli;
 import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.JarLocation;
 import java.io.ByteArrayOutputStream;
 import java.util.Optional;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.sdase.commons.server.weld.testing.WeldAppRule;
 import org.sdase.commons.server.weld.testing.test.AppConfiguration;
 import org.sdase.commons.server.weld.testing.test.WeldExampleApplication;
 
-class WeldBundleApplicationTest {
+/** @deprecated see {@link WeldAppRule} */
+@Deprecated
+public class WeldBundleApplicationTest {
 
   private static final String LOCALHOST = "http://localhost:";
 
-  @RegisterExtension
-  public static final WeldAppExtension<AppConfiguration> APP =
-      new WeldAppExtension<>(WeldExampleApplication.class, resourceFilePath("test-config.yaml"));
+  @ClassRule
+  public static final DropwizardAppRule<AppConfiguration> RULE =
+      new WeldAppRule<>(WeldExampleApplication.class, resourceFilePath("test-config.yaml"));
 
   @Test
-  void testResource() {
+  public void testResource() {
     String response =
-        APP.client()
-            .target(LOCALHOST + APP.getLocalPort() + "/api/dummy")
+        RULE.client()
+            .target(LOCALHOST + RULE.getLocalPort() + "/api/dummy")
             .request()
             .get(String.class);
     assertThat(response).isEqualTo("hello foo");
   }
 
   @Test
-  void testServlet() {
+  public void testServlet() {
     Response response =
-        APP.client().target(LOCALHOST + APP.getLocalPort() + "/foo").request().get();
+        RULE.client().target(LOCALHOST + RULE.getLocalPort() + "/foo").request().get();
     assertThat(response).isNotNull();
     assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
   }
 
   @Test
-  void testCommand() {
+  public void testCommand() {
     ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
     ByteArrayOutputStream stdErr = new ByteArrayOutputStream();
-    WeldExampleApplication app = APP.getApplication();
+    WeldExampleApplication app = RULE.getApplication();
 
     final JarLocation location = mock(JarLocation.class);
-    final Bootstrap<AppConfiguration> bootstrap = new Bootstrap<>(APP.getApplication());
+    final Bootstrap<AppConfiguration> bootstrap = new Bootstrap<>(RULE.getApplication());
     when(location.toString()).thenReturn("dw-thing.jar");
     when(location.getVersion()).thenReturn(Optional.of("1.0.0"));
     bootstrap.addCommand(app.getTestCommand());
@@ -64,12 +68,12 @@ class WeldBundleApplicationTest {
   }
 
   @Test
-  void testTask() {
-    WeldExampleApplication app = APP.getApplication();
+  public void testTask() {
+    WeldExampleApplication app = RULE.getApplication();
 
     try (Response response =
-        APP.client()
-            .target(LOCALHOST + APP.getAdminPort() + "/tasks/runTestTask")
+        RULE.client()
+            .target(LOCALHOST + RULE.getAdminPort() + "/tasks/runTestTask")
             .request()
             .post(Entity.entity("", MediaType.TEXT_PLAIN))) {
       assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
@@ -78,10 +82,10 @@ class WeldBundleApplicationTest {
   }
 
   @Test
-  void testEmbedTrue() {
+  public void testEmbedTrue() {
     Boolean actual =
-        APP.client()
-            .target("http://localhost:" + APP.getLocalPort())
+        RULE.client()
+            .target("http://localhost:" + RULE.getLocalPort())
             .path("api")
             .path("dummy")
             .path("testLinkEmbedded")
@@ -93,10 +97,10 @@ class WeldBundleApplicationTest {
   }
 
   @Test
-  void testEmbedFalse() {
+  public void testEmbedFalse() {
     Boolean actual =
-        APP.client()
-            .target("http://localhost:" + APP.getLocalPort())
+        RULE.client()
+            .target("http://localhost:" + RULE.getLocalPort())
             .path("api")
             .path("dummy")
             .path("testLinkEmbedded")

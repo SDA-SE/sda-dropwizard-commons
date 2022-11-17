@@ -1,4 +1,4 @@
-package org.sdase.commons.server.weld.testing;
+package org.sdase.commons.server.weld.testing.junit4;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -7,50 +7,54 @@ import static org.sdase.commons.server.testing.DropwizardConfigurationHelper.con
 
 import io.dropwizard.cli.Cli;
 import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.JarLocation;
 import java.io.ByteArrayOutputStream;
 import java.util.Optional;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.sdase.commons.server.weld.testing.WeldAppRule;
 import org.sdase.commons.server.weld.testing.test.AppConfiguration;
 import org.sdase.commons.server.weld.testing.test.WeldExampleApplication;
 
-class WeldBundleProgrammaticConfigTest {
+/** @deprecated see {@link WeldAppRule} */
+@Deprecated
+public class WeldBundleProgrammaticConfigTest {
 
   private static final String LOCALHOST = "http://localhost:";
 
-  @RegisterExtension
-  static final WeldAppExtension<AppConfiguration> APP =
-      new WeldAppExtension<>(
+  @ClassRule
+  public static final DropwizardAppRule<AppConfiguration> RULE =
+      new WeldAppRule<>(
           WeldExampleApplication.class,
           configFrom(AppConfiguration::new).withPorts(4567, 0).withRootPath("/api/*").build());
 
   @Test
-  void testResource() {
+  public void testResource() {
     String response =
-        APP.client().target(LOCALHOST + 4567 + "/api/dummy").request().get(String.class);
+        RULE.client().target(LOCALHOST + 4567 + "/api/dummy").request().get(String.class);
     assertThat(response).isNotNull().isEqualTo("hello foo");
   }
 
   @Test
-  void testServlet() {
+  public void testServlet() {
     Response response =
-        APP.client().target(LOCALHOST + APP.getLocalPort() + "/foo").request().get();
+        RULE.client().target(LOCALHOST + RULE.getLocalPort() + "/foo").request().get();
     assertThat(response).isNotNull();
     assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
   }
 
   @Test
-  void testCommand() {
+  public void testCommand() {
     ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
     ByteArrayOutputStream stdErr = new ByteArrayOutputStream();
-    WeldExampleApplication app = APP.getApplication();
+    WeldExampleApplication app = RULE.getApplication();
 
     final JarLocation location = mock(JarLocation.class);
-    final Bootstrap<AppConfiguration> bootstrap = new Bootstrap<>(APP.getApplication());
+    final Bootstrap<AppConfiguration> bootstrap = new Bootstrap<>(RULE.getApplication());
     when(location.toString()).thenReturn("dw-thing.jar");
     when(location.getVersion()).thenReturn(Optional.of("1.0.0"));
     bootstrap.addCommand(app.getTestCommand());
@@ -63,12 +67,12 @@ class WeldBundleProgrammaticConfigTest {
   }
 
   @Test
-  void testTask() {
-    WeldExampleApplication app = APP.getApplication();
+  public void testTask() {
+    WeldExampleApplication app = RULE.getApplication();
 
     try (Response response =
-        APP.client()
-            .target(LOCALHOST + APP.getAdminPort() + "/tasks/runTestTask")
+        RULE.client()
+            .target(LOCALHOST + RULE.getAdminPort() + "/tasks/runTestTask")
             .request()
             .post(Entity.entity("", MediaType.TEXT_PLAIN))) {
       assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());

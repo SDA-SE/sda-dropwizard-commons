@@ -3,7 +3,7 @@ package org.sdase.commons.server.weld.testing;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.annotation.Nullable;
 
 /**
@@ -12,25 +12,21 @@ import javax.annotation.Nullable;
  * <p>Example usage:
  *
  * <pre>
- *   &#64;ClassRule
- *   public static final WeldAppRule&lt;AppConfiguration&gt; RULE =
- *       new WeldAppRule&lt;&gt;(Application.class, ResourceHelpers.resourceFilePath("config.yml"));
+ *   &#64;RegisterExtension
+ *   static final WeldAppExtension&lt;AppConfiguration%gt APP =
+ *       new WeldAppExtension&lt;&gt;(WeldExampleApplication.class, resourceFilePath("test-config.yaml"));
  * </pre>
- *
- * @deprecated migration to JUnit 5 is highly recommended, use {@link WeldAppExtension} as
- *     alternative
  */
-@Deprecated
-public class WeldAppRule<C extends Configuration> extends DropwizardAppRule<C> {
+public class WeldAppExtension<C extends Configuration> extends DropwizardAppExtension<C> {
 
-  public WeldAppRule(
+  public WeldAppExtension(
       Class<? extends Application<C>> applicationClass,
       @Nullable String configPath,
       ConfigOverride... configOverrides) {
     super(new WeldTestSupport<>(applicationClass, configPath, configOverrides));
   }
 
-  public WeldAppRule(Class<? extends Application<C>> applicationClass, C configuration) {
+  public WeldAppExtension(Class<? extends Application<C>> applicationClass, C configuration) {
     super(new WeldTestSupport<>(applicationClass, configuration));
   }
 }
