@@ -9,14 +9,14 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.shared.asyncapi.models.BaseEvent;
 import org.sdase.commons.shared.yaml.YamlUtil;
 
-public class JsonSchemaGeneratorTest {
+class JsonSchemaGeneratorTest {
 
   @Test
-  public void shouldGenerateJsonSchema() throws IOException, URISyntaxException {
+  void shouldGenerateJsonSchema() throws IOException, URISyntaxException {
     String actual = JsonSchemaGenerator.builder().forClass(BaseEvent.class).generateYaml();
     String expected = TestUtil.readResource("/schema_expected.yaml");
 
@@ -29,7 +29,7 @@ public class JsonSchemaGeneratorTest {
   }
 
   @Test
-  public void shouldSortDefinitions() {
+  void shouldSortDefinitions() {
     JsonNode actual = JsonSchemaGenerator.builder().forClass(BaseEvent.class).generate();
     JsonNode definitions = actual.at("/definitions");
     List<String> keys = new ArrayList<>();
