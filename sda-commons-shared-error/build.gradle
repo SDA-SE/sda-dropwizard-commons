@@ -1,7 +1,7 @@
 dependencies {
   compileOnly 'io.swagger.core.v3:swagger-annotations'
 
-  testImplementation 'junit:junit'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api'
   testImplementation 'org.assertj:assertj-core'
   testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
