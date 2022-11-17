@@ -16,18 +16,18 @@ import java.util.Optional;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import org.bouncycastle.openssl.PEMParser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class CompositeX509TrustManagerTest {
+class CompositeX509TrustManagerTest {
 
   public static final String AUTH_TYPE = "Basic";
   private X509TrustManager trustManager;
   private X509Certificate trustedChain;
   private X509Certificate unTrustedChain;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  void setUp() throws Exception {
     trustManager = createTrustManager();
 
     trustedChain = getCertificateFromPemFile("trusted.pem");
@@ -35,7 +35,7 @@ public class CompositeX509TrustManagerTest {
   }
 
   @Test
-  public void shouldCreateCompositeTrustManager() {
+  void shouldCreateCompositeTrustManager() {
     CompositeX509TrustManager compositeX509TrustManager =
         new CompositeX509TrustManager(Collections.singletonList(trustManager));
 
@@ -43,7 +43,7 @@ public class CompositeX509TrustManagerTest {
   }
 
   @Test
-  public void shouldTrustServer() {
+  void shouldTrustServer() {
     CompositeX509TrustManager compositeX509TrustManager =
         new CompositeX509TrustManager(Collections.singletonList(trustManager));
 
@@ -59,7 +59,7 @@ public class CompositeX509TrustManagerTest {
   }
 
   @Test
-  public void shouldTrustClient() {
+  void shouldTrustClient() {
     CompositeX509TrustManager compositeX509TrustManager =
         new CompositeX509TrustManager(Collections.singletonList(trustManager));
 
@@ -74,7 +74,7 @@ public class CompositeX509TrustManagerTest {
   }
 
   @Test
-  public void shouldNotTrustClient() {
+  void shouldNotTrustClient() {
     CompositeX509TrustManager compositeX509TrustManager =
         new CompositeX509TrustManager(Collections.singletonList(trustManager));
 
@@ -90,7 +90,7 @@ public class CompositeX509TrustManagerTest {
   }
 
   @Test
-  public void shouldNotTrustServer() {
+  void shouldNotTrustServer() {
     CompositeX509TrustManager compositeX509TrustManager =
         new CompositeX509TrustManager(Collections.singletonList(trustManager));
 
@@ -106,7 +106,7 @@ public class CompositeX509TrustManagerTest {
   }
 
   @Test
-  public void shouldHaveSameAcceptedIssuers() {
+  void shouldHaveSameAcceptedIssuers() {
     CompositeX509TrustManager compositeX509TrustManager =
         new CompositeX509TrustManager(Collections.singletonList(trustManager));
 
