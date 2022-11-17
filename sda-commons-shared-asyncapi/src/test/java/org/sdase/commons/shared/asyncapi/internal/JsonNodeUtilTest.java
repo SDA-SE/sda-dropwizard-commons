@@ -6,13 +6,13 @@ import static org.sdase.commons.shared.asyncapi.internal.JsonNodeUtil.sortJsonNo
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.shared.yaml.YamlUtil;
 
-public class JsonNodeUtilTest {
+class JsonNodeUtilTest {
 
   @Test
-  public void shouldSortJsonNodeInPlace() {
+  void shouldSortJsonNodeInPlace() {
     JsonNode jsonNode =
         YamlUtil.load("{\"toSort\": {\"b\": 1, \"z\": 2, \"a\": 0}}", JsonNode.class);
     JsonNode nodeToSort = jsonNode.at("/toSort");
