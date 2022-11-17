@@ -21,7 +21,10 @@ import org.sdase.commons.server.s3.testing.builder.StreamObject;
  *   &#64;ClassRule
  *   public static final S3MockRule S3_MOCK = S3MockRule.builder().build();
  * </pre>
+ *
+ * @deprecated Please update to JUnit 5 and use {@link S3ClassExtension}
  */
+@Deprecated
 public class S3MockRule extends ExternalResource {
 
   private final S3Mock s3Mock;
