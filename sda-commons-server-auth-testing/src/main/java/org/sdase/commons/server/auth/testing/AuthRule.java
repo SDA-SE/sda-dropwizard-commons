@@ -5,9 +5,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Configuration;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -72,26 +69,6 @@ public class AuthRule extends AbstractAuth implements TestRule {
   @Override
   public Statement apply(Statement base, Description description) {
     return delegate.apply(base, description);
-  }
-
-  /**
-   * Provides a consumer that applies the {@link AuthConfig} matching this {@code AuthRule} to an
-   * application configuration in tests that do not use a configuration yaml file.
-   *
-   * @param authConfigSetter a reference to the setter of the {@link AuthConfig} in the {@link
-   *     Configuration} the application uses, e.g. {@code MyAppConfig::setAuth}
-   * @param <C> the type of {@link Configuration} the application uses
-   * @return a consumer to be used with {@link
-   *     org.sdase.commons.server.testing.DropwizardRuleHelper#withConfigurationModifier(Consumer)}
-   *     or {@link
-   *     org.sdase.commons.server.testing.DropwizardConfigurationHelper#withConfigurationModifier(Consumer)}
-   * @deprecated see {@link org.sdase.commons.server.testing.DropwizardRuleHelper}
-   */
-  @SuppressWarnings("WeakerAccess")
-  @Deprecated
-  public <C extends Configuration> Consumer<C> applyConfig(
-      BiConsumer<C, AuthConfig> authConfigSetter) {
-    return c -> authConfigSetter.accept(c, this.authConfig);
   }
 
   private void init() {
