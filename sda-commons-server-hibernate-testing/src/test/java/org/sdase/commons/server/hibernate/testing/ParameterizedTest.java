@@ -1,41 +1,25 @@
 package org.sdase.commons.server.hibernate.testing;
 
-import com.github.database.rider.core.DBUnitRule;
 import com.github.database.rider.core.api.configuration.DBUnit;
-import java.util.Arrays;
-import java.util.Collection;
+import com.github.database.rider.junit5.DBUnitExtension;
+import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-/**
- * This test ensures that the used rider version is able to run parameterized tests. Versions 1.3.0
- * and 1.4.0 fail when using the {@link com.github.database.rider.core.DBUnitRule}
- */
-@RunWith(Parameterized.class)
 @DBUnit(url = "jdbc:h2:mem:test", driver = "org.h2.Driver", user = "sa", password = "sa")
-public class ParameterizedTest {
+@ExtendWith(DBUnitExtension.class)
+class ParameterizedTest {
 
-  private int given;
-  private int expected;
-
-  @Rule public final DBUnitRule dbUnitRule = DBUnitRule.instance();
-
-  @Parameters
-  public static Collection<Object[]> data() {
-    return Arrays.asList(new Object[] {0, 0}, new Object[] {1, 1}, new Object[] {2, 2});
+  public static Stream<Arguments> data() {
+    return Stream.of(
+        Arguments.arguments(0, 0), Arguments.arguments(1, 1), Arguments.arguments(2, 2));
   }
 
-  public ParameterizedTest(int given, int expected) {
-    this.given = given;
-    this.expected = expected;
-  }
-
-  @Test
-  public void shouldJustRunMoreThanOneTime() {
+  @org.junit.jupiter.params.ParameterizedTest
+  @MethodSource("data")
+  void shouldJustRunMoreThanOneTime(int given, int expected) {
     Assertions.assertThat(given).isEqualTo(expected);
   }
 }
