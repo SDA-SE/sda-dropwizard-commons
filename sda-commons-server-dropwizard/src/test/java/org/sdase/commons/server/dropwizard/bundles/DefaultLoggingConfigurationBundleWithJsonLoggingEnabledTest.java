@@ -12,29 +12,24 @@ import io.dropwizard.logging.json.AccessJsonLayoutBaseFactory;
 import io.dropwizard.logging.json.EventJsonLayoutBaseFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.server.DefaultServerFactory;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.sdase.commons.server.dropwizard.bundles.test.LoggingTestApp;
-import org.sdase.commons.server.testing.SystemPropertyRule;
 
-public class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
+@SetSystemProperty(key = "ENABLE_JSON_LOGGING", value = "true")
+class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
 
-  public static final SystemPropertyRule SYSTEM_PROPERTY_RULE =
-      new SystemPropertyRule().setProperty("ENABLE_JSON_LOGGING", "true");
-
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  private static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(
           LoggingTestApp.class, resourceFilePath("without-appenders-key-config.yaml"));
 
-  @ClassRule
-  public static final RuleChain RULE = RuleChain.outerRule(SYSTEM_PROPERTY_RULE).around(DW);
-
-  @Test()
-  public void shouldApplyConsoleAppender() {
+  @Test
+  void shouldApplyConsoleAppender() {
     LoggingTestApp app = DW.getApplication();
     DefaultLoggingFactory defaultLoggingFactory =
         (DefaultLoggingFactory) app.getConfiguration().getLoggingFactory();
@@ -60,8 +55,8 @@ public class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
     assertThat(layout.isFlattenMdc()).isFalse();
   }
 
-  @Test()
-  public void shouldApplyRequestLogConsoleAppender() {
+  @Test
+  void shouldApplyRequestLogConsoleAppender() {
     LoggingTestApp app = DW.getApplication();
 
     DefaultServerFactory serverFactory =
