@@ -17,12 +17,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.hibernate.example.db.manager.PersonManager;
 import org.sdase.commons.server.hibernate.example.db.model.PersonEntity;
 
 // add connection information to ride db test util
 @DBUnit(url = URL, driver = "org.h2.Driver", user = USER, password = PWD)
-@ExtendWith(DBUnitExtension.class)
+@ExtendWith({DBUnitExtension.class})
 class PersonManagerTest {
 
   // define connect information
@@ -31,12 +32,15 @@ class PersonManagerTest {
   static final String PWD = "sa";
 
   /** DAOTest rule creates the database and provide means to access it */
+  @RegisterExtension
   private final DAOTestExtension daoTestExtension =
       DAOTestExtension.newBuilder()
           .setProperty(AvailableSettings.URL, URL)
           .setProperty(AvailableSettings.USER, USER)
           .setProperty(AvailableSettings.PASS, PWD)
           .setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop")
+          .setProperty(AvailableSettings.AUTO_CLOSE_SESSION, "false")
+          .setProperty(AvailableSettings.AUTOCOMMIT, "true")
           .addEntityClass(PersonEntity.class)
           .build();
 
@@ -50,7 +54,8 @@ class PersonManagerTest {
   }
 
   @BeforeEach
-  void before() {
+  void before() throws Throwable {
+    daoTestExtension.before();
     personManager = new PersonManager(daoTestExtension.getSessionFactory());
   }
 
