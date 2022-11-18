@@ -1,31 +1,33 @@
 package org.sdase.commons.server.dropwizard.bundles;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.assertj.core.api.Assertions;
-import org.junit.ClassRule;
-import org.junit.Test;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.dropwizard.test.DropwizardApp;
 import org.sdase.commons.server.dropwizard.test.DropwizardConfig;
-import org.sdase.commons.server.testing.SystemPropertyRule;
+import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 
-public class ConfigurationSubstitutionBundleWithOptionalConfigAsJsonTest {
+class ConfigurationSubstitutionBundleWithOptionalConfigAsJsonTest {
 
-  @ClassRule
-  public static final SystemPropertyRule SYSTEM_PROPERTY_RULE =
-      new SystemPropertyRule()
+  @RegisterExtension
+  @Order(0)
+  static final SystemPropertyClassExtension SYSTEM_PROPERTY_RULE =
+      new SystemPropertyClassExtension()
           .setProperty("OPTIONAL_CONFIG", "{'property1':'juice', 'property2':'beer'}");
 
-  @ClassRule
-  public static final DropwizardAppRule<DropwizardConfig> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  static final DropwizardAppExtension<DropwizardConfig> DW =
+      new DropwizardAppExtension<>(
           DropwizardApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
   @Test
-  public void shouldReplaceInNestedProperties() {
-    Assertions.assertThat(DW.getConfiguration().getOptionalConfig().getProperty1())
-        .isEqualTo("juice");
-    Assertions.assertThat(DW.getConfiguration().getOptionalConfig().getProperty2())
-        .isEqualTo("beer");
+  void shouldReplaceInNestedProperties() {
+    assertThat(DW.getConfiguration().getOptionalConfig().getProperty1()).isEqualTo("juice");
+    assertThat(DW.getConfiguration().getOptionalConfig().getProperty2()).isEqualTo("beer");
   }
 }
