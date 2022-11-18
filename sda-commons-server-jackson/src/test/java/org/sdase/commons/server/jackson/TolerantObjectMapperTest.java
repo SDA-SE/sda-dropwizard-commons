@@ -17,20 +17,20 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class TolerantObjectMapperTest {
+class TolerantObjectMapperTest {
 
   private ObjectMapper om;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     this.om = ObjectMapperConfigurationUtil.configureMapper().build();
   }
 
   @Test
-  public void omShouldHaveSameModulesAsDefaultFromDropwizardButNoFuzzyEnumAndBlackbirdModules() {
+  void omShouldHaveSameModulesAsDefaultFromDropwizardButNoFuzzyEnumAndBlackbirdModules() {
     Bootstrap<Configuration> standardBootstrap =
         new Bootstrap<>(
             new Application<Configuration>() {
@@ -58,7 +58,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void deserializeJsonWithUnknownFields() throws Exception {
+  void deserializeJsonWithUnknownFields() throws Exception {
     // age is not part of model class
     String given = "{\"name\": \"John Doe\", \"age\": 28}";
 
@@ -70,7 +70,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void readSingleStringAsList() throws Exception {
+  void readSingleStringAsList() throws Exception {
     String given = "{\"addresses\": \"Main Street 1\\n12345 Gotham City\"}";
 
     Person actual = om.readValue(given, Person.class);
@@ -79,7 +79,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void readEnumValue() throws Exception {
+  void readEnumValue() throws Exception {
     String given = "{\"title\": \"DOCTOR\"}";
 
     Person actual = om.readValue(given, Person.class);
@@ -88,7 +88,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void readUnknownEnumAsNull() throws Exception {
+  void readUnknownEnumAsNull() throws Exception {
     String given = "{\"title\": \"DOCTOR_HC\"}";
 
     Person actual = om.readValue(given, Person.class);
@@ -97,7 +97,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void readEnumValueWithDefault() throws Exception {
+  void readEnumValueWithDefault() throws Exception {
     String given = "{\"profession\": \"IT\"}";
 
     Person actual = om.readValue(given, Person.class);
@@ -106,7 +106,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void readUnknownEnumValueAsDefault() throws Exception {
+  void readUnknownEnumValueAsDefault() throws Exception {
     String given = "{\"profession\": \"CRAFTMANSHIP\"}";
 
     Person actual = om.readValue(given, Person.class);
@@ -115,14 +115,14 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void writeEmptyBeans() throws Exception {
+  void writeEmptyBeans() throws Exception {
     String actual = om.writeValueAsString(new Object());
 
     assertThat(actual).isEqualTo("{}");
   }
 
   @Test
-  public void failOnSelfReferenceToAvoidRecursion() {
+  void failOnSelfReferenceToAvoidRecursion() {
     Person given = new Person();
     given.setPartner(given);
 
@@ -132,7 +132,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void writeNullFields() throws Exception {
+  void writeNullFields() throws Exception {
 
     Person given = new Person();
 
@@ -148,7 +148,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void doNotWriteIgnoredField() throws Exception {
+  void doNotWriteIgnoredField() throws Exception {
 
     Person given = new Person().setIdCardNumber("123-456-789");
 
@@ -158,7 +158,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void skipIgnoredFieldWhenReading() throws Exception {
+  void skipIgnoredFieldWhenReading() throws Exception {
 
     String given = "{\"idCardNumber\": \"123-456-789\"}";
 
@@ -168,7 +168,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void shouldReadSubType() throws Exception {
+  void shouldReadSubType() throws Exception {
     String given = "{\"type\":\"my\", \"value\":\"foo\"}";
 
     Filter actual = om.readValue(given, Filter.class);
@@ -177,7 +177,7 @@ public class TolerantObjectMapperTest {
   }
 
   @Test
-  public void shouldNotFailForUnknownSubtype() throws Exception {
+  void shouldNotFailForUnknownSubtype() throws Exception {
     String given = "{\"type\":\"notMy\", \"value\":\"foo\"}";
 
     Filter actual = om.readValue(given, Filter.class);
