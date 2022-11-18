@@ -4,33 +4,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.HashSet;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.sdase.commons.server.s3.testing.S3MockRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.server.s3.testing.S3ClassExtension;
 
-public class ExternalS3HealthCheckIT {
-  @ClassRule
-  public static final S3MockRule S3_MOCK = S3MockRule.builder().createBucket("testbucket").build();
+class ExternalS3HealthCheckIT {
+  @RegisterExtension
+  static final S3ClassExtension S3 = S3ClassExtension.builder().createBucket("testbucket").build();
 
   private ExternalS3HealthCheck externalS3HealthCheck;
 
-  @Before
-  public void init() {
+  @BeforeEach
+  void init() {
     externalS3HealthCheck =
         new ExternalS3HealthCheck(
-            S3_MOCK.getClient(), new HashSet<>(Collections.singletonList("testbucket")));
+            S3.getClient(), new HashSet<>(Collections.singletonList("testbucket")));
   }
 
   @Test
-  public void shouldBeHealthy() {
+  void shouldBeHealthy() {
     assertThat(externalS3HealthCheck.execute().isHealthy()).isTrue();
   }
 
   @Test
-  public void shouldBeUnhealthy() {
-    S3_MOCK.stop();
+  void shouldBeUnhealthy() {
+    S3.stop();
     assertThat(externalS3HealthCheck.execute().isHealthy()).isFalse();
-    S3_MOCK.start();
+    S3.start();
   }
 }
