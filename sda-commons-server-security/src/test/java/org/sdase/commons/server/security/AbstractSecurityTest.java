@@ -9,32 +9,32 @@ import io.dropwizard.server.AbstractServerFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.server.SimpleServerFactory;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test that checks the application with a given config for vulnerabilities. This test may be Used
  * as a template to check other applications for security risks. Usage:
  *
  * <pre>
- *   public class MyAppIsSecureIT extends AbstractSecurityTest<Configuration> {
+ *   class MyAppIsSecureIT extends AbstractSecurityTest<Configuration> {
  *
- *     &#64;ClassRule
- *     public static final DropwizardAppRule<Configuration> DW = new DropwizardAppRule<>(
+ *     &#64;RegisterExtension
+ *     static final DropwizardAppExtension<Configuration> DW = new DropwizardAppExtension<>(
  *         MyApp.class,
  *         ResourceHelpers.resourceFilePath("default-config.yaml")
  *     );
  *
  *     &#64;Override
- *     DropwizardAppRule<Configuration> getAppRule() {
+ *     DropwizardAppExtension<Configuration> getAppRule() {
  *       return DW;
  *     }
  *
@@ -42,27 +42,27 @@ import org.junit.Test;
  *   }
  * }</pre>
  */
-public abstract class AbstractSecurityTest<C extends Configuration> {
+abstract class AbstractSecurityTest<C extends Configuration> {
 
-  abstract DropwizardAppRule<C> getAppRule();
+  abstract DropwizardAppExtension<C> getAppExtension();
 
   private WebTarget appClient;
   private WebTarget adminClient;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     appClient =
-        getAppRule()
+        getAppExtension()
             .client()
-            .target(String.format("http://localhost:%s", getAppRule().getLocalPort()));
+            .target(String.format("http://localhost:%s", getAppExtension().getLocalPort()));
     adminClient =
-        getAppRule()
+        getAppExtension()
             .client()
-            .target(String.format("http://localhost:%s", getAppRule().getAdminPort()));
+            .target(String.format("http://localhost:%s", getAppExtension().getAdminPort()));
   }
 
   @Test
-  public void doNotAllowTrace() {
+  void doNotAllowTrace() {
     Set<String> allowedMethods =
         getServerFactory().getAllowedMethods().stream()
             .map(String::trim)
@@ -72,22 +72,22 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
   }
 
   @Test
-  public void doNotStartAsRoot() {
+  void doNotStartAsRoot() {
     assertThat(getServerFactory().getStartsAsRoot()).isFalse();
   }
 
   @Test
-  public void useForwardHeadersInApp() {
+  void useForwardHeadersInApp() {
     assertThat(getAppConnector().isUseForwardedHeaders()).isTrue();
   }
 
   @Test
-  public void useForwardHeadersInAdmin() {
+  void useForwardHeadersInAdmin() {
     assertThat(getAdminConnector().isUseForwardedHeaders()).isTrue();
   }
 
   @Test
-  public void doNotUseServerHeaderInApp() {
+  void doNotUseServerHeaderInApp() {
     assertThat(getAppConnector().isUseServerHeader()).isFalse();
     Response response =
         getAppClient()
@@ -102,7 +102,7 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
   }
 
   @Test
-  public void doNotUseServerHeaderInAdmin() {
+  void doNotUseServerHeaderInAdmin() {
     assertThat(getAdminConnector().isUseServerHeader()).isFalse();
     Response response =
         getAdminClient().path("path").path("does").path("not").path("exist").request().get();
@@ -111,7 +111,7 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
   }
 
   @Test
-  public void doNotUseDateHeaderInApp() {
+  void doNotUseDateHeaderInApp() {
     assertThat(getAppConnector().isUseDateHeader()).isFalse();
     Response response =
         getAppClient().path("path").path("does").path("not").path("exist").request().get();
@@ -120,7 +120,7 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
   }
 
   @Test
-  public void doNotUseDateHeaderInAdmin() {
+  void doNotUseDateHeaderInAdmin() {
     assertThat(getAdminConnector().isUseDateHeader()).isFalse();
     Response response =
         getAppClient().path("path").path("does").path("not").path("exist").request().get();
@@ -129,7 +129,7 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
   }
 
   @Test
-  public void doNotShowDefaultErrorPageInApp() {
+  void doNotShowDefaultErrorPageInApp() {
     Response response =
         getAppClient()
             .path("path")
@@ -149,7 +149,7 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
   // represents the use of the BufferLimitsAdvice as the input headers are the only thing that can
   // be checked from http
   @Test
-  public void rejectInputHeadersOverEightKib() {
+  void rejectInputHeadersOverEightKib() {
     String chars = "0987654321abcdefghijklmnopqrstuvwxyz";
     StringBuilder valueMoreThanOneKib = new StringBuilder();
     while (valueMoreThanOneKib.length() < 1024) {
@@ -172,12 +172,12 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
   }
 
   @Test
-  @Ignore(
+  @Disabled(
       "Setting a custom error handler does not affect the deep internals of Jetty.\n"
           + "There has been an issue https://github.com/dropwizard/dropwizard/issues/647 but the resolution only affects"
           + "regular error responses from the application.\n"
           + "In AbstractServerFactory#568 a default ErrorHandler is registered.")
-  public void rejectInputHeadersOverEightKibNotReturningDefaultErrorPage() {
+  void rejectInputHeadersOverEightKibNotReturningDefaultErrorPage() {
     String chars = "0987654321abcdefghijklmnopqrstuvwxyz";
     StringBuilder valueMoreThanOneKib = new StringBuilder();
     while (valueMoreThanOneKib.length() < 1024) {
@@ -206,7 +206,7 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
    */
   @SuppressWarnings("WeakerAccess")
   protected HttpConnectorFactory getAppConnector() {
-    ServerFactory serverFactory = getAppRule().getConfiguration().getServerFactory();
+    ServerFactory serverFactory = getAppExtension().getConfiguration().getServerFactory();
     assertThat(serverFactory)
         .isInstanceOfAny(DefaultServerFactory.class, SimpleServerFactory.class);
     if (serverFactory instanceof DefaultServerFactory) {
@@ -234,7 +234,7 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
    */
   @SuppressWarnings("WeakerAccess")
   protected HttpConnectorFactory getAdminConnector() {
-    ServerFactory serverFactory = getAppRule().getConfiguration().getServerFactory();
+    ServerFactory serverFactory = getAppExtension().getConfiguration().getServerFactory();
     assertThat(serverFactory).isInstanceOf(DefaultServerFactory.class);
     if (serverFactory instanceof DefaultServerFactory) {
       DefaultServerFactory defaultServerFactory = (DefaultServerFactory) serverFactory;
@@ -255,7 +255,7 @@ public abstract class AbstractSecurityTest<C extends Configuration> {
    */
   @SuppressWarnings("WeakerAccess")
   protected AbstractServerFactory getServerFactory() {
-    ServerFactory serverFactory = getAppRule().getConfiguration().getServerFactory();
+    ServerFactory serverFactory = getAppExtension().getConfiguration().getServerFactory();
     assertThat(serverFactory).isInstanceOf(AbstractServerFactory.class);
     return (AbstractServerFactory) serverFactory;
   }
