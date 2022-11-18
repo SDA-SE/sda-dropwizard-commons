@@ -3,21 +3,21 @@ package org.sdase.commons.server.prometheus.example;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.starter.SdaPlatformConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PrometheusMetricsIT {
+class PrometheusMetricsIT {
 
   private static final Logger LOG = LoggerFactory.getLogger(PrometheusMetricsIT.class);
 
-  @ClassRule
-  public static final DropwizardAppRule<SdaPlatformConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  static final DropwizardAppExtension<SdaPlatformConfiguration> DW =
+      new DropwizardAppExtension<>(
           MetricExampleApp.class,
           null,
           // use random ports so that tests can run in parallel
@@ -25,7 +25,7 @@ public class PrometheusMetricsIT {
           randomPorts());
 
   @Test
-  public void produceGaugeMetric() {
+  void produceGaugeMetric() {
 
     String metrics = readMetrics();
 
@@ -36,7 +36,7 @@ public class PrometheusMetricsIT {
   }
 
   @Test
-  public void produceSuccessCounterMetric() {
+  void produceSuccessCounterMetric() {
 
     String metrics = readMetrics();
 
@@ -47,7 +47,7 @@ public class PrometheusMetricsIT {
   }
 
   @Test
-  public void produceErrorCounterMetric() {
+  void produceErrorCounterMetric() {
 
     String metrics = readMetrics();
 
@@ -58,7 +58,7 @@ public class PrometheusMetricsIT {
   }
 
   @Test
-  public void produceHistogramMetric() {
+  void produceHistogramMetric() {
 
     String metrics = readMetrics();
 
