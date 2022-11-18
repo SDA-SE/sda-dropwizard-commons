@@ -1,23 +1,28 @@
 package org.sdase.commons.server.hibernate;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.junit5.DBUnitExtension;
 import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.testing.junit.DAOTestRule;
+import io.dropwizard.testing.junit5.DAOTestExtension;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.internal.SessionImpl;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class DbMigrationServiceTest {
+@DBUnit(url = DbMigrationServiceTest.DB_URL, driver = "org.h2.Driver", user = "sa", password = "sa")
+@ExtendWith(DBUnitExtension.class)
+class DbMigrationServiceTest {
 
-  private static final String DB_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+  public static final String DB_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
 
-  @Rule
-  public final DAOTestRule daoTestRule =
-      DAOTestRule.newBuilder()
+  @RegisterExtension
+  DAOTestExtension daoTestExtension =
+      DAOTestExtension.newBuilder()
           .setProperty(AvailableSettings.URL, DB_URL)
           .setProperty(AvailableSettings.USER, "sa")
           .setProperty(AvailableSettings.PASS, "sa")
@@ -25,7 +30,7 @@ public class DbMigrationServiceTest {
           .build();
 
   @Test
-  public void testDBMigration() throws Exception {
+  void testDBMigration() throws Exception {
     // given
     DataSourceFactory dataSourceFactory = new DataSourceFactory();
     dataSourceFactory.setUrl(DB_URL);
@@ -34,12 +39,11 @@ public class DbMigrationServiceTest {
 
     // when
     new DbMigrationService(dataSourceFactory).migrateDatabase();
-
     // then see annotation
     Connection connection =
-        ((SessionImpl) daoTestRule.getSessionFactory().getCurrentSession()).connection();
+        ((SessionImpl) daoTestExtension.getSessionFactory().openSession()).connection();
     ResultSet tables =
         connection.getMetaData().getTables("", "public", "flyway_schema_history", null);
-    assertTrue("Expect a result for schema_version", tables.first());
+    assertTrue(tables.first(), "Expect a result for schema_version");
   }
 }
