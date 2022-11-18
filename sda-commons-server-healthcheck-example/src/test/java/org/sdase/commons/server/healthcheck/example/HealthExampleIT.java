@@ -7,39 +7,41 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
-public class HealthExampleIT {
+class HealthExampleIT {
 
   private static final String SERVICE_PATH = "/service"; // NOSONAR
   private static final String HEALTH_CHECK = "healthcheck";
   private static final String HEALTH_INTERNAL = "healthcheck/internal";
 
   // Wiremock to mock external service
-  public static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   // create example application
-  public static final DropwizardAppRule<HealthExampleConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<HealthExampleConfiguration> DW =
+      new DropwizardAppExtension<>(
           HealthExampleApplication.class,
           null,
           randomPorts(),
           config("externalServiceUrl", () -> WIRE.url(SERVICE_PATH)));
 
-  // start the two rules in order
-  @ClassRule public static final RuleChain RULE = RuleChain.outerRule(WIRE).around(DW);
-
-  @Before
-  public void resetMock() {
-    WIRE.resetMappings();
+  @BeforeEach
+  void resetMock() {
+    // WIRE.resetMappings();
+    WIRE.resetAll();
   }
 
   private void mockHealthy() {
@@ -51,7 +53,7 @@ public class HealthExampleIT {
   }
 
   @Test
-  public void overallHealthCheckStatusShouldBecomeUnhealthy() throws InterruptedException {
+  void overallHealthCheckStatusShouldBecomeUnhealthy() throws InterruptedException {
     mockHealthy();
     HealthExampleApplication app = DW.getApplication();
     // reset counting thread and set application to healthy by doing so
@@ -64,7 +66,7 @@ public class HealthExampleIT {
   }
 
   @Test
-  public void internalHealthCheckStatusShouldBecomeUnhealthy() throws InterruptedException {
+  void internalHealthCheckStatusShouldBecomeUnhealthy() throws InterruptedException {
     mockHealthy();
     HealthExampleApplication app = DW.getApplication();
     // reset counting thread and set application to healthy by doing so
@@ -77,7 +79,7 @@ public class HealthExampleIT {
   }
 
   @Test
-  public void externalHealthCheckDoesOnlyAffectOverallStatus() {
+  void externalHealthCheckDoesOnlyAffectOverallStatus() {
     mockUnhealthy();
     HealthExampleApplication app = DW.getApplication();
     // reset counting thread and set application to healthy by doing so
