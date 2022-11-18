@@ -13,13 +13,13 @@ import io.dropwizard.setup.Environment;
 import io.openapitools.jackson.dataformat.hal.HALLink;
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.jackson.test.ResourceWithLink;
 
-public class JacksonConfigurationBundleTest {
+class JacksonConfigurationBundleTest {
 
   @Test
-  public void shouldAllowEmptyBean() throws Exception {
+  void shouldAllowEmptyBean() throws Exception {
     ObjectMapper objectMapper =
         objectMapperFromBundle(JacksonConfigurationBundle.builder().build());
 
@@ -29,7 +29,7 @@ public class JacksonConfigurationBundleTest {
   }
 
   @Test
-  public void shouldRenderSelfLink() throws Exception {
+  void shouldRenderSelfLink() throws Exception {
 
     ObjectMapper objectMapper =
         objectMapperFromBundle(JacksonConfigurationBundle.builder().build());
@@ -42,7 +42,7 @@ public class JacksonConfigurationBundleTest {
   }
 
   @Test
-  public void shouldDisableHalSupport() throws Exception {
+  void shouldDisableHalSupport() throws Exception {
 
     ObjectMapper objectMapper =
         objectMapperFromBundle(JacksonConfigurationBundle.builder().withoutHalSupport().build());
@@ -55,7 +55,7 @@ public class JacksonConfigurationBundleTest {
   }
 
   @Test
-  public void shouldCustomizeObjectMapper() throws Exception {
+  void shouldCustomizeObjectMapper() throws Exception {
 
     ObjectMapper objectMapper =
         objectMapperFromBundle(
