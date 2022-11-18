@@ -12,12 +12,12 @@ import static org.sdase.commons.server.opentracing.tags.TagUtils.sanitizeHeaders
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TagUtilsTest {
+class TagUtilsTest {
 
   @Test
-  public void shouldConvertSingleHeaderToString() {
+  void shouldConvertSingleHeaderToString() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
     headers.put(LOCATION, singletonList("1"));
 
@@ -27,7 +27,7 @@ public class TagUtilsTest {
   }
 
   @Test
-  public void shouldConvertMultipleHeadersToString() {
+  void shouldConvertMultipleHeadersToString() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
     headers.put(LOCATION, singletonList("1"));
     headers.put("Transfer-Encoding", singletonList("2"));
@@ -38,7 +38,7 @@ public class TagUtilsTest {
   }
 
   @Test
-  public void shouldConvertMultiValueHeaderToString() {
+  void shouldConvertMultiValueHeaderToString() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
     headers.put(LOCATION, asList("1", "2"));
 
@@ -48,7 +48,7 @@ public class TagUtilsTest {
   }
 
   @Test
-  public void shouldReturnEmptyStringIfNoHeaders() {
+  void shouldReturnEmptyStringIfNoHeaders() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
 
     String tag = convertHeadersToString(headers);
@@ -57,14 +57,14 @@ public class TagUtilsTest {
   }
 
   @Test
-  public void shouldReturnNullIfPassedNull() {
+  void shouldReturnNullIfPassedNull() {
     String tag = convertHeadersToString(null);
 
     assertThat(tag).isNull();
   }
 
   @Test
-  public void shouldSanitizeSetCookieHeader() {
+  void shouldSanitizeSetCookieHeader() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
     headers.put(SET_COOKIE, singletonList("1234"));
     MultivaluedMap<String, ?> sanitizedHeaders = sanitizeHeaders(headers);
@@ -73,7 +73,7 @@ public class TagUtilsTest {
   }
 
   @Test
-  public void shouldSanitizeCookieHeader() {
+  void shouldSanitizeCookieHeader() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
     headers.put(COOKIE, singletonList("1234"));
     MultivaluedMap<String, ?> sanitizedHeaders = sanitizeHeaders(headers);
@@ -82,7 +82,7 @@ public class TagUtilsTest {
   }
 
   @Test
-  public void shouldSanitizeAuthorizationHeader() {
+  void shouldSanitizeAuthorizationHeader() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
     headers.put(AUTHORIZATION, singletonList("1234"));
     MultivaluedMap<String, ?> sanitizedHeaders = sanitizeHeaders(headers);
@@ -91,7 +91,7 @@ public class TagUtilsTest {
   }
 
   @Test
-  public void shouldSanitizeBearerTokenInAuthorizationHeader() {
+  void shouldSanitizeBearerTokenInAuthorizationHeader() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
     headers.put(AUTHORIZATION, singletonList("Bearer 1234"));
     MultivaluedMap<String, ?> sanitizedHeaders = sanitizeHeaders(headers);
