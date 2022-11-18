@@ -19,9 +19,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
@@ -29,7 +29,7 @@ import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
-public class AutocommitStrategyTest {
+class AutocommitStrategyTest {
 
   private static final String[] TOPICS = {"create", "delete", "update"};
 
@@ -50,16 +50,16 @@ public class AutocommitStrategyTest {
   private Thread listenerThread;
 
   @SuppressWarnings("unchecked")
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     consumer = Mockito.mock(KafkaConsumer.class);
     handler = Mockito.mock(MessageHandler.class);
     errorHandler = Mockito.mock(ErrorHandler.class);
     histogram = Mockito.mock(ConsumerTopicMessageHistogram.class);
   }
 
-  @After
-  public void stop() throws InterruptedException {
+  @AfterEach
+  void stop() throws InterruptedException {
     try {
       // stop the consumer
       if (listener != null) {
@@ -97,7 +97,7 @@ public class AutocommitStrategyTest {
   }
 
   @Test
-  public void itShouldSubscribeToAllTopics() {
+  void itShouldSubscribeToAllTopics() {
     setupMocks();
     setupListener();
     when(consumer.poll(argThat(d -> d.toMillis() > -10)))
@@ -116,7 +116,7 @@ public class AutocommitStrategyTest {
   }
 
   @Test
-  public void itShouldReenterPollingQueue() {
+  void itShouldReenterPollingQueue() {
     setupMocks();
     setupListener();
 
@@ -138,7 +138,7 @@ public class AutocommitStrategyTest {
   }
 
   @Test
-  public void errorHandlerShouldBeInvokedWhenExceptionButNotStop() {
+  void errorHandlerShouldBeInvokedWhenExceptionButNotStop() {
     ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
     setupMocks();
     setupListener();
@@ -161,7 +161,7 @@ public class AutocommitStrategyTest {
   }
 
   @Test
-  public void shouldStopWhenErrorHandlerReturnsFalse() {
+  void shouldStopWhenErrorHandlerReturnsFalse() {
     ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
     setupMocks();
     setupListener();
@@ -184,7 +184,7 @@ public class AutocommitStrategyTest {
   }
 
   @Test
-  public void itShouldHandAllRecordsToMessageHandler() {
+  void itShouldHandAllRecordsToMessageHandler() {
     ConsumerRecords<String, String> records = TestHelper.createConsumerRecords(N_MESSAGES, TOPICS);
     setupMocks();
     setupListener();
@@ -201,7 +201,7 @@ public class AutocommitStrategyTest {
   }
 
   @Test
-  public void itShouldCorrectlyStop() {
+  void itShouldCorrectlyStop() {
     setupMocks();
     setupListener();
     AtomicBoolean throwException = new AtomicBoolean(false);
@@ -237,7 +237,7 @@ public class AutocommitStrategyTest {
   }
 
   @Test
-  public void itShouldCorrectlyStopEvenWhenTopicDoesNotExist() {
+  void itShouldCorrectlyStopEvenWhenTopicDoesNotExist() {
     int waitTime = 10000;
     setupMocks();
     setupListener(waitTime);
@@ -282,7 +282,7 @@ public class AutocommitStrategyTest {
   }
 
   @Test
-  public void shouldRecognizeTopicNotReady() {
+  void shouldRecognizeTopicNotReady() {
     @SuppressWarnings("unchecked")
     final KafkaConsumer<String, String> consumer = Mockito.mock(KafkaConsumer.class);
     when(consumer.partitionsFor("topic1")).thenReturn(null);
