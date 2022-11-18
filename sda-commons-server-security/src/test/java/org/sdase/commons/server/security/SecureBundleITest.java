@@ -4,35 +4,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.security.test.SecurityTestApp;
 
-public class SecureBundleIT extends AbstractSecurityTest<Configuration> {
+class SecureBundleITest extends AbstractSecurityTest<Configuration> {
 
-  @ClassRule
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(
           SecurityTestApp.class, ResourceHelpers.resourceFilePath("test-config-no-settings.yaml"));
 
   @Override
-  DropwizardAppRule<Configuration> getAppRule() {
+  DropwizardAppExtension<Configuration> getAppExtension() {
     return DW;
   }
 
   // additional tests we use here to test the bundle
 
   @Test
-  public void useRegularIpWithoutForwardedByHeader() {
+  void useRegularIpWithoutForwardedByHeader() {
     String caller = getAppClient().path("caller").request(MediaType.TEXT_PLAIN).get(String.class);
     assertThat(caller).contains("127.0.0.1");
   }
 
   @Test
-  public void useForwardedForHeader() {
+  void useForwardedForHeader() {
     String caller =
         getAppClient()
             .path("caller")
@@ -43,13 +43,13 @@ public class SecureBundleIT extends AbstractSecurityTest<Configuration> {
   }
 
   @Test
-  public void createLinkWithoutForwardedProtoAndHostHeader() {
+  void createLinkWithoutForwardedProtoAndHostHeader() {
     String caller = getAppClient().path("link").request(MediaType.TEXT_PLAIN).get(String.class);
     assertThat(caller).contains("http://localhost:" + DW.getLocalPort());
   }
 
   @Test
-  public void useForwardedProtoAndHostHeaderToCreateLink() {
+  void useForwardedProtoAndHostHeaderToCreateLink() {
     String caller =
         getAppClient()
             .path("link")
@@ -61,7 +61,7 @@ public class SecureBundleIT extends AbstractSecurityTest<Configuration> {
   }
 
   @Test
-  public void useCustomErrorHandlersForRuntimeException() {
+  void useCustomErrorHandlersForRuntimeException() {
     Response response = getAppClient().path("throw").request().get();
     assertThat(response.getStatus()).isEqualTo(500);
     String content = response.readEntity(String.class);
@@ -69,7 +69,7 @@ public class SecureBundleIT extends AbstractSecurityTest<Configuration> {
   }
 
   @Test
-  public void useCustomErrorPageHandlerForErrorPages() {
+  void useCustomErrorPageHandlerForErrorPages() {
     Response response = getAppClient().path("404").request().get();
     assertThat(response.getStatus()).isEqualTo(404);
     String content = response.readEntity(String.class);
