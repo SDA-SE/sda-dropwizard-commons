@@ -4,19 +4,19 @@ import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.junit.ClassRule;
-import org.junit.Test;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.jaeger.test.TraceTestApp;
 
-public class JaegerBundleMetricsTest {
+class JaegerBundleMetricsTest {
 
-  @ClassRule
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(TraceTestApp.class, null, randomPorts());
+  @RegisterExtension
+  public static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(TraceTestApp.class, null, randomPorts());
 
   @Test
-  public void shouldHavePrometheusMetrics() {
+  void shouldHavePrometheusMetrics() {
     // Warmup jaeger first by performing a request:
     DW.client().target("http://localhost:" + DW.getLocalPort()).request().get();
 
