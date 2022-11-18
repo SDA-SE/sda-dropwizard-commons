@@ -1,39 +1,42 @@
 package org.sdase.commons.server.circuitbreaker;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.event.CircuitBreakerOnIgnoredErrorEvent;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 
-public class CircuitBreakerBundleTestIT {
-  private static final WireMockClassRule WIRE =
-      new WireMockClassRule(wireMockConfig().dynamicPort());
+class CircuitBreakerBundleTestIT {
+  @RegisterExtension
+  @Order(0)
+  private static final WireMockClassExtension WIRE =
+      new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  private static final DropwizardAppRule<AppConfiguration> DW =
-      new DropwizardAppRule<>(TestApp.class, resourceFilePath("test-config.yml"));
-
-  @ClassRule public static final RuleChain CHAIN = RuleChain.outerRule(WIRE).around(DW);
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<AppConfiguration> DW =
+      new DropwizardAppExtension<>(
+          TestApp.class, ResourceHelpers.resourceFilePath("test-config.yml"));
 
   @Test
-  public void shouldCreateCircuitBreaker() {
+  void shouldCreateCircuitBreaker() {
     TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
@@ -43,7 +46,7 @@ public class CircuitBreakerBundleTestIT {
   }
 
   @Test
-  public void shouldHaveDefaultConfiguration() {
+  void shouldHaveDefaultConfiguration() {
     TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
@@ -64,7 +67,7 @@ public class CircuitBreakerBundleTestIT {
   }
 
   @Test
-  public void shouldHaveCustomConfiguration() {
+  void shouldHaveCustomConfiguration() {
     TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
@@ -93,7 +96,7 @@ public class CircuitBreakerBundleTestIT {
   }
 
   @Test
-  public void shouldApplyIgnoredExceptions() {
+  void shouldApplyIgnoredExceptions() {
     TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
@@ -118,7 +121,7 @@ public class CircuitBreakerBundleTestIT {
   }
 
   @Test
-  public void shouldWrapTarget() {
+  void shouldWrapTarget() {
     TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     Simple target =
@@ -131,7 +134,7 @@ public class CircuitBreakerBundleTestIT {
   }
 
   @Test
-  public void shouldProvideMetrics() {
+  void shouldProvideMetrics() {
     TestApp app = DW.getApplication();
     CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
