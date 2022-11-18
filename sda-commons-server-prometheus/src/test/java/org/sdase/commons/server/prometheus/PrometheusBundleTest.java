@@ -4,60 +4,70 @@ import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.stream.Stream;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.prometheus.test.PrometheusTestApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PrometheusBundleTest {
+class PrometheusBundleTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(PrometheusBundleTest.class);
 
-  // intentionally not a class rule, because we have to verify some parts of the metrics dependent
-  // of the test requests
-  @Rule
-  public final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(PrometheusTestApplication.class, null, randomPorts());
+  @RegisterExtension
+  private static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(PrometheusTestApplication.class, null, randomPorts());
 
   private static final String REST_URI = "http://localhost:%d";
   private String resourceUri;
 
-  @Before
-  public void setupClass() {
+  @BeforeEach
+  void beforeEach() {
     resourceUri = String.format(REST_URI, DW.getLocalPort());
   }
 
   @Test
-  public void shouldTrackFiveRequests() {
+  void shouldTrackFiveRequests() {
+    String metrics = readMetrics();
+    String count = extractSpecificMetric(metrics, "http_request_duration_seconds_count");
+    double oldCountValue = extractValue(count);
+
+    // when
     for (int i = 0; i < 5; i++) {
       prepareResourceRequest().get(String.class);
     }
 
-    String metrics = readMetrics();
+    // then
+    metrics = readMetrics();
+    count = extractSpecificMetric(metrics, "http_request_duration_seconds_count");
 
-    // five requests count provided
-    assertThat(metrics).contains("http_request_duration_seconds_count");
-    String count =
-        Stream.of(metrics.split("(\r\n|\r|\n)"))
-            .filter(l -> l.contains("http_request_duration_seconds_count"))
-            .findFirst()
-            .orElse(null);
-    assertThat(count)
-        .isNotBlank()
-        .startsWith("http_request_duration_seconds_count")
-        .endsWith("5.0");
+    double countValue = extractValue(count);
+    assertThat(countValue).isEqualTo(oldCountValue + 5);
 
     // five requests summary
     assertThat(metrics).contains("http_request_duration_seconds_sum");
   }
 
+  private String extractSpecificMetric(String metrics, String metricName) {
+    return Stream.of(metrics.split("(\r\n|\r|\n)"))
+        .filter(l -> l.contains(metricName))
+        .findFirst()
+        .orElse(null);
+  }
+
+  private double extractValue(String countMetric) {
+    if (countMetric == null) {
+      return 0;
+    }
+    return Double.parseDouble(countMetric.split(" ")[1]);
+  }
+
   @Test
-  public void shouldReadConsumerNameFromRequestAttribute() {
+  void shouldReadConsumerNameFromRequestAttribute() {
     prepareResourceRequest().header("Consumer-Name", "test-consumer-from-name").get(String.class);
 
     String metrics = readMetrics();
@@ -66,7 +76,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldWriteHelpAndTypeToMetrics() {
+  void shouldWriteHelpAndTypeToMetrics() {
     prepareResourceRequest().get(String.class);
 
     String metrics = readMetrics();
@@ -77,7 +87,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldSkipConsumerName() {
+  void shouldSkipConsumerName() {
     prepareResourceRequest().get(String.class);
 
     String metrics = readMetrics();
@@ -86,7 +96,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldTrackHttpMethod() {
+  void shouldTrackHttpMethod() {
     prepareResourceRequest().get(String.class);
 
     String metrics = readMetrics();
@@ -95,7 +105,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldTrackInvokedMethod() {
+  void shouldTrackInvokedMethod() {
     prepareResourceRequest().get(String.class);
 
     String metrics = readMetrics();
@@ -104,7 +114,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldTrackResourcePath() {
+  void shouldTrackResourcePath() {
     prepareResourceRequest().get(String.class);
 
     String metrics = readMetrics();
@@ -113,7 +123,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldTrackResourcePathWithPathParam() {
+  void shouldTrackResourcePathWithPathParam() {
     DW.client()
         .target(resourceUri)
         .path("path")
@@ -127,7 +137,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldTrackStatusCode() {
+  void shouldTrackStatusCode() {
     prepareResourceRequest().get(String.class);
 
     String metrics = readMetrics();
@@ -136,7 +146,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldTrackDropwizardMetricsFromBridge() {
+  void shouldTrackDropwizardMetricsFromBridge() {
     prepareResourceRequest().get(String.class);
 
     String metrics = readMetrics();
@@ -145,7 +155,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldMapCustomMetrics() {
+  void shouldMapCustomMetrics() {
     DW.client()
         .target(resourceUri)
         .path("client")
@@ -161,7 +171,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldProvideHealthChecksAsPrometheusMetrics() {
+  void shouldProvideHealthChecksAsPrometheusMetrics() {
     String healthChecks = readMetrics();
 
     assertThat(healthChecks)
@@ -170,7 +180,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldProvideHealthChecksAsPrometheusMetricsOnCustomEndpoint() {
+  void shouldProvideHealthChecksAsPrometheusMetricsOnCustomEndpoint() {
     String healthChecks = readHealthChecks();
 
     assertThat(healthChecks)
@@ -179,7 +189,7 @@ public class PrometheusBundleTest {
   }
 
   @Test
-  public void shouldNotHttpCacheHealthCheck() {
+  void shouldNotHttpCacheHealthCheck() {
     Response response =
         DW.client()
             .target(

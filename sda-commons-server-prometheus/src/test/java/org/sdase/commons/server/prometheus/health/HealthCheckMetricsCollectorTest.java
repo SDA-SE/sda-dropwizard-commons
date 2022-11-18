@@ -11,12 +11,12 @@ import io.prometheus.client.Collector.MetricFamilySamples;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class HealthCheckMetricsCollectorTest {
+class HealthCheckMetricsCollectorTest {
 
   @Test
-  public void shouldExposeMetricsForHealthChecks() {
+  void shouldExposeMetricsForHealthChecks() {
     HealthCheckRegistry registry = mock(HealthCheckRegistry.class);
     HealthCheckMetricsCollector collector = new HealthCheckMetricsCollector(registry);
 
