@@ -8,71 +8,74 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-public class GoldenFileAssertionsTest {
-  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
+class GoldenFileAssertionsTest {
 
-  @Test
-  public void textShouldNotThrowOnCorrectFileContent() throws IOException {
-    Path path = temporaryFolder.newFile().toPath();
+  @TempDir private Path tempDir;
 
-    // create file with expected-content
-    Files.write(path, "expected-content".getBytes());
+  private Path tempFile;
 
-    // should be accepted
-    assertThatCode(
-            () ->
-                GoldenFileAssertions.assertThat(path).hasContentAndUpdateGolden("expected-content"))
-        .doesNotThrowAnyException();
-
-    // content should still be expected-content
-    assertThat(path).hasContent("expected-content");
+  @BeforeEach
+  void setUp() {
+    tempFile = tempDir.resolve("file");
   }
 
   @Test
-  public void textShouldNotThrowOnCorrectFileContentWithSpecialCharacters() throws IOException {
-    Path path = temporaryFolder.newFile().toPath();
-
+  void textShouldNotThrowOnCorrectFileContent() throws IOException {
     // create file with expected-content
-    Files.write(path, "expected-content-\u00f6".getBytes(StandardCharsets.UTF_8));
+    Files.write(tempFile, "expected-content".getBytes());
 
     // should be accepted
     assertThatCode(
             () ->
-                GoldenFileAssertions.assertThat(path)
+                GoldenFileAssertions.assertThat(tempFile)
+                    .hasContentAndUpdateGolden("expected-content"))
+        .doesNotThrowAnyException();
+
+    // content should still be expected-content
+    assertThat(tempFile).hasContent("expected-content");
+  }
+
+  @Test
+  void textShouldNotThrowOnCorrectFileContentWithSpecialCharacters() throws IOException {
+    // create file with expected-content
+    Files.write(tempFile, "expected-content-\u00f6".getBytes(StandardCharsets.UTF_8));
+
+    // should be accepted
+    assertThatCode(
+            () ->
+                GoldenFileAssertions.assertThat(tempFile)
                     .hasContentAndUpdateGolden("expected-content-ö"))
         .doesNotThrowAnyException();
 
     // content should still be expected-content
-    assertThat(path).hasBinaryContent("expected-content-ö".getBytes(StandardCharsets.UTF_8));
+    assertThat(tempFile).hasBinaryContent("expected-content-ö".getBytes(StandardCharsets.UTF_8));
   }
 
   @Test
-  public void textShouldThrowOnInvalidFileContent() throws IOException {
-    Path path = temporaryFolder.newFile().toPath();
+  void textShouldThrowOnInvalidFileContent() throws IOException {
     // create file with unexpected-content
-    Files.write(path, "unexpected-content".getBytes());
+    Files.write(tempFile, "unexpected-content".getBytes());
 
     // should throw and update the file
-    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(path);
+    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(tempFile);
     assertThatThrownBy(() -> goldenFileAssertions.hasContentAndUpdateGolden("expected-content"))
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
             "The current %s file is not up-to-date. If this happens locally,",
-            path.getFileName().toString());
+            tempFile.getFileName().toString());
 
     // content should now be expected-content
-    assertThat(path).hasContent("expected-content");
+    assertThat(tempFile).hasContent("expected-content");
   }
 
   @Test
-  public void textShouldThrowOnMissingFile() {
+  void textShouldThrowOnMissingFile() {
     // use a file that does not yet exist
-    Path path = Paths.get(temporaryFolder.getRoot().getAbsolutePath(), "non-existing-file.yaml");
+    Path path = tempDir.resolve("non-existing-file.yaml");
 
     // should throw and update the file
     GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(path);
@@ -87,57 +90,52 @@ public class GoldenFileAssertionsTest {
   }
 
   @Test
-  public void yamlShouldNotThrowOnCorrectFileContent() throws IOException {
-    Path path = temporaryFolder.newFile().toPath();
-
+  void yamlShouldNotThrowOnCorrectFileContent() throws IOException {
     // create file with expected-content
-    Files.write(path, "key0: v\nkey1: w\nkey2:\n  nested1: a\n  nested2: b".getBytes());
+    Files.write(tempFile, "key0: v\nkey1: w\nkey2:\n  nested1: a\n  nested2: b".getBytes());
 
     // should be accepted
     assertThatCode(
             () ->
-                GoldenFileAssertions.assertThat(path)
+                GoldenFileAssertions.assertThat(tempFile)
                     .hasYamlContentAndUpdateGolden(
                         "key0: v\nkey2:\n  nested2: b\n  nested1: a\nkey1: w"))
         .doesNotThrowAnyException();
 
     // content should still be expected-content
-    assertThat(path).hasContent("key0: v\nkey2:\n  nested2: b\n  nested1: a\nkey1: w");
+    assertThat(tempFile).hasContent("key0: v\nkey2:\n  nested2: b\n  nested1: a\nkey1: w");
   }
 
   @Test
-  public void yamlShouldNotThrowOnCorrectFileContentWithSpecialCharacters() throws IOException {
-    Path path = temporaryFolder.newFile().toPath();
-
+  void yamlShouldNotThrowOnCorrectFileContentWithSpecialCharacters() throws IOException {
     // create file with expected-content
     Files.write(
-        path,
+        tempFile,
         "key0: v\nkey1: w\nkey2:\n  nested1: a\n  nested2: \u00f6"
             .getBytes(StandardCharsets.UTF_8));
 
     // should be accepted
     assertThatCode(
             () ->
-                GoldenFileAssertions.assertThat(path)
+                GoldenFileAssertions.assertThat(tempFile)
                     .hasYamlContentAndUpdateGolden(
                         "key0: v\nkey2:\n  nested2: ö\n  nested1: a\nkey1: w"))
         .doesNotThrowAnyException();
 
     // content should still be expected-content
-    assertThat(path)
+    assertThat(tempFile)
         .hasBinaryContent(
             "key0: v\nkey2:\n  nested2: \u00f6\n  nested1: a\nkey1: w"
                 .getBytes(StandardCharsets.UTF_8));
   }
 
   @Test
-  public void yamlShouldThrowOnInvalidFileContent() throws IOException {
-    Path path = temporaryFolder.newFile().toPath();
+  void yamlShouldThrowOnInvalidFileContent() throws IOException {
     // create file with unexpected-content
-    Files.write(path, "key0: v\nkey1: w\nkey2:\n  nested1: a\n  nested2: b".getBytes());
+    Files.write(tempFile, "key0: v\nkey1: w\nkey2:\n  nested1: a\n  nested2: b".getBytes());
 
     // should throw and update the file
-    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(path);
+    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(tempFile);
     assertThatThrownBy(
             () ->
                 goldenFileAssertions.hasYamlContentAndUpdateGolden(
@@ -145,47 +143,44 @@ public class GoldenFileAssertionsTest {
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
             "The current %s file is not up-to-date. If this happens locally,",
-            path.getFileName().toString());
+            tempFile.getFileName().toString());
 
     // content should now be expected-content
-    assertThat(path).hasContent("key0: w\nkey1: x\nkey2:\n  nested1: b\n  nested2: c");
+    assertThat(tempFile).hasContent("key0: w\nkey1: x\nkey2:\n  nested1: b\n  nested2: c");
   }
 
   @Test
-  public void jsonShouldNotThrowOnCorrectFileContent() throws IOException {
-    Path path = temporaryFolder.newFile().toPath();
-
+  void jsonShouldNotThrowOnCorrectFileContent() throws IOException {
     // create file with expected-content
     Files.write(
-        path,
+        tempFile,
         "{\"key0\": \"v\",\"key1\": \"w\",\"key2\":{\"nested1\":\"a\",\"nested2\": \"b\"}}"
             .getBytes());
 
     // should be accepted
     assertThatCode(
             () ->
-                GoldenFileAssertions.assertThat(path)
+                GoldenFileAssertions.assertThat(tempFile)
                     .hasYamlContentAndUpdateGolden(
                         "{\"key0\": \"v\",\"key2\":{\"nested2\":\"b\",\"nested1\": \"a\"},\"key1\": \"w\"}"))
         .doesNotThrowAnyException();
 
     // content should still be expected-content
-    assertThat(path)
+    assertThat(tempFile)
         .hasContent(
             "{\"key0\": \"v\",\"key2\":{\"nested2\":\"b\",\"nested1\": \"a\"},\"key1\": \"w\"}");
   }
 
   @Test
-  public void jsonShouldThrowOnInvalidFileContent() throws IOException {
-    Path path = temporaryFolder.newFile().toPath();
+  void jsonShouldThrowOnInvalidFileContent() throws IOException {
     // create file with unexpected-content
     Files.write(
-        path,
+        tempFile,
         ("{\"key0\": \"v\",\"key1\": \"w\",\"key2\":{\"nested1\":\"a\",\"nested2\": \"b\"}}")
             .getBytes());
 
     // should throw and update the file
-    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(path);
+    GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(tempFile);
     assertThatThrownBy(
             () ->
                 goldenFileAssertions.hasYamlContentAndUpdateGolden(
@@ -193,18 +188,18 @@ public class GoldenFileAssertionsTest {
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining(
             "The current %s file is not up-to-date. If this happens locally,",
-            path.getFileName().toString());
+            tempFile.getFileName().toString());
 
     // content should now be expected-content
-    assertThat(path)
+    assertThat(tempFile)
         .hasContent(
             "{\"key0\": \"2\",\"key1\": \"x\",\"key2\":{\"nested1\":\"b\",\"nested2\": \"c\"}}");
   }
 
   @Test
-  public void yamlShouldThrowOnMissingFile() {
+  void yamlShouldThrowOnMissingFile() {
     // use a file that does not yet exist
-    Path path = Paths.get(temporaryFolder.getRoot().getAbsolutePath(), "non-existing-file.yaml");
+    Path path = tempDir.resolve("non-existing-file.yaml");
 
     // should throw and update the file
     GoldenFileAssertions goldenFileAssertions = GoldenFileAssertions.assertThat(path);
