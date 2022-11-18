@@ -11,12 +11,12 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.util.Optional;
 import java.util.function.Supplier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ConfigurationValueSupplierBundleTest {
+class ConfigurationValueSupplierBundleTest {
 
   @Test
-  public void failIfGetCalledBeforeInitialize() {
+  void failIfGetCalledBeforeInitialize() {
     ConfigurationValueSupplierBundle<TestConfig, String> bundle =
         ConfigurationValueSupplierBundle.builder().withAccessor(TestConfig::getMyConfig).build();
 
@@ -26,7 +26,7 @@ public class ConfigurationValueSupplierBundleTest {
   }
 
   @Test
-  public void failIfGetCalledBeforeRun() {
+  void failIfGetCalledBeforeRun() {
     ConfigurationValueSupplierBundle<TestConfig, String> bundle =
         ConfigurationValueSupplierBundle.builder().withAccessor(TestConfig::getMyConfig).build();
 
@@ -38,7 +38,7 @@ public class ConfigurationValueSupplierBundleTest {
   }
 
   @Test
-  public void failFastWithValidation() {
+  void failFastWithValidation() {
     ConfigurationValueSupplierBundle<TestConfig, String> bundle =
         ConfigurationValueSupplierBundle.builder()
             .withAccessor(TestConfig::getMyConfig)
@@ -52,7 +52,7 @@ public class ConfigurationValueSupplierBundleTest {
   }
 
   @Test
-  public void optionNotPresentForNull() {
+  void optionNotPresentForNull() {
     ConfigurationValueSupplierBundle<TestConfig, String> bundle =
         ConfigurationValueSupplierBundle.builder().withAccessor(TestConfig::getMyConfig).build();
 
@@ -65,7 +65,7 @@ public class ConfigurationValueSupplierBundleTest {
   }
 
   @Test
-  public void noExceptionIfValueIsNull() {
+  void noExceptionIfValueIsNull() {
     ConfigurationValueSupplierBundle<TestConfig, String> bundle =
         ConfigurationValueSupplierBundle.builder().withAccessor(TestConfig::getMyConfig).build();
 
@@ -78,7 +78,7 @@ public class ConfigurationValueSupplierBundleTest {
   }
 
   @Test
-  public void returnValue() {
+  void returnValue() {
     ConfigurationValueSupplierBundle<TestConfig, String> bundle =
         ConfigurationValueSupplierBundle.builder()
             .withAccessor(TestConfig::getMyConfig)
@@ -95,7 +95,7 @@ public class ConfigurationValueSupplierBundleTest {
   }
 
   @Test
-  public void returnValueInOptional() {
+  void returnValueInOptional() {
     ConfigurationValueSupplierBundle<TestConfig, String> bundle =
         ConfigurationValueSupplierBundle.builder().withAccessor(TestConfig::getMyConfig).build();
 
@@ -112,11 +112,11 @@ public class ConfigurationValueSupplierBundleTest {
   private static class TestConfig extends Configuration {
     private String myConfig;
 
-    public String getMyConfig() {
+    String getMyConfig() {
       return myConfig;
     }
 
-    public TestConfig setMyConfig(String myConfig) {
+    TestConfig setMyConfig(String myConfig) {
       this.myConfig = myConfig;
       return this;
     }
