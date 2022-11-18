@@ -5,12 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import java.lang.reflect.Proxy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CircuitBreakerWrapperHelperTest {
+class CircuitBreakerWrapperHelperTest {
 
   @Test
-  public void shouldWrapClassWithDefaultConstructor() {
+  void shouldWrapClassWithDefaultConstructor() {
     // This is the happy path, but will probably never happen...
     CircuitBreaker circuitBreaker = CircuitBreakerRegistry.ofDefaults().circuitBreaker("wrap");
     Simple target = new SimpleImpl();
@@ -23,7 +23,7 @@ public class CircuitBreakerWrapperHelperTest {
   }
 
   @Test
-  public void shouldWrapClassWithoutDefaultConstructor() {
+  void shouldWrapClassWithoutDefaultConstructor() {
     // This requires to have a default constructor just for creating the proxy
     // (similar to WELD):
     CircuitBreaker circuitBreaker = CircuitBreakerRegistry.ofDefaults().circuitBreaker("wrap");
@@ -37,7 +37,7 @@ public class CircuitBreakerWrapperHelperTest {
   }
 
   @Test
-  public void shouldWrapClassWithoutDefaultConstructorAndWithoutInterface() {
+  void shouldWrapClassWithoutDefaultConstructorAndWithoutInterface() {
     CircuitBreaker circuitBreaker = CircuitBreakerRegistry.ofDefaults().circuitBreaker("wrap");
     NoDefaultConstructor target = new NoDefaultConstructor(42);
 
@@ -50,7 +50,7 @@ public class CircuitBreakerWrapperHelperTest {
   }
 
   @Test
-  public void shouldWrapClassWithoutDefaultConstructorViaInterface() {
+  void shouldWrapClassWithoutDefaultConstructorViaInterface() {
     // Alternative to the default constructor is using an interface that
     // specifies the methods of the class:
     CircuitBreaker circuitBreaker = CircuitBreakerRegistry.ofDefaults().circuitBreaker("wrap");
@@ -64,7 +64,7 @@ public class CircuitBreakerWrapperHelperTest {
   }
 
   @Test
-  public void shouldWrapDynamicProxy() {
+  void shouldWrapDynamicProxy() {
     // We might want to proxy an existing proxy, e.g. a Jersey proxy client,
     // based on an invocation handler:
     CircuitBreaker circuitBreaker = CircuitBreakerRegistry.ofDefaults().circuitBreaker("wrap");
