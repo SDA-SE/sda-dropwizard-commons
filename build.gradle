@@ -73,7 +73,7 @@ subprojects {
   spotless {
     if (!javaPlatformModules.contains(project.name)) {
       java {
-        googleJavaFormat('1.14.0')
+        googleJavaFormat('1.15.0')
       }
     }
     groovyGradle {
