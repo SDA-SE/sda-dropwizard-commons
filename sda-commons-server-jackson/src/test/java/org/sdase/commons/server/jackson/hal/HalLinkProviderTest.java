@@ -12,69 +12,69 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class HalLinkProviderTest {
+class HalLinkProviderTest {
 
   @Test
-  public void shouldProvideHalLinkForNormalPathParams() {
+  void shouldProvideHalLinkForNormalPathParams() {
     final LinkResult linkResult = linkTo(methodOn(TestApi.class).testMethod("TEST"));
     assertLinkResult(linkResult, "/testPath/TEST");
   }
 
   @Test
-  public void shouldFailWhenNoInterfaceIsProvided() {
+  void shouldFailWhenNoInterfaceIsProvided() {
     assertThatThrownBy(() -> linkTo(methodOn(TestController.class).testMethod("FAIL")))
         .isInstanceOf(HalLinkMethodInvocationException.class);
   }
 
   @Test
-  public void shouldProvideHalLinkForQueryParam() {
+  void shouldProvideHalLinkForQueryParam() {
     final LinkResult linkResult = linkTo(methodOn(TestApi.class).testMethodQueryParam("TEST"));
     assertLinkResult(linkResult, "/testPath?testRequestParam=TEST");
   }
 
   @Test
-  public void shouldProvideHalLinkIgnoringCookieParam() {
+  void shouldProvideHalLinkIgnoringCookieParam() {
     final LinkResult linkResult = linkTo(methodOn(TestApi.class).testMethodCookieParam("TEST"));
     assertLinkResult(linkResult, "/testPath");
   }
 
   @Test
-  public void shouldProvideHalLinkForDetailed() {
+  void shouldProvideHalLinkForDetailed() {
     final LinkResult linkResult =
         linkTo(methodOn(TestApi.class).testMethodDetail("TEST", 1, "testTheQuery"));
     assertLinkResult(linkResult, "/testPath/TEST/detail/testTheQuery?query=1");
   }
 
   @Test
-  public void shouldProvideHalLinkForDetailedAndIgnoreQueryParamWithNullValue() {
+  void shouldProvideHalLinkForDetailedAndIgnoreQueryParamWithNullValue() {
     final LinkResult linkResult =
         linkTo(methodOn(TestApi.class).testMethodDetail("TEST", null, "testTheQuery"));
     assertLinkResult(linkResult, "/testPath/TEST/detail/testTheQuery");
   }
 
   @Test
-  public void shouldFailWithoutAnnotation() {
+  void shouldFailWithoutAnnotation() {
     assertThatThrownBy(
             () -> linkTo(methodOn(TestApi.class).testMethodWithoutPathParamAnnotation("FAIL")))
         .isInstanceOf(HalLinkMethodInvocationException.class);
   }
 
   @Test
-  public void shouldDoNothingWhenNoParamsAreProvided() {
+  void shouldDoNothingWhenNoParamsAreProvided() {
     final LinkResult linkResult = linkTo(methodOn(TestApi.class).testMethodWithoutParams());
     assertLinkResult(linkResult, "/testPathWithNoParams");
   }
 
   @Test
-  public void shouldFailWithNonProxiedMethod() {
+  void shouldFailWithNonProxiedMethod() {
     assertThatThrownBy(() -> linkTo("testMethod"))
         .isInstanceOf(HalLinkMethodInvocationException.class);
   }
 
   @Test
-  public void shouldFailWithNullProxiedMethod() {
+  void shouldFailWithNullProxiedMethod() {
     assertThatThrownBy(() -> linkTo(null))
         .isInstanceOf(HalLinkMethodInvocationException.class)
         .hasMessageContaining("No proxied method invocation processed.");

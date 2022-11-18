@@ -10,16 +10,16 @@ import io.dropwizard.setup.Environment;
 import io.opentracing.util.GlobalTracer;
 import io.opentracing.util.GlobalTracerTestUtil;
 import io.prometheus.client.CollectorRegistry;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class JaegerBundleTest {
+class JaegerBundleTest {
 
-  @Before
-  @After
-  public void cleanUpGlobalTracer() {
+  @BeforeEach
+  @AfterEach
+  void cleanUpGlobalTracer() {
     // We have to clean up the global tracer before and after testing:
     // https://github.com/opentracing/opentracing-java/issues/288
     GlobalTracerTestUtil.resetGlobalTracer();
@@ -29,7 +29,7 @@ public class JaegerBundleTest {
   }
 
   @Test
-  public void shouldRegisterGlobalTracer() {
+  void shouldRegisterGlobalTracer() {
     Bootstrap bootstrap = mock(Bootstrap.class);
     Environment environment = mock(Environment.class, Mockito.RETURNS_DEEP_STUBS);
     when(environment.getName()).thenReturn("MyApp");
