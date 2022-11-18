@@ -8,12 +8,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kjetland.jackson.jsonSchema.JsonSchemaConfig;
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator;
 import java.time.ZonedDateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class Iso8601SerializerTest {
+class Iso8601SerializerTest {
 
   @Test
-  public void shouldProduceDateTimeTypeHint() {
+  void shouldProduceDateTimeTypeHint() {
 
     ObjectMapper mapper = configureMapper().alwaysWriteZonedDateTimeWithMillis().build();
 

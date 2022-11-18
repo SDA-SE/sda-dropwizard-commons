@@ -15,11 +15,11 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-public class DateFormatObjectMapperTest {
+class DateFormatObjectMapperTest {
 
   private ObjectMapper om;
 
@@ -27,8 +27,8 @@ public class DateFormatObjectMapperTest {
 
   private ObjectMapper onlySecondsOm;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     this.om = ObjectMapperConfigurationUtil.configureMapper().build();
     this.alwaysMillisOm =
         ObjectMapperConfigurationUtil.configureMapper()
@@ -41,7 +41,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601DateAsDate() throws Exception {
+  void readIso8601DateAsDate() throws Exception {
     String given = asJsonString("2018-11-21");
 
     Date date = om.readValue(given, Date.class);
@@ -50,7 +50,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601DateAsLocalDate() throws Exception {
+  void readIso8601DateAsLocalDate() throws Exception {
     String given = asJsonString("2018-11-21");
 
     LocalDate date = om.readValue(given, LocalDate.class);
@@ -59,7 +59,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601DateTimeAsLocalDate() throws Exception {
+  void readIso8601DateTimeAsLocalDate() throws Exception {
     String given = asJsonString("2018-11-21T13:16:47Z");
 
     LocalDate date = om.readValue(given, LocalDate.class);
@@ -68,7 +68,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601UtcTimeAsDate() throws Exception {
+  void readIso8601UtcTimeAsDate() throws Exception {
     String given = asJsonString("2018-11-21T13:16:47Z");
 
     Date date = om.readValue(given, Date.class);
@@ -89,7 +89,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601UtcTimeAsZonedDateTime() throws Exception {
+  void readIso8601UtcTimeAsZonedDateTime() throws Exception {
     String given = asJsonString("2018-11-21T13:16:47Z");
 
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
@@ -99,7 +99,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601UtcTimeAsZonedDateTimeWithNamedZone() throws Exception {
+  void readIso8601UtcTimeAsZonedDateTimeWithNamedZone() throws Exception {
     String given = asJsonString("2018-01-25T00:00Z[UTC]");
 
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
@@ -108,7 +108,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601CetTimeAsZonedDateTimeWithNamedZone() throws Exception {
+  void readIso8601CetTimeAsZonedDateTimeWithNamedZone() throws Exception {
     String given = asJsonString("2018-01-09T00:00+01:00[Europe/Paris]");
 
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
@@ -117,7 +117,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601UtcTimeWithMillisAsZonedDateTime() throws Exception {
+  void readIso8601UtcTimeWithMillisAsZonedDateTime() throws Exception {
     String given = asJsonString("2018-11-21T13:16:47.647Z");
 
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
@@ -127,7 +127,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601ZeroOffsetWithColonTimeAsZonedDateTime() throws Exception {
+  void readIso8601ZeroOffsetWithColonTimeAsZonedDateTime() throws Exception {
     String given = asJsonString("2018-11-21T13:16:47+00:00");
 
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
@@ -137,7 +137,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601CetTimeAsZonedDateTime() throws Exception {
+  void readIso8601CetTimeAsZonedDateTime() throws Exception {
     String given = asJsonString("2018-11-21T14:16:47+01:00");
 
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
@@ -147,8 +147,8 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  @Ignore("https://github.com/FasterXML/jackson-modules-java8/issues/38")
-  public void readIso8601CetTimeAsZonedDateTimeWithoutColon() throws Exception {
+  @Disabled("https://github.com/FasterXML/jackson-modules-java8/issues/38")
+  void readIso8601CetTimeAsZonedDateTimeWithoutColon() throws Exception {
     String given = asJsonString("2018-11-21T14:16:47+0100");
 
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
@@ -158,7 +158,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601CetTimeAsDateWithoutColon() throws Exception {
+  void readIso8601CetTimeAsDateWithoutColon() throws Exception {
     String given = asJsonString("2018-11-21T14:16:47+0100");
 
     Date date = om.readValue(given, Date.class);
@@ -167,7 +167,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601CetTimeAsZonedDateTimeWithNanos() throws Exception {
+  void readIso8601CetTimeAsZonedDateTimeWithNanos() throws Exception {
     String given = asJsonString("2018-11-21T14:16:47.9650003+01:00");
 
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
@@ -177,7 +177,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601Duration() throws Exception {
+  void readIso8601Duration() throws Exception {
     String given = asJsonString("P1DT13M");
 
     Duration duration = om.readValue(given, Duration.class);
@@ -186,7 +186,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601Period() throws Exception {
+  void readIso8601Period() throws Exception {
     String given = asJsonString("P1Y35D");
 
     Period period = om.readValue(given, Period.class);
@@ -195,7 +195,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601UtcTime() throws Exception {
+  void writeIso8601UtcTime() throws Exception {
     ZonedDateTime given =
         ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16, 47), ZoneOffset.UTC);
 
@@ -205,7 +205,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601CetTime() throws Exception {
+  void writeIso8601CetTime() throws Exception {
     ZonedDateTime given =
         ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16, 47), ZoneId.of("CET"));
 
@@ -215,7 +215,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601CetTimeWithMillis() throws Exception {
+  void writeIso8601CetTimeWithMillis() throws Exception {
     ZonedDateTime given =
         ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16, 47), ZoneId.of("CET"))
             .plus(965, ChronoUnit.MILLIS);
@@ -226,7 +226,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601CetTimeWithNanos() throws Exception {
+  void writeIso8601CetTimeWithNanos() throws Exception {
     ZonedDateTime given =
         ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16, 47, 965_000_300), ZoneId.of("CET"));
 
@@ -236,7 +236,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601DateFromLocalDate() throws Exception {
+  void writeIso8601DateFromLocalDate() throws Exception {
     LocalDate date = LocalDate.of(2018, 11, 21);
 
     String actual = om.writeValueAsString(date);
@@ -245,7 +245,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithMillisCetIfMillisSet() throws Exception {
+  void writeIso8601WithMillisCetIfMillisSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTimeWithMillis(
@@ -258,7 +258,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithSecondsCetIfOnlyMinutesSet() throws Exception {
+  void writeIso8601WithSecondsCetIfOnlyMinutesSet() throws Exception {
     ZonedDateTime given =
         ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16), ZoneId.of("CET"));
 
@@ -268,7 +268,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithMillisCetIfNanosSet() throws Exception {
+  void writeIso8601WithMillisCetIfNanosSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTimeWithMillis(
@@ -281,7 +281,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601UsingConfigWithMillisCetIfNanosSet() throws Exception {
+  void writeIso8601UsingConfigWithMillisCetIfNanosSet() throws Exception {
     ZonedDateTime given =
         ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16, 47, 965_000_300), ZoneId.of("CET"));
 
@@ -291,7 +291,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601UsingConfigWithMillisCetIfSecondsSet() throws Exception {
+  void writeIso8601UsingConfigWithMillisCetIfSecondsSet() throws Exception {
     ZonedDateTime given =
         ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16, 47), ZoneId.of("CET"));
 
@@ -301,7 +301,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601UsingConfigWithSecondsCetIfNanosSet() throws Exception {
+  void writeIso8601UsingConfigWithSecondsCetIfNanosSet() throws Exception {
     ZonedDateTime given =
         ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16, 47, 965_000_300), ZoneId.of("CET"));
 
@@ -311,7 +311,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithMillisCetIfSecondsSet() throws Exception {
+  void writeIso8601WithMillisCetIfSecondsSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTimeWithMillis(
@@ -323,7 +323,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithMillisUtcIfMillisSet() throws Exception {
+  void writeIso8601WithMillisUtcIfMillisSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTimeWithMillis(
@@ -336,7 +336,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithMillisUtcIfNanosSet() throws Exception {
+  void writeIso8601WithMillisUtcIfNanosSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTimeWithMillis(
@@ -349,7 +349,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithMillisUtcIfSecondsSet() throws Exception {
+  void writeIso8601WithMillisUtcIfSecondsSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTimeWithMillis(
@@ -361,7 +361,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601WithNanosInPropertyFormattedWithMillis() throws Exception {
+  void readIso8601WithNanosInPropertyFormattedWithMillis() throws Exception {
     String given =
         '{'
             + asJsonString("zonedDateTimeWithMillis")
@@ -376,7 +376,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601WithSecondsInPropertyFormattedWithMillis() throws Exception {
+  void readIso8601WithSecondsInPropertyFormattedWithMillis() throws Exception {
     String given =
         '{'
             + asJsonString("zonedDateTimeWithMillis")
@@ -390,7 +390,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithSecondsCetIfMillisSet() throws Exception {
+  void writeIso8601WithSecondsCetIfMillisSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTime(
@@ -403,7 +403,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithSecondsCetIfNanosSet() throws Exception {
+  void writeIso8601WithSecondsCetIfNanosSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTime(
@@ -416,7 +416,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithSecondsCetIfSecondsSet() throws Exception {
+  void writeIso8601WithSecondsCetIfSecondsSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTime(
@@ -428,7 +428,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithSecondsUtcIfMillisSet() throws Exception {
+  void writeIso8601WithSecondsUtcIfMillisSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTime(
@@ -441,7 +441,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithSecondsUtcIfNanosSet() throws Exception {
+  void writeIso8601WithSecondsUtcIfNanosSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTime(
@@ -454,7 +454,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void writeIso8601WithSecondsUtcIfSecondsSet() throws Exception {
+  void writeIso8601WithSecondsUtcIfSecondsSet() throws Exception {
     DateTimeHolder given =
         new DateTimeHolder()
             .setZonedDateTime(
@@ -466,7 +466,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601WithNanosInPropertyFormattedWithSeconds() throws Exception {
+  void readIso8601WithNanosInPropertyFormattedWithSeconds() throws Exception {
     String given =
         '{'
             + asJsonString("zonedDateTime")
@@ -480,7 +480,7 @@ public class DateFormatObjectMapperTest {
   }
 
   @Test
-  public void readIso8601WithSecondsInPropertyFormattedWithSeconds() throws Exception {
+  void readIso8601WithSecondsInPropertyFormattedWithSeconds() throws Exception {
     String given =
         '{' + asJsonString("zonedDateTime") + ':' + asJsonString("2018-11-21T13:16:47Z") + '}';
 

@@ -11,11 +11,11 @@ import io.dropwizard.setup.Environment;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class EmbedHelperTest {
+class EmbedHelperTest {
   @Test
-  public void shouldEmbedResourceIfRequested() {
+  void shouldEmbedResourceIfRequested() {
     MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
     queryParameters.put("embed", singletonList("drivers"));
     EmbedHelper embedHelper = createEmbedHelper(queryParameters);
@@ -25,7 +25,7 @@ public class EmbedHelperTest {
   }
 
   @Test
-  public void shouldEmbedMultipleResourcesIfRequested() {
+  void shouldEmbedMultipleResourcesIfRequested() {
     MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
     queryParameters.put("embed", asList("drivers", "owner"));
     EmbedHelper embedHelper = createEmbedHelper(queryParameters);
