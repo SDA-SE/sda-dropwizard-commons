@@ -3,7 +3,7 @@ package org.sdase.commons.server.cors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,8 +11,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.cors.test.CorsAllowTestApp;
 import org.sdase.commons.server.cors.test.CorsDenyTestApp;
 import org.sdase.commons.server.cors.test.CorsRestrictedTestApp;
@@ -20,40 +21,45 @@ import org.sdase.commons.server.cors.test.CorsTestConfiguration;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.sdase.commons.shared.tracing.RequestTracing;
 
-public class CorsTestIT {
+class CorsTestIT {
 
-  @ClassRule
-  public static DropwizardAppRule<CorsTestConfiguration> DW_ALLOW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(0)
+  private static final DropwizardAppExtension<CorsTestConfiguration> DW_ALLOW =
+      new DropwizardAppExtension<>(
           CorsAllowTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-  @ClassRule
-  public static DropwizardAppRule<CorsTestConfiguration> DW_DENY =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<CorsTestConfiguration> DW_DENY =
+      new DropwizardAppExtension<>(
           CorsDenyTestApp.class, ResourceHelpers.resourceFilePath("test-config-deny.yaml"));
 
-  @ClassRule
-  public static DropwizardAppRule<CorsTestConfiguration> DW_RESTRICTED =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(2)
+  private static final DropwizardAppExtension<CorsTestConfiguration> DW_RESTRICTED =
+      new DropwizardAppExtension<>(
           CorsRestrictedTestApp.class,
           ResourceHelpers.resourceFilePath("test-config-restricted.yaml"));
 
-  @ClassRule
-  public static DropwizardAppRule<CorsTestConfiguration> DW_PATTERN =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(3)
+  private static final DropwizardAppExtension<CorsTestConfiguration> DW_PATTERN =
+      new DropwizardAppExtension<>(
           CorsRestrictedTestApp.class,
           ResourceHelpers.resourceFilePath("test-config-pattern.yaml"));
 
-  private String allowAllEndpoint =
+  private final String allowAllEndpoint =
       "http://localhost:" + DW_ALLOW.getLocalPort() + "/samples/empty";
-  private String denyEndpoint = "http://localhost:" + DW_DENY.getLocalPort() + "/samples/empty";
-  private String restrictedEndpoint =
+  private final String denyEndpoint =
+      "http://localhost:" + DW_DENY.getLocalPort() + "/samples/empty";
+  private final String restrictedEndpoint =
       "http://localhost:" + DW_RESTRICTED.getLocalPort() + "/samples/empty";
-  private String patternEndpoint =
+  private final String patternEndpoint =
       "http://localhost:" + DW_PATTERN.getLocalPort() + "/samples/empty";
 
   @Test
-  public void shouldNotSetHeaderWhenDeny() {
+  void shouldNotSetHeaderWhenDeny() {
     Response response =
         DW_DENY
             .client()
@@ -73,7 +79,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldSetHeaderWhenAllow() {
+  void shouldSetHeaderWhenAllow() {
     String origin = "some.com";
     Response response =
         DW_ALLOW
@@ -92,7 +98,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldSetHeaderWhenOriginAllowed() {
+  void shouldSetHeaderWhenOriginAllowed() {
     String origin = "server-a.com";
     Response response =
         DW_RESTRICTED
@@ -111,7 +117,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldNotSetHeaderWhenOriginNotAllowed() {
+  void shouldNotSetHeaderWhenOriginNotAllowed() {
     String origin = "server-b.com";
     Response response =
         DW_RESTRICTED
@@ -132,7 +138,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldNotSetHeaderWhenDenyedPreflight() {
+  void shouldNotSetHeaderWhenDenyedPreflight() {
     String origin = "server-a.com";
     Response response =
         DW_DENY
@@ -154,7 +160,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldSetHeaderWhenAllowPreflight() {
+  void shouldSetHeaderWhenAllowPreflight() {
     String origin = "some.com";
     Response response =
         DW_ALLOW
@@ -181,7 +187,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldRespondWithStandardAllowHeaderForNonPreflightOptionsRequest() {
+  void shouldRespondWithStandardAllowHeaderForNonPreflightOptionsRequest() {
     Response response =
         DW_ALLOW
             .client()
@@ -193,7 +199,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldSetHeaderWhenOriginAllowedPreflight() {
+  void shouldSetHeaderWhenOriginAllowedPreflight() {
     String origin = "server-a.com";
     Response response =
         DW_RESTRICTED
@@ -220,7 +226,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldNotSetHeaderWhenOriginNotAllowedPreflight() {
+  void shouldNotSetHeaderWhenOriginNotAllowedPreflight() {
     String origin = "server-b.com";
     Response response =
         DW_RESTRICTED
@@ -242,7 +248,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldNotSetHeaderWhenMethodNotAllowedPreflight() {
+  void shouldNotSetHeaderWhenMethodNotAllowedPreflight() {
     String origin = "server-a.com";
     Response response =
         DW_RESTRICTED
@@ -264,7 +270,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldNotSetHeaderWhenDenyedUnmatchedHostname() {
+  void shouldNotSetHeaderWhenDenyedUnmatchedHostname() {
     String origin = "unknown-server-a.com";
     Response response =
         DW_PATTERN
@@ -283,7 +289,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldSetHeaderWhenAllowForMatchedSubdomain() {
+  void shouldSetHeaderWhenAllowForMatchedSubdomain() {
     String origin = "unknown.server-a.com";
     Response response =
         DW_PATTERN
@@ -302,7 +308,7 @@ public class CorsTestIT {
   }
 
   @Test
-  public void shouldSetHeaderWhenAllowForMatchedDomain() {
+  void shouldSetHeaderWhenAllowForMatchedDomain() {
     String origin = "unknownserver-c.com";
     Response response =
         DW_PATTERN
