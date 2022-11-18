@@ -4,29 +4,32 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.consumer.test.ConsumerTokenRequiredTestApp;
 import org.sdase.commons.server.consumer.test.ConsumerTokenTestApp;
 import org.sdase.commons.server.consumer.test.ConsumerTokenTestConfig;
 import org.sdase.commons.shared.api.error.ApiError;
 
-public class ConsumerTokenBundleTest {
+class ConsumerTokenBundleTest {
 
-  @ClassRule
-  public static DropwizardAppRule<ConsumerTokenTestConfig> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(0)
+  private static final DropwizardAppExtension<ConsumerTokenTestConfig> DW =
+      new DropwizardAppExtension<>(
           ConsumerTokenTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-  @ClassRule
-  public static DropwizardAppRule<ConsumerTokenTestConfig> DW_REQUIRED =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<ConsumerTokenTestConfig> DW_REQUIRED =
+      new DropwizardAppExtension<>(
           ConsumerTokenRequiredTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
   @Test
-  public void shouldReadConsumerToken() {
+  void shouldReadConsumerToken() {
     String consumerToken =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -38,7 +41,7 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldReadConsumerName() {
+  void shouldReadConsumerName() {
     String consumerToken =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -50,7 +53,7 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldRejectRequestWithoutConsumerToken() {
+  void shouldRejectRequestWithoutConsumerToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -63,7 +66,7 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldNotRejectRequestWithoutConsumerTokenExcludedSwagger() {
+  void shouldNotRejectRequestWithoutConsumerTokenExcludedSwagger() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -74,7 +77,7 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldNotRejectRequestWithoutConsumerTokenExcludedOpenApi() {
+  void shouldNotRejectRequestWithoutConsumerTokenExcludedOpenApi() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -85,14 +88,14 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldNotRejectOptionsRequest() {
+  void shouldNotRejectOptionsRequest() {
     Response response =
         DW.client().target("http://localhost:" + DW.getLocalPort()).request().options();
     assertThat(response.getStatus()).isEqualTo(200);
   }
 
   @Test
-  public void shouldReadConsumerTokenFixedConfig() {
+  void shouldReadConsumerTokenFixedConfig() {
     String consumerToken =
         DW_REQUIRED
             .client()
@@ -105,7 +108,7 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldReadConsumerNameFixedConfig() {
+  void shouldReadConsumerNameFixedConfig() {
     String consumerToken =
         DW_REQUIRED
             .client()
@@ -118,7 +121,7 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldRejectRequestWithoutConsumerTokenFixedConfig() {
+  void shouldRejectRequestWithoutConsumerTokenFixedConfig() {
     Response response =
         DW_REQUIRED
             .client()
@@ -132,7 +135,7 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldNotRejectRequestWithoutConsumerTokenExcludedFixedConfigSwagger() {
+  void shouldNotRejectRequestWithoutConsumerTokenExcludedFixedConfigSwagger() {
     Response response =
         DW_REQUIRED
             .client()
@@ -144,7 +147,7 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldNotRejectRequestWithoutConsumerTokenExcludedFixedConfigOpenApi() {
+  void shouldNotRejectRequestWithoutConsumerTokenExcludedFixedConfigOpenApi() {
     Response response =
         DW_REQUIRED
             .client()
@@ -156,7 +159,7 @@ public class ConsumerTokenBundleTest {
   }
 
   @Test
-  public void shouldNotRejectOptionsRequestFixedConfig() {
+  void shouldNotRejectOptionsRequestFixedConfig() {
     Response response =
         DW_REQUIRED
             .client()

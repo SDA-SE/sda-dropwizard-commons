@@ -4,34 +4,33 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.sdase.commons.server.consumer.test.ConsumerTokenOptionalTestApp;
 import org.sdase.commons.server.consumer.test.ConsumerTokenTestApp;
 import org.sdase.commons.server.consumer.test.ConsumerTokenTestConfig;
-import org.sdase.commons.server.testing.SystemPropertyRule;
 
-public class ConsumerTokenBundleOptionalTokenTest {
+@SetSystemProperty(key = "CONSUMER_TOKEN_OPTIONAL", value = "true")
+class ConsumerTokenBundleOptionalTokenTest {
 
-  private static DropwizardAppRule<ConsumerTokenTestConfig> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(0)
+  private static final DropwizardAppExtension<ConsumerTokenTestConfig> DW =
+      new DropwizardAppExtension<>(
           ConsumerTokenTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-  private static DropwizardAppRule<ConsumerTokenTestConfig> DW_OPTIONAL =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<ConsumerTokenTestConfig> DW_OPTIONAL =
+      new DropwizardAppExtension<>(
           ConsumerTokenOptionalTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
-  @ClassRule
-  public static RuleChain CHAIN =
-      RuleChain.outerRule(new SystemPropertyRule().setProperty("CONSUMER_TOKEN_OPTIONAL", "true"))
-          .around(DW)
-          .around(DW_OPTIONAL);
-
   @Test
-  public void shouldReadConsumerToken() {
+  void shouldReadConsumerToken() {
     String consumerToken =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -43,7 +42,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
   }
 
   @Test
-  public void shouldReadConsumerName() {
+  void shouldReadConsumerName() {
     String consumerToken =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -55,7 +54,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
   }
 
   @Test
-  public void shouldNotRejectRequestWithoutConsumerToken() {
+  void shouldNotRejectRequestWithoutConsumerToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -66,14 +65,14 @@ public class ConsumerTokenBundleOptionalTokenTest {
   }
 
   @Test
-  public void shouldNotRejectOptionsRequest() {
+  void shouldNotRejectOptionsRequest() {
     Response response =
         DW.client().target("http://localhost:" + DW.getLocalPort()).request().options();
     assertThat(response.getStatus()).isEqualTo(200);
   }
 
   @Test
-  public void shouldReadConsumerTokenFixedConfig() {
+  void shouldReadConsumerTokenFixedConfig() {
     String consumerToken =
         DW_OPTIONAL
             .client()
@@ -86,7 +85,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
   }
 
   @Test
-  public void shouldReadConsumerNameFixedConfig() {
+  void shouldReadConsumerNameFixedConfig() {
     String consumerToken =
         DW_OPTIONAL
             .client()
@@ -99,7 +98,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
   }
 
   @Test
-  public void shouldNotRejectRequestWithoutConsumerTokenFixedConfig() {
+  void shouldNotRejectRequestWithoutConsumerTokenFixedConfig() {
     Response response =
         DW_OPTIONAL
             .client()
@@ -111,7 +110,7 @@ public class ConsumerTokenBundleOptionalTokenTest {
   }
 
   @Test
-  public void shouldNotRejectOptionsRequestFixedConfig() {
+  void shouldNotRejectOptionsRequestFixedConfig() {
     Response response =
         DW_OPTIONAL
             .client()
