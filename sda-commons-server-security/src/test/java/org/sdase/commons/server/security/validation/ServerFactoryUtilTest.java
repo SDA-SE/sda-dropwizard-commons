@@ -14,42 +14,42 @@ import io.dropwizard.server.ServerFactory;
 import io.dropwizard.server.SimpleServerFactory;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ServerFactoryUtilTest {
+class ServerFactoryUtilTest {
 
   @Test
-  public void isAbstractServerFactory() {
+  void isAbstractServerFactory() {
     ServerFactory serverFactory = mock(AbstractServerFactory.class);
     Optional<AbstractServerFactory> actual = verifyAbstractServerFactory(serverFactory);
     assertThat(actual).isPresent();
   }
 
   @Test
-  public void serverFactoryIsNotAbstractServerFactory() {
+  void serverFactoryIsNotAbstractServerFactory() {
     ServerFactory serverFactory = mock(ServerFactory.class);
     Optional<AbstractServerFactory> actual = verifyAbstractServerFactory(serverFactory);
     assertThat(actual).isNotPresent();
   }
 
   @Test
-  public void nullIsNotAbstractServerFactory() {
+  void nullIsNotAbstractServerFactory() {
     Optional<AbstractServerFactory> actual = verifyAbstractServerFactory(null);
     assertThat(actual).isNotPresent();
   }
 
   @Test
-  public void extractNoConnectorsFromNull() {
+  void extractNoConnectorsFromNull() {
     assertThat(ServerFactoryUtil.extractConnectorFactories(null)).isEmpty();
   }
 
   @Test
-  public void extractNoConnectorsFromUnknownServerFactoryType() {
+  void extractNoConnectorsFromUnknownServerFactoryType() {
     assertThat(ServerFactoryUtil.extractConnectorFactories(mock(ServerFactory.class))).isEmpty();
   }
 
   @Test
-  public void extractConnectorsFromSimpleServerFactory() {
+  void extractConnectorsFromSimpleServerFactory() {
     ConnectorFactory connectorFactoryMock = mock(ConnectorFactory.class);
     SimpleServerFactory simpleServerFactory = mock(SimpleServerFactory.class);
     when(simpleServerFactory.getConnector()).thenReturn(connectorFactoryMock);
@@ -61,7 +61,7 @@ public class ServerFactoryUtilTest {
   }
 
   @Test
-  public void extractConnectorsFromDefaultServerFactory() {
+  void extractConnectorsFromDefaultServerFactory() {
     ConnectorFactory firstAppConnector = mock(ConnectorFactory.class);
     ConnectorFactory secondAppConnector = mock(ConnectorFactory.class);
     ConnectorFactory adminConnector = mock(ConnectorFactory.class);
