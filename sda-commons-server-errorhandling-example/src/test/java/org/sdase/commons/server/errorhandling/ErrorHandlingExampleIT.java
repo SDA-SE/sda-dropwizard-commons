@@ -4,25 +4,25 @@ import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.assertj.core.groups.Tuple;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.sdase.commons.shared.api.error.ApiInvalidParam;
 
-public class ErrorHandlingExampleIT {
+class ErrorHandlingExampleIT {
 
-  @ClassRule
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(ErrorHandlingExampleApplication.class, null, randomPorts());
+  @RegisterExtension
+  private static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(ErrorHandlingExampleApplication.class, null, randomPorts());
 
   @Test
-  public void shouldGetNotFoundException() {
+  void shouldGetNotFoundException() {
     Response response = getClient().path("exception").request(MediaType.APPLICATION_JSON).get();
 
     assertThat(response.getStatus()).isEqualTo(404);
@@ -31,7 +31,7 @@ public class ErrorHandlingExampleIT {
   }
 
   @Test
-  public void shouldGetErrorResponse() {
+  void shouldGetErrorResponse() {
     Response response = getClient().path("errorResponse").request(MediaType.APPLICATION_JSON).get();
 
     assertThat(response.getStatus()).isEqualTo(500);
@@ -40,7 +40,7 @@ public class ErrorHandlingExampleIT {
   }
 
   @Test
-  public void shouldGetErrorResponseFromApiException() {
+  void shouldGetErrorResponseFromApiException() {
     Response response = getClient().path("apiException").request(MediaType.APPLICATION_JSON).get();
 
     assertThat(response.getStatus()).isEqualTo(422);
@@ -48,7 +48,7 @@ public class ErrorHandlingExampleIT {
   }
 
   @Test
-  public void shouldGetValidationException() {
+  void shouldGetValidationException() {
     Response response =
         getClient()
             .path("validation")
@@ -64,7 +64,7 @@ public class ErrorHandlingExampleIT {
   }
 
   @Test
-  public void shouldGetCustomValidationException() {
+  void shouldGetCustomValidationException() {
     Response response =
         getClient()
             .path("validation")
