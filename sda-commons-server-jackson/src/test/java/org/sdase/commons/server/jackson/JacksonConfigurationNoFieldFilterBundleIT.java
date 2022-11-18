@@ -3,24 +3,25 @@ package org.sdase.commons.server.jackson;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Map;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import org.assertj.core.api.Assertions;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.jackson.test.JacksonConfigurationNoFieldFilterTestApp;
 import org.sdase.commons.server.jackson.test.PersonResource;
 
-public class JacksonConfigurationNoFieldFilterBundleIT {
+class JacksonConfigurationNoFieldFilterBundleIT {
 
-  @ClassRule
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(JacksonConfigurationNoFieldFilterTestApp.class, null, randomPorts());
+  @RegisterExtension
+  public static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(
+          JacksonConfigurationNoFieldFilterTestApp.class, null, randomPorts());
 
   @Test
-  public void shouldGetJohnDoe() {
+  void shouldGetJohnDoe() {
     PersonResource johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -40,7 +41,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
   }
 
   @Test
-  public void shouldIgnoreFieldSelection() {
+  void shouldIgnoreFieldSelection() {
     Map<String, Object> johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -54,7 +55,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
   }
 
   @Test
-  public void shouldNotFilterField() {
+  void shouldNotFilterField() {
     PersonResource johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -75,7 +76,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
   }
 
   @Test
-  public void shouldNotFilterFieldsByMultipleParams() {
+  void shouldNotFilterFieldsByMultipleParams() {
     PersonResource johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -97,7 +98,7 @@ public class JacksonConfigurationNoFieldFilterBundleIT {
   }
 
   @Test
-  public void shouldNotFilterFieldsBySingleParams() {
+  void shouldNotFilterFieldsBySingleParams() {
     PersonResource johnny =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
