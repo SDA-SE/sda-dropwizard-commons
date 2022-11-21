@@ -2,17 +2,18 @@ package org.sdase.commons.server.kafka;
 
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
@@ -24,11 +25,11 @@ import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 
 /** checks that all public bundle methods can be called without any exception */
-public class AppDisabledKafkaServerIT {
+class AppDisabledKafkaServerIT {
 
-  @ClassRule
-  public static final DropwizardAppRule<KafkaTestConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  public static final DropwizardAppExtension<KafkaTestConfiguration> DW =
+      new DropwizardAppExtension<>(
           KafkaTestApplication.class,
           resourceFilePath("test-config-default.yml"),
           config("kafka.disabled", "true"));
@@ -37,15 +38,15 @@ public class AppDisabledKafkaServerIT {
 
   private KafkaBundle<KafkaTestConfiguration> bundle;
 
-  @Before
-  public void before() {
+  @BeforeEach
+  void before() {
     KafkaTestApplication app = DW.getApplication();
     bundle = app.kafkaBundle();
     results.clear();
   }
 
   @Test
-  public void checkRegisterMessageHandler() {
+  void checkRegisterMessageHandler() {
     List<MessageListener<Object, String>> lc1 =
         bundle.createMessageListener(
             MessageListenerRegistration.builder()
@@ -64,15 +65,15 @@ public class AppDisabledKafkaServerIT {
   }
 
   @Test
-  public void checkRegisterProducerReturnsDummy() {
+  void checkRegisterProducerReturnsDummy() {
     MessageProducer<Object, Object> producer =
         bundle.registerProducer(
             ProducerRegistration.builder().forTopic("Topic").withDefaultProducer().build());
     assertNull(producer.send("test", "test"));
   }
 
-  @Test(expected = ConfigurationException.class)
-  public void checkGetTopicConfiguration() {
-    bundle.getTopicConfiguration("test");
+  @Test
+  void checkGetTopicConfiguration() {
+    assertThrows(ConfigurationException.class, () -> bundle.getTopicConfiguration("test"));
   }
 }

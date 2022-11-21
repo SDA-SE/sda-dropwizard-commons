@@ -27,7 +27,7 @@ class UseExistingMongoDbClassExtensionTest {
   private String originalMongoDbConnectionString;
 
   @BeforeEach
-  public void initUseExistingMongoDbExtension() {
+  void initUseExistingMongoDbExtension() {
 
     String MONGODB_CONNECTION_STRING =
         "mongodb://"
@@ -63,7 +63,7 @@ class UseExistingMongoDbClassExtensionTest {
   }
 
   @AfterEach
-  public void clearDatabase() {
+  void clearDatabase() {
     useExistingMongoDbClassExtension.clearDatabase();
     System.clearProperty(OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME);
     if (StringUtils.isNotBlank(originalMongoDbConnectionString)) {
