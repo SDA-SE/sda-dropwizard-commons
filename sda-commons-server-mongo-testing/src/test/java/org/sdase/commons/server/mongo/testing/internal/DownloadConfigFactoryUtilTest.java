@@ -8,16 +8,16 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.mongo.testing.MongoDbRule;
 import org.sdase.commons.server.testing.SystemPropertyRule;
 
-public class DownloadConfigFactoryUtilTest {
+class DownloadConfigFactoryUtilTest {
 
   @Test
-  public void shouldCreateWithFixedDownloadPath() throws Throwable {
+  void shouldCreateWithFixedDownloadPath() throws Throwable {
     AtomicReference<DownloadConfig> actualConfig = new AtomicReference<>();
     new SystemPropertyRule()
         .setProperty("EMBEDDED_MONGO_DOWNLOAD_PATH", "http://localhost/mongo.tar.gz")
@@ -39,7 +39,7 @@ public class DownloadConfigFactoryUtilTest {
   }
 
   @Test
-  public void shouldCreateProxyWithAuthentication() throws Throwable {
+  void shouldCreateProxyWithAuthentication() throws Throwable {
     AtomicReference<DownloadConfig> actualConfig = new AtomicReference<>();
     new SystemPropertyRule()
         .setProperty("http_proxy", "http://tester:dummy@the-test-domain.example.com:1234")
