@@ -3,12 +3,12 @@ package org.sdase.commons.server.kafka.serializers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class JsonSerializerTest {
+class JsonSerializerTest {
 
   @Test
-  public void testSerializer() {
+  void testSerializer() {
     SimpleEntity simpleEntity = new SimpleEntity();
     simpleEntity.setName("MyTestName");
     simpleEntity.setLastname("MyTestLastname");

@@ -5,13 +5,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Properties;
 import org.apache.kafka.common.config.SaslConfigs;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 import org.sdase.commons.server.kafka.KafkaProperties;
 
-public class KafkaPropertiesTest {
+class KafkaPropertiesTest {
   @Test
-  public void itShouldUseGlobalConfig() {
+  void itShouldUseGlobalConfig() {
     KafkaConfiguration config = new KafkaConfiguration();
 
     config.getConfig().put("setting", "from.global");
@@ -22,7 +22,7 @@ public class KafkaPropertiesTest {
   }
 
   @Test
-  public void itShouldUseAdminConfigOverGlobalConfig() {
+  void itShouldUseAdminConfigOverGlobalConfig() {
     KafkaConfiguration config = new KafkaConfiguration();
 
     AdminConfig adminConfig = new AdminConfig();
@@ -37,7 +37,7 @@ public class KafkaPropertiesTest {
   }
 
   @Test
-  public void itShouldBuildSaslStringCorrectly() {
+  void itShouldBuildSaslStringCorrectly() {
     KafkaConfiguration config = new KafkaConfiguration();
 
     Security sec = new Security();
@@ -55,7 +55,7 @@ public class KafkaPropertiesTest {
   }
 
   @Test
-  public void itShouldConfigureSecurityForAdminConfig() {
+  void itShouldConfigureSecurityForAdminConfig() {
     KafkaConfiguration config = new KafkaConfiguration();
 
     Security sec = new Security();
@@ -74,7 +74,7 @@ public class KafkaPropertiesTest {
   }
 
   @Test
-  public void itShouldUseCustomConfigForAdminConfig() {
+  void itShouldUseCustomConfigForAdminConfig() {
     KafkaConfiguration config = new KafkaConfiguration();
 
     Security sec = new Security();
@@ -98,7 +98,7 @@ public class KafkaPropertiesTest {
   }
 
   @Test
-  public void itShouldBuildSaslStringCorrectlyForSCRAM() {
+  void itShouldBuildSaslStringCorrectlyForSCRAM() {
     KafkaConfiguration config = new KafkaConfiguration();
 
     Security sec = new Security();
@@ -117,7 +117,7 @@ public class KafkaPropertiesTest {
   }
 
   @Test
-  public void itShouldThrowForUnknownSaslMechanism() {
+  void itShouldThrowForUnknownSaslMechanism() {
     KafkaConfiguration config = new KafkaConfiguration();
 
     Security sec = new Security();
@@ -134,7 +134,7 @@ public class KafkaPropertiesTest {
   }
 
   @Test
-  public void itShouldNotConfigureSaslForPLAINTEXT() {
+  void itShouldNotConfigureSaslForPLAINTEXT() {
     KafkaConfiguration config = new KafkaConfiguration();
 
     Security sec = new Security();
@@ -151,7 +151,7 @@ public class KafkaPropertiesTest {
   }
 
   @Test
-  public void itShouldNotConfigureSaslForSSL() {
+  void itShouldNotConfigureSaslForSSL() {
     KafkaConfiguration config = new KafkaConfiguration();
 
     Security sec = new Security();
