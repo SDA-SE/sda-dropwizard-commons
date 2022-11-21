@@ -5,21 +5,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.trace.test.TraceTokenTestApp;
 
-public class TraceTokenBundleTest {
+class TraceTokenBundleTest {
 
-  @ClassRule
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  public static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(
           TraceTokenTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
   @Test
-  public void shouldReadTraceToken() {
+  void shouldReadTraceToken() {
     String token =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -31,7 +31,7 @@ public class TraceTokenBundleTest {
   }
 
   @Test
-  public void shouldRespondWithGivenTraceToken() {
+  void shouldRespondWithGivenTraceToken() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -43,7 +43,7 @@ public class TraceTokenBundleTest {
   }
 
   @Test
-  public void shouldGenerateTraceToken() {
+  void shouldGenerateTraceToken() {
     String token =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -54,7 +54,7 @@ public class TraceTokenBundleTest {
   }
 
   @Test
-  public void shouldAddTokenToResponse() {
+  void shouldAddTokenToResponse() {
     Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
@@ -69,7 +69,7 @@ public class TraceTokenBundleTest {
   }
 
   @Test
-  public void shouldDoNothingOnOptions() {
+  void shouldDoNothingOnOptions() {
     Response response =
         DW.client().target("http://localhost:" + DW.getLocalPort()).request().options();
     String header = response.getHeaderString("Trace-Token");
