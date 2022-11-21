@@ -4,15 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.salesforce.kafka.test.KafkaBroker;
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import java.util.stream.Collectors;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 
-public class ExternalKafkaHealthCheckIT {
+class ExternalKafkaHealthCheckIT {
 
-  @ClassRule
+  @RegisterExtension
   public static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           .withBrokers(1)
@@ -23,7 +23,7 @@ public class ExternalKafkaHealthCheckIT {
           .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
   @Test
-  public void testHealthCheckIt() throws Exception {
+  void testHealthCheckIt() throws Exception {
 
     KafkaConfiguration config = new KafkaConfiguration();
     config.setBrokers(
