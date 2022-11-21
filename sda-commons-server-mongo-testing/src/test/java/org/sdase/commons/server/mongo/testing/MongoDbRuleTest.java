@@ -3,15 +3,15 @@ package org.sdase.commons.server.mongo.testing;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.concurrent.atomic.AtomicReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sdase.commons.server.testing.SystemPropertyRule;
 
-public class MongoDbRuleTest {
+class MongoDbRuleTest {
 
   @Test
-  public void shouldUseExistingMongoDb() throws Throwable {
+  void shouldUseExistingMongoDb() throws Throwable {
     AtomicReference<MongoDbRule> actualRule = new AtomicReference<>();
     new SystemPropertyRule()
         .setProperty(
@@ -30,7 +30,7 @@ public class MongoDbRuleTest {
   }
 
   @Test
-  public void shouldStartLocalMongoDb() throws Throwable {
+  void shouldStartLocalMongoDb() throws Throwable {
     AtomicReference<MongoDbRule> actualRule = new AtomicReference<>();
     new SystemPropertyRule()
         .unsetProperty(MongoDbRule.OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME)
