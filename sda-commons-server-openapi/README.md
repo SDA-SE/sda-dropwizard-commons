@@ -67,17 +67,17 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.testing.GoldenFileAssertions;
 
-public class OpenApiDocumentationTest {
+class OpenApiDocumentationTest {
   // start your application
   @ClassRule
   public static final DropwizardAppRule<Configuration> DW =
       new DropwizardAppRule<>(YourApplication.class, resourceFilePath("test-config.yaml"));
 
   @Test
-  public void shouldHaveSameOpenApiInRepository() throws IOException {
+  void shouldHaveSameOpenApiInRepository() throws IOException {
     // receive the openapi.yaml from your service
     String expected =
         DW.client()
