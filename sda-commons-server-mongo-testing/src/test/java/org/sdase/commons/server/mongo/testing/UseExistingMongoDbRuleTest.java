@@ -24,7 +24,7 @@ public class UseExistingMongoDbRuleTest {
           .withPassword("testpassword")
           .build();
 
-  private static SystemPropertyRule SYSTEM_PROPERTY_RULE;
+  @ClassRule public static SystemPropertyRule SYSTEM_PROPERTY_RULE;
 
   private MongoDbRule useExistingMongoDbRule;
 
