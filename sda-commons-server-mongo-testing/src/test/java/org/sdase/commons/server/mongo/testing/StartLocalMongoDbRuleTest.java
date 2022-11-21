@@ -19,6 +19,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.sdase.commons.server.testing.SystemPropertyRule;
 
 public class StartLocalMongoDbRuleTest {
@@ -67,16 +68,20 @@ public class StartLocalMongoDbRuleTest {
     }
   }
 
-  @Test(expected = MongoSecurityException.class)
+  @Test
   public void shouldRejectAccessForBadCredentials() {
-    try (MongoClient mongoClient =
-        new MongoClient(
-            ServerAddressHelper.createServerAddress(RULE.getHosts()),
-            MongoCredential.createCredential(
-                DATABASE_USERNAME, DATABASE_NAME, (DATABASE_PASSWORD + "_bad").toCharArray()),
-            MongoClientOptions.builder().build())) {
-      mongoClient.getDatabase("my_db").getCollection("test").countDocuments();
-    }
+    Assertions.assertThrows(
+        MongoSecurityException.class,
+        () -> {
+          try (MongoClient mongoClient =
+              new MongoClient(
+                  ServerAddressHelper.createServerAddress(RULE.getHosts()),
+                  MongoCredential.createCredential(
+                      DATABASE_USERNAME, DATABASE_NAME, (DATABASE_PASSWORD + "_bad").toCharArray()),
+                  MongoClientOptions.builder().build())) {
+            mongoClient.getDatabase("my_db").getCollection("test").countDocuments();
+          }
+        });
   }
 
   @Test // Flapdoodle can not require auth and create a user

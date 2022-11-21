@@ -7,13 +7,13 @@ import java.util.Map;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 
-public class ProducerRegistrationTest {
+class ProducerRegistrationTest {
 
   @Test
-  public void defaultBuilderHasStringSerializer() {
+  void defaultBuilderHasStringSerializer() {
 
     ProducerRegistration<String, String> producerRegistration =
         ProducerRegistration.builder()
@@ -30,7 +30,7 @@ public class ProducerRegistrationTest {
   }
 
   @Test
-  public void serializerShouldBeSetCorrectly() {
+  void serializerShouldBeSetCorrectly() {
 
     ProducerRegistration<Long, Integer> producerRegistration =
         ProducerRegistration.builder()
@@ -47,7 +47,7 @@ public class ProducerRegistrationTest {
   }
 
   @Test
-  public void customProducerCanBeUsed() {
+  void customProducerCanBeUsed() {
 
     Map<String, String> test = new HashMap<>();
     test.put("key.serializer", StringSerializer.class.getName());

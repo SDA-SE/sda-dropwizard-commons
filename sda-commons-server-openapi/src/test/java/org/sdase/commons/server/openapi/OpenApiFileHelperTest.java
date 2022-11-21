@@ -6,12 +6,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.parser.ObjectMapperFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class OpenApiFileHelperTest {
+class OpenApiFileHelperTest {
 
   @Test
-  public void normalizeOpenApiYaml() throws JsonProcessingException {
+  void normalizeOpenApiYaml() throws JsonProcessingException {
     OpenAPI openAPI = new OpenAPI().addServersItem(new Server().url("http://test"));
     String yamlString = ObjectMapperFactory.createYaml().writeValueAsString(openAPI);
 

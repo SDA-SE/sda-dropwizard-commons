@@ -5,11 +5,11 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.Invocation;
-import org.junit.Test;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.openapi.apps.alternate.AnotherTestApp;
 import org.sdase.commons.server.openapi.apps.test.OpenApiBundleTestApp;
 
@@ -17,46 +17,36 @@ import org.sdase.commons.server.openapi.apps.test.OpenApiBundleTestApp;
  * This test suite checks if the correct swagger file is generated if multiple different apps are
  * executed in the same JVM.
  */
-public class OpenApiBundleMultipleApplicationsIT {
-  public DropwizardAppRule<Configuration> DW;
+class OpenApiBundleMultipleApplicationsIT {
+
+  @RegisterExtension
+  @Order(0)
+  private static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(
+          OpenApiBundleTestApp.class, resourceFilePath("test-config.yaml"));
+
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<Configuration> DW_ANOTHER_APP =
+      new DropwizardAppExtension<>(AnotherTestApp.class, resourceFilePath("test-config.yaml"));
 
   @Test
-  public void shouldIncludeInfoTry1() throws Throwable {
-    DW = new DropwizardAppRule<>(OpenApiBundleTestApp.class, resourceFilePath("test-config.yaml"));
+  void shouldIncludeInfoTry1() {
+    String response = getJsonRequest(DW).get(String.class);
 
-    DW.apply(
-            new Statement() {
-              @Override
-              public void evaluate() {
-                String response = getJsonRequest().get(String.class);
-
-                assertThatJson(response).inPath("$.info.title").isEqualTo("A test app");
-                assertThatJson(response).inPath("$.info.version").asString().isEqualTo("1");
-              }
-            },
-            Description.EMPTY)
-        .evaluate();
+    assertThatJson(response).inPath("$.info.title").isEqualTo("A test app");
+    assertThatJson(response).inPath("$.info.version").asString().isEqualTo("1");
   }
 
   @Test
-  public void shouldIncludeInfoTry2() throws Throwable {
-    DW = new DropwizardAppRule<>(AnotherTestApp.class, resourceFilePath("test-config.yaml"));
+  void shouldIncludeInfoTry2() {
+    String response = getJsonRequest(DW_ANOTHER_APP).get(String.class);
 
-    DW.apply(
-            new Statement() {
-              @Override
-              public void evaluate() {
-                String response = getJsonRequest().get(String.class);
-
-                assertThatJson(response).inPath("$.info.title").isEqualTo("Another test app");
-                assertThatJson(response).inPath("$.info.version").asString().isEqualTo("2");
-              }
-            },
-            Description.EMPTY)
-        .evaluate();
+    assertThatJson(response).inPath("$.info.title").isEqualTo("Another test app");
+    assertThatJson(response).inPath("$.info.version").asString().isEqualTo("2");
   }
 
-  private Invocation.Builder getJsonRequest() {
+  private Invocation.Builder getJsonRequest(DropwizardAppExtension<Configuration> DW) {
     return DW.client()
         .target("http://localhost:" + DW.getLocalPort())
         .path("/api")

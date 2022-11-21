@@ -6,19 +6,18 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.prometheus.client.Collector;
 import io.prometheus.client.Collector.MetricFamilySamples;
 import io.prometheus.client.CollectorRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
@@ -29,10 +28,12 @@ import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KafkaPrometheusMonitoringIT {
+class KafkaPrometheusMonitoringIT {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaPrometheusMonitoringIT.class);
 
+  @RegisterExtension
+  @Order(0)
   private static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           // we only need one consumer offsets partition
@@ -45,8 +46,10 @@ public class KafkaPrometheusMonitoringIT {
 
   private static final String PRODUCER_1 = "producer1";
 
-  private static final DropwizardAppRule<KafkaTestConfiguration> DROPWIZARD_APP_RULE =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(1)
+  private static final DropwizardAppExtension<KafkaTestConfiguration> DROPWIZARD_APP_EXTENSION =
+      new DropwizardAppExtension<>(
           KafkaTestApplication.class,
           resourceFilePath("test-config-default.yml"),
           config("kafka.brokers", KAFKA::getKafkaConnectString),
@@ -54,22 +57,19 @@ public class KafkaPrometheusMonitoringIT {
           // performance improvements in the tests
           config("kafka.config.heartbeat\\.interval\\.ms", "250"));
 
-  @ClassRule
-  public static final TestRule CHAIN = RuleChain.outerRule(KAFKA).around(DROPWIZARD_APP_RULE);
-
   private List<Long> resultsLong = Collections.synchronizedList(new ArrayList<>());
 
   private KafkaBundle<KafkaTestConfiguration> kafkaBundle;
 
-  @Before
-  public void before() {
-    KafkaTestApplication app = DROPWIZARD_APP_RULE.getApplication();
+  @BeforeEach
+  void before() {
+    KafkaTestApplication app = DROPWIZARD_APP_EXTENSION.getApplication();
     kafkaBundle = app.kafkaBundle();
     resultsLong.clear();
   }
 
   @Test
-  public void shouldWriteHelpAndTypeToMetrics() {
+  void shouldWriteHelpAndTypeToMetrics() {
     String topic = "testConsumeMsgForPrometheus";
     KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
 
