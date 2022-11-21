@@ -5,12 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TopicanaExceptionsTest {
+class TopicanaExceptionsTest {
 
   @Test
-  public void testEvaluationException() {
+  void testEvaluationException() {
     IllegalStateException cause = new IllegalStateException("illegal state");
     EvaluationException e = new EvaluationException("msg", cause);
     assertThat(e.getMessage()).isEqualTo("msg");
@@ -18,7 +18,7 @@ public class TopicanaExceptionsTest {
   }
 
   @Test
-  public void testMismatchedTopicConfigException() {
+  void testMismatchedTopicConfigException() {
     Set<String> missingTopics = new HashSet<>();
     missingTopics.add("foo");
     ComparisonResult comparisonResult =

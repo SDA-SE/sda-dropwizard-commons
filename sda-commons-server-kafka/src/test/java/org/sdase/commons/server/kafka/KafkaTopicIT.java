@@ -64,7 +64,7 @@ class KafkaTopicIT {
   private final List<String> results = Collections.synchronizedList(new ArrayList<>());
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     results.clear();
     KafkaTestApplication app = DW.getApplication();
     bundle = app.kafkaBundle();
