@@ -5,17 +5,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.mongodb.MongoClient;
 import java.util.ArrayList;
 import org.bson.Document;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class MongoDbRuleWithScriptingTest {
+class MongoDbRuleWithScriptingTest {
   private static final String DATABASE_NAME = "my_db";
   private static final String DATABASE_USERNAME = "theuser";
   private static final String DATABASE_PASSWORD = "S3CR3t!"; // NOSONAR
 
-  @ClassRule
-  public static final MongoDbRule RULE =
-      MongoDbRule.builder()
+  @RegisterExtension
+  public static final MongoDbClassExtension RULE =
+      MongoDbClassExtension.builder()
           .withDatabase(DATABASE_NAME)
           .withUsername(DATABASE_USERNAME)
           .withPassword(DATABASE_PASSWORD)
@@ -24,7 +24,7 @@ public class MongoDbRuleWithScriptingTest {
           .build();
 
   @Test
-  public void shouldSupportJavaScriptIfEnabled() {
+  void shouldSupportJavaScriptIfEnabled() {
     try (MongoClient mongoClient = RULE.createClient()) {
       ArrayList<Document> results =
           mongoClient

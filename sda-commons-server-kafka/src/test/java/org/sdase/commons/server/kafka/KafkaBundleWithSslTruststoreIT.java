@@ -6,37 +6,39 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import com.salesforce.kafka.test.listeners.SslListener;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
-import org.sdase.commons.server.testing.SystemPropertyRule;
+import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 
 /** A test that uses the JVM-wide truststore to connect to Kafka. */
-public class KafkaBundleWithSslTruststoreIT {
-  private static final CleanupJaasConfigurationRule CLEANUP = new CleanupJaasConfigurationRule();
+class KafkaBundleWithSslTruststoreIT {
 
-  private static final SystemPropertyRule PROP =
-      new SystemPropertyRule()
+  @RegisterExtension
+  @Order(0)
+  private static final SystemPropertyClassExtension PROP =
+      new SystemPropertyClassExtension()
           .setProperty(
               "javax.net.ssl.trustStore",
               KafkaBundleWithSslIT.class.getResource("/ssl/kafka.client.truststore.jks").getFile())
           .setProperty("javax.net.ssl.trustStorePassword", "client-password");
 
+  @RegisterExtension
+  @Order(1)
   private static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           // Register and configure SSL authentication on cluster.
@@ -54,19 +56,17 @@ public class KafkaBundleWithSslTruststoreIT {
           // fresh kafka instance
           .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
-  private static final DropwizardAppRule<KafkaTestConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(2)
+  private static final DropwizardAppExtension<KafkaTestConfiguration> DW =
+      new DropwizardAppExtension<>(
           KafkaTestApplication.class,
           resourceFilePath("test-config-default.yml"),
           config("kafka.brokers", KAFKA::getKafkaConnectString),
           config("kafka.security.protocol", "SSL"));
 
-  @ClassRule
-  public static final TestRule CHAIN =
-      RuleChain.outerRule(CLEANUP).around(PROP).around(KAFKA).around(DW);
-
-  @BeforeClass
-  public static void beforeClass() {
+  @BeforeAll
+  static void beforeAll() {
     KAFKA.getKafkaTestUtils().createTopic("my-topic", 1, (short) 1);
 
     final KafkaProducer<String, String> producer =
@@ -76,7 +76,7 @@ public class KafkaBundleWithSslTruststoreIT {
   }
 
   @Test
-  public void shouldReceiveEntries() {
+  void shouldReceiveEntries() {
     Set<String> results = new HashSet<>();
 
     DW.<KafkaTestApplication>getApplication()
