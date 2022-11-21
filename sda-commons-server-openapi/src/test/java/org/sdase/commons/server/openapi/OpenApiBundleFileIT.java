@@ -8,27 +8,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.nio.charset.StandardCharsets;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.server.openapi.apps.file.FromFileTestApp;
 import org.sdase.commons.server.openapi.test.OpenApiAssertions;
-import org.sdase.commons.server.testing.Retry;
-import org.sdase.commons.server.testing.RetryRule;
 
-public class OpenApiBundleFileIT {
+class OpenApiBundleFileIT {
   private static final String HOUSE_DEFINITION = "House";
 
-  @ClassRule
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(FromFileTestApp.class, resourceFilePath("test-config.yaml"));
-
-  @Rule public RetryRule retryRule = new RetryRule();
+  @RegisterExtension
+  public static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(FromFileTestApp.class, resourceFilePath("test-config.yaml"));
 
   private static Builder getJsonRequest() {
     return DW.client()
@@ -51,8 +47,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldProvideSchemaCompliantJson() {
+  @RetryingTest(5)
+  void shouldProvideSchemaCompliantJson() {
     try (Response response = getJsonRequest().get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
       assertThat(response.getMediaType()).isEqualTo(APPLICATION_JSON_TYPE);
@@ -62,8 +58,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldProvideValidYaml() {
+  @RetryingTest(5)
+  void shouldProvideValidYaml() {
     try (Response response = getYamlRequest().get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
       assertThat(response.getMediaType()).isEqualTo(MediaType.valueOf("application/yaml"));
@@ -73,8 +69,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldProvideYamlInUtf8() {
+  @RetryingTest(5)
+  void shouldProvideYamlInUtf8() {
     try (Response response = getYamlRequest().get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
       assertThat(response.getMediaType()).isEqualTo(MediaType.valueOf("application/yaml"));
@@ -87,8 +83,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldHaveCORSWildcardJson() {
+  @RetryingTest(5)
+  void shouldHaveCORSWildcardJson() {
     try (Response response = getJsonRequest().header("Origin", "example.com").get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
       assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
@@ -96,8 +92,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldHaveCORSWildcardYaml() {
+  @RetryingTest(5)
+  void shouldHaveCORSWildcardYaml() {
     try (Response response = getYamlRequest().header("Origin", "example.com").get()) {
       assertThat(response.getStatus()).isEqualTo(OK_200);
       assertThat(response.getHeaderString("Access-Control-Allow-Origin")).isEqualTo("example.com");
@@ -105,8 +101,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldNotHaveCORSWildcardOnOtherPath() {
+  @RetryingTest(5)
+  void shouldNotHaveCORSWildcardOnOtherPath() {
     try (Response response =
         DW.client()
             .target(getTarget())
@@ -122,8 +118,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldIncludeInfo() {
+  @RetryingTest(5)
+  void shouldIncludeInfo() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response).inPath("$.info.title").isEqualTo("A manually written OpenAPI file");
@@ -131,8 +127,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldIncludeServerUrl() {
+  @RetryingTest(5)
+  void shouldIncludeServerUrl() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -142,8 +138,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldIncludePaths() {
+  @RetryingTest(5)
+  void shouldIncludePaths() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -155,8 +151,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldIncludeSchemas() {
+  @RetryingTest(5)
+  void shouldIncludeSchemas() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -171,8 +167,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldUseDescriptionFromAnnotation() {
+  @RetryingTest(5)
+  void shouldUseDescriptionFromAnnotation() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -181,8 +177,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldNotIncludeAdditionalReturnCode() {
+  @RetryingTest(5)
+  void shouldNotIncludeAdditionalReturnCode() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -191,8 +187,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldIncludeEmbedParameterExistingEmbeddedProperty() {
+  @RetryingTest(5)
+  void shouldIncludeEmbedParameterExistingEmbeddedProperty() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -202,8 +198,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldIncludeEmbedParameterExistingEmbeddedAllOfProperty() {
+  @RetryingTest(5)
+  void shouldIncludeEmbedParameterExistingEmbeddedAllOfProperty() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response)
@@ -213,8 +209,8 @@ public class OpenApiBundleFileIT {
   }
 
   @Test
-  @Retry(5)
-  public void shouldNotIncludeEmbedParameterExistingEmbeddedAnyOfProperty() {
+  @RetryingTest(5)
+  void shouldNotIncludeEmbedParameterExistingEmbeddedAnyOfProperty() {
     String response = getJsonRequest().get(String.class);
 
     assertThatJson(response).inPath("$.paths./embedAnyOf.get.parameters").isAbsent();

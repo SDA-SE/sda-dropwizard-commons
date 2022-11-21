@@ -6,10 +6,10 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.SharedKafkaTestResourceScram;
-import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
+import com.salesforce.kafka.test.SharedKafkaClassExtensionScram;
+import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import com.salesforce.kafka.test.listeners.SaslScramListener;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,27 +17,29 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.kafka.common.security.JaasUtils;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
-import org.sdase.commons.server.testing.SystemPropertyRule;
+import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 
-public class KafkaBundleWithSaslScramIT {
-  private static final CleanupJaasConfigurationRule CLEANUP = new CleanupJaasConfigurationRule();
+class KafkaBundleWithSaslScramIT {
 
-  private static final SystemPropertyRule PROP =
-      new SystemPropertyRule()
+  @RegisterExtension
+  @Order(0)
+  private static final SystemPropertyClassExtension PROP =
+      new SystemPropertyClassExtension()
           .setProperty(
               JaasUtils.JAVA_LOGIN_CONFIG_PARAM,
               KafkaBundleWithSaslScramIT.class.getResource("/sasl-scram-jaas.conf").getFile());
 
+  @RegisterExtension
+  @Order(1)
   private static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResourceScram()
+      new SharedKafkaClassExtensionScram()
           .registerListener(
               new SaslScramListener().withUsername("kafkaclient").withPassword("client-secret"))
           // we only need one consumer offsets partition
@@ -46,8 +48,10 @@ public class KafkaBundleWithSaslScramIT {
           // fresh kafka instance
           .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
-  private static final DropwizardAppRule<KafkaTestConfiguration> DW =
-      new DropwizardAppRule<>(
+  @RegisterExtension
+  @Order(2)
+  private static final DropwizardAppExtension<KafkaTestConfiguration> DW =
+      new DropwizardAppExtension<>(
           KafkaTestApplication.class,
           resourceFilePath("test-config-default.yml"),
           config("kafka.brokers", KAFKA::getKafkaConnectString),
@@ -56,12 +60,8 @@ public class KafkaBundleWithSaslScramIT {
           config("kafka.security.protocol", "SASL_PLAINTEXT"),
           config("kafka.security.saslMechanism", "SCRAM-SHA-512"));
 
-  @ClassRule
-  public static final TestRule CHAIN =
-      RuleChain.outerRule(CLEANUP).around(PROP).around(KAFKA).around(DW);
-
   @Test
-  public void shouldReceiveEntries() {
+  void shouldReceiveEntries() {
     Set<String> results = new HashSet<>();
 
     DW.<KafkaTestApplication>getApplication()
