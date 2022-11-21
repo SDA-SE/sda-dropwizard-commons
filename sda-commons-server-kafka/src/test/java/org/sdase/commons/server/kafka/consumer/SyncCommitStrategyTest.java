@@ -8,13 +8,13 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.when;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
-public class SyncCommitStrategyTest {
+class SyncCommitStrategyTest {
 
   private MessageHandler<String, String> handler;
   private ErrorHandler<String, String> errorHandler;
@@ -22,8 +22,8 @@ public class SyncCommitStrategyTest {
   private ConsumerTopicMessageHistogram histogram;
 
   @SuppressWarnings("unchecked")
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     consumer = Mockito.mock(KafkaConsumer.class);
     handler = Mockito.mock(MessageHandler.class);
     errorHandler = Mockito.mock(ErrorHandler.class);
@@ -31,7 +31,7 @@ public class SyncCommitStrategyTest {
   }
 
   @Test
-  public void shouldInvokeCommitAfterEachChunkOfRecords() {
+  void shouldInvokeCommitAfterEachChunkOfRecords() {
     SyncCommitMLS<String, String> strategy = new SyncCommitMLS<>(handler, errorHandler);
     strategy.init(histogram);
 
@@ -47,7 +47,7 @@ public class SyncCommitStrategyTest {
   }
 
   @Test
-  public void shouldInvokeErrorHandlerWhenException() {
+  void shouldInvokeErrorHandlerWhenException() {
     doThrow(new RuntimeException("Test")).when(handler).handle(any());
     when(errorHandler.handleError(any(), any(), any())).thenReturn(true);
 
