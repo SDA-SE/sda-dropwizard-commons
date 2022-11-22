@@ -34,6 +34,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
+import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
@@ -197,6 +198,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     converter.setCustomConversions(conversions);
     converter.setCodecRegistryProvider(factory);
     converter.afterPropertiesSet();
+    converter.setTypeMapper(new DefaultMongoTypeMapper("className"));
 
     return converter;
   }

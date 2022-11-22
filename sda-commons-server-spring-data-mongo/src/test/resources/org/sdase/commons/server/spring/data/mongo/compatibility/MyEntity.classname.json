@@ -1,0 +1,5 @@
+{
+  "_id": "1a736daf-6ff0-4779-9ace-f8eef956739e",
+  "className": "org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEntity",
+  "value": "a string"
+}
