@@ -43,6 +43,11 @@ import org.springframework.data.repository.Repository;
 
 public class SpringDataMongoBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
+  /**
+   * Adding our own JSR 310 converters to stay backwards compatible with the old Morphia Bundle.
+   * Spring usually provides {@link org.springframework.data.convert.Jsr310Converters} that are not
+   * used here intentionally.
+   */
   private static final Set<Converter<?, ?>> DEFAULT_CONVERTERS =
       new LinkedHashSet<>(
           List.of(
@@ -110,7 +115,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   }
 
   /**
-   * registers an health check for the mongo database
+   * registers a health check for the mongo database
    *
    * @param healthCheckRegistry registry where to register health checks
    * @param database database name that is used within health check
@@ -121,11 +126,27 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
         "mongo", new MongoHealthCheck(mongoClient.getDatabase((database))));
   }
 
+  /**
+   * @return the {@link MongoOperations} that can be used to interact with your MongoDB instance
+   */
   public MongoOperations getMongoOperations() {
     if (mongoOperations == null) {
       mongoOperations = createMongoOperations();
     }
     return mongoOperations;
+  }
+
+  /**
+   * @return a new Spring Data Mongo repository
+   * @param <S> the type of your entity type
+   * @param <ID> the type of your primary key
+   */
+  public <T extends Repository<S, ID>, S, ID extends Serializable> T createRepository(
+      Class<T> clazz) {
+    MongoRepositoryFactoryBean<T, S, ID> factoryBean = new MongoRepositoryFactoryBean<>(clazz);
+    factoryBean.setMongoOperations(getMongoOperations());
+    factoryBean.afterPropertiesSet();
+    return factoryBean.getObject();
   }
 
   private MongoOperations createMongoOperations() {
@@ -159,14 +180,6 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   private SpringDataMongoBundle<C> setAutoIndexCreation(boolean autoIndexCreation) {
     this.autoIndexCreation = autoIndexCreation;
     return this;
-  }
-
-  public <T extends Repository<S, ID>, S, ID extends Serializable> T createRepository(
-      Class<T> clazz) {
-    MongoRepositoryFactoryBean<T, S, ID> factoryBean = new MongoRepositoryFactoryBean<>(clazz);
-    factoryBean.setMongoOperations(getMongoOperations());
-    factoryBean.afterPropertiesSet();
-    return factoryBean.getObject();
   }
 
   /** Copied from Spring's {@link MongoTemplate} */
