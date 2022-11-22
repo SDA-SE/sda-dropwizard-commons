@@ -10,7 +10,9 @@ import org.sdase.commons.server.weld.testing.WeldAppRule;
 import org.sdase.commons.server.weld.testing.test.AppConfiguration;
 import org.sdase.commons.server.weld.testing.test.WeldExampleApplication;
 
-/** @deprecated see {@link WeldAppRule} */
+/**
+ * @deprecated see {@link WeldAppRule}
+ */
 @Deprecated
 public class SecondWeldBundleApplicationTest {
 
