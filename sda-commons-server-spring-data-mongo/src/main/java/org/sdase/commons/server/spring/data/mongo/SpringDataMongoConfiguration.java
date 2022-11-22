@@ -62,6 +62,11 @@ public class SpringDataMongoConfiguration {
   /** If SSL should be used for the database connection. */
   private boolean useSsl;
 
+  /**
+   * Plain MongoDB connection string as described in the <a
+   * href="https://www.mongodb.com/docs/manual/reference/connection-string/">official
+   * documentation</a>.
+   */
   private String connectionString;
 
   public String getHosts() {
