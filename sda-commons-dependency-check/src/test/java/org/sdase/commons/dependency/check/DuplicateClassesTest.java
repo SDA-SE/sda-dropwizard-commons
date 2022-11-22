@@ -10,8 +10,8 @@ import io.github.classgraph.ScanResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.Test;
 import java.util.regex.Pattern;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ class DuplicateClassesTest {
     // There only seems to be one very old release of aopalliance that HK2 and Spring repackaged
     // into their own artifacts. Assumption is that the included versions are identical and
     // the duplication is not an issue.
-    ignorePatterns.add(Pattern.compile("org\\/aopalliance.*"));
+    ignorePatterns.add(Pattern.compile("org/aopalliance.*"));
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(DuplicateClassesTest.class);
