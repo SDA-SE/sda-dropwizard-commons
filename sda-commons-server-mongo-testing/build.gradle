@@ -2,49 +2,5 @@ dependencies {
   api project(':sda-commons-server-testing')
 
   api 'org.mongodb:mongodb-driver-legacy:4.2.3'
-  api 'de.flapdoodle.embed:de.flapdoodle.embed.mongo', {
-    // conflict within flapdoodle:
-    //
-    // de.flapdoodle:de.flapdoodle.os:1.1.8
-    // +--- de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.5
-    // |    +--- org.sdase.commons:sda-commons-dependencies:2.48.1
-    // |    |    \--- testCompileClasspath
-    // |    \--- org.sdase.commons:sda-commons-server-mongo-testing:2.48.1
-    // |         +--- testCompileClasspath (requested org.sdase.commons:sda-commons-server-mongo-testing)
-    // |         \--- org.sdase.commons:sda-commons-bom:2.48.1
-    // |              \--- testCompileClasspath
-    // \--- de.flapdoodle.embed:de.flapdoodle.embed.mongo.packageresolver:1.0.3
-    //      \--- de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.5 (*)
-    // de.flapdoodle:de.flapdoodle.os:1.1.6 -> 1.1.8
-    // \--- de.flapdoodle.embed:de.flapdoodle.embed.process:3.1.10
-    //      +--- de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.5
-    //      |    +--- org.sdase.commons:sda-commons-dependencies:2.48.1
-    //      |    |    \--- testCompileClasspath
-    //      |    \--- org.sdase.commons:sda-commons-server-mongo-testing:2.48.1
-    //      |         +--- testCompileClasspath (requested org.sdase.commons:sda-commons-server-mongo-testing)
-    //      |         \--- org.sdase.commons:sda-commons-bom:2.48.1
-    //      |              \--- testCompileClasspath
-    //      \--- de.flapdoodle.embed:de.flapdoodle.embed.mongo.packageresolver:1.0.3 (requested de.flapdoodle.embed:de.flapdoodle.embed.process:3.1.9)
-    //           \--- de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.5 (*)
-    exclude group: 'de.flapdoodle', module: 'de.flapdoodle.os'
-
-    // conflict within flapdoodle
-    //
-    // de.flapdoodle.embed:de.flapdoodle.embed.process:3.1.10
-    // \--- de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.5
-    //      +--- org.sdase.commons:sda-commons-dependencies:2.48.1
-    //      |    \--- testCompileClasspath
-    //      \--- org.sdase.commons:sda-commons-server-mongo-testing:2.48.1
-    // de.flapdoodle.embed:de.flapdoodle.embed.process:3.1.9 -> 3.1.10
-    // \--- de.flapdoodle.embed:de.flapdoodle.embed.mongo.packageresolver:1.0.3
-    //      \--- de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.5
-    //           +--- org.sdase.commons:sda-commons-dependencies:2.48.1
-    //           |    \--- testCompileClasspath
-    //           \--- org.sdase.commons:sda-commons-server-mongo-testing:2.48.1
-    exclude group: 'de.flapdoodle.embed', module: 'de.flapdoodle.embed.process'
-  }
-  api 'de.flapdoodle.embed:de.flapdoodle.embed.process:3.1.11', {
-    exclude group: 'de.flapdoodle', module: 'de.flapdoodle.os'
-  }
-  api 'de.flapdoodle:de.flapdoodle.os:1.1.10'
+  api 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 }
