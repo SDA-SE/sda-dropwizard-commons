@@ -77,7 +77,8 @@ class MorphiaCompatibilityITest {
   }
 
   @Test
-  @Disabled("This test shows the default of Spring Data MongoDB - using _class instead of Morphia's className.")
+  @Disabled(
+      "This test shows the default of Spring Data MongoDB - using _class instead of Morphia's className.")
   void verifyHowGenericTypesAreStoredBySpringData() {
     String id = UUID.randomUUID().toString();
     var given =
@@ -97,7 +98,8 @@ class MorphiaCompatibilityITest {
     assertThat(actual.first())
         .extracting("genericValue")
         .extracting("_class", "value")
-        .contains("org.sdase.commons.server.spring.data.mongo.compatibility.model.GenericIntType", 123);
+        .contains(
+            "org.sdase.commons.server.spring.data.mongo.compatibility.model.GenericIntType", 123);
   }
 
   @Test

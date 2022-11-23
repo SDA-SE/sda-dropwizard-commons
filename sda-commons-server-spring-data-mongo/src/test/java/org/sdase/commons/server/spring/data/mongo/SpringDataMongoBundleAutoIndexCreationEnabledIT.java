@@ -32,8 +32,8 @@ class SpringDataMongoBundleAutoIndexCreationEnabledIT {
   @Test
   void shouldHaveCreatedIndexed() {
     MongoOperations mongoOperations = getMongoOperations();
-    var indexInfos = mongoOperations.indexOps(Person.class).getIndexInfo();
-    assertThat(indexInfos).hasSize(3);
+    var indexesByMongoClient = mongoOperations.getCollection("people").listIndexes();
+    assertThat(indexesByMongoClient).hasSize(3);
   }
 
   private MongoOperations getMongoOperations() {
@@ -45,6 +45,7 @@ class SpringDataMongoBundleAutoIndexCreationEnabledIT {
     private final SpringDataMongoBundle<MyConfiguration> springDataMongoBundle =
         SpringDataMongoBundle.builder()
             .withConfigurationProvider(MyConfiguration::getSpringDataMongo)
+            .withEntity(Person.class)
             .build();
 
     @Override

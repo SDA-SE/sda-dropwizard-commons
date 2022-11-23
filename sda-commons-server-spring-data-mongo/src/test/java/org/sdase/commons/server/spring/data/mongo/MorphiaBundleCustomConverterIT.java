@@ -77,6 +77,7 @@ class MorphiaBundleCustomConverterIT {
     private final SpringDataMongoBundle<MyConfiguration> springDataMongoBundle =
         SpringDataMongoBundle.builder()
             .withConfigurationProvider(MyConfiguration::getSpringDataMongo)
+            .withEntity(Person.class)
             .addCustomConverters(
                 new PhoneNumberToStringConverter(), new StringToPhoneNumberConverter())
             .build();
