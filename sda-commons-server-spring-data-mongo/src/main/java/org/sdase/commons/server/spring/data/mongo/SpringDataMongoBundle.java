@@ -72,7 +72,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private boolean autoIndexCreation = true;
 
-  private Set<Class<?>> entityClasses = new HashSet<>();
+  private final Set<Class<?>> entityClasses = new HashSet<>();
   /**
    * Database as defined by the {@link SpringDataMongoConfiguration#getConnectionString()} or {@link
    * SpringDataMongoConfiguration#getDatabase()}
@@ -164,16 +164,6 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     return converters;
   }
 
-  private SpringDataMongoBundle<C> withEntity(Class<?> entityClass) {
-    withEntities(entityClass);
-    return this;
-  }
-
-  private SpringDataMongoBundle<C> withEntities(Class<?>... entityClasses) {
-    withEntities(asList(entityClasses));
-    return this;
-  }
-
   private SpringDataMongoBundle<C> withEntities(List<Class<?>> entityClasses) {
     this.entityClasses.addAll(new HashSet<>(entityClasses));
     return this;
@@ -235,29 +225,11 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   public interface ScanPackageBuilder<C extends Configuration> extends FinalBuilder<C> {
 
     /**
-     * @param entityClass A model class that represents an entity. Using explicit classes instead of
-     *     scanning packages boosts application startup.
-     * @return a builder instance for further configuration
-     */
-    default CustomConverterBuilder<C> withEntity(Class<?> entityClass) {
-      return withEntities(entityClass);
-    }
-
-    /**
      * @param entityClasses Model classes that represent entities. Using explicit classes instead of
      *     scanning packages boosts application startup.
      * @return a builder instance for further configuration
      */
-    default CustomConverterBuilder<C> withEntities(Class<?>... entityClasses) {
-      return withEntities(asList(entityClasses));
-    }
-
-    /**
-     * @param entityClasses Model classes that represent entities. Using explicit classes instead of
-     *     scanning packages boosts application startup.
-     * @return a builder instance for further configuration
-     */
-    CustomConverterBuilder<C> withEntities(@NotNull List<Class<?>> entityClasses);
+    CustomConverterBuilder<C> withEntities(Class<?>... entityClasses);
   }
 
   public interface CustomConverterBuilder<C extends Configuration> extends FinalBuilder<C> {
@@ -317,20 +289,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     }
 
     @Override
-    public CustomConverterBuilder<T> withEntity(Class<?> entityClass) {
-      this.entityClasses.add(entityClass);
-      return this;
-    }
-
-    @Override
     public CustomConverterBuilder<T> withEntities(Class<?>... entityClasses) {
       this.entityClasses.addAll(asList(entityClasses));
-      return this;
-    }
-
-    @Override
-    public CustomConverterBuilder<T> withEntities(List<Class<?>> entityClasses) {
-      this.entityClasses.addAll(entityClasses);
       return this;
     }
 
