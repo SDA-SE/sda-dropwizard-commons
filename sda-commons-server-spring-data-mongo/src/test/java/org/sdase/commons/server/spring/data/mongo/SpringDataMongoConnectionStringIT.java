@@ -56,6 +56,26 @@ class SpringDataMongoConnectionStringIT {
   }
 
   @Test
+  void shouldSaveAndFindWithoutValidation() {
+    PhoneNumber phoneNumber = new PhoneNumber().setNumber("+49123456789");
+    Person person =
+        new Person()
+            .setAge(0)
+            .setName(null)
+            .setBirthday(LocalDate.now().minusYears(44))
+            .setPhoneNumber(phoneNumber);
+
+    MyApp app = DW.getApplication();
+    MongoOperations mongoOperations = app.getMongoOperations();
+    Person savedPerson = mongoOperations.save(person);
+
+    Person foundPerson = mongoOperations.findById(savedPerson.getId(), Person.class);
+    assertThat(foundPerson).isNotNull();
+    assertThat(foundPerson.getAge()).isZero();
+    assertThat(foundPerson.getName()).isNull();
+  }
+
+  @Test
   void readsFirstPageCorrectly() {
     MyApp app = DW.getApplication();
     PersonRepository repository = app.getPersonRepository();

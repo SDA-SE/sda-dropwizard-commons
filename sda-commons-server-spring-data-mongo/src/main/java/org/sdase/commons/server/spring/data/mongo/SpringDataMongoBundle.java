@@ -1,6 +1,7 @@
 package org.sdase.commons.server.spring.data.mongo;
 
 import static java.util.Arrays.asList;
+import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.mongodb.ConnectionString;
@@ -19,6 +20,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.sdase.commons.server.spring.data.mongo.converter.DateToZonedDateTimeConverter;
@@ -27,6 +31,7 @@ import org.sdase.commons.server.spring.data.mongo.converter.StringToLocalDateCon
 import org.sdase.commons.server.spring.data.mongo.converter.StringToZonedDateTimeConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeToDateConverter;
 import org.sdase.commons.server.spring.data.mongo.health.MongoHealthCheck;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -39,6 +44,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactoryBean;
 import org.springframework.data.repository.Repository;
 
@@ -72,6 +78,10 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private boolean autoIndexCreation = true;
 
+  private GenericApplicationContext applicationContext;
+
+  private boolean validationEnabled = false;
+
   private final Set<Class<?>> entityClasses = new HashSet<>();
   /**
    * Database as defined by the {@link SpringDataMongoConfiguration#getConnectionString()} or {@link
@@ -95,6 +105,9 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   @Override
   public void run(C configuration, Environment environment) {
     this.config = configurationProvider.apply(configuration);
+    if (this.validationEnabled) {
+      this.applicationContext = createAndStartApplicationContext();
+    }
 
     String connectionString;
     if (StringUtils.isNotBlank(config.getConnectionString())) {
@@ -114,6 +127,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     mongoClient = MongoClients.create(cs);
 
     registerHealthCheck(environment.healthChecks(), mongoClient, this.database);
+    registerOnShutdown(environment);
   }
 
   /**
@@ -151,11 +165,56 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     return factoryBean.getObject();
   }
 
+  /**
+   * creates a mongoTemplate to be used for operations in database. If the option {@code
+   * withValidation} was selected in the Bundle creation, it will initialize a spring application
+   * context for the validation
+   */
   private MongoOperations createMongoOperations() {
     SimpleMongoClientDatabaseFactory mongoDbFactory =
         new SimpleMongoClientDatabaseFactory(mongoClient, this.database);
     MongoConverter mongoConverter = getDefaultMongoConverter(mongoDbFactory, getConverters());
-    return new MongoTemplate(mongoDbFactory, mongoConverter);
+    var mongoTemplate = new MongoTemplate(mongoDbFactory, mongoConverter);
+    if (validationEnabled) {
+      // we need the application context for the application events (OnBeforeSave) to be supported
+      mongoTemplate.setApplicationContext(applicationContext);
+    }
+    return mongoTemplate;
+  }
+
+  /**
+   * creates a spring application context to enable validation features, if the option {@code
+   * withValidation} was selected in the Bundle creation
+   */
+  private GenericApplicationContext createAndStartApplicationContext() {
+    var context = new GenericApplicationContext();
+    context.addApplicationListener(new ValidatingMongoEventListener(createValidator()));
+    context.refresh();
+    context.start();
+    return context;
+  }
+
+  /**
+   * @return a new Validator instance
+   */
+  private Validator createValidator() {
+    try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+      return factory.getValidator();
+    }
+  }
+
+  /** shutdowns the spring application context, if created */
+  private void registerOnShutdown(Environment environment) {
+    if (applicationContext != null) {
+      environment
+          .lifecycle()
+          .manage(
+              onShutdown(
+                  () -> {
+                    applicationContext.stop();
+                    applicationContext.close();
+                  }));
+    }
   }
 
   private List<?> getConverters() {
@@ -189,6 +248,11 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     return this;
   }
 
+  private SpringDataMongoBundle<C> setValidationEnabled(boolean validationEnabled) {
+    this.validationEnabled = validationEnabled;
+    return this;
+  }
+
   /** Copied from Spring's {@link MongoTemplate} */
   private MongoConverter getDefaultMongoConverter(
       MongoDatabaseFactory factory, List<?> converters) {
@@ -198,6 +262,11 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     MongoMappingContext mappingContext = new MongoMappingContext();
     mappingContext.setSimpleTypeHolder(conversions.getSimpleTypeHolder());
     mappingContext.setAutoIndexCreation(autoIndexCreation);
+    if (this.validationEnabled) {
+      mappingContext.setApplicationContext(applicationContext);
+      mappingContext.setApplicationEventPublisher(applicationContext);
+    }
+
     mappingContext.setInitialEntitySet(entityClasses);
     mappingContext.afterPropertiesSet();
 
@@ -257,6 +326,9 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
     FinalBuilder<C> disableAutoIndexCreation();
 
+    /** enables validation features, otherwise it will be disabled by default */
+    FinalBuilder<C> withValidation();
+
     /**
      * Builds the mongo bundle
      *
@@ -276,6 +348,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
     private boolean autoIndexCreation = true;
 
+    private boolean validationEnabled = false;
+
     public Builder(SpringDataMongoConfigurationProvider<T> configurationProvider) {
       this.configurationProvider = configurationProvider;
     }
@@ -286,6 +360,12 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     public <C extends Configuration> ScanPackageBuilder<C> withConfigurationProvider(
         SpringDataMongoConfigurationProvider<C> configurationProvider) {
       return new Builder<>(configurationProvider);
+    }
+
+    @Override
+    public FinalBuilder<T> withValidation() {
+      this.validationEnabled = true;
+      return this;
     }
 
     @Override
@@ -311,7 +391,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
       return new SpringDataMongoBundle<>(configurationProvider)
           .withEntities(entityClasses)
           .addCustomConverters(customConverters)
-          .setAutoIndexCreation(autoIndexCreation);
+          .setAutoIndexCreation(autoIndexCreation)
+          .setValidationEnabled(validationEnabled);
     }
   }
 }
