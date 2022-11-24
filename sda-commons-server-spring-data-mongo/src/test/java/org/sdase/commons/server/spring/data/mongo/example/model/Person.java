@@ -3,20 +3,23 @@ package org.sdase.commons.server.spring.data.mongo.example.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-@Document("people") // required when entities are added by classpath scanning to ensure indexes
+@Document("people")
 public class Person {
 
   @MongoId private ObjectId id;
 
   @Indexed @NotNull private String name;
 
-  @Indexed private int age;
+  @Min(1)
+  @Indexed
+  private int age;
 
   private PhoneNumber phoneNumber;
 

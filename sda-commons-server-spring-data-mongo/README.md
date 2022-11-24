@@ -104,6 +104,17 @@ private final SpringDataMongoBundle<MyConfiguration> springDataMongoBundle =
       .build();
 ```
 
+## Enabling validation
+You can use the `javax.validation.constraints` annotations to validate your beans e.g: [`Person`](./src/test/java/org/sdase/commons/server/spring/data/mongo/example/model/Person.java).
+The mongo bean validation will be disabled by default. You can enable it using the builder:
+
+```java
+private final SpringDataMongoBundle<MyConfiguration> springDataMongoBundle =
+  SpringDataMongoBundle.builder()
+      .withConfigurationProvider(MyConfiguration::getSpringDataMongo)
+      .withValidation()
+      .build();
+```
 
 ## Spring Data Mongo Repositories
 
