@@ -23,6 +23,7 @@ public class MyApp extends Application<MyConfiguration> {
   private final SpringDataMongoBundle<MyConfiguration> springDataMongoBundle =
       SpringDataMongoBundle.builder()
           .withConfigurationProvider(MyConfiguration::getSpringDataMongo)
+          .withEntites(MyEntity.class)
           .build();
 
   private PersonRepository personRepository;
@@ -98,6 +99,7 @@ the builder:
 private final SpringDataMongoBundle<MyConfiguration> springDataMongoBundle =
   SpringDataMongoBundle.builder()
       .withConfigurationProvider(MyConfiguration::getSpringDataMongo)
+      .withEntites(MyEntity.class)
       .disableAutoIndexCreation()
       .build();
 ```
