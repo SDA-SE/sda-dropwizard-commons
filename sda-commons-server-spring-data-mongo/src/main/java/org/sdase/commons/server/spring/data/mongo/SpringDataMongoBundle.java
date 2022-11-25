@@ -333,6 +333,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
      *   <li>{@code dev.morphia.geo.Geometry} and all its implementations
      * </ul>
      *
+     * x
+     *
      * @see CustomConverterBuilder#addCustomConverters(Converter[]) defaults without Morphia
      *     compatibility
      * @return a builder instance for further configuration
@@ -370,9 +372,9 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     /**
      * Adds a custom {@link Converter}
      *
-     * <p>By default the bundle provides {@link Jsr310Converters} and custom converters {@linkplain
-     * org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter to write
-     * <code>ZoneDateTime</code> as <code>Date</code>} and {@linkplain
+     * <p>By default the bundle provides default converters of Spring Data and custom converters
+     * {@linkplain org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter
+     * to write <code>ZoneDateTime</code> as <code>Date</code>} and {@linkplain
      * org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeReadConverter read
      * <code>ZoneDateTime</code> from <code>Date</code>} unless {@linkplain
      * MorphiaCompatibilityBuilder#withMorphiaCompatibility() Morphia compatibility is enabled}.
