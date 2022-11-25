@@ -5,6 +5,7 @@ import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListe
 
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import io.dropwizard.Configuration;
@@ -32,6 +33,8 @@ import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibilit
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.LocalDateWriteConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.UriReadConverter;
 import org.sdase.commons.server.spring.data.mongo.health.MongoHealthCheck;
+import org.sdase.commons.shared.certificates.ca.CaCertificateConfigurationProvider;
+import org.sdase.commons.shared.certificates.ca.CaCertificatesBundle;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.Jsr310Converters;
@@ -77,6 +80,12 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private final Function<C, SpringDataMongoConfiguration> configurationProvider;
 
+  private CaCertificatesBundle.FinalBuilder<C> caCertificatesBundleBuilder;
+
+  private CaCertificatesBundle<C> caCertificatesBundle;
+
+  private SpringDataMongoConfiguration config;
+
   private MongoClient mongoClient;
 
   private MongoOperations mongoOperations;
@@ -109,12 +118,13 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   @Override
   public void initialize(Bootstrap<?> bootstrap) {
-    // nothing to do ATM
+    this.caCertificatesBundle = caCertificatesBundleBuilder.build();
+    bootstrap.addBundle((ConfiguredBundle) this.caCertificatesBundle);
   }
 
   @Override
   public void run(C configuration, Environment environment) {
-    var config = configurationProvider.apply(configuration);
+    this.config = configurationProvider.apply(configuration);
     if (this.validationEnabled) {
       this.applicationContext = createAndStartApplicationContext();
     }
@@ -134,10 +144,39 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
     var cs = new ConnectionString(connectionString);
     this.database = cs.getDatabase();
-    mongoClient = MongoClients.create(cs);
+
+    mongoClient = createMongoClient(cs);
 
     registerHealthCheck(environment.healthChecks(), mongoClient, this.database);
     registerOnShutdown(environment);
+  }
+
+  private MongoClient createMongoClient(ConnectionString cs) {
+    MongoClientSettings.Builder clientSettingsBuilder =
+        MongoClientSettings.builder().applyConnectionString(cs);
+    if (config.isUseSsl() && caCertificatesBundle.getSslContext() != null) {
+      clientSettingsBuilder.applyToSslSettings(
+          builder -> {
+            builder.context(this.caCertificatesBundle.getSslContext());
+            builder.enabled(true);
+          });
+    }
+    return MongoClients.create(clientSettingsBuilder.build());
+  }
+
+  /**
+   * @return the {@link MongoClient} that is connected to the MongoDB cluster. The client may be
+   *     used for raw MongoDB operations. Usually the Morphia {@linkplain #getMongoOperations()}
+   *     should be preferred for database operations.
+   * @throws IllegalStateException if the method is called before the mongoClient is initialized in
+   *     {@link #run(Configuration, Environment)}
+   */
+  public MongoClient mongoClient() {
+    if (mongoClient == null) {
+      throw new IllegalStateException(
+          "Could not access mongoClient before Application#run(Configuration, Environment).");
+    }
+    return mongoClient;
   }
 
   /**
@@ -217,8 +256,14 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     }
   }
 
-  /** shutdowns the spring application context, if created */
+  /** shutdowns mongo and spring application context */
   private void registerOnShutdown(Environment environment) {
+    registerOnShutdownForApplicationContext(environment);
+    registerOnShutdownForMongo(environment);
+  }
+
+  /** shutdowns the spring application context, if created */
+  private void registerOnShutdownForApplicationContext(Environment environment) {
     if (applicationContext != null) {
       environment
           .lifecycle()
@@ -229,6 +274,11 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
                     applicationContext.close();
                   }));
     }
+  }
+
+  /** shutdowns the mongoClient */
+  private void registerOnShutdownForMongo(Environment environment) {
+    environment.lifecycle().manage(onShutdown(mongoClient::close));
   }
 
   private List<?> getConverters() {
@@ -244,6 +294,12 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private SpringDataMongoBundle<C> withEntities(List<Class<?>> entityClasses) {
     this.entityClasses.addAll(new HashSet<>(entityClasses));
+    return this;
+  }
+
+  private SpringDataMongoBundle<C> withCaCertificateConfigProvider(
+      CaCertificatesBundle.FinalBuilder<C> caCertificatesBundleBuilder) {
+    this.caCertificatesBundleBuilder = caCertificatesBundleBuilder;
     return this;
   }
 
@@ -306,6 +362,20 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
      */
     <C extends Configuration> MorphiaCompatibilityBuilder<C> withConfigurationProvider(
         @NotNull SpringDataMongoConfigurationProvider<C> configurationProvider);
+  }
+
+  public interface CaCertificateConfigProviderBuilder<C extends Configuration>
+      extends FinalBuilder<C> {
+    /**
+     * * Add the ability to use SSl for connection with the database. If no specific configuration
+     * is provided it will try to look for the pem files in the default directory {@value
+     * org.sdase.commons.shared.certificates.ca.CaCertificatesBundle#DEFAULT_TRUSTED_CERTIFICATES_DIR}
+     *
+     * @param configProvider the configuration provider to get SSL Context
+     * @return a builder instance for further configuration
+     */
+    FinalBuilder<C> withCaCertificateConfigProvider(
+        CaCertificateConfigurationProvider<C> configProvider);
   }
 
   public interface MorphiaCompatibilityBuilder<C extends Configuration>
@@ -394,6 +464,9 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     /** enables validation features, otherwise it will be disabled by default */
     FinalBuilder<C> withValidation();
 
+    FinalBuilder<C> withCaCertificateConfigProvider(
+        CaCertificateConfigurationProvider<C> configProvider);
+
     /**
      * Builds the mongo bundle
      *
@@ -404,12 +477,16 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   public static class Builder<T extends Configuration>
       implements InitialBuilder,
-          MorphiaCompatibilityBuilder<T>,
           ScanPackageBuilder<T>,
+          MorphiaCompatibilityBuilder<T>,
           CustomConverterBuilder<T>,
+          CaCertificateConfigProviderBuilder<T>,
           FinalBuilder<T> {
 
     private SpringDataMongoConfigurationProvider<T> configurationProvider;
+
+    private CaCertificatesBundle.FinalBuilder<T> caCertificatesBundleBuilder =
+        CaCertificatesBundle.builder();
 
     private final Set<Converter<?, ?>> customConverters = new HashSet<>();
 
@@ -464,10 +541,19 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     }
 
     @Override
+    public FinalBuilder<T> withCaCertificateConfigProvider(
+        CaCertificateConfigurationProvider<T> configProvider) {
+      this.caCertificatesBundleBuilder =
+          CaCertificatesBundle.builder().withCaCertificateConfigProvider(configProvider);
+      return this;
+    }
+
+    @Override
     public SpringDataMongoBundle<T> build() {
       return new SpringDataMongoBundle<>(configurationProvider)
           .withEntities(entityClasses)
           .addCustomConverters(customConverters)
+          .withCaCertificateConfigProvider(caCertificatesBundleBuilder)
           .setAutoIndexCreation(autoIndexCreation)
           .setMorphiaCompatibilityEnabled(morphiaCompatibilityEnabled)
           .setValidationEnabled(validationEnabled);

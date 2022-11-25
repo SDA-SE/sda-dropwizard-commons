@@ -82,7 +82,6 @@ mongo:
   username: "${MONGODB_USERNAME:-}"
   password: "${MONGODB_PASSWORD:-}"
   useSsl: ${MONGODB_USE_SSL:-true}
-  caCertificate: "${MONGODB_CA_CERTIFICATE:-}"
 ```
 
 ## Health check
@@ -132,3 +131,12 @@ public interface PersonRepository extends PagingAndSortingRepository<Person, Obj
 ```java
 var personRepository = springDataMongoBundle.createRepository(PersonRepository.class);
 ```
+
+## CA Certificates support
+
+Instead of providing `caCertificate` as an environment variable, mount the CA certificates in PEM format
+in the directory `/var/trust/certificates`. Certificates available in sub-directories will also be loaded.
+
+Note that this directory is also configurable through the Dropwizard config class. The config class should then provide a
+[`CaCertificateConfiguration`](../sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificateConfiguration.java)
+to the bundle builder. See [`sda-commons-shared-certificates`](../sda-commons-shared-certificates/README.md) for details.

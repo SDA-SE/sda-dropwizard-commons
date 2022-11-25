@@ -4,6 +4,7 @@ configurations {
 
 dependencies {
   api project(':sda-commons-server-dropwizard')
+  api project(':sda-commons-shared-certificates')
 
   // See compatibility matrix:
   // https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#compatibility.matrix
