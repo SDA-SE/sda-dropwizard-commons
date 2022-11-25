@@ -13,7 +13,6 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -25,14 +24,14 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
-import org.sdase.commons.server.spring.data.mongo.converter.DateToZonedDateTimeConverter;
-import org.sdase.commons.server.spring.data.mongo.converter.LocalDateToStringConverter;
-import org.sdase.commons.server.spring.data.mongo.converter.StringToLocalDateConverter;
-import org.sdase.commons.server.spring.data.mongo.converter.StringToZonedDateTimeConverter;
-import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeToDateConverter;
+import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeReadConverter;
+import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter;
+import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.LocalDateReadConverter;
+import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.LocalDateWriteConverter;
 import org.sdase.commons.server.spring.data.mongo.health.MongoHealthCheck;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -50,25 +49,25 @@ import org.springframework.data.repository.Repository;
 
 public class SpringDataMongoBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
-  /**
-   * Adding our own JSR 310 converters to stay backwards compatible with the old Morphia Bundle.
-   * Spring usually provides {@link org.springframework.data.convert.Jsr310Converters} that are not
-   * used here intentionally.
-   */
+  /** Custom converters to stay compatible with sda-spring-boot-commons for new services. */
   private static final Set<Converter<?, ?>> DEFAULT_CONVERTERS =
       new LinkedHashSet<>(
           List.of(
-              // LocalDate
-              new LocalDateToStringConverter(),
-              new StringToLocalDateConverter(),
               // ZonedDateTime
-              new DateToZonedDateTimeConverter(),
-              new StringToZonedDateTimeConverter(),
-              new ZonedDateTimeToDateConverter()));
+              ZonedDateTimeWriteConverter.INSTANCE, ZonedDateTimeReadConverter.INSTANCE));
+
+  /** Custom converters to stay compatible with Morphia for services that upgrade from 2.x.x. */
+  private static final Set<Converter<?, ?>> CONVERTERS_MORPHIA_COMPATIBILITY =
+      new LinkedHashSet<>(
+          List.of(
+              // LocalDate
+              LocalDateWriteConverter.INSTANCE,
+              LocalDateReadConverter.INSTANCE,
+              // ZonedDateTime
+              ZonedDateTimeWriteConverter.INSTANCE,
+              ZonedDateTimeReadConverter.INSTANCE));
 
   private final Function<C, SpringDataMongoConfiguration> configurationProvider;
-
-  private SpringDataMongoConfiguration config;
 
   private MongoClient mongoClient;
 
@@ -83,6 +82,9 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   private boolean validationEnabled = false;
 
   private final Set<Class<?>> entityClasses = new HashSet<>();
+
+  private boolean morphiaCompatibilityEnabled = false;
+
   /**
    * Database as defined by the {@link SpringDataMongoConfiguration#getConnectionString()} or {@link
    * SpringDataMongoConfiguration#getDatabase()}
@@ -104,7 +106,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   @Override
   public void run(C configuration, Environment environment) {
-    this.config = configurationProvider.apply(configuration);
+    var config = configurationProvider.apply(configuration);
     if (this.validationEnabled) {
       this.applicationContext = createAndStartApplicationContext();
     }
@@ -154,12 +156,16 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   /**
    * @return a new Spring Data Mongo repository
-   * @param <S> the type of your entity type
-   * @param <ID> the type of your primary key
+   * @param repositoryType the type of the repository that is created
+   * @param <T> the repository class or interface
+   * @param <S> the type of the entity
+   * @param <ID> the type of primary key of the entity
    */
+  @SuppressWarnings("java:S119") // ID follows Spring Data conventions
   public <T extends Repository<S, ID>, S, ID extends Serializable> T createRepository(
-      Class<T> clazz) {
-    MongoRepositoryFactoryBean<T, S, ID> factoryBean = new MongoRepositoryFactoryBean<>(clazz);
+      Class<T> repositoryType) {
+    MongoRepositoryFactoryBean<T, S, ID> factoryBean =
+        new MongoRepositoryFactoryBean<>(repositoryType);
     factoryBean.setMongoOperations(getMongoOperations());
     factoryBean.afterPropertiesSet();
     return factoryBean.getObject();
@@ -218,7 +224,12 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   }
 
   private List<?> getConverters() {
-    List<Converter<?, ?>> converters = new ArrayList<>(DEFAULT_CONVERTERS);
+    List<Converter<?, ?>> converters = new ArrayList<>();
+    if (morphiaCompatibilityEnabled) {
+      converters.addAll(CONVERTERS_MORPHIA_COMPATIBILITY);
+    } else {
+      converters.addAll(DEFAULT_CONVERTERS);
+    }
     converters.addAll(customConverters);
     return converters;
   }
@@ -228,18 +239,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     return this;
   }
 
-  private SpringDataMongoBundle<C> addCustomConverter(Converter<?, ?> converter) {
-    this.customConverters.add(converter);
-    return this;
-  }
-
-  private SpringDataMongoBundle<C> addCustomConverters(Converter<?, ?>... converters) {
-    Arrays.stream(converters).forEach(this::addCustomConverter);
-    return this;
-  }
-
   private SpringDataMongoBundle<C> addCustomConverters(Collection<Converter<?, ?>> converters) {
-    converters.forEach(this::addCustomConverter);
+    this.customConverters.addAll(converters);
     return this;
   }
 
@@ -250,6 +251,12 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private SpringDataMongoBundle<C> setValidationEnabled(boolean validationEnabled) {
     this.validationEnabled = validationEnabled;
+    return this;
+  }
+
+  private SpringDataMongoBundle<C> setMorphiaCompatibilityEnabled(
+      boolean morphiaCompatibilityEnabled) {
+    this.morphiaCompatibilityEnabled = morphiaCompatibilityEnabled;
     return this;
   }
 
@@ -274,7 +281,9 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     converter.setCustomConversions(conversions);
     converter.setCodecRegistryProvider(factory);
     converter.afterPropertiesSet();
-    converter.setTypeMapper(new DefaultMongoTypeMapper("className"));
+    if (morphiaCompatibilityEnabled) {
+      converter.setTypeMapper(new DefaultMongoTypeMapper("className"));
+    }
 
     return converter;
   }
@@ -287,8 +296,27 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
      * @param <C> the type of the applications configuration class
      * @return a builder instance for further configuration
      */
-    <C extends Configuration> ScanPackageBuilder<C> withConfigurationProvider(
+    <C extends Configuration> MorphiaCompatibilityBuilder<C> withConfigurationProvider(
         @NotNull SpringDataMongoConfigurationProvider<C> configurationProvider);
+  }
+
+  public interface MorphiaCompatibilityBuilder<C extends Configuration>
+      extends ScanPackageBuilder<C> {
+
+    /**
+     * Enables compatibility of the data mapping with the defaults provided by the old {@code
+     * MorphiaBundle}. This configuration should ONLY be used when upgrading a Service from
+     * sda-dropwizard-commons v2.x.x to avoid data migration.
+     *
+     * <p>It is strongly suggested to use test data reflecting the real structure and formats in the
+     * collections for unit tests of the repositories before upgrading from v2.x.x to v3.x.x to test
+     * for compatibility when migrating to {@code sda-commons-spring-data-mongo}.
+     *
+     * @see CustomConverterBuilder#addCustomConverters(Converter[]) defaults without Morphia
+     *     compatibility
+     * @return a builder instance for further configuration
+     */
+    ScanPackageBuilder<C> withMorphiaCompatibility();
   }
 
   public interface ScanPackageBuilder<C extends Configuration> extends FinalBuilder<C> {
@@ -306,6 +334,13 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     /**
      * Adds a custom {@link Converter}s
      *
+     * <p>By default the bundle provides {@link Jsr310Converters} and custom converters {@linkplain
+     * org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter to write
+     * <code>ZoneDateTime</code> as <code>Date</code>} and {@linkplain
+     * org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeReadConverter read
+     * <code>ZoneDateTime</code> from <code>Date</code>} unless {@linkplain
+     * MorphiaCompatibilityBuilder#withMorphiaCompatibility() Morphia compatibility is enabled}.
+     *
      * @param converters the converters to add
      * @return a builder instance for further configuration
      */
@@ -313,6 +348,13 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
     /**
      * Adds a custom {@link Converter}
+     *
+     * <p>By default the bundle provides {@link Jsr310Converters} and custom converters {@linkplain
+     * org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter to write
+     * <code>ZoneDateTime</code> as <code>Date</code>} and {@linkplain
+     * org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeReadConverter read
+     * <code>ZoneDateTime</code> from <code>Date</code>} unless {@linkplain
+     * MorphiaCompatibilityBuilder#withMorphiaCompatibility() Morphia compatibility is enabled}.
      *
      * @param converters the converters to add
      * @return a builder instance for further configuration
@@ -338,7 +380,11 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   }
 
   public static class Builder<T extends Configuration>
-      implements InitialBuilder, ScanPackageBuilder<T>, CustomConverterBuilder<T>, FinalBuilder<T> {
+      implements InitialBuilder,
+          MorphiaCompatibilityBuilder<T>,
+          ScanPackageBuilder<T>,
+          CustomConverterBuilder<T>,
+          FinalBuilder<T> {
 
     private SpringDataMongoConfigurationProvider<T> configurationProvider;
 
@@ -350,6 +396,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
     private boolean validationEnabled = false;
 
+    private boolean morphiaCompatibilityEnabled = false;
+
     public Builder(SpringDataMongoConfigurationProvider<T> configurationProvider) {
       this.configurationProvider = configurationProvider;
     }
@@ -357,9 +405,15 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     public Builder() {}
 
     @Override
-    public <C extends Configuration> ScanPackageBuilder<C> withConfigurationProvider(
+    public <C extends Configuration> MorphiaCompatibilityBuilder<C> withConfigurationProvider(
         SpringDataMongoConfigurationProvider<C> configurationProvider) {
       return new Builder<>(configurationProvider);
+    }
+
+    @Override
+    public ScanPackageBuilder<T> withMorphiaCompatibility() {
+      this.morphiaCompatibilityEnabled = true;
+      return this;
     }
 
     @Override
@@ -392,6 +446,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
           .withEntities(entityClasses)
           .addCustomConverters(customConverters)
           .setAutoIndexCreation(autoIndexCreation)
+          .setMorphiaCompatibilityEnabled(morphiaCompatibilityEnabled)
           .setValidationEnabled(validationEnabled);
     }
   }

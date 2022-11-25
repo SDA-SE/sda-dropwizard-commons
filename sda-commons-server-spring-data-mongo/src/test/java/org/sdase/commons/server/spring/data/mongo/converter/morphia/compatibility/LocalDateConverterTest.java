@@ -1,4 +1,4 @@
-package org.sdase.commons.server.spring.data.mongo.converter;
+package org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 class LocalDateConverterTest {
 
-  private final LocalDateToStringConverter encoder = new LocalDateToStringConverter();
-  private final StringToLocalDateConverter decoder = new StringToLocalDateConverter();
+  private final LocalDateWriteConverter encoder = LocalDateWriteConverter.INSTANCE;
+  private final LocalDateReadConverter decoder = LocalDateReadConverter.INSTANCE;
 
   @Test
   void shouldEncodeAsIsoLocalDateString() {
