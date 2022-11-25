@@ -26,8 +26,11 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeReadConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter;
+import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.CharArrayReadConverter;
+import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.CharArrayWriteConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.LocalDateReadConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.LocalDateWriteConverter;
+import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.UriReadConverter;
 import org.sdase.commons.server.spring.data.mongo.health.MongoHealthCheck;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.convert.converter.Converter;
@@ -60,6 +63,11 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   private static final Set<Converter<?, ?>> CONVERTERS_MORPHIA_COMPATIBILITY =
       new LinkedHashSet<>(
           List.of(
+              // char[]
+              CharArrayReadConverter.INSTANCE,
+              CharArrayWriteConverter.INSTANCE,
+              // URI
+              UriReadConverter.INSTANCE,
               // LocalDate
               LocalDateWriteConverter.INSTANCE,
               LocalDateReadConverter.INSTANCE,
@@ -311,6 +319,19 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
      * <p>It is strongly suggested to use test data reflecting the real structure and formats in the
      * collections for unit tests of the repositories before upgrading from v2.x.x to v3.x.x to test
      * for compatibility when migrating to {@code sda-commons-spring-data-mongo}.
+     *
+     * <p>Some data types that where supported in Morphia 1.6.x, are <strong>not supported</strong>
+     * with sda-commons-server-spring-data-mongo in compatibility mode:
+     *
+     * <ul>
+     *   <li>{@link java.sql.Timestamp} (stored as `date` by Morphia, not mappable)
+     *   <li>{@link java.time.LocalTime} (stored as `long` representing nano of day by Morphia, not
+     *       mappable)
+     *   <li>{@link java.time.LocalDateTime} (technically works, but gaps are possible due to time
+     *       zone settings)
+     *   <li>{@link com.mongodb.DBRef} (compatibility not tested)
+     *   <li>{@code dev.morphia.geo.Geometry} and all its implementations
+     * </ul>
      *
      * @see CustomConverterBuilder#addCustomConverters(Converter[]) defaults without Morphia
      *     compatibility
