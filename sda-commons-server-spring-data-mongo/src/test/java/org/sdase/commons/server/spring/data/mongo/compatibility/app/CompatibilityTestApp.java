@@ -16,7 +16,10 @@ import org.springframework.data.repository.CrudRepository;
 public class CompatibilityTestApp extends Application<CompatibilityTestApp.Config> {
 
   private final SpringDataMongoBundle<Config> springDataMongoBundle =
-      SpringDataMongoBundle.builder().withConfigurationProvider(Config::getSpringDataMongo).build();
+      SpringDataMongoBundle.builder()
+          .withConfigurationProvider(Config::getSpringDataMongo)
+          .withMorphiaCompatibility()
+          .build();
 
   private MyEntityRepository myEntityRepository;
   private MyEntityWithGenericsRepository myEntityWithGenericsRepository;
