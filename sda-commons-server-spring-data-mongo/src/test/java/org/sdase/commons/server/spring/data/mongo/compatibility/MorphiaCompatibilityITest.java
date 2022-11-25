@@ -7,7 +7,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.math.BigDecimal;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Currency;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -28,6 +35,7 @@ import org.sdase.commons.server.spring.data.mongo.compatibility.model.GenericInt
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.GenericStringType;
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEntity;
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEntityWithGenerics;
+import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEnum;
 import org.springframework.data.mongodb.core.MongoOperations;
 
 class MorphiaCompatibilityITest {
@@ -125,8 +133,33 @@ class MorphiaCompatibilityITest {
 
     assertThat(actual)
         .isNotNull()
-        .extracting(MyEntity::getId, MyEntity::getValue)
-        .contains("1a736daf-6ff0-4779-9ace-f8eef956739e", "a string");
+        .extracting(
+            MyEntity::getId,
+            MyEntity::getStringValue,
+            MyEntity::getCharValue,
+            MyEntity::getEnumValue,
+            MyEntity::getCharArrayValue,
+            MyEntity::getUriValue,
+            MyEntity::getCharArrayValue,
+            MyEntity::getLocaleValue,
+            MyEntity::getCurrencyValue,
+            MyEntity::getBigDecimalValue,
+            MyEntity::getDateValue,
+            MyEntity::getInstantValue,
+            MyEntity::getLocalDateTimeValue)
+        .contains(
+            "1a736daf-6ff0-4779-9ace-f8eef956739e",
+            "a string",
+            'a',
+            MyEnum.C,
+            "a char array".toCharArray(),
+            URI.create("http://foo.bar.test/hello-world/index.html"),
+            Locale.GERMANY,
+            Currency.getInstance("XAU"),
+            new BigDecimal("123.45"),
+            Date.from(Instant.parse("2022-10-10T08:10:21.130Z")),
+            Instant.parse("2022-10-10T08:10:21.130Z"),
+            LocalDateTime.parse("2022-10-10T10:10:21.130"));
   }
 
   @Test
@@ -137,7 +170,7 @@ class MorphiaCompatibilityITest {
 
     assertThat(actual)
         .hasSize(1)
-        .extracting(MyEntity::getId, MyEntity::getValue)
+        .extracting(MyEntity::getId, MyEntity::getStringValue)
         .contains(Tuple.tuple("1a736daf-6ff0-4779-9ace-f8eef956739e", "a string"));
   }
 
