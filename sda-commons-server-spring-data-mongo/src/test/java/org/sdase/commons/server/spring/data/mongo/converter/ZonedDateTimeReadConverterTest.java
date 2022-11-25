@@ -1,18 +1,26 @@
+/*
+ * Copyright 2022- SDA SE Open Industry Solutions (https://www.sda.se)
+ *
+ * Use of this source code is governed by an MIT-style
+ * license that can be found in the LICENSE file or at
+ * https://opensource.org/licenses/MIT.
+ */
 package org.sdase.commons.server.spring.data.mongo.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.ZonedDateTime;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class ZonedDateTimeConverterTest {
+class ZonedDateTimeReadConverterTest {
 
   private TimeZone defaultTimeZone;
+  private ZonedDateTimeReadConverter converter = ZonedDateTimeReadConverter.INSTANCE;
 
   @BeforeEach
   void setUp() {
@@ -21,14 +29,13 @@ class ZonedDateTimeConverterTest {
   }
 
   @AfterEach
-  public void tearDown() {
+  void tearDown() {
     TimeZone.setDefault(defaultTimeZone);
   }
 
   @Test
   void shouldDecodeDate() {
     // given
-    DateToZonedDateTimeConverter converter = new DateToZonedDateTimeConverter();
     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
     cal.clear();
     cal.set(2019, Calendar.MARCH, 21, 17, 22, 53);
@@ -42,9 +49,6 @@ class ZonedDateTimeConverterTest {
 
   @Test
   void shouldDecodeString() {
-    // given
-    StringToZonedDateTimeConverter converter = new StringToZonedDateTimeConverter();
-
     // when
     ZonedDateTime result = converter.convert("2019-01-21T17:22:53+01:00[Europe/Paris]");
 
@@ -53,14 +57,10 @@ class ZonedDateTimeConverterTest {
   }
 
   @Test
-  void shouldEncodeZonedDateTime() {
-    // given
-    ZonedDateTimeToDateConverter converter = new ZonedDateTimeToDateConverter();
-
+  void shouldFailOnEncodeWrongType() {
     // when
-    Date result = converter.convert(ZonedDateTime.parse("2019-02-21T17:22:53+01:00[Europe/Paris]"));
-
-    // then
-    assertThat(result).isEqualTo("2019-02-21T17:22:53.000");
+    final var fromDBObject = new Object();
+    assertThatThrownBy(() -> converter.convert(fromDBObject))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 }

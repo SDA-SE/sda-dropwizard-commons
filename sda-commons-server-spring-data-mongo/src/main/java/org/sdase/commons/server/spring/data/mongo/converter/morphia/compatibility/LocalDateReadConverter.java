@@ -1,4 +1,4 @@
-package org.sdase.commons.server.spring.data.mongo.converter;
+package org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_TIME;
@@ -10,7 +10,8 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 
 @ReadingConverter
-public class StringToLocalDateConverter implements Converter<String, LocalDate> {
+public enum LocalDateReadConverter implements Converter<String, LocalDate> {
+  INSTANCE;
 
   // we use this for parsing to be backward compatible with the default
   private static final DateTimeFormatter ISO_LOCAL_DATE_WITH_OPTIONAL_TIME =

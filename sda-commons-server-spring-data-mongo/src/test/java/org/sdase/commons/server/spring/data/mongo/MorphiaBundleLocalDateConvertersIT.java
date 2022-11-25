@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.mongo.testing.MongoDbClassExtension;
-import org.sdase.commons.server.spring.data.mongo.example.MyApp;
 import org.sdase.commons.server.spring.data.mongo.example.MyConfiguration;
+import org.sdase.commons.server.spring.data.mongo.example.MyMorphiaCompatibleApp;
 import org.sdase.commons.server.spring.data.mongo.example.model.Person;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,7 +34,7 @@ class MorphiaBundleLocalDateConvertersIT {
   @Order(1)
   static final DropwizardAppExtension<MyConfiguration> DW =
       new DropwizardAppExtension<>(
-          MyApp.class,
+          MyMorphiaCompatibleApp.class,
           null,
           config("springDataMongo.connectionString", mongo::getConnectionString));
 
@@ -84,6 +84,6 @@ class MorphiaBundleLocalDateConvertersIT {
   }
 
   private MongoOperations getMongoOperations() {
-    return ((MyApp) DW.getApplication()).getMongoOperations();
+    return ((MyMorphiaCompatibleApp) DW.getApplication()).getMongoOperations();
   }
 }
