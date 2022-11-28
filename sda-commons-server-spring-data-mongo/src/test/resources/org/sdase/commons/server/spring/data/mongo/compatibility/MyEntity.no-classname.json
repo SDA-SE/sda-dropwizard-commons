@@ -1,0 +1,14 @@
+{
+  "_id": "1a736daf-6ff0-4779-9ace-f8eef956739e",
+  "stringValue": "a string",
+  "charValue": "a",
+  "enumValue": "C",
+  "charArrayValue": "a char array",
+  "uriValue": "http://foo%46bar%46test/hello-world/index%46html",
+  "bigDecimalValue": {"$numberDecimal":  "123.45"},
+  "currencyValue": "XAU",
+  "localeValue": "de_DE",
+  "dateValue": {"$date":  "2022-10-10T08:10:21.130Z"},
+  "instantValue": {"$date":  "2022-10-10T08:10:21.130Z"},
+  "localDateTimeValue": {"$date":  "2022-10-10T08:10:21.130Z"}
+}

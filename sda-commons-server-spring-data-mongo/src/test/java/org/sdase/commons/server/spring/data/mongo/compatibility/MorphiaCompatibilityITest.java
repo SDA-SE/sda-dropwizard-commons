@@ -1,6 +1,7 @@
 package org.sdase.commons.server.spring.data.mongo.compatibility;
 
 import static io.dropwizard.testing.ConfigOverride.config;
+import static java.time.ZoneId.systemDefault;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,6 +29,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.sdase.commons.server.mongo.testing.MongoDbClassExtension;
 import org.sdase.commons.server.spring.data.mongo.compatibility.app.CompatibilityTestApp;
 import org.sdase.commons.server.spring.data.mongo.compatibility.app.CompatibilityTestApp.MyEntityWithGenericsRepository;
@@ -125,9 +128,10 @@ class MorphiaCompatibilityITest {
     assertThat(actual.getGenericValue()).isExactlyInstanceOf(GenericStringType.class);
   }
 
-  @Test
-  void shouldReadWithClassnameStoredWithMongoOperations() {
-    insertTestDataFromResource("MyEntity", "MyEntity.classname.json");
+  @ParameterizedTest
+  @ValueSource(strings = {"MyEntity.classname.json", "MyEntity.no-classname.json"})
+  void shouldReadWithMongoOperations(String givenResource) {
+    insertTestDataFromResource("MyEntity", givenResource);
 
     var actual = mongoOperations.findById("1a736daf-6ff0-4779-9ace-f8eef956739e", MyEntity.class);
 
@@ -159,7 +163,7 @@ class MorphiaCompatibilityITest {
             new BigDecimal("123.45"),
             Date.from(Instant.parse("2022-10-10T08:10:21.130Z")),
             Instant.parse("2022-10-10T08:10:21.130Z"),
-            LocalDateTime.parse("2022-10-10T10:10:21.130"));
+            LocalDateTime.ofInstant(Instant.parse("2022-10-10T08:10:21.130Z"), systemDefault()));
   }
 
   @Test
