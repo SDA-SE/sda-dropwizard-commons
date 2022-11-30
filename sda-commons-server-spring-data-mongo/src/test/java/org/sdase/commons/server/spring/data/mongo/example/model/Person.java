@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Document("people")
@@ -28,6 +29,9 @@ public class Person {
   private LocalDateTime lastLogin;
 
   private ZonedDateTime zonedDateTime;
+
+  @Field("_class")
+  private String entityClass;
 
   @SuppressWarnings("unused")
   public ObjectId getId() {
@@ -92,5 +96,14 @@ public class Person {
   public Person setZonedDateTime(ZonedDateTime zonedDateTime) {
     this.zonedDateTime = zonedDateTime;
     return this;
+  }
+
+  public String getEntityClass() {
+    return entityClass;
+  }
+
+  @SuppressWarnings("unused")
+  public void setEntityClass(String entityClass) {
+    this.entityClass = entityClass;
   }
 }

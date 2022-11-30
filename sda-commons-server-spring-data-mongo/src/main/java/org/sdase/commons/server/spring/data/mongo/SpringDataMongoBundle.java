@@ -15,16 +15,19 @@ import io.dropwizard.setup.Environment;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
+import org.sdase.commons.server.spring.data.mongo.converter.AnnotationTypeInformationMapper;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeReadConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.CharArrayReadConverter;
@@ -38,6 +41,7 @@ import org.sdase.commons.shared.certificates.ca.CaCertificatesBundle;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.Jsr310Converters;
+import org.springframework.data.convert.TypeInformationMapper;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -48,6 +52,7 @@ import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import org.springframework.data.mongodb.core.convert.MongoTypeMapper;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactoryBean;
@@ -101,6 +106,10 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   private final Set<Class<?>> entityClasses = new HashSet<>();
 
   private boolean morphiaCompatibilityEnabled = false;
+
+  private boolean withClassDiscriminator = true;
+
+  private String[] packagesToScan;
 
   /**
    * Database as defined by the {@link SpringDataMongoConfiguration#getConnectionString()} or {@link
@@ -324,6 +333,16 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     return this;
   }
 
+  private SpringDataMongoBundle<C> setWithClassDiscriminator(boolean withClassDiscriminator) {
+    this.withClassDiscriminator = withClassDiscriminator;
+    return this;
+  }
+
+  private SpringDataMongoBundle<C> setPackagesToScan(String[] packagesToScan) {
+    this.packagesToScan = packagesToScan;
+    return this;
+  }
+
   /** Copied from Spring's {@link MongoTemplate} */
   private MongoConverter getDefaultMongoConverter(
       MongoDatabaseFactory factory, List<?> converters) {
@@ -344,12 +363,31 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mappingContext);
     converter.setCustomConversions(conversions);
     converter.setCodecRegistryProvider(factory);
-    converter.afterPropertiesSet();
-    if (morphiaCompatibilityEnabled) {
-      converter.setTypeMapper(new DefaultMongoTypeMapper("className"));
+    var typeKey = getTypeKey();
+    converter.setTypeMapper(new DefaultMongoTypeMapper(typeKey));
+    if (!withClassDiscriminator) {
+      removeClassDiscriminator(converter, typeKey);
     }
-
+    converter.afterPropertiesSet();
     return converter;
+  }
+
+  private String getTypeKey() {
+    return morphiaCompatibilityEnabled ? "className" : DefaultMongoTypeMapper.DEFAULT_TYPE_KEY;
+  }
+
+  private void removeClassDiscriminator(MappingMongoConverter converter, String typeKey) {
+    if (packagesToScan != null) {
+      TypeInformationMapper typeInformationMapper =
+          new AnnotationTypeInformationMapper.Builder().withBasePackages(packagesToScan).build();
+
+      MongoTypeMapper typeMapper =
+          new DefaultMongoTypeMapper(typeKey, Collections.singletonList(typeInformationMapper));
+      converter.setTypeMapper(typeMapper);
+    } else {
+      // this removes the _class discriminator from database
+      converter.setTypeMapper(new DefaultMongoTypeMapper(null));
+    }
   }
 
   public interface InitialBuilder {
@@ -468,6 +506,17 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
         CaCertificateConfigurationProvider<C> configProvider);
 
     /**
+     * Deactivates saving the `_class` discriminator in the database. You can pass a list of
+     * packages to look for {@link
+     * org.sdase.commons.server.spring.data.mongo.annotation.DocumentType} annotations. These
+     * classes will be saved with the _class property with the value passed to the annotation
+     *
+     * @param packagesToScan An array containing the list of packages to look for {@link
+     *     org.sdase.commons.server.spring.data.mongo.annotation.DocumentType} annotations
+     */
+    FinalBuilder<C> withoutClassDiscriminator(String... packagesToScan);
+
+    /**
      * Builds the mongo bundle
      *
      * @return mongo bundle
@@ -497,6 +546,10 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     private boolean validationEnabled = false;
 
     private boolean morphiaCompatibilityEnabled = false;
+
+    private boolean withClassDiscriminator = true;
+
+    private String[] packagesToScan;
 
     public Builder(SpringDataMongoConfigurationProvider<T> configurationProvider) {
       this.configurationProvider = configurationProvider;
@@ -549,6 +602,13 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     }
 
     @Override
+    public FinalBuilder<T> withoutClassDiscriminator(@Nullable String... packagesToScan) {
+      this.withClassDiscriminator = false;
+      this.packagesToScan = packagesToScan;
+      return this;
+    }
+
+    @Override
     public SpringDataMongoBundle<T> build() {
       return new SpringDataMongoBundle<>(configurationProvider)
           .withEntities(entityClasses)
@@ -556,7 +616,9 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
           .withCaCertificateConfigProvider(caCertificatesBundleBuilder)
           .setAutoIndexCreation(autoIndexCreation)
           .setMorphiaCompatibilityEnabled(morphiaCompatibilityEnabled)
-          .setValidationEnabled(validationEnabled);
+          .setValidationEnabled(validationEnabled)
+          .setWithClassDiscriminator(withClassDiscriminator)
+          .setPackagesToScan(packagesToScan);
     }
   }
 }

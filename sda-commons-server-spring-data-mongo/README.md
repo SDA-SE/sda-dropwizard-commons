@@ -140,3 +140,54 @@ in the directory `/var/trust/certificates`. Certificates available in sub-direct
 Note that this directory is also configurable through the Dropwizard config class. The config class should then provide a
 [`CaCertificateConfiguration`](../sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificateConfiguration.java)
 to the bundle builder. See [`sda-commons-shared-certificates`](../sda-commons-shared-certificates/README.md) for details.
+
+## Class Discriminator
+By default, mongoDB will save `_class` property discriminator in database.
+If you want to disable it, use the option `withoutClassDiscriminator`. 
+
+```java
+private final SpringDataMongoBundle<MyConfiguration> springDataMongoBundle =
+        SpringDataMongoBundle.builder()
+            .withConfigurationProvider(MyConfiguration::getSpringDataMongo)
+            .withoutClassDiscriminator()
+            .build();
+```
+
+### Enabling Class Discriminator for specific cases
+If you have abstract classes as properties in your entities, and you want to use `withClassDiscriminator` for the other classes, you can enable for the abstract ones using the annotation [@DocumentType](./src/main/java/org/sdase/commons/server/spring/data/mongo/annotation/DocumentType.java).
+Example:
+
+```java
+@Document("pet_owner")
+public class PetOwner {
+
+  @MongoId
+  private ObjectId id;
+
+  private Animal pet;
+}
+
+public abstract class Animal {
+
+  @MongoId
+  private ObjectId id;
+
+  @Indexed
+  @NotNull
+  private String name;
+}
+
+@DocumentType("dog")
+public class Dog extends Animal {
+
+  private String breed;
+}
+
+@DocumentType("cat")
+public class Cat extends Animal {
+
+  private int age;
+}
+```
+This will save the _class property in the database for the property `pet` on `pet_owner` document, so it knows what subclass must be instantiated.
+You can check for an example [here](./src/test/java/org/sdase/commons/server/spring/data/mongo/SpringDataMongoBundleClassDiscriminatorIT.java)
