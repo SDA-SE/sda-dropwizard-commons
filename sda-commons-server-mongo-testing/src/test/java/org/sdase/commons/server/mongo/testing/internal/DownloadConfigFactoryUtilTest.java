@@ -9,49 +9,31 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-import org.sdase.commons.server.mongo.testing.MongoDbRule;
-import org.sdase.commons.server.testing.SystemPropertyRule;
+import org.junitpioneer.jupiter.SetSystemProperty;
+import org.sdase.commons.server.mongo.testing.MongoDbClassExtension;
 
 class DownloadConfigFactoryUtilTest {
 
   @Test
-  void shouldCreateWithFixedDownloadPath() throws Throwable {
+  @SetSystemProperty(key = "EMBEDDED_MONGO_DOWNLOAD_PATH", value = "http://localhost/mongo.tar.gz")
+  void shouldCreateWithFixedDownloadPath() {
     AtomicReference<DownloadConfig> actualConfig = new AtomicReference<>();
-    new SystemPropertyRule()
-        .setProperty("EMBEDDED_MONGO_DOWNLOAD_PATH", "http://localhost/mongo.tar.gz")
-        .apply(
-            new Statement() {
-              @Override
-              public void evaluate() {
-                actualConfig.set(DownloadConfigFactoryUtil.createDownloadConfig());
-              }
-            },
-            Description.EMPTY)
-        .evaluate();
+    actualConfig.set(DownloadConfigFactoryUtil.createDownloadConfig());
     assertThat(
             actualConfig
                 .get()
                 .getDownloadPath()
-                .getPath(Distribution.detectFor(MongoDbRule.Builder.DEFAULT_VERSION)))
+                .getPath(Distribution.detectFor(MongoDbClassExtension.Builder.DEFAULT_VERSION)))
         .isEqualTo("http://localhost/mongo.tar.gz");
   }
 
   @Test
+  @SetSystemProperty(
+      key = "http_proxy",
+      value = "http://tester:dummy@the-test-domain.example.com:1234")
   void shouldCreateProxyWithAuthentication() throws Throwable {
     AtomicReference<DownloadConfig> actualConfig = new AtomicReference<>();
-    new SystemPropertyRule()
-        .setProperty("http_proxy", "http://tester:dummy@the-test-domain.example.com:1234")
-        .apply(
-            new Statement() {
-              @Override
-              public void evaluate() {
-                actualConfig.set(DownloadConfigFactoryUtil.createDownloadConfig());
-              }
-            },
-            Description.EMPTY)
-        .evaluate();
+    actualConfig.set(DownloadConfigFactoryUtil.createDownloadConfig());
     assertThat(actualConfig.get()).isNotNull();
     PasswordAuthentication authentication =
         Authenticator.requestPasswordAuthentication(

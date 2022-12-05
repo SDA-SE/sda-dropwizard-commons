@@ -8,8 +8,8 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.util.Lists.newArrayList;
-import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
-import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
+import static org.sdase.commons.server.opa.testing.AbstractOpa.onAnyRequest;
+import static org.sdase.commons.server.opa.testing.AbstractOpa.onRequest;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Map;

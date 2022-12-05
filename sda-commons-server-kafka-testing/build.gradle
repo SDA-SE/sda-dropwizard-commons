@@ -8,9 +8,6 @@ dependencies {
   api project(':sda-commons-server-testing')
 
   api 'org.apache.kafka:kafka_2.13'
-  api 'com.salesforce.kafka.test:kafka-junit4', {
-    exclude group: 'org.apache.curator', module: 'curator-test'
-  }
   api 'com.salesforce.kafka.test:kafka-junit5', {
     exclude group: 'org.apache.curator', module: 'curator-test'
   }
