@@ -84,6 +84,20 @@ mongo:
   useSsl: ${MONGODB_USE_SSL:-true}
 ```
 
+## Inheritance in Entities
+
+It is strongly recommended to annotate all types that are used in a field that does not exactly
+match the type with `@TypeAlias`.
+Using `@TypeAlias` will replace the default class name as discriminator with the given value in the
+annotation and gives you the ability for refactoring of the model classes.
+This rule applies for all types that are a subclass of an (abstract) super class, types that are
+stored in a field defined as `Object` and all types that are stored in a shared collection.
+The latter are usually a subtype of an abstract class to support a common repository.
+
+It is important to register each class that is annotated with `@TypeAlias` by using `withEntities`
+in the builder of the bundle.
+If not registered there, the mapping is unknown when reading entities.
+
 ## Health check
 
 A health check with the name _mongo_ is automatically registered to test the mongo connection.
