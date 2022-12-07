@@ -13,9 +13,9 @@ import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * The {@code AuthBuilder} is used to build JWT authentication in test cases that is accepted by the
- * tested application if the test is initialized with the {@link AuthRule}. Properly configured
- * instances of the {@code AuthBuilder} can be created from the {@link AuthRule} using {@link
- * AuthRule#auth()} within the test.
+ * tested application if the test is initialized with the {@link AuthClassExtension}. Properly
+ * configured instances of the {@code AuthBuilder} can be created from the {@link
+ * AuthClassExtension} using {@link AuthClassExtension#auth()} within the test.
  */
 public class AuthBuilder {
 
@@ -30,7 +30,7 @@ public class AuthBuilder {
   private final Map<String, Object> claims = new HashMap<>();
 
   /**
-   * Use {@link AuthRule#auth()} to create {@code AuthBuilder} instances.
+   * Use {@link AuthClassExtension#auth()} to create {@code AuthBuilder} instances.
    *
    * @param keyId the {@code kid} written in the token header
    * @param privateKey the private key that signs the token
