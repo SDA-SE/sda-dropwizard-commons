@@ -9,13 +9,13 @@ import org.jboss.weld.environment.se.WeldContainer;
 import org.sdase.commons.server.weld.internal.WeldSupport;
 
 /**
- * Test support rule that uses WELD to inject the application class.
+ * Test support extension that uses WELD to inject the application class.
  *
  * <p>Example usage:
  *
  * <pre>
- *   &#64;ClassRule
- *   public static final DropwizardAppRule&lt;AppConfiguration&gt; RULE = new DropwizardAppRule&lt;&gt;(
+ *   &#64;RegisterExtension
+ *   static final DropwizardAppExtension&lt;AppConfiguration&gt; EXTENSION = new DropwizardAppExtension&lt;&gt;(
  *       new WeldTestSupport&lt;&gt;(Application.class, ResourceHelpers.resourceFilePath("config.yml")));
  * </pre>
  */

@@ -1,10 +1,11 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
 
-  api 'io.dropwizard:dropwizard-testing'
+  api 'io.dropwizard:dropwizard-testing', {
+    exclude group: 'junit', module: 'junit'
+  }
   api 'jakarta.servlet:jakarta.servlet-api'
 
-  api 'junit:junit'
   api 'org.junit.jupiter:junit-jupiter-api'
   api 'org.hamcrest:hamcrest'
   api 'org.mockito:mockito-core'

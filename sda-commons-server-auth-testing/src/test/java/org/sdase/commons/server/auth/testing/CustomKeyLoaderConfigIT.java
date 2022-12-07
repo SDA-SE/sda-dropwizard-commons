@@ -27,7 +27,7 @@ import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 
 /** A test that checks if the jersey client that is used to load keys is configurable */
-@SetSystemProperty(key = "AUTH_RULE", value = "{\"keys\": [{}]}")
+@SetSystemProperty(key = AuthClassExtension.AUTH_ENV_KEY, value = "{\"keys\": [{}]}")
 class CustomKeyLoaderConfigIT {
 
   @RegisterExtension

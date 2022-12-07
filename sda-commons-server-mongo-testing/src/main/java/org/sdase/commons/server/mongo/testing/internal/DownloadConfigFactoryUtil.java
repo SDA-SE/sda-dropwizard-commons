@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A utility that creates a {@link DownloadConfig} for the {@link
- * org.sdase.commons.server.mongo.testing.StartLocalMongoDbRule} depending on the environment
- * property {@value #PROXY_ENV_NAME}.
+ * org.sdase.commons.server.mongo.testing.StartLocalMongoDbClassExtension} depending on the
+ * environment property {@value #PROXY_ENV_NAME}.
  *
  * <p>A fixed download URL may be configured by {@value #EMBEDDED_MONGO_DOWNLOAD_PATH_ENV_NAME}.
  */

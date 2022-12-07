@@ -29,6 +29,7 @@ dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
     exclude group: 'org.assertj', module: 'assertj-core'
+    exclude group: 'org.junit', module: 'junit'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.346")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
@@ -155,7 +156,6 @@ dependencies {
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
     api "org.apache.zookeeper:zookeeper:3.5.9"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
-    api "com.salesforce.kafka.test:kafka-junit4:$kafkaJunitVersion"
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
     api "org.apache.curator:curator-test:5.4.0", {
       because '''\

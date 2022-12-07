@@ -4,7 +4,7 @@
 
 The module `sda-commons-server-testing` is the base module to add unit and integrations test for applications in the 
 SDA SE infrastructure.
-It provides JUnit test rules and extensions that are helpful in integration tests. 
+It provides JUnit test extensions that are helpful in integration tests. 
 
 Add the module with test scope:
 
@@ -56,43 +56,23 @@ YAML or JSON and ignores the order of keys. If possible, prefer the other varian
 content should always be reproducible. Note that the [AsyncAPI](../sda-commons-shared-asyncapi) and
 [OpenAPI](../sda-commons-server-openapi) generations export reproducible content.
 
-### SystemPropertyRule
+### SystemPropertyClassExtension
 
-The [`SystemPropertyRule`](src/main/java/org/sdase/commons/server/testing/SystemPropertyRule.java)
+The [`SystemPropertyClassExtension`](src/main/java/org/sdase/commons/server/testing/SystemPropertyClassExtension.java)
 allows for overriding or unsetting system properties for (integration) tests and resets them to their original value when the tests have finished.
 
-To use the rule register it to your test class via the JUnit4 `@Rule`:
+To use the extension, register it to your test class via the JUnit5 `@RegisterExtension`:
 
 ```java
-@Rule
-public SystemPropertyRule PROP =
-  new SystemPropertyRule()
+@RegisterExtension
+public SystemPropertyClassExtension PROP =
+  new SystemPropertyClassExtension()
     .setProperty(PROP_TO_SET, VALUE)
     .setProperty(PROP_TO_SET_SUPPLIER, () -> VALUE)
     .unsetProperty(PROP_TO_UNSET);
 ```
 
 ## Provided helpers
-
-### DropwizardRuleHelper
-
-The `DropwizardRuleHelper` allows to bootstrap a programmatically configured Dropwizard application in tests without the
-need for `test-config.yaml`:
-
-```java
-public class CustomIT {
-
-   @ClassRule
-   public static DropwizardAppRule<TestConfig> DW = DropwizardRuleHelper.dropwizardTestAppFrom(TestApp.class)
-         .withConfigFrom(TestConfig::new)
-         .withRandomPorts()
-         .withConfigurationModifier(c -> c.setMyConfigProperty("Foo"))
-         .withConfigurationModifier(c -> c.setMyOtherConfigProperty("Bar"))
-         .build();
-
-    // ...
-}
-```
 
 ### DropwizardConfigurationHelper
 
@@ -103,10 +83,11 @@ need for `test-config.yaml`. This can be useful when not using the default Dropw
 ```java
 public class CustomIT {
 
-   @ClassRule
-   public static final DropwizardAppRule<AppConfiguration> RULE = new WeldAppRule<>(
-         WeldExampleApplication.class,
-         configFrom(AppConfiguration::new).withPorts(4567, 0).withRootPath("/api/*").build());
+  @RegisterExtension
+  static final WeldAppExtension<AppConfiguration> APP =
+      new WeldAppExtension<>(
+          WeldExampleApplication.class,
+          configFrom(AppConfiguration::new).withPorts(4567, 0).withRootPath("/api/*").build());
 
     // ...
 }
