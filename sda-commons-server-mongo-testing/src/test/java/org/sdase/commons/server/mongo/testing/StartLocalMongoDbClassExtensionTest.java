@@ -3,7 +3,11 @@ package org.sdase.commons.server.mongo.testing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mongodb.*;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
+import com.mongodb.MongoQueryException;
+import com.mongodb.MongoSecurityException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -155,7 +159,9 @@ class StartLocalMongoDbClassExtensionTest {
             .build();
     assertThat(mongoDbClassExtension)
         .extracting("version")
-        .isIn(MongoDbRule.Builder.DEFAULT_VERSION, MongoDbRule.Builder.WINDOWS_VERSION);
+        .isIn(
+            MongoDbClassExtension.Builder.DEFAULT_VERSION,
+            MongoDbClassExtension.Builder.WINDOWS_VERSION);
   }
 
   @Test

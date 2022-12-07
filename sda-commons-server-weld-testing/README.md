@@ -3,7 +3,7 @@
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-weld-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-weld-testing)
 
 `sda-commons-server-weld-testing` is used to bootstrap Dropwizard applications inside a Weld-SE container using the
-`DropwizardAppRule` during testing and provides CDI support for Servlets, listeners and resources.
+`DropwizardAppExtension` during testing and provides CDI support for Servlets, listeners and resources.
 
 **Info:**
 We at SDA SE do not use CDI in our microservices anymore.
@@ -38,7 +38,7 @@ It may also be used with programmatic configuration omitting a `config.yaml`:
 public class WeldAppITest {
 
   @RegisterExtension
-  static final DropwizardAppRule<AppConfiguration> APP = new WeldAppExtension<>(
+  static final DropwizardAppExtension<AppConfiguration> APP = new WeldAppExtension<>(
       MyApplication.class,
       configFrom(AppConfiguration::new).withPorts(4567, 0).withRootPath("/api/*").build());
 
