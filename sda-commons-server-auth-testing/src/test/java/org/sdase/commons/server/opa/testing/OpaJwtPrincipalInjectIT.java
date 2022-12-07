@@ -4,6 +4,7 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.sdase.commons.server.opa.testing.AbstractOpa.onAnyRequest;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Collections;
@@ -48,7 +49,7 @@ class OpaJwtPrincipalInjectIT {
 
     String token = AUTH.auth().buildToken();
     OPA.mock(
-        OpaRule.onAnyRequest()
+        onAnyRequest()
             .allow()
             .withConstraint(Collections.singletonMap("allowedOwners", new String[] {"ownerId"})));
 
@@ -70,7 +71,7 @@ class OpaJwtPrincipalInjectIT {
   void shouldProvideConstraintsWithoutUserContext() {
 
     OPA.mock(
-        OpaRule.onAnyRequest()
+        onAnyRequest()
             .allow()
             .withConstraint(Collections.singletonMap("allowedOwners", new String[] {})));
 
@@ -90,7 +91,7 @@ class OpaJwtPrincipalInjectIT {
   @RetryingTest(5)
   void shouldRejectWithForbiddenWithoutUserContext() {
 
-    OPA.mock(OpaRule.onAnyRequest().deny());
+    OPA.mock(onAnyRequest().deny());
 
     assertThatExceptionOfType(ForbiddenException.class)
         .isThrownBy(
@@ -109,7 +110,7 @@ class OpaJwtPrincipalInjectIT {
     String token1 = AUTH.auth().addClaim("foo", "bar").buildToken();
     String token2 = AUTH.auth().addClaim("bar", "foo").buildToken();
     OPA.mock(
-        OpaRule.onAnyRequest()
+        onAnyRequest()
             .allow()
             .withConstraint(Collections.singletonMap("allowedOwners", new String[] {"ownerId"})));
 

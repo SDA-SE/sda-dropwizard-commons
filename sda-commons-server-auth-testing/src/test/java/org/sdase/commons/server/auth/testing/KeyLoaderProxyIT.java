@@ -31,7 +31,7 @@ import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 
 /** A test that checks if the jersey client that is used to load keys can use a proxy server */
 @SetSystemProperties({
-  @SetSystemProperty(key = AuthRule.AUTH_RULE_ENV_KEY, value = "{\"keys\": [{}]}"),
+  @SetSystemProperty(key = AuthClassExtension.AUTH_ENV_KEY, value = "{\"keys\": [{}]}"),
   @SetSystemProperty(key = "http.proxyHost", value = "localhost"),
   @SetSystemProperty(key = "http.nonProxyHosts", value = "localhost")
 })
