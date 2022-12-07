@@ -8,8 +8,8 @@ import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
-import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
+import static org.sdase.commons.server.opa.testing.AbstractOpa.onAnyRequest;
+import static org.sdase.commons.server.opa.testing.AbstractOpa.onRequest;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.Entity;

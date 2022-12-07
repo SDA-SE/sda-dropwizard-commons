@@ -36,9 +36,9 @@ import org.slf4j.LoggerFactory;
  * A bundle used to generate and serve API-first or code-first OpenAPI 3 files at the {@code
  * openapi.yaml} or {@code openapi.json} HTTP resources.
  *
- * <h3>Example Usage</h3>
+ * <p>Example Usage:
  *
- * <h4>Minimal</h4>
+ * <p>Minimal
  *
  * <pre><code>
  *  &#64;OpenAPIDefinition(info = @Info(title = "An example application"))

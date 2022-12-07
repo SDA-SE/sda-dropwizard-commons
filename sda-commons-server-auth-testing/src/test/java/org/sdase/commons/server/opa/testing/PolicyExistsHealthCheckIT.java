@@ -4,7 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
+import static org.sdase.commons.server.opa.testing.AbstractOpa.onAnyRequest;
 
 import com.codahale.metrics.health.HealthCheck.Result;
 import javax.ws.rs.client.WebTarget;
