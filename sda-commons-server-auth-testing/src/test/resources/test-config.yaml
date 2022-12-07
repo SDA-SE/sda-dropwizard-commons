@@ -6,4 +6,4 @@ server:
   - type: http
     port: 0
 
-auth: ${AUTH_RULE}
+auth: ${AUTH_CONFIG_KEYS}

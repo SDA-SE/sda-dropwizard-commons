@@ -62,19 +62,19 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.sdase.commons.server.openapi.OpenApiFileHelper.normalizeOpenApiYaml;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.testing.GoldenFileAssertions;
 
 class OpenApiDocumentationTest {
   // start your application
-  @ClassRule
-  public static final DropwizardAppRule<Configuration> DW =
-      new DropwizardAppRule<>(YourApplication.class, resourceFilePath("test-config.yaml"));
+  @RegisterExtension
+  public static final DropwizardAppExtension<Configuration> DW =
+      new DropwizardAppExtension<>(YourApplication.class, resourceFilePath("test-config.yaml"));
 
   @Test
   void shouldHaveSameOpenApiInRepository() throws IOException {
