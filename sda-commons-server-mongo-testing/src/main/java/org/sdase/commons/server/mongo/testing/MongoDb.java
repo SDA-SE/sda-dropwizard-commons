@@ -16,20 +16,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JUnit Test rule for running a MongoDB instance alongside the (integration) tests. Can be
+ * JUnit Test extension for running a MongoDB instance alongside the (integration) tests. Can be
  * configured with custom user credentials and database name. Use {@link #getHosts()} to retrieve
  * the hosts to connect to.
  *
  * <p>Example usage:
  *
  * <pre>
- * &#64;ClassRule
- * public static final MongoDbRule RULE = MongoDbRule
- *     .builder()
- *     .withDatabase("my_db")
- *     .withUsername("my_user")
- *     .withPassword("my_s3cr3t")
- *     .build();
+ * &#64;RegisterExtension
+ * MongoDbClassExtension.builder()
+ *    .withDatabase(DATABASE_NAME)
+ *    .withUsername(DATABASE_USERNAME)
+ *    .withPassword(DATABASE_PASSWORD)
+ *    .withTimeoutInMillis(30_000)
+ *    .enableScripting()
+ *    .build();
  * </pre>
  */
 public interface MongoDb {
@@ -81,7 +82,7 @@ public interface MongoDb {
   MongoClient createClient();
 
   /**
-   * @return the version of the MongoDB instance which is associated with this MongoDbRule
+   * @return the version of the MongoDB instance which is associated with this MongoDbClassExtension
    */
   default String getServerVersion() {
     try (MongoClient client = createClient()) {
