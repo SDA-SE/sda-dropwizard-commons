@@ -5,8 +5,8 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.sdase.commons.server.opa.testing.AbstractOpa.onAnyRequest;
 import static org.sdase.commons.server.opa.testing.AbstractOpa.onRequest;
-import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.openapitools.jackson.dataformat.hal.HALLink;

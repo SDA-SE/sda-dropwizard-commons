@@ -4,7 +4,7 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
+import static org.sdase.commons.server.opa.testing.AbstractOpa.onAnyRequest;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.WebTarget;
