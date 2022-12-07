@@ -25,7 +25,7 @@ class S3ClassExtensionTest {
           .putObject(
               PRE_FILLED_BUCKET,
               "stream.txt",
-              S3MockRuleTest.class.getResourceAsStream("/test-file.txt"))
+              S3ClassExtension.class.getResourceAsStream("/test-file.txt"))
           .putObject(PRE_FILLED_BUCKET, "content.txt", "RUN SDA")
           .build();
 
