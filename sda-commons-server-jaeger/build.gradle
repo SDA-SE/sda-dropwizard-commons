@@ -12,9 +12,17 @@ dependencies {
      * Is added as compile dependency in libthrift. Most likely will be fixed with 0.15.0 when this dependency is moved to crossTestCompile
      */
     exclude group: "org.apache.tomcat.embed", module: "tomcat-embed-core"
+
+    /**
+     * jaeger-core brings gson 2.9.0; we want to enforce newer versions
+     */
+    exclude group: "io.jaegertracing", module: "jaeger-core"
+  }
+  api 'io.jaegertracing:jaeger-core', {
+    exclude group: "com.google.code.gson", module: "gson"
   }
   api 'jakarta.annotation:jakarta.annotation-api'
-
+  api 'com.google.code.gson:gson'
 
   // Sadly the required code is in a test dependency, but as an alternative we could also copy the class here.
   api group: 'io.opentracing', name: 'opentracing-util', classifier: 'tests'
