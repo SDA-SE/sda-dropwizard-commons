@@ -15,6 +15,7 @@ import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.StopListenerException;
 import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
+import org.sdase.commons.shared.tracing.TraceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,7 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
 
       try {
         SimpleTimer timer = new SimpleTimer();
+        startTraceContext(record);
         handler.handle(record);
         // mark last successful processed record for commit
         lastCommitOffset = new OffsetAndMetadata(record.offset() + 1);
@@ -91,6 +93,8 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
           consumer.seek(partition, record.offset());
           break;
         }
+      } finally {
+        TraceContext.clear();
       }
     }
     if (lastCommitOffset != null) {

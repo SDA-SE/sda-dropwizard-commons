@@ -1,2 +1,5 @@
 dependencies {
+  api project(':sda-commons-server-opentracing')
+
+  api 'org.slf4j:slf4j-api'
 }

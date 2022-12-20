@@ -14,6 +14,7 @@ import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.StopListenerException;
 import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
+import org.sdase.commons.shared.tracing.TraceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,7 @@ public class SyncCommitMLS<K, V> extends MessageListenerStrategy<K, V> {
       LOGGER.debug("Handling message for {}", record.key());
       try {
         SimpleTimer timer = new SimpleTimer();
+        startTraceContext(record);
         handler.handle(record);
         addOffsetToCommitOnClose(record);
 
@@ -65,6 +67,8 @@ public class SyncCommitMLS<K, V> extends MessageListenerStrategy<K, V> {
         if (!shouldContinue) {
           throw new StopListenerException(e);
         }
+      } finally {
+        TraceContext.clear();
       }
     }
     commitSync(consumer);

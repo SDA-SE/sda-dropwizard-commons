@@ -1,7 +1,6 @@
 package org.sdase.commons.server.trace.filter;
 
 import java.util.Optional;
-import java.util.UUID;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -9,7 +8,7 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.PreMatching;
 import org.sdase.commons.shared.tracing.RequestTracing;
-import org.slf4j.MDC;
+import org.sdase.commons.shared.tracing.TraceContext;
 
 /**
  * A request filter land response filter that detects, optionally generates if not existing and
@@ -28,12 +27,15 @@ public class TraceTokenServerFilter implements ContainerRequestFilter, Container
     }
 
     // Get the HTTP trace token header from the request
-    String token = extractTokenFromRequest(requestContext).orElse(UUID.randomUUID().toString());
+    Optional<String> token = extractTokenFromRequest(requestContext);
+    if (token.isPresent()) {
+      TraceContext.storeTraceToken(token.get());
+    } else {
+      token = Optional.of(TraceContext.createNewTraceToken());
+    }
 
     // Add token to request context so that it is available within the application
-    this.addTokenToRequest(requestContext, token);
-
-    this.addTokenToMdc(token);
+    this.addTokenToRequest(requestContext, token.get());
   }
 
   @Override
@@ -41,6 +43,7 @@ public class TraceTokenServerFilter implements ContainerRequestFilter, Container
       ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
     Optional<String> token = extractTokenFromRequestProperties(requestContext);
     token.ifPresent(s -> responseContext.getHeaders().add(RequestTracing.TOKEN_HEADER, s));
+    TraceContext.clear();
   }
 
   private Optional<String> extractTokenFromRequestProperties(
@@ -58,12 +61,6 @@ public class TraceTokenServerFilter implements ContainerRequestFilter, Container
       return Optional.empty();
     }
     return Optional.of(requestToken);
-  }
-
-  private void addTokenToMdc(String token) {
-    if (MDC.getMDCAdapter() != null) {
-      MDC.put(RequestTracing.TOKEN_MDC_KEY, token);
-    }
   }
 
   private void addTokenToRequest(ContainerRequestContext requestContext, String token) {

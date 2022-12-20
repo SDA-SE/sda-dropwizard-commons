@@ -5,7 +5,10 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Headers;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
+import org.sdase.commons.shared.tracing.RequestTracing;
+import org.sdase.commons.shared.tracing.TraceContext;
 
 public class KafkaMessageProducer<K, V> implements MessageProducer<K, V> {
 
@@ -30,16 +33,27 @@ public class KafkaMessageProducer<K, V> implements MessageProducer<K, V> {
 
   @Override
   public Future<RecordMetadata> send(K key, V value) {
-    ProducerRecord<K, V> record = new ProducerRecord<>(topic, key, value);
-    msgCounter.increase(producerName, record.topic());
-    return producer.send(record);
+    ProducerRecord<K, V> producerRecord = new ProducerRecord<>(topic, key, value);
+    addTraceTokenToHeader(producerRecord);
+    msgCounter.increase(producerName, producerRecord.topic());
+    return producer.send(producerRecord);
   }
 
   @Override
   public Future<RecordMetadata> send(K key, V value, Headers headers) {
-    ProducerRecord<K, V> record = new ProducerRecord<>(topic, null, key, value, headers);
-    msgCounter.increase(producerName, record.topic());
-    return producer.send(record);
+    ProducerRecord<K, V> producerRecord = new ProducerRecord<>(topic, null, key, value, headers);
+    addTraceTokenToHeader(producerRecord);
+    msgCounter.increase(producerName, producerRecord.topic());
+    return producer.send(producerRecord);
+  }
+
+  private void addTraceTokenToHeader(ProducerRecord<K, V> producerRecord) {
+    String traceToken = TraceContext.getCurrentOrCreateNewTraceToken();
+    if (traceToken != null) {
+      producerRecord
+          .headers()
+          .add(new RecordHeader(RequestTracing.TOKEN_HEADER, traceToken.getBytes()));
+    }
   }
 
   public void close() {

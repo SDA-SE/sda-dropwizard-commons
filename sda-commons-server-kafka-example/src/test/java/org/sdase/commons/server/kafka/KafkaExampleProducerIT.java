@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.header.Header;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -23,6 +24,7 @@ import org.sdase.commons.server.kafka.testing.CreateKafkaTopicsClassExtension;
 
 class KafkaExampleProducerIT {
   private static final String TOPIC_NAME = "exampleTopic";
+  private static final String TRACE_HEADER_KEY = "Trace-Token";
 
   @RegisterExtension
   @Order(0)
@@ -80,6 +82,13 @@ class KafkaExampleProducerIT {
     assertThat(records)
         .extracting(ConsumerRecord::value)
         .containsExactly(new ObjectMapper().writeValueAsBytes(new Value(v1, v2)));
+
+    assertThat(records)
+        .extracting(ConsumerRecord::headers)
+        .map(headers -> headers.lastHeader(TRACE_HEADER_KEY))
+        .map(Header::value)
+        .asString()
+        .isNotBlank();
   }
 
   @Test
@@ -106,6 +115,7 @@ class KafkaExampleProducerIT {
 
     assertThat(getLong(record.key())).isEqualTo(1L);
     assertThat(getLong(record.value())).isEqualTo(2L);
+    assertThat(new String(record.headers().lastHeader(TRACE_HEADER_KEY).value())).isNotBlank();
   }
 
   private static long getLong(byte[] array) {

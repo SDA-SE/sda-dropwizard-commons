@@ -9,10 +9,13 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.header.Header;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
+import org.sdase.commons.shared.tracing.ConsumerTracing;
+import org.sdase.commons.shared.tracing.TraceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,5 +107,18 @@ public abstract class MessageListenerStrategy<K, V> {
    */
   public Map<String, String> forcedConfigToApply() {
     return Collections.emptyMap();
+  }
+
+  protected void startTraceContext(ConsumerRecord<K, V> consumerRecord) {
+    Header header = consumerRecord.headers().lastHeader(ConsumerTracing.TOKEN_HEADER);
+    if (header != null) {
+      TraceContext.storeTraceToken(new String(header.value()));
+    } else {
+      TraceContext.createNewTraceToken();
+    }
+  }
+
+  protected void clearTraceContext() {
+    TraceContext.clear();
   }
 }
