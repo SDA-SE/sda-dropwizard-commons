@@ -21,6 +21,7 @@ ext {
   dbRiderVersion = '1.35.0'
   kotlinVersion = '1.7.22'
   kotlinxCoroutinesVersion = '1.6.4'
+  resilience4jVersion = '1.7.1'
 }
 
 dependencies {
@@ -31,7 +32,6 @@ dependencies {
     exclude group: 'org.awaitility', module: 'awaitility'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.366")
-  api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
 
   constraints {
     // overall conflicts
@@ -71,6 +71,8 @@ dependencies {
     api "com.auth0:java-jwt:4.2.1"
 
     // sda-commons-server-circuitbreaker
+    api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
+    api "io.github.resilience4j:resilience4j-prometheus:$resilience4jVersion"
     api "org.objenesis:objenesis:3.3"
 
     // sda-commons-server-hibernate
