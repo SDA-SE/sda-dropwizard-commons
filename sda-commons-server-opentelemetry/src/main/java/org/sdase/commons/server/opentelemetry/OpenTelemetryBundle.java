@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
   private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryBundle.class);
-  private static final String OTEL_DISABLED = "OTEL_DISABLED";
+  private static final String TRACING_DISABLED = "TRACING_DISABLED";
   private static final String JAEGER_SAMPLER_TYPE = "JAEGER_SAMPLER_TYPE";
   private static final String JAEGER_SAMPLER_PARAM = "JAEGER_SAMPLER_PARAM";
   private final Supplier<OpenTelemetry> openTelemetryProvider;
@@ -171,7 +171,7 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
       LOG.warn("Tracing is disabled using deprecated configuration.");
       return true;
     }
-    return "true".equals(getProperty(OTEL_DISABLED));
+    return "true".equals(getProperty(TRACING_DISABLED));
   }
 
   private static String getProperty(String name) {
