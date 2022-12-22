@@ -8,10 +8,14 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.event.CommandListener;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -90,6 +94,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private MongoOperations mongoOperations;
 
+  private OpenTelemetry openTelemetry;
+
   private final Set<Converter<?, ?>> customConverters = new LinkedHashSet<>();
 
   private boolean autoIndexCreation = true;
@@ -161,6 +167,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
             builder.enabled(true);
           });
     }
+    clientSettingsBuilder.addCommandListener(createTracingCommandListener());
     return MongoClients.create(clientSettingsBuilder.build());
   }
 
@@ -245,6 +252,17 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     context.refresh();
     context.start();
     return context;
+  }
+
+  /**
+   * Retrieves an OpenTelemetry instance and sets it to a command listener
+   *
+   * @return commandListener
+   */
+  private CommandListener createTracingCommandListener() {
+    OpenTelemetry currentTelemetryInstance =
+        this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
+    return MongoTelemetry.builder(currentTelemetryInstance).build().newCommandListener();
   }
 
   /**
@@ -350,6 +368,11 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     }
 
     return converter;
+  }
+
+  private SpringDataMongoBundle<C> withOpenTelemetry(OpenTelemetry openTelemetry) {
+    this.openTelemetry = openTelemetry;
+    return this;
   }
 
   public interface InitialBuilder {
@@ -467,6 +490,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     FinalBuilder<C> withCaCertificateConfigProvider(
         CaCertificateConfigurationProvider<C> configProvider);
 
+    FinalBuilder<C> withTelemetryInstance(OpenTelemetry openTelemetry);
+
     /**
      * Builds the mongo bundle
      *
@@ -497,6 +522,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     private boolean validationEnabled = false;
 
     private boolean morphiaCompatibilityEnabled = false;
+
+    private OpenTelemetry openTelemetry;
 
     public Builder(SpringDataMongoConfigurationProvider<T> configurationProvider) {
       this.configurationProvider = configurationProvider;
@@ -549,6 +576,12 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     }
 
     @Override
+    public FinalBuilder<T> withTelemetryInstance(OpenTelemetry openTelemetry) {
+      this.openTelemetry = openTelemetry;
+      return this;
+    }
+
+    @Override
     public SpringDataMongoBundle<T> build() {
       return new SpringDataMongoBundle<>(configurationProvider)
           .withEntities(entityClasses)
@@ -556,7 +589,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
           .withCaCertificateConfigProvider(caCertificatesBundleBuilder)
           .setAutoIndexCreation(autoIndexCreation)
           .setMorphiaCompatibilityEnabled(morphiaCompatibilityEnabled)
-          .setValidationEnabled(validationEnabled);
+          .setValidationEnabled(validationEnabled)
+          .withOpenTelemetry(openTelemetry);
     }
   }
 }
