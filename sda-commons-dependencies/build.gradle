@@ -31,7 +31,7 @@ dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.370")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.374")
 
   constraints {
     // overall conflicts
