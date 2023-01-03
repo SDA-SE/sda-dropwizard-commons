@@ -34,9 +34,9 @@ class DisableTracingTest {
 
   @Test
   @Order(0)
-  @SetSystemProperty(key = "OTEL_DISABLED", value = "true")
+  @SetSystemProperty(key = "TRACING_DISABLED", value = "true")
   void shouldDisableTracing() {
-    assertThat(System.getProperty("OTEL_DISABLED")).isEqualTo("true");
+    assertThat(System.getProperty("TRACING_DISABLED")).isEqualTo("true");
     assertThat(GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().fields())
         .isEmpty();
   }

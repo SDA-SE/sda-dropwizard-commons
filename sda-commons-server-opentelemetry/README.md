@@ -70,8 +70,8 @@ To export traces in Jaeger format, to a [Jaeger collector](https://hub.docker.co
 
 ## Disable Tracing
 
-In order to disable tracing in the applications that are using this bundle, or the [starter bundle](../sda-commons-starter), the environment variable `OTEL_DISABLED=true` can be used.
-Setting `OTEL_DISABLED` to false will force the instrumented modules provided by sda-commons to use a no-op instance.
+In order to disable tracing in the applications that are using this bundle, or the [starter bundle](../sda-commons-starter), the environment variable `TRACING_DISABLED=true` can be used.
+Setting `TRACING_DISABLED` to false will force the instrumented modules provided by sda-commons to use a no-op instance.
 
 ## Manual instrumentation
 
