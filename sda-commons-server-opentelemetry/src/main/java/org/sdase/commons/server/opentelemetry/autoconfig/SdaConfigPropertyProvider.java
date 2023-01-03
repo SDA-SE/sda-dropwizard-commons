@@ -27,7 +27,7 @@ public final class SdaConfigPropertyProvider {
 
     // 'jaeger' header formats are used by the deprecated libraries.
     // 'tracecontext' 'baggage' formats are recommended defaults and used by most external systems.
-    properties.put("otel.propagators", "tracecontext,baggage,jaeger");
+    properties.put("otel.propagators", "jaeger,b3,tracecontext,baggage");
 
     // use environment legacy env variable defined by jaeger client by default
     String jaegerServiceName =
