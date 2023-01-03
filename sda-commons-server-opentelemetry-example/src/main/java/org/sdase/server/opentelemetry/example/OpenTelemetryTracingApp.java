@@ -5,7 +5,6 @@ import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
 public class OpenTelemetryTracingApp extends Application<Configuration> {
   private static final Logger LOGGER = LoggerFactory.getLogger(OpenTelemetryTracingApp.class);
   private static final String INSTRUMENTATION_NAME = OpenTelemetryTracingApp.class.getName();
-  private OpenTelemetry openTelemetry;
   private Tracer tracer;
 
   private final JerseyClientBundle<Configuration> jerseyClientBundle =
@@ -38,8 +36,8 @@ public class OpenTelemetryTracingApp extends Application<Configuration> {
   @Override
   public void initialize(Bootstrap<Configuration> bootstrap) {
     bootstrap.addBundle(jerseyClientBundle);
-    openTelemetry = GlobalOpenTelemetry.get();
-    bootstrap.addBundle(OpenTelemetryBundle.builder().withOpenTelemetry(openTelemetry).build());
+    bootstrap.addBundle(
+        OpenTelemetryBundle.builder().withAutoConfiguredTelemetryInstance().build());
   }
 
   @Override
@@ -52,13 +50,7 @@ public class OpenTelemetryTracingApp extends Application<Configuration> {
     // The instance should be setup once and registered as global and used everywhere.
     // acquire the globally registered instance
     // create a tracer, the name reflects the lib name and optionally the version(major is enough)
-    tracer = tracer == null ? openTelemetry.getTracer(INSTRUMENTATION_NAME) : tracer;
-  }
-
-  // only for testing
-  public OpenTelemetryTracingApp setTracer(Tracer tracer) {
-    this.tracer = tracer;
-    return this;
+    tracer = tracer == null ? GlobalOpenTelemetry.get().getTracer(INSTRUMENTATION_NAME) : tracer;
   }
 
   @GET
