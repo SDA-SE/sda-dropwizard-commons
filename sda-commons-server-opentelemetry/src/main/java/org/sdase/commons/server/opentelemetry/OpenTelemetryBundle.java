@@ -80,11 +80,20 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
 
   private static OpenTelemetry bootstrapConfiguredTelemetrySdk() {
     LOG.info("No OpenTelemetry sdk instance is provided, using autoConfigured instance.");
-    return AutoConfiguredOpenTelemetrySdk.builder()
-        .addPropertiesSupplier(SdaConfigPropertyProvider::getProperties)
-        .setResultAsGlobal(true)
-        .build()
-        .getOpenTelemetrySdk();
+    try {
+      return AutoConfiguredOpenTelemetrySdk.builder()
+          .addPropertiesSupplier(SdaConfigPropertyProvider::getProperties)
+          .setResultAsGlobal(true)
+          .build()
+          .getOpenTelemetrySdk();
+    } catch (IllegalStateException e) {
+      LOG.warn(
+          "A global tracer already defined. "
+              + "This should only happen in a test that uses the OpenTelemetryExtension. "
+              + "If you see this in other circumstances, something with the setup is wrong.",
+          e);
+      return GlobalOpenTelemetry.get();
+    }
   }
 
   private OpenTelemetry setupNoopOpenTelemetry() {
