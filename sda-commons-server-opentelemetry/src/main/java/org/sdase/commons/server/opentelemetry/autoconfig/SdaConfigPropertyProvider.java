@@ -26,6 +26,7 @@ public final class SdaConfigPropertyProvider {
     properties.put("otel.metrics.exporter", "none");
 
     // 'jaeger' header formats are used by the deprecated libraries.
+    // 'b3' is required to correlate traces with services instrumented by DW commons 2.x.x
     // 'tracecontext' 'baggage' formats are recommended defaults and used by most external systems.
     properties.put("otel.propagators", "jaeger,b3,tracecontext,baggage");
 
