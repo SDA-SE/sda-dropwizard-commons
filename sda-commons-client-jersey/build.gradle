@@ -1,6 +1,5 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-server-opentracing')
   api project(':sda-commons-shared-tracing')
   api project(':sda-commons-shared-error')
   api project(':sda-commons-server-opentelemetry')
@@ -10,7 +9,6 @@ dependencies {
   api 'org.glassfish.jersey.core:jersey-client'
   api 'org.glassfish.jersey.ext:jersey-proxy-client'
   api 'org.codefetti.proxy:proxy-handler:1.0.2'
-  api 'io.opentracing.contrib:opentracing-concurrent'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')
@@ -20,7 +18,6 @@ dependencies {
 
   testImplementation 'org.awaitility:awaitility'
   testImplementation 'org.assertj:assertj-core'
-  testImplementation 'io.opentracing:opentracing-mock'
 
   implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:1.16.0-alpha'
   testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
