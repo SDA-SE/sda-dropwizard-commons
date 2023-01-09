@@ -6,6 +6,9 @@ The module also creating server traces to insure proper context propagation.
 ## Docs
 An extensive documentation can be found in [OpenTelemetry Java documentation](https://opentelemetry.io/docs/instrumentation/java/).
 
+## Migrating from OpenTracing
+Here you can find a [migration guide](./docs/MIGRATION_GUIDE.md), if you use OpenTracing on your project.
+
 ## Usage
 
 The bundle must be initialized before other bundles in the dependent applications, as it is responsible for initializing the openTelemetry Sdk and registering the created instance as global, so that dependent bundles can use it.
