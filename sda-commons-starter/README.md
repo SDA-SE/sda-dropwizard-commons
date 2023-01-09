@@ -15,11 +15,11 @@ automatically contain
 - [Authentication support](../sda-commons-server-auth/README.md)
 - [Prometheus metrics](../sda-commons-server-prometheus/README.md)
 - [OpenApi documentation](../sda-commons-server-openapi/README.md)
-- [Open Tracing](../sda-commons-server-opentracing/README.md) and [Jaeger](../sda-commons-server-jaeger/README.md)
+- [Open Telemetry](../sda-commons-server-opentelemetry/README.md)
 
 They may be configured easily to
 
-- [allow cross origin resource sharing](../sda-commons-server-cors/README.md)
+- [allow cross-origin resource sharing](../sda-commons-server-cors/README.md)
 - [use the Open Policy Agent for authorization](../sda-commons-server-auth/README.md)
 
 Using the [`SdaPlatformBundle`](./src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java) is the easiest

@@ -11,7 +11,6 @@ ext {
   prometheusVersion = '0.16.0'
   swaggerCoreV3Version = '2.2.7'
   weldVersion = '3.1.9.Final'
-  openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.36.0'
   scalaVersion = '2.13.10' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.2.3'
@@ -23,7 +22,6 @@ ext {
   openTelemetryAlphaVersion = '1.16.0-alpha'
   openTelemetryVersion= '1.16.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
   openTelemetryAlphaVersion = '1.16.0-alpha'
-  otelInstrumentationVersion = '1.16.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java-instrumentation
   otelInstrumentationAlphaVersion = '1.16.0-alpha'
 }
 
@@ -93,27 +91,12 @@ dependencies {
     api "com.github.database-rider:rider-core:$dbRiderVersion"
     api "com.github.database-rider:rider-junit5:$dbRiderVersion"
 
-    // sda-commons-server-jaeger
-    api "io.jaegertracing:jaeger-client:1.8.1"
-    api "com.squareup.okhttp3:okhttp:4.10.0" // fixes CVE-2021-0341 (bump from 4.9.0 used in jaeger-thrift:1.8.0)
-
     // sda-commons-server-mongo-testing
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.2"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:$otelAgentAlphaVersion"
 
     // sda-commons-server-openapi
     api "com.jayway.jsonpath:json-path:2.7.0"
-
-    // sda-commons-server-opentracing
-    api "io.opentracing:opentracing-util:$openTracingUtilVersion"
-    api "io.opentracing:opentracing-util:$openTracingUtilVersion:tests"
-    api "io.opentracing:opentracing-mock:$openTracingUtilVersion"
-    api "io.opentracing.contrib:opentracing-mongo-driver:0.1.5"
-    api "io.opentracing.contrib:opentracing-aws-sdk-1:0.1.5"
-    api "io.opentracing.contrib:opentracing-jaxrs2:1.0.0"
-    api "io.opentracing.contrib:opentracing-concurrent:0.4.0"
-    api "io.opentracing.contrib:opentracing-web-servlet-filter:0.4.1"
-    api 'io.opentracing:opentracing-api:0.33.0'
 
     // sda-commons-server-openapi
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9" // TODO Needed for OpenAPI?
