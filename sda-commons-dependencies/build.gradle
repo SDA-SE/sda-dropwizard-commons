@@ -8,7 +8,6 @@ javaPlatform {
 
 ext {
   dropwizardVersion = '2.1.4'
-  morphiaVersion = '1.6.1'
   prometheusVersion = '0.16.0'
   swaggerCoreVersion = '1.6.9'
   swaggerCoreV3Version = '2.2.8'
