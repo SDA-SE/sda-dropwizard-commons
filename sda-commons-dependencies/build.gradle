@@ -8,7 +8,6 @@ javaPlatform {
 
 ext {
   dropwizardVersion = '2.1.5'
-  morphiaVersion = '1.6.1'
   prometheusVersion = '0.16.0'
   swaggerCoreVersion = '1.6.9'
   swaggerCoreV3Version = '2.2.8'
@@ -38,6 +37,9 @@ dependencies {
   constraints {
     // overall conflicts
     api "org.apache.commons:commons-lang3:3.12.0"
+    api "commons-codec:commons-codec:1.15", {
+      because "conflict between org.apache.httpcomponents:httpclient:4.5.12 and org.dbunit:dbunit:2.7.0"
+    }
     api "io.github.classgraph:classgraph:4.8.156", {
       because "conflict between io.swagger.core.v3:swagger-jaxrs2, io.swagger.core.v3:swagger-integration, dev.morphia.morphia:core and com.kjetland:mbknor-jackson-jsonschema_2.13 upgrade"
     }
