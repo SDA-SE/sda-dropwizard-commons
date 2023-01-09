@@ -80,7 +80,7 @@ In order to configure Open Telemetry, you have to set some environment variables
 |-------------------------------|-----------------------------------------------|----------------------------------------------------------------------------------|
 | OTEL_PROPAGATORS              | jaeger,b3,tracecontext,baggage                | Propagators to be used as a comma-separated list                                 |
 | OTEL_SERVICE_NAME             | value from env `JAEGER_SERVICE_NAME` (if set) | The service name that will appear on tracing                                     |
-| OTEL_EXPORTER_JAEGER_ENDPOINT | http://otel-collector-gateway.jaeger:4317     | Full URL of the Jaeger HTTP endpoint. The URL must point to the jaeger collector |
+| OTEL_EXPORTER_JAEGER_ENDPOINT | http://jaeger-collector.jaeger:14250          | Full URL of the Jaeger HTTP endpoint. The URL must point to the jaeger collector |
 
 A full list of the configurable properties can be found in the [General SDK Configuration](https://opentelemetry.io/docs/reference/specification/sdk-environment-variables/).
 
