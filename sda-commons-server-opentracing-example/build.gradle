@@ -1,7 +1,0 @@
-dependencies {
-  api project(':sda-commons-server-opentracing')
-  api project(':sda-commons-server-jaeger')
-  api project(':sda-commons-client-jersey')
-
-  testImplementation project(':sda-commons-server-testing')
-}
