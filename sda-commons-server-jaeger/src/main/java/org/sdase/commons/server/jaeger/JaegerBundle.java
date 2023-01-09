@@ -21,7 +21,12 @@ import org.sdase.commons.server.jaeger.metrics.PrometheusMetricsFactory;
  * variables.
  *
  * @see <a href="https://www.jaegertracing.io/docs/1.16/client-features/">Jaeger Configuration</a>
+ * @deprecated This bundle is deprecated. Consider using the <a
+ *     href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java">SdaPlatformBundle</a>
+ *     as base bundle because it will migrate to <a
+ *     href="https://opentelemetry.io">OpenTelemetry</a> for you automatically.
  */
+@Deprecated
 public class JaegerBundle implements ConfiguredBundle<io.dropwizard.Configuration> {
 
   private static final String JAEGER_SERVICE_NAME = "JAEGER_SERVICE_NAME";

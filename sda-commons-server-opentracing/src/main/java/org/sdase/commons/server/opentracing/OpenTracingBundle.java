@@ -28,6 +28,13 @@ import org.sdase.commons.server.opentracing.servlet.AdminServletSpanDecorator;
 import org.sdase.commons.server.opentracing.servlet.CustomServletSpanDecorator;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated This bundle is deprecated. Consider using the <a
+ *     href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java">SdaPlatformBundle</a>
+ *     as base bundle because it will migrate to <a
+ *     href="https://opentelemetry.io">OpenTelemetry</a> for you automatically.
+ */
+@Deprecated
 public class OpenTracingBundle implements ConfiguredBundle<Configuration> {
 
   private final Tracer tracer;
