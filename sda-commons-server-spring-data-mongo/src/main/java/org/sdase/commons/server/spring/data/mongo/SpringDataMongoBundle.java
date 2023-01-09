@@ -89,8 +89,6 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private boolean autoIndexCreation = true;
 
-  private boolean validationEnabled = false;
-
   private final Set<Class<?>> entityClasses = new HashSet<>();
 
   private boolean morphiaCompatibilityEnabled = false;
@@ -208,11 +206,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     return factoryBean.getObject();
   }
 
-  /**
-   * creates a mongoTemplate to be used for operations in database. If the option {@code
-   * withValidation} was selected in the Bundle creation, it will initialize a spring application
-   * context for the validation
-   */
+  /** creates a mongoTemplate to be used for operations in database. */
   private MongoOperations createMongoOperations() {
     SimpleMongoClientDatabaseFactory mongoDbFactory =
         new SimpleMongoClientDatabaseFactory(mongoClient, this.database);
@@ -260,11 +254,6 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private SpringDataMongoBundle<C> setAutoIndexCreation(boolean autoIndexCreation) {
     this.autoIndexCreation = autoIndexCreation;
-    return this;
-  }
-
-  private SpringDataMongoBundle<C> setValidationEnabled(boolean validationEnabled) {
-    this.validationEnabled = validationEnabled;
     return this;
   }
 
@@ -407,9 +396,6 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
     FinalBuilder<C> disableAutoIndexCreation();
 
-    /** enables validation features, otherwise it will be disabled by default */
-    FinalBuilder<C> withValidation();
-
     FinalBuilder<C> withCaCertificateConfigProvider(
         CaCertificateConfigurationProvider<C> configProvider);
 
@@ -440,8 +426,6 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
     private boolean autoIndexCreation = true;
 
-    private boolean validationEnabled = false;
-
     private boolean morphiaCompatibilityEnabled = false;
 
     public Builder(SpringDataMongoConfigurationProvider<T> configurationProvider) {
@@ -459,12 +443,6 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     @Override
     public ScanPackageBuilder<T> withMorphiaCompatibility() {
       this.morphiaCompatibilityEnabled = true;
-      return this;
-    }
-
-    @Override
-    public FinalBuilder<T> withValidation() {
-      this.validationEnabled = true;
       return this;
     }
 
@@ -501,8 +479,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
           .addCustomConverters(customConverters)
           .withCaCertificateConfigProvider(caCertificatesBundleBuilder)
           .setAutoIndexCreation(autoIndexCreation)
-          .setMorphiaCompatibilityEnabled(morphiaCompatibilityEnabled)
-          .setValidationEnabled(validationEnabled);
+          .setMorphiaCompatibilityEnabled(morphiaCompatibilityEnabled);
     }
   }
 }
