@@ -6,8 +6,10 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
@@ -17,12 +19,11 @@ import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBund
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
-import org.sdase.commons.server.jaeger.JaegerBundle;
 import org.sdase.commons.server.opa.OpaBundle;
 import org.sdase.commons.server.opa.OpaBundle.OpaBuilder;
 import org.sdase.commons.server.opa.config.OpaConfigProvider;
 import org.sdase.commons.server.openapi.OpenApiBundle;
-import org.sdase.commons.server.opentracing.OpenTracingBundle;
+import org.sdase.commons.server.opentelemetry.OpenTelemetryBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.server.security.SecurityBundle;
 import org.sdase.commons.server.trace.TraceTokenBundle;
@@ -45,6 +46,9 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
   private final OpaBuilder<C> opaBundleBuilder;
   private final CorsBundle.FinalBuilder<C> corsBundleBuilder;
   private final OpenApiBundle.FinalBuilder openApiBundleBuilder;
+  private final List<String> excludedTracingUrls =
+      Arrays.asList(
+          "/ping", "/healthcheck", "/healthcheck/internal", "/metrics", "/metrics/prometheus");
 
   private SdaPlatformBundle(
       SecurityBundle.Builder securityBundleBuilder,
@@ -69,11 +73,14 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
   public void initialize(Bootstrap<?> bootstrap) {
 
     // add normal bundles
+    bootstrap.addBundle(
+        OpenTelemetryBundle.builder()
+            .withAutoConfiguredTelemetryInstance()
+            .withExcludedUrlsPattern(Pattern.compile(String.join("|", excludedTracingUrls)))
+            .build());
     bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
     bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
     bootstrap.addBundle(InternalHealthCheckEndpointBundle.builder().build());
-    bootstrap.addBundle(JaegerBundle.builder().build());
-    bootstrap.addBundle(OpenTracingBundle.builder().build());
     bootstrap.addBundle(PrometheusBundle.builder().build());
     bootstrap.addBundle(TraceTokenBundle.builder().build());
 
