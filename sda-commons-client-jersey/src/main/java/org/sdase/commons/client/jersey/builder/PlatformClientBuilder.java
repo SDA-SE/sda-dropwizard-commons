@@ -1,7 +1,7 @@
 package org.sdase.commons.client.jersey.builder;
 
 import io.dropwizard.setup.Environment;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.OpenTelemetry;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
@@ -18,9 +18,9 @@ public class PlatformClientBuilder extends AbstractBaseClientBuilder<PlatformCli
   public PlatformClientBuilder(
       Environment environment,
       HttpClientConfiguration httpClientConfiguration,
-      Tracer tracer,
+      OpenTelemetry openTelemetry,
       String consumerToken) {
-    super(environment, httpClientConfiguration, tracer);
+    super(environment, httpClientConfiguration, openTelemetry);
     this.consumerTokenSupplier = () -> Optional.ofNullable(StringUtils.trimToNull(consumerToken));
     addFilter(new TraceTokenClientFilter());
   }
