@@ -1,7 +1,7 @@
 package org.sdase.commons.client.jersey;
 
 import io.dropwizard.setup.Environment;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.OpenTelemetry;
 import org.sdase.commons.client.jersey.builder.ExternalClientBuilder;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;
 
@@ -13,12 +13,12 @@ public class ClientFactory {
 
   private final Environment environment;
   private final String consumerToken;
-  private final Tracer tracer;
+  private final OpenTelemetry openTelemetry;
 
-  ClientFactory(Environment environment, String consumerToken, Tracer tracer) {
+  ClientFactory(Environment environment, String consumerToken, OpenTelemetry openTelemetry) {
     this.environment = environment;
     this.consumerToken = consumerToken;
-    this.tracer = tracer;
+    this.openTelemetry = openTelemetry;
   }
 
   /**
@@ -45,7 +45,8 @@ public class ClientFactory {
    * @return a builder to configure the client
    */
   public PlatformClientBuilder platformClient(HttpClientConfiguration httpClientConfiguration) {
-    return new PlatformClientBuilder(environment, httpClientConfiguration, tracer, consumerToken);
+    return new PlatformClientBuilder(
+        environment, httpClientConfiguration, openTelemetry, consumerToken);
   }
 
   /**
@@ -68,6 +69,6 @@ public class ClientFactory {
    * @return a builder to configure the client
    */
   public ExternalClientBuilder externalClient(HttpClientConfiguration httpClientConfiguration) {
-    return new ExternalClientBuilder(environment, httpClientConfiguration, tracer);
+    return new ExternalClientBuilder(environment, httpClientConfiguration, openTelemetry);
   }
 }
