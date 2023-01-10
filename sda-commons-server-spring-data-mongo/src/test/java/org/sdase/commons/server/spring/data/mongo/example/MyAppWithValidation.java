@@ -12,7 +12,6 @@ public class MyAppWithValidation extends Application<MyConfiguration> {
   private final SpringDataMongoBundle<MyConfiguration> springDataMongoBundle =
       SpringDataMongoBundle.builder()
           .withConfigurationProvider(MyConfiguration::getSpringDataMongo)
-          .withValidation()
           .build();
 
   private PersonRepository personRepository;
