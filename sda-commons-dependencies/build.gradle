@@ -11,7 +11,6 @@ ext {
   prometheusVersion = '0.16.0'
   swaggerCoreV3Version = '2.2.7'
   weldVersion = '3.1.9.Final'
-  openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.36.0'
   scalaVersion = '2.13.10' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.2.3'
@@ -19,6 +18,11 @@ ext {
   dbRiderVersion = '1.35.0'
   kotlinVersion = '1.7.21'
   kotlinxCoroutinesVersion = '1.6.4'
+  otelAgentAlphaVersion = '1.16.0-alpha'
+  openTelemetryAlphaVersion = '1.16.0-alpha'
+  openTelemetryVersion= '1.16.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
+  openTelemetryAlphaVersion = '1.16.0-alpha'
+  otelInstrumentationAlphaVersion = '1.16.0-alpha'
 }
 
 dependencies {
@@ -32,6 +36,8 @@ dependencies {
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.346")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
+  api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
+  api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:$openTelemetryAlphaVersion")
 
   constraints {
     // overall conflicts
@@ -55,6 +61,7 @@ dependencies {
     // overall testing dependencies
     api "org.awaitility:awaitility:4.2.0"
     api 'org.assertj:assertj-core:3.23.1'
+
 
     // sda-commons-client-jersey-wiremock-testing
     api "com.github.tomakehurst:wiremock-jre8:2.35.0"
@@ -84,25 +91,12 @@ dependencies {
     api "com.github.database-rider:rider-core:$dbRiderVersion"
     api "com.github.database-rider:rider-junit5:$dbRiderVersion"
 
-    // sda-commons-server-jaeger
-    api "io.jaegertracing:jaeger-client:1.8.1"
-    api "com.squareup.okhttp3:okhttp:4.10.0" // fixes CVE-2021-0341 (bump from 4.9.0 used in jaeger-thrift:1.8.0)
-
     // sda-commons-server-mongo-testing
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.2"
+    api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:$otelAgentAlphaVersion"
 
     // sda-commons-server-openapi
     api "com.jayway.jsonpath:json-path:2.7.0"
-
-    // sda-commons-server-opentracing
-    api "io.opentracing:opentracing-util:$openTracingUtilVersion"
-    api "io.opentracing:opentracing-util:$openTracingUtilVersion:tests"
-    api "io.opentracing:opentracing-mock:$openTracingUtilVersion"
-    api "io.opentracing.contrib:opentracing-mongo-driver:0.1.5"
-    api "io.opentracing.contrib:opentracing-aws-sdk-1:0.1.5"
-    api "io.opentracing.contrib:opentracing-jaxrs2:1.0.0"
-    api "io.opentracing.contrib:opentracing-concurrent:0.4.0"
-    api "io.opentracing.contrib:opentracing-web-servlet-filter:0.4.1"
 
     // sda-commons-server-openapi
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9" // TODO Needed for OpenAPI?
@@ -121,6 +115,7 @@ dependencies {
 
     // sda-commons-server-s3-testing
     api "io.findify:s3mock_2.13:0.2.6"
+    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11:$otelInstrumentationAlphaVersion"
 
     // sda-commons-server-swagger
     api "com.github.java-json-tools:json-schema-validator:2.2.14"
@@ -150,6 +145,15 @@ dependencies {
 
     // sda-commons-shared-*
     api 'commons-io:commons-io:2.11.0'
+
+    // sda-commons-server-opentelemetry
+    api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:$openTelemetryAlphaVersion"
+    api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:$otelInstrumentationAlphaVersion"
+    api "io.opentelemetry:opentelemetry-exporter-otlp:$openTelemetryVersion"
+    api "io.opentelemetry:opentelemetry-exporter-jaeger:$openTelemetryVersion"
+    api "io.opentelemetry:opentelemetry-extension-trace-propagators:$openTelemetryVersion"
+    api "io.opentelemetry:opentelemetry-sdk-testing:$openTelemetryVersion"
+    api "io.opentelemetry:opentelemetry-exporter-logging:$openTelemetryVersion"
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
