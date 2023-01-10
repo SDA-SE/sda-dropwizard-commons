@@ -1,11 +1,9 @@
 package org.sdase.commons.client.jersey.builder;
 
-import static org.sdase.commons.server.opentracing.client.ClientTracingUtil.registerTracing;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.OpenTelemetry;
 import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +13,7 @@ import javax.ws.rs.core.Feature;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
+import org.sdase.commons.server.opentelemetry.client.TracedHttpClientInitialBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +31,10 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
    */
   private static final boolean DEFAULT_FOLLOW_REDIRECTS = true;
 
-  private final HttpClientConfiguration httpClientConfiguration;
-  private final JerseyClientBuilder jerseyClientBuilder;
-  private final Tracer tracer;
+  private HttpClientConfiguration httpClientConfiguration;
+  private JerseyClientBuilder jerseyClientBuilder;
   private final ObjectMapper objectMapper;
+  private OpenTelemetry openTelemetry;
 
   private final List<ClientRequestFilter> filters;
   private final List<Feature> features;
@@ -43,10 +42,14 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
   private boolean followRedirects;
 
   AbstractBaseClientBuilder(
-      Environment environment, HttpClientConfiguration httpClientConfiguration, Tracer tracer) {
+      Environment environment,
+      HttpClientConfiguration httpClientConfiguration,
+      OpenTelemetry openTelemetry) {
     this.httpClientConfiguration = httpClientConfiguration;
     this.jerseyClientBuilder = new JerseyClientBuilder(environment);
-    this.tracer = tracer;
+    this.openTelemetry = openTelemetry;
+    this.jerseyClientBuilder.setApacheHttpClientBuilder(
+        new TracedHttpClientInitialBuilder(environment).usingTelemetryInstance(this.openTelemetry));
     this.objectMapper = environment.getObjectMapper();
     this.filters = new ArrayList<>();
     this.features = new ArrayList<>();
@@ -110,7 +113,6 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
     features.forEach(client::register);
     client.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
     registerMultiPartIfAvailable(client);
-    registerTracing(client, tracer);
     return client;
   }
 
