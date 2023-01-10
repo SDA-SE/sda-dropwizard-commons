@@ -25,7 +25,7 @@ See [`S3BundleTest`](./src/test/java/org/sdase/commons/server/s3/S3BundleTest.ja
 
 ### Tracing
 
-The bundle comes with [OpenTracing](https://opentracing.io/) instrumentation.
+The bundle comes with [OpenTelemetry](https://opentelemetry.io/) instrumentation.
 
 ### Health Check
 

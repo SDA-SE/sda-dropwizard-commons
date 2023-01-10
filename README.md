@@ -33,7 +33,7 @@ technologies that are recommended for services in the SDA Platform. These techno
 - [Kafka](https://kafka.apache.org/)
 - [MongoDB](https://www.mongodb.com)
 - [Open Policy Agent](https://www.openpolicyagent.org/)
-- [OpenTracing](https://opentracing.io/)
+- [OpenTelemetry](https://opentelemetry.io/)
 
 
 ## Changelog and Versioning
@@ -180,15 +180,14 @@ The module [`sda-commons-server-morphia-exmaple`](./sda-commons-server-morphia-e
 to use the bundle within an application.
 
 
-##### Open Tracing
+##### Open Telemetry
 
-The module [`sda-commons-server-opentracing`](./sda-commons-server-opentracing/README.md) provides [OpenTracing](https://opentracing.io/) instrumentation for JAX-RS. 
-Other bundles like `sda-commons-client-jersey`, `sda-commons-server-morphia` or `sda-commons-server-s3` come with built in instrumentation.
+The module [`sda-commons-server-opentelemetry`](./sda-commons-server-opentelemetry/README.md) provides [OpenTelemetry](https://opentelemetry.io/) instrumentation for JAX-RS. 
+Other bundles like `sda-commons-client-jersey`, `sda-commons-server-spring-data-mongo` or `sda-commons-server-s3` come with built-in instrumentation.
 
-Besides instrumentation it's also required to specify a collector, like [Jaeger](https://www.jaegertracing.io/).
-The module [`sda-commons-server-jaeger`](./sda-commons-server-jaeger/README.md) provides the Jaeger collector.
+Besides instrumentation, it's also required to specify a collector, like [Jaeger](https://www.jaegertracing.io/).
 
-The module [`sda-commons-server-opentracing-exmaple`](./sda-commons-server-morphia-example/README.md) shows how to use OpenTracing and Jaeger within an application and has examples for manual instrumentation.
+The module [`sda-commons-server-opentelemetry-example`](./sda-commons-server-opentelemetry-example/README.md) shows how to use OpenTelemetry and Jaeger within an application and has examples for manual instrumentation.
 
 
 ##### Prometheus
