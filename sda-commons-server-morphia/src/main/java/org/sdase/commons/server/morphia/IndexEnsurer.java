@@ -11,19 +11,35 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class IndexEnsurer {
+/**
+ * On top of Morphia's {@linkplain Datastore#ensureIndexes() implementation to automatically create
+ * indexes}, the {@code IndexEnsurer} can force to create the indexes for a collection. It reacts on
+ * failures due to already existing indexes that are changed by deleting them and retrying. It does
+ * not support renaming of indexes.
+ *
+ * <p>Consumers <strong>should not use</strong> the {@code IndexEnsurer} directly to force ensuring
+ * indexes, but set the {@linkplain MorphiaBundle.EnsureIndexesConfigBuilder#forceEnsureIndexes()
+ * configuration option} at the {@link MorphiaBundle}.
+ *
+ * <p>In rare cases like renaming an index, the {@code IndexEnsurer} may be used in a custom
+ * migration implementation to create the renamed index after a custom query removed the old index.
+ * In such cases, the {@code IndexEnsurer} must be {@linkplain
+ * MorphiaBundle.EnsureIndexesConfigBuilder#skipEnsureIndexes() disabled} when configuring the
+ * {@link MorphiaBundle}.
+ */
+public class IndexEnsurer {
 
   private static final Logger LOG = LoggerFactory.getLogger(IndexEnsurer.class);
 
-  private Datastore datastore;
+  private final Datastore datastore;
   private final boolean forceEnsureIndex;
 
-  IndexEnsurer(Datastore datastore, boolean forceEnsureIndex) {
+  public IndexEnsurer(Datastore datastore, boolean forceEnsureIndex) {
     this.datastore = datastore;
     this.forceEnsureIndex = forceEnsureIndex;
   }
 
-  void ensureIndexes() {
+  public void ensureIndexes() {
     ensureIndexes(this.forceEnsureIndex);
   }
 

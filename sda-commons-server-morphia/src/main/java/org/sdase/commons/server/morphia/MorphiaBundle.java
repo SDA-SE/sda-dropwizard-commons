@@ -135,7 +135,7 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
   }
 
   /**
-   * registers an health check for the mongo database
+   * registers a health check for the mongo database
    *
    * @param healthCheckRegistry registry where to register health checks
    * @param database database name that is used within health check
@@ -318,6 +318,10 @@ public class MorphiaBundle<C extends Configuration> implements ConfiguredBundle<
     /**
      * Executes {@link Datastore#ensureIndexes()} after connecting to let Morphia create all
      * annotated indexes. If existing indexes are modified all indexes are dropped and recreated.
+     *
+     * <p><strong>Due to limitations of MongoDB, it is not possible to rename an index. If an index
+     * must be renamed, a custom migration must be implemented to drop the index before creating it
+     * with a new name. The {@link IndexEnsurer} may be used for such a custom migration.</strong>
      *
      * @return a builder instance for further configuration
      */
