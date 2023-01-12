@@ -1,6 +1,6 @@
 dependencies {
   api project(':sda-commons-server-testing')
 
-  api 'org.mongodb:mongodb-driver-legacy:4.2.3'
+  api 'org.mongodb:mongodb-driver-legacy:4.6.1'
   api 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 }
