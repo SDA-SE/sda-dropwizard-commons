@@ -1,6 +1,7 @@
 package org.sdase.commons.server.spring.data.mongo;
 
 import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,6 +27,7 @@ class MorphiaBundleHealthCheckIT {
       new DropwizardAppExtension<>(
           MyApp.class,
           null,
+          randomPorts(),
           config("springDataMongo.connectionString", mongo::getConnectionString));
 
   @Test
