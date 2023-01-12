@@ -68,7 +68,7 @@ dependencies {
     api "com.kjetland:mbknor-jackson-jsonschema_2.13:1.0.39"
 
     // sda-commons-server-auth
-    api "com.auth0:java-jwt:4.2.1"
+    api "com.auth0:java-jwt:4.2.2"
 
     // sda-commons-server-circuitbreaker
     api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
