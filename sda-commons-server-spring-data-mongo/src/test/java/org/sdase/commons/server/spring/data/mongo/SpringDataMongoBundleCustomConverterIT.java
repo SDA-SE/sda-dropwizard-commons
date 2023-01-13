@@ -24,7 +24,7 @@ import org.sdase.commons.server.spring.data.mongo.example.model.StringToPhoneNum
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 
-class MorphiaBundleCustomConverterIT {
+class SpringDataMongoBundleCustomConverterIT {
 
   @RegisterExtension
   @Order(0)
@@ -34,7 +34,7 @@ class MorphiaBundleCustomConverterIT {
   @Order(1)
   static final DropwizardAppExtension<MyConfiguration> DW =
       new DropwizardAppExtension<>(
-          MorphiaTestApp.class,
+          TestApp.class,
           null,
           config("springDataMongo.connectionString", mongo::getConnectionString));
 
@@ -57,22 +57,22 @@ class MorphiaBundleCustomConverterIT {
     peopleCollection.find().forEach(d -> phoneNumbers.add(d.get("phoneNumber").toString()));
     assertThat(phoneNumbers).containsExactly("+49 172 123456789");
 
-    Person johnDoeFromMorphia =
+    Person johnDoeFromMongoOperations =
         mongoOperations.findAll(Person.class).stream()
             .filter(p -> p.getId().equals(johnDoe.getId()))
             .findFirst()
             .orElse(null);
-    assertThat(johnDoeFromMorphia).isNotNull();
-    assertThat(johnDoeFromMorphia.getPhoneNumber())
+    assertThat(johnDoeFromMongoOperations).isNotNull();
+    assertThat(johnDoeFromMongoOperations.getPhoneNumber())
         .extracting(PhoneNumber::getCountryCode, PhoneNumber::getAreaCode, PhoneNumber::getNumber)
         .containsExactly("+49", "172", "123456789");
   }
 
   private MongoOperations getMongoOperations() {
-    return DW.<MorphiaTestApp>getApplication().getMongoOperations();
+    return DW.<TestApp>getApplication().getMongoOperations();
   }
 
-  public static class MorphiaTestApp extends Application<MyConfiguration> {
+  public static class TestApp extends Application<MyConfiguration> {
 
     private final SpringDataMongoBundle<MyConfiguration> springDataMongoBundle =
         SpringDataMongoBundle.builder()
