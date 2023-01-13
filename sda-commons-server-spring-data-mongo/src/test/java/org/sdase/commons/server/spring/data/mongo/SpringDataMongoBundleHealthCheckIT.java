@@ -15,7 +15,7 @@ import org.sdase.commons.server.mongo.testing.MongoDbClassExtension;
 import org.sdase.commons.server.spring.data.mongo.example.MyApp;
 import org.sdase.commons.server.spring.data.mongo.example.MyConfiguration;
 
-class MorphiaBundleHealthCheckIT {
+class SpringDataMongoBundleHealthCheckIT {
 
   @RegisterExtension
   @Order(0)
