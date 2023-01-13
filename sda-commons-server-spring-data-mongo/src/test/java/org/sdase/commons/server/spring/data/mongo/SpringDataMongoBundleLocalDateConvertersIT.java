@@ -24,7 +24,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 /** Tests if entities can be added by exact definition. */
-class MorphiaBundleLocalDateConvertersIT {
+class SpringDataMongoBundleLocalDateConvertersIT {
 
   @RegisterExtension
   @Order(0)
