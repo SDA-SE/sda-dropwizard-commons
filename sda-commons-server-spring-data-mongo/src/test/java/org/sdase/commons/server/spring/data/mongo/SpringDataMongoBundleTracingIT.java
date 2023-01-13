@@ -30,7 +30,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
  * us.
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class MongoBundleTracingIT {
+class SpringDataMongoBundleTracingIT {
 
   @RegisterExtension
   @Order(0)
