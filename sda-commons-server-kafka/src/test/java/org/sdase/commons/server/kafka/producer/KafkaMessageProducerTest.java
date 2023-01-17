@@ -3,6 +3,7 @@ package org.sdase.commons.server.kafka.producer;
 import static org.mockito.Mockito.*;
 
 import java.util.concurrent.Future;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Headers;
@@ -40,6 +41,12 @@ class KafkaMessageProducerTest {
 
           @Override
           public Future<RecordMetadata> send(Object key, Object value, Headers headers) {
+            return null;
+          }
+
+          @Override
+          public Future<RecordMetadata> send(
+              Object key, Object value, Headers headers, Callback callback) {
             return null;
           }
         };

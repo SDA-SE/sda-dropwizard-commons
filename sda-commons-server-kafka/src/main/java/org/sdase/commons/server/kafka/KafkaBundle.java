@@ -22,6 +22,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Metric;
@@ -228,6 +229,11 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
         @Override
         public Future<RecordMetadata> send(K key, V value, Headers headers) {
+          return null;
+        }
+
+        @Override
+        public Future<RecordMetadata> send(K key, V value, Headers headers, Callback callback) {
           return null;
         }
       };

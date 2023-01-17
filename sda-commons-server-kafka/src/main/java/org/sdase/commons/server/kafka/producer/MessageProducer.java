@@ -1,6 +1,7 @@
 package org.sdase.commons.server.kafka.producer;
 
 import java.util.concurrent.Future;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Headers;
 
@@ -22,6 +23,16 @@ public interface MessageProducer<K, V> {
   Future<RecordMetadata> send(K key, V value);
 
   Future<RecordMetadata> send(K key, V value, Headers headers);
+
+  /**
+   * @param key key to send
+   * @param value value to send
+   * @param headers headers to send
+   * @param callback A callback that will be triggered once the message is sent
+   * @return The result of the send is a {@link RecordMetadata} specifying the partition the record
+   *     was sent to, the offset it was assigned and the timestamp of the record.
+   */
+  Future<RecordMetadata> send(K key, V value, Headers headers, Callback callback);
 
   /**
    * This method is a blank default implementation in order to avoid it being a breaking change. The

@@ -24,7 +24,6 @@ public class ExternalKafkaHealthCheckIT {
 
   @Test
   public void testHealthCheckIt() throws Exception {
-
     KafkaConfiguration config = new KafkaConfiguration();
     config.setBrokers(
         KAFKA.getKafkaBrokers().stream()
