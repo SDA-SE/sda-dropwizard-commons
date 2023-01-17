@@ -28,7 +28,8 @@ public interface MessageProducer<K, V> {
    * @param key key to send
    * @param value value to send
    * @param headers headers to send
-   * @param callback A callback that will be triggered once the message is sent
+   * @param callback A callback that will be triggered once the request is complete (if the ACK is
+   *     received or an exception is raised).
    * @return The result of the send is a {@link RecordMetadata} specifying the partition the record
    *     was sent to, the offset it was assigned and the timestamp of the record.
    */
