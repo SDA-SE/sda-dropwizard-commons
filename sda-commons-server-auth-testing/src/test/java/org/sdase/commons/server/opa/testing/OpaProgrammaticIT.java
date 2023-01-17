@@ -3,7 +3,7 @@ package org.sdase.commons.server.opa.testing;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.sdase.commons.server.opa.testing.OpaRule.onRequest;
+import static org.sdase.commons.server.opa.testing.AbstractOpa.onRequest;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.core.Response;
@@ -33,7 +33,7 @@ class OpaProgrammaticIT {
   // only one test since this is for demonstration with programmatic config
   @Test
   @RetryingTest(5)
-  public void shouldAllowAccess() {
+  void shouldAllowAccess() {
     // given
     OPA_EXTENSION.mock(onRequest().withHttpMethod("GET").withPath("resources").allow());
 

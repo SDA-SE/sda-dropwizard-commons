@@ -14,7 +14,7 @@ import org.sdase.commons.server.auth.config.AuthConfig;
 public class AuthClassExtension extends AbstractAuth
     implements BeforeAllCallback, AfterAllCallback {
 
-  private static final String AUTH_RULE_ENV_KEY = "AUTH_RULE";
+  public static final String AUTH_ENV_KEY = "AUTH_CONFIG_KEYS";
 
   private static final String DEFAULT_KEY_ID = AuthClassExtension.class.getSimpleName();
   private static final String DEFAULT_ISSUER = "AuthExtension";
@@ -70,17 +70,17 @@ public class AuthClassExtension extends AbstractAuth
 
   @Override
   public void beforeAll(ExtensionContext context) {
-    valueToRestore = getCurrentValueForAuthRuleEnv();
+    valueToRestore = getCurrentValueForAuthKeysEnv();
   }
 
   @Override
   public void afterAll(ExtensionContext context) {
-    setValueForAuthRuleEnv(valueToRestore);
+    setValueForAuthKeysEnv(valueToRestore);
   }
 
   private void initDisabledTestAuth() {
     this.authConfig = new AuthConfig().setDisableAuth(true);
-    setValueForAuthRuleEnv("{\"disableAuth\": true}");
+    setValueForAuthKeysEnv("{\"disableAuth\": true}");
   }
 
   private void initEnabledTestAuth() {
@@ -89,18 +89,18 @@ public class AuthClassExtension extends AbstractAuth
 
     try {
       String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);
-      setValueForAuthRuleEnv(authKeysConfig);
+      setValueForAuthKeysEnv(authKeysConfig);
     } catch (JsonProcessingException e) {
       fail("Failed to create the config keys: " + e.getMessage());
     }
   }
 
-  private String getCurrentValueForAuthRuleEnv() {
-    return System.getProperty(AUTH_RULE_ENV_KEY);
+  private String getCurrentValueForAuthKeysEnv() {
+    return System.getProperty(AUTH_ENV_KEY);
   }
 
-  private void setValueForAuthRuleEnv(String value) {
-    System.setProperty(AUTH_RULE_ENV_KEY, value);
+  private void setValueForAuthKeysEnv(String value) {
+    System.setProperty(AUTH_ENV_KEY, value);
   }
 
   //
