@@ -33,6 +33,7 @@ dependencies {
     exclude group: 'org.awaitility', module: 'awaitility'
     exclude group: 'org.assertj', module: 'assertj-core'
     exclude group: 'org.junit', module: 'junit'
+    exclude group: 'jakarta.xml.bind', module: 'jakarta.xml.bind-api'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.346")
   api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
@@ -86,6 +87,7 @@ dependencies {
     // sda-commons-server-hibernate
     api "org.postgresql:postgresql:42.5.0"
     api "org.flywaydb:flyway-core:9.8.2"
+    api 'javax.xml.bind:jaxb-api:2.3.1'
 
     // sda-commons-server-hibernate-testing
     api "com.github.database-rider:rider-core:$dbRiderVersion"
@@ -187,5 +189,7 @@ dependencies {
     api "com.typesafe.scala-logging:scala-logging_2.13:3.9.5", {
       because "conflict between io.findify:s3mock_2.13 and org.apache.kafka:kafka_2.13"
     }
+
+    api "jakarta.xml.bind:jakarta.xml.bind-api:4.0.0"
   }
 }
