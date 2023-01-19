@@ -3,6 +3,9 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-error')
   api 'io.openapitools.jackson.dataformat:jackson-dataformat-hal'
+  api 'javax.xml.bind:jaxb-api', {
+    exclude group: 'javax.activation', module: 'javax.activation-api'
+  }
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-shared-forms')
