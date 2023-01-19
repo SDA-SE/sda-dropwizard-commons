@@ -33,6 +33,9 @@ dependencies {
     exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
   }
   api 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider'
+  api 'javax.xml.bind:jaxb-api', {
+    exclude group: 'javax.activation', module: 'javax.activation-api'
+  }
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation 'net.javacrumbs.json-unit:json-unit-assertj'
