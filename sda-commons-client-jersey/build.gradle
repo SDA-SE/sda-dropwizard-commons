@@ -9,6 +9,9 @@ dependencies {
   api 'org.glassfish.jersey.core:jersey-client'
   api 'org.glassfish.jersey.ext:jersey-proxy-client'
   api 'org.codefetti.proxy:proxy-handler:1.0.2'
+  api 'javax.xml.bind:jaxb-api', {
+    exclude group: 'javax.activation', module: 'javax.activation-api'
+  }
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')
