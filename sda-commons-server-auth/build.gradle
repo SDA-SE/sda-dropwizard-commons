@@ -9,6 +9,9 @@ dependencies {
 
   api 'com.auth0:java-jwt'
   api 'org.bouncycastle:bcpkix-jdk15on'
+  api 'javax.xml.bind:jaxb-api', {
+    exclude group: 'javax.activation', module: 'javax.activation-api'
+  }
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')
