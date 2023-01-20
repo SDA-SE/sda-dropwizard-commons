@@ -30,6 +30,7 @@ import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeReadCon
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.CharArrayReadConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.CharArrayWriteConverter;
+import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.ListWritingConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.LocalDateReadConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.LocalDateWriteConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.UriReadConverter;
@@ -75,7 +76,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
               LocalDateReadConverter.INSTANCE,
               // ZonedDateTime
               ZonedDateTimeWriteConverter.INSTANCE,
-              ZonedDateTimeReadConverter.INSTANCE));
+              ZonedDateTimeReadConverter.INSTANCE,
+              new ListWritingConverter()));
 
   private final Function<C, SpringDataMongoConfiguration> configurationProvider;
 
@@ -197,11 +199,11 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   }
 
   /**
-   * @return a new Spring Data Mongo repository
    * @param repositoryType the type of the repository that is created
    * @param <T> the repository class or interface
    * @param <S> the type of the entity
    * @param <ID> the type of primary key of the entity
+   * @return a new Spring Data Mongo repository
    */
   @SuppressWarnings("java:S119") // ID follows Spring Data conventions
   public <T extends Repository<S, ID>, S, ID extends Serializable> T createRepository(
@@ -217,7 +219,12 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   private MongoOperations createMongoOperations() {
     SimpleMongoClientDatabaseFactory mongoDbFactory =
         new SimpleMongoClientDatabaseFactory(mongoClient, this.database);
-    MongoConverter mongoConverter = getDefaultMongoConverter(mongoDbFactory, getConverters());
+    List<?> converters = getConverters();
+    MongoConverter mongoConverter = getDefaultMongoConverter(mongoDbFactory, converters);
+    converters.stream()
+        .filter(ListWritingConverter.class::isInstance)
+        .map(ListWritingConverter.class::cast)
+        .forEach(c -> c.setMongoConverter(mongoConverter));
 
     return new MongoTemplate(mongoDbFactory, mongoConverter);
   }
@@ -361,11 +368,11 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
      *   <li>{@code dev.morphia.geo.Geometry} and all its implementations
      * </ul>
      *
-     * x
+     * <p>x
      *
+     * @return a builder instance for further configuration
      * @see CustomConverterBuilder#addCustomConverters(Converter[]) defaults without Morphia
      *     compatibility
-     * @return a builder instance for further configuration
      */
     ScanPackageBuilder<C> withMorphiaCompatibility();
   }

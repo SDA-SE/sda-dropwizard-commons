@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -36,9 +37,11 @@ import org.sdase.commons.server.spring.data.mongo.compatibility.app.Compatibilit
 import org.sdase.commons.server.spring.data.mongo.compatibility.app.CompatibilityTestApp.MyEntityWithGenericsRepository;
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.GenericIntType;
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.GenericStringType;
+import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyColor;
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEntity;
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEntityWithGenerics;
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEnum;
+import org.sdase.commons.server.spring.data.mongo.compatibility.model.MySubEntity;
 import org.springframework.data.mongodb.core.MongoOperations;
 
 class MorphiaCompatibilityITest {
@@ -126,6 +129,66 @@ class MorphiaCompatibilityITest {
         .extracting(MyEntityWithGenerics::getId, it -> it.getGenericValue().getValue())
         .contains("1a736daf-6ff0-4779-9ace-f8eef956739e", "a string");
     assertThat(actual.getGenericValue()).isExactlyInstanceOf(GenericStringType.class);
+  }
+
+  @Test
+  void shouldStoreNullsForEmptyLists() {
+    // given
+    var entity =
+        new MyEntity()
+            .setListOfStringValues(List.of())
+            .setListOfColorValues(List.of())
+            .setSubEntity(new MySubEntity().setColors(List.of()));
+
+    // when
+    mongoOperations.save(entity);
+
+    // then
+    // check MongoDB document
+    var iterator = mongoOperations.getCollection("MyEntity").find().iterator();
+    assertThat(iterator).hasNext();
+    var mongoDbDoc = iterator.next();
+    assertThat(mongoDbDoc.get("listOfStringValues")).isNull();
+    assertThat(mongoDbDoc.get("listOfColorValues")).isNull();
+    assertThat(mongoDbDoc.get("subEntity")).isNotNull();
+    var subEntity = (Document) mongoDbDoc.get("subEntity");
+    assertThat(subEntity.get("colors")).isNull();
+
+    // Check converted entity
+    var entities = mongoOperations.findAll(MyEntity.class);
+    assertThat(entities).hasSize(1);
+    assertThat(entities.get(0).getListOfStringValues()).isNull();
+    assertThat(entities.get(0).getListOfColorValues()).isNull();
+  }
+
+  @Test
+  void shouldConvertLists() {
+    // given
+    var entity =
+        new MyEntity()
+            .setListOfStringValues(List.of("one", "two"))
+            .setListOfColorValues(List.of(new MyColor().setRed(100).setBlue(200).setGreen(300)));
+
+    // when
+    mongoOperations.save(entity);
+
+    // then
+    // Check MongoDB document
+    var iterator = mongoOperations.getCollection("MyEntity").find().iterator();
+    assertThat(iterator).hasNext();
+    var mongoDbDoc = iterator.next();
+    assertThat(mongoDbDoc.get("listOfStringValues")).isNotNull();
+    assertThat(mongoDbDoc.get("listOfColorValues")).isNotNull();
+
+    // Check converted entity
+    var entities = mongoOperations.findAll(MyEntity.class);
+    assertThat(entities).hasSize(1);
+    MyEntity entity1 = entities.get(0);
+    assertThat(entity1.getListOfStringValues()).hasSize(2);
+    assertThat(entity1.getListOfStringValues().get(0)).isEqualTo("one");
+    assertThat(entity1.getListOfStringValues().get(1)).isEqualTo("two");
+    assertThat(entity1.getListOfColorValues()).hasSize(1);
+    assertThat(entity1.getListOfColorValues().get(0).getRed()).isEqualTo(100);
   }
 
   @ParameterizedTest

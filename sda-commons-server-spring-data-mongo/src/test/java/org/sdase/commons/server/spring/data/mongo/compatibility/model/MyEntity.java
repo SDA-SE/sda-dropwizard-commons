@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -36,6 +37,11 @@ public class MyEntity {
   private Instant instantValue;
 
   private LocalDateTime localDateTimeValue;
+
+  private List<String> listOfStringValues;
+  private List<MyColor> listOfColorValues;
+
+  private MySubEntity subEntity;
 
   public String getId() {
     return id;
@@ -142,6 +148,33 @@ public class MyEntity {
 
   public MyEntity setLocalDateTimeValue(LocalDateTime localDateTimeValue) {
     this.localDateTimeValue = localDateTimeValue;
+    return this;
+  }
+
+  public List<String> getListOfStringValues() {
+    return listOfStringValues;
+  }
+
+  public MyEntity setListOfStringValues(List<String> listOfStringValues) {
+    this.listOfStringValues = listOfStringValues;
+    return this;
+  }
+
+  public List<MyColor> getListOfColorValues() {
+    return listOfColorValues;
+  }
+
+  public MyEntity setListOfColorValues(List<MyColor> listOfColorValues) {
+    this.listOfColorValues = listOfColorValues;
+    return this;
+  }
+
+  public MySubEntity getSubEntity() {
+    return subEntity;
+  }
+
+  public MyEntity setSubEntity(MySubEntity subEntity) {
+    this.subEntity = subEntity;
     return this;
   }
 }
