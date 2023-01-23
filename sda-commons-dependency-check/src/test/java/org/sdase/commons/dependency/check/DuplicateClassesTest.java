@@ -6,7 +6,6 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.Resource;
 import io.github.classgraph.ResourceList;
 import io.github.classgraph.ScanResult;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -16,14 +15,12 @@ import org.slf4j.LoggerFactory;
 
 class DuplicateClassesTest {
 
-  private static final List<Pattern> ignorePatterns = new ArrayList<>();
-
-  static {
-    // There only seems to be one very old release of aopalliance that HK2 and Spring repackaged
-    // into their own artifacts. Assumption is that the included versions are identical and
-    // the duplication is not an issue.
-    ignorePatterns.add(Pattern.compile("org/aopalliance.*"));
-  }
+  private static final List<Pattern> ignorePatterns =
+      List.of(
+          // There only seems to be one very old release of aopalliance that HK2 and Spring
+          // repackaged into their own artifacts. Assumption is that the included versions are
+          // identical and the duplication is not an issue.
+          Pattern.compile("org/aopalliance.*"));
 
   private static final Logger LOG = LoggerFactory.getLogger(DuplicateClassesTest.class);
 
