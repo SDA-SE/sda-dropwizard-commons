@@ -12,7 +12,7 @@ should be added as a field in the application class instead of being anonymously
 method like other bundles of this library.
 
 The Dropwizard application's config class needs to provide a
-[`SpringDataMongoConfiguration`](./src/main/java/org/sdase/commons/server/spring/data/mongo/SpringDataMongoConfiguration.java).
+[`MongoConfiguration`](./src/main/java/org/sdase/commons/server/spring/data/mongo/MongoConfiguration.java).
 
 Please refer to the official documentation how to annotate your entity classes correctly, e.g. by
 adding `@Document`, `@MongoId` or `@Indexed`.
