@@ -38,7 +38,6 @@ dependencies {
     exclude group: 'org.junit', module: 'junit'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.389")
-  api enforcedPlatform("io.github.resilience4j:resilience4j-bom:1.7.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:$openTelemetryAlphaVersion")
 
