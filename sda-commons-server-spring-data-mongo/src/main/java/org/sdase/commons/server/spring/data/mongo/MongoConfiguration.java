@@ -5,7 +5,7 @@ import com.mongodb.ConnectionString;
 import javax.validation.constraints.AssertTrue;
 import org.apache.commons.lang3.StringUtils;
 
-public class SpringDataMongoConfiguration {
+public class MongoConfiguration {
 
   /**
    * Comma separated list of hosts with their port that build the MongoDB cluster:
@@ -76,7 +76,7 @@ public class SpringDataMongoConfiguration {
     return hosts;
   }
 
-  public SpringDataMongoConfiguration setHosts(String hosts) {
+  public MongoConfiguration setHosts(String hosts) {
     this.hosts = hosts;
     return this;
   }
@@ -88,7 +88,7 @@ public class SpringDataMongoConfiguration {
     return database;
   }
 
-  public SpringDataMongoConfiguration setDatabase(String database) {
+  public MongoConfiguration setDatabase(String database) {
     this.database = database;
     return this;
   }
@@ -100,7 +100,7 @@ public class SpringDataMongoConfiguration {
     return options;
   }
 
-  public SpringDataMongoConfiguration setOptions(String options) {
+  public MongoConfiguration setOptions(String options) {
     this.options = options;
     return this;
   }
@@ -112,7 +112,7 @@ public class SpringDataMongoConfiguration {
     return username;
   }
 
-  public SpringDataMongoConfiguration setUsername(String username) {
+  public MongoConfiguration setUsername(String username) {
     this.username = username;
     return this;
   }
@@ -127,7 +127,7 @@ public class SpringDataMongoConfiguration {
     return password;
   }
 
-  public SpringDataMongoConfiguration setPassword(String password) {
+  public MongoConfiguration setPassword(String password) {
     this.password = password;
     return this;
   }
@@ -136,7 +136,7 @@ public class SpringDataMongoConfiguration {
     return useSsl;
   }
 
-  public SpringDataMongoConfiguration setUseSsl(boolean useSsl) {
+  public MongoConfiguration setUseSsl(boolean useSsl) {
     this.useSsl = useSsl;
     return this;
   }
@@ -145,7 +145,7 @@ public class SpringDataMongoConfiguration {
     return connectionString;
   }
 
-  public SpringDataMongoConfiguration setConnectionString(String connectionString) {
+  public MongoConfiguration setConnectionString(String connectionString) {
     this.connectionString = connectionString;
     return this;
   }
