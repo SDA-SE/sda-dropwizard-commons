@@ -6,8 +6,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import org.sdase.commons.server.spring.data.mongo.MongoConfiguration;
 import org.sdase.commons.server.spring.data.mongo.SpringDataMongoBundle;
-import org.sdase.commons.server.spring.data.mongo.SpringDataMongoConfiguration;
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEntity;
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEntityWithGenerics;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -50,14 +50,13 @@ public class CompatibilityTestApp extends Application<CompatibilityTestApp.Confi
 
   public static class Config extends Configuration {
 
-    @Valid @NotNull
-    private SpringDataMongoConfiguration springDataMongo = new SpringDataMongoConfiguration();
+    @Valid @NotNull private MongoConfiguration springDataMongo = new MongoConfiguration();
 
-    public SpringDataMongoConfiguration getSpringDataMongo() {
+    public MongoConfiguration getSpringDataMongo() {
       return springDataMongo;
     }
 
-    public Config setSpringDataMongo(SpringDataMongoConfiguration springDataMongo) {
+    public Config setSpringDataMongo(MongoConfiguration springDataMongo) {
       this.springDataMongo = springDataMongo;
       return this;
     }
