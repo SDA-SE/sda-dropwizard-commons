@@ -115,3 +115,9 @@ Spring Data Mongo will throw more specific exceptions like
 `org.springframework.dao.DuplicateKeyException` or more generic
 `org.springframework.dao.DataAccessException`.
 Error handling must be updated.
+
+### Indexes
+
+While all `@Indexes` can be created at the main entity class in Morphia, each field must be
+`@Indexed`, `@TextIndexed` or `@WildcardIndexed` where it is defined in Spring Data Mongo.
+A `@CompoundIndex` can be declared at the entity class.
