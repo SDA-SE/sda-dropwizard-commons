@@ -8,3 +8,7 @@ plugins:
   - "@semantic-release/github"
 branches:
   - name: 'master'
+# maintaining v2
+  - name: 'release/2.x.x'
+    range: '2.x.x'
+    channel: '2.x.x'
