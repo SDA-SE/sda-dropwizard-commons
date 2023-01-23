@@ -77,13 +77,13 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
               ZonedDateTimeWriteConverter.INSTANCE,
               ZonedDateTimeReadConverter.INSTANCE));
 
-  private final Function<C, SpringDataMongoConfiguration> configurationProvider;
+  private final Function<C, MongoConfiguration> configurationProvider;
 
   private CaCertificatesBundle.FinalBuilder<C> caCertificatesBundleBuilder;
 
   private CaCertificatesBundle<C> caCertificatesBundle;
 
-  private SpringDataMongoConfiguration config;
+  private MongoConfiguration config;
 
   private MongoClient mongoClient;
 
@@ -100,12 +100,12 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   private boolean morphiaCompatibilityEnabled = false;
 
   /**
-   * Database as defined by the {@link SpringDataMongoConfiguration#getConnectionString()} or {@link
-   * SpringDataMongoConfiguration#getDatabase()}
+   * Database as defined by the {@link MongoConfiguration#getConnectionString()} or {@link
+   * MongoConfiguration#getDatabase()}
    */
   private String database;
 
-  public SpringDataMongoBundle(SpringDataMongoConfigurationProvider<C> configurationProvider) {
+  public SpringDataMongoBundle(MongoConfigurationProvider<C> configurationProvider) {
     this.configurationProvider = configurationProvider;
   }
 
@@ -314,12 +314,12 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
     /**
      * @param configurationProvider the method reference that provides the @{@link
-     *     SpringDataMongoConfiguration} from the applications configurations class
+     *     MongoConfiguration} from the applications configurations class
      * @param <C> the type of the applications configuration class
      * @return a builder instance for further configuration
      */
     <C extends Configuration> MorphiaCompatibilityBuilder<C> withConfigurationProvider(
-        @NotNull SpringDataMongoConfigurationProvider<C> configurationProvider);
+        @NotNull MongoConfigurationProvider<C> configurationProvider);
   }
 
   public interface CaCertificateConfigProviderBuilder<C extends Configuration>
@@ -440,7 +440,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
           CaCertificateConfigProviderBuilder<T>,
           FinalBuilder<T> {
 
-    private SpringDataMongoConfigurationProvider<T> configurationProvider;
+    private MongoConfigurationProvider<T> configurationProvider;
 
     private CaCertificatesBundle.FinalBuilder<T> caCertificatesBundleBuilder =
         CaCertificatesBundle.builder();
@@ -455,7 +455,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
     private OpenTelemetry openTelemetry;
 
-    public Builder(SpringDataMongoConfigurationProvider<T> configurationProvider) {
+    public Builder(MongoConfigurationProvider<T> configurationProvider) {
       this.configurationProvider = configurationProvider;
     }
 
@@ -463,7 +463,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
     @Override
     public <C extends Configuration> MorphiaCompatibilityBuilder<C> withConfigurationProvider(
-        SpringDataMongoConfigurationProvider<C> configurationProvider) {
+        MongoConfigurationProvider<C> configurationProvider) {
       return new Builder<>(configurationProvider);
     }
 
