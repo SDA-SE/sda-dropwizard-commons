@@ -1,7 +1,6 @@
 package org.sdase.commons.dependency.check;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assumptions.assumeThat;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.Resource;
@@ -16,12 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class DuplicateClassesTest {
-
-  /**
-   * Number of duplicates seen in the GitHub action build. This number may be different in other
-   * environments for unknown reasons.
-   */
-  private static final int LAST_SEEN_NUMBER_OF_DUPLICATES = 0;
 
   private static final List<Pattern> ignorePatterns = new ArrayList<>();
 
@@ -70,11 +63,6 @@ class DuplicateClassesTest {
       }
       LOG.warn("Found {} duplicates.", numberOfDuplicates);
       assertThat(numberOfDuplicates)
-          .describedAs(
-              "already saw only %s duplicate classes but now there are %s",
-              LAST_SEEN_NUMBER_OF_DUPLICATES, numberOfDuplicates)
-          .isLessThanOrEqualTo(LAST_SEEN_NUMBER_OF_DUPLICATES);
-      assumeThat(numberOfDuplicates)
           .describedAs("expecting no duplicate classes but found %s", numberOfDuplicates)
           .isZero();
     }
