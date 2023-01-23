@@ -106,3 +106,12 @@ public interface PersonMongoRepository extends MongoRepository<Person, String> {
 }
 ```
 See the [official documentation](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details) for further details.
+
+### Error handling
+
+Morphia raised `ValidationException`s or subclasses of it when validation errors like duplicate
+unique keys occur at database level.
+Spring Data Mongo will throw more specific exceptions like
+`org.springframework.dao.DuplicateKeyException` or more generic
+`org.springframework.dao.DataAccessException`.
+Error handling must be updated.
