@@ -30,7 +30,9 @@ jobs:
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
 
       - name: Upload to SDA Nexus
-        run: ./gradlew -x signMavenPublication publishMavenPublicationToSdaInternRepository
+        run: ./gradlew publishMavenPublicationToSdaInternRepository
         env:
           SDA_NEXUS_USER: ${{ secrets.NEXUS_LOGIN_USER }}
           SDA_NEXUS_PASSWORD: ${{ secrets.NEXUS_LOGIN_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
