@@ -46,11 +46,13 @@ jobs:
           SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
 
       - name: Upload to Maven Central
-        run: ./gradlew -x signMavenPublication publishMavenPublicationToMavenCentralRepository closeAndReleaseRepository
+        run: ./gradlew publishMavenPublicationToMavenCentralRepository closeAndReleaseRepository
         env:
           SDA_SONATYPE_USER: ${{ secrets.SDA_SONATYPE_USER }}
           SDA_SONATYPE_PASSWORD: ${{ secrets.SDA_SONATYPE_PASSWORD }}
           SONATYPE_STAGING_REPOSITORY_ID: ${{ steps.create-staging-repo.outputs.STAGING_PROFILE_ID }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
 
       - uses: 8398a7/action-slack@v3
         with:
