@@ -18,11 +18,18 @@ jobs:
           java-version: 11
           cache: 'gradle'
 
-      - name: Build and Publish Snapshot
-        run: ./gradlew publishMavenPublicationToSdaInternRepository
+      - name: Build and Sign packages
+        run: ./gradlew --parallel signMavenPublication
         env:
-          SEMANTIC_VERSION: PR-${{ github.event.number }}-SNAPSHOT
-          SDA_NEXUS_USER: ${{ secrets.NEXUS_LOGIN_USER }}
-          SDA_NEXUS_PASSWORD: ${{ secrets.NEXUS_LOGIN_PASSWORD }}
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
+          SEMANTIC_VERSION: PR-${{ github.event.number }}-SNAPSHOT
+
+      - name: Upload to SDA Nexus
+        run: ./gradlew publishMavenPublicationToSdaInternRepository
+        env:
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
+          SDA_NEXUS_USER: ${{ secrets.NEXUS_LOGIN_USER }}
+          SDA_NEXUS_PASSWORD: ${{ secrets.NEXUS_LOGIN_PASSWORD }}
+          SEMANTIC_VERSION: PR-${{ github.event.number }}-SNAPSHOT
