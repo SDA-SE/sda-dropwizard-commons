@@ -26,7 +26,7 @@ public class PolicyExistsHealthCheck extends HealthCheck {
       // send a get request to the policy path. The get will not provide any input.
       // Normally, the policy should response with a deny decision.
       // If there is an exception, the check will be unhealthy
-      OpaResponse opaResponse = client.request().post(Entity.json(null), OpaResponse.class);
+      OpaResponse opaResponse = client.request().get(OpaResponse.class);
 
       if (opaResponse == null
           || opaResponse.getResult() == null
