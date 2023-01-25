@@ -1,6 +1,6 @@
 # Migration Guide from v2 to v3
 
-## Migrate from OpenTracing to OpenTelemetry 
+## Migrate from OpenTracing to OpenTelemetry
 
 ### Starter Bundle
 If you do not use sda-commons-starter with [SdaPlatformBundle](../../sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java), you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTelemetry bundle.
@@ -199,7 +199,7 @@ public MongoOperations getMongoOperations() {
 }
 ```
 
-#### Morphia compatibility
+### Morphia compatibility
 When upgrading a service from 2.x.x a set of converters is provided to stay compatible with a
 database that was initialized with Morphia. To enable these converters, `.withMorphiaCompatibility()`
 can be used when building the SpringDataMongoBundle.
@@ -211,7 +211,7 @@ SpringDataMongoBundle.builder()
   build();
 ```
 
-#### Validation
+### Validation
 Automatic JSR validation is no longer provided in v3. If you still want to validate your models
 you can do so manually using the `ValidationFactory`:
 
@@ -225,7 +225,7 @@ boolean isValid =
 
 ### Queries
 
-#### Building queries with the datastore
+### Building queries with the datastore
 Simple operations can be realised by the MongoOperations directly.
 
 Saving an entity:
@@ -253,7 +253,7 @@ public Optional<SampleEntity> findByArbitraryFields(String identifier, String va
 ```
 See the [official documentation](https://docs.spring.io/spring-data/mongodb/docs/current/api/org/springframework/data/mongodb/core/query/Criteria.html) for further information.
 
-#### Auto-generate queries out of method names with the `MongoRepository` interface
+### Auto-generate queries out of method names with the `MongoRepository` interface
 Depending on the complexity, queries can also be auto-generated based on the method names by using
 the MongoRepository Interface provided by spring-data-mongo.
 
@@ -277,49 +277,33 @@ public interface PersonMongoRepository extends MongoRepository<Person, String> {
 ```
 See the [official documentation](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details) for further details.
 
-#### Query functions
-
+### Query functions
 As Spring Data Mongo doesn't support/provide many query functions provided by Morphia, below are some replacements/alternatives.
 
-##### EqualIgnoreCase
+* #### _EqualIgnoreCase_
+  Morphia supports usage of _equalIgnoreCase()_. Use _regex()_ in Spring Data Mongo. For example
+  * Morphia - `query.criteria("fieldName").equalIgnoreCase(entity.getFieldName());`
+  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex("^" + entity.getFieldName(), "i"));`
 
-Morphia supports usage of _equalIgnoreCase()_. Use _regex()_ in Spring Data Mongo. For example
+* #### _HasAnyOf_
+  Morphia supports _hasAnyOf()_ method. Use _in()_ in Spring Data Mongo. For example
+  * Morphia - `query.field("id").hasAnyOf(getIds());`
+  * Spring Data Mongo - `query.addCriteria(where("id").in(getIds()));`
 
-Morphia - `query.criteria("fieldName").equalIgnoreCase(entity.getFieldName());`
+* #### _Filter_
+  Morphia supports _filter()_ method. Use _is()_ in Spring Data Mongo. For example
+  * Morphia - `query.filter("id", getId());`
+  * Spring Data Mongo - `query.addCriteria(where("id").is(getId()));`
 
-Spring Data Mongo - `query.addCriteria(where("fieldName").regex("^" + entity.getFieldName(), "i"));`
+* #### _Contains_
+  Morphia supports _contains()_ method. Use _regex()_ in Spring Data Mongo. For example
+  * Morphia - `query.criteria("fieldName").contains(entity.getFieldName());`
+  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex(".*" + entity.getFieldName() + ".*"));`
 
-##### HasAnyOf
-
-Morphia supports _hasAnyOf()_ method. Use _in()_ in Spring Data Mongo. For example 
-
-Morphia - `query.field("id").hasAnyOf(getIds());`
-
-Spring Data Mongo - `query.addCriteria(where("id").in(getIds()));`
-
-##### Filter
-
-Morphia supports _filter()_ method. Use _is()_ in Spring Data Mongo. For example
-
-Morphia - `query.filter("id", getId());`
-
-Spring Data Mongo - `query.addCriteria(where("id").is(getId()));`
-
-##### Contains
-
-Morphia supports _contains()_ method. Use _regex()_ in Spring Data Mongo. For example
-
-Morphia - `query.criteria("fieldName").contains(entity.getFieldName());`
-
-Spring Data Mongo - `query.addCriteria(where("fieldName").regex(".*" + entity.getFieldName() + ".*"));`
-
-##### HasAllOf
-
-Morphia supports _contains()_ method. Use _regex()_ in Spring Data Mongo. For example
-
-Morphia - `query.field("fieldName").hasAllOf(getFieldNameValues());`
-
-Spring Data Mongo - `query.addCriteria(where("fieldName").all(getFieldNameValues()));`
+* #### _HasAllOf_
+  Morphia supports _contains()_ method. Use _regex()_ in Spring Data Mongo. For example
+  * Morphia - `query.field("fieldName").hasAllOf(getFieldNameValues());`
+  * Spring Data Mongo - `query.addCriteria(where("fieldName").all(getFieldNameValues()));`
 
 
 ### Error handling
@@ -339,8 +323,8 @@ A `@CompoundIndex` can be declared at the entity class.
 
 ### Custom converters
 
-Custom converters can be added directly to the Entity class in Morphia by using annotation like `@Converters(value = {ExampleConverter.class})`. 
-In Spring Data Mongo the custom converters can be added to the builder in your `Application.class`. The entity class that uses the converters must also be registered in the builder like below:
+Custom converters can be added directly to the Entity class in Morphia by using annotation like `@Converters(value = {ExampleConverter.class})`.
+In Spring Data Mongo the custom converters can be added to the builder in your `Application.class` like below:
 
 ```java
 SpringDataMongoBundle.builder()
