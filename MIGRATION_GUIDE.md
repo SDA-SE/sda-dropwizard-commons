@@ -1,4 +1,4 @@
-# Migration Guide
+# Migration Guide from v2 to v3
 
 ## Migrate from OpenTracing to OpenTelemetry 
 
@@ -201,7 +201,7 @@ public MongoOperations getMongoOperations() {
 
 #### Morphia compatibility
 When upgrading a service from 2.x.x a set of converters is provided to stay compatible with a
-database that was initialised with Morphia. To enable these converters, `.withMorphiaCompatibility()`
+database that was initialized with Morphia. To enable these converters, `.withMorphiaCompatibility()`
 can be used when building the SpringDataMongoBundle.
 
 ```java
@@ -361,4 +361,4 @@ Implementing the converter changes from Morphia interface to using the Spring in
 | `@Entity(noClassnameStored = true, name="exampleEntity")` | `@Document("exampleEntity")`. There is no property similar to _noClassnameStored_ as the type/class can't be excluded with Spring Data. |
 | `@PrePersist` | There is no replacement annotation for this. If you are using this on any fields, please set the field before save(). One very common example is to set the creation date like this `entity.setCreated(ZonedDateTime.now(ZoneOffset.UTC));` |
 | `@Embedded` | No replacement available as Spring Data already embeds the document. |
-| `@Converters()` | Replaced with `@ReadingConverter` and `WritingConverter` |
+| `@Converters()` | Replaced with `@ReadingConverter` and `@WritingConverter` |
