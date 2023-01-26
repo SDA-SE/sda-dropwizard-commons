@@ -231,7 +231,7 @@ Simple operations can be realised by the MongoOperations directly.
 Saving an entity:
 ```java
 public void save(SampleEntity entity) {
-    mongoOperations.save(entity);
+    mongoOperations.insert(entity);
 ```
 
 Find by id:
@@ -283,7 +283,7 @@ As Spring Data Mongo doesn't support/provide many query functions provided by Mo
 * #### _EqualIgnoreCase_
   Morphia supports usage of _equalIgnoreCase()_. Use _regex()_ in Spring Data Mongo. For example
   * Morphia - `query.criteria("fieldName").equalIgnoreCase(entity.getFieldName());`
-  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex("^" + entity.getFieldName(), "i"));`
+  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex(Pattern.complie("^" + Pattern.quote(entity.getFieldName()), Pattern.CASE_INSENSITIVE)));`
 
 * #### _HasAnyOf_
   Morphia supports _hasAnyOf()_ method. Use _in()_ in Spring Data Mongo. For example
@@ -298,7 +298,7 @@ As Spring Data Mongo doesn't support/provide many query functions provided by Mo
 * #### _Contains_
   Morphia supports _contains()_ method. Use _regex()_ in Spring Data Mongo. For example
   * Morphia - `query.criteria("fieldName").contains(entity.getFieldName());`
-  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex(".*" + entity.getFieldName() + ".*"));`
+  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex(Pattern.complie(".*" + Pattern.quote(entity.getFieldName()) + ".*")));`
 
 * #### _HasAllOf_
   Morphia supports _contains()_ method. Use _regex()_ in Spring Data Mongo. For example
