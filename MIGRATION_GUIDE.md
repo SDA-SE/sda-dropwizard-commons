@@ -3,7 +3,7 @@
 ## Migrate from OpenTracing to OpenTelemetry
 
 ### Starter Bundle
-If you do not use sda-commons-starter with [SdaPlatformBundle](../../sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java), you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTelemetry bundle.
+If you do not use sda-commons-starter with [SdaPlatformBundle](./sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java), you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTelemetry bundle.
 
 Before:
 ```java
@@ -14,10 +14,12 @@ bootstrap.addBundle(OpenTracingBundle.builder().build());
 After:
 ```java
 bootstrap.addBundle(
-        OpenTelemetryBundle.builder()
-            .withAutoConfiguredTelemetryInstance()
-            .withExcludedUrlsPattern(Pattern.compile(String.join("|", excludedTracingUrls)))
-            .build());
+    OpenTelemetryBundle.builder()
+      .withAutoConfiguredTelemetryInstance()
+      .withExcludedUrlsPattern(Pattern.compile(String.join("|", Arrays.asList(
+        "/ping", "/healthcheck", "/healthcheck/internal", "/metrics",
+        "/metrics/prometheus"))))
+      .build());
 ```
 
 ### Replace OpenTracing dependencies to OpenTelemetry dependencies
@@ -76,7 +78,7 @@ TRACING_DISABLED=true
 ```
 
 ### New environment variables
-In order to configure Open Telemetry, you have to set some environment variables:
+In order to configure Open Telemetry, you can set some environment variables:
 
 | Name                          | Default value                                 | Description                                                                      |
 |-------------------------------|-----------------------------------------------|----------------------------------------------------------------------------------|
@@ -283,7 +285,7 @@ As Spring Data Mongo doesn't support/provide many query functions provided by Mo
 * #### _EqualIgnoreCase_
   Morphia supports usage of _equalIgnoreCase()_. Use _regex()_ in Spring Data Mongo. For example
   * Morphia - `query.criteria("fieldName").equalIgnoreCase(entity.getFieldName());`
-  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex(Pattern.complie("^" + Pattern.quote(entity.getFieldName()), Pattern.CASE_INSENSITIVE)));`
+  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex(Pattern.compile("^" + Pattern.quote(entity.getFieldName()), Pattern.CASE_INSENSITIVE)));`
 
 * #### _HasAnyOf_
   Morphia supports _hasAnyOf()_ method. Use _in()_ in Spring Data Mongo. For example
@@ -298,7 +300,7 @@ As Spring Data Mongo doesn't support/provide many query functions provided by Mo
 * #### _Contains_
   Morphia supports _contains()_ method. Use _regex()_ in Spring Data Mongo. For example
   * Morphia - `query.criteria("fieldName").contains(entity.getFieldName());`
-  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex(Pattern.complie(".*" + Pattern.quote(entity.getFieldName()) + ".*")));`
+  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex(Pattern.compile(".*" + Pattern.quote(entity.getFieldName()) + ".*")));`
 
 * #### _HasAllOf_
   Morphia supports _contains()_ method. Use _regex()_ in Spring Data Mongo. For example
