@@ -1,6 +1,36 @@
 # Migration Guide from v2 to v3
 
-## Migrate from OpenTracing to OpenTelemetry
+The following modules contain changes:
+
+1. sda-commons-server-testing
+2. sda-commons-server-auth-testing
+3. sda-commons-server-opentracing
+4. sda-commons-server-morphia
+5. sda-commons-server-kafka
+
+## 1 sda-commons-server-testing
+
+Does not provide any Junit 4 rules anymore. You should find Junit 5 extensions for all of
+your rules. We recommend to migrate all your Junit 4 tests to Junit 4.
+
+## 2 sda-commons-server-auth-testing
+
+Please change your `test-config.yaml` if they use `${AUTH_RULE}` as placeholder. We wanted to
+get rid of all references to old Junit 4 rules.
+
+v2
+```
+  config: ${AUTH_RULE}
+```
+
+v3
+```
+  config: ${AUTH_CONFIG_KEYS}
+```
+
+## 3 sda-commons-server-opentracing
+
+Migrate from OpenTracing to OpenTelemetry.
 
 ### Starter Bundle
 If you do not use sda-commons-starter with [SdaPlatformBundle](./sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java), you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTelemetry bundle.
@@ -171,7 +201,9 @@ After:
     ```
 
 
-## Migrate from Morphia to Spring-Data-Mongo
+## 4 sda-commons-server-morphia
+
+Migrate to [Spring Data Mongo](https://docs.spring.io/spring-data/mongodb/docs/).
 
 The spring-data-mongo package is available at the following coordinates:
 ```groovy
@@ -348,3 +380,11 @@ Implementing the converter changes from Morphia interface to using the Spring in
 | `@PrePersist` | There is no replacement annotation for this. If you are using this on any fields, please set the field before save(). One very common example is to set the creation date like this `entity.setCreated(ZonedDateTime.now(ZoneOffset.UTC));` |
 | `@Embedded` | No replacement available as Spring Data already embeds the document. |
 | `@Converters()` | Replaced with `@ReadingConverter` and `@WritingConverter` |
+
+
+## 5 sda-commons-server-kafka
+
+Some deprecated code was removed.
+Especially we removed the feature `createTopicIfMissing` because we don't recommend services
+to do that. You usually need different privileges for topic creation that you don't want to
+give to your services.
