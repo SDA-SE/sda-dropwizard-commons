@@ -1,12 +1,12 @@
 package org.sdase.commons.server.dropwizard.bundles;
 
-import io.dropwizard.configuration.EnvironmentVariableLookup;
+import org.apache.commons.text.lookup.StringLookup;
 
 /**
  * Lookup for Java's system properties and environment variables. System properties have higher
  * priority.
  */
-public class SystemPropertyAndEnvironmentLookup extends EnvironmentVariableLookup {
+public class SystemPropertyAndEnvironmentLookup implements StringLookup {
 
   @Override
   public String lookup(String key) {
@@ -14,6 +14,6 @@ public class SystemPropertyAndEnvironmentLookup extends EnvironmentVariableLooku
     if (result != null) {
       return result;
     }
-    return super.lookup(key);
+    return System.getenv(key);
   }
 }
