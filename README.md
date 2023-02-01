@@ -14,11 +14,13 @@ SDA Dropwizard Commons is a set of libraries to bootstrap services easily that f
 the SDA SE.
 
 >
-> ##### ⚠️ ATTENTION: Please use SDA Dropwizard Commons version 2 and newer:
+> ##### ⚠️ ATTENTION: Please use SDA Dropwizard Commons version 3 and newer:
 >
-> New features and security patches are only contributed in version 2.x.x.
-> As the support for [Dropwizard version 1.3.x is discontinued](https://github.com/dropwizard/dropwizard/releases/tag/v1.3.29), we also discontinued the version 1.x.x.
-> Please make sure to upgrade to version 2 as soon as possible.
+> New features can only be contributed in version 3.x.x.
+> 
+> Version 2.x.x only receives critical security updates.
+> 
+> Please make sure to upgrade to version 3 as soon as possible.
 >
 
 SDA Dropwizard Commons is separated in different modules that can be combined as needed. Most of the modules require the 
@@ -170,15 +172,14 @@ and map enumerations (keys) between the API data model and a possible implementa
 
 ##### MongoDB
 
-The module [`sda-commons-server-morphia`](./sda-commons-server-morphia/README.md) is used to work
-with MongoDB using [Morphia](https://github.com/MorphiaOrg).
+The module [`sda-commons-server-spring-data-mongo`](./sda-commons-server-spring-data-mongo/README.md) is used to work
+with MongoDB using [Spring Data Mongo](https://spring.io/projects/spring-data-mongodb).
 
 The module [`sda-commons-server-mongo-testing`](./sda-commons-server-mongo-testing/README.md) 
 provides a MongoDB instance for integration testing.
 
-The module [`sda-commons-server-morphia-exmaple`](./sda-commons-server-morphia-example/README.md) shows how
-to use the bundle within an application.
-
+The [`example`](./sda-commons-server-spring-data-mongo/src/test/java/org/sdase/commons/server/spring/data/mongo/example)
+package shows how to use the bundle within an application.
 
 ##### Open Telemetry
 
@@ -218,14 +219,6 @@ Dropwizard application.
 
 The module [`sda-commons-shared-certificates`](./sda-commons-shared-certificates/README.md) adds support for trusting custom certificate authorities.
 
-
-##### Swagger
-
-The module [`sda-commons-server-swagger`](./sda-commons-server-swagger/README.md) is the base 
-module to add [Swagger](https://github.com/swagger-api/swagger-core) support for applications
-in the SDA SE infrastructure.
-
-
 ##### Trace Token
 
 The module [`sda-commons-server-trace`](./sda-commons-server-trace/README.md) adds support to track create a 
@@ -239,7 +232,7 @@ The module [`sda-commons-server-weld`](./sda-commons-server-weld/README.md) is u
 inside a Weld-SE container and provides CDI support for servlets, listeners and resources.
 
 The module [`sda-commons-server-weld-example`](./sda-commons-server-weld-example/README.md) gives a small example on
-starting an application within an Weld container.
+starting an application within a Weld container.
 
 
 ##### YAML
@@ -249,7 +242,7 @@ The module [`sda-commons-shared-yaml`](./sda-commons-shared-yaml/README.md) adds
 
 ### Client
 
-All modules prefixed with `sda-commons-client-` provide support for applications that use a HTTP client to access other
+All modules prefixed with `sda-commons-client-` provide support for applications that use an HTTP client to access other
 services.
 
 
