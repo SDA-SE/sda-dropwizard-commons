@@ -16,15 +16,20 @@ The Dropwizard module provides default Bundles that are useful for most Dropwiza
 ### ConfigurationSubstitutionBundle
 
 The [`ConfigurationSubstitutionBundle`](./src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
-allows to use placeholders for environment variables or system properties in the config.yaml of the 
-application to dynamically configure the application at startup. Default values can be added after 
-the variable name separated by `:-`
+allows to use placeholders for environment variables or system properties in the `config.yaml` of
+the application to dynamically configure the application at startup. Default values can be added
+after the variable name separated by `:-`
+
+The `ConfigurationSubstitutionBundle` supports the modifier `toJsonString` to convert String values
+in the `config.yaml` into valid Json String values by escaping the value and wrapping it in quotes.
+The default value of a value modified by `toJsonString` must be valid Json itself, e.g. `null` or
+`"my\nmultiline\nstring"`.
 
 ```yaml
 database:
   driverClass: org.postgresql.Driver
   user: ${POSTGRES_USER:-dev}
-  password: ${POSTGRES_PASSWORD:-s3cr3t}
+  password: ${POSTGRES_PASSWORD | toJsonString:-"s3cr3t"}
   url: ${POSTGRES_URL:-localhost:12345}
 ```
 
