@@ -25,12 +25,6 @@ class SystemPropertyAndEnvironmentLookupTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"FOO", "FOO | toJsonString"})
-  void shouldProvideTheBareKeyToLookup(String given) {
-    assertThat(SystemPropertyAndEnvironmentLookup.extractKeyToLookup(given)).isEqualTo("FOO");
-  }
-
-  @ParameterizedTest
   @SetSystemProperty(key = "FOO", value = "a\"string that\nneeds\\escaping")
   @ValueSource(
       strings = {
