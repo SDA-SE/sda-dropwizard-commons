@@ -1,6 +1,8 @@
 package org.sdase.commons.server.kafka;
 
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -61,7 +63,7 @@ public class KafkaProperties extends Properties {
     props.putAll(configureSecurity(configuration.getSecurity()));
 
     if (configuration.getConfig() != null) {
-      props.putAll(configuration.getConfig());
+      props.putAll(noBlankValues(configuration.getConfig()));
     }
 
     return props;
@@ -99,7 +101,7 @@ public class KafkaProperties extends Properties {
     props.put(
         AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG,
         configuration.getAdminConfig().getAdminClientRequestTimeoutMs());
-    props.putAll(configuration.getAdminConfig().getConfig());
+    props.putAll(noBlankValues(configuration.getAdminConfig().getConfig()));
     return props;
   }
 
@@ -138,5 +140,11 @@ public class KafkaProperties extends Properties {
       default:
         throw new IllegalArgumentException("Unsupported SASL mechanism " + saslMechanism);
     }
+  }
+
+  private static Map<String, String> noBlankValues(Map<String, String> original) {
+    return original.entrySet().stream()
+        .filter(e -> StringUtils.isNotBlank(e.getValue()))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 }
