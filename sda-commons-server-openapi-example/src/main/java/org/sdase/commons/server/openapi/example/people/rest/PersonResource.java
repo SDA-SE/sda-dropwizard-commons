@@ -4,6 +4,7 @@ import io.openapitools.jackson.dataformat.hal.HALLink;
 import io.openapitools.jackson.dataformat.hal.annotation.Link;
 import io.openapitools.jackson.dataformat.hal.annotation.Resource;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import java.util.List;
 
 /** Example resource representing a Person in the REST API */
@@ -19,12 +20,18 @@ public class PersonResource {
 
   // Provide the description and an example for the property. Examples are optional but help a
   // consumer to understand the behavior. Examples also have an effect on tools, like the Swagger UI
-  // to display useful responds. Required allows to mark fields as non optional. Fields are optional
+  // to display useful responds. Required allows to mark fields as non-optional. Fields are optional
   // by default.
-  @Schema(description = "The first name of the person.", required = true, example = "John")
+  @Schema(
+      description = "The first name of the person.",
+      requiredMode = RequiredMode.REQUIRED,
+      example = "John")
   private String firstName;
 
-  @Schema(description = "The last name of the person.", required = true, example = "Doe")
+  @Schema(
+      description = "The last name of the person.",
+      requiredMode = RequiredMode.REQUIRED,
+      example = "Doe")
   private String lastName;
 
   // As long a the JSON example feature isn't disabled, one can use JSON to describe more complex
