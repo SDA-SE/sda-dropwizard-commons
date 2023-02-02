@@ -3,6 +3,8 @@ package org.sdase.commons.server.dropwizard.bundles;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,13 +32,13 @@ class LookupKeyAndOperatorsTest {
 
   static Stream<Arguments> testData() {
     return Stream.of(
-        of("FOO_KEY", "FOO_KEY", List.of()),
-        of("FOO_KEY|toJsonString", "FOO_KEY", List.of("toJsonString")),
-        of("FOO_KEY | toJsonString", "FOO_KEY", List.of("toJsonString")),
-        of(" FOO_KEY|toJsonString ", "FOO_KEY", List.of("toJsonString")),
+        of("FOO_KEY", "FOO_KEY", Collections.EMPTY_LIST),
+        of("FOO_KEY|toJsonString", "FOO_KEY", Collections.singletonList("toJsonString")),
+        of("FOO_KEY | toJsonString", "FOO_KEY", Collections.singletonList("toJsonString")),
+        of(" FOO_KEY|toJsonString ", "FOO_KEY", Collections.singletonList("toJsonString")),
         of(
             " FOO_KEY|toLowerCase|toJsonString ",
             "FOO_KEY",
-            List.of("toLowerCase", "toJsonString")));
+            Arrays.asList("toLowerCase", "toJsonString")));
   }
 }
