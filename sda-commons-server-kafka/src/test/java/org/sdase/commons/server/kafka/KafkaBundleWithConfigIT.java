@@ -191,11 +191,10 @@ class KafkaBundleWithConfigIT {
     assertThrows(
         ConfigurationException.class,
         () -> {
+          StringDeserializer keyDeSerializer = new StringDeserializer();
           try (KafkaConsumer<String, String> consumer =
               kafkaBundle.createConsumer(
-                  new StringDeserializer(),
-                  new StringDeserializer(),
-                  "notExistingConsumerConfig")) {
+                  keyDeSerializer, keyDeSerializer, "notExistingConsumerConfig")) {
             // empty
           }
         });
@@ -234,9 +233,10 @@ class KafkaBundleWithConfigIT {
     assertThrows(
         ConfigurationException.class,
         () -> {
+          StringSerializer keySerializer = new StringSerializer();
           try (KafkaProducer<String, String> producer =
               kafkaBundle.createProducer(
-                  new StringSerializer(), new StringSerializer(), "notExistingProducerConfig")) {
+                  keySerializer, keySerializer, "notExistingProducerConfig")) {
             // empty
           }
         });
