@@ -5,6 +5,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import java.net.URI;
 import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
@@ -15,6 +16,7 @@ import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBund
 
 public class JerseyClientExampleApplication extends Application<JerseyClientExampleConfiguration> {
 
+  public static final String CARS_PATH = URI.create("cars").toString();
   private JerseyClientBundle<Configuration> jerseyClientBundle =
       JerseyClientBundle.builder().withConsumerTokenProvider(c -> "MyConsumerToken").build();
 
@@ -83,7 +85,7 @@ public class JerseyClientExampleApplication extends Application<JerseyClientExam
   public int usePlatformClient() {
     return platformClient
         .target(apiABaseUrl)
-        .path("/cars")
+        .path(CARS_PATH)
         .request(MediaType.APPLICATION_JSON_TYPE)
         .get()
         .getStatus();
@@ -98,7 +100,7 @@ public class JerseyClientExampleApplication extends Application<JerseyClientExam
   public int useExternalClient() {
     return externalClient
         .target(apiABaseUrl)
-        .path("/cars")
+        .path(CARS_PATH)
         .request(MediaType.APPLICATION_JSON_TYPE)
         .get()
         .getStatus();
@@ -114,7 +116,7 @@ public class JerseyClientExampleApplication extends Application<JerseyClientExam
   public int useConfiguredExternalClient() {
     return configuredExternalClient
         .target(apiABaseUrl)
-        .path("/cars")
+        .path(CARS_PATH)
         .request(MediaType.APPLICATION_JSON_TYPE)
         .get()
         .getStatus();

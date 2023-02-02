@@ -20,15 +20,15 @@ public class ContractCreatedMessageHandler
   }
 
   @Override
-  public void handle(ConsumerRecord<String, ContractCreatedEvent> record) {
-    ContractCreatedEvent.ContractCreated data = record.value().getData();
+  public void handle(ConsumerRecord<String, ContractCreatedEvent> consumerRecord) {
+    ContractCreatedEvent.ContractCreated data = consumerRecord.value().getData();
     inMemoryStore.addContractCreatedEvent(data);
     LOGGER.info("Contract {} created for partner {}", data.getContractId(), data.getPartnerId());
   }
 
   @Override
   public boolean handleError(
-      ConsumerRecord<String, ContractCreatedEvent> record,
+      ConsumerRecord<String, ContractCreatedEvent> consumerRecord,
       RuntimeException e,
       Consumer<String, ContractCreatedEvent> consumer) {
     return false;

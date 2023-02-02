@@ -24,7 +24,7 @@ class HalLinkProviderTest {
 
   @Test
   void shouldFailWhenNoInterfaceIsProvided() {
-    assertThatThrownBy(() -> linkTo(methodOn(TestController.class).testMethod("FAIL")))
+    assertThatThrownBy(() -> methodWithNoInterfaceProvided())
         .isInstanceOf(HalLinkMethodInvocationException.class);
   }
 
@@ -56,8 +56,7 @@ class HalLinkProviderTest {
 
   @Test
   void shouldFailWithoutAnnotation() {
-    assertThatThrownBy(
-            () -> linkTo(methodOn(TestApi.class).testMethodWithoutPathParamAnnotation("FAIL")))
+    assertThatThrownBy(() -> methodWithoutPathParamAnnotation())
         .isInstanceOf(HalLinkMethodInvocationException.class);
   }
 
@@ -85,6 +84,14 @@ class HalLinkProviderTest {
     final URI uri = linkResult.asUri();
     assertThat(halLink).isNotNull().extracting("href").isEqualTo(expectedPath);
     assertThat(uri).isNotNull().hasToString(expectedPath);
+  }
+
+  private static LinkResult methodWithNoInterfaceProvided() {
+    return linkTo(methodOn(TestController.class).testMethod("FAIL"));
+  }
+
+  private static LinkResult methodWithoutPathParamAnnotation() {
+    return linkTo(methodOn(TestApi.class).testMethodWithoutPathParamAnnotation("FAIL"));
   }
 }
 
