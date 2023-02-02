@@ -7,6 +7,11 @@ dependencies {
 
   api 'io.prometheus:simpleclient'
 
+  api 'javax.xml.bind:jaxb-api', {
+    exclude group: 'javax.activation', module: 'javax.activation-api'
+  }
+  api "jakarta.xml.bind:jakarta.xml.bind-api"
+
   testImplementation 'org.mockito:mockito-core'
   testImplementation 'org.mockito:mockito-junit-jupiter'
   testImplementation 'org.objenesis:objenesis'
