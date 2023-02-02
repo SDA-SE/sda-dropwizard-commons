@@ -71,6 +71,7 @@ public class SystemPropertyAndEnvironmentLookup implements StringLookup {
   }
 
   private String toJsonString(String source) {
+    // inspired by com.fasterxml.jackson.databind.node.TextNode#appendQuoted(StringBuilder, String)
     StringBuilder quoted = new StringBuilder();
     CharTypes.appendQuoted(quoted, source);
     return "\"" + quoted + "\"";
