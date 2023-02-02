@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
-public class AddRequestHeaderFilterTest {
+class AddRequestHeaderFilterTest {
 
   @RegisterExtension
   private static final WireMockClassExtension WIRE =

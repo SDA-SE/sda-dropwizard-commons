@@ -121,9 +121,9 @@ class MessageListenerStrategyOnCloseTest {
     private final Set<String> processedKeys = new HashSet<>();
 
     @Override
-    public void handle(ConsumerRecord<String, String> record) {
-      LOGGER.info("Processing record: {}", record.key());
-      processedKeys.add(record.key());
+    public void handle(ConsumerRecord<String, String> consumerRecord) {
+      LOGGER.info("Processing record: {}", consumerRecord.key());
+      processedKeys.add(consumerRecord.key());
 
       try {
         long sleepFor = 1000L;
