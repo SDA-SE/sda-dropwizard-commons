@@ -173,7 +173,7 @@ public class TopicComparer {
       ComparisonResult.ComparisonResultBuilder resultBuilder,
       List<String> topicNames,
       AdminClient adminClient) {
-    return adminClient.describeTopics(topicNames).values().entrySet().stream()
+    return adminClient.describeTopics(topicNames).topicNameValues().entrySet().stream()
         .flatMap(
             desc -> {
               try {

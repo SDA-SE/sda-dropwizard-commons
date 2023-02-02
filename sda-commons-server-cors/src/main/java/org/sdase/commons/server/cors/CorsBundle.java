@@ -108,7 +108,7 @@ public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> 
   }
 
   public static InitialBuilder builder() {
-    return new Builder();
+    return new Builder<>();
   }
 
   public interface InitialBuilder {
