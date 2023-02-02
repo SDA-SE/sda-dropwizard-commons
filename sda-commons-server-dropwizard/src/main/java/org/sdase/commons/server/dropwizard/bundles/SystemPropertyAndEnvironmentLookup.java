@@ -16,31 +16,9 @@ public class SystemPropertyAndEnvironmentLookup implements StringLookup {
 
   private static final String TO_JSON_STRING_OPERATOR_NORMALIZED = "toJsonString".toLowerCase();
 
-  /**
-   * Provides the actual key to lookup without any operators.
-   *
-   * @param definedKey The key with operators as defined in the String with substitutions. Examples:
-   *     <ul>
-   *       <li><code>foo: ${FOO_PROPERTY}</code> =&gt; definedKey = {@code FOO_PROPERTY}
-   *       <li><code>foo: ${FOO_PROPERTY:-default}</code> =&gt; definedKey = {@code FOO_PROPERTY}
-   *       <li><code>foo: ${FOO_PROPERTY | toJsonString:-default}</code> =&gt; definedKey = {@code
-   *           FOO_PROPERTY | toJsonString}
-   *     </ul>
-   *
-   * @return The key that should be looked up in the environment. All examples for {@code
-   *     definedKey} above will return {@code FOO_PROPERTY}.
-   */
-  public static String extractKeyToLookup(String definedKey) {
-    return splitKeyInKeyAndOperators(definedKey)[0].trim();
-  }
-
-  private static String[] splitKeyInKeyAndOperators(String definedKey) {
-    return definedKey.split("\\|");
-  }
-
   @Override
   public String lookup(String key) {
-    String[] keyAndOperators = splitKeyInKeyAndOperators(key);
+    LookupKeyAndOperators keyAndOperators = LookupKeyAndOperators.of(key);
     String result = lookupValue(keyAndOperators);
     if (result == null) {
       return null;
@@ -48,9 +26,8 @@ public class SystemPropertyAndEnvironmentLookup implements StringLookup {
     return modifyValue(keyAndOperators, result);
   }
 
-  private String modifyValue(String[] keyAndOperators, String originalValue) {
-    for (int i = 1; i < keyAndOperators.length; i++) {
-      String operator = keyAndOperators[i].trim();
+  private String modifyValue(LookupKeyAndOperators lookupKeyAndOperators, String originalValue) {
+    for (String operator : lookupKeyAndOperators.getOperators()) {
       String normalizedOperator = operator.toLowerCase();
       // refactor to switch-case and separate operator classes when more operators are added
       if (TO_JSON_STRING_OPERATOR_NORMALIZED.equals(normalizedOperator)) {
@@ -59,14 +36,14 @@ public class SystemPropertyAndEnvironmentLookup implements StringLookup {
         LOGGER.error(
             "Ignoring unknown substitution operator '{}' when replacing {}",
             operator,
-            keyAndOperators[0]);
+            lookupKeyAndOperators.getKey());
       }
     }
     return originalValue;
   }
 
-  private String lookupValue(String[] keyAndOperator) {
-    String keyToLookup = keyAndOperator[0].trim();
+  private String lookupValue(LookupKeyAndOperators lookupKeyAndOperators) {
+    String keyToLookup = lookupKeyAndOperators.getKey();
     return Optional.ofNullable(System.getProperty(keyToLookup)).orElse(System.getenv(keyToLookup));
   }
 
