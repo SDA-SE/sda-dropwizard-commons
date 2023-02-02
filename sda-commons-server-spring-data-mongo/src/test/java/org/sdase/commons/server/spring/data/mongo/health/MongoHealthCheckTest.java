@@ -16,7 +16,7 @@ import org.mockito.Mockito;
  * Tests that the health checks reports healthy when the ping result is ok and unhealthy if
  * exception is thrown
  */
-public class MongoHealthCheckTest {
+class MongoHealthCheckTest {
 
   private MongoDatabase dbMock;
 
@@ -26,7 +26,7 @@ public class MongoHealthCheckTest {
   }
 
   @Test
-  public void shouldBeHealthy() {
+  void shouldBeHealthy() {
     // given
     when(dbMock.runCommand(Mockito.any())).thenReturn(new Document("ok", Double.valueOf("1.0")));
 
@@ -38,7 +38,7 @@ public class MongoHealthCheckTest {
   }
 
   @Test
-  public void shouldBeUnHealthy() {
+  void shouldBeUnHealthy() {
     // given
     when(dbMock.runCommand(Mockito.any()))
         .thenThrow(new MongoExecutionTimeoutException(1, "DUMMY"));

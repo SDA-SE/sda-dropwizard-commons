@@ -53,6 +53,10 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
   private static final String HEALTH_SERVLET_URL = "/healthcheck/prometheus"; // NOSONAR
 
   private static final Logger LOG = LoggerFactory.getLogger(PrometheusBundle.class);
+  public static final String APACHE_HTTP_CLIENT_CONNECTIONS = "apache_http_client_connections";
+  public static final String MANAGER = "manager";
+  public static final String APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS =
+      "apache_http_client_request_duration_seconds";
 
   private RequestDurationHistogramSpecification requestDurationHistogramSpecification;
 
@@ -113,85 +117,85 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.available-connections",
-            "apache_http_client_connections",
-            "manager",
+            APACHE_HTTP_CLIENT_CONNECTIONS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "available"))); // NOSONAR
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.leased-connections",
-            "apache_http_client_connections",
-            "manager",
+            APACHE_HTTP_CLIENT_CONNECTIONS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "leased")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.max-connections",
-            "apache_http_client_connections",
-            "manager",
+            APACHE_HTTP_CLIENT_CONNECTIONS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "max")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.pending-connections",
-            "apache_http_client_connections",
-            "manager",
+            APACHE_HTTP_CLIENT_CONNECTIONS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "pending")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.client.*.*.get-requests",
-            "apache_http_client_request_duration_seconds",
-            "manager",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "get"))); // NOSONAR
     mappers.add(
         createMapperConfig(
             "org.apache.http.client.*.*.post-requests",
-            "apache_http_client_request_duration_seconds",
-            "manager",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "post")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.client.*.*.put-requests",
-            "apache_http_client_request_duration_seconds",
-            "manager",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "put")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.client.*.*.delete-requests",
-            "apache_http_client_request_duration_seconds",
-            "manager",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "delete")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.client.*.*.head-requests",
-            "apache_http_client_request_duration_seconds",
-            "manager",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "head")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.client.*.*.connect-requests",
-            "apache_http_client_request_duration_seconds",
-            "manager",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "connect")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.client.*.*.options-requests",
-            "apache_http_client_request_duration_seconds",
-            "manager",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "options")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.client.*.*.trace-requests",
-            "apache_http_client_request_duration_seconds",
-            "manager",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "trace")));
     mappers.add(
@@ -254,7 +258,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
       Object labelName = labelNames[i];
 
       if (labelName instanceof Entry) {
-        Entry pair = (Entry) labelName;
+        var pair = (Entry) labelName;
         labels.put(pair.getKey().toString(), pair.getValue().toString());
       } else {
         labels.put(labelName.toString(), "${" + i + "}");

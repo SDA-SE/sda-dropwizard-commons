@@ -14,7 +14,7 @@ public class IgnoreAndProceedErrorHandler<K, V> implements ErrorHandler<K, V> {
 
   @Override
   public boolean handleError(
-      ConsumerRecord<K, V> record, RuntimeException e, Consumer<K, V> consumer) {
+      ConsumerRecord<K, V> consumerRecord, RuntimeException e, Consumer<K, V> consumer) {
     // do nothing. Just ignore the error
     return true;
   }
