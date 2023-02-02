@@ -15,25 +15,27 @@ updates:
   labels:
     - 'dependencies'
 # maintaining v2
-- package_manager: "java:gradle"
-  target_branch: "release/2.x.x"
+- package-ecosystem: gradle
+  target-branch: "release/2.x.x"
   directory: "/"
-  update_schedule: "weekly"
-  default_labels:
+  schedule:
+    interval: "weekly"
+  labels:
     - "dependencies"
     - "release-2.x.x"
-  commit_message:
+  commit-message:
     prefix: "fix"
-    prefix_development: "chore"
-    include_scope: true
-- package_manager: "github_actions"
-  target_branch: "release/2.x.x"
+    prefix-development: "chore"
+    include: scope
+- package-ecosystem: github-actions
+  target-branch: "release/2.x.x"
   directory: "/"
-  update_schedule: "monthly"
-  default_labels:
+  schedule:
+    interval: "weekly"
+  labels:
     - "dependencies"
     - "release-2.x.x"
-  commit_message:
+  commit-message:
     prefix: "chore"
-    prefix_development: "chore"
-    include_scope: true
+    prefix-development: "chore"
+    include: scope
