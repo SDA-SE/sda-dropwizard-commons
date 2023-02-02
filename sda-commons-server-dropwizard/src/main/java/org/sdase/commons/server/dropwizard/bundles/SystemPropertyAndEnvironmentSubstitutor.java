@@ -4,6 +4,13 @@ import io.dropwizard.configuration.UndefinedEnvironmentVariableException;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.TextStringBuilder;
 
+/**
+ * A {@link StringSubstitutor} that picks properties from {@link System#getProperty(String)}
+ * (preferred) and {@link System#getenv(String)} (secondary) that may be modified by operators.
+ * Substitution variables are identified according the defaults of {@link StringSubstitutor}.
+ *
+ * @see SystemPropertyAndEnvironmentLookup Details about lookup and modification by operators
+ */
 public class SystemPropertyAndEnvironmentSubstitutor extends StringSubstitutor {
 
   public SystemPropertyAndEnvironmentSubstitutor() {
