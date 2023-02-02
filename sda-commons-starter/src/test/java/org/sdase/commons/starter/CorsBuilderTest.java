@@ -53,14 +53,13 @@ class CorsBuilderTest {
 
   @Test
   void noCorsConfigurationIfCorsDisabled() {
-    assertThatCode(
-            () ->
-                SdaPlatformBundle.builder()
-                    .usingCustomConfig(SdaPlatformConfiguration.class)
-                    .withAuthConfigProvider(c -> new AuthConfig())
-                    .withoutCorsSupport()
-                    .addOpenApiResourcePackageClass(this.getClass())
-                    .withCorsAdditionalExposedHeaders("x-foo"))
+    var sdaPlatformBundleBuilder =
+        SdaPlatformBundle.builder()
+            .usingCustomConfig(SdaPlatformConfiguration.class)
+            .withAuthConfigProvider(c -> new AuthConfig())
+            .withoutCorsSupport()
+            .addOpenApiResourcePackageClass(this.getClass());
+    assertThatCode(() -> sdaPlatformBundleBuilder.withCorsAdditionalExposedHeaders("x-foo"))
         .isInstanceOf(IllegalStateException.class);
   }
 }

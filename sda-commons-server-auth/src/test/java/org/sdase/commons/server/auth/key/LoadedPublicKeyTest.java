@@ -8,7 +8,7 @@ import java.net.URI;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class LoadedPublicKeyTest {
+class LoadedPublicKeyTest {
 
   @Test
   void shouldBeEqualWithDifferentKeyInstances() {
