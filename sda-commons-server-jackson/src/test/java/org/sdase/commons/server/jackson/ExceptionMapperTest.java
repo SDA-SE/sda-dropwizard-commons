@@ -40,8 +40,7 @@ class ExceptionMapperTest {
 
   @Test
   void shouldReturnErrorForNonExceptionStatusCode() {
-    assertThrows(
-        IllegalStateException.class,
-        () -> ApiException.builder().httpCode(200).title("Error").build());
+    var codeBuilder = ApiException.builder();
+    assertThrows(IllegalStateException.class, () -> codeBuilder.httpCode(200));
   }
 }

@@ -55,7 +55,7 @@ public class CircuitBreakerWrapperHelper {
     }
 
     proxyFactory.setFilter(m -> !IGNORED_METHODS.contains(m.getName()));
-    Class proxyClass = proxyFactory.createClass();
+    var proxyClass = proxyFactory.createClass();
 
     // Extract all methods from the target class, to forward calls from the
     // proxy to the target.

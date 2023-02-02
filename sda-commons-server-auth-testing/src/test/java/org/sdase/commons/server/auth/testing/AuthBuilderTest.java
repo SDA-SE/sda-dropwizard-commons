@@ -121,7 +121,7 @@ class AuthBuilderTest {
     claims.put("l[]", new Long[] {1L, 2L});
     claims.put("date", dateValue);
     claims.put("invalid", Instant.now());
-    assertThrows(IllegalArgumentException.class, () -> authBuilder.addClaims(claims).buildToken());
+    assertThrows(IllegalArgumentException.class, () -> authBuilder.addClaims(claims));
   }
 
   @Test

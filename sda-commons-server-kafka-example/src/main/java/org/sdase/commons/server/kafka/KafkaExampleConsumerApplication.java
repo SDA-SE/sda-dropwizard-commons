@@ -64,7 +64,7 @@ public class KafkaExampleConsumerApplication extends Application<KafkaExampleCon
             .withValueDeserializer(new KafkaJsonDeserializer<>(configuredObjectMapper, Value.class))
             .withListenerStrategy(
                 new AutocommitMLS<>(
-                    record -> receivedMessages.add(record.value()),
+                    consumerRecord -> receivedMessages.add(consumerRecord.value()),
                     new IgnoreAndProceedErrorHandler<>()))
             .build());
   }
@@ -90,7 +90,7 @@ public class KafkaExampleConsumerApplication extends Application<KafkaExampleCon
             .withValueDeserializer(new LongDeserializer())
             .withListenerStrategy(
                 new AutocommitMLS<>(
-                    record -> receivedLongs.add(record.value()),
+                    consumerRecord -> receivedLongs.add(consumerRecord.value()),
                     new IgnoreAndProceedErrorHandler<>()))
             .build());
   }

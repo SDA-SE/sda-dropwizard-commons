@@ -127,7 +127,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
   // Builder
   //
   public static InitialBuilder builder() {
-    return new Builder();
+    return new Builder<>();
   }
 
   public interface InitialBuilder {
