@@ -1,13 +1,20 @@
 package org.sdase.commons.server.openapi.example.people.rest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 
 @Schema(description = "Defines a postal address.")
 public class AddressResource {
-  @Schema(description = "The street of the address.", required = true, example = "Reeperbahn 1")
+  @Schema(
+      description = "The street of the address.",
+      requiredMode = RequiredMode.REQUIRED,
+      example = "Reeperbahn 1")
   private String street;
 
-  @Schema(description = "The city of the address.", required = true, example = "Hamburg")
+  @Schema(
+      description = "The city of the address.",
+      requiredMode = RequiredMode.REQUIRED,
+      example = "Hamburg")
   private String city;
 
   public String getStreet() {

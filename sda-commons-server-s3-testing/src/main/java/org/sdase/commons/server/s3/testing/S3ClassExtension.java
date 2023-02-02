@@ -39,10 +39,12 @@ public class S3ClassExtension extends S3Mock implements BeforeAllCallback, After
     stop();
   }
 
+  @Override
   public void start() {
     super.start();
   }
 
+  @Override
   public void stop() {
     super.stop();
   }

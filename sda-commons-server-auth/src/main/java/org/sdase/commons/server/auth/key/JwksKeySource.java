@@ -1,7 +1,6 @@
 package org.sdase.commons.server.auth.key;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.dropwizard.util.Sets;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
 import java.security.KeyFactory;
@@ -38,9 +37,9 @@ public class JwksKeySource implements KeySource {
 
   private static final String RSA_KTY = "RSA";
   private static final String EC_KTY = "EC";
-  private static final Set<String> SUPPORTED_KTY = Sets.of(RSA_KTY, EC_KTY);
+  private static final Set<String> SUPPORTED_KTY = Set.of(RSA_KTY, EC_KTY);
   private static final Set<String> SUPPORTED_ALG =
-      Sets.of("RS256", "RS384", "RS512", "ES256", "ES384", "ES512");
+      Set.of("RS256", "RS384", "RS512", "ES256", "ES384", "ES512");
 
   private final String jwksUri;
 
@@ -112,11 +111,11 @@ public class JwksKeySource implements KeySource {
   }
 
   private boolean isSupportedKeyType(Key key) {
-    return SUPPORTED_KTY.contains(key.getKty());
+    return key.getKty() != null && SUPPORTED_KTY.contains(key.getKty());
   }
 
   private boolean isSupportedAlg(Key key) {
-    return SUPPORTED_ALG.contains(key.getAlg());
+    return key.getAlg() != null && SUPPORTED_ALG.contains(key.getAlg());
   }
 
   private static String mapCrvToStdName(String crv) {
