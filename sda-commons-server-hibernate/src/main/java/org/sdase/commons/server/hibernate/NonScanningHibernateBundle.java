@@ -15,7 +15,7 @@ import java.util.List;
 public abstract class NonScanningHibernateBundle<T extends Configuration>
     extends HibernateBundle<T> {
 
-  public NonScanningHibernateBundle(
+  protected NonScanningHibernateBundle(
       List<Class<?>> entities, SessionFactoryFactory sessionFactoryFactory) {
     super(new ArrayList<>(entities), sessionFactoryFactory);
   }

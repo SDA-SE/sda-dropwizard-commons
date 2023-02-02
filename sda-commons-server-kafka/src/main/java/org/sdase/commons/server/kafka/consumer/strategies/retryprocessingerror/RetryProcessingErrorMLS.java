@@ -49,46 +49,46 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
       ConsumerRecords<K, V> records, KafkaConsumer<K, V> consumer, TopicPartition partition) {
     List<ConsumerRecord<K, V>> partitionRecords = records.records(partition);
     OffsetAndMetadata lastCommitOffset = null;
-    for (ConsumerRecord<K, V> record : partitionRecords) {
-      LOGGER.debug("Handling message for {}", record.key());
+    for (ConsumerRecord<K, V> consumerRecord : partitionRecords) {
+      LOGGER.debug("Handling message for {}", consumerRecord.key());
 
       try {
         SimpleTimer timer = new SimpleTimer();
-        handler.handle(record);
+        handler.handle(consumerRecord);
         // mark last successful processed record for commit
-        lastCommitOffset = new OffsetAndMetadata(record.offset() + 1);
-        addOffsetToCommitOnClose(record);
+        lastCommitOffset = new OffsetAndMetadata(consumerRecord.offset() + 1);
+        addOffsetToCommitOnClose(consumerRecord);
 
         // Prometheus
         double elapsedSeconds = timer.elapsedSeconds();
-        consumerProcessedMsgHistogram.observe(elapsedSeconds, consumerName, record.topic());
+        consumerProcessedMsgHistogram.observe(elapsedSeconds, consumerName, consumerRecord.topic());
 
         if (LOGGER.isTraceEnabled()) {
           LOGGER.trace(
               "calculated duration {} for message consumed by {} from {}",
               elapsedSeconds,
               consumerName,
-              record.topic());
+              consumerRecord.topic());
         }
 
       } catch (RuntimeException e) {
         LOGGER.error(
             "Error while handling record {} in message handler {}",
-            record.key(),
+            consumerRecord.key(),
             handler.getClass(),
             e);
-        boolean shouldContinue = errorHandler.handleError(record, e, consumer);
+        boolean shouldContinue = errorHandler.handleError(consumerRecord, e, consumer);
         if (!shouldContinue) {
           throw new StopListenerException(e);
         } else {
           LOGGER.warn(
               "Error while handling record {} in message handler {}, will be retried",
-              record.key(),
+              consumerRecord.key(),
               handler.getClass(),
               e);
 
           // seek to the current offset of the failing record for retry
-          consumer.seek(partition, record.offset());
+          consumer.seek(partition, consumerRecord.offset());
           break;
         }
       }
@@ -100,7 +100,7 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
 
   @Override
   public void verifyConsumerConfig(Map<String, String> config) {
-    if (Boolean.valueOf(config.getOrDefault("enable.auto.commit", "true"))) {
+    if (Boolean.TRUE.equals(Boolean.valueOf(config.getOrDefault("enable.auto.commit", "true")))) {
       throw new ConfigurationException(
           "The strategy should commit explicitly by partition but property 'enable.auto.commit' in consumer config is set to 'true'");
     }
