@@ -7,8 +7,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Lookup for Java's system properties and environment variables. System properties have higher
- * priority.
+ * A {@link StringLookup} for Java's system properties and environment variables. System properties
+ * have higher priority. While the use of environment variables is the typical approach to configure
+ * services in a container, system properties are used in tests because it is not possible to modify
+ * environment variables in recent Java versions.
+ *
+ * <p>Looked up values can be modified by operators. The actual key identified by the {@link
+ * org.apache.commons.text.StringSubstitutor} may use a piped syntax to apply operators to the
+ * looked up value. This {@link StringLookup} will extract the key and the operators and applies
+ * them.
+ *
+ * <p>Currently supported operators:
+ *
+ * <ul>
+ *   <li>{@code toJsonString}: Builds a Json String that exactly represents the looked up value.
+ *       Example:
+ *       <pre>
+ *       <code>property: ${PROPERTY | toJsonString:-null}</code>
+ *     </pre>
+ *       The example will look up {@code PROPERTY}. Assuming it resolves to {@code some"string}, the
+ *       result will be:
+ *       <pre>
+ *       <code>property: "some\"string"</code>
+ *     </pre>
+ * </ul>
  */
 public class SystemPropertyAndEnvironmentLookup implements StringLookup {
   private static final Logger LOGGER =
