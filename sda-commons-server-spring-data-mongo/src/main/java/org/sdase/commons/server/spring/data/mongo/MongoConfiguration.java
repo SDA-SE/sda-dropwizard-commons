@@ -94,9 +94,6 @@ public class MongoConfiguration {
   }
 
   public String getOptions() {
-    if (StringUtils.isBlank(options) && StringUtils.isNotBlank(connectionString)) {
-      // TODO what should be returned?
-    }
     return options;
   }
 

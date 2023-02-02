@@ -156,20 +156,22 @@ class JwksKeySourceIT {
   @Test
   void shouldFailWithKeyLoadFailedException() {
     String location = "http://localhost:" + DW.getLocalPort() + "/invalid-path";
+    var jwksKeySource = new JwksKeySource(location, DW.client(), null);
     assertThrows(
         KeyLoadFailedException.class,
         () -> {
-          new JwksKeySource(location, DW.client(), null).loadKeysFromSource();
+          jwksKeySource.loadKeysFromSource();
         });
   }
 
   @Test
   void shouldFailWithKeyLoadFailedExceptionOnTimeout() {
     String location = "http://unknownhost/invalid-path";
+    var jwksKeySource = new JwksKeySource(location, DW.client(), null);
     assertThrows(
         KeyLoadFailedException.class,
         () -> {
-          new JwksKeySource(location, DW.client(), null).loadKeysFromSource();
+          jwksKeySource.loadKeysFromSource();
         });
   }
 
