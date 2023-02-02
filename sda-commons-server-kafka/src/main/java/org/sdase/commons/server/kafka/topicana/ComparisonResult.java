@@ -87,10 +87,6 @@ public class ComparisonResult {
       this.property = description;
     }
 
-    private Comparison(String topicName, T actual, T expected) {
-      this(topicName, null, actual, expected);
-    }
-
     public String getTopicName() {
       return topicName;
     }

@@ -87,39 +87,19 @@ class PrometheusBundleTest {
   }
 
   @Test
-  void shouldSkipConsumerName() {
+  void shouldContainAllMetrics() {
     prepareResourceRequest().get(String.class);
 
     String metrics = readMetrics();
 
-    assertThat(metrics).contains("consumer_name=\"\"");
-  }
-
-  @Test
-  void shouldTrackHttpMethod() {
-    prepareResourceRequest().get(String.class);
-
-    String metrics = readMetrics();
-
-    assertThat(metrics).contains("method=\"GET\"");
-  }
-
-  @Test
-  void shouldTrackInvokedMethod() {
-    prepareResourceRequest().get(String.class);
-
-    String metrics = readMetrics();
-
-    assertThat(metrics).contains("implementing_method=\"pingResource\"");
-  }
-
-  @Test
-  void shouldTrackResourcePath() {
-    prepareResourceRequest().get(String.class);
-
-    String metrics = readMetrics();
-
-    assertThat(metrics).contains("resource_path=\"ping\"");
+    assertThat(metrics)
+        .contains(
+            "consumer_name=\"\"",
+            "method=\"GET\"",
+            "implementing_method=\"pingResource\"",
+            "resource_path=\"ping\"",
+            "status_code=\"200\"",
+            "io_dropwizard_");
   }
 
   @Test
@@ -134,24 +114,6 @@ class PrometheusBundleTest {
     String metrics = readMetrics();
 
     assertThat(metrics).contains("resource_path=\"path/{param}\"");
-  }
-
-  @Test
-  void shouldTrackStatusCode() {
-    prepareResourceRequest().get(String.class);
-
-    String metrics = readMetrics();
-
-    assertThat(metrics).contains("status_code=\"200\"");
-  }
-
-  @Test
-  void shouldTrackDropwizardMetricsFromBridge() {
-    prepareResourceRequest().get(String.class);
-
-    String metrics = readMetrics();
-
-    assertThat(metrics).contains("io_dropwizard_");
   }
 
   @Test
