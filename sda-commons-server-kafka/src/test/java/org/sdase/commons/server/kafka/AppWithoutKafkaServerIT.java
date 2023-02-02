@@ -16,9 +16,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
+import org.sdase.commons.server.kafka.consumer.MessageListener;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
+import org.sdase.commons.server.kafka.producer.MessageProducer;
 
 class AppWithoutKafkaServerIT {
 
@@ -44,33 +46,35 @@ class AppWithoutKafkaServerIT {
   void checkMessageListenerCreationThrowsException() {
     String topicName = "checkMessageListenerCreationSuccessful";
     Assertions.assertThrows(
-        TimeoutException.class,
-        () ->
-            bundle.createMessageListener(
-                MessageListenerRegistration.builder()
-                    .withListenerConfig("lc1")
-                    .forTopic(topicName)
-                    .checkTopicConfiguration()
-                    .withDefaultConsumer()
-                    .withValueDeserializer(new StringDeserializer())
-                    .withListenerStrategy(
-                        new AutocommitMLS<>(
-                            record -> results.add(record.value()),
-                            new IgnoreAndProceedErrorHandler<>()))
-                    .build()));
+        TimeoutException.class, () -> getMessageListenerRegistration(topicName));
   }
 
   @Test
   void checkProducerWithCheckThrowsException() {
     String topicName = "checkProducerWithCreationThrowsException";
-    Assertions.assertThrows(
-        TimeoutException.class,
-        () ->
-            bundle.registerProducer(
-                ProducerRegistration.builder()
-                    .forTopic(topicName)
-                    .checkTopicConfiguration()
-                    .withDefaultProducer()
-                    .build()));
+    Assertions.assertThrows(TimeoutException.class, () -> registertMessageProducer(topicName));
+  }
+
+  private List<MessageListener<Object, String>> getMessageListenerRegistration(String topicName) {
+    return bundle.createMessageListener(
+        MessageListenerRegistration.builder()
+            .withListenerConfig("lc1")
+            .forTopic(topicName)
+            .checkTopicConfiguration()
+            .withDefaultConsumer()
+            .withValueDeserializer(new StringDeserializer())
+            .withListenerStrategy(
+                new AutocommitMLS<>(
+                    record -> results.add(record.value()), new IgnoreAndProceedErrorHandler<>()))
+            .build());
+  }
+
+  private MessageProducer<Object, Object> registertMessageProducer(String topicName) {
+    return bundle.registerProducer(
+        ProducerRegistration.builder()
+            .forTopic(topicName)
+            .checkTopicConfiguration()
+            .withDefaultProducer()
+            .build());
   }
 }

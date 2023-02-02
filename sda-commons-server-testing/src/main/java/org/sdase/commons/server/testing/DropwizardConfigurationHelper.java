@@ -67,7 +67,7 @@ public class DropwizardConfigurationHelper<C extends Configuration>
   private void applyApplicationPort(int applicationPort) {
     DefaultServerFactory serverFactory = (DefaultServerFactory) configuration.getServerFactory();
     serverFactory.getApplicationConnectors().stream()
-        .filter(c -> c instanceof HttpConnectorFactory)
+        .filter(HttpConnectorFactory.class::isInstance)
         .map(c -> (HttpConnectorFactory) c)
         .forEach(c -> c.setPort(applicationPort));
   }
@@ -75,7 +75,7 @@ public class DropwizardConfigurationHelper<C extends Configuration>
   private void applyAdminPort(int adminPort) {
     DefaultServerFactory serverFactory = (DefaultServerFactory) configuration.getServerFactory();
     serverFactory.getAdminConnectors().stream()
-        .filter(c -> c instanceof HttpConnectorFactory)
+        .filter(HttpConnectorFactory.class::isInstance)
         .map(c -> (HttpConnectorFactory) c)
         .forEach(c -> c.setPort(adminPort));
   }

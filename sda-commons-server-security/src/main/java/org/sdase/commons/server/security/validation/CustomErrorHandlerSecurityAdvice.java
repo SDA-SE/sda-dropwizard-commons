@@ -45,7 +45,7 @@ public class CustomErrorHandlerSecurityAdvice {
   }
 
   private void forceDefaultExceptionMappersAreNotRegistered() {
-    if (abstractServerFactory.getRegisterDefaultExceptionMappers()) {
+    if (Boolean.TRUE.equals(abstractServerFactory.getRegisterDefaultExceptionMappers())) {
       LOG.info(
           "Disabling registerDefaultExceptionHeaders to avoid giving information to possible attackers.");
       abstractServerFactory.setRegisterDefaultExceptionMappers(false);
