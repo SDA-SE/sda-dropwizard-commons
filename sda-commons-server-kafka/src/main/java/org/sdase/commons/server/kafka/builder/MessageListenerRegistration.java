@@ -6,16 +6,14 @@ import java.util.stream.Collectors;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
+import org.sdase.commons.server.kafka.config.TopicConfig;
 import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
-import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
-import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 
 public class MessageListenerRegistration<K, V> {
 
   private Deserializer<K> keyDeserializer;
   private Deserializer<V> valueDeserializer;
-  private Collection<ExpectedTopicConfiguration> topics;
-  private boolean checkTopicConfiguration;
+  private Collection<TopicConfig> topics;
   private MessageListenerStrategy<K, V> strategy;
 
   private ConsumerConfig consumerConfig;
@@ -27,10 +25,6 @@ public class MessageListenerRegistration<K, V> {
     return keyDeserializer;
   }
 
-  public boolean isCheckTopicConfiguration() {
-    return checkTopicConfiguration;
-  }
-
   public String getListenerConfigName() {
     return listenerConfigName;
   }
@@ -39,14 +33,12 @@ public class MessageListenerRegistration<K, V> {
     return valueDeserializer;
   }
 
-  public Collection<ExpectedTopicConfiguration> getTopics() {
+  public Collection<TopicConfig> getTopics() {
     return topics;
   }
 
   public Collection<String> getTopicsNames() {
-    return topics.stream()
-        .map(ExpectedTopicConfiguration::getTopicName)
-        .collect(Collectors.toList());
+    return topics.stream().map(TopicConfig::getName).collect(Collectors.toList());
   }
 
   public MessageListenerStrategy<K, V> getStrategy() {
@@ -93,19 +85,10 @@ public class MessageListenerRegistration<K, V> {
      *     config This is necessary if you want to check the topic configuration during startup
      * @return builder
      */
-    ConsumerBuilder forTopicConfigs(Collection<ExpectedTopicConfiguration> topicConfiguration);
+    ConsumerBuilder forTopicConfigs(Collection<TopicConfig> topicConfiguration);
   }
 
   public interface ConsumerBuilder {
-
-    /**
-     * Define optional step to process a configuration check of the topic. If the topic differs,
-     * a @{@link org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException} will be
-     * thrown.
-     *
-     * @return builder
-     */
-    ConsumerBuilder checkTopicConfiguration();
 
     /**
      * @param name name of a consumer config given in the configuration yaml.
@@ -198,9 +181,8 @@ public class MessageListenerRegistration<K, V> {
   private static class InitialBuilder
       implements ListenerBuilder, TopicBuilder, ConsumerBuilder, KeyDeserializerBuilder {
 
-    private Collection<ExpectedTopicConfiguration> topics;
+    private Collection<TopicConfig> topics;
 
-    private boolean topicExistCheck = false;
     private ConsumerConfig consumerConfig;
     private ListenerConfig listenerConfig;
     private String consumerName;
@@ -226,29 +208,20 @@ public class MessageListenerRegistration<K, V> {
 
     @Override
     public ConsumerBuilder forTopic(String topic) {
-      this.topics = Collections.singletonList(TopicConfigurationBuilder.builder(topic).build());
+      this.topics = Collections.singletonList(buildTopicConfig(topic));
       return this;
     }
 
     @Override
     public ConsumerBuilder forTopics(Collection<String> topics) {
       this.topics =
-          topics.stream()
-              .map(t -> TopicConfigurationBuilder.builder(t).build())
-              .collect(Collectors.toList());
+          topics.stream().map(InitialBuilder::buildTopicConfig).collect(Collectors.toList());
       return this;
     }
 
     @Override
-    public ConsumerBuilder forTopicConfigs(
-        Collection<ExpectedTopicConfiguration> topicConfiguration) {
+    public ConsumerBuilder forTopicConfigs(Collection<TopicConfig> topicConfiguration) {
       this.topics = topicConfiguration;
-      return this;
-    }
-
-    @Override
-    public ConsumerBuilder checkTopicConfiguration() {
-      this.topicExistCheck = true;
       return this;
     }
 
@@ -286,6 +259,10 @@ public class MessageListenerRegistration<K, V> {
     public <K2, V2> FinalBuilder<K2, V2> withListenerStrategy(
         MessageListenerStrategy<K2, V2> strategy) {
       return new FinalBuilder<>(this, null, null, strategy);
+    }
+
+    private static TopicConfig buildTopicConfig(String topic) {
+      return TopicConfig.builder().name(topic).build();
     }
   }
 
@@ -378,7 +355,6 @@ public class MessageListenerRegistration<K, V> {
       build.keyDeserializer = keyDeserializer;
       build.valueDeserializer = valueDeserializer;
       build.topics = initialBuilder.topics;
-      build.checkTopicConfiguration = initialBuilder.topicExistCheck;
       build.consumerConfig = initialBuilder.consumerConfig;
       build.consumerConfigName = initialBuilder.consumerName;
       build.listenerConfig = initialBuilder.listenerConfig;
