@@ -2,29 +2,30 @@
 
 The following modules contain changes:
 
-1. sda-commons-server-testing
-2. sda-commons-server-auth-testing
-3. sda-commons-server-opentracing
-4. sda-commons-server-morphia
-5. sda-commons-server-kafka
+1. [sda-commons-server-testing](#1-sda-commons-server-testing)
+2. [sda-commons-server-auth-testing](#2-sda-commons-server-auth-testing)
+3. [sda-commons-server-opentracing](#3-sda-commons-server-opentracing)
+4. [sda-commons-server-morphia](#4-sda-commons-server-morphia)
+5. [sda-commons-server-kafka](#5-sda-commons-server-kafka)
 
 ## 1 sda-commons-server-testing
 
-Does not provide any Junit 4 rules anymore. You should find Junit 5 extensions for all of
-your rules. We recommend to migrate all your Junit 4 tests to Junit 5.
+Does not provide any Junit 4 rules anymore. You should find Junit 5 extensions for all of your
+rules.
+We recommend to migrate all your Junit 4 tests to Junit 5.
 
 ## 2 sda-commons-server-auth-testing
 
-Please change your `test-config.yaml` if they use `${AUTH_RULE}` as placeholder. We wanted to
-get rid of all references to old Junit 4 rules.
+Please change your `test-config.yaml` if they use `${AUTH_RULE}` as placeholder.
+We wanted to get rid of all references to old Junit 4 rules.
 
-v2
-```
+Before:
+```yaml
   config: ${AUTH_RULE}
 ```
 
-v3
-```
+After:
+```yaml
   config: ${AUTH_CONFIG_KEYS}
 ```
 
@@ -33,7 +34,9 @@ v3
 Migrate from OpenTracing to OpenTelemetry.
 
 ### Starter Bundle
-If you do not use sda-commons-starter with [SdaPlatformBundle](./sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java), you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTelemetry bundle.
+
+If you do not use sda-commons-starter with [SdaPlatformBundle](./sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java),
+you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTelemetry bundle.
 
 Before:
 ```java
@@ -79,7 +82,6 @@ return new AsyncEmailSendManager(
 ```
 
 After:
-
 ```java
 return new AsyncEmailSendManager(
     new InMemoryAsyncTaskRepository<>(limits.getMaxAttempts()),
@@ -94,7 +96,9 @@ return new AsyncEmailSendManager(
 
 ### Environment variables
 
-To disable tracing, you must set the variable `TRACING_DISABLED` to `true`. The legacy Jaeger environment variables are still supported, but they will be removed in later versions.
+To disable tracing, you must set the variable `TRACING_DISABLED` to `true`.
+The legacy Jaeger environment variables are still supported, but they will be removed in later
+versions.
 
 Before:
 ```properties
@@ -108,6 +112,7 @@ TRACING_DISABLED=true
 ```
 
 ### New environment variables
+
 In order to configure Open Telemetry, you can set some environment variables:
 
 | Name                          | Default value                                 | Description                                                                      |
@@ -119,7 +124,11 @@ In order to configure Open Telemetry, you can set some environment variables:
 A full list of the configurable properties can be found in the [General SDK Configuration](https://opentelemetry.io/docs/reference/specification/sdk-environment-variables/).
 
 ### New API for instrumentation
-If you use the OpenTracing API for manual instrumentation, you will have to replace it with the OpenTelemetry API. You can find the [API Definition](https://www.javadoc.io/static/io.opentelemetry/opentelemetry-api/1.0.1/io/opentelemetry/api/GlobalOpenTelemetry.html) to see all the possible methods.
+
+If you use the OpenTracing API for manual instrumentation, you will have to replace it with the
+OpenTelemetry API.
+You can find the [API Definition](https://www.javadoc.io/static/io.opentelemetry/opentelemetry-api/1.0.1/io/opentelemetry/api/GlobalOpenTelemetry.html)
+to see all the possible methods.
 
 Before:
 ```java
@@ -175,8 +184,8 @@ After:
   ```java
     @BeforeEach
     void setupTestData() throws FolderException {
-    GlobalTracerTestUtil.setGlobalTracerUnconditionally(mockTracer);
-    mockTracer.reset();
+      GlobalTracerTestUtil.setGlobalTracerUnconditionally(mockTracer);
+      mockTracer.reset();
     }
   ``` 
   After:
@@ -191,14 +200,14 @@ After:
 - Capture spans using `OpenTelemetryExtension` and `io.opentelemetry.sdk.trace.data.SpanData`
 
   Before:
-    ```java
-    assertThat(mockTracer.finishedSpans().stream()
-                            .filter(s -> s.operationName().equals("expectedTracing")));
-    ```
+  ```java
+  assertThat(mockTracer.finishedSpans().stream()
+                          .filter(s -> s.operationName().equals("expectedTracing")));
+  ```
   After:
-    ```java
-    assertThat(OTEL.getSpans().stream().filter(s -> s.getName().equals("expectedTracing")));
-    ```
+  ```java
+  assertThat(OTEL.getSpans().stream().filter(s -> s.getName().equals("expectedTracing")));
+  ```
 
 
 ## 4 sda-commons-server-morphia
@@ -234,20 +243,23 @@ public MongoOperations getMongoOperations() {
 ```
 
 ### Morphia compatibility
+
 When upgrading a service from 2.x.x a set of converters is provided to stay compatible with a
-database that was initialized with Morphia. To enable these converters, `.withMorphiaCompatibility()`
-can be used when building the SpringDataMongoBundle.
+database that was initialized with Morphia.
+To enable these converters, `.withMorphiaCompatibility()` can be used when building the
+SpringDataMongoBundle.
 
 ```java
 SpringDataMongoBundle.builder()
   .withConfigurationProvider(AppConfiguration::getSpringDataMongo)
   .withMorphiaCompatibility()
-  build();
+  .build();
 ```
 
 ### Validation
-Automatic JSR validation is no longer provided in v3. If you still want to validate your models
-you can do so manually using the `ValidationFactory`:
+
+Automatic JSR validation is no longer provided in v3.
+If you still want to validate your models you can do so manually using the `ValidationFactory`:
 
 ```java
 boolean isValid =
@@ -260,6 +272,7 @@ boolean isValid =
 ### Queries
 
 ### Building queries with the datastore
+
 Simple operations can be realised by the MongoOperations directly.
 
 Saving an entity:
@@ -285,9 +298,12 @@ public Optional<SampleEntity> findByArbitraryFields(String identifier, String va
         SampleEntity.class));
 }
 ```
-See the [official documentation](https://docs.spring.io/spring-data/mongodb/docs/current/api/org/springframework/data/mongodb/core/query/Criteria.html) for further information.
+
+See the [official documentation](https://docs.spring.io/spring-data/mongodb/docs/current/api/org/springframework/data/mongodb/core/query/Criteria.html)
+for further information.
 
 ### Auto-generate queries out of method names with the `MongoRepository` interface
+
 Depending on the complexity, queries can also be auto-generated based on the method names by using
 the MongoRepository Interface provided by spring-data-mongo.
 
@@ -309,10 +325,14 @@ public interface PersonMongoRepository extends MongoRepository<Person, String> {
   List<Person> findAllByNameIsNot(String name);
 }
 ```
-See the [official documentation](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details) for further details.
+
+See the [official documentation](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details)
+for further details.
 
 ### Query functions
-As Spring Data Mongo doesn't support/provide many query functions provided by Morphia, below are some replacements/alternatives.
+
+As Spring Data Mongo doesn't support/provide many query functions provided by Morphia, below are
+some replacements/alternatives.
 
 * #### _EqualIgnoreCase_
   Morphia supports usage of _equalIgnoreCase()_. Use _regex()_ in Spring Data Mongo. For example
@@ -357,8 +377,10 @@ A `@CompoundIndex` can be declared at the entity class.
 
 ### Custom converters
 
-Custom converters can be added directly to the Entity class in Morphia by using annotation like `@Converters(value = {ExampleConverter.class})`.
-In Spring Data Mongo the custom converters can be added to the builder in your `Application.class` like below:
+Custom converters can be added directly to the Entity class in Morphia by using annotation like
+`@Converters(value = {ExampleConverter.class})`.
+In Spring Data Mongo the custom converters can be added to the builder in your `Application.class`
+like below:
 
 ```java
 SpringDataMongoBundle.builder()
@@ -370,21 +392,23 @@ SpringDataMongoBundle.builder()
   build();
 ```
 
-Implementing the converter changes from Morphia interface to using the Spring interface can be done like here [ZonedDateTimeReadConverter.java](sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/converter/ZonedDateTimeReadConverter.java).
+Implementing the converter changes from Morphia interface to using the Spring interface can be done
+like here [ZonedDateTimeReadConverter.java](sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/converter/ZonedDateTimeReadConverter.java).
 
 ### Annotations
 
-| Morphia       | Spring Data Mongo |
-| --------------| ----------------- |
-| `@Entity(noClassnameStored = true, name="exampleEntity")` | `@Document("exampleEntity")`. There is no property similar to _noClassnameStored_ as the type/class can't be excluded with Spring Data. |
-| `@PrePersist` | There is no replacement annotation for this. If you are using this on any fields, please set the field before save(). One very common example is to set the creation date like this `entity.setCreated(ZonedDateTime.now(ZoneOffset.UTC));` |
-| `@Embedded` | No replacement available as Spring Data already embeds the document. |
-| `@Converters()` | Replaced with `@ReadingConverter` and `@WritingConverter` |
+| Morphia                                                   | Spring Data Mongo                                                                                                                                                                                                                           |
+|-----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `@Entity(noClassnameStored = true, name="exampleEntity")` | `@Document("exampleEntity")`. There is no property similar to _noClassnameStored_ as the type/class can't be excluded with Spring Data.                                                                                                     |
+| `@PrePersist`                                             | There is no replacement annotation for this. If you are using this on any fields, please set the field before save(). One very common example is to set the creation date like this `entity.setCreated(ZonedDateTime.now(ZoneOffset.UTC));` |
+| `@Embedded`                                               | No replacement available as Spring Data already embeds the document.                                                                                                                                                                        |
+| `@Converters()`                                           | Replaced with `@ReadingConverter` and `@WritingConverter`                                                                                                                                                                                   |
 
 
 ## 5 sda-commons-server-kafka
 
 Some deprecated code was removed.
-Especially we removed the feature `createTopicIfMissing` because we don't recommend services
-to do that. You usually need different privileges for topic creation that you don't want to
-give to your services.
+Especially we removed the feature `createTopicIfMissing` because we don't recommend services to do
+that.
+You usually need different privileges for topic creation that you don't want to give to your
+services.
