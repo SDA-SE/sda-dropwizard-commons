@@ -11,7 +11,7 @@ The following modules contain changes:
 ## 1 sda-commons-server-testing
 
 Does not provide any Junit 4 rules anymore. You should find Junit 5 extensions for all of
-your rules. We recommend to migrate all your Junit 4 tests to Junit 4.
+your rules. We recommend to migrate all your Junit 4 tests to Junit 5.
 
 ## 2 sda-commons-server-auth-testing
 
