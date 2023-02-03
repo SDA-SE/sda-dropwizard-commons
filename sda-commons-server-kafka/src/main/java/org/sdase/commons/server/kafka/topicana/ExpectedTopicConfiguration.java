@@ -17,7 +17,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Created by ftr on 10.11.17. */
+/**
+ * @deprecated All classes from this package will be removed in the next version because topic
+ *     comparison is not recommended.
+ */
+@Deprecated
 public class ExpectedTopicConfiguration {
 
   private final String topicName;

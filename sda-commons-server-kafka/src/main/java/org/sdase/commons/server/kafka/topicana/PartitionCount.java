@@ -13,7 +13,11 @@
  */
 package org.sdase.commons.server.kafka.topicana;
 
-/** Created by ftr on 10.11.17. */
+/**
+ * @deprecated All classes from this package will be removed in the next version because topic
+ *     comparison is not recommended.
+ */
+@Deprecated
 public interface PartitionCount {
 
   boolean isSpecified();

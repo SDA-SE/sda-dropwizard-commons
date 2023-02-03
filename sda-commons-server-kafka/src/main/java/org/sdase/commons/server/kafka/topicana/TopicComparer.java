@@ -42,7 +42,11 @@ import org.sdase.commons.server.kafka.KafkaProperties;
  *       broker that require auth credentials
  *   <li>Refactoring of code to reduce complexity
  * </ul>
+ *
+ * @deprecated All classes from this package will be removed in the next version because topic
+ *     comparison is not recommended.
  */
+@Deprecated
 public class TopicComparer {
 
   public TopicComparer() {

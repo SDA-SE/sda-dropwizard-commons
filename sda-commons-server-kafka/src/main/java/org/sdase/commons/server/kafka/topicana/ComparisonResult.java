@@ -15,7 +15,11 @@ package org.sdase.commons.server.kafka.topicana;
 
 import java.util.*;
 
-/** Created by ftr on 11.11.17. */
+/**
+ * @deprecated All classes from this package will be removed in the next version because topic
+ *     comparison is not recommended.
+ */
+@Deprecated
 public class ComparisonResult {
 
   private final Set<String> missingTopics;

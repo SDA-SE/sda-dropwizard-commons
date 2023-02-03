@@ -117,6 +117,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    * Provides a {@link ExpectedTopicConfiguration} that is generated from the values within the
    * configuration yaml
    *
+   * @deprecated the {@link ExpectedTopicConfiguration} will be removed, hence, this method will be
+   *     replaced by {@link TopicConfig} getTopicConfiguration(String name)
    * @param name the name of the topic
    * @return the configured topic configuration
    * @throws ConfigurationException if no such topic exists in the configuration
