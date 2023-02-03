@@ -178,7 +178,7 @@ public class DemoApplication {
                   .withReplicationFactor(2)
                   .withPartitionCount(2)
                   .withConfig(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT).build())
-                  .checkTopicConfiguration() // enforces that topic must be configured exactly as defined above
+                  .checkTopicConfiguration() // enforces that topic must be configured exactly as defined above. Deprecated. Services can't decide on topic configurations.
                   .createTopicIfMissing()    // creates the topic if no topic has been found. Deprecated. It will be removed in the next releases
                   .withProducerConfig("producer1") // use producer config from config yaml
                   .build());
