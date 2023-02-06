@@ -90,7 +90,7 @@ dependencies {
     api "com.google.code.gson:gson:2.10.1" // resolve conflict between jaeger-core + google-cloud-secretmanager
 
     // sda-commons-server-mongo-testing
-    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.4"
+    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.4.0"
 
     // sda-commons-server-morphia
     api "dev.morphia.morphia:core:$morphiaVersion"
