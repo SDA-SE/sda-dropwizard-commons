@@ -13,7 +13,3 @@ kafka:
       name: exampleTopic
     example1:
       name: exampleTopicConfiguration
-      partitions: 2
-      replicationFactor: 2
-      config:
-        max.message.bytes: 1024
