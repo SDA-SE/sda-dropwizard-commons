@@ -11,7 +11,7 @@ The following modules contain changes:
 ## 1 sda-commons-server-testing
 
 Does not provide any Junit 4 rules anymore. You should find Junit 5 extensions for all of
-your rules. We recommend to migrate all your Junit 4 tests to Junit 4.
+your rules. We recommend to migrate all your Junit 4 tests to Junit 5.
 
 ## 2 sda-commons-server-auth-testing
 
@@ -374,12 +374,12 @@ Implementing the converter changes from Morphia interface to using the Spring in
 
 ### Annotations
 
-| Morphia       | Spring Data Mongo |
-| --------------| ----------------- |
-| `@Entity(noClassnameStored = true, name="exampleEntity")` | `@Document("exampleEntity")`. There is no property similar to _noClassnameStored_ as the type/class can't be excluded with Spring Data. |
-| `@PrePersist` | There is no replacement annotation for this. If you are using this on any fields, please set the field before save(). One very common example is to set the creation date like this `entity.setCreated(ZonedDateTime.now(ZoneOffset.UTC));` |
-| `@Embedded` | No replacement available as Spring Data already embeds the document. |
-| `@Converters()` | Replaced with `@ReadingConverter` and `@WritingConverter` |
+| Morphia                                                   | Spring Data Mongo                                                                                                                                                                                                                           |
+|-----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `@Entity(noClassnameStored = true, name="exampleEntity")` | `@Document("exampleEntity")`. There is no property similar to _noClassnameStored_ as the type/class can't be excluded with Spring Data.                                                                                                     |
+| `@PrePersist`                                             | There is no replacement annotation for this. If you are using this on any fields, please set the field before save(). One very common example is to set the creation date like this `entity.setCreated(ZonedDateTime.now(ZoneOffset.UTC));` |
+| `@Embedded`                                               | No replacement available as Spring Data already embeds the document.                                                                                                                                                                        |
+| `@Converters()`                                           | Replaced with `@ReadingConverter` and `@WritingConverter`                                                                                                                                                                                   |
 
 
 ## 5 sda-commons-server-kafka
@@ -388,3 +388,27 @@ Some deprecated code was removed.
 Especially we removed the feature `createTopicIfMissing` because we don't recommend services
 to do that. You usually need different privileges for topic creation that you don't want to
 give to your services.
+
+We also removed the topicana classes in package `org.sdase.commons.server.kafka.topicana`. For this
+reason the following methods were removed or changed
+on [MessageListenerRegistration](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/builder/MessageListenerRegistration.java)
+and [ProducerRegistration](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/builder/ProducerRegistration.java):
+
+- checkTopicConfiguration
+  This method compared the current topics with the configured ones and threw
+  a `org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException` in case they did not
+  match. It was removed in this version.
+
+- forTopicConfigs
+  These methods accepted a list
+  of `org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration` to compare against the
+  current topic configuration. Now it accepts a list
+  of [TopicConfig](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java),
+  with only the name of the topic, but it does not perform any check in the configuration.
+
+- forTopic(ExpectedTopicConfiguration topic)
+  These methods accepted an instance
+  of `org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration` to compare against the
+  current topic configuration. Now it accepts
+  a [TopicConfig](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java) instance,
+  with only the name of the topic, but it does not perform any check in the configuration.
