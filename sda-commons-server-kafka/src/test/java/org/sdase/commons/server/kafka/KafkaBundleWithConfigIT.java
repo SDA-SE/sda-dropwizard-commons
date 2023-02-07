@@ -125,11 +125,9 @@ class KafkaBundleWithConfigIT {
   void allTopicsDescriptionsGenerated() {
     final String testTopic1 = "topicId1";
     assertThat(kafkaBundle.getTopicConfiguration(testTopic1)).isNotNull();
-    assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getReplicationFactor().count())
-        .isEqualTo(2);
-    assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getPartitions().count()).isEqualTo(2);
-    assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getProps()).hasSize(2);
+    assertThat(kafkaBundle.getTopicConfiguration(testTopic1).getName()).isEqualTo("topic1");
     assertThat(kafkaBundle.getTopicConfiguration("topicId2")).isNotNull();
+    assertThat(kafkaBundle.getTopicConfiguration("topicId2").getName()).isEqualTo("topic2");
   }
 
   @Test
@@ -188,16 +186,17 @@ class KafkaBundleWithConfigIT {
 
   @Test
   void shouldProduceConfigExceptionWhenConsumerConfigNotExists() {
-    assertThrows(
-        ConfigurationException.class,
-        () -> {
-          StringDeserializer keyDeSerializer = new StringDeserializer();
-          try (KafkaConsumer<String, String> consumer =
-              kafkaBundle.createConsumer(
-                  keyDeSerializer, keyDeSerializer, "notExistingConsumerConfig")) {
-            // empty
-          }
-        });
+    try (StringDeserializer keyDeSerializer = new StringDeserializer()) {
+      assertThrows(
+          ConfigurationException.class,
+          () -> {
+            try (KafkaConsumer<String, String> consumer =
+                kafkaBundle.createConsumer(
+                    keyDeSerializer, keyDeSerializer, "notExistingConsumerConfig")) {
+              // empty
+            }
+          });
+    }
   }
 
   @Test
@@ -230,16 +229,17 @@ class KafkaBundleWithConfigIT {
 
   @Test
   void shouldProduceConfigExceptionWhenProducerConfigNotExists() {
-    assertThrows(
-        ConfigurationException.class,
-        () -> {
-          StringSerializer keySerializer = new StringSerializer();
-          try (KafkaProducer<String, String> producer =
-              kafkaBundle.createProducer(
-                  keySerializer, keySerializer, "notExistingProducerConfig")) {
-            // empty
-          }
-        });
+    try (StringSerializer keySerializer = new StringSerializer()) {
+      assertThrows(
+          ConfigurationException.class,
+          () -> {
+            try (KafkaProducer<String, String> producer =
+                kafkaBundle.createProducer(
+                    keySerializer, keySerializer, "notExistingProducerConfig")) {
+              // empty
+            }
+          });
+    }
   }
 
   @Test
@@ -319,7 +319,6 @@ class KafkaBundleWithConfigIT {
         kafkaBundle.registerProducer(
             ProducerRegistration.<String, String>builder()
                 .forTopic(topic)
-                .checkTopicConfiguration()
                 .withProducerConfig(PRODUCER_2)
                 .build());
 
@@ -353,7 +352,6 @@ class KafkaBundleWithConfigIT {
         kafkaBundle.registerProducer(
             ProducerRegistration.<String, String>builder()
                 .forTopic(topic)
-                .checkTopicConfiguration()
                 .withDefaultProducer()
                 .build());
 
@@ -502,7 +500,7 @@ class KafkaBundleWithConfigIT {
             .withKeyDeserializer(deserializer)
             .withValueDeserializer(deserializer)
             .withListenerStrategy(
-                new MessageListenerStrategy<String, String>() {
+                new MessageListenerStrategy<>() {
                   @Override
                   public void processRecords(
                       ConsumerRecords<String, String> records,
