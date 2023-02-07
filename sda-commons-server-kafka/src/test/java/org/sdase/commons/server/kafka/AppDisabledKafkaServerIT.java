@@ -34,7 +34,7 @@ class AppDisabledKafkaServerIT {
           resourceFilePath("test-config-default.yml"),
           config("kafka.disabled", "true"));
 
-  private List<String> results = Collections.synchronizedList(new ArrayList<>());
+  private final List<String> results = Collections.synchronizedList(new ArrayList<>());
 
   private KafkaBundle<KafkaTestConfiguration> bundle;
 
@@ -52,7 +52,6 @@ class AppDisabledKafkaServerIT {
             MessageListenerRegistration.builder()
                 .withListenerConfig("lc1")
                 .forTopic("topic")
-                .checkTopicConfiguration()
                 .withDefaultConsumer()
                 .withValueDeserializer(new StringDeserializer())
                 .withListenerStrategy(

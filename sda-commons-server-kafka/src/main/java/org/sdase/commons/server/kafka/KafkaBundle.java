@@ -7,7 +7,6 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,11 +39,6 @@ import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 import org.sdase.commons.server.kafka.prometheus.KafkaConsumerMetrics;
 import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
-import org.sdase.commons.server.kafka.topicana.ComparisonResult;
-import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
-import org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException;
-import org.sdase.commons.server.kafka.topicana.TopicComparer;
-import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,8 +61,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   private final List<ThreadedMessageListener<?, ?>> threadedMessageListeners = new ArrayList<>();
   private final List<KafkaMessageProducer<?, ?>> messageProducers = new ArrayList<>();
 
-  private final Map<String, ExpectedTopicConfiguration> topics = new HashMap<>();
-
   private KafkaHealthCheck kafkaHealthCheck;
 
   private KafkaBundle(
@@ -90,7 +82,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   @Override
   public void run(C configuration, Environment environment) {
     kafkaConfiguration = configurationProvider.apply(configuration);
-    kafkaConfiguration.getTopics().forEach((k, v) -> topics.put(k, createTopicDescription(v)));
     if (!kafkaConfiguration.isDisabled()) {
       if (healthCheckDisabled) {
         kafkaHealthCheck = new ExternalKafkaHealthCheck(kafkaConfiguration);
@@ -107,32 +98,25 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   }
 
   /**
-   * Provides a {@link ExpectedTopicConfiguration} that is generated from the values within the
-   * configuration yaml
+   * Provides a {@link TopicConfig} that is generated from the values within the configuration yaml
    *
-   * @deprecated the {@link ExpectedTopicConfiguration} will be removed, hence, this method will be
-   *     replaced by {@link TopicConfig} getTopicConfiguration(String name)
-   * @param name the name of the topic
+   * @param key the name of the topic configuration
    * @return the configured topic configuration
    * @throws ConfigurationException if no such topic exists in the configuration
    */
-  public ExpectedTopicConfiguration getTopicConfiguration(String name)
-      throws ConfigurationException { // NOSONAR
-    if (topics.get(name) == null) {
+  public TopicConfig getTopicConfiguration(String key) throws ConfigurationException { // NOSONAR
+    if (kafkaConfiguration.getTopics().get(key) == null) {
       throw new ConfigurationException(
           String.format(
-              "Topic with name '%s' seems not to be part of the read configuration. Please check the name and configuration.",
-              name));
+              "Topic with key '%s' seems not to be part of the read configuration. Please check the name and configuration.",
+              key));
     }
-    return topics.get(name);
+    return kafkaConfiguration.getTopics().get(key);
   }
 
   /**
    * Creates a number of message listeners with the parameters given in the {@link
    * MessageListenerRegistration}.
-   *
-   * <p>The depricated fields of the {@link ListenerConfig} from {@link MessageListenerRegistration}
-   * are not considered here
    *
    * @param registration the registration configuration
    * @param <K> the key object type
@@ -146,13 +130,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     }
 
     checkInit();
-
-    if (registration.isCheckTopicConfiguration()) {
-      ComparisonResult comparisonResult = checkTopics(registration.getTopics());
-      if (!comparisonResult.ok()) {
-        throw new MismatchedTopicConfigException(comparisonResult);
-      }
-    }
 
     ListenerConfig listenerConfig = registration.getListenerConfig();
     if (listenerConfig == null && registration.getListenerConfigName() != null) {
@@ -215,7 +192,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     // only.
     // This dummy works as long as the future is not evaluated
     if (kafkaConfiguration.isDisabled()) {
-      return new MessageProducer<K, V>() {
+      return new MessageProducer<>() {
         @Override
         public Future<RecordMetadata> send(K key, V value) {
           return null;
@@ -230,13 +207,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
     checkInit();
 
-    if (registration.isCheckTopicConfiguration()) {
-      ComparisonResult comparisonResult =
-          checkTopics(Collections.singletonList(registration.getTopic()));
-      if (!comparisonResult.ok()) {
-        throw new MismatchedTopicConfigException(comparisonResult);
-      }
-    }
     KafkaProducer<K, V> producer = createProducer(registration);
     Entry<MetricName, ? extends Metric> entry =
         producer.metrics().entrySet().stream().findFirst().orElse(null);
@@ -244,32 +214,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
     KafkaMessageProducer<K, V> messageProducer =
         new KafkaMessageProducer<>(
-            registration.getTopicName(), producer, topicProducerCounterSpec, clientId);
+            registration.getTopic().getName(), producer, topicProducerCounterSpec, clientId);
 
     messageProducers.add(messageProducer);
     return messageProducer;
-  }
-
-  /**
-   * Checks if the defined topics are available on the broker for the provided credentials
-   *
-   * @param topics list of topics to test
-   */
-  private ComparisonResult checkTopics(Collection<ExpectedTopicConfiguration> topics) {
-    if (kafkaConfiguration.isDisabled()) {
-      return new ComparisonResult.ComparisonResultBuilder().build();
-    }
-    TopicComparer topicComparer = new TopicComparer();
-    return topicComparer.compare(topics, kafkaConfiguration);
-  }
-
-  @SuppressWarnings("static-method")
-  private ExpectedTopicConfiguration createTopicDescription(TopicConfig c) {
-    return TopicConfigurationBuilder.builder(c.getName())
-        .withPartitionCount(c.getPartitions())
-        .withReplicationFactor(c.getReplicationFactor())
-        .withConfig(c.getConfig())
-        .build();
   }
 
   /**
@@ -349,7 +297,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     KafkaProperties producerProperties = KafkaProperties.forProducer(kafkaConfiguration);
 
     if (producerConfig != null) {
-      producerConfig.getConfig().forEach(producerProperties::put);
+      producerProperties.putAll(producerConfig.getConfig());
     }
 
     return new KafkaProducer<>(producerProperties, keySerializer, valueSerializer);
