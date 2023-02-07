@@ -174,10 +174,7 @@ public class DemoApplication {
       // Create message with a detailed topic specification that checks the topic
       MessageProducer<String, String> producerConfigured = kafkaBundle
             .registerProducer(ProducerRegistration.<String, String> builder()
-                  .forTopic(TopicConfigurationBuilder.builder("mytopic")
-                  .withReplicationFactor(2)
-                  .withPartitionCount(2)
-                  .withConfig(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT).build())
+                  .forTopic(TopicConfig.builder("mytopic").build())
                   .withProducerConfig("producer1") // use producer config from config yaml
                   .build());
 
@@ -337,22 +334,13 @@ kafka:
         acks: all
         retries: 1000
   # Map with topic configurations. The key is the name of the topic and is also used to address the configuration within the code
-  # Topic descriptions can be used to validate the brokers topic configuration or to create new topics
   topics:
     # id of the topic configuration
-    topic1:
+    topic1: # topic key
       # topic name
       name: topic1-name
-      # partitions and replications factor are mandatory
-      partitions: 2
-      replicationFactor: 2
-      # configuration key -> values as defined in the kafka documentation
-      config:
-        max.message.bytes: 1024
-        retention.ms: 60480000
-    topicName2:
-      partitions: 1
-      replicationFactor: 1
+    topic2:
+      name: topic2-name
   # Map with listener configurations that can be used within MessageListener creation.
   listenerConfig:
     # id/name of the listener configuration
@@ -546,12 +534,6 @@ No defaults
 | config -> linger.ms | 0 |
 | config -> key.serializer | org.apache.kafka.common.serialization.StringSerializer |
 | config -> value.serializer | org.apache.kafka.common.serialization.StringSerializer |
-
-#### topics
-| Key | Value |
-|-----|-------|
-| replicationFactor | 1 |
-| partitions | 1 |
 
 #### listenerConfig
 | Key | Value |
