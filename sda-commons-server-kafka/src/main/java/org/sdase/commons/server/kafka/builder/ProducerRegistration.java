@@ -3,17 +3,13 @@ package org.sdase.commons.server.kafka.builder;
 import javax.validation.constraints.NotNull;
 import org.apache.kafka.common.serialization.Serializer;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
-import org.sdase.commons.server.kafka.exception.TopicMissingException;
-import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
-import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
+import org.sdase.commons.server.kafka.config.TopicConfig;
 
 public class ProducerRegistration<K, V> {
 
   private Serializer<K> keySerializer;
   private Serializer<V> valueSerializer;
-  private ExpectedTopicConfiguration topic;
-
-  private boolean checkTopicConfiguration;
+  private TopicConfig topic;
   private ProducerConfig producerConfig;
   private String producerName;
 
@@ -21,16 +17,12 @@ public class ProducerRegistration<K, V> {
     return producerName;
   }
 
-  public ExpectedTopicConfiguration getTopic() {
-    return topic;
+  public TopicConfig getTopic() {
+    return this.topic;
   }
 
   public String getTopicName() {
-    return topic.getTopicName();
-  }
-
-  public boolean isCheckTopicConfiguration() {
-    return checkTopicConfiguration;
+    return topic.getName();
   }
 
   public Serializer<K> getKeySerializer() {
@@ -52,27 +44,17 @@ public class ProducerRegistration<K, V> {
      * @return builder
      */
     default ProducerBuilder<K, V> forTopic(String topic) {
-      return forTopic(TopicConfigurationBuilder.builder(topic).build());
+      return forTopic(TopicConfig.builder().name(topic).build());
     }
 
     /**
-     * @param topic detailed definition of the topic for that messages will be produced. This
-     *     details are used when topic existence should be checked or topic should be created if
-     *     missing. If topic differs, a {@link TopicMissingException} is thrown.
+     * @param topic definition of the topic for that messages will be produced
      * @return builder
      */
-    ProducerBuilder<K, V> forTopic(ExpectedTopicConfiguration topic);
+    ProducerBuilder<K, V> forTopic(TopicConfig topic);
   }
 
   public interface ProducerBuilder<K, V> {
-
-    /**
-     * defines that the topic configuration should be checked. If the name is given only, just topic
-     * existence is checked.
-     *
-     * @return builder
-     */
-    ProducerBuilder<K, V> checkTopicConfiguration();
 
     /**
      * defines that the default producer should be used
@@ -115,8 +97,8 @@ public class ProducerRegistration<K, V> {
 
   public static class ValueSerializerBuilder<K, V> {
 
-    private InitialBuilder<K, V> initialBuilder;
-    private Serializer<K> keySerializer;
+    private final InitialBuilder<K, V> initialBuilder;
+    private final Serializer<K> keySerializer;
 
     private ValueSerializerBuilder(
         InitialBuilder<K, V> initialBuilder, Serializer<K> keySerializer) {
@@ -141,9 +123,9 @@ public class ProducerRegistration<K, V> {
 
   public static class FinalBuilder<K, V> {
 
-    private InitialBuilder<K, V> initialBuilder;
-    private Serializer<K> keySerializer;
-    private Serializer<V> valueSerializer;
+    private final InitialBuilder<K, V> initialBuilder;
+    private final Serializer<K> keySerializer;
+    private final Serializer<V> valueSerializer;
 
     private FinalBuilder(
         InitialBuilder<K, V> initialBuilder,
@@ -173,8 +155,7 @@ public class ProducerRegistration<K, V> {
   private static class InitialBuilder<K, V>
       implements TopicBuilder<K, V>, ProducerBuilder<K, V>, KeySerializerBuilder<K, V> {
 
-    private ExpectedTopicConfiguration topic;
-    private boolean checkTopicConfiguration = false;
+    private TopicConfig topic;
     private ProducerConfig producerConfig;
     private String producerName = null;
 
@@ -182,7 +163,6 @@ public class ProducerRegistration<K, V> {
 
     static <K, V, K2, V2> InitialBuilder<K2, V2> clone(InitialBuilder<K, V> source) {
       InitialBuilder<K2, V2> target = new InitialBuilder<>();
-      target.checkTopicConfiguration = source.checkTopicConfiguration;
       target.topic = source.topic;
       target.producerConfig = source.producerConfig;
       target.producerName = source.producerName;
@@ -190,7 +170,7 @@ public class ProducerRegistration<K, V> {
     }
 
     @Override
-    public ProducerBuilder<K, V> forTopic(@NotNull ExpectedTopicConfiguration topic) {
+    public ProducerBuilder<K, V> forTopic(@NotNull TopicConfig topic) {
       this.topic = topic;
       return this;
     }
@@ -203,12 +183,6 @@ public class ProducerRegistration<K, V> {
     @Override
     public <V1> FinalBuilder<K, V1> withValueSerializer(Serializer<V1> valueSerializer) {
       return new FinalBuilder<>(InitialBuilder.clone(this), null, valueSerializer);
-    }
-
-    @Override
-    public ProducerBuilder<K, V> checkTopicConfiguration() {
-      this.checkTopicConfiguration = true;
-      return this;
     }
 
     @Override
@@ -244,7 +218,6 @@ public class ProducerRegistration<K, V> {
     build.keySerializer = keySerializer;
     build.valueSerializer = valueSerializer;
     build.topic = initialBuilder.topic;
-    build.checkTopicConfiguration = initialBuilder.checkTopicConfiguration;
     build.producerConfig = initialBuilder.producerConfig;
     build.producerName = initialBuilder.producerName;
 
