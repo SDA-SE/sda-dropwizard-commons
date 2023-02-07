@@ -25,9 +25,9 @@ public class KafkaConfiguration {
 
   private Map<String, ConsumerConfig> consumers = new HashMap<>();
 
-  private Map<String, TopicConfig> topics = new HashMap<>();
-
   private Map<String, ListenerConfig> listenerConfig = new HashMap<>();
+
+  private Map<String, TopicConfig> topics = new HashMap<>();
 
   private Security security = new Security();
 
@@ -70,10 +70,6 @@ public class KafkaConfiguration {
     return consumers;
   }
 
-  public Map<String, TopicConfig> getTopics() {
-    return topics;
-  }
-
   public Map<String, ListenerConfig> getListenerConfig() {
     return listenerConfig;
   }
@@ -97,13 +93,17 @@ public class KafkaConfiguration {
     return this;
   }
 
-  public KafkaConfiguration setTopics(Map<String, TopicConfig> topics) {
-    this.topics = topics;
+  public KafkaConfiguration setListenerConfig(Map<String, ListenerConfig> listenerConfig) {
+    this.listenerConfig = listenerConfig;
     return this;
   }
 
-  public KafkaConfiguration setListenerConfig(Map<String, ListenerConfig> listenerConfig) {
-    this.listenerConfig = listenerConfig;
+  public Map<String, TopicConfig> getTopics() {
+    return topics;
+  }
+
+  public KafkaConfiguration setTopics(Map<String, TopicConfig> topics) {
+    this.topics = topics;
     return this;
   }
 
