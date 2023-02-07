@@ -24,7 +24,7 @@ class ProducerRegistrationTest {
             .build();
 
     assertThat(producerRegistration).isNotNull();
-    assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
+    assertThat(producerRegistration.getTopicName()).isEqualTo("TOPIC");
     assertThat(producerRegistration.getKeySerializer()).isInstanceOf(StringSerializer.class);
     assertThat(producerRegistration.getValueSerializer()).isInstanceOf(StringSerializer.class);
   }
@@ -41,7 +41,7 @@ class ProducerRegistrationTest {
             .build();
 
     assertThat(producerRegistration).isNotNull();
-    assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
+    assertThat(producerRegistration.getTopic().getName()).isEqualTo("TOPIC");
     assertThat(producerRegistration.getKeySerializer()).isInstanceOf(LongSerializer.class);
     assertThat(producerRegistration.getValueSerializer()).isInstanceOf(IntegerSerializer.class);
   }
@@ -63,7 +63,7 @@ class ProducerRegistrationTest {
             .build();
 
     assertThat(producerRegistration).isNotNull();
-    assertThat(producerRegistration.getTopic().getTopicName()).isEqualTo("TOPIC");
+    assertThat(producerRegistration.getTopicName()).isEqualTo("TOPIC");
     assertThat(producerRegistration.getProducerConfig()).isEqualTo(producerConfig);
   }
 }

@@ -36,12 +36,5 @@ kafka:
   topics:
     topicId1:
       name: topic1
-      partitions: 2
-      replicationFactor: 2
-      config:
-        max.message.bytes: 1024
-        retention.ms: 60480000
     topicId2:
       name: topic2
-      partitions: 1
-      replicationFactor: 1
