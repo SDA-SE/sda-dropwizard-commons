@@ -3,9 +3,6 @@ package org.sdase.commons.server.s3.testing;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import java.io.File;
@@ -33,12 +30,6 @@ class S3ClassExtensionTest {
 
   @BeforeEach
   void setUp() {
-    // The S3 Mock doesn't require authentication, however we still pass it
-    // here to check that the server is at least ignoring it
-    AWSCredentials credentials = new BasicAWSCredentials("user", "s3cr3t");
-    ClientConfiguration clientConfiguration = new ClientConfiguration();
-    clientConfiguration.setSignerOverride("AWSS3V4SignerType");
-
     s3Client = S3_EXTENSION.getClient();
   }
 
