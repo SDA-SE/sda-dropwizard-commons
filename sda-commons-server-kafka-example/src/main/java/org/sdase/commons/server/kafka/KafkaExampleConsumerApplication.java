@@ -21,8 +21,8 @@ public class KafkaExampleConsumerApplication extends Application<KafkaExampleCon
   private final KafkaBundle<KafkaExampleConfiguration> kafka =
       KafkaBundle.builder().withConfigurationProvider(KafkaExampleConfiguration::getKafka).build();
 
-  private List<Value> receivedMessages = new ArrayList<>();
-  private List<Long> receivedLongs = new ArrayList<>();
+  private final List<Value> receivedMessages = new ArrayList<>();
+  private final List<Long> receivedLongs = new ArrayList<>();
 
   @Override
   public void initialize(Bootstrap<KafkaExampleConfiguration> bootstrap) {
