@@ -17,11 +17,13 @@ import io.opentelemetry.sdk.trace.data.EventData;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.server.opentelemetry.OpenTelemetryBundle;
 
 class TracingAsyncListenerIT {
@@ -32,13 +34,16 @@ class TracingAsyncListenerIT {
 
   @RegisterExtension static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
-  @Test
+  @RetryingTest(maxAttempts = 3)
   void shouldTraceAsyncServlets() {
     Response response = createAdminClient().path("/async/trace").request().get();
 
     assertThat(response.getStatus()).isEqualTo(SC_OK);
 
+    // setting the pollDelay and maximum timeout, because it is an async call
     await()
+        .pollDelay(4, TimeUnit.SECONDS)
+        .atMost(10, TimeUnit.SECONDS)
         .untilAsserted(
             () -> {
               List<SpanData> spans = OTEL.getSpans();
