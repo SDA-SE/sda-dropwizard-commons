@@ -1,5 +1,7 @@
 package org.sdase.commons.server.s3.testing;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -101,6 +103,7 @@ public class S3Mock {
             new AwsClientBuilder.EndpointConfiguration(
                 getEndpoint(), Regions.DEFAULT_REGION.getName()))
         .withPathStyleAccessEnabled(true)
+        .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))
         .build();
   }
 
