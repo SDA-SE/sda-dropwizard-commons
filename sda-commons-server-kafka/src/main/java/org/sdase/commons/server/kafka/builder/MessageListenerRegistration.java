@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
+import org.sdase.commons.server.kafka.config.TopicConfig;
 import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
 import org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration;
 import org.sdase.commons.server.kafka.topicana.TopicConfigurationBuilder;
@@ -27,6 +28,11 @@ public class MessageListenerRegistration<K, V> {
     return keyDeserializer;
   }
 
+  /**
+   * @deprecated this feature will be removed in v3 because services can't really decide on proper
+   *     topic configurations.
+   */
+  @Deprecated
   public boolean isCheckTopicConfiguration() {
     return checkTopicConfiguration;
   }
@@ -39,6 +45,12 @@ public class MessageListenerRegistration<K, V> {
     return valueDeserializer;
   }
 
+  /**
+   * @deprecated the {@link ExpectedTopicConfiguration} will be removed, hence, this method will be
+   *     replaced by Collection&lt;{@link TopicConfig}&gt; getTopics()
+   * @return topics
+   */
+  @Deprecated
   public Collection<ExpectedTopicConfiguration> getTopics() {
     return topics;
   }
@@ -92,7 +104,11 @@ public class MessageListenerRegistration<K, V> {
      * @param topicConfiguration topic to consume given as topic configuration, e.g. predefined in
      *     config This is necessary if you want to check the topic configuration during startup
      * @return builder
+     * @deprecated the class {@link ExpectedTopicConfiguration} will be removed, hence, this method
+     *     will be replaced by forTopicConfigs(Collection&lt;{@link TopicConfig}&gt;
+     *     topicConfiguration)
      */
+    @Deprecated
     ConsumerBuilder forTopicConfigs(Collection<ExpectedTopicConfiguration> topicConfiguration);
   }
 
@@ -104,7 +120,10 @@ public class MessageListenerRegistration<K, V> {
      * thrown.
      *
      * @return builder
+     * @deprecated this feature will be removed in v3 because services can't really decide on proper
+     *     topic configurations.
      */
+    @Deprecated
     ConsumerBuilder checkTopicConfiguration();
 
     /**
@@ -239,6 +258,14 @@ public class MessageListenerRegistration<K, V> {
       return this;
     }
 
+    /**
+     * @deprecated the class {@link ExpectedTopicConfiguration} will be removed, hence, this method
+     *     will be replaced by * forTopicConfigs(Collection&lt;{@link TopicConfig}&gt;
+     *     topicConfiguration)
+     * @param topicConfiguration topic to consume given as topic configuration, e.g. predefined in
+     *     config This is necessary if you want to check the topic configuration during startup
+     */
+    @Deprecated
     @Override
     public ConsumerBuilder forTopicConfigs(
         Collection<ExpectedTopicConfiguration> topicConfiguration) {
@@ -246,6 +273,16 @@ public class MessageListenerRegistration<K, V> {
       return this;
     }
 
+    /**
+     * Define optional step to process a configuration check of the topic. If the topic differs,
+     * a @{@link org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException} will be
+     * thrown.
+     *
+     * @return builder
+     * @deprecated this feature will be removed in v3 because services can't really decide on proper
+     *     topic configurations.
+     */
+    @Deprecated
     @Override
     public ConsumerBuilder checkTopicConfiguration() {
       this.topicExistCheck = true;

@@ -18,14 +18,29 @@ public class TopicConfig {
     return name;
   }
 
+  /**
+   * @deprecated since the topic creation will be removed, this method will not be necessary
+   *     anymore, and it will be removed as well
+   */
+  @Deprecated
   public Integer getReplicationFactor() {
     return replicationFactor;
   }
 
+  /**
+   * @deprecated since the topic creation will be removed, this method will not be necessary
+   *     anymore, and it will be removed as well
+   */
+  @Deprecated
   public Integer getPartitions() {
     return partitions;
   }
 
+  /**
+   * @deprecated since the topic creation will be removed, this method will not be necessary
+   *     anymore, and it will be removed as well
+   */
+  @Deprecated
   public Map<String, String> getConfig() {
     return config;
   }
@@ -35,14 +50,31 @@ public class TopicConfig {
     return this;
   }
 
+  /**
+   * @deprecated since the topic creation will be removed, this method will not be necessary
+   *     anymore, and it will be removed as well
+   * @param replicationFactor
+   */
+  @Deprecated
   public void setReplicationFactor(Integer replicationFactor) {
     this.replicationFactor = replicationFactor;
   }
 
+  /**
+   * @deprecated since the topic creation will be removed, this method will not be necessary
+   *     anymore, and it will be removed as well
+   */
+  @Deprecated
   public void setPartitions(Integer partitions) {
     this.partitions = partitions;
   }
 
+  /**
+   * @deprecated since the topic creation will be removed, this method will not be necessary
+   *     anymore, and it will be removed as well
+   * @param config
+   */
+  @Deprecated
   public void setConfig(Map<String, String> config) {
     this.config = config;
   }
@@ -53,10 +85,29 @@ public class TopicConfig {
 
   public interface TopicConfigBuilder {
 
+    /**
+     * @deprecated since the topic creation will be removed, this method will not be necessary
+     *     anymore, and it will be removed as well
+     * @param replicationFactor
+     */
+    @Deprecated
     TopicConfigBuilder withReplicationFactor(Integer replicationFactor);
 
+    /**
+     * @deprecated since the topic creation will be removed, this method will not be necessary
+     *     anymore, and it will be removed as well
+     * @param partitions
+     */
+    @Deprecated
     TopicConfigBuilder withPartitions(Integer partitions);
 
+    /**
+     * @deprecated since the topic creation will be removed, this method will not be necessary
+     *     anymore, and it will be removed as well
+     * @param key
+     * @param value
+     */
+    @Deprecated
     TopicConfigBuilder addConfig(String key, String value);
 
     TopicConfig build();
@@ -79,18 +130,37 @@ public class TopicConfig {
       return this;
     }
 
+    /**
+     * @deprecated since the topic creation will be removed, this method will not be necessary
+     *     anymore, and it will be removed as well
+     * @param replicationFactor
+     */
+    @Deprecated
     @Override
     public TopicConfigBuilder withReplicationFactor(Integer replicationFactor) {
       this.replicationFactor = replicationFactor;
       return this;
     }
 
+    /**
+     * @deprecated since the topic creation will be removed, this method will not be necessary
+     *     anymore, and it will be removed as well
+     * @param partitions
+     */
+    @Deprecated
     @Override
     public TopicConfigBuilder withPartitions(Integer partitions) {
       this.partitions = partitions;
       return this;
     }
 
+    /**
+     * @deprecated since the topic creation will be removed, this method will not be necessary
+     *     anymore, and it will be removed as well
+     * @param key
+     * @param value
+     */
+    @Deprecated
     @Override
     public TopicConfigBuilder addConfig(String key, String value) {
       config.put(key, value);
