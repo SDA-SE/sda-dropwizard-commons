@@ -10,6 +10,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
 import org.slf4j.MDC;
 
 /**
@@ -55,21 +56,22 @@ public class ContainerRequestContextHolder
 
     return Context.current()
         .wrap(
-            () -> {
-              ContainerRequestContextHolder containerRequestContextHolder =
-                  new ContainerRequestContextHolder();
-              try {
-                if (contextMap != null) {
-                  MDC.setContextMap(contextMap);
-                }
-                containerRequestContextHolder.filter(requestContext);
+            MetadataContext.transferMetadataContext(
+                () -> {
+                  ContainerRequestContextHolder containerRequestContextHolder =
+                      new ContainerRequestContextHolder();
+                  try {
+                    if (contextMap != null) {
+                      MDC.setContextMap(contextMap);
+                    }
+                    containerRequestContextHolder.filter(requestContext);
 
-                runnable.run();
-              } finally {
-                MDC.clear();
-                containerRequestContextHolder.filter(requestContext, null);
-              }
-            });
+                    runnable.run();
+                  } finally {
+                    MDC.clear();
+                    containerRequestContextHolder.filter(requestContext, null);
+                  }
+                }));
   }
 
   /**
@@ -85,20 +87,21 @@ public class ContainerRequestContextHolder
 
     return Context.current()
         .wrap(
-            () -> {
-              ContainerRequestContextHolder containerRequestContextHolder =
-                  new ContainerRequestContextHolder();
-              try {
-                if (contextMap != null) {
-                  MDC.setContextMap(contextMap);
-                }
-                containerRequestContextHolder.filter(requestContext);
+            MetadataContext.transferMetadataContext(
+                () -> {
+                  ContainerRequestContextHolder containerRequestContextHolder =
+                      new ContainerRequestContextHolder();
+                  try {
+                    if (contextMap != null) {
+                      MDC.setContextMap(contextMap);
+                    }
+                    containerRequestContextHolder.filter(requestContext);
 
-                return callable.call();
-              } finally {
-                MDC.clear();
-                containerRequestContextHolder.filter(requestContext, null);
-              }
-            });
+                    return callable.call();
+                  } finally {
+                    MDC.clear();
+                    containerRequestContextHolder.filter(requestContext, null);
+                  }
+                }));
   }
 }
