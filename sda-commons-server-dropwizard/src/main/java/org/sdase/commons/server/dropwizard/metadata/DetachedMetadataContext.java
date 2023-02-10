@@ -9,6 +9,13 @@ import java.util.List;
  * MetadataContext#current() current} {@link MetadataContext}. Changes in this class do not
  * propagate to the {@linkplain MetadataContext#current() current} {@link MetadataContext} and vice
  * versa.
+ *
+ * <p>This variant of a {@link MetadataContext} can be added to a business entity to persist the
+ * context related to that entity in MongoDB with {@code sda-commons-server-spring-data-mongo}. When
+ * a process continues and the entity is loaded from MongoDB, the {@link MetadataContext} can be
+ * restored like this:
+ *
+ * <pre>{@code MetadataContext.createContext(detachedMetadataContextFromEntity)}</pre>
  */
 public class DetachedMetadataContext extends LinkedHashMap<String, List<String>> {
 
