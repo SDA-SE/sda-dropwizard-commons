@@ -17,6 +17,7 @@ import org.sdase.commons.server.cors.CorsBundle;
 import org.sdase.commons.server.cors.CorsConfigProvider;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
+import org.sdase.commons.server.dropwizard.bundles.MetadataContextBundle;
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.opa.OpaBundle;
@@ -46,6 +47,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
   private final OpaBuilder<C> opaBundleBuilder;
   private final CorsBundle.FinalBuilder<C> corsBundleBuilder;
   private final OpenApiBundle.FinalBuilder openApiBundleBuilder;
+
   private final List<String> excludedTracingUrls =
       Arrays.asList(
           "/ping", "/healthcheck", "/healthcheck/internal", "/metrics", "/metrics/prometheus");
@@ -83,6 +85,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     bootstrap.addBundle(InternalHealthCheckEndpointBundle.builder().build());
     bootstrap.addBundle(PrometheusBundle.builder().build());
     bootstrap.addBundle(TraceTokenBundle.builder().build());
+    bootstrap.addBundle(MetadataContextBundle.builder().build());
 
     // add configured bundles
     List<ConfiguredBundle<? super C>> configuredBundles = new ArrayList<>();
