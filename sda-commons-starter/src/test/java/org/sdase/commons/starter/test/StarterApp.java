@@ -11,11 +11,15 @@ import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.Collections;
+import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.sdase.commons.server.dropwizard.metadata.DetachedMetadataContext;
+import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
 import org.sdase.commons.starter.SdaPlatformBundle;
 import org.sdase.commons.starter.SdaPlatformConfiguration;
 
@@ -59,5 +63,12 @@ public class StarterApp extends Application<SdaPlatformConfiguration> {
   @ApiResponses({@ApiResponse(responseCode = "200", description = "Successful ping")})
   public Object getPing() {
     return Collections.singletonMap("ping", "pong");
+  }
+
+  @GET
+  @PermitAll
+  @Path("metadataContext")
+  public DetachedMetadataContext getContext(@HeaderParam("tenant-id") List<String> header) {
+    return MetadataContext.detachedCurrent();
   }
 }
