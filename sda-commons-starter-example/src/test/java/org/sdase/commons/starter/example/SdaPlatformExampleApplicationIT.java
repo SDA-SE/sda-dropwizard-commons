@@ -82,7 +82,6 @@ class SdaPlatformExampleApplicationIT {
   @Test
   void accessApiWithAuthenticationAndConsumerToken() {
     String authHeader = AUTH.auth().buildHeaderValue();
-    OPA.mock(onAnyRequest().deny());
     OPA.mock(
         onRequest()
             .withHttpMethod(HttpMethod.GET)
@@ -103,7 +102,6 @@ class SdaPlatformExampleApplicationIT {
 
   @Test
   void respond401DueToInvalidJWT() {
-    OPA.mock(onAnyRequest().deny());
     Response response =
         baseUrlWebTarget()
             .path("people")
