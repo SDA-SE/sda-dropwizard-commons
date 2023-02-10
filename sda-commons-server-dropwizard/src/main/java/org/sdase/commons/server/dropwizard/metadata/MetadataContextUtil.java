@@ -1,6 +1,10 @@
 package org.sdase.commons.server.dropwizard.metadata;
 
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 class MetadataContextUtil {
@@ -41,14 +45,33 @@ class MetadataContextUtil {
 
   static String keyFromConfiguration(String environmentOrPropertyName)
       throws KeyConfigurationMissingException {
+    return determineConfiguredValue(environmentOrPropertyName)
+        .orElseThrow(() -> new KeyConfigurationMissingException(environmentOrPropertyName));
+  }
+
+  static Set<String> metadataFields() {
+    return determineConfiguredValue(MetadataContext.METADATA_FIELDS_ENVIRONMENT_VARIABLE)
+        .map(MetadataContextUtil::toSet)
+        .orElse(Set.of());
+  }
+
+  private static Set<String> toSet(String commaDelimitedValues) {
+    var values = Arrays.asList(commaDelimitedValues.split(","));
+    return values.stream()
+        .filter(StringUtils::isNotBlank)
+        .map(String::trim)
+        .collect(Collectors.toSet());
+  }
+
+  private static Optional<String> determineConfiguredValue(String environmentOrPropertyName) {
     var fromProperty = System.getProperty(environmentOrPropertyName);
     if (StringUtils.isNotBlank(fromProperty)) {
-      return fromProperty;
+      return Optional.of(fromProperty);
     }
     String fromEnvironment = System.getenv(environmentOrPropertyName);
     if (StringUtils.isNotBlank(fromEnvironment)) {
-      return fromEnvironment;
+      return Optional.of(fromEnvironment);
     }
-    throw new KeyConfigurationMissingException(environmentOrPropertyName);
+    return Optional.empty();
   }
 }
