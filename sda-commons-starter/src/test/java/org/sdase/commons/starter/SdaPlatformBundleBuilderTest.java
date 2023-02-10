@@ -8,6 +8,7 @@ import org.sdase.commons.server.consumer.ConsumerTokenBundle;
 import org.sdase.commons.server.cors.CorsBundle;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
+import org.sdase.commons.server.dropwizard.bundles.MetadataContextBundle;
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.opa.OpaBundle;
@@ -74,7 +75,10 @@ class SdaPlatformBundleBuilderTest {
           softly
               .assertThat(bundleAssertion.getBundleOfType(bundle, ConsumerTokenBundle.class))
               .isNotNull();
-          softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(13);
+          softly
+              .assertThat(bundleAssertion.getBundleOfType(bundle, MetadataContextBundle.class))
+              .isNotNull();
+          softly.assertThat(bundleAssertion.countAddedBundles(bundle)).isEqualTo(14);
         });
   }
 }
