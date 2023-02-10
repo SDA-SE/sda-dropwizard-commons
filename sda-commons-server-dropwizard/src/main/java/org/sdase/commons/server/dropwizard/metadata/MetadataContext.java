@@ -18,18 +18,40 @@ import java.util.concurrent.Callable;
  *
  * <p>The metadata fields (e.g. header names) that are put into the {@code MetadataContext} must be
  * configured by {@linkplain System#getenv(String) environment variable} or {@linkplain
- * System#getProperty(String) system property} {@code METADATA_FIELDS} as comma separated list of
- * header names, e.g. {@code business-process-id,tenant-id}. Header names are treated
- * case-insensitive.
+ * System#getProperty(String) system property} {@value METADATA_FIELDS_ENVIRONMENT_VARIABLE} as
+ * comma separated list of header names, e.g. {@code business-process-id,tenant-id}. Header names
+ * are treated case-insensitive.
+ *
+ * <p>Metadata supports to have multiple values per key. Commas (@code ,) are not allowed in values
+ * to support composition as described in <a
+ * href="https://www.rfc-editor.org/rfc/rfc9110.html#name-field-lines-and-combined-fi">RFC 9110
+ * 5.2</a>.
  *
  * <p>Technically, the {@code MetadataContext} is implemented as static {@link ThreadLocal}. When
  * code is executed in a new {@link Thread}, the context must be transferred. Helper methods are
  * available for {@linkplain #transferMetadataContext(Runnable) <code>Runnable</code>} and
  * {@linkplain #transferMetadataContext(Callable) <code>Callable</code>}
  */
-// TODO not picked up from request headers and Kafka consumers as documented yet.
+// TODO not picked up from Kafka consumers as documented yet.
 // TODO Not handled in platform client and KafkaMessageProducer as documented yet.
 public interface MetadataContext {
+
+  /**
+   * The name of the property or environment variable that defines which fields (e.g. of HTTP
+   * request headers or Kafka message headers are) included in the {@link MetadataContext}. The
+   * value must be a comma separated list of field names.
+   *
+   * <p>Example: {@code METADATA_FIELDS=tenant-id,processes}
+   */
+  String METADATA_FIELDS_ENVIRONMENT_VARIABLE = "METADATA_FIELDS";
+
+  /**
+   * @return The fields that should be included in the {@link MetadataContext}, derived from the
+   *     property or environment variable {@value #METADATA_FIELDS_ENVIRONMENT_VARIABLE}.
+   */
+  static Set<String> metadataFields() {
+    return MetadataContextUtil.metadataFields();
+  }
 
   /**
    * @return the immutable metadata context of the current {@link Thread}, never {@code null}.
@@ -81,6 +103,24 @@ public interface MetadataContext {
   }
 
   /**
+   * Derives the metadata key from the service specific configured environment.
+   *
+   * <p>This is the preferred approach to determine the key when adding information to the metadata
+   * context.
+   *
+   * @param environmentOrPropertyName environmentOrPropertyName the name of a {@linkplain
+   *     System#getProperty(String) system property} or {@linkplain System#getenv(String)
+   *     environment variable} that defines the actual key for a specific need of the service.
+   * @return the metadata key that is used for the metadata context
+   * @throws KeyConfigurationMissingException if the given {@code environmentOrPropertyName} does *
+   *     not resolve to a metadata context key
+   */
+  static String keyFromConfiguration(String environmentOrPropertyName)
+      throws KeyConfigurationMissingException {
+    return MetadataContextUtil.keyFromConfiguration(environmentOrPropertyName);
+  }
+
+  /**
    * @return all available keys in the metadata context.
    */
   Set<String> keys();
@@ -114,6 +154,6 @@ public interface MetadataContext {
    */
   default List<String> valuesByKeyFromEnvironment(String environmentOrPropertyName)
       throws KeyConfigurationMissingException {
-    return valuesByKey(MetadataContextUtil.keyFromConfiguration(environmentOrPropertyName));
+    return valuesByKey(keyFromConfiguration(environmentOrPropertyName));
   }
 }
