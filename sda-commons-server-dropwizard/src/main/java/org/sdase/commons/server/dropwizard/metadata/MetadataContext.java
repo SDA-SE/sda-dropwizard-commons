@@ -2,6 +2,7 @@ package org.sdase.commons.server.dropwizard.metadata;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -79,6 +80,32 @@ public interface MetadataContext {
    */
   static void createContext(DetachedMetadataContext metadataContext) {
     MetadataContextHolder.set(metadataContext.toMetadataContext());
+  }
+
+  /**
+   * Merges the given new metadata context data into the {@link #current()} metadata context.
+   *
+   * @param newContextData the context data that should be merged into the {@linkplain #current()
+   *     current context}
+   * @param mergeStrategy defines the preference when metadata for a specific key exists in both
+   *     contexts
+   * @throws NullPointerException if {@code mergeStrategy} is {@code null}
+   */
+  static void mergeContext(
+      DetachedMetadataContext newContextData, MetadataContextMergeStrategy mergeStrategy) {
+    var current = detachedCurrent();
+    var newNonNull = Optional.ofNullable(newContextData).orElse(new DetachedMetadataContext());
+    switch (mergeStrategy) {
+      case EXTEND:
+        createContext(MetadataContextUtil.merge(current, newNonNull));
+        break;
+      case REPLACE:
+        createContext(MetadataContextUtil.mergeWithPreference(newNonNull, current));
+        break;
+      case KEEP:
+        createContext(MetadataContextUtil.mergeWithPreference(current, newNonNull));
+        break;
+    }
   }
 
   /**
