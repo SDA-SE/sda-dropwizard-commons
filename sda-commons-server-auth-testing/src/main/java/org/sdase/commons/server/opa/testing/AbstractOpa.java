@@ -2,6 +2,7 @@ package org.sdase.commons.server.opa.testing;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.absent;
+import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
@@ -181,7 +182,7 @@ public abstract class AbstractOpa {
 
       MappingBuilder mappingBuilder;
       if (isOnAnyRequest()) {
-        mappingBuilder = matchAnyPostUrl();
+        mappingBuilder = matchAnyUrl();
       } else {
         mappingBuilder = matchInput(getHttpMethod(), getPaths());
 
@@ -336,6 +337,10 @@ public abstract class AbstractOpa {
 
     MappingBuilder matchAnyPostUrl() {
       return post(urlMatching("/.*"));
+    }
+
+    MappingBuilder matchAnyUrl() {
+      return any(urlMatching("/.*"));
     }
 
     MappingBuilder matchInput(String httpMethod, String[] paths) {

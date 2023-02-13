@@ -1,7 +1,6 @@
 package org.sdase.commons.server.opa.health;
 
 import com.codahale.metrics.health.HealthCheck;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.slf4j.Logger;
@@ -24,9 +23,9 @@ public class PolicyExistsHealthCheck extends HealthCheck {
     try {
 
       // send a get request to the policy path. The get will not provide any input.
-      // Normally, the policy should response with a deny decision.
+      // Normally, the policy should respond with a denying decision.
       // If there is an exception, the check will be unhealthy
-      OpaResponse opaResponse = client.request().post(Entity.json(null), OpaResponse.class);
+      OpaResponse opaResponse = client.request().get(OpaResponse.class);
 
       if (opaResponse == null
           || opaResponse.getResult() == null
