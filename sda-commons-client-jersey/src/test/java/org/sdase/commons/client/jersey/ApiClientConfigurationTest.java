@@ -7,6 +7,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.notMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
@@ -15,18 +18,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.MetricFilter;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import java.util.List;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
 import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
+import org.sdase.commons.server.dropwizard.metadata.DetachedMetadataContext;
+import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
 
 /** Test that http client configuration is correct. */
+@SetSystemProperty(key = "METADATA_FIELDS", value = "tenant-id")
 class ApiClientConfigurationTest {
 
   @RegisterExtension
@@ -115,5 +123,51 @@ class ApiClientConfigurationTest {
     assertThat(client.createCar(new Car().setSign("HH UV 42")))
         .extracting(Response::getStatus)
         .isEqualTo(SC_CREATED);
+  }
+
+  @Test
+  void submitMetadataContextInPlatformClient() {
+
+    MockApiClient client =
+        app.getJerseyClientBundle()
+            .getClientFactory()
+            .platformClient()
+            .api(MockApiClient.class)
+            .atTarget(WIRE.baseUrl());
+
+    WIRE.stubFor(
+        post("/api/cars") // NOSONAR
+            .willReturn(created()));
+    DetachedMetadataContext metadataContext = new DetachedMetadataContext();
+    metadataContext.put("tenant-id", List.of("t-1"));
+    MetadataContext.createContext(metadataContext);
+    try (var ignored = client.createCar(new Car().setSign("HH UV 42"))) {
+      verify(postRequestedFor(urlEqualTo("/api/cars")).withHeader("tenant-id", equalTo("t-1")));
+    } finally {
+      MetadataContext.createContext(new DetachedMetadataContext());
+    }
+  }
+
+  @Test
+  void dontSubmitMetadataContextInExternalClient() {
+
+    MockApiClient client =
+        app.getJerseyClientBundle()
+            .getClientFactory()
+            .externalClient()
+            .api(MockApiClient.class)
+            .atTarget(WIRE.baseUrl());
+
+    WIRE.stubFor(
+        post("/api/cars") // NOSONAR
+            .willReturn(created()));
+    DetachedMetadataContext metadataContext = new DetachedMetadataContext();
+    metadataContext.put("tenant-id", List.of("t-1"));
+    MetadataContext.createContext(metadataContext);
+    try (var ignored = client.createCar(new Car().setSign("HH UV 42"))) {
+      verify(postRequestedFor(urlEqualTo("/api/cars")).withoutHeader("tenant-id"));
+    } finally {
+      MetadataContext.createContext(new DetachedMetadataContext());
+    }
   }
 }
