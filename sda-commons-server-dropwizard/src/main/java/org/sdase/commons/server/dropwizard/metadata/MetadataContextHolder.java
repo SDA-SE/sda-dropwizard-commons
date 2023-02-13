@@ -4,6 +4,10 @@ class MetadataContextHolder {
 
   private static final ThreadLocal<MetadataContext> METADATA_CONTEXT = new ThreadLocal<>();
 
+  private MetadataContextHolder() {
+    // only static methods to handle ThreadLocal
+  }
+
   static MetadataContext get() {
     return getInternal();
   }
