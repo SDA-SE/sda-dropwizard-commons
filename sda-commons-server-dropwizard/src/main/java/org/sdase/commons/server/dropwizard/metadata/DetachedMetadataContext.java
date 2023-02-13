@@ -3,6 +3,7 @@ package org.sdase.commons.server.dropwizard.metadata;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A {@link MetadataContext} representation which is detached from the {@linkplain
@@ -39,5 +40,15 @@ public class DetachedMetadataContext extends LinkedHashMap<String, List<String>>
    */
   public MetadataContext toMetadataContext() {
     return UnmodifiableMetadataContext.of(this);
+  }
+
+  /**
+   * @return {@code true}, if no metadata {@linkplain #keySet() keys} are defined or no {@linkplain
+   *     #get(Object) values} contain data, {@code false} if any {@linkplain #get(Object) value} is
+   *     not {@linkplain List#isEmpty() empty}
+   */
+  public boolean isEffectivelyEmpty() {
+    return keySet().isEmpty()
+        || keySet().stream().map(this::get).filter(Objects::nonNull).allMatch(List::isEmpty);
   }
 }
