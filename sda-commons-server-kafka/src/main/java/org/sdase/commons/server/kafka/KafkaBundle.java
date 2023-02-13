@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 import javax.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
+import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
@@ -36,6 +38,7 @@ import org.sdase.commons.server.kafka.health.ExternalKafkaHealthCheck;
 import org.sdase.commons.server.kafka.health.KafkaHealthCheck;
 import org.sdase.commons.server.kafka.producer.KafkaMessageProducer;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
+import org.sdase.commons.server.kafka.producer.MetadataContextProducerInterceptor;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 import org.sdase.commons.server.kafka.prometheus.KafkaConsumerMetrics;
 import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
@@ -300,6 +303,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       producerProperties.putAll(producerConfig.getConfig());
     }
 
+    extendPropertiesWithMetadataContextInterceptorIfNeeded(
+        producerProperties,
+        org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,
+        MetadataContextProducerInterceptor.class);
     return new KafkaProducer<>(producerProperties, keySerializer, valueSerializer);
   }
 
@@ -429,6 +436,22 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   private void checkInit() {
     if (kafkaConfiguration == null) {
       throw new IllegalStateException("KafkaConfiguration not yet initialized!");
+    }
+  }
+
+  private static void extendPropertiesWithMetadataContextInterceptorIfNeeded(
+      KafkaProperties kafkaProperties, String interceptorConfigKey, Class<?> interceptorType) {
+    Set<String> metadataContextFields = MetadataContext.metadataFields();
+    if (!metadataContextFields.isEmpty()) {
+      Object o = kafkaProperties.get(interceptorConfigKey);
+      String interceptorName = interceptorType.getName();
+      if (o == null) {
+        kafkaProperties.put(interceptorConfigKey, interceptorName);
+      } else if (o instanceof String) {
+        kafkaProperties.put(interceptorConfigKey, String.join(",", o.toString(), interceptorName));
+      } else if (o instanceof List) {
+        ((List<String>) o).add(interceptorName);
+      }
     }
   }
 
