@@ -1,6 +1,7 @@
 package org.sdase.commons.server.dropwizard.metadata;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -155,5 +156,15 @@ public interface MetadataContext {
   default List<String> valuesByKeyFromEnvironment(String environmentOrPropertyName)
       throws KeyConfigurationMissingException {
     return valuesByKey(keyFromConfiguration(environmentOrPropertyName));
+  }
+
+  /**
+   * @return {@code true}, if no metadata {@link #keys()} are defined or no {@link
+   *     #valuesByKey(String)} contain data, {@code false} if any {@link #valuesByKey(String)} is
+   *     not {@linkplain List#isEmpty() empty}
+   */
+  default boolean isEffectivelyEmpty() {
+    return keys().isEmpty()
+        || keys().stream().map(this::valuesByKey).filter(Objects::nonNull).allMatch(List::isEmpty);
   }
 }
