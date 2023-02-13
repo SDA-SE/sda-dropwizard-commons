@@ -9,11 +9,13 @@ import org.sdase.commons.client.jersey.HttpClientConfiguration;
 import org.sdase.commons.client.jersey.filter.AddRequestHeaderFilter;
 import org.sdase.commons.client.jersey.filter.AuthHeaderClientFilter;
 import org.sdase.commons.client.jersey.filter.TraceTokenClientFilter;
+import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
+import org.sdase.commons.server.dropwizard.metadata.MetadataContextClientRequestFilter;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 
 public class PlatformClientBuilder extends AbstractBaseClientBuilder<PlatformClientBuilder> {
 
-  private Supplier<Optional<String>> consumerTokenSupplier;
+  private final Supplier<Optional<String>> consumerTokenSupplier;
 
   public PlatformClientBuilder(
       Environment environment,
@@ -23,6 +25,7 @@ public class PlatformClientBuilder extends AbstractBaseClientBuilder<PlatformCli
     super(environment, httpClientConfiguration, openTelemetry);
     this.consumerTokenSupplier = () -> Optional.ofNullable(StringUtils.trimToNull(consumerToken));
     addFilter(new TraceTokenClientFilter());
+    addFilter(new MetadataContextClientRequestFilter(MetadataContext.metadataFields()));
   }
 
   /**
