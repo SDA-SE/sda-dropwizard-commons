@@ -69,4 +69,43 @@ class MetadataContextDefaultMethodsTest {
     assertThat(metadataContext.valuesByKeyFromEnvironment("METADATA_KEY_DEFINED"))
         .isEqualTo(List.of("tenant-1"));
   }
+
+  @Test
+  void shouldIdentifyEmptyMetadata() {
+    assertThat(metadataContext.isEffectivelyEmpty()).isTrue();
+  }
+
+  @Test
+  void shouldIdentifyEmptyMetadataWithEmptyLists() {
+    testData.put("tenant-id", List.of());
+    testData.put("processes", List.of());
+    assertThat(metadataContext.isEffectivelyEmpty()).isTrue();
+  }
+
+  @Test
+  void shouldIdentifyEmptyMetadataWithNullValues() {
+    testData.put("tenant-id", null);
+    testData.put("processes", null);
+    assertThat(metadataContext.isEffectivelyEmpty()).isTrue();
+  }
+
+  @Test
+  void shouldIdentifyNonEmptyMetadataWithValues() {
+    testData.put("tenant-id", List.of("t-1"));
+    assertThat(metadataContext.isEffectivelyEmpty()).isFalse();
+  }
+
+  @Test
+  void shouldIdentifyNonEmptyMetadataWithValuesAndNull() {
+    testData.put("tenant-id", List.of("t-1"));
+    testData.put("processes", null);
+    assertThat(metadataContext.isEffectivelyEmpty()).isFalse();
+  }
+
+  @Test
+  void shouldIdentifyNonEmptyMetadataWithValuesAndEmptyValues() {
+    testData.put("tenant-id", List.of("t-1"));
+    testData.put("processes", List.of());
+    assertThat(metadataContext.isEffectivelyEmpty()).isFalse();
+  }
 }
