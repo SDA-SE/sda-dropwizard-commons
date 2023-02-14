@@ -2,7 +2,7 @@ package org.sdase.commons.server.kafka.consumer;
 
 import java.util.Map.Entry;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.MetricName;
 
@@ -30,7 +30,7 @@ public class KafkaHelper {
    * @param <V> the type of the Value
    * @return the name of the producer as used in log messages that is hidden within the metrics
    */
-  public static <K, V> String getClientId(KafkaProducer<K, V> producer) {
+  public static <K, V> String getClientId(Producer<K, V> producer) {
     Entry<MetricName, ? extends Metric> entry =
         producer.metrics().entrySet().stream().findFirst().orElse(null);
     return entry != null ? entry.getKey().tags().get("client-id") : "";

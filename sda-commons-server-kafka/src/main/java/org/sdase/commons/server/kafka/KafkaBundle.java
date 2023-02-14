@@ -12,15 +12,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import javax.validation.constraints.NotNull;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.MetricName;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
+import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
@@ -33,6 +36,7 @@ import org.sdase.commons.server.kafka.health.ExternalKafkaHealthCheck;
 import org.sdase.commons.server.kafka.health.KafkaHealthCheck;
 import org.sdase.commons.server.kafka.producer.KafkaMessageProducer;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
+import org.sdase.commons.server.kafka.producer.MetadataContextAwareKafkaProducer;
 import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 import org.sdase.commons.server.kafka.prometheus.KafkaConsumerMetrics;
 import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
@@ -101,7 +105,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    * @return the configured topic configuration
    * @throws ConfigurationException if no such topic exists in the configuration
    */
-  public TopicConfig getTopicConfiguration(String key) throws ConfigurationException { // NOSONAR
+  public TopicConfig getTopicConfiguration(String key) throws ConfigurationException {
     if (kafkaConfiguration.getTopics().get(key) == null) {
       throw new ConfigurationException(
           String.format(
@@ -183,7 +187,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    *     same name as defined in {@link ProducerRegistration#getProducerConfigName()}
    */
   public <K, V> MessageProducer<K, V> registerProducer(ProducerRegistration<K, V> registration)
-      throws ConfigurationException { // NOSONAR
+      throws ConfigurationException {
 
     // if Kafka is disabled (for testing issues), we return a dummy producer
     // only.
@@ -194,7 +198,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
     checkInit();
 
-    KafkaProducer<K, V> producer = createProducer(registration);
+    Producer<K, V> producer = createProducer(registration);
     Entry<MetricName, ? extends Metric> entry =
         producer.metrics().entrySet().stream().findFirst().orElse(null);
     String clientId = entry != null ? entry.getKey().tags().get("client-id") : "";
@@ -265,10 +269,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   }
 
   /**
-   * creates a new Kafka Consumer with deserializers and consumer config
+   * Creates a new Kafka {@link Producer} with serializers and producer config
    *
-   * <p>Note: after creating a {@code KafkaProducer} you must always {@link KafkaProducer#close()}
-   * it to avoid resource leaks.
+   * <p>Note: after creating a Kafka {@code Producer} you must always {@link Producer#close()} it to
+   * avoid resource leaks.
    *
    * @param keySerializer deserializer for key objects. If null, value from config or default {@link
    *     org.apache.kafka.common.serialization.StringSerializer} will be used
@@ -279,7 +283,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    * @param <V> Value object type
    * @return a new kafka producer
    */
-  public <K, V> KafkaProducer<K, V> createProducer(
+  public <K, V> Producer<K, V> createProducer(
       Serializer<K> keySerializer, Serializer<V> valueSerializer, ProducerConfig producerConfig) {
     KafkaProperties producerProperties = KafkaProperties.forProducer(kafkaConfiguration);
 
@@ -287,25 +291,32 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       producerProperties.putAll(producerConfig.getConfig());
     }
 
-    return new KafkaProducer<>(producerProperties, keySerializer, valueSerializer);
+    KafkaProducer<K, V> kafkaProducer =
+        new KafkaProducer<>(producerProperties, keySerializer, valueSerializer);
+
+    Set<String> metadataFields = MetadataContext.metadataFields();
+    if (metadataFields.isEmpty()) {
+      return kafkaProducer;
+    }
+    return new MetadataContextAwareKafkaProducer<>(kafkaProducer, MetadataContext.metadataFields());
   }
 
   /**
-   * creates a new Kafka Consumer with deserializers and consumer config
+   * Creates a new Kafka {@link Producer} with serializers and producer config
    *
-   * <p>Note: after creating a {@code KafkaProducer} you must always {@link KafkaProducer#close()}
-   * it to avoid resource leaks.
+   * <p>Note: after creating a Kafka {@code Producer} you must always {@link Producer#close()} it to
+   * avoid resource leaks.
    *
    * @param keySerializer deserializer for key objects. If null, value from config or default {@link
    *     org.apache.kafka.common.serialization.StringSerializer} will be used
-   * @param valueSerializer deserializer for value objects. If null, value from config or * default
-   *     * {@link org.apache.kafka.common.serialization.StringSerializer} * will be used
+   * @param valueSerializer deserializer for value objects. If null, value from config or efault
+   *     {@link org.apache.kafka.common.serialization.StringSerializer} will be used
    * @param producerConfigName name of the producer config to be used
    * @param <K> Key object type
    * @param <V> Value object type
    * @return a new kafka producer
    */
-  public <K, V> KafkaProducer<K, V> createProducer(
+  public <K, V> Producer<K, V> createProducer(
       Serializer<K> keySerializer, Serializer<V> valueSerializer, String producerConfigName) {
 
     ProducerConfig producerConfig = getProducerConfiguration(producerConfigName);
@@ -316,7 +327,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     return createProducer(keySerializer, valueSerializer, producerConfig);
   }
 
-  private <K, V> KafkaProducer<K, V> createProducer(ProducerRegistration<K, V> registration) {
+  private <K, V> Producer<K, V> createProducer(ProducerRegistration<K, V> registration) {
 
     ProducerConfig producerConfig = registration.getProducerConfig();
     if (producerConfig == null && registration.getProducerConfigName() != null) {
@@ -335,7 +346,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    *
    * @param name name of the consumer in the configuration
    * @return Consumer Configuration
-   * @throws ConfigurationException exception of the configuration does not exist
+   * @throws ConfigurationException when the configuration does not exist
    */
   public ConsumerConfig getConsumerConfiguration(String name) {
     if (!kafkaConfiguration.getConsumers().containsKey(name)) {
@@ -352,7 +363,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
    *
    * @param name name of the producer in the configuration
    * @return Producer Configuration
-   * @throws ConfigurationException exception of the configuration does not exist
+   * @throws ConfigurationException when the configuration does not exist
    */
   public ProducerConfig getProducerConfiguration(String name) {
     if (!kafkaConfiguration.getProducers().containsKey(name)) {
@@ -391,8 +402,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     for (Entry<String, String> configEntry : forcedConfig.entrySet()) {
       String key = configEntry.getKey();
       String newValue = configEntry.getValue();
-      String oldValue =
-          newConfig.get(key); // NOSONAR I have no idea, why sonar is complaining here (squid S3824)
+      String oldValue = newConfig.get(key);
       if (oldValue == null) {
         LOGGER.info(
             "Setting in consumer config: '{}'='{}' (forced from strategy {})",
