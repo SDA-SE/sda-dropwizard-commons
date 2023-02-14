@@ -35,32 +35,32 @@ public class AutocommitMLS<K, V> extends MessageListenerStrategy<K, V> {
       consumerName = KafkaHelper.getClientId(consumer);
     }
 
-    for (ConsumerRecord<K, V> record : records) {
-      LOGGER.debug("Handling message for {}", record.key());
-      try {
+    for (ConsumerRecord<K, V> consumerRecord : records) {
+      LOGGER.debug("Handling message for {}", consumerRecord.key());
+      try (var ignored = metadataContextFrom(consumerRecord)) {
         SimpleTimer timer = new SimpleTimer();
-        handler.handle(record);
-        addOffsetToCommitOnClose(record);
+        handler.handle(consumerRecord);
+        addOffsetToCommitOnClose(consumerRecord);
 
         // Prometheus
         double elapsedSeconds = timer.elapsedSeconds();
-        consumerProcessedMsgHistogram.observe(elapsedSeconds, consumerName, record.topic());
+        consumerProcessedMsgHistogram.observe(elapsedSeconds, consumerName, consumerRecord.topic());
 
         if (LOGGER.isTraceEnabled()) {
           LOGGER.trace(
               "calculated duration {} for message consumed by {} from {}",
               elapsedSeconds,
               consumerName,
-              record.topic());
+              consumerRecord.topic());
         }
 
       } catch (RuntimeException e) {
         LOGGER.error(
             "Error while handling record {} in message handler {}",
-            record.key(),
+            consumerRecord.key(),
             handler.getClass(),
             e);
-        boolean shouldContinue = errorHandler.handleError(record, e, consumer);
+        boolean shouldContinue = errorHandler.handleError(consumerRecord, e, consumer);
         if (!shouldContinue) {
           throw new StopListenerException(e);
         }
@@ -70,7 +70,7 @@ public class AutocommitMLS<K, V> extends MessageListenerStrategy<K, V> {
 
   @Override
   public void verifyConsumerConfig(Map<String, String> config) {
-    if (!Boolean.valueOf(config.getOrDefault("enable.auto.commit", "true"))) {
+    if (Boolean.FALSE.equals(Boolean.valueOf(config.getOrDefault("enable.auto.commit", "true")))) {
       throw new ConfigurationException(
           "The strategy should use autocommit but property 'enable.auto.commit' in consumer config is set to 'false'");
     }
