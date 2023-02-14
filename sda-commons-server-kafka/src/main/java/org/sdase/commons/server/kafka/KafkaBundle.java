@@ -12,16 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import javax.validation.constraints.NotNull;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.MetricName;
 import org.apache.kafka.common.errors.InterruptException;
-import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
@@ -192,17 +189,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     // only.
     // This dummy works as long as the future is not evaluated
     if (kafkaConfiguration.isDisabled()) {
-      return new MessageProducer<>() {
-        @Override
-        public Future<RecordMetadata> send(K key, V value) {
-          return null;
-        }
-
-        @Override
-        public Future<RecordMetadata> send(K key, V value, Headers headers) {
-          return null;
-        }
-      };
+      return (k, v, h) -> null;
     }
 
     checkInit();
