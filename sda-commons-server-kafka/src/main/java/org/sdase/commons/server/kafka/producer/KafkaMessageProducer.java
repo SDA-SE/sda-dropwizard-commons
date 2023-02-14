@@ -29,13 +29,6 @@ public class KafkaMessageProducer<K, V> implements MessageProducer<K, V> {
   }
 
   @Override
-  public Future<RecordMetadata> send(K key, V value) {
-    ProducerRecord<K, V> producerRecord = new ProducerRecord<>(topic, key, value);
-    msgCounter.increase(producerName, producerRecord.topic());
-    return producer.send(producerRecord);
-  }
-
-  @Override
   public Future<RecordMetadata> send(K key, V value, Headers headers) {
     ProducerRecord<K, V> producerRecord = new ProducerRecord<>(topic, null, key, value, headers);
     msgCounter.increase(producerName, producerRecord.topic());
