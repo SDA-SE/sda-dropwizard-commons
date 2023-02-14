@@ -1,7 +1,7 @@
 package org.sdase.commons.server.kafka.producer;
 
 import java.util.concurrent.Future;
-import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Headers;
@@ -9,17 +9,17 @@ import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
 
 public class KafkaMessageProducer<K, V> implements MessageProducer<K, V> {
 
-  private String topic;
+  private final String topic;
 
-  private KafkaProducer<K, V> producer;
+  private final Producer<K, V> producer;
 
-  private ProducerTopicMessageCounter msgCounter;
+  private final ProducerTopicMessageCounter msgCounter;
 
-  private String producerName;
+  private final String producerName;
 
   public KafkaMessageProducer(
       String topic,
-      KafkaProducer<K, V> producer,
+      Producer<K, V> producer,
       ProducerTopicMessageCounter msgCounter,
       String producerName) {
     this.producer = producer;
