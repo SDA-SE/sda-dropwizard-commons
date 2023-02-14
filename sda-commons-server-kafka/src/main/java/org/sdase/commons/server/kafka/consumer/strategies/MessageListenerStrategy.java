@@ -1,14 +1,25 @@
 package org.sdase.commons.server.kafka.consumer.strategies;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.CommitFailedException;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.header.Header;
+import org.sdase.commons.server.dropwizard.metadata.DetachedMetadataContext;
+import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
+import org.sdase.commons.server.dropwizard.metadata.MetadataContextCloseable;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
@@ -33,9 +44,28 @@ public abstract class MessageListenerStrategy<K, V> {
   protected ConsumerTopicMessageHistogram consumerProcessedMsgHistogram;
 
   private Map<TopicPartition, OffsetAndMetadata> offsetsToCommitOnClose = new HashMap<>();
+  private Set<String> metadataFields = Set.of();
 
+  /**
+   * @param consumerTopicMessageHistogram the histogram that tracks time for consuming single
+   *     records
+   * @deprecated in favour of {@link #init(ConsumerTopicMessageHistogram, Set)}
+   */
+  @Deprecated
+  @SuppressWarnings({"DeprecatedIsStillUsed", "java:S6355", "java:S1133"})
   public void init(ConsumerTopicMessageHistogram consumerTopicMessageHistogram) {
+    init(consumerTopicMessageHistogram, MetadataContext.metadataFields());
+  }
+
+  /**
+   * @param consumerTopicMessageHistogram the histogram that tracks time for consuming single
+   *     records
+   * @param metadataFields the configured {@link MetadataContext#metadataFields()}
+   */
+  public void init(
+      ConsumerTopicMessageHistogram consumerTopicMessageHistogram, Set<String> metadataFields) {
     this.consumerProcessedMsgHistogram = consumerTopicMessageHistogram;
+    this.metadataFields = Optional.ofNullable(metadataFields).orElse(Set.of());
   }
 
   /**
@@ -60,6 +90,44 @@ public abstract class MessageListenerStrategy<K, V> {
    * @param consumer the consumer to communicate with Kafka
    */
   public abstract void processRecords(ConsumerRecords<K, V> records, KafkaConsumer<K, V> consumer);
+
+  /**
+   * Sets the {@link MetadataContext} for the current thread to handle the given {@code
+   * consumerContext} with the desired context. The context information is based on the {@link
+   * ConsumerRecord#headers()} considering all configured metadata fields.
+   *
+   * <p>This method should be used as try with resources around the message handler to automatically
+   * reset the context after processing is done.
+   *
+   * <p>Example usage:
+   *
+   * <pre>
+   *   <code>try (var ignored = metadataContextFrom(consumerRecord)) {
+   *     messageHandler.handle(consumerRecord);
+   *   } catch (Exception e) {
+   *     errorHandler.handleError(consumerRecord, e, consumer);
+   *   }
+   *   </code>
+   * </pre>
+   *
+   * @param consumerRecord the consumer record that will be handled
+   * @return a {@link java.io.Closeable} that will reset the {@link MetadataContext} to the previous
+   *     stat on {@link MetadataContextCloseable#close()}
+   */
+  protected MetadataContextCloseable metadataContextFrom(ConsumerRecord<K, V> consumerRecord) {
+    var newContext = new DetachedMetadataContext();
+    var headers = consumerRecord.headers();
+    for (var field : metadataFields) {
+      var values =
+          StreamSupport.stream(headers.headers(field).spliterator(), false)
+              .map(Header::value)
+              .map(v -> new String(v, UTF_8))
+              .filter(StringUtils::isNotBlank)
+              .collect(Collectors.toList());
+      newContext.put(field, values);
+    }
+    return MetadataContext.createCloseableContext(newContext);
+  }
 
   public void resetOffsetsToCommitOnClose() {
     this.offsetsToCommitOnClose = new HashMap<>();
