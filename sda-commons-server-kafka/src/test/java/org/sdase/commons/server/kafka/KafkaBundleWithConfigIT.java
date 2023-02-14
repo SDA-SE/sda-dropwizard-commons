@@ -22,6 +22,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.LongDeserializer;
@@ -233,7 +234,7 @@ class KafkaBundleWithConfigIT {
       assertThrows(
           ConfigurationException.class,
           () -> {
-            try (KafkaProducer<String, String> producer =
+            try (Producer<String, String> ignored =
                 kafkaBundle.createProducer(
                     keySerializer, keySerializer, "notExistingProducerConfig")) {
               // empty
@@ -244,7 +245,7 @@ class KafkaBundleWithConfigIT {
 
   @Test
   void shouldReturnProducerByProducerConfigName() {
-    try (KafkaProducer<String, String> producer =
+    try (Producer<String, String> producer =
         kafkaBundle.createProducer(new StringSerializer(), new StringSerializer(), PRODUCER_1)) {
       assertThat(producer).isNotNull();
       assertThat(KafkaHelper.getClientId(producer)).isEqualTo(PRODUCER_1);
@@ -253,7 +254,7 @@ class KafkaBundleWithConfigIT {
 
   @Test
   void shouldReturnProducerByProducerConfig() {
-    try (KafkaProducer<String, String> producer =
+    try (Producer<String, String> producer =
         kafkaBundle.createProducer(
             null,
             null,
@@ -751,7 +752,7 @@ class KafkaBundleWithConfigIT {
 
   @Test
   void shouldSetProducerNameCorrectlyWithProducerConfig() {
-    try (KafkaProducer<String, String> p1 =
+    try (Producer<String, String> p1 =
         kafkaBundle.createProducer(
             new StringSerializer(),
             new StringSerializer(),
@@ -762,7 +763,7 @@ class KafkaBundleWithConfigIT {
 
   @Test
   void shouldSetProducerNameCorrectlyWithProducerConfigFromYaml() {
-    try (KafkaProducer<String, String> p1 =
+    try (Producer<String, String> p1 =
         kafkaBundle.createProducer(new StringSerializer(), new StringSerializer(), PRODUCER_1)) {
       assertThat(KafkaHelper.getClientId(p1)).isEqualTo(PRODUCER_1);
     }
@@ -770,7 +771,7 @@ class KafkaBundleWithConfigIT {
 
   @Test
   void shouldSetProducerNameCorrectlyWithProducerConfigFromYamlWithExplicitClientId() {
-    try (KafkaProducer<String, String> p1 =
+    try (Producer<String, String> p1 =
         kafkaBundle.createProducer(new StringSerializer(), new StringSerializer(), PRODUCER_2)) {
       assertThat(KafkaHelper.getClientId(p1)).isEqualTo("p2");
     }
