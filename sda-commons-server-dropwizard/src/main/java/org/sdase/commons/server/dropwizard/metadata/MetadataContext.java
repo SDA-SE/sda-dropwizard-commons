@@ -1,5 +1,6 @@
 package org.sdase.commons.server.dropwizard.metadata;
 
+import java.io.Closeable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -80,6 +81,33 @@ public interface MetadataContext {
    */
   static void createContext(DetachedMetadataContext metadataContext) {
     MetadataContextHolder.set(metadataContext.toMetadataContext());
+  }
+
+  /**
+   * {@linkplain #createContext(DetachedMetadataContext) Creates a new current context} that is
+   * alive until the returned {@link Closeable} is {@linkplain Closeable#close() closed}. On
+   * closing, the previous context will be restored.
+   *
+   * <p>Example usage:
+   *
+   * <pre>
+   *   <code>
+   *     var myContext = // create a context from something
+   *     try (var ignored = MetadataContext.createCloseableContext(myContext)) {
+   *       // do something
+   *     }
+   *   </code>
+   * </pre>
+   *
+   * @param metadataContext the context to be set until the returned closable is {@linkplain
+   *     Closeable#close() closed}
+   * @return a closeable that will restore the previous context when {@linkplain Closeable#close()
+   *     closed}
+   */
+  static MetadataContextCloseable createCloseableContext(DetachedMetadataContext metadataContext) {
+    var previous = detachedCurrent();
+    createContext(metadataContext);
+    return new MetadataContextCloseable(previous);
   }
 
   /**
