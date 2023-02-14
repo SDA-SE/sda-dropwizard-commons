@@ -86,6 +86,48 @@ public void initialize(Bootstrap<Configuration> bootstrap) {
 }
 ```
 
+### MetadataContextBundle
+The [`MetadataContextBundle`](./src/main/java/org/sdase/commons/server/dropwizard/bundles/MetadataContextBundle.java)
+enables the metadata context handling for an application.
+
+Services that use the bundle
+- can access the current [`MetadataContext`](./src/main/java/org/sdase/commons/server/dropwizard/metadata/MetadataContext.java)
+  in their implementation
+- will automatically load the context from incoming HTTP requests into the thread handling the
+  request
+- will automatically load the context from consumed Kafka messages into the thread handling the
+  message and the error when handling the message fails when the consumer is configured with one of
+  the provided `MessageListenerStrategy` implementations
+- will automatically propagate the context to other services via HTTP when using a platform client
+  from the `JerseyClientBundle`
+- will automatically propagate the context in produced Kafka messages when the producer is created
+  or registered by the `KafkaBundle`
+- are configurable by the property or environment variable `METADATA_FIELDS` to be aware of the
+  metadata used in a specific environment
+
+Services that interrupt a business process should persist the context from
+`MetadataContext.detachedCurrent()` and restore it with `MetadataContext.createContext(…)` when the
+process continues.
+Interrupting a business process means that processing is stopped and continued later in a new thread
+or even another instance of the service.
+Most likely, this will happen when a business entity is stored based on a request and loaded later
+for further processing by a scheduler or due to a new user interaction.
+In this case, the `DetachedMetadataContext` must be persisted along with the entity and recreated
+when the entity is loaded.
+The `DetachedMetadataContext` can be defined as field in any MongoDB entity.
+
+Services that handle requests or messages in parallel must transfer the metadata context to their
+`Runnable` or `Callable` with `MetadataContext.transferMetadataContext(…)`.
+In most cases, developers should prefer`ContainerRequestContextHolder.transferRequestContext(…)`,
+which also transfers the metadata context.
+
+Services that use the `MetadataContextBundle` and take care of interrupted processes and parallel
+execution, may add a link like this in their deployment documentation:
+
+```md
+This service keeps track of the [metadata context](https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-server-dropwizard/README.md#metadatacontextbundle).
+```
+
 ### JSON Logging
 To enable [JSON logging](https://www.dropwizard.io/en/latest/manual/core.html#logging), set the environment variable `ENABLE_JSON_LOGGING` to `"true"`.
 We recommend JSON logging in production as they are better parsable by tools.
