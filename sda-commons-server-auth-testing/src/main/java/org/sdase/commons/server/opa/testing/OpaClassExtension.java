@@ -29,6 +29,8 @@ public class OpaClassExtension extends AbstractOpa implements BeforeAllCallback,
     opaClientTimeoutBackup = System.getProperty(OPA_CLIENT_TIMEOUT);
     System.setProperty(OPA_CLIENT_TIMEOUT, OPA_CLIENT_TIMEOUT_DEFAULT);
     wireMockExtension.start();
+    // by default all the requests will be denied. this can be overridden for each test case
+    mock(onAnyRequest().deny());
   }
 
   @Override

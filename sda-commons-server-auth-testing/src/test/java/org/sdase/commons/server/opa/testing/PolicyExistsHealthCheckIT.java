@@ -1,8 +1,8 @@
 package org.sdase.commons.server.opa.testing;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.opa.testing.OpaRule.onAnyRequest;
 
@@ -51,7 +51,7 @@ public class PolicyExistsHealthCheckIT {
   @Test
   @Retry(5)
   public void shouldBeUnhealthyIfOpaGivesNullResponse() {
-    OPA_RULE.mock(wire -> wire.stubFor(post(anyUrl()).willReturn(okJson("{}"))));
+    OPA_RULE.mock(wire -> wire.stubFor(get(anyUrl()).willReturn(okJson("{}"))));
     final Result check = policyExistsHealthCheck.check();
     assertThat(check.isHealthy()).isFalse();
     assertThat(check.getMessage())
