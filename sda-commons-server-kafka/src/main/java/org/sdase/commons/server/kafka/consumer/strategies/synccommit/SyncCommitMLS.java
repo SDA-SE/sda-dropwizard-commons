@@ -39,31 +39,34 @@ public class SyncCommitMLS<K, V> extends MessageListenerStrategy<K, V> {
     for (ConsumerRecord<K, V> consumerRecord : records) {
       LOGGER.debug("Handling message for {}", consumerRecord.key());
       try (var ignored = messageHandlerContextFor(consumerRecord)) {
-        SimpleTimer timer = new SimpleTimer();
-        handler.handle(consumerRecord);
-        addOffsetToCommitOnClose(consumerRecord);
+        try {
+          SimpleTimer timer = new SimpleTimer();
+          handler.handle(consumerRecord);
+          addOffsetToCommitOnClose(consumerRecord);
 
-        // Prometheus
-        double elapsedSeconds = timer.elapsedSeconds();
-        consumerProcessedMsgHistogram.observe(elapsedSeconds, consumerName, consumerRecord.topic());
+          // Prometheus
+          double elapsedSeconds = timer.elapsedSeconds();
+          consumerProcessedMsgHistogram.observe(
+              elapsedSeconds, consumerName, consumerRecord.topic());
 
-        if (LOGGER.isTraceEnabled()) {
-          LOGGER.trace(
-              "calculated duration {} for message consumed by {} from {}",
-              elapsedSeconds,
-              consumerName,
-              consumerRecord.topic());
-        }
+          if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(
+                "calculated duration {} for message consumed by {} from {}",
+                elapsedSeconds,
+                consumerName,
+                consumerRecord.topic());
+          }
 
-      } catch (RuntimeException e) {
-        LOGGER.error(
-            "Error while handling record {} in message handler {}",
-            consumerRecord.key(),
-            handler.getClass(),
-            e);
-        boolean shouldContinue = errorHandler.handleError(consumerRecord, e, consumer);
-        if (!shouldContinue) {
-          throw new StopListenerException(e);
+        } catch (RuntimeException e) {
+          LOGGER.error(
+              "Error while handling record {} in message handler {}",
+              consumerRecord.key(),
+              handler.getClass(),
+              e);
+          boolean shouldContinue = errorHandler.handleError(consumerRecord, e, consumer);
+          if (!shouldContinue) {
+            throw new StopListenerException(e);
+          }
         }
       }
     }
