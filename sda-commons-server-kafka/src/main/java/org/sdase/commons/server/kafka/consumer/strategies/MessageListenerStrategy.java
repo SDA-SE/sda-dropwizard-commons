@@ -95,13 +95,15 @@ public abstract class MessageListenerStrategy<K, V> {
    * Creates a context for the current {@link Thread} to handle a message with appropriate
    * information in {@link ThreadLocal}s.
    *
-   * <p>Example usage:
+   * <p>Example usage (notice the nested "try" to keep the context for error handling):
    *
    * <pre>
    *   <code>try (var ignored = messageHandlerContextFor(consumerRecord)) {
-   *     messageHandler.handle(consumerRecord);
-   *   } catch (Exception e) {
-   *     errorHandler.handleError(consumerRecord, e, consumer);
+   *     try {
+   *       messageHandler.handle(consumerRecord);
+   *     } catch (Exception e) {
+   *       errorHandler.handleError(consumerRecord, e, consumer);
+   *     }
    *   }
    *   </code>
    * </pre>
@@ -134,6 +136,7 @@ public abstract class MessageListenerStrategy<K, V> {
               .map(Header::value)
               .map(v -> new String(v, UTF_8))
               .filter(StringUtils::isNotBlank)
+              .map(String::trim)
               .collect(Collectors.toList());
       newContext.put(field, values);
     }
