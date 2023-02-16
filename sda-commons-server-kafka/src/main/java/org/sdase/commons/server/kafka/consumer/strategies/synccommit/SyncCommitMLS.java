@@ -1,75 +1,31 @@
 package org.sdase.commons.server.kafka.consumer.strategies.synccommit;
 
-import io.prometheus.client.SimpleTimer;
 import java.util.Collections;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.CommitFailedException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.sdase.commons.server.kafka.consumer.ErrorHandler;
-import org.sdase.commons.server.kafka.consumer.KafkaHelper;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
-import org.sdase.commons.server.kafka.consumer.StopListenerException;
 import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
+import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** {@link MessageListenerStrategy} that uses sync commit explicitly before polling a new chunk */
-public class SyncCommitMLS<K, V> extends MessageListenerStrategy<K, V> {
+public class SyncCommitMLS<K, V> extends AutocommitMLS<K, V> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SyncCommitMLS.class);
-  private final MessageHandler<K, V> handler;
-  private final ErrorHandler<K, V> errorHandler;
-  private String consumerName;
 
   public SyncCommitMLS(MessageHandler<K, V> handler, ErrorHandler<K, V> errorHandler) {
-    this.handler = handler;
-    this.errorHandler = errorHandler;
+    super(handler, errorHandler);
   }
 
   @Override
   public void processRecords(ConsumerRecords<K, V> records, KafkaConsumer<K, V> consumer) {
-    if (consumerName == null) {
-      consumerName = KafkaHelper.getClientId(consumer);
-    }
-
-    for (ConsumerRecord<K, V> consumerRecord : records) {
-      LOGGER.debug("Handling message for {}", consumerRecord.key());
-      try (var ignored = messageHandlerContextFor(consumerRecord)) {
-        try {
-          SimpleTimer timer = new SimpleTimer();
-          handler.handle(consumerRecord);
-          addOffsetToCommitOnClose(consumerRecord);
-
-          // Prometheus
-          double elapsedSeconds = timer.elapsedSeconds();
-          consumerProcessedMsgHistogram.observe(
-              elapsedSeconds, consumerName, consumerRecord.topic());
-
-          if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace(
-                "calculated duration {} for message consumed by {} from {}",
-                elapsedSeconds,
-                consumerName,
-                consumerRecord.topic());
-          }
-
-        } catch (RuntimeException e) {
-          LOGGER.error(
-              "Error while handling record {} in message handler {}",
-              consumerRecord.key(),
-              handler.getClass(),
-              e);
-          boolean shouldContinue = errorHandler.handleError(consumerRecord, e, consumer);
-          if (!shouldContinue) {
-            throw new StopListenerException(e);
-          }
-        }
-      }
-    }
+    super.processRecords(records, consumer);
     commitSync(consumer);
   }
 
