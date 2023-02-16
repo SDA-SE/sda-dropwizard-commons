@@ -37,7 +37,7 @@ public class AutocommitMLS<K, V> extends MessageListenerStrategy<K, V> {
 
     for (ConsumerRecord<K, V> consumerRecord : records) {
       LOGGER.debug("Handling message for {}", consumerRecord.key());
-      try (var ignored = metadataContextFrom(consumerRecord)) {
+      try (var ignored = messageHandlerContextFor(consumerRecord)) {
         SimpleTimer timer = new SimpleTimer();
         handler.handle(consumerRecord);
         addOffsetToCommitOnClose(consumerRecord);
