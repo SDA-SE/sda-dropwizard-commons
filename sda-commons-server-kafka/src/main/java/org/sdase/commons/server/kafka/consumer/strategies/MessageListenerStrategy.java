@@ -92,17 +92,13 @@ public abstract class MessageListenerStrategy<K, V> {
   public abstract void processRecords(ConsumerRecords<K, V> records, KafkaConsumer<K, V> consumer);
 
   /**
-   * Sets the {@link MetadataContext} for the current thread to handle the given {@code
-   * consumerContext} with the desired context. The context information is based on the {@link
-   * ConsumerRecord#headers()} considering all configured metadata fields.
-   *
-   * <p>This method should be used as try with resources around the message handler to automatically
-   * reset the context after processing is done.
+   * Creates a context for the current {@link Thread} to handle a message with appropriate
+   * information in {@link ThreadLocal}s.
    *
    * <p>Example usage:
    *
    * <pre>
-   *   <code>try (var ignored = metadataContextFrom(consumerRecord)) {
+   *   <code>try (var ignored = messageHandlerContextFor(consumerRecord)) {
    *     messageHandler.handle(consumerRecord);
    *   } catch (Exception e) {
    *     errorHandler.handleError(consumerRecord, e, consumer);
@@ -110,11 +106,26 @@ public abstract class MessageListenerStrategy<K, V> {
    *   </code>
    * </pre>
    *
+   * <p>The context will be set up as follows:
+   *
+   * <ol>
+   *   <li>Sets the {@link MetadataContext} for the current thread to handle the given {@code
+   *       consumerContext} with the desired context. The context information is based on the {@link
+   *       ConsumerRecord#headers()} considering all configured metadata fields.
+   *       <p>This method should be used as try with resources around the message handler to
+   *       automatically reset the context after processing is done.
+   * </ol>
+   *
    * @param consumerRecord the consumer record that will be handled
-   * @return a {@link java.io.Closeable} that will reset the {@link MetadataContext} to the previous
-   *     stat on {@link MetadataContextCloseable#close()}
+   * @return a {@link java.io.Closeable} that will reset the created contexts to the previous state
+   *     on {@link MessageHandlerContextCloseable#close()}
    */
-  protected MetadataContextCloseable metadataContextFrom(ConsumerRecord<K, V> consumerRecord) {
+  protected MessageHandlerContextCloseable messageHandlerContextFor(
+      ConsumerRecord<K, V> consumerRecord) {
+    return MessageHandlerContextCloseable.of(createMetadataContext(consumerRecord));
+  }
+
+  private MetadataContextCloseable createMetadataContext(ConsumerRecord<K, V> consumerRecord) {
     var newContext = new DetachedMetadataContext();
     var headers = consumerRecord.headers();
     for (var field : metadataFields) {
