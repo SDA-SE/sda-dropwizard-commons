@@ -36,7 +36,6 @@ import java.util.concurrent.Callable;
  * {@linkplain #transferMetadataContext(Callable) <code>Callable</code>}
  */
 // TODO not picked up from Kafka consumers as documented yet.
-// TODO Not handled in platform client and KafkaMessageProducer as documented yet.
 public interface MetadataContext {
 
   /**
