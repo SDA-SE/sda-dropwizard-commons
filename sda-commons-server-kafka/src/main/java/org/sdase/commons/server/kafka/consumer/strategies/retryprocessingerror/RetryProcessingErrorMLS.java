@@ -53,43 +53,46 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
       LOGGER.debug("Handling message for {}", consumerRecord.key());
 
       try (var ignored = messageHandlerContextFor(consumerRecord)) {
-        SimpleTimer timer = new SimpleTimer();
-        handler.handle(consumerRecord);
-        // mark last successful processed record for commit
-        lastCommitOffset = new OffsetAndMetadata(consumerRecord.offset() + 1);
-        addOffsetToCommitOnClose(consumerRecord);
+        try {
+          SimpleTimer timer = new SimpleTimer();
+          handler.handle(consumerRecord);
+          // mark last successful processed record for commit
+          lastCommitOffset = new OffsetAndMetadata(consumerRecord.offset() + 1);
+          addOffsetToCommitOnClose(consumerRecord);
 
-        // Prometheus
-        double elapsedSeconds = timer.elapsedSeconds();
-        consumerProcessedMsgHistogram.observe(elapsedSeconds, consumerName, consumerRecord.topic());
+          // Prometheus
+          double elapsedSeconds = timer.elapsedSeconds();
+          consumerProcessedMsgHistogram.observe(
+              elapsedSeconds, consumerName, consumerRecord.topic());
 
-        if (LOGGER.isTraceEnabled()) {
-          LOGGER.trace(
-              "calculated duration {} for message consumed by {} from {}",
-              elapsedSeconds,
-              consumerName,
-              consumerRecord.topic());
-        }
+          if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(
+                "calculated duration {} for message consumed by {} from {}",
+                elapsedSeconds,
+                consumerName,
+                consumerRecord.topic());
+          }
 
-      } catch (RuntimeException e) {
-        LOGGER.error(
-            "Error while handling record {} in message handler {}",
-            consumerRecord.key(),
-            handler.getClass(),
-            e);
-        boolean shouldContinue = errorHandler.handleError(consumerRecord, e, consumer);
-        if (!shouldContinue) {
-          throw new StopListenerException(e);
-        } else {
-          LOGGER.warn(
-              "Error while handling record {} in message handler {}, will be retried",
+        } catch (RuntimeException e) {
+          LOGGER.error(
+              "Error while handling record {} in message handler {}",
               consumerRecord.key(),
               handler.getClass(),
               e);
+          boolean shouldContinue = errorHandler.handleError(consumerRecord, e, consumer);
+          if (!shouldContinue) {
+            throw new StopListenerException(e);
+          } else {
+            LOGGER.warn(
+                "Error while handling record {} in message handler {}, will be retried",
+                consumerRecord.key(),
+                handler.getClass(),
+                e);
 
-          // seek to the current offset of the failing record for retry
-          consumer.seek(partition, consumerRecord.offset());
-          break;
+            // seek to the current offset of the failing record for retry
+            consumer.seek(partition, consumerRecord.offset());
+            break;
+          }
         }
       }
     }
