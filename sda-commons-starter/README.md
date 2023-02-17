@@ -16,6 +16,7 @@ automatically contain
 - [Prometheus metrics](../sda-commons-server-prometheus/README.md)
 - [OpenApi documentation](../sda-commons-server-openapi/README.md)
 - [Open Telemetry](../sda-commons-server-opentelemetry/README.md)
+- [support for the Metadata Context](../sda-commons-server-dropwizard/README.md#metadatacontextbundle)
 
 They may be configured easily to
 
