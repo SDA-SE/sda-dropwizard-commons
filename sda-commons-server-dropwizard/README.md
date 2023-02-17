@@ -90,6 +90,10 @@ public void initialize(Bootstrap<Configuration> bootstrap) {
 The [`MetadataContextBundle`](./src/main/java/org/sdase/commons/server/dropwizard/bundles/MetadataContextBundle.java)
 enables the metadata context handling for an application.
 
+If you want to make use of the data in the metadata context, you should read the [dedicated documentation](./docs/metadata-context.md).
+If your service is required to support the metadata context but is not interested in the data,
+continue here:
+
 Services that use the bundle
 - can access the current [`MetadataContext`](./src/main/java/org/sdase/commons/server/dropwizard/metadata/MetadataContext.java)
   in their implementation
