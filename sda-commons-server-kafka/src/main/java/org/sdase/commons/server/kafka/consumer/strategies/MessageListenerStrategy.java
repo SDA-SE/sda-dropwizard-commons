@@ -114,7 +114,7 @@ public abstract class MessageListenerStrategy<K, V> {
    *   <li>Sets the {@link MetadataContext} for the current thread to handle the given {@code
    *       consumerContext} with the desired context. The context information is based on the {@link
    *       ConsumerRecord#headers()} considering all configured metadata fields.
-   *       <p>This method should be used as try with resources around the message handler to
+   *       <p>This method should be used as try-with-resources around the message handler to
    *       automatically reset the context after processing is done.
    * </ol>
    *
