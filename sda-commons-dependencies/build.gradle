@@ -12,7 +12,7 @@ ext {
   prometheusVersion = '0.16.0'
   swaggerCoreVersion = '1.6.9'
   swaggerCoreV3Version = '2.2.8'
-  weldVersion = '3.1.9.Final'
+  weldVersion = '5.1.0.Final'
   openTracingUtilVersion = '0.33.0'
   jsonUnitVersion = '2.36.0'
   scalaVersion = '2.13.10' // align transitive dependency from various modules, keep up to date
@@ -21,7 +21,7 @@ ext {
   dbRiderVersion = '1.35.1'
   kotlinVersion = '1.8.10'
   kotlinxCoroutinesVersion = '1.6.4'
-  resilience4jVersion = '1.7.1'
+  resilience4jVersion = '2.0.2'
 }
 
 dependencies {
@@ -36,7 +36,7 @@ dependencies {
   constraints {
     // overall conflicts
     api "org.apache.commons:commons-lang3:3.12.0"
-    api "commons-codec:commons-codec:1.15", {
+    api "commons-codec:commons-codec:20041127.091804", {
       because "conflict between org.apache.httpcomponents:httpclient:4.5.12 and org.dbunit:dbunit:2.7.0"
     }
     api "io.github.classgraph:classgraph:4.8.154", {
@@ -90,7 +90,7 @@ dependencies {
     api "com.google.code.gson:gson:2.10.1" // resolve conflict between jaeger-core + google-cloud-secretmanager
 
     // sda-commons-server-mongo-testing
-    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.4"
+    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.5.1"
 
     // sda-commons-server-morphia
     api "dev.morphia.morphia:core:$morphiaVersion"
@@ -156,10 +156,10 @@ dependencies {
       because "Dropwizard does not use the jakarta version yet so we replace it in weld with the javax version that comes as transitive dependency without explicit version."
     }
 
-    api "org.junit-pioneer:junit-pioneer:1.9.1"
+    api "org.junit-pioneer:junit-pioneer:2.0.0"
 
     // sda-commons-shared-*
-    api 'commons-io:commons-io:2.11.0'
+    api 'commons-io:commons-io:20030203.000550'
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
