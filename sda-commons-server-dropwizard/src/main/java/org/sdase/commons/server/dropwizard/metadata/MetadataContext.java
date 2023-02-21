@@ -35,7 +35,6 @@ import java.util.concurrent.Callable;
  * available for {@linkplain #transferMetadataContext(Runnable) <code>Runnable</code>} and
  * {@linkplain #transferMetadataContext(Callable) <code>Callable</code>}
  */
-// TODO not picked up from Kafka consumers as documented yet.
 public interface MetadataContext {
 
   /**
