@@ -38,6 +38,7 @@ dependencies {
     exclude group: 'org.junit', module: 'junit'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.411")
+  api enforcedPlatform("io.github.resilience4j:resilience4j-bom:$resilience4jVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:$openTelemetryAlphaVersion")
 
@@ -81,8 +82,8 @@ dependencies {
     api "org.bouncycastle:bcpkix-jdk15on:1.70" // use the same version as bcprov-jdk15on in DW
 
     // sda-commons-server-circuitbreaker
-    api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
-    api "io.github.resilience4j:resilience4j-prometheus:$resilience4jVersion"
+    api "io.github.resilience4j:resilience4j-circuitbreaker"
+    api "io.github.resilience4j:resilience4j-prometheus"
     api "org.objenesis:objenesis:3.3"
 
     // sda-commons-server-hibernate
