@@ -14,10 +14,10 @@ ext {
   swaggerCoreV3Version = '2.2.8'
   weldVersion = '3.1.9.Final'
   openTracingUtilVersion = '0.33.0'
-  jsonUnitVersion = '2.36.0'
+  jsonUnitVersion = '2.36.1'
   scalaVersion = '2.13.10' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.4.0'
-  kafkaJunitVersion = '3.2.4' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
+  kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.35.1'
   kotlinVersion = '1.8.10'
   kotlinxCoroutinesVersion = '1.6.4'
@@ -31,7 +31,7 @@ dependencies {
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.410")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.411")
 
   constraints {
     // overall conflicts
@@ -42,7 +42,7 @@ dependencies {
     api "io.github.classgraph:classgraph:4.8.154", {
       because "conflict between io.swagger.core.v3:swagger-jaxrs2, io.swagger.core.v3:swagger-integration, dev.morphia.morphia:core and com.kjetland:mbknor-jackson-jsonschema_2.13 upgrade"
     }
-    api "org.jboss.logging:jboss-logging:3.4.3.Final", {
+    api "org.jboss.logging:jboss-logging:3.5.0.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
     }
     api "org.yaml:snakeyaml:1.33", {
@@ -77,7 +77,7 @@ dependencies {
 
     // sda-commons-server-hibernate
     api "org.postgresql:postgresql:42.5.4"
-    api "org.flywaydb:flyway-core:9.11.0"
+    api "org.flywaydb:flyway-core:9.15.0"
 
     // sda-commons-server-hibernate-testing
     api "com.github.database-rider:rider-core:$dbRiderVersion"
@@ -164,7 +164,7 @@ dependencies {
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.5.9"
+    api "org.apache.zookeeper:zookeeper:3.8.1"
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
     api "com.salesforce.kafka.test:kafka-junit4:$kafkaJunitVersion"
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
@@ -176,7 +176,7 @@ dependencies {
           anymore.
         '''
     }
-    api "org.xerial.snappy:snappy-java:1.1.8.4", {
+    api "org.xerial.snappy:snappy-java:1.1.9.1", {
       because "conflict between org.apache.kafka:kafka-clients and org.apache.curator:curator-test upgrade"
     }
     api "org.scala-lang.modules:scala-java8-compat_2.13:1.0.2", {
