@@ -412,3 +412,19 @@ and [ProducerRegistration](./sda-commons-server-kafka/src/main/java/org/sdase/co
   current topic configuration. Now it accepts
   a [TopicConfig](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java) instance,
   with only the name of the topic, but it does not perform any check in the configuration.
+
+### Kafka Configuration
+
+As topic configuration is not defined in the service any more, all properties but `name` have been removed from the topic configuration.
+
+```diff
+# example changes in config.yml
+
+kafka:
+  topics:
+    event-topic:
+      name: ${KAFKA_CONSUMER_EVENT_TOPIC:-partner-ods-event-topic}
+-     partitions: ${KAFKA_CONSUMER_EVENT_TOPIC_PARTITIONS:-2}
+-     replicationFactor: ${KAFKA_CONSUMER_EVENT_TOPIC_REPLICATION_FACTOR:-1}
+
+```
