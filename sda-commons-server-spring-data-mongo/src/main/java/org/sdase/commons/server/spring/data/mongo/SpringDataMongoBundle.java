@@ -28,6 +28,8 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeReadConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter;
+import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.BigDecimalReadConverter;
+import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.BigDecimalWriteConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.CharArrayReadConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.CharArrayWriteConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.LocalDateReadConverter;
@@ -75,7 +77,10 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
               LocalDateReadConverter.INSTANCE,
               // ZonedDateTime
               ZonedDateTimeWriteConverter.INSTANCE,
-              ZonedDateTimeReadConverter.INSTANCE));
+              ZonedDateTimeReadConverter.INSTANCE,
+              // BigDecimal
+              BigDecimalWriteConverter.INSTANCE,
+              BigDecimalReadConverter.INSTANCE));
 
   private final Function<C, MongoConfiguration> configurationProvider;
 
@@ -116,6 +121,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   @Override
   public void initialize(Bootstrap<?> bootstrap) {
     this.caCertificatesBundle = caCertificatesBundleBuilder.build();
+    //noinspection unchecked,rawtypes
     bootstrap.addBundle((ConfiguredBundle) this.caCertificatesBundle);
   }
 
