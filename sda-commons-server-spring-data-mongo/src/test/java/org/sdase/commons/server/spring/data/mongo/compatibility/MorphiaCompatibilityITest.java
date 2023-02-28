@@ -24,6 +24,7 @@ import org.assertj.core.groups.Tuple;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
 import org.bson.Document;
+import org.bson.types.Decimal128;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.junitpioneer.jupiter.DefaultTimeZone;
 import org.sdase.commons.server.mongo.testing.MongoDbClassExtension;
 import org.sdase.commons.server.spring.data.mongo.compatibility.app.CompatibilityTestApp;
 import org.sdase.commons.server.spring.data.mongo.compatibility.app.CompatibilityTestApp.MyEntityWithGenericsRepository;
@@ -176,6 +178,64 @@ class MorphiaCompatibilityITest {
         .hasSize(1)
         .extracting(MyEntity::getId, MyEntity::getStringValue)
         .contains(Tuple.tuple("1a736daf-6ff0-4779-9ace-f8eef956739e", "a string"));
+  }
+
+  @Test
+  @DefaultTimeZone("UTC")
+  void shouldWriteWithMongoOperationsAsWithMorphia() {
+
+    var given =
+        new MyEntity()
+            .setId("ID_1234")
+            .setBigDecimalValue(new BigDecimal("12.34"))
+            .setCharArrayValue(new char[] {'c', 'h'})
+            .setCharValue('c')
+            .setDateValue(new Date(10L * 1_000))
+            .setCurrencyValue(Currency.getInstance("XAU"))
+            .setEnumValue(MyEnum.A)
+            .setInstantValue(Instant.ofEpochSecond(10L))
+            .setLocalDateTimeValue(LocalDateTime.of(2000, 10, 20, 13, 23))
+            .setLocaleValue(Locale.GERMANY)
+            .setStringValue("a String")
+            .setUriValue(URI.create("http://example.com"));
+
+    mongoOperations.insert(given);
+
+    try (var mongoClient = MONGO.createClient()) {
+      var actual =
+          mongoClient
+              .getDatabase(MONGO.getDatabase())
+              .getCollection("MyEntity")
+              .find(new BsonDocument("_id", new BsonString("ID_1234")))
+              .first();
+      assertThat(actual)
+          .extracting(
+              d -> d.get("_id"),
+              d -> d.get("bigDecimalValue"),
+              d -> d.get("charArrayValue"),
+              d -> d.get("charValue"),
+              d -> d.get("dateValue"),
+              d -> d.get("currencyValue"),
+              d -> d.get("enumValue"),
+              d -> d.get("instantValue"),
+              d -> d.get("localDateTimeValue"),
+              d -> d.get("localeValue"),
+              d -> d.get("stringValue"),
+              d -> d.get("uriValue"))
+          .containsExactly(
+              "ID_1234",
+              new Decimal128(new BigDecimal("12.34")),
+              "ch",
+              "c",
+              Date.from(Instant.parse("1970-01-01T00:00:10Z")),
+              "XAU",
+              "A",
+              Date.from(Instant.parse("1970-01-01T00:00:10Z")),
+              Date.from(Instant.parse("2000-10-20T13:23:00Z")),
+              "de_DE",
+              "a String",
+              "http://example.com");
+    }
   }
 
   private void insertTestDataFromResource(String collection, String jsonResourcePath) {
