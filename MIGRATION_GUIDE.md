@@ -233,6 +233,11 @@ public MongoOperations getMongoOperations() {
 }
 ```
 
+### Mongo Configuration Options
+The database connection can be configured in the `config.yaml` of the application. Please read the Spring-Data-Mongo [README.md](./sda-commons-server-spring-data-mongo/README.md#Configuration) for further information on how to configure your database connection.
+
+`Please note that we now prefer to configure the MongoDB connection using MongoDB's connection string. All other configuration options like hosts, options, etc are still available but deprecated and will be removed in the next major release.`
+
 ### Morphia compatibility
 When upgrading a service from 2.x.x a set of converters is provided to stay compatible with a
 database that was initialized with Morphia. To enable these converters, `.withMorphiaCompatibility()`
