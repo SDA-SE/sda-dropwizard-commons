@@ -45,17 +45,23 @@ public interface MongoDb {
   /**
    * @return the hostname and port that can be used to connect to the database. The result may
    *     contain a comma separated list of hosts as in the MongoDB Connection String
+   * @deprecated Please use 'getConnectionString() instead'.
    */
+  @Deprecated(forRemoval = true)
   String getHosts();
 
   /**
    * @return the username that must be used to connect to the database.
+   * @deprecated Please use 'getConnectionString()' instead.
    */
+  @Deprecated(forRemoval = true)
   String getUsername();
 
   /**
    * @return the password that must be used to connect to the database.
+   * @deprecated Please use 'getConnectionString()' instead.
    */
+  @Deprecated(forRemoval = true)
   String getPassword();
 
   /**
@@ -65,7 +71,9 @@ public interface MongoDb {
 
   /**
    * @return the MongoDB options String without leading question mark
+   * @deprecated Please use 'getConnectionString()' instead.
    */
+  @Deprecated(forRemoval = true)
   String getOptions();
 
   /**
