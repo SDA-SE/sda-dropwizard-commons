@@ -1,5 +1,6 @@
 package org.sdase.commons.server.jackson;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -155,6 +156,7 @@ public class ObjectMapperConfigurationUtil {
           .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
           .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
           .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
+          .disable(JsonGenerator.Feature.AUTO_CLOSE_JSON_CONTENT)
           // deserialization
           .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
           .disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
