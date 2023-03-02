@@ -15,7 +15,9 @@ dependencies {
   api 'org.postgresql:postgresql'
   api 'org.flywaydb:flyway-core', {
     exclude group: 'javax.annotation', module: 'javax.annotation-api'
+    exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-toml'
   }
+  api 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml'
   api 'jakarta.annotation:jakarta.annotation-api'
   api 'org.flywaydb:flyway-core'
   api 'javax.xml.bind:jaxb-api', {

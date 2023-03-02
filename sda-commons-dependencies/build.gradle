@@ -13,6 +13,7 @@ ext {
   swaggerCoreV3Version = '2.2.8'
   weldVersion = '3.1.9.Final'
   jacksonVersion = '2.14.2'
+  jacksonDatabindVersion = '2.14.2'
   jsonUnitVersion = '2.36.1'
   scalaVersion = '2.13.10' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.4.0'
@@ -29,6 +30,7 @@ ext {
 }
 
 dependencies {
+  api enforcedPlatform("com.fasterxml.jackson:jackson-bom:${jacksonVersion}")
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion") // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
@@ -37,13 +39,38 @@ dependencies {
     exclude group: 'org.assertj', module: 'assertj-core'
     exclude group: 'jakarta.xml.bind', module: 'jakarta.xml.bind-api'
     exclude group: 'org.junit', module: 'junit'
+    exclude group: 'com.fasterxml.jackson'
+    exclude group: 'com.fasterxml.jackson.core'
+    exclude group: 'com.fasterxml.jackson.dataformat'
+    exclude group: 'com.fasterxml.jackson.datatype'
+    exclude group: 'com.fasterxml.jackson.jaxrs'
+    exclude group: 'com.fasterxml.jackson.module'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.417")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:$openTelemetryAlphaVersion")
-  api enforcedPlatform("com.fasterxml.jackson:jackson-bom:${jacksonVersion}")
 
   constraints {
+    // jackson
+    api "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+    api "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:$jacksonVersion"
+    api "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion"
+    api "com.fasterxml.jackson.module:jackson-module-afterburner:$jacksonVersion"
+    api "com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion"
+    api "com.fasterxml.jackson.module:jackson-module-parameter-names:$jacksonVersion"
+    api "com.fasterxml.jackson.module:jackson-module-scala_2.13:$jacksonVersion"
+
     // overall conflicts
     api "org.apache.commons:commons-lang3:3.12.0"
     api "commons-codec:commons-codec:1.15", {
