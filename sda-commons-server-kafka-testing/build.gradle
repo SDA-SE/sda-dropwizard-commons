@@ -10,9 +10,11 @@ dependencies {
   api 'org.apache.kafka:kafka_2.13', {
     exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-scala_2.13'
     exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-csv'
+    exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-jsr310'
   }
   api 'com.fasterxml.jackson.module:jackson-module-scala_2.13'
   api 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
+  api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
   api 'com.salesforce.kafka.test:kafka-junit5', {
     exclude group: 'org.apache.curator', module: 'curator-test'
   }
