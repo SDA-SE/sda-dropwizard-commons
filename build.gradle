@@ -245,8 +245,8 @@ configure(subprojects.findAll {
   !unpublishedModules.contains(it.name) && !it.name.endsWith("-example")
 }) {
   java {
-    withJavadocJar();
-    withSourcesJar();
+    withJavadocJar()
+    withSourcesJar()
   }
 
   javadoc {
@@ -337,4 +337,4 @@ sonarqube {
   }
 }
 
-// apply from: 'failOnVersionConflict.gradle'
+apply from: 'failOnVersionConflict.gradle'
