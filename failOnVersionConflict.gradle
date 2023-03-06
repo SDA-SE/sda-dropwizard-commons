@@ -22,17 +22,15 @@ task failOnVersionConflict {
         ))
 
     // Add some dependencies that can be ignored
-    var ignoredDuplicates = new HashSet<String>(
-        Arrays.asList("io.openapitools.hal:swagger-hal")
-        )
+    var ignoredDuplicates = new HashSet<String>()
 
     var baseDir = new File("${rootProject.buildDir}/deps")
-    var deps = new HashMap<String, String>();
+    var deps = new HashMap<String, String>()
     for (file in baseDir.listFiles()) {
       // var listFilesMock = List.of(new File("${rootProject.buildDir}/deps", "sda-commons-starter.txt"))
       // for (file in listFilesMock) {
       logger.info("File: $file")
-      var currentConfig = null;
+      var currentConfig = null
       var skip = true
       file.eachLine {
 
@@ -64,10 +62,10 @@ task failOnVersionConflict {
 
           // Extract groupId / artifactId / version
           logger.debug("Line: $line")
-          var indexOfFirstColon = line.indexOf(':');
+          var indexOfFirstColon = line.indexOf(':')
           var groupId = line.substring(0, indexOfFirstColon)
           var artifactId = line.substring(indexOfFirstColon + 1)
-          var version = null;
+          var version = null
           if (artifactId.contains(" -> ")) {
             var oldArtifactId = artifactId
             artifactId = oldArtifactId.takeBefore(' -> ')
@@ -105,7 +103,7 @@ task failOnVersionConflict {
               deps.put(key, version)
             }
             else if (version != null && otherVersion != version) {
-              var message = "Version conflict for $key between versions $version and $otherVersion for scope $currentConfig";
+              var message = "Version conflict for $key between versions $version and $otherVersion for scope $currentConfig"
               if (ignoredDuplicates.contains(key.toString())) {
                 logger.debug( "Ignoring: $message")
               }
@@ -119,7 +117,7 @@ task failOnVersionConflict {
     }
 
     // Write all unique dependencies to a file
-    var depsSorted = deps.keySet().sort();
+    var depsSorted = deps.keySet().sort()
     new File("${rootProject.buildDir}/deps", "__all.txt")
         .withWriter('utf-8') {
           for (dep in depsSorted) {
