@@ -336,5 +336,3 @@ sonarqube {
 
   }
 }
-
-apply from: 'failOnVersionConflict.gradle'
