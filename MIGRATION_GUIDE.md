@@ -2,11 +2,12 @@
 
 The following modules contain changes:
 
-1. sda-commons-server-testing
-2. sda-commons-server-auth-testing
-3. sda-commons-server-opentracing
-4. sda-commons-server-morphia
-5. sda-commons-server-kafka
+1. [sda-commons-server-testing](#1-sda-commons-server-testing)
+2. [sda-commons-server-auth-testing](#2-sda-commons-server-auth-testing)
+3. [sda-commons-server-opentracing](#3-sda-commons-server-opentracing)
+4. [sda-commons-server-morphia](#4-sda-commons-server-morphia)
+5. [sda-commons-server-kafka](#5-sda-commons-server-kafka)
+6. [Deployment and Release of upgraded services](#deployment-and-release-of-upgraded-services)
 
 ## 1 sda-commons-server-testing
 
@@ -99,7 +100,7 @@ To disable tracing, you must set the variable `TRACING_DISABLED` to `true`. The 
 Before:
 ```properties
 JAEGER_SAMPLER_TYPE=const
-JAEGER_SAMPLER_TYPE=0
+JAEGER_SAMPLER_PARAM=0
 ```
 
 After:
@@ -426,7 +427,7 @@ and [ProducerRegistration](./sda-commons-server-kafka/src/main/java/org/sdase/co
 
 ### Kafka Configuration
 
-As topic configuration is not defined in the service any more, all properties but `name` have been removed from the topic configuration.
+As topic configuration is not defined in the service anymore, all properties but `name` have been removed from the topic configuration.
 
 ```diff
 # example changes in config.yml
@@ -439,3 +440,50 @@ kafka:
 -     replicationFactor: ${KAFKA_CONSUMER_EVENT_TOPIC_REPLICATION_FACTOR:-1}
 
 ```
+
+## Deployment and Release of upgraded services
+
+The changes mentioned above also have an impact on the deployment of a containerized service.
+This section summarizes notable changes of deployments, that are derived from the required migration
+in a service.
+
+Services that upgrade to SDA Dropwizard Commons v3 should mention this in their release notes.
+It may be required to introduce the upgrade as breaking change (aka new major release) if
+deployments are incompatible to the previous version.
+
+Additional service specific changes may apply as well.
+
+### Tracing
+
+Any Jaeger related configuration should be migrated to the Open Telemetry variant.
+The release notes of a service should respective information.
+
+Changes with backward compatible fallback:
+
+- To identify the service, `JAEGER_SERVICE_NAME` is still supported.
+  Changing to `OTEL_SERVICE_NAME` is recommended.
+- To disable tracing, `JAEGER_SAMPLER_TYPE=const` in combination with `JAEGER_SAMPLER_PARAM=0` is
+  still supported.
+  Changing to `TRACING_DISABLED=true` is recommended.
+
+**Incompatible changes:**
+
+- `JAEGER_AGENT_HOST` is not supported anymore.
+  [The official documentation](https://opentelemetry.io/docs/reference/specification/sdk-environment-variables/#otlp-exporter)
+  provides all available options.
+  In an environment that previously used Jaeger, `OTEL_TRACES_EXPORTER=jaeger` and
+  `OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger-collector.jaeger:14250` may be suitable.
+  Note that the collector endpoint may not be the same as the agent endpoint configured for Jaeger.
+
+### Kafka
+
+All topic configurations for topic creation and validation are not considered anymore.
+Users of the service should be informed that the service will not create any topic and does not
+validate existing topics.
+Therefore, some configuration options of a service may be removed.
+
+### MongoDB
+
+Configuration of individual parts of the MongoDB Connection String is deprecated.
+each service should provide a configuration option for the full MongoDB Connection String and
+inform about the deprecation in the release notes.
