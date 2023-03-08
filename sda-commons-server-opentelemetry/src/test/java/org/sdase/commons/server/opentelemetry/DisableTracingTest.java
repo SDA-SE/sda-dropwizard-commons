@@ -9,61 +9,72 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.DropwizardTestSupport;
 import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
+import java.io.Closeable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DisableTracingTest {
 
+  @BeforeEach
   @AfterEach
-  void tearDown() {
+  void cleanupTracer() {
     GlobalOpenTelemetry.resetForTest();
   }
 
-  @BeforeEach
-  void setUp() throws Exception {
+  @Test
+  @SetSystemProperty(key = "TRACING_DISABLED", value = "true")
+  void shouldDisableTracing() throws Exception {
+    try (var ignored = startApp()) {
+      assertThat(System.getProperty("TRACING_DISABLED")).isEqualTo("true");
+      assertThat(GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().fields())
+          .isEmpty();
+      assertThat(GlobalOpenTelemetry.get()).extracting("delegate").isSameAs(OpenTelemetry.noop());
+    }
+  }
+
+  @Test
+  @SetSystemProperty(key = "JAEGER_SAMPLER_TYPE", value = "const")
+  void shouldNotDisableTracingJaegerSampleType() throws Exception {
+    try (var ignored = startApp()) {
+      assertThat(System.getProperty("TRACING_DISABLED")).isNull();
+      assertThat(GlobalOpenTelemetry.get())
+          .extracting("delegate")
+          .isNotSameAs(OpenTelemetry.noop());
+    }
+  }
+
+  @Test
+  @SetSystemProperty(key = "JAEGER_SAMPLER_PARAM", value = "0")
+  void shouldNotDisableTracingJaegerSampleName() throws Exception {
+    try (var ignored = startApp()) {
+      assertThat(System.getProperty("TRACING_DISABLED")).isNull();
+      assertThat(GlobalOpenTelemetry.get())
+          .extracting("delegate")
+          .isNotSameAs(OpenTelemetry.noop());
+    }
+  }
+
+  @Test
+  @SetSystemProperty(key = "JAEGER_SAMPLER_TYPE", value = "const")
+  @SetSystemProperty(key = "JAEGER_SAMPLER_PARAM", value = "0")
+  void shouldDisableTracingWithLegacyParams() throws Exception {
+    try (var ignored = startApp()) {
+      assertThat(System.getProperty("JAEGER_SAMPLER_TYPE")).isEqualTo("const");
+      assertThat(System.getProperty("JAEGER_SAMPLER_PARAM")).isEqualTo("0");
+      assertThat(GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().fields())
+          .isEmpty();
+      assertThat(GlobalOpenTelemetry.get()).extracting("delegate").isSameAs(OpenTelemetry.noop());
+    }
+  }
+
+  private Closeable startApp() throws Exception {
     DropwizardTestSupport<Configuration> DW =
         new DropwizardTestSupport<>(TestApp.class, null, randomPorts());
     DW.before();
-  }
-
-  @Test
-  @Order(0)
-  @SetSystemProperty(key = "TRACING_DISABLED", value = "true")
-  void shouldDisableTracing() {
-    assertThat(System.getProperty("TRACING_DISABLED")).isEqualTo("true");
-    assertThat(GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().fields())
-        .isEmpty();
-  }
-
-  @Test
-  @Order(1)
-  @SetSystemProperty(key = "JAEGER_SAMPLER_TYPE", value = "const")
-  void shouldNotDisableTracingJaegerSampleType() {
-    assertThat(System.getProperty("TRACING_DISABLED")).isNull();
-  }
-
-  @Test
-  @Order(2)
-  @SetSystemProperty(key = "JAEGER_SAMPLER_PARAM", value = "0")
-  void shouldNotDisableTracingJaegerSampleName() {
-    assertThat(System.getProperty("TRACING_DISABLED")).isNull();
-  }
-
-  @Test
-  @Order(3)
-  @SetSystemProperty(key = "JAEGER_SAMPLER_TYPE", value = "const")
-  @SetSystemProperty(key = "JAEGER_SAMPLER_PARAM", value = "0")
-  void shouldDisableTracingWithLegacyParams() {
-    assertThat(System.getProperty("JAEGER_SAMPLER_TYPE")).isEqualTo("const");
-    assertThat(System.getProperty("JAEGER_SAMPLER_PARAM")).isEqualTo("0");
-    assertThat(GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().fields())
-        .isEmpty();
+    return DW::after;
   }
 
   public static class TestApp extends Application<Configuration> {
