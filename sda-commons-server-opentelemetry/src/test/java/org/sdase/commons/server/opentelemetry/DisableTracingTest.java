@@ -44,6 +44,20 @@ class DisableTracingTest {
   @Test
   @Order(1)
   @SetSystemProperty(key = "JAEGER_SAMPLER_TYPE", value = "const")
+  void shouldNotDisableTracingJaegerSampleType() {
+    assertThat(System.getProperty("TRACING_DISABLED")).isNull();
+  }
+
+  @Test
+  @Order(2)
+  @SetSystemProperty(key = "JAEGER_SAMPLER_PARAM", value = "0")
+  void shouldNotDisableTracingJaegerSampleName() {
+    assertThat(System.getProperty("TRACING_DISABLED")).isNull();
+  }
+
+  @Test
+  @Order(3)
+  @SetSystemProperty(key = "JAEGER_SAMPLER_TYPE", value = "const")
   @SetSystemProperty(key = "JAEGER_SAMPLER_PARAM", value = "0")
   void shouldDisableTracingWithLegacyParams() {
     assertThat(System.getProperty("JAEGER_SAMPLER_TYPE")).isEqualTo("const");

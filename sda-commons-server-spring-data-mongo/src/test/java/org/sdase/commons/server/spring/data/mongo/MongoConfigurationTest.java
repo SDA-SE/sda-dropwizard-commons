@@ -28,6 +28,14 @@ class MongoConfigurationTest {
   }
 
   @Test
+  void shouldReturnNullPasswordFromConnectionString() {
+    MongoConfiguration config =
+        new MongoConfiguration()
+            .setConnectionString("mongodb://sysop@localhost/records?authMechanism=MONGODB-X509");
+    assertThat(config.getPassword()).isNull();
+  }
+
+  @Test
   void shouldReturnHostsFromConnectionString() {
     MongoConfiguration config =
         new MongoConfiguration().setConnectionString("mongodb://sysop:moon@localhost/records");
@@ -39,6 +47,13 @@ class MongoConfigurationTest {
     MongoConfiguration config =
         new MongoConfiguration().setConnectionString("mongodb://sysop:moon@localhost/records");
     assertThat(config.isValid()).isTrue();
+  }
+
+  @Test
+  void shouldBeValidIfConnectionStringWasSetPassword() {
+    MongoConfiguration config =
+        new MongoConfiguration().setConnectionString("mongodb://sysop:moon@localhost/records");
+    assertThat(config.getPassword()).isEqualTo("moon");
   }
 
   @Test
