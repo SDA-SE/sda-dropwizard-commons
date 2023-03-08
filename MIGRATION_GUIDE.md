@@ -11,14 +11,14 @@ The following modules contain changes:
 
 ## 1 sda-commons-server-testing
 
-Does not provide any Junit 4 rules anymore.
-You should find Junit 5 extensions for all of your rules.
-We recommend to migrate all your Junit 4 tests to Junit 5.
+Does not provide any JUnit 4 rules anymore.
+You should find JUnit 5 extensions for all of your rules.
+We recommend to migrate all your JUnit 4 tests to JUnit 5.
 
 ## 2 sda-commons-server-auth-testing
 
 Please change your `test-config.yaml` if they use `${AUTH_RULE}` as placeholder.
-We wanted to get rid of all references to old Junit 4 rules.
+We wanted to get rid of all references to old JUnit 4 rules.
 
 ```diff
 -   config: ${AUTH_RULE}
