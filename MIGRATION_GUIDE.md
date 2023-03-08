@@ -11,13 +11,14 @@ The following modules contain changes:
 
 ## 1 sda-commons-server-testing
 
-Does not provide any Junit 4 rules anymore. You should find Junit 5 extensions for all of
-your rules. We recommend to migrate all your Junit 4 tests to Junit 5.
+Does not provide any Junit 4 rules anymore.
+You should find Junit 5 extensions for all of your rules.
+We recommend to migrate all your Junit 4 tests to Junit 5.
 
 ## 2 sda-commons-server-auth-testing
 
-Please change your `test-config.yaml` if they use `${AUTH_RULE}` as placeholder. We wanted to
-get rid of all references to old Junit 4 rules.
+Please change your `test-config.yaml` if they use `${AUTH_RULE}` as placeholder.
+We wanted to get rid of all references to old Junit 4 rules.
 
 v2
 ```
@@ -34,7 +35,8 @@ v3
 Migrate from OpenTracing to OpenTelemetry.
 
 ### Starter Bundle
-If you do not use sda-commons-starter with [SdaPlatformBundle](./sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java), you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTelemetry bundle.
+If you do not use sda-commons-starter with [SdaPlatformBundle](./sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java),
+you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTelemetry bundle.
 
 Before:
 ```java
@@ -95,7 +97,9 @@ return new AsyncEmailSendManager(
 
 ### Environment variables
 
-To disable tracing, you must set the variable `TRACING_DISABLED` to `true`. The legacy Jaeger environment variables are still supported, but they will be removed in later versions.
+To disable tracing, you must set the variable `TRACING_DISABLED` to `true`.
+The legacy Jaeger environment variables are still supported, but they will be removed in later
+versions.
 
 Before:
 ```properties
@@ -109,6 +113,7 @@ TRACING_DISABLED=true
 ```
 
 ### New environment variables
+
 In order to configure Open Telemetry, you can set some environment variables:
 
 | Name                          | Default value                                 | Description                                                                      |
@@ -120,7 +125,10 @@ In order to configure Open Telemetry, you can set some environment variables:
 A full list of the configurable properties can be found in the [General SDK Configuration](https://opentelemetry.io/docs/reference/specification/sdk-environment-variables/).
 
 ### New API for instrumentation
-If you use the OpenTracing API for manual instrumentation, you will have to replace it with the OpenTelemetry API. You can find the [API Definition](https://www.javadoc.io/static/io.opentelemetry/opentelemetry-api/1.0.1/io/opentelemetry/api/GlobalOpenTelemetry.html) to see all the possible methods.
+If you use the OpenTracing API for manual instrumentation, you will have to replace it with the
+OpenTelemetry API.
+You can find the [API Definition](https://www.javadoc.io/static/io.opentelemetry/opentelemetry-api/1.0.1/io/opentelemetry/api/GlobalOpenTelemetry.html)
+to see all the possible methods.
 
 Before:
 ```java
@@ -155,7 +163,8 @@ After:
     testImplementation 'io.opentelemetry:opentelemetry-sdk-testing' 
   ```
 
-- Replace `io.opentracing.mock.MockTracer` with `io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension`
+- Replace `io.opentracing.mock.MockTracer` with
+  `io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension`
 
   Before:
     ```java
@@ -207,6 +216,7 @@ After:
 Migrate to [Spring Data Mongo](https://docs.spring.io/spring-data/mongodb/docs/).
 
 The spring-data-mongo package is available at the following coordinates:
+
 ```groovy
 implementation "org.sdase.commons:sda-commons-server-spring-data-mongo"
 ```
@@ -228,6 +238,7 @@ implementation "org.sdase.commons:sda-commons-server-spring-data-mongo"
 ```
 
 Morphia's `Datastore` can be replaced by Spring Data Mongo's `MongoOperations`:
+
 ```java
 public MongoOperations getMongoOperations() {
   return this.mongoBundle.getMongoOperations();
@@ -235,14 +246,22 @@ public MongoOperations getMongoOperations() {
 ```
 
 ### Mongo Configuration Options
-The database connection can be configured in the `config.yaml` of the application. Please read the Spring-Data-Mongo [README.md](./sda-commons-server-spring-data-mongo/README.md#Configuration) for further information on how to configure your database connection.
 
-`Please note that we now prefer to configure the MongoDB connection using MongoDB's connection string. All other configuration options like hosts, options, etc are still available but deprecated and will be removed in the next major release.`
+The database connection can be configured in the `config.yaml` of the application.
+Please consult the [README of the Spring Data Mongo module](./sda-commons-server-spring-data-mongo/README.md#Configuration)
+for further information on how to configure your database connection.
+
+> Please note that we now prefer to configure the MongoDB connection using MongoDB's connection
+> string.
+> All other configuration options like hosts, options, etc. are still available but deprecated and
+> will be removed in the next major release.
 
 ### Morphia compatibility
+
 When upgrading a service from 2.x.x a set of converters is provided to stay compatible with a
-database that was initialized with Morphia. To enable these converters, `.withMorphiaCompatibility()`
-can be used when building the SpringDataMongoBundle.
+database that was initialized with Morphia.
+To enable these converters, `.withMorphiaCompatibility()` can be used when building the
+`SpringDataMongoBundle`.
 
 ```java
 SpringDataMongoBundle.builder()
@@ -252,8 +271,9 @@ SpringDataMongoBundle.builder()
 ```
 
 ### Validation
-Automatic JSR validation is no longer provided in v3. If you still want to validate your models
-you can do so manually using the `ValidationFactory`:
+
+Automatic JSR validation is no longer provided in v3.
+If you still want to validate your models you can do so manually by using the `ValidationFactory`:
 
 ```java
 boolean isValid =
@@ -266,21 +286,25 @@ boolean isValid =
 ### Queries
 
 ### Building queries with the datastore
+
 Simple operations can be realised by the MongoOperations directly.
 
 Saving an entity:
+
 ```java
 public void save(SampleEntity entity) {
     mongoOperations.insert(entity);
 ```
 
 Find by id:
+
 ```java
 public Optional<SampleEntity> findById(String id) {
     return Optional.ofNullable(mongoOperations.findById(id, SampleEntity.class));
 ```
 
 More complex queries can be realised by building a compound `Query`:
+
 ```java
 public Optional<SampleEntity> findByArbitraryFields(String identifier, String value) {
   return Optional.ofNullable(
@@ -291,13 +315,16 @@ public Optional<SampleEntity> findByArbitraryFields(String identifier, String va
         SampleEntity.class));
 }
 ```
-See the [official documentation](https://docs.spring.io/spring-data/mongodb/docs/current/api/org/springframework/data/mongodb/core/query/Criteria.html) for further information.
+
+See the [official documentation](https://docs.spring.io/spring-data/mongodb/docs/current/api/org/springframework/data/mongodb/core/query/Criteria.html)
+for further information.
 
 ### Auto-generate queries out of method names with the `MongoRepository` interface
 Depending on the complexity, queries can also be auto-generated based on the method names by using
 the MongoRepository Interface provided by spring-data-mongo.
 
 Imagine the following simple entity class:
+
 ```java
 public class Person {
   private String Name;
@@ -305,7 +332,9 @@ public class Person {
 }
 ```
 
-Now we can define queries directly through the method names (see the official documentation for the specific syntax).
+Now we can define queries directly through the method names (see the official documentation for the
+specific syntax).
+
 ```java
 public interface PersonMongoRepository extends MongoRepository<Person, String> {
   Optional<Person> findByName(String name);
@@ -315,36 +344,57 @@ public interface PersonMongoRepository extends MongoRepository<Person, String> {
   List<Person> findAllByNameIsNot(String name);
 }
 ```
+
 See the [official documentation](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details) for further details.
 
 ### Query functions
-As Spring Data Mongo doesn't support/provide many query functions provided by Morphia, below are some replacements/alternatives.
 
-* #### _EqualIgnoreCase_
-  Morphia supports usage of _equalIgnoreCase()_. Use _regex()_ in Spring Data Mongo. For example
-  * Morphia - `query.criteria("fieldName").equalIgnoreCase(entity.getFieldName());`
-  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex(Pattern.compile("^" + Pattern.quote(entity.getFieldName()), Pattern.CASE_INSENSITIVE)));`
+As Spring Data Mongo doesn't support/provide many query functions provided by Morphia, below are
+some replacements/alternatives.
 
-* #### _HasAnyOf_
-  Morphia supports _hasAnyOf()_ method. Use _in()_ in Spring Data Mongo. For example
-  * Morphia - `query.field("id").hasAnyOf(getIds());`
-  * Spring Data Mongo - `query.addCriteria(where("id").in(getIds()));`
+#### EqualIgnoreCase
 
-* #### _Filter_
-  Morphia supports _filter()_ method. Use _is()_ in Spring Data Mongo. For example
-  * Morphia - `query.filter("id", getId());`
-  * Spring Data Mongo - `query.addCriteria(where("id").is(getId()));`
+Morphia supports usage of _equalIgnoreCase()_.
+Use _regex()_ in Spring Data Mongo.
+For example
 
-* #### _Contains_
-  Morphia supports _contains()_ method. Use _regex()_ in Spring Data Mongo. For example
-  * Morphia - `query.criteria("fieldName").contains(entity.getFieldName());`
-  * Spring Data Mongo - `query.addCriteria(where("fieldName").regex(Pattern.compile(".*" + Pattern.quote(entity.getFieldName()) + ".*")));`
+- Morphia - `query.criteria("fieldName").equalIgnoreCase(entity.getFieldName());`
+- Spring Data Mongo - `query.addCriteria(where("fieldName").regex(Pattern.compile("^" + Pattern.quote(entity.getFieldName()), Pattern.CASE_INSENSITIVE)));`
 
-* #### _HasAllOf_
-  Morphia supports _contains()_ method. Use _regex()_ in Spring Data Mongo. For example
-  * Morphia - `query.field("fieldName").hasAllOf(getFieldNameValues());`
-  * Spring Data Mongo - `query.addCriteria(where("fieldName").all(getFieldNameValues()));`
+#### HasAnyOf  
 
+Morphia supports _hasAnyOf()_ method. Use _in()_ in Spring Data Mongo.
+For example
+
+- Morphia - `query.field("id").hasAnyOf(getIds());`
+- Spring Data Mongo - `query.addCriteria(where("id").in(getIds()));`
+
+#### Filter
+
+Morphia supports _filter()_ method.
+Use _is()_ in Spring Data Mongo.
+For example
+
+- Morphia - `query.filter("id", getId());`
+- Spring Data Mongo - `query.addCriteria(where("id").is(getId()));`
+
+#### Contains
+
+Morphia supports _contains()_ method.
+Use _regex()_ in Spring Data Mongo.
+For example
+
+- Morphia - `query.criteria("fieldName").contains(entity.getFieldName());`
+- Spring Data Mongo - `query.addCriteria(where("fieldName").regex(Pattern.compile(".*" + Pattern.quote(entity.getFieldName()) + ".*")));`
+
+#### HasAllOf
+
+Morphia supports _contains()_ method.
+Use _regex()_ in Spring Data Mongo.
+For example
+
+- Morphia - `query.field("fieldName").hasAllOf(getFieldNameValues());`
+- Spring Data Mongo - `query.addCriteria(where("fieldName").all(getFieldNameValues()));`
 
 ### Error handling
 
@@ -369,8 +419,10 @@ comparison with the existing indexes of a database populated with the latest ver
 
 ### Custom converters
 
-Custom converters can be added directly to the Entity class in Morphia by using annotation like `@Converters(value = {ExampleConverter.class})`.
-In Spring Data Mongo the custom converters can be added to the builder in your `Application.class` like below:
+Custom converters can be added directly to the Entity class in Morphia by using annotation like
+`@Converters(value = {ExampleConverter.class})`.
+In Spring Data Mongo the custom converters can be added to the builder in your `Application.class`
+like below:
 
 ```java
 SpringDataMongoBundle.builder()
@@ -382,7 +434,8 @@ SpringDataMongoBundle.builder()
   build();
 ```
 
-Implementing the converter changes from Morphia interface to using the Spring interface can be done like here [ZonedDateTimeReadConverter.java](sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/converter/ZonedDateTimeReadConverter.java).
+Implementing the converter changes from Morphia interface to using the Spring interface can be done
+like here [ZonedDateTimeReadConverter.java](sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/converter/ZonedDateTimeReadConverter.java).
 
 ### Annotations
 
@@ -398,36 +451,42 @@ Implementing the converter changes from Morphia interface to using the Spring in
 
 Some deprecated code was removed.
 Especially we removed the feature `createTopicIfMissing` because we don't recommend services
-to do that. You usually need different privileges for topic creation that you don't want to
-give to your services.
+to do that.
+You usually need different privileges for topic creation that you don't want to give to your
+services.
 
-We also removed the topicana classes in package `org.sdase.commons.server.kafka.topicana`. For this
-reason the following methods were removed or changed
+We also removed the topicana classes in package `org.sdase.commons.server.kafka.topicana`.
+For this reason the following methods were removed or changed
 on [MessageListenerRegistration](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/builder/MessageListenerRegistration.java)
 and [ProducerRegistration](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/builder/ProducerRegistration.java):
 
-- checkTopicConfiguration
+- `checkTopicConfiguration`
+  
   This method compared the current topics with the configured ones and threw
   a `org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException` in case they did not
-  match. It was removed in this version.
+  match.
+  It was removed in this version.
 
-- forTopicConfigs
+- `forTopicConfigs`
+  
   These methods accepted a list
   of `org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration` to compare against the
-  current topic configuration. Now it accepts a list
-  of [TopicConfig](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java),
+  current topic configuration.
+  Now it accepts a list of [TopicConfig](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java),
   with only the name of the topic, but it does not perform any check in the configuration.
 
-- forTopic(ExpectedTopicConfiguration topic)
-  These methods accepted an instance
+- `forTopic(ExpectedTopicConfiguration topic)`
+  
+  These method accepted an instance
   of `org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration` to compare against the
-  current topic configuration. Now it accepts
-  a [TopicConfig](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java) instance,
-  with only the name of the topic, but it does not perform any check in the configuration.
+  current topic configuration.
+  Now it accepts a [TopicConfig](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java)
+  instance, with only the name of the topic, but it does not perform any check in the configuration.
 
 ### Kafka Configuration
 
-As topic configuration is not defined in the service anymore, all properties but `name` have been removed from the topic configuration.
+As topic configuration is not defined in the service anymore, all properties but `name` have been
+removed from the topic configuration.
 
 ```diff
 # example changes in config.yml
