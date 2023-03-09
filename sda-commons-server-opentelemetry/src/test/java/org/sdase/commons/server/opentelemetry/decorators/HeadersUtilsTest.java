@@ -58,6 +58,13 @@ class HeadersUtilsTest {
   }
 
   @Test
+  void shouldReturnEmptyForNull() {
+    List<String> formattedHeaders = convertHeadersToString(null);
+
+    assertThat(formattedHeaders).isNotNull().isEmpty();
+  }
+
+  @Test
   void shouldSanitizeSetCookieHeader() {
     MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
     headers.put(SET_COOKIE, singletonList("1234"));
