@@ -20,10 +20,8 @@ ext {
   kotlinVersion = '1.8.10'
   kotlinxCoroutinesVersion = '1.6.4'
   resilience4jVersion = '1.7.1'
-  otelAgentAlphaVersion = '1.16.0-alpha'
   openTelemetryAlphaVersion = '1.24.0-alpha'
   openTelemetryVersion= '1.24.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
-  openTelemetryAlphaVersion = '1.16.0-alpha'
   otelInstrumentationAlphaVersion = '1.23.0-alpha'
 }
 
@@ -101,7 +99,7 @@ dependencies {
 
     // sda-commons-server-mongo-testing
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.4"
-    api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:$otelAgentAlphaVersion"
+    api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:$otelInstrumentationAlphaVersion"
 
     // sda-commons-server-openapi
     api "com.jayway.jsonpath:json-path:2.7.0"
