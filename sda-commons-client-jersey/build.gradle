@@ -12,6 +12,11 @@ dependencies {
   api 'javax.xml.bind:jaxb-api', {
     exclude group: 'javax.activation', module: 'javax.activation-api'
   }
+  api 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:1.23.0-alpha', {
+    exclude group: 'io.opentelemetry', module: 'opentelemetry-api'
+  }
+  api "io.opentelemetry:opentelemetry-api"
+
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')
@@ -22,6 +27,5 @@ dependencies {
   testImplementation 'org.awaitility:awaitility'
   testImplementation 'org.assertj:assertj-core'
 
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:1.23.0-alpha'
   testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
 }
