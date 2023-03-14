@@ -5,10 +5,7 @@ test {
 dependencies {
   api project(':sda-commons-server-dropwizard')
   api 'io.dropwizard:dropwizard-client'
-  api 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3', {
-    exclude group: 'io.opentelemetry', module: 'opentelemetry-api'
-  }
-  api "io.opentelemetry:opentelemetry-api"
+  api 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3'
   // provides some conventional static attributes that are recommended for manual instrumentation.
   api 'io.opentelemetry:opentelemetry-semconv'
   // this module provides provides a builder to setup an instance sdk
