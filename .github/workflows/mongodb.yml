@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - release/2.x.x
   pull_request:
 
 jobs:
