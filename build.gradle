@@ -335,7 +335,6 @@ sonarqube {
     if (System.getenv('SONAR_SCM_REVISION') != null) {
       property 'sonar.scm.revision', System.getenv('SONAR_SCM_REVISION')
     }
-
   }
 }
 
