@@ -3,11 +3,12 @@
 The following modules contain changes:
 
 1. [sda-commons-server-testing](#1-sda-commons-server-testing)
-2. [sda-commons-server-auth-testing](#2-sda-commons-server-auth-testing)
-3. [sda-commons-server-opentracing](#3-sda-commons-server-opentracing)
-4. [sda-commons-server-morphia](#4-sda-commons-server-morphia)
-5. [sda-commons-server-kafka](#5-sda-commons-server-kafka)
-6. [Deployment and Release of upgraded services](#deployment-and-release-of-upgraded-services)
+2. [sda-commons-server-auth](#2-sda-commons-server-auth)
+3. [sda-commons-server-auth-testing](#3-sda-commons-server-auth-testing)
+4. [sda-commons-server-opentracing](#4-sda-commons-server-opentracing)
+5. [sda-commons-server-morphia](#5-sda-commons-server-morphia)
+6. [sda-commons-server-kafka](#6-sda-commons-server-kafka)
+7. [Deployment and Release of upgraded services](#7-deployment-and-release-of-upgraded-services)
 
 ## 1 sda-commons-server-testing
 
@@ -15,7 +16,20 @@ Does not provide any JUnit 4 rules anymore.
 You should find JUnit 5 extensions for all of your rules.
 We recommend migrating all your JUnit 4 tests to JUnit 5.
 
-## 2 sda-commons-server-auth-testing
+## 2 sda-commons-server-auth
+
+The deprecated field `readTimeout` was removed from the class `OpaConfig`.
+Please set the timeout in the `opaClient` configuration instead.
+
+Example:
+
+```yaml
+opa:
+  opaClient:
+    timeout: 500ms
+```
+
+## 3 sda-commons-server-auth-testing
 
 Please change your `test-config.yaml` if they use `${AUTH_RULE}` as placeholder.
 We wanted to get rid of all references to old JUnit 4 rules.
@@ -25,7 +39,7 @@ We wanted to get rid of all references to old JUnit 4 rules.
 +   config: ${AUTH_CONFIG_KEYS}
 ```
 
-## 3 sda-commons-server-opentracing
+## 4 sda-commons-server-opentracing
 
 Migrate from OpenTracing to OpenTelemetry.
 
@@ -164,7 +178,7 @@ to see all the possible methods.
     + assertThat(OTEL.getSpans().stream().filter(s -> s.getName().equals("expectedTracing")));
     ```
 
-## 4 sda-commons-server-morphia
+## 5 sda-commons-server-morphia
 
 Migrate to [Spring Data Mongo](https://docs.spring.io/spring-data/mongodb/docs/).
 
@@ -207,7 +221,9 @@ for further information on how to configure your database connection.
 > Please note that we now prefer to configure the MongoDB connection using MongoDB's connection
 > string.
 > All other configuration options like hosts, options, etc. are still available but deprecated and
-> will be removed in the next major release.
+> will be removed in the next major release. 
+> There is only one exception: The deprecated option `caCertificate` was removed.
+> For more information how to mount a certificate please read the [module's documentation](./sda-commons-server-spring-data-mongo/README.md#ca-certificates-support).
 
 ### Morphia compatibility
 
@@ -402,7 +418,7 @@ like here [ZonedDateTimeReadConverter.java](sda-commons-server-spring-data-mongo
 | `@Converters()`                                           | Replaced with `@ReadingConverter` and `@WritingConverter`                                                                                                                                                                                   |
 
 
-## 5 sda-commons-server-kafka
+## 6 sda-commons-server-kafka
 
 Some deprecated code was removed.
 Especially we removed the feature `createTopicIfMissing` because we don't recommend services
@@ -455,7 +471,7 @@ kafka:
 
 ```
 
-## Deployment and Release of upgraded services
+## 7. Deployment and Release of upgraded services
 
 The changes mentioned above also have an impact on the deployment of a containerized service.
 This section summarizes notable changes of deployments, that are derived from the required migration
