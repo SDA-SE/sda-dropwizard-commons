@@ -10,7 +10,7 @@ ext {
   dropwizardVersion = '2.1.5'
   prometheusVersion = '0.16.0'
   swaggerCoreVersion = '1.6.9'
-  swaggerCoreV3Version = '2.2.8'
+  swaggerCoreV3Version = '2.2.9'
   weldVersion = '3.1.9.Final'
   jsonUnitVersion = '2.36.1'
   scalaVersion = '2.13.10' // align transitive dependency from various modules, keep up to date
