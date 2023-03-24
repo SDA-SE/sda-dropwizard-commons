@@ -18,7 +18,8 @@ the SDA SE.
 >
 > New features can only be contributed in version 3.x.x.
 > 
-> Version 2.x.x only receives critical security updates.
+> Version 2.x.x only receives critical security updates until October 2023. 
+> We will only provide security updates for the libraries that are still compatible with Java 8.
 > 
 > Please make sure to upgrade to version 3 as soon as possible.
 >
