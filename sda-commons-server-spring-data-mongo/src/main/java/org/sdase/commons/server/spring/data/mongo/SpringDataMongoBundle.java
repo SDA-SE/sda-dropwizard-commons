@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import javax.validation.constraints.NotNull;
-import org.apache.commons.lang3.StringUtils;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeReadConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.BigDecimalReadConverter;
@@ -129,19 +128,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   public void run(C configuration, Environment environment) {
     this.config = configurationProvider.apply(configuration);
 
-    String connectionString;
-    if (StringUtils.isNotBlank(config.getConnectionString())) {
-      connectionString = config.getConnectionString();
-    } else {
-      connectionString =
-          String.format(
-              "mongodb://%s:%s@%s/%s",
-              config.getUsername(), config.getPassword(), config.getHosts(), config.getDatabase());
-      if (StringUtils.isNotBlank(config.getOptions())) {
-        connectionString += "?" + config.getOptions();
-      }
-    }
-
+    var connectionString = MongoConfigurationUtil.buildConnectionString(config);
     var cs = new ConnectionString(connectionString);
     this.database = cs.getDatabase();
 
