@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Special assertions for {@link Path} objects to check if a file matches the expected contents and
@@ -19,6 +21,11 @@ import org.assertj.core.api.Assertions;
  * OpenAPI or AsyncApi).
  */
 public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, Path> {
+
+  private static final Logger LOG = LoggerFactory.getLogger(GoldenFileAssertions.class);
+
+  private static final CiUtil CI_UTIL = new CiUtil();
+
   private static final String ASSERTION_TEXT =
       "The current %s file is not up-to-date. If this "
           + "happens locally, just run the test again. The %s file is updated automatically after "
@@ -52,6 +59,9 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
    *
    * <p>Use this assertion if you want to conveniently store the latest copy of a file in your
    * repository, and let the CI fail if an update has not been committed.
+   *
+   * <p>Please note that we will not update the golden version if we run in a CI pipeline such as
+   * Github Actions or Jenkins.
    *
    * <p>Examples:
    *
@@ -91,8 +101,12 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
           .isEqualTo(expected);
 
     } finally {
-      // always update the file content
-      Files.write(actual, expected.getBytes(StandardCharsets.UTF_8));
+      // eventually update the file content
+      if (CI_UTIL.isRunningInCiPipeline()) {
+        LOG.info("Not updating file {} when running in CI pipeline", actual);
+      } else {
+        Files.write(actual, expected.getBytes(StandardCharsets.UTF_8));
+      }
     }
 
     return this;
