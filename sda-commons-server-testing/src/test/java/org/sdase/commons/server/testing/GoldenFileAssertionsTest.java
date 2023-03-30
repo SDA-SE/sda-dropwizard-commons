@@ -17,6 +17,7 @@ class GoldenFileAssertionsTest {
   @TempDir private Path tempDir;
 
   private Path tempFile;
+  private final CiUtil ciUtil = new CiUtil();
 
   @BeforeEach
   void setUp() {
@@ -68,8 +69,13 @@ class GoldenFileAssertionsTest {
             "The current %s file is not up-to-date. If this happens locally,",
             tempFile.getFileName().toString());
 
-    // content should now be expected-content
-    assertThat(tempFile).hasContent("expected-content");
+    if (ciUtil.isRunningInCiPipeline()) {
+      // content should be unchanged
+      assertThat(tempFile).hasContent("unexpected-content");
+    } else {
+      // content should now be expected-content
+      assertThat(tempFile).hasContent("expected-content");
+    }
   }
 
   @Test
@@ -85,8 +91,13 @@ class GoldenFileAssertionsTest {
             "The current %s file is not up-to-date. If this happens locally,",
             path.getFileName().toString());
 
-    // content should now be expected-content
-    assertThat(path).exists().hasContent("expected-content");
+    if (ciUtil.isRunningInCiPipeline()) {
+      // file should still not exist
+      assertThat(path).doesNotExist();
+    } else {
+      // content should now be expected-content
+      assertThat(path).exists().hasContent("expected-content");
+    }
   }
 
   @Test
