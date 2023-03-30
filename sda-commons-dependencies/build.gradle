@@ -104,7 +104,7 @@ dependencies {
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:$otelAgentAlphaVersion"
 
     // sda-commons-server-openapi
-    api "com.jayway.jsonpath:json-path:2.7.0"
+    api "com.jayway.jsonpath:json-path:2.8.0"
 
     // sda-commons-server-openapi
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9" // TODO Needed for OpenAPI?
