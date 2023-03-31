@@ -201,6 +201,7 @@ implementation "org.sdase.commons:sda-commons-server-spring-data-mongo"
 +  private final SpringDataMongoBundle<AppConfiguration> mongoBundle = 
 +    SpringDataMongoBundle.builder()
 +      .withConfigurationProvider(AppConfiguration::getMongo)
++      .withEntities(ConsentConfigurationEntity.class)
 +      .build();
 ```
 
