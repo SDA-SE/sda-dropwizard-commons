@@ -63,6 +63,7 @@ public class TraceTokenServerFilter implements ContainerRequestFilter, Container
   private void addTokenToMdc(String token) {
     if (MDC.getMDCAdapter() != null) {
       MDC.put(RequestTracing.TOKEN_MDC_KEY, token);
+      MDC.put("TraceID", token);
     }
   }
 
