@@ -29,13 +29,17 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
 
   private final ConfigurationSourceProvider delegate;
 
+  private Map<String, String> additionalFields;
+
   /**
    * Create a new instance.
    *
    * @param delegate The underlying {@link ConfigurationSourceProvider}.
    */
-  public ConsoleAppenderInjectorSourceProvider(ConfigurationSourceProvider delegate) {
+  public ConsoleAppenderInjectorSourceProvider(
+      ConfigurationSourceProvider delegate, Map<String, String> additionalFields) {
     this.delegate = requireNonNull(delegate);
+    this.additionalFields = additionalFields;
   }
 
   /** {@inheritDoc} */
@@ -190,6 +194,9 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
     consoleAppenderLayout.put("type", "access-json");
     consoleAppenderLayout.put("requestHeaders", asList("Trace-Token", "Consumer-Token"));
     consoleAppenderLayout.put("responseHeaders", singletonList("Trace-Token"));
+    if (additionalFields != null) {
+      consoleAppenderLayout.put("additionalFields", additionalFields);
+    }
     return consoleAppenderLayout;
   }
 

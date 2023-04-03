@@ -4,6 +4,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import java.util.Map;
 import org.sdase.commons.server.dropwizard.logging.ConsoleAppenderInjectorSourceProvider;
 
 /**
@@ -16,10 +17,21 @@ public class DefaultLoggingConfigurationBundle implements ConfiguredBundle<Confi
     return new Builder();
   }
 
+  public DefaultLoggingConfigurationBundle() {
+    super();
+  }
+
+  public DefaultLoggingConfigurationBundle(Map<String, String> additionalFields) {
+    this.additionalFields = additionalFields;
+  }
+
+  private Map<String, String> additionalFields = null;
+
   @Override
   public void initialize(Bootstrap<?> bootstrap) {
     bootstrap.setConfigurationSourceProvider(
-        new ConsoleAppenderInjectorSourceProvider(bootstrap.getConfigurationSourceProvider()));
+        new ConsoleAppenderInjectorSourceProvider(
+            bootstrap.getConfigurationSourceProvider(), additionalFields));
   }
 
   @Override
@@ -28,8 +40,15 @@ public class DefaultLoggingConfigurationBundle implements ConfiguredBundle<Confi
   }
 
   public static class Builder {
+    Map<String, String> additionalFields;
+
+    public Builder withAdditionalFields(Map<String, String> additionalFields) {
+      this.additionalFields = additionalFields;
+      return this;
+    }
+
     public DefaultLoggingConfigurationBundle build() {
-      return new DefaultLoggingConfigurationBundle();
+      return new DefaultLoggingConfigurationBundle(additionalFields);
     }
   }
 }
