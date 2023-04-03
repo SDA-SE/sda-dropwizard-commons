@@ -190,6 +190,8 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
     consoleAppenderLayout.put("type", "access-json");
     consoleAppenderLayout.put("requestHeaders", asList("Trace-Token", "Consumer-Token"));
     consoleAppenderLayout.put("responseHeaders", singletonList("Trace-Token"));
+    consoleAppenderLayout.put("TraceID", "TraceID");
+    consoleAppenderLayout.put("trace_id", "trace_id");
     return consoleAppenderLayout;
   }
 
