@@ -2,6 +2,7 @@ package org.sdase.commons.client.jersey.filter;
 
 import static org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder.currentRequestContext;
 
+import io.opentelemetry.api.trace.Span;
 import java.util.Optional;
 import java.util.UUID;
 import javax.ws.rs.client.ClientRequestContext;
@@ -27,6 +28,7 @@ public class TraceTokenClientFilter implements ClientRequestFilter, ClientRespon
         takeTraceTokenFromIncomingRequest()
             .orElseGet(() -> createTraceTokenForOutgoingRequest(requestContext));
     requestContext.getHeaders().add(RequestTracing.TOKEN_HEADER, traceToken);
+    MDC.put("TraceID", Span.current().getSpanContext().getTraceId());
   }
 
   @Override
