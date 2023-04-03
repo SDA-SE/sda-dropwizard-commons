@@ -5,8 +5,10 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.opentelemetry.api.trace.Span;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -80,8 +82,12 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
             .withAutoConfiguredTelemetryInstance()
             .withExcludedUrlsPattern(Pattern.compile(String.join("|", excludedTracingUrls)))
             .build());
+    HashMap<String, String> additionalFields = new HashMap<>();
+    additionalFields.put("TraceID", Span.current().getSpanContext().getTraceId());
+
     bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
-    bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
+    bootstrap.addBundle(
+        DefaultLoggingConfigurationBundle.builder().withAdditionalFields(additionalFields).build());
     bootstrap.addBundle(InternalHealthCheckEndpointBundle.builder().build());
     bootstrap.addBundle(PrometheusBundle.builder().build());
     bootstrap.addBundle(TraceTokenBundle.builder().build());
