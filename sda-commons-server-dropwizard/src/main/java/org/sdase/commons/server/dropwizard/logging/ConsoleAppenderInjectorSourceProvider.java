@@ -1,7 +1,6 @@
 package org.sdase.commons.server.dropwizard.logging;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 import io.dropwizard.configuration.ConfigurationSourceProvider;
@@ -189,7 +188,8 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
     Map<String, Object> consoleAppenderLayout = new HashMap<>();
     consoleAppenderLayout.put("type", "access-json");
     consoleAppenderLayout.put("requestHeaders", asList("Trace-Token", "Consumer-Token"));
-    consoleAppenderLayout.put("responseHeaders", singletonList("Trace-Token"));
+    consoleAppenderLayout.put("responseHeaders", asList("Trace-Token", "TraceID"));
+
     return consoleAppenderLayout;
   }
 
