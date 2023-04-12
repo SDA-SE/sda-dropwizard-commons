@@ -193,7 +193,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     // only.
     // This dummy works as long as the future is not evaluated
     if (kafkaConfiguration.isDisabled()) {
-      return (k, v, h) -> null;
+      return (k, v, h, c) -> null;
     }
 
     checkInit();
