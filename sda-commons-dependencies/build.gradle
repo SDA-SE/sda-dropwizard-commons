@@ -22,7 +22,7 @@ ext {
   resilience4jVersion = '1.7.1'
   otelAgentAlphaVersion = '1.16.0-alpha'
   openTelemetryAlphaVersion = '1.16.0-alpha'
-  openTelemetryVersion= '1.16.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
+  openTelemetryVersion= '1.25.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
   openTelemetryAlphaVersion = '1.16.0-alpha'
   otelInstrumentationAlphaVersion = '1.16.0-alpha'
 }
