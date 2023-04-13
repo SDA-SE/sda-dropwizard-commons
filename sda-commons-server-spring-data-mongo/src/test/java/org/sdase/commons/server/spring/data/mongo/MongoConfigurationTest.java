@@ -80,4 +80,32 @@ class MongoConfigurationTest {
     MongoConfiguration config = new MongoConfiguration().setDatabase("records");
     assertThat(config.isValid()).isFalse();
   }
+
+  @Test
+  void shouldReturnSslTrueFromConnectionStringByTlsSetting() {
+    MongoConfiguration config =
+        new MongoConfiguration().setConnectionString("mongodb://localhost/db?tls=true");
+    assertThat(config.isUseSsl()).isTrue();
+  }
+
+  @Test
+  void shouldReturnSslFalseFromConnectionStringByTlsSetting() {
+    MongoConfiguration config =
+        new MongoConfiguration().setConnectionString("mongodb://localhost/db?tls=false");
+    assertThat(config.isUseSsl()).isFalse();
+  }
+
+  @Test
+  void shouldReturnSslTrueFromConnectionStringBySssSetting() {
+    MongoConfiguration config =
+        new MongoConfiguration().setConnectionString("mongodb://localhost/db?ssl=true");
+    assertThat(config.isUseSsl()).isTrue();
+  }
+
+  @Test
+  void shouldReturnSslFalseFromConnectionStringBySssSetting() {
+    MongoConfiguration config =
+        new MongoConfiguration().setConnectionString("mongodb://localhost/db?ssl=false");
+    assertThat(config.isUseSsl()).isFalse();
+  }
 }

@@ -1,5 +1,7 @@
 package org.sdase.commons.server.spring.data.mongo;
 
+import static java.util.Optional.ofNullable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mongodb.ConnectionString;
 import javax.validation.constraints.AssertTrue;
@@ -115,7 +117,7 @@ public class MongoConfiguration {
   @Deprecated(forRemoval = true)
   public String getDatabase() {
     if (StringUtils.isBlank(database) && StringUtils.isNotBlank(connectionString)) {
-      return String.join(",", new ConnectionString(connectionString).getDatabase());
+      return new ConnectionString(connectionString).getDatabase();
     }
     return database;
   }
@@ -152,7 +154,7 @@ public class MongoConfiguration {
   @Deprecated(forRemoval = true)
   public String getUsername() {
     if (StringUtils.isBlank(username) && StringUtils.isNotBlank(connectionString)) {
-      return String.join(",", new ConnectionString(connectionString).getUsername());
+      return new ConnectionString(connectionString).getUsername();
     }
     return username;
   }
@@ -194,6 +196,9 @@ public class MongoConfiguration {
    */
   @Deprecated(forRemoval = true)
   public boolean isUseSsl() {
+    if (StringUtils.isNotBlank(connectionString)) {
+      return ofNullable(new ConnectionString(connectionString).getSslEnabled()).orElse(false);
+    }
     return useSsl;
   }
 
