@@ -31,8 +31,9 @@ class SpringDataMongoBundleSSLConfigurationIT {
           AutoIndexDisabledApp.class,
           null,
           randomPorts(),
-          config("springDataMongo.connectionString", mongo::getConnectionString),
-          config("springDataMongo.useSsl", "true"),
+          config(
+              "springDataMongo.connectionString", () -> mongo.getConnectionString() + "&ssl=true"),
+          config("springDataMongo.useSsl", "false"),
           config(
               "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
 
@@ -44,7 +45,7 @@ class SpringDataMongoBundleSSLConfigurationIT {
           null,
           randomPorts(),
           config("springDataMongo.connectionString", mongo::getConnectionString),
-          config("springDataMongo.useSsl", "false"),
+          config("springDataMongo.useSsl", "true"),
           config(
               "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
 
