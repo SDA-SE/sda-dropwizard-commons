@@ -45,6 +45,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 See our [changelog](https://github.com/SDA-SE/sda-dropwizard-commons/releases/) for more information about the latest features.
 
+> Please note that we will release smaller breaking changes more often. It does not mean that you will
+be affected every time, but we want to live by the semantic versioning approach more seriously to 
+make it more transparent if there is change that may have an effect on you. This also affects 
+further maintenance of previous major releases. Not all of them will receive updates in the future.
 
 ## Contributing
 
