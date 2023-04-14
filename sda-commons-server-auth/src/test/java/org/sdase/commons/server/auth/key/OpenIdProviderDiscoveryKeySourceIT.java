@@ -1,13 +1,24 @@
 package org.sdase.commons.server.auth.key;
 
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
+import io.opentelemetry.sdk.trace.data.SpanData;
 import java.math.BigInteger;
+import java.net.URI;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
@@ -17,12 +28,18 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.server.auth.AuthBundle;
+import org.sdase.commons.server.auth.config.AuthConfig;
+import org.sdase.commons.server.auth.config.KeyLocation;
+import org.sdase.commons.server.auth.config.KeyUriType;
 import org.sdase.commons.server.auth.test.KeyProviderTestApp;
 
 class OpenIdProviderDiscoveryKeySourceIT {
 
+  @RegisterExtension static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
+
   @RegisterExtension
-  private static final DropwizardAppExtension<Configuration> DW =
+  static final DropwizardAppExtension<Configuration> DW =
       new DropwizardAppExtension<>(KeyProviderTestApp.class, null, randomPorts());
 
   @Test
@@ -75,12 +92,10 @@ class OpenIdProviderDiscoveryKeySourceIT {
 
   private Optional<PublicKey> getLoadedKeyByKid(
       OpenIdProviderDiscoveryKeySource keySource, String kid) {
-    Optional<PublicKey> rsaKey =
-        keySource.loadKeysFromSource().stream()
-            .filter(loadedPublicKey -> loadedPublicKey.getKid().equals(kid))
-            .map(LoadedPublicKey::getPublicKey)
-            .findFirst();
-    return rsaKey;
+    return keySource.loadKeysFromSource().stream()
+        .filter(loadedPublicKey -> loadedPublicKey.getKid().equals(kid))
+        .map(LoadedPublicKey::getPublicKey)
+        .findFirst();
   }
 
   @Test
@@ -89,11 +104,7 @@ class OpenIdProviderDiscoveryKeySourceIT {
     OpenIdProviderDiscoveryKeySource keySource =
         new OpenIdProviderDiscoveryKeySource(location, DW.client(), null);
 
-    assertThrows(
-        KeyLoadFailedException.class,
-        () -> {
-          keySource.loadKeysFromSource();
-        });
+    assertThrows(KeyLoadFailedException.class, keySource::loadKeysFromSource);
   }
 
   @Test
@@ -102,10 +113,51 @@ class OpenIdProviderDiscoveryKeySourceIT {
     OpenIdProviderDiscoveryKeySource keySource =
         new OpenIdProviderDiscoveryKeySource(location, DW.client(), null);
 
-    assertThrows(
-        KeyLoadFailedException.class,
-        () -> {
-          keySource.loadKeysFromSource();
-        });
+    assertThrows(KeyLoadFailedException.class, keySource::loadKeysFromSource);
+  }
+
+  @Test
+  void shouldLoadKeyWithTracing() {
+    var authConfig = new AuthConfig();
+    String oidcHost = "http://localhost:" + DW.getLocalPort();
+    authConfig.setKeys(
+        List.of(
+            new KeyLocation()
+                .setType(KeyUriType.OPEN_ID_DISCOVERY)
+                .setLocation(URI.create(oidcHost))));
+    var bundle =
+        AuthBundle.builder()
+            .withAuthConfigProvider(ConfigWithAuth::getAuthConfig)
+            .withAnnotatedAuthorization()
+            .withOpenTelemetry(OTEL.getOpenTelemetry())
+            .build();
+    bundle.initialize(mock(Bootstrap.class, RETURNS_DEEP_STUBS));
+    var environmentMock = mock(Environment.class, RETURNS_DEEP_STUBS);
+    when(environmentMock.getObjectMapper()).thenReturn(new ObjectMapper());
+    bundle.run(new ConfigWithAuth(authConfig), environmentMock);
+    await()
+        .untilAsserted(
+            () -> {
+              var spans = OTEL.getSpans();
+              assertThat(spans)
+                  .hasSize(2)
+                  .extracting(
+                      s -> s.getAttributes().asMap().get(stringKey("http.url")), SpanData::getName)
+                  .containsExactly(
+                      tuple(oidcHost + "/.well-known/openid-configuration", "HTTP GET"),
+                      tuple(oidcHost + "/jwks", "HTTP GET"));
+            });
+  }
+
+  static class ConfigWithAuth extends Configuration {
+    private final AuthConfig authConfig;
+
+    public ConfigWithAuth(AuthConfig authConfig) {
+      this.authConfig = authConfig;
+    }
+
+    public AuthConfig getAuthConfig() {
+      return authConfig;
+    }
   }
 }

@@ -18,4 +18,5 @@ dependencies {
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')
   testImplementation 'org.awaitility:awaitility'
+  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
 }
