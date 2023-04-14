@@ -11,7 +11,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
  * {@link JerseyClientBuilder#setApacheHttpClientBuilder(io.dropwizard.client.HttpClientBuilder)}
  * and preferably be set as soon as creating a new {@link JerseyClientBuilder} instance in order to
  * avoid rewriting custom configuration.
+ *
+ * @deprecated no replacement planned
  */
+@Deprecated(forRemoval = true)
 public class TracedHttpClientInitialBuilder extends io.dropwizard.client.HttpClientBuilder {
   private OpenTelemetry openTelemetry;
 
