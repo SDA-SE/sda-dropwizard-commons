@@ -3,6 +3,7 @@ dependencies {
   api project(':sda-commons-server-healthcheck')
   api 'com.amazonaws:aws-java-sdk-s3'
   api 'org.slf4j:jcl-over-slf4j'
+  api 'io.opentelemetry:opentelemetry-api'
 
   implementation 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11'
 
