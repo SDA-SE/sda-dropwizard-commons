@@ -1,9 +1,11 @@
 package org.sdase.commons.client.jersey.builder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
 import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,6 @@ import javax.ws.rs.core.Feature;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
-import org.sdase.commons.server.opentelemetry.client.TracedHttpClientInitialBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +32,9 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
    */
   private static final boolean DEFAULT_FOLLOW_REDIRECTS = true;
 
-  private HttpClientConfiguration httpClientConfiguration;
-  private JerseyClientBuilder jerseyClientBuilder;
+  private final HttpClientConfiguration httpClientConfiguration;
+  private final JerseyClientBuilder jerseyClientBuilder;
   private final ObjectMapper objectMapper;
-  private OpenTelemetry openTelemetry;
 
   private final List<ClientRequestFilter> filters;
   private final List<Feature> features;
@@ -47,9 +47,13 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
       OpenTelemetry openTelemetry) {
     this.httpClientConfiguration = httpClientConfiguration;
     this.jerseyClientBuilder = new JerseyClientBuilder(environment);
-    this.openTelemetry = openTelemetry;
     this.jerseyClientBuilder.setApacheHttpClientBuilder(
-        new TracedHttpClientInitialBuilder(environment).usingTelemetryInstance(this.openTelemetry));
+        new HttpClientBuilder(environment) {
+          @Override
+          protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
+            return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
+          }
+        });
     this.objectMapper = environment.getObjectMapper();
     this.filters = new ArrayList<>();
     this.features = new ArrayList<>();
