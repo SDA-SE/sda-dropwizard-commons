@@ -3,11 +3,13 @@ package org.sdase.commons.server.auth;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,7 +32,6 @@ import org.sdase.commons.server.auth.key.PublicKeyLoader;
 import org.sdase.commons.server.auth.service.AuthService;
 import org.sdase.commons.server.auth.service.JwtAuthenticator;
 import org.sdase.commons.server.auth.service.TokenAuthorizer;
-import org.sdase.commons.server.opentelemetry.client.TracedHttpClientInitialBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +40,8 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
   private static final Logger LOG = LoggerFactory.getLogger(AuthBundle.class);
   private static final String INSTRUMENTATION_NAME = "sda-commons.auth-bundle";
 
-  private AuthConfigProvider<T> configProvider;
-  private boolean useAnnotatedAuthorization;
+  private final AuthConfigProvider<T> configProvider;
+  private final boolean useAnnotatedAuthorization;
   private final OpenTelemetry openTelemetry;
 
   public static ProviderBuilder builder() {
@@ -112,7 +113,12 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
     JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
     // should be set as soon as creating the builder
     jerseyClientBuilder.setApacheHttpClientBuilder(
-        new TracedHttpClientInitialBuilder(environment).usingTelemetryInstance(openTelemetry));
+        new HttpClientBuilder(environment) {
+          @Override
+          protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
+            return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
+          }
+        });
 
     // a specific proxy configuration always overrides the system proxy
     if (config.getKeyLoaderClient() == null

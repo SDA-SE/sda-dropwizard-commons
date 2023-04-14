@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,7 +33,6 @@ import org.sdase.commons.server.opa.filter.OpaAuthFilter;
 import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
 import org.sdase.commons.server.opa.internal.OpaJwtPrincipalFactory;
-import org.sdase.commons.server.opentelemetry.client.TracedHttpClientInitialBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,7 +176,12 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
     JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
     jerseyClientBuilder.setApacheHttpClientBuilder(
-        new TracedHttpClientInitialBuilder(environment).usingTelemetryInstance(openTelemetry));
+        new HttpClientBuilder(environment) {
+          @Override
+          protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
+            return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
+          }
+        });
 
     return jerseyClientBuilder.using(clientConfig).using(objectMapper).build("opaClient");
   }
