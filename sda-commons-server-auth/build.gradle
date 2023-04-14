@@ -1,17 +1,19 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-error')
-  api project(':sda-commons-server-opentelemetry')
   api project(':sda-commons-shared-tracing')
+
   api 'io.dropwizard:dropwizard-auth'
   api 'io.dropwizard:dropwizard-client'
-  api 'jakarta.servlet:jakarta.servlet-api'
 
   api 'com.auth0:java-jwt'
   api 'org.bouncycastle:bcpkix-jdk15on'
   api 'javax.xml.bind:jaxb-api', {
     exclude group: 'javax.activation', module: 'javax.activation-api'
   }
+  api 'io.opentelemetry:opentelemetry-api'
+
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')
