@@ -9,16 +9,20 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
+import static io.opentelemetry.api.common.AttributeKey.booleanKey;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
+import io.opentelemetry.sdk.trace.data.SpanData;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
@@ -41,7 +45,7 @@ class OpaBundleClientConfigurationIT {
   private static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
-  ;
+  @RegisterExtension static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
   @RegisterExtension
   @Order(1)
@@ -74,6 +78,20 @@ class OpaBundleClientConfigurationIT {
             .withHeader(USER_AGENT, equalTo("my-user-agent")));
   }
 
+  @Test
+  @RetryingTest(5)
+  void shouldTraceAuthRequests() {
+    try (Response response = createWebTarget().request(APPLICATION_JSON).get()) {
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+    }
+
+    var spans = OTEL.getSpans();
+    assertThat(spans)
+        .hasSizeGreaterThan(1)
+        .extracting(s -> s.getAttributes().asMap().get(booleanKey("opa.allow")), SpanData::getName)
+        .contains(tuple(true, "authorizeUsingOpa"));
+  }
+
   private WebTarget createWebTarget() {
     return DW.client().target("http://localhost:" + DW.getLocalPort());
   }
@@ -94,7 +112,10 @@ class OpaBundleClientConfigurationIT {
   @Path("")
   public static class TestApplication extends Application<TestConfiguration> {
     final OpaBundle<TestConfiguration> opaBundle =
-        OpaBundle.builder().withOpaConfigProvider(TestConfiguration::getOpa).build();
+        OpaBundle.builder()
+            .withOpaConfigProvider(TestConfiguration::getOpa)
+            .withOpenTelemetry(OTEL.getOpenTelemetry())
+            .build();
 
     @Override
     public void initialize(Bootstrap<TestConfiguration> bootstrap) {
