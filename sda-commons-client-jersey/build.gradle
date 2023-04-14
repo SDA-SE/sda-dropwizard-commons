@@ -2,7 +2,6 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-tracing')
   api project(':sda-commons-shared-error')
-  api project(':sda-commons-server-opentelemetry')
 
   api 'io.dropwizard:dropwizard-client'
   api 'jakarta.servlet:jakarta.servlet-api'
@@ -12,6 +11,9 @@ dependencies {
   api 'javax.xml.bind:jaxb-api', {
     exclude group: 'javax.activation', module: 'javax.activation-api'
   }
+  api 'io.opentelemetry:opentelemetry-api'
+
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')
@@ -22,6 +24,5 @@ dependencies {
   testImplementation 'org.awaitility:awaitility'
   testImplementation 'org.assertj:assertj-core'
 
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:1.16.0-alpha'
   testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
 }
