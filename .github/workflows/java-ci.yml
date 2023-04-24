@@ -22,12 +22,12 @@ jobs:
 
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
         with:
           fetch-depth: 0 # fetch commit log so that Sonar is able to assign committers to issues
 
       - name: Set up JDK ${{ matrix.java_version }}
-        uses: actions/setup-java@1df8dbefe2a8cbc99770194893dd902763bee34b # v3.9.0
+        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2 # v3.11.0
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java_version }}
@@ -46,7 +46,7 @@ jobs:
         if: always()
         run: ./gradlew -x test testReport codeCoverageReport
 
-      - uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # tag=v3
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
         if: always()
         with:
           name: ${{ matrix.os }}-${{ matrix.java_version }}-test-results
@@ -64,12 +64,12 @@ jobs:
     if: (success() || failure()) && !(github.event.pull_request && github.event.pull_request.head.repo.fork) && github.actor != 'dependabot[bot]'
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7 # tag=v3
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3
         with:
           path: artifacts
 
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@a3caf02865c0604ad3dc1ecfcc5cdec9c41b7936 # tag=v2.3.0
+        uses: EnricoMi/publish-unit-test-result-action@4e7013f9576bd22ffdae979dc6e68cb9ec2aeece # v2.7.0
         with:
           junit_files: artifacts/**/build/test-results/**/*.xml
 
@@ -79,15 +79,15 @@ jobs:
     timeout-minutes: 60
     needs: build
     steps:
-      - uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # tag=v3
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: 14
 
       - name: Set up JDK 11
-        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc # tag=v3.6.0
+        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2 # v3.11.0
         with:
           distribution: 'temurin'
           java-version: 11

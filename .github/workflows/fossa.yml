@@ -28,12 +28,12 @@ jobs:
           -f description='Checking Licenses'
           -f context='fossa-license-analyze'
         continue-on-error: true
-      - uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
         with:
           ref: ${{ github.event.workflow_run.head_sha }} # checkout commit that triggered this workflow
 
       - name: Set up JDK 11
-        uses: actions/setup-java@1df8dbefe2a8cbc99770194893dd902763bee34b # v3.9.0
+        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2 # v3.11.0
         with:
           distribution: 'temurin'
           java-version: 11
