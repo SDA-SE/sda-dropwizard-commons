@@ -25,7 +25,8 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final String DEFAULT_LOG_FORMAT =
       "[%d] [%-5level] [%X{Trace-Token}] %logger{36} - %msg%n";
-  private static final String DEFAULT_THRESHOLD = "INFO";
+  private static final String DEFAULT_THRESHOLD = "TRACE";
+  private static final String DEFAULT_LOGGING_LEVEL = "INFO";
 
   private final ConfigurationSourceProvider delegate;
 
@@ -65,7 +66,12 @@ public class ConsoleAppenderInjectorSourceProvider implements ConfigurationSourc
     root.putIfAbsent("logging", new HashMap<String, Object>());
     @SuppressWarnings("unchecked")
     Map<String, Object> logging = (Map<String, Object>) root.get("logging");
+    applyLoggingLevel(logging);
     applyLoggingAppenders(logging);
+  }
+
+  private void applyLoggingLevel(Map<String, Object> logging) {
+    logging.putIfAbsent("level", DEFAULT_LOGGING_LEVEL);
   }
 
   private void applyLoggingAppenders(Map<String, Object> logging) {

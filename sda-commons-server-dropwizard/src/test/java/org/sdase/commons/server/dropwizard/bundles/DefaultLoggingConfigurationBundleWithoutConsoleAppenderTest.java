@@ -28,6 +28,8 @@ class DefaultLoggingConfigurationBundleWithoutConsoleAppenderTest {
     DefaultLoggingFactory defaultLoggingFactory =
         (DefaultLoggingFactory) app.getConfiguration().getLoggingFactory();
 
+    assertThat(defaultLoggingFactory.getLevel()).isEqualTo("INFO");
+
     List<AppenderFactory<ILoggingEvent>> consoleAppenderFactories =
         defaultLoggingFactory.getAppenders().stream()
             .filter(a -> a instanceof ConsoleAppenderFactory)
@@ -40,7 +42,7 @@ class DefaultLoggingConfigurationBundleWithoutConsoleAppenderTest {
 
     assertThat(consoleAppenderFactory.getLogFormat())
         .isEqualTo("[%d] [%-5level] [%X{Trace-Token}] %logger{36} - %msg%n");
-    assertThat(consoleAppenderFactory.getThreshold()).isEqualTo("INFO");
+    assertThat(consoleAppenderFactory.getThreshold()).isEqualTo("TRACE");
     assertThat(consoleAppenderFactory.getLayout()).isNull();
   }
 }
