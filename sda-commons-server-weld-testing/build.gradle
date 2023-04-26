@@ -1,3 +1,11 @@
+// we need the 'beans.xml' in the classes directory
+task copyMetaInf(type: Copy) {
+  from "${projectDir}/src/test/resources/META-INF"
+  into "${buildDir}/classes/java/test/META-INF"
+}
+
+processTestResources.dependsOn copyMetaInf
+
 dependencies {
   api project(':sda-commons-server-testing')
   api project(':sda-commons-server-weld')

@@ -206,15 +206,6 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     api enforcedPlatform(project(':sda-commons-dependencies'))
   }
 
-  sourceSets {
-    main {
-      output.resourcesDir = output.classesDirs.singleFile
-    }
-    test {
-      output.resourcesDir = output.classesDirs.singleFile
-    }
-  }
-
   configurations {
     all*.exclude group: 'javax.servlet', module: 'javax.servlet-api' // prefer jakarta.servlet-api
     all*.exclude group: 'org.glassfish.hk2.external', module: 'jakarta.inject' // prefer jakarta.inject:jakarta.inject-api
@@ -286,7 +277,7 @@ configure(subprojects.findAll { javaPlatformModules.contains(it.name) }) {
 
 // Reconfigure the testReport task to display the results of all modules into a single report
 task testReport(type: TestReport) {
-  destinationDir = file("$buildDir/reports/allTests")
+  destinationDirectory = file("$buildDir/reports/allTests")
   // Include the results from the `test` task in all subprojects
   reportOn subprojects.findAll { !javaPlatformModules.contains(it.name) }*.test
 }
@@ -304,6 +295,8 @@ task codeCoverageReport(type: JacocoReport) {
     xml.required = true
     xml.destination file("${buildDir}/reports/jacoco/report.xml")
   }
+
+  dependsOn ":testReport"
 }
 
 // Automatically close and release the staging repository that gets created
