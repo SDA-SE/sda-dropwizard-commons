@@ -1,3 +1,15 @@
+// we need the 'beans.xml' in the classes directory
+task copyMainMetaInf(type: Copy) {
+  from "${projectDir}/src/main/resources/META-INF"
+  into "${buildDir}/classes/java/main/META-INF"
+}
+
+processResources.dependsOn copyMainMetaInf
+
+jar {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-server-weld')
