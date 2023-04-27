@@ -94,7 +94,7 @@ dependencies {
     api "com.github.database-rider:rider-junit5:$dbRiderVersion"
 
     // sda-commons-server-mongo-testing
-    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.4"
+    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.6.3"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:$otelAgentAlphaVersion"
 
     // sda-commons-server-openapi
