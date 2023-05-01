@@ -37,7 +37,7 @@ dependencies {
     exclude group: 'jakarta.xml.bind', module: 'jakarta.xml.bind-api'
     exclude group: 'org.junit', module: 'junit'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.458")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.459")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:$openTelemetryAlphaVersion")
 
