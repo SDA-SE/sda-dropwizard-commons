@@ -55,21 +55,21 @@ To provide the application with a custom name for each deployment, the `OTEL_SER
 
 ### Basic configuration
 
-By default, the module exports traces in the otlp format, to an [openTelemetry collector](https://opentelemetry.io/docs/collector/). The most basic configuration would be to provide the service name and a collector endpoint.
-- `OTEL_SERVICE_NAME=my-service`
-- `OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-gateway-host:4317`.
-
-Or in case if the collector is deployed as a sidecar:
-- `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317`
-
-### Using Jaeger exporter
-
-To export traces in Jaeger format, to a [Jaeger collector](https://hub.docker.com/r/jaegertracing/jaeger-collector/). This can be very handy for less local setup overhead, where the [All in one Jaeger image](https://www.jaegertracing.io/docs/1.6/getting-started/#all-in-one-docker-image) can be enough.
+By default, the module exports traces in the jaeger format, to a [Jaeger collector](https://hub.docker.com/r/jaegertracing/jaeger-collector/). This can be very handy for less local setup overhead, where the [All in one Jaeger image](https://www.jaegertracing.io/docs/1.44/getting-started/#all-in-one) can be enough.
 - `OTEL_SERVICE_NAME=my-service`
 - `OTEL_TRACES_EXPORTER=jaeger`
 - `OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger-collector-host:14250`
 
 > **_NOTE:_** It is recommended to not use this option in production even if the used monitoring backend is Jaeger. It is better to export the telemetry data in the _OTLP_ format to a collector, and configure it to handle the transformation.
+
+### Using OTLP exporter
+To export traces in an otlp format, to an [openTelemetry collector](https://opentelemetry.io/docs/collector/). The most basic configuration would be to provide the service name and a collector endpoint.
+- `OTEL_SERVICE_NAME=my-service`
+- `OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-gateway-host:4317`
+- `OTEL_TRACES_EXPORTER=otlp`
+
+Or in case if the collector is deployed as a sidecar:
+- `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317`
 
 ## Disable Tracing
 
