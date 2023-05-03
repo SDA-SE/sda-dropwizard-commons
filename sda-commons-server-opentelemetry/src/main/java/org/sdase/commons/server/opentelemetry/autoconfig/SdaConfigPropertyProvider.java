@@ -20,6 +20,7 @@ public final class SdaConfigPropertyProvider {
   public static Map<String, String> getProperties() {
     Map<String, String> properties = new HashMap<>();
 
+    properties.put("otel.traces.exporter", "jaeger");
     // default jaeger collector gateway endpoint 14250
     properties.put("otel.exporter.jaeger.endpoint", "http://jaeger-collector.jaeger:14250");
     // Disable exporting metrics
