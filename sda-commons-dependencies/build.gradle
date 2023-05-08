@@ -16,7 +16,7 @@ ext {
   scalaVersion = '2.13.10' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.4.0'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
-  dbRiderVersion = '1.37.0'
+  dbRiderVersion = '1.37.1'
   kotlinVersion = '1.8.21'
   kotlinxCoroutinesVersion = '1.6.4'
   resilience4jVersion = '1.7.1'
