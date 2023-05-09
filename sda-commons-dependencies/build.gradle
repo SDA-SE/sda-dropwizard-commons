@@ -28,8 +28,15 @@ ext {
 }
 
 dependencies {
-  api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion") // override version from dropwizard-bom
-  api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
+  // override version from dropwizard-bom
+  api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"), {
+    exclude group: 'org.jetbrains', module: 'annotations'
+    because("this version is outdated, but the main dependency does not have yet an updated version")
+  }
+  api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion"), {
+    exclude group: 'org.jetbrains', module: 'annotations'
+    because("this version is outdated, but the main dependency does not have yet an updated version")
+  }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
