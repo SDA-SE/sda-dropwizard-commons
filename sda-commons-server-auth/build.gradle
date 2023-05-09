@@ -13,7 +13,10 @@ dependencies {
   }
   api 'io.opentelemetry:opentelemetry-api'
 
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3'
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3', {
+    exclude group: 'io.opentelemetry', module: 'opentelemetry-api'
+    because("this module does not provide a compatible version")
+  }
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')

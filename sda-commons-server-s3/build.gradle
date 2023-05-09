@@ -5,7 +5,10 @@ dependencies {
   api 'org.slf4j:jcl-over-slf4j'
   api 'io.opentelemetry:opentelemetry-api'
 
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11'
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11', {
+    exclude group: 'io.opentelemetry', module: 'opentelemetry-api'
+    because("this module does not provide a compatible version")
+  }
 
   testImplementation project(':sda-commons-server-s3-testing')
   testImplementation 'org.assertj:assertj-core'

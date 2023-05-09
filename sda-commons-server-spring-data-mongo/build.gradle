@@ -12,7 +12,10 @@ dependencies {
   api 'org.mongodb:mongodb-driver-core:4.6.1'
   api 'org.mongodb:mongodb-driver-sync:4.6.1'
   api "io.opentelemetry:opentelemetry-api"
-  implementation('io.opentelemetry.instrumentation:opentelemetry-mongo-3.1')
+  implementation('io.opentelemetry.instrumentation:opentelemetry-mongo-3.1', {
+    exclude group: 'io.opentelemetry', module: 'opentelemetry-api'
+    because("this module does not provide a compatible version")
+  })
   // api 'org.mongodb:mongodb-driver-reactivestreams:4.6.0'
   // api 'io.projectreactor:reactor-core:3.4.18'
 
