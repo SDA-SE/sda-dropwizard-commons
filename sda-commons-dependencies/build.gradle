@@ -20,7 +20,7 @@ ext {
   kotlinVersion = '1.8.21'
   kotlinxCoroutinesVersion = '1.7.0'
   resilience4jVersion = '1.7.1'
-  otelAgentAlphaVersion = '1.19.0-alpha'
+  otelAgentAlphaVersion = '1.26.0-alpha'
   openTelemetryVersion= '1.19.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
   openTelemetryAlphaVersion = '1.19.0-alpha'
   otelInstrumentationAlphaVersion = '1.19.0-alpha'
