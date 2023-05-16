@@ -20,10 +20,7 @@ ext {
   kotlinVersion = '1.8.21'
   kotlinxCoroutinesVersion = '1.7.0'
   resilience4jVersion = '1.7.1'
-  otelAgentAlphaVersion = '1.19.0-alpha'
-  openTelemetryVersion= '1.19.0' // Matching version: https://github.com/open-telemetry/opentelemetry-java
-  openTelemetryAlphaVersion = '1.19.0-alpha'
-  otelInstrumentationAlphaVersion = '1.19.0-alpha'
+  openTelemetryVersion= '1.19.0'
 }
 
 dependencies {
@@ -45,7 +42,7 @@ dependencies {
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.466")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
-  api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:$openTelemetryAlphaVersion")
+  api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
 
   constraints {
     // overall conflicts
@@ -101,7 +98,7 @@ dependencies {
 
     // sda-commons-server-mongo-testing
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.4"
-    api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:$otelAgentAlphaVersion"
+    api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryVersion}-alpha"
 
     // sda-commons-server-openapi
     api "com.jayway.jsonpath:json-path:2.8.0"
@@ -123,7 +120,7 @@ dependencies {
 
     // sda-commons-server-s3-testing
     api "io.findify:s3mock_2.13:0.2.6"
-    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11:$otelInstrumentationAlphaVersion"
+    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11:${openTelemetryVersion}-alpha"
 
     // sda-commons-server-swagger
     api "com.github.java-json-tools:json-schema-validator:2.2.14"
@@ -155,8 +152,8 @@ dependencies {
     api 'commons-io:commons-io:2.11.0'
 
     // sda-commons-server-opentelemetry
-    api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:$openTelemetryAlphaVersion"
-    api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:$otelInstrumentationAlphaVersion"
+    api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:${openTelemetryVersion}-alpha"
+    api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3:${openTelemetryVersion}-alpha"
     api "io.opentelemetry:opentelemetry-exporter-otlp:$openTelemetryVersion"
     api "io.opentelemetry:opentelemetry-exporter-jaeger:$openTelemetryVersion"
     api "io.opentelemetry:opentelemetry-extension-trace-propagators:$openTelemetryVersion"
