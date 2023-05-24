@@ -8,7 +8,7 @@ dependencies {
 
   // See compatibility matrix:
   // https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#compatibility.matrix
-  api 'org.springframework.data:spring-data-mongodb:3.4.11'
+  api 'org.springframework.data:spring-data-mongodb:3.4.12'
   api 'org.mongodb:mongodb-driver-core:4.6.1'
   api 'org.mongodb:mongodb-driver-sync:4.6.1'
   api "io.opentelemetry:opentelemetry-api"
