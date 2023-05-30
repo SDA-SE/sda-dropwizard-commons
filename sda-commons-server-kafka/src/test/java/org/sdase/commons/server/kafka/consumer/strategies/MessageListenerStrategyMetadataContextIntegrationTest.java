@@ -81,7 +81,9 @@ class MessageListenerStrategyMetadataContextIntegrationTest {
             consumerRecord("two", "two-value", List.of(Map.entry("tenant-id", "two")))));
     recordsMap.put(
         new TopicPartition(TOPIC, 2),
-        List.of(consumerRecord("three", "three-value", List.of(Map.entry("tenant-id", "three")))));
+        List.of(
+            consumerRecord("three", "three-value", List.of(Map.entry("tenant-id", "three"))),
+            consumerRecord("four", "four-value", List.of(Map.entry("Tenant-Id", "four")))));
     var givenRecords = new ConsumerRecords<>(recordsMap);
 
     //noinspection unchecked
@@ -95,12 +97,13 @@ class MessageListenerStrategyMetadataContextIntegrationTest {
               Map.of("tenant-id", List.of("one")), Map.of("tenant-id", List.of("three")));
     } else {
       assertThat(handledContexts)
-          .hasSize(3)
+          .hasSize(4)
           .extracting(Map.class::cast)
           .containsExactly(
               Map.of("tenant-id", List.of("one")),
               Map.of("tenant-id", List.of("two")),
-              Map.of("tenant-id", List.of("three")));
+              Map.of("tenant-id", List.of("three")),
+              Map.of("tenant-id", List.of("four")));
     }
   }
 

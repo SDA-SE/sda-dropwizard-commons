@@ -2,11 +2,7 @@ package org.sdase.commons.server.kafka.consumer.strategies;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +12,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.Headers;
+import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.sdase.commons.server.dropwizard.metadata.DetachedMetadataContext;
 import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
 import org.sdase.commons.server.dropwizard.metadata.MetadataContextCloseable;
@@ -128,7 +126,7 @@ public abstract class MessageListenerStrategy<K, V> {
 
   private MetadataContextCloseable createMetadataContext(ConsumerRecord<K, V> consumerRecord) {
     var newContext = new DetachedMetadataContext();
-    var headers = consumerRecord.headers();
+    var headers = normalizeHeaders(consumerRecord.headers());
     for (var field : metadataFields) {
       var values =
           StreamSupport.stream(headers.headers(field).spliterator(), false)
@@ -140,6 +138,14 @@ public abstract class MessageListenerStrategy<K, V> {
       newContext.put(field, values);
     }
     return MetadataContext.createCloseableContext(newContext);
+  }
+
+  private Headers normalizeHeaders(Headers headers) {
+    return new RecordHeaders(
+        Arrays.stream(headers.toArray())
+            .filter(Objects::nonNull)
+            .map(CaseInsensitiveHeader::new)
+            .collect(Collectors.toList()));
   }
 
   public void resetOffsetsToCommitOnClose() {
