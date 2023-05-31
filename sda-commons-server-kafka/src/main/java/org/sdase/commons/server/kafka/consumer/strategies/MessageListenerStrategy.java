@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.clients.consumer.CommitFailedException;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -159,21 +158,17 @@ public abstract class MessageListenerStrategy<K, V> {
    * @param consumer the consumer to communicate with Kafka
    */
   public void commitOnClose(KafkaConsumer<K, V> consumer) {
-    try {
-      if (!offsetsToCommitOnClose.isEmpty()) {
-        LOGGER.info("Committing offsets on close: {}", offsetsToCommitOnClose);
-        consumer.commitAsync(
-            offsetsToCommitOnClose,
-            (offsets, e) -> {
-              if (e != null) {
-                LOGGER.error("Failed to commit on close.", e);
-              } else {
-                LOGGER.info("Committed offsets on close: {}", offsets);
-              }
-            });
-      }
-    } catch (CommitFailedException e) {
-      LOGGER.error("Commit failed", e);
+    if (!offsetsToCommitOnClose.isEmpty()) {
+      LOGGER.info("Committing offsets on close: {}", offsetsToCommitOnClose);
+      consumer.commitAsync(
+          offsetsToCommitOnClose,
+          (offsets, e) -> {
+            if (e != null) {
+              LOGGER.error("Failed to commit on close.", e);
+            } else {
+              LOGGER.info("Committed offsets on close: {}", offsets);
+            }
+          });
     }
   }
 
