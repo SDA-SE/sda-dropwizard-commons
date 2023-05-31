@@ -3,6 +3,7 @@ package org.sdase.commons.server.kafka.consumer.strategies;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -17,9 +18,11 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.consumer.OffsetCommitCallback;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.stubbing.Answer;
 import org.sdase.commons.server.kafka.consumer.IgnoreAndProceedErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
@@ -65,7 +68,7 @@ class MessageListenerStrategyOnCloseTest {
   private void shouldCommitLastOffsetOnClose(
       MessageListenerStrategy<String, String> strategy, MyMessageHandler messageHandler) {
     // given
-    strategy.init(mock(ConsumerTopicMessageHistogram.class));
+    strategy.init(mock(ConsumerTopicMessageHistogram.class), Set.of());
 
     Map<TopicPartition, List<ConsumerRecord<String, String>>> recordsByPartition = new HashMap<>();
     recordsByPartition.put(
@@ -76,7 +79,20 @@ class MessageListenerStrategyOnCloseTest {
             new ConsumerRecord<>(TOPIC_NAME, 0, 2, "key2", "value2")));
 
     LOGGER.info("Starting thread for strategy");
+    @SuppressWarnings("unchecked")
     final KafkaConsumer<String, String> consumer = mock(KafkaConsumer.class);
+
+    doAnswer(
+            (Answer<Void>)
+                i -> {
+                  Object callback = i.getArgument(1);
+                  if (callback instanceof OffsetCommitCallback) {
+                    ((OffsetCommitCallback) callback).onComplete(i.getArgument(0), null);
+                  }
+                  return null;
+                })
+        .when(consumer)
+        .commitAsync(any(), any());
     new Thread(
             () -> {
               ConsumerRecords<String, String> records = new ConsumerRecords<>(recordsByPartition);
@@ -103,6 +119,7 @@ class MessageListenerStrategyOnCloseTest {
     strategy.commitOnClose(consumer);
 
     // then
+    @SuppressWarnings("unchecked")
     ArgumentCaptor<Map<TopicPartition, OffsetAndMetadata>> offsets =
         ArgumentCaptor.forClass(Map.class);
     verify(consumer).commitAsync(offsets.capture(), any());

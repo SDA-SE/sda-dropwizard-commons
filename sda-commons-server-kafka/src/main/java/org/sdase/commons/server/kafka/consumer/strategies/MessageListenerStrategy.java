@@ -171,9 +171,6 @@ public abstract class MessageListenerStrategy<K, V> {
                 LOGGER.info("Committed offsets on close: {}", offsets);
               }
             });
-      } else {
-        LOGGER.warn("Committing offsets of last poll on close");
-        consumer.commitAsync();
       }
     } catch (CommitFailedException e) {
       LOGGER.error("Commit failed", e);
