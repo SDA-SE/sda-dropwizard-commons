@@ -162,7 +162,15 @@ public abstract class MessageListenerStrategy<K, V> {
     try {
       if (!offsetsToCommitOnClose.isEmpty()) {
         LOGGER.info("Committing offsets on close: {}", offsetsToCommitOnClose);
-        consumer.commitAsync(offsetsToCommitOnClose, null);
+        consumer.commitAsync(
+            offsetsToCommitOnClose,
+            (offsets, e) -> {
+              if (e != null) {
+                LOGGER.error("Failed to commit on close.", e);
+              } else {
+                LOGGER.info("Committed offsets on close: {}", offsets);
+              }
+            });
       } else {
         LOGGER.warn("Committing offsets of last poll on close");
         consumer.commitAsync();
