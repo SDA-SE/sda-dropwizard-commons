@@ -103,9 +103,19 @@ public class MessageListener<K, V> implements Runnable {
     LOGGER.info("MessageListener closing Consumer for [{}]", joinedTopics);
     try {
       strategy.commitOnClose(consumer);
+    } catch (RuntimeException e) {
+      LOGGER.error("Exception caught while committing offsets on close.", e);
     } finally {
       // close will auto-commit if enabled
+      doCloseConsumer();
+    }
+  }
+
+  private void doCloseConsumer() {
+    try {
       consumer.close();
+    } catch (RuntimeException e) {
+      LOGGER.error("Exception caught while closing consumer.", e);
     }
   }
 
