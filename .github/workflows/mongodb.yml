@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      TEST_MONGODB_CONNECTION_STRING: mongodb://test:example@localhost:27017/testdb?authSource=admin
+      TEST_MONGODB_CONNECTION_STRING: mongodb://test:example@localhost:27017/default_db?authSource=admin
     steps:
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
 
@@ -32,7 +32,7 @@ jobs:
         run: ./gradlew :sda-commons-server-spring-data-mongo:test
 
       - name: Assert use of MongoDB
-        run: "docker logs test_mongo | grep -F 'createCollection' | grep -F 'testdb.'"
+        run: "docker logs test_mongo | grep -F 'createCollection' | grep -F 'default_db.'"
 
       - name: Stop MongoDB
         run: docker stop test_mongo
