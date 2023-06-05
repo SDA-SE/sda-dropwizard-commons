@@ -8,6 +8,7 @@ javaPlatform {
 
 ext {
   dropwizardVersion = '2.1.6'
+  jacksonVersion = '2.15.1'
   prometheusVersion = '0.16.0'
   swaggerCoreVersion = '1.6.9'
   swaggerCoreV3Version = '2.2.11'
@@ -33,6 +34,7 @@ dependencies {
     exclude group: 'org.jetbrains', module: 'annotations'
     because("this version is outdated, but the main dependency does not have yet an updated version")
   }
+  api enforcedPlatform("com.fasterxml.jackson:jackson-bom:$jacksonVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
