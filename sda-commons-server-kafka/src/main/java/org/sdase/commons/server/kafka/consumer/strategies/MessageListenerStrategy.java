@@ -2,7 +2,13 @@ package org.sdase.commons.server.kafka.consumer.strategies;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +19,7 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.sdase.commons.server.dropwizard.metadata.DetachedMetadataContext;
 import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
@@ -144,7 +151,7 @@ public abstract class MessageListenerStrategy<K, V> {
     return new RecordHeaders(
         Arrays.stream(headers.toArray())
             .filter(Objects::nonNull)
-            .map(CaseInsensitiveHeader::new)
+            .map(h -> new RecordHeader(StringUtils.lowerCase(h.key()), h.value()))
             .collect(Collectors.toList()));
   }
 
