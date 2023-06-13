@@ -9,6 +9,7 @@ javaPlatform {
 ext {
   dropwizardVersion = '2.1.6'
   prometheusVersion = '0.16.0'
+  micrometerVersion = '1.11.0'
   swaggerCoreVersion = '1.6.9'
   swaggerCoreV3Version = '2.2.11'
   weldVersion = '3.1.9.Final'
@@ -117,6 +118,9 @@ dependencies {
     api "io.prometheus:simpleclient_common:$prometheusVersion"
     api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
     api "io.prometheus:simpleclient_servlet:$prometheusVersion"
+
+    api "io.micrometer:micrometer-core:$micrometerVersion"
+    api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
 
     // sda-commons-server-s3-testing
     api "io.findify:s3mock_2.13:0.2.6"

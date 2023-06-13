@@ -9,6 +9,9 @@ dependencies {
   api 'io.prometheus:simpleclient_dropwizard'
   api 'io.prometheus:simpleclient_servlet'
 
+  implementation('io.micrometer:micrometer-core')
+  implementation('io.micrometer:micrometer-registry-prometheus')
+
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey')
 }

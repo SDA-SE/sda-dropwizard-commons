@@ -6,6 +6,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.micrometer.core.instrument.Metrics;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,9 +61,11 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
   private final List<MessageListener<?, ?>> messageListeners = new ArrayList<>();
   private final List<ThreadedMessageListener<?, ?>> threadedMessageListeners = new ArrayList<>();
-  private final List<KafkaMessageProducer<?, ?>> messageProducers = new ArrayList<>();
+  private final Map<String, KafkaMessageProducer<?, ?>> messageProducers = new HashMap<>();
 
   private KafkaHealthCheck kafkaHealthCheck;
+
+  private MicrometerProducerListener micrometerProducerListener;
 
   private KafkaBundle(
       KafkaConfigurationProvider<C> configurationProvider, boolean healthCheckDisabled) {
@@ -95,6 +98,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     topicProducerCounterSpec = new ProducerTopicMessageCounter();
     topicConsumerHistogram = new ConsumerTopicMessageHistogram();
     new KafkaConsumerMetrics(messageListeners);
+
+    micrometerProducerListener = new MicrometerProducerListener(Metrics.globalRegistry);
     setupManagedThreadManager(environment);
   }
 
@@ -207,7 +212,10 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
         new KafkaMessageProducer<>(
             registration.getTopic().getName(), producer, topicProducerCounterSpec, clientId);
 
-    messageProducers.add(messageProducer);
+    if (micrometerProducerListener != null) {
+      micrometerProducerListener.producerAdded(clientId, producer);
+    }
+    messageProducers.put(clientId, messageProducer);
     return messageProducer;
   }
 
@@ -443,12 +451,14 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
   private void stopProducers() {
     messageProducers.forEach(
-        p -> {
+        (k, v) -> {
           try {
-            p.close();
+            v.close();
           } catch (InterruptException ie) {
             LOGGER.error("Error closing producer", ie);
             Thread.currentThread().interrupt();
+          } finally {
+            micrometerProducerListener.producerRemoved(k);
           }
         });
     topicProducerCounterSpec.unregister();

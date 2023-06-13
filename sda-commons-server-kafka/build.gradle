@@ -6,6 +6,7 @@ dependencies {
   api "org.apache.kafka:kafka-clients"
 
   api 'io.prometheus:simpleclient'
+  implementation 'io.micrometer:micrometer-core'
 
   api 'javax.xml.bind:jaxb-api', {
     exclude group: 'javax.activation', module: 'javax.activation-api'
@@ -19,6 +20,7 @@ dependencies {
   testImplementation 'org.assertj:assertj-core'
 
   testImplementation project(':sda-commons-server-kafka-testing')
+  testImplementation('io.micrometer:micrometer-registry-prometheus')
 
   test {
     // running one test at time, to avoid problems with kafka servers concurrency
