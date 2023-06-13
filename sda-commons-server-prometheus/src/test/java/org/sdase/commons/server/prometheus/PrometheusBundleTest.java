@@ -5,6 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Metrics;
+import io.prometheus.client.Collector;
+import io.prometheus.client.CollectorRegistry;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
@@ -163,6 +171,34 @@ class PrometheusBundleTest {
         .contains("must-revalidate")
         .contains("no-cache")
         .contains("no-store");
+  }
+
+  @Test
+  void micrometerMetricsAvailableInPrometheus() {
+
+    MeterRegistry globalRegistry = Metrics.globalRegistry;
+    Counter counter = globalRegistry.counter("micrometerTestCounter", "testTagKey", "testTagValue");
+
+    counter.increment();
+    counter.increment();
+
+    ArrayList<Collector.MetricFamilySamples> testCounterTotal =
+        Collections.list(
+            CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(
+                s -> s.equals("micrometerTestCounter_total")));
+
+    assertThat(testCounterTotal).hasSize(1);
+
+    Collector.MetricFamilySamples testCounterSamples = testCounterTotal.get(0);
+    assertThat(testCounterSamples.name).isEqualTo("micrometerTestCounter");
+
+    List<Collector.MetricFamilySamples.Sample> sampleList = testCounterSamples.samples;
+    assertThat(sampleList).hasSize(1);
+
+    assertThat(sampleList.get(0).labelNames).contains("testTagKey");
+    assertThat(sampleList.get(0).labelValues).contains("testTagValue");
+
+    assertThat(sampleList.get(0).value).isEqualTo(2);
   }
 
   private Invocation.Builder prepareResourceRequest() {

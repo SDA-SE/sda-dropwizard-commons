@@ -7,6 +7,9 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.AdminEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.dropwizard.DropwizardExports;
 import io.prometheus.client.dropwizard.samplebuilder.CustomMappingSampleBuilder;
@@ -74,6 +77,19 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     // init Histogram at startup
     requestDurationHistogramSpecification = new RequestDurationHistogramSpecification();
     initializeDropwizardMetricsBridge(environment);
+
+    createPrometheusRegistry();
+  }
+
+  /**
+   * Creates a micrometer PrometheusMeterRegistry and adds it to the Micrometer Global registry. Can
+   * be used in a bundle via {@link io.micrometer.core.instrument.Metrics#globalRegistry}
+   */
+  private void createPrometheusRegistry() {
+    PrometheusMeterRegistry meterRegistry =
+        new PrometheusMeterRegistry(key -> null, CollectorRegistry.defaultRegistry, Clock.SYSTEM);
+
+    Metrics.addRegistry(meterRegistry);
   }
 
   private void initializeDropwizardMetricsBridge(Environment environment) {

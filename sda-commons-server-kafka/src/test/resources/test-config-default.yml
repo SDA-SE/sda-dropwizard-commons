@@ -20,14 +20,28 @@ kafka:
         value.deserializer: "org.apache.kafka.common.serialization.LongDeserializer"
     consumer2:
       clientId: c2
+    consumer3:
+      group: consumer3
+      clientId: consumer3
+      config:
+        key.deserializer: "org.apache.kafka.common.serialization.LongDeserializer"
+        value.deserializer: "org.apache.kafka.common.serialization.LongDeserializer"
 
   producers:
     producer1:
       config:
         key.serializer: "org.apache.kafka.common.serialization.LongSerializer"
         value.serializer: "org.apache.kafka.common.serialization.LongSerializer"
+        metric.reporters: "org.sdase.commons.server.kafka.helper.KafkaMetricsReporter"
+        metrics.sample.window.ms: 5000
     producer2:
       clientId: p2
+    producer3:
+      config:
+        key.serializer: "org.apache.kafka.common.serialization.LongSerializer"
+        value.serializer: "org.apache.kafka.common.serialization.LongSerializer"
+        metric.reporters: "org.sdase.commons.server.kafka.helper.KafkaMetricsReporter"
+        metrics.sample.window.ms: 5000
 
   listenerConfig:
     async:
