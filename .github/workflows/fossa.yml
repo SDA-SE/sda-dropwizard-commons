@@ -28,7 +28,7 @@ jobs:
           -f description='Checking Licenses'
           -f context='fossa-license-analyze'
         continue-on-error: true
-      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
         with:
           ref: ${{ github.event.workflow_run.head_sha }} # checkout commit that triggered this workflow
 
