@@ -9,9 +9,17 @@ import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.server.AsyncContextState;
+import org.eclipse.jetty.server.HttpChannel;
+import org.junit.platform.commons.util.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("java:S2925")
 public class TestAsyncServlet extends HttpServlet {
+
+  private static final Logger LOG = LoggerFactory.getLogger(TestAsyncServlet.class);
+
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -29,6 +37,7 @@ public class TestAsyncServlet extends HttpServlet {
   }
 
   private void throwTimeout(HttpServletRequest req) {
+    LOG.warn("Request {} received in Thread {}", req, Thread.currentThread());
     final AsyncContext ctx = req.startAsync();
     // a short timeout duration
     ctx.setTimeout(100);
@@ -44,6 +53,7 @@ public class TestAsyncServlet extends HttpServlet {
 
   private void createInternalSpan(HttpServletRequest req) {
     final AsyncContext ctx = req.startAsync();
+    informForFlakyTest(ctx);
     ctx.start(Context.current().wrap(() -> doSomething(ctx)));
     ctx.complete();
   }
@@ -55,9 +65,34 @@ public class TestAsyncServlet extends HttpServlet {
             .spanBuilder("async-process-test")
             .startSpan();
     try (Scope ignored = span.makeCurrent()) {
-      // do nothing
+      LOG.warn("Request handled in Thread {} in AsyncContext {}", Thread.currentThread(), ctx);
     } finally {
       span.end();
+    }
+  }
+
+  /**
+   * get more info for flaky test, see PLP-932
+   *
+   * @param ctx the current context handling the request asynchronously
+   */
+  private static void informForFlakyTest(AsyncContext ctx) {
+    if (ctx instanceof AsyncContextState) {
+      var httpChannel = ((AsyncContextState) ctx).getHttpChannel();
+      var executorTry =
+          ReflectionUtils.tryToReadFieldValue(HttpChannel.class, "_executor", httpChannel);
+      executorTry
+          .ifSuccess(
+              executor ->
+                  LOG.warn(
+                      "Using Executor {} of type {} in HttpChannel {}",
+                      executor,
+                      executor.getClass(),
+                      httpChannel))
+          .ifFailure(
+              exception ->
+                  LOG.warn(
+                      "Could not extract executor from HttpChannel {}", httpChannel, exception));
     }
   }
 }

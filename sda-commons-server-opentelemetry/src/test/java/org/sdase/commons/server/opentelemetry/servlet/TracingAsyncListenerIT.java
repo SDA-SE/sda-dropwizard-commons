@@ -34,7 +34,7 @@ class TracingAsyncListenerIT {
 
   @RegisterExtension static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
-  @RetryingTest(maxAttempts = 3)
+  @RetryingTest(maxAttempts = 3, name = "[{index}] check PLP-932 on error")
   void shouldTraceAsyncServlets() {
     Response response = createAdminClient().path("/async/trace").request().get();
 
