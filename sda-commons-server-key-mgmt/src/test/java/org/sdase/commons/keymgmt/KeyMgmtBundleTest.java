@@ -380,5 +380,19 @@ class KeyMgmtBundleTest {
       this.genderList = genderList;
       return this;
     }
+
+    @Override
+    public String toString() {
+      return "ObjectWithKey{"
+          + "genderKey='"
+          + genderKey
+          + '\''
+          + ", genderOrSalutationKey='"
+          + genderOrSalutationKey
+          + '\''
+          + ", genderList="
+          + genderList
+          + '}';
+    }
   }
 }
