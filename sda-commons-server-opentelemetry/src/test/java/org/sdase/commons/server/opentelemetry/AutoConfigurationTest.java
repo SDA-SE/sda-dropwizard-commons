@@ -3,6 +3,7 @@ package org.sdase.commons.server.opentelemetry;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
@@ -38,6 +39,7 @@ class AutoConfigurationTest {
   @Test
   @StdIo
   @Order(3)
+  @SuppressWarnings("JUnitMalformedDeclaration") // inspection not expecting parameter for StdIo
   void shouldUseEnvironmentVariablesForConfiguration(StdOut out) {
     assertThat(System.getenv("OTEL_TRACES_EXPORTER")).isEqualTo("logging");
 
@@ -48,13 +50,16 @@ class AutoConfigurationTest {
     assertThat(r.getStatus()).isEqualTo(SC_OK);
 
     // assert the logging exporter is used
-    assertThat(out.capturedLines())
-        .isNotEmpty()
-        .anyMatch(
-            l ->
-                l.contains("[tracer: sda-commons.servlet:]")
-                    && l.contains(
-                        "io.opentelemetry.exporter.logging.LoggingSpanExporter: 'GET /base/respond/{value}'"));
+    await()
+        .untilAsserted(
+            () ->
+                assertThat(out.capturedLines())
+                    .isNotEmpty()
+                    .anyMatch(
+                        l ->
+                            l.contains("[tracer: sda-commons.servlet:]")
+                                && l.contains(
+                                    "io.opentelemetry.exporter.logging.LoggingSpanExporter: 'GET /base/respond/{value}'")));
   }
 
   private WebTarget createClient() {
