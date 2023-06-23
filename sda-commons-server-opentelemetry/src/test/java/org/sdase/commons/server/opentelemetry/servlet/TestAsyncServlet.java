@@ -47,6 +47,8 @@ public class TestAsyncServlet extends HttpServlet {
             Thread.sleep(500);
           } catch (InterruptedException e) {
             // do nothing
+          } finally {
+            ctx.complete();
           }
         });
   }
@@ -55,7 +57,6 @@ public class TestAsyncServlet extends HttpServlet {
     final AsyncContext ctx = req.startAsync();
     informForFlakyTest(ctx);
     ctx.start(Context.current().wrap(() -> doSomething(ctx)));
-    ctx.complete();
   }
 
   private void doSomething(AsyncContext ctx) {
@@ -68,6 +69,7 @@ public class TestAsyncServlet extends HttpServlet {
       LOG.warn("Request handled in Thread {} in AsyncContext {}", Thread.currentThread(), ctx);
     } finally {
       span.end();
+      ctx.complete();
     }
   }
 
