@@ -59,19 +59,39 @@ class MessageListenerStrategyMetadataContextIntegrationTest {
   static Stream<Arguments> testInstances() {
     return Stream.of(
         // handled in message handler
-        Arguments.of(false, new AutocommitMLS<>(messageHandler, errorHandler)),
-        Arguments.of(false, new RetryProcessingErrorMLS<>(messageHandler, errorHandler)),
-        Arguments.of(false, new SyncCommitMLS<>(messageHandler, errorHandler)),
+        Arguments.of(
+            "MessageHandler not stopping: AutocommitMLS",
+            false,
+            new AutocommitMLS<>(messageHandler, errorHandler)),
+        Arguments.of(
+            "MessageHandler not stopping: RetryProcessingErrorMLS",
+            false,
+            new RetryProcessingErrorMLS<>(messageHandler, errorHandler)),
+        Arguments.of(
+            "MessageHandler not stopping: SyncCommitMLS",
+            false,
+            new SyncCommitMLS<>(messageHandler, errorHandler)),
         // handled in error handler
-        Arguments.of(false, new AutocommitMLS<>(throwingMessageHandler, errorHandler)),
-        Arguments.of(true, new RetryProcessingErrorMLS<>(throwingMessageHandler, errorHandler)),
-        Arguments.of(false, new SyncCommitMLS<>(throwingMessageHandler, errorHandler)));
+        Arguments.of(
+            "ErrorHandler not stopping: AutocommitMLS",
+            false,
+            new AutocommitMLS<>(throwingMessageHandler, errorHandler)),
+        Arguments.of(
+            "ErrorHandler stopping: RetryProcessingErrorMLS",
+            true,
+            new RetryProcessingErrorMLS<>(throwingMessageHandler, errorHandler)),
+        Arguments.of(
+            "ErrorHandler not stopping: SyncCommitMLS",
+            false,
+            new SyncCommitMLS<>(throwingMessageHandler, errorHandler)));
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "{0}")
   @MethodSource("testInstances")
   void shouldHandleContexts(
-      boolean stopsInTopic, MessageListenerStrategy<String, String> messageListenerStrategy) {
+      String testName,
+      boolean stopsInTopic,
+      MessageListenerStrategy<String, String> messageListenerStrategy) {
     messageListenerStrategy.init(mock(ConsumerTopicMessageHistogram.class), Set.of("tenant-id"));
     var recordsMap = new LinkedHashMap<TopicPartition, List<ConsumerRecord<String, String>>>();
     recordsMap.put(

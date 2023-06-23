@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class MongoConfigurationUtilTest {
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "expects: {1}")
   @MethodSource("validConfigurations")
   void shouldBuildConnectionString(MongoConfiguration given, String expected) {
     var actual = MongoConfigurationUtil.buildConnectionString(given);
