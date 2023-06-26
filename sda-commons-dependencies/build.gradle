@@ -22,7 +22,8 @@ ext {
   kotlinxCoroutinesVersion = '1.7.1'
   resilience4jVersion = '1.7.1'
   openTelemetryVersion= '1.19.0'
-  mongoDbDriverVersion = '4.10.1'
+  // should be aligned with transitive dependency of Spring Data MongoDB
+  mongoDbDriverVersion = '4.6.1'
 }
 
 dependencies {
