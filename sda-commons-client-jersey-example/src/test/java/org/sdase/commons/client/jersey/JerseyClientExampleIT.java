@@ -17,7 +17,6 @@ import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import org.apache.http.HttpHeaders;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -48,13 +47,17 @@ class JerseyClientExampleIT {
       new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
 
   @BeforeEach
+  void beforeEach() throws JsonProcessingException {
+    resetRequests();
+    initWires();
+  }
+
   void resetRequests() {
-    WIRE.resetRequests();
+    WIRE.resetAll();
     app = DW.getApplication();
   }
 
-  @BeforeAll
-  public static void initWires() throws JsonProcessingException {
+  void initWires() throws JsonProcessingException {
     WIRE.stubFor(
         get("/api/cars") // NOSONAR
             .withHeader("Accept", equalTo("application/json")) // NOSONAR
