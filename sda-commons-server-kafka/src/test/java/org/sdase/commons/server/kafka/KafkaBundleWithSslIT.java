@@ -18,6 +18,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
@@ -25,9 +26,11 @@ import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 
 /** A test that configures the truststore and keystore in the kafka configuration */
+@ExtendWith(CleanupJaasConfigurationExtension.class)
 class KafkaBundleWithSslIT {
+
   @RegisterExtension
-  @Order(0)
+  @Order(1)
   private static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           .registerListener(
@@ -46,7 +49,7 @@ class KafkaBundleWithSslIT {
           .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
   @RegisterExtension
-  @Order(1)
+  @Order(2)
   private static final DropwizardAppExtension<KafkaTestConfiguration> DW =
       new DropwizardAppExtension<>(
           KafkaTestApplication.class,
