@@ -22,6 +22,7 @@ ext {
   kotlinxCoroutinesVersion = '1.7.1'
   resilience4jVersion = '1.7.1'
   openTelemetryVersion= '1.19.0'
+  mongoDbDriverVersion = '4.10.1'
 }
 
 dependencies {
@@ -97,9 +98,12 @@ dependencies {
     api "com.github.database-rider:rider-core:$dbRiderVersion"
     api "com.github.database-rider:rider-junit5:$dbRiderVersion"
 
-    // sda-commons-server-mongo-testing
+    // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.4"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryVersion}-alpha"
+    api "org.mongodb:mongodb-driver-core:${mongoDbDriverVersion}"
+    api "org.mongodb:mongodb-driver-sync:${mongoDbDriverVersion}"
+    api "org.mongodb:mongodb-driver-legacy:${mongoDbDriverVersion}"
 
     // sda-commons-server-openapi
     api "com.jayway.jsonpath:json-path:2.8.0"
