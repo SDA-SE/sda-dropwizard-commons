@@ -166,7 +166,7 @@ class KafkaPrometheusMonitoringIT {
     producer2.send(1L, 1L);
     producer2.send(2L, 2L);
 
-    attachPrometheusToMicrometer();
+    CollectorRegistry collectorRegistry = attachPrometheusToMicrometer();
 
     await()
         .atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS)
@@ -178,7 +178,7 @@ class KafkaPrometheusMonitoringIT {
 
     ArrayList<Collector.MetricFamilySamples> collectorMetricSamplesErrorTotal =
         Collections.list(
-            CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(
+            collectorRegistry.filteredMetricFamilySamples(
                 s -> s.equals("kafka_producer_record_error_total")));
 
     //    assert that metric exists
@@ -345,10 +345,14 @@ class KafkaPrometheusMonitoringIT {
             .build());
   }
 
-  private void attachPrometheusToMicrometer() {
-    PrometheusMeterRegistry meterRegistry =
-        new PrometheusMeterRegistry(key -> null, CollectorRegistry.defaultRegistry, Clock.SYSTEM);
+  private CollectorRegistry attachPrometheusToMicrometer() {
 
+    CollectorRegistry collectorRegistry = new CollectorRegistry(true);
+
+    PrometheusMeterRegistry meterRegistry =
+        new PrometheusMeterRegistry(key -> null, collectorRegistry, Clock.SYSTEM);
     Metrics.addRegistry(meterRegistry);
+
+    return collectorRegistry;
   }
 }

@@ -9,7 +9,6 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
 import io.prometheus.client.Collector;
-import io.prometheus.client.CollectorRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -184,7 +183,7 @@ class PrometheusBundleTest {
 
     ArrayList<Collector.MetricFamilySamples> testCounterTotal =
         Collections.list(
-            CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(
+            PrometheusBundle.mircometerCollectorRegistry.filteredMetricFamilySamples(
                 s -> s.equals("micrometerTestCounter_total")));
 
     assertThat(testCounterTotal).hasSize(1);

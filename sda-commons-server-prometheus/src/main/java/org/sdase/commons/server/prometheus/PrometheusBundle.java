@@ -63,6 +63,9 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
 
   private RequestDurationHistogramSpecification requestDurationHistogramSpecification;
 
+  protected static final CollectorRegistry mircometerCollectorRegistry =
+      new CollectorRegistry(true);
+
   // use PrometheusBundle.builder()... to get an instance
   private PrometheusBundle() {}
 
@@ -87,7 +90,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
    */
   private void createPrometheusRegistry() {
     PrometheusMeterRegistry meterRegistry =
-        new PrometheusMeterRegistry(key -> null, CollectorRegistry.defaultRegistry, Clock.SYSTEM);
+        new PrometheusMeterRegistry(key -> null, mircometerCollectorRegistry, Clock.SYSTEM);
 
     Metrics.addRegistry(meterRegistry);
   }
