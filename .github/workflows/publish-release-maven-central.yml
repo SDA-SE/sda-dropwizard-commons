@@ -64,7 +64,7 @@ jobs:
               icon_emoji: ':coffin-dance:',
               attachments: [{
                 color: 'danger',
-                text: `Maven Central Upload of ${{ github.event.release.tag_name }} failed!\n\nWorkflow ${process.env.AS_WORKFLOW}`,
+                text: `Maven Central Upload of sda-dropwizard-commons:${{ github.event.release.tag_name }} failed!\n\nWorkflow ${process.env.AS_WORKFLOW}`,
               }]
             }
         env:
