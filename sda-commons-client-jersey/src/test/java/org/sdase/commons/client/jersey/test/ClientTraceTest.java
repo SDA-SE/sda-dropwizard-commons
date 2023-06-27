@@ -61,7 +61,7 @@ class ClientTraceTest {
     client.target(WIRE.baseUrl()).request().header(LOCATION, "1").header(LOCATION, "2").get();
 
     List<SpanData> spans = OTEL.getSpans();
-    assertThat(spans).hasSize(1).first().extracting(SpanData::getName).isEqualTo("HTTP GET");
+    assertThat(spans).hasSize(1).first().extracting(SpanData::getName).isEqualTo("GET");
 
     assertThat(spans.get(0).getAttributes())
         .extracting(
