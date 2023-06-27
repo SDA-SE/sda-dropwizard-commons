@@ -144,8 +144,8 @@ class OpenIdProviderDiscoveryKeySourceIT {
                   .extracting(
                       s -> s.getAttributes().asMap().get(stringKey("http.url")), SpanData::getName)
                   .containsExactly(
-                      tuple(oidcHost + "/.well-known/openid-configuration", "HTTP GET"),
-                      tuple(oidcHost + "/jwks", "HTTP GET"));
+                      tuple(oidcHost + "/.well-known/openid-configuration", "GET"),
+                      tuple(oidcHost + "/jwks", "GET"));
             });
   }
 
