@@ -10,6 +10,7 @@ import io.dropwizard.setup.Environment;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
+import io.opentelemetry.sdk.autoconfigure.spi.ConfigurationException;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -86,13 +87,16 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
           .setResultAsGlobal(true)
           .build()
           .getOpenTelemetrySdk();
-    } catch (IllegalStateException e) {
-      LOG.warn(
-          "A global tracer already defined. "
-              + "This should only happen in a test that uses the OpenTelemetryExtension. "
-              + "If you see this in other circumstances, something with the setup is wrong.",
-          e);
-      return GlobalOpenTelemetry.get();
+    } catch (IllegalStateException | ConfigurationException e) {
+      if (e instanceof IllegalStateException || e.getCause() instanceof IllegalStateException) {
+        LOG.warn(
+            "A global tracer already defined. "
+                + "This should only happen in a test that uses the OpenTelemetryExtension. "
+                + "If you see this in other circumstances, something with the setup is wrong.",
+            e);
+        return GlobalOpenTelemetry.get();
+      }
+      throw e;
     }
   }
 
