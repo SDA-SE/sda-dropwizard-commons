@@ -79,6 +79,16 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     initializeDropwizardMetricsBridge(environment);
 
     createPrometheusRegistry();
+
+    environment.lifecycle().manage(onShutdown(PrometheusBundle::resetForTest));
+  }
+
+  /**
+   * Clears default registry. This is only meant to be used from tests which need to reconfigure
+   * prometheus.
+   */
+  public static void resetForTest() {
+    CollectorRegistry.defaultRegistry.clear();
   }
 
   /**
@@ -101,15 +111,6 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     DropwizardExports dropwizardExports =
         new DropwizardExports(environment.metrics(), sampleBuilder);
     CollectorRegistry.defaultRegistry.register(dropwizardExports);
-
-    environment
-        .lifecycle()
-        .manage(
-            onShutdown(
-                () -> {
-                  requestDurationHistogramSpecification.unregister();
-                  CollectorRegistry.defaultRegistry.unregister(dropwizardExports);
-                }));
   }
 
   private List<MapperConfig> createMetricsMapperConfigs() {
@@ -310,12 +311,6 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
         new HealthCheckMetricsCollector(environment.healthChecks());
 
     healthCheckMetricsCollector.register();
-
-    environment
-        .lifecycle()
-        .manage(
-            onShutdown(
-                () -> CollectorRegistry.defaultRegistry.unregister(healthCheckMetricsCollector)));
   }
 
   @Override
