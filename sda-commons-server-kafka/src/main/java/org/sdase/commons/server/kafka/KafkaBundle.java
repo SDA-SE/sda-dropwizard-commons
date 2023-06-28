@@ -213,7 +213,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             registration.getTopic().getName(), producer, topicProducerCounterSpec, clientId);
 
     if (micrometerProducerListener != null) {
-      micrometerProducerListener.producerAdded(clientId, producer);
+//      micrometerProducerListener.producerAdded(clientId, producer);
     }
     messageProducers.put(clientId, messageProducer);
     return messageProducer;
@@ -458,7 +458,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             LOGGER.error("Error closing producer", ie);
             Thread.currentThread().interrupt();
           } finally {
-            micrometerProducerListener.producerRemoved(k);
+//            micrometerProducerListener.producerRemoved(k);
           }
         });
     topicProducerCounterSpec.unregister();
