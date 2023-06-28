@@ -98,7 +98,12 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
 
   private OpenTelemetry setupNoopOpenTelemetry() {
     OpenTelemetry noop = OpenTelemetry.noop();
-    GlobalOpenTelemetry.set(noop);
+    try {
+
+      GlobalOpenTelemetry.set(noop);
+    } catch (IllegalStateException e) {
+      return GlobalOpenTelemetry.get();
+    }
     return noop;
   }
 
