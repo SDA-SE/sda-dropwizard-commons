@@ -10,6 +10,7 @@ import io.dropwizard.setup.Environment;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
+import io.prometheus.client.Collector;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.dropwizard.DropwizardExports;
 import io.prometheus.client.dropwizard.samplebuilder.CustomMappingSampleBuilder;
@@ -49,6 +50,8 @@ import org.slf4j.LoggerFactory;
  * }</pre>
  */
 public class PrometheusBundle implements ConfiguredBundle<Configuration>, DynamicFeature {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(PrometheusBundle.class);
 
   // sonar: this path is used as a convention in our world!
   private static final String METRICS_SERVLET_URL = "/metrics/prometheus"; // NOSONAR
@@ -90,6 +93,15 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
   public static void resetForTest() {
     Metrics.globalRegistry.clear();
     CollectorRegistry.defaultRegistry.clear();
+  }
+
+  public static void unregisterCollector(Collector collector) {
+    try {
+
+      CollectorRegistry.defaultRegistry.unregister(collector);
+    } catch (NullPointerException nullPointerException) {
+      LOGGER.error("Tried to remove collector that is not registered: " + collector.toString());
+    }
   }
 
   /**
@@ -309,10 +321,21 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
   }
 
   private void registerHealthCheckMetrics(Environment environment) {
+
     HealthCheckMetricsCollector healthCheckMetricsCollector =
         new HealthCheckMetricsCollector(environment.healthChecks());
+    try {
 
-    healthCheckMetricsCollector.register();
+      healthCheckMetricsCollector.register();
+
+      environment
+          .lifecycle()
+          .manage(
+              onShutdown(
+                  () -> CollectorRegistry.defaultRegistry.unregister(healthCheckMetricsCollector)));
+    } catch (IllegalArgumentException illegalArgumentException) {
+      LOGGER.error("Tried to register Collector twice: " + healthCheckMetricsCollector.toString());
+    }
   }
 
   @Override

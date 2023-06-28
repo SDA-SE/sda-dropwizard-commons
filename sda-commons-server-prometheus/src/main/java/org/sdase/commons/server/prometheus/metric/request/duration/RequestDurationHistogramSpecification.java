@@ -19,6 +19,9 @@ import org.slf4j.LoggerFactory;
  */
 public class RequestDurationHistogramSpecification {
 
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(RequestDurationHistogramSpecification.class);
+
   private static final Logger LOG =
       LoggerFactory.getLogger(RequestDurationHistogramSpecification.class);
 
@@ -60,7 +63,14 @@ public class RequestDurationHistogramSpecification {
 
   /** Unregisters the histogram. Should be called when the context is closed. */
   public void unregister() {
-    CollectorRegistry.defaultRegistry.unregister(requestDurationHistogram);
+    try {
+
+      CollectorRegistry.defaultRegistry.unregister(requestDurationHistogram);
+    } catch (NullPointerException nullPointerException) {
+      LOGGER.error(
+          "Tried to remove collector that is not registered: "
+              + requestDurationHistogram.toString());
+    }
   }
 
   /**
@@ -115,7 +125,12 @@ public class RequestDurationHistogramSpecification {
         Histogram.build().name(HISTOGRAM_NAME).labelNames(LABELS).help(DESCRIPTION);
     Histogram histogram = requestDurationHistogramBuilder.create();
     LOG.debug("Created Histogram {}", HISTOGRAM_NAME);
-    CollectorRegistry.defaultRegistry.register(histogram);
+    try {
+
+      CollectorRegistry.defaultRegistry.register(histogram);
+    } catch (IllegalArgumentException illegalArgumentException) {
+      LOGGER.error("Could not register RequestDurationHistogram");
+    }
     LOG.debug("Registered Histogram {}", HISTOGRAM_NAME);
     return histogram;
   }

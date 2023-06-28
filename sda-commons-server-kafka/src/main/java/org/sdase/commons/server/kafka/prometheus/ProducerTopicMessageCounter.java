@@ -2,6 +2,8 @@ package org.sdase.commons.server.kafka.prometheus;
 
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The central definition of the response duration histogram. This is the definition of the response
@@ -9,6 +11,8 @@ import io.prometheus.client.Counter;
  * Prometheus.
  */
 public class ProducerTopicMessageCounter {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProducerTopicMessageCounter.class);
 
   /** The counter name as it is published to Prometheus. */
   private static final String METRIC_NAME = "kafka_producer_topic_message";
@@ -40,7 +44,13 @@ public class ProducerTopicMessageCounter {
 
   /** Unregisters the histogram. Should be called when the context is closed. */
   public void unregister() {
-    CollectorRegistry.defaultRegistry.unregister(topicMessagesCounter);
+    try {
+
+      CollectorRegistry.defaultRegistry.unregister(topicMessagesCounter);
+    } catch (NullPointerException nullPointerException) {
+      LOGGER.error(
+          "Tried to remove collector that is not registered: " + topicMessagesCounter.toString());
+    }
   }
 
   /**
