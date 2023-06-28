@@ -88,6 +88,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
    * prometheus.
    */
   public static void resetForTest() {
+    Metrics.globalRegistry.clear();
     CollectorRegistry.defaultRegistry.clear();
   }
 
@@ -99,6 +100,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     PrometheusMeterRegistry meterRegistry =
         new PrometheusMeterRegistry(key -> null, CollectorRegistry.defaultRegistry, Clock.SYSTEM);
 
+    Metrics.globalRegistry.clear();
     Metrics.addRegistry(meterRegistry);
   }
 
