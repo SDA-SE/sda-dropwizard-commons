@@ -99,6 +99,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     PrometheusMeterRegistry meterRegistry =
         new PrometheusMeterRegistry(key -> null, CollectorRegistry.defaultRegistry, Clock.SYSTEM);
 
+    Metrics.globalRegistry.clear();
     Metrics.addRegistry(meterRegistry);
   }
 
