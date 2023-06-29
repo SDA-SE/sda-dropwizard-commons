@@ -18,6 +18,20 @@ plugins {
 allprojects {
   apply plugin: 'idea'
   idea.module.inheritOutputDirs = true
+
+  dependencyLocking { lockAllConfigurations() }
+
+  // Task for creating gradle.lockfile per module. Needed for Trivy vulnerability scan.
+  task resolveAndLockAll {
+    doFirst {
+      assert gradle.startParameter.writeDependencyLocks
+    }
+    doLast {
+      configurations.findAll {
+        it.canBeResolved
+      }.each { it.resolve() }
+    }
+  }
 }
 
 // we need a repository for the combination of jacoco and sonarcloud
