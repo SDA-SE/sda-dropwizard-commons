@@ -18,11 +18,14 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.server.prometheus.helper.MicrometerTestExtension;
 import org.sdase.commons.server.prometheus.test.PrometheusTestApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ExtendWith(MicrometerTestExtension.class)
 class PrometheusBundleTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(PrometheusBundleTest.class);
 
@@ -199,6 +202,8 @@ class PrometheusBundleTest {
     assertThat(sampleList.get(0).labelValues).contains("testTagValue");
 
     assertThat(sampleList.get(0).value).isEqualTo(2);
+
+    Metrics.globalRegistry.close();
   }
 
   private Invocation.Builder prepareResourceRequest() {
