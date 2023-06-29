@@ -78,18 +78,20 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     requestDurationHistogramSpecification = new RequestDurationHistogramSpecification();
     initializeDropwizardMetricsBridge(environment);
 
-    createPrometheusRegistry();
+    createPrometheusRegistry(environment);
   }
 
   /**
    * Creates a micrometer PrometheusMeterRegistry and adds it to the Micrometer Global registry. Can
    * be used in a bundle via {@link io.micrometer.core.instrument.Metrics#globalRegistry}
    */
-  private void createPrometheusRegistry() {
+  private void createPrometheusRegistry(Environment environment) {
     PrometheusMeterRegistry meterRegistry =
         new PrometheusMeterRegistry(key -> null, CollectorRegistry.defaultRegistry, Clock.SYSTEM);
 
     Metrics.addRegistry(meterRegistry);
+
+    environment.lifecycle().manage(onShutdown(() -> Metrics.removeRegistry(meterRegistry)));
   }
 
   private void initializeDropwizardMetricsBridge(Environment environment) {
