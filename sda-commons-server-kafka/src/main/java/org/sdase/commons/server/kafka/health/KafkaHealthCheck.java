@@ -24,14 +24,13 @@ public class KafkaHealthCheck extends HealthCheck {
 
   @Override
   protected Result check() {
+    int timeoutInSeconds = config.getHealthCheck().getTimeoutInSeconds();
     try {
-      adminClient
-          .listTopics()
-          .names()
-          .get(config.getHealthCheck().getTimeoutInSeconds(), TimeUnit.SECONDS);
+      adminClient.listTopics().names().get(timeoutInSeconds, TimeUnit.SECONDS);
     } catch (Exception e) {
       LOGGER.warn("Kafka health check failed", e);
-      return Result.unhealthy("Connection to broker failed within 2 seconds");
+      return Result.unhealthy(
+          "Connection to broker failed within " + timeoutInSeconds + " seconds");
     }
     return Result.healthy();
   }
