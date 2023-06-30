@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,11 @@ class PrometheusBundleTest {
   @BeforeEach
   void beforeEach() {
     resourceUri = String.format(REST_URI, DW.getLocalPort());
+  }
+
+  @AfterEach
+  void tearDown() {
+    Metrics.globalRegistry.clear();
   }
 
   @Test
@@ -202,8 +208,36 @@ class PrometheusBundleTest {
     assertThat(sampleList.get(0).labelValues).contains("testTagValue");
 
     assertThat(sampleList.get(0).value).isEqualTo(2);
+  }
 
-    Metrics.globalRegistry.close();
+  //  Testing the same metric twice as an example of how to clear metrics.
+  //  Please note the usage of Metrics.globalRegistry.clear(); in the tearDown method.
+  @Test
+  void micrometerMetricsAvailableInPrometheus2() {
+
+    MeterRegistry globalRegistry = Metrics.globalRegistry;
+    Counter counter = globalRegistry.counter("micrometerTestCounter", "testTagKey", "testTagValue");
+
+    counter.increment();
+    counter.increment();
+
+    ArrayList<Collector.MetricFamilySamples> testCounterTotal =
+        Collections.list(
+            CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(
+                s -> s.equals("micrometerTestCounter_total")));
+
+    assertThat(testCounterTotal).hasSize(1);
+
+    Collector.MetricFamilySamples testCounterSamples = testCounterTotal.get(0);
+    assertThat(testCounterSamples.name).isEqualTo("micrometerTestCounter");
+
+    List<Collector.MetricFamilySamples.Sample> sampleList = testCounterSamples.samples;
+    assertThat(sampleList).hasSize(1);
+
+    assertThat(sampleList.get(0).labelNames).contains("testTagKey");
+    assertThat(sampleList.get(0).labelValues).contains("testTagValue");
+
+    assertThat(sampleList.get(0).value).isEqualTo(2);
   }
 
   private Invocation.Builder prepareResourceRequest() {
