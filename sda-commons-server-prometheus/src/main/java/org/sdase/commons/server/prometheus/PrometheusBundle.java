@@ -91,7 +91,14 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
 
     Metrics.addRegistry(meterRegistry);
 
-    environment.lifecycle().manage(onShutdown(() -> Metrics.removeRegistry(meterRegistry)));
+    environment
+        .lifecycle()
+        .manage(
+            onShutdown(
+                () -> {
+                  Metrics.removeRegistry(meterRegistry);
+                  Metrics.globalRegistry.close();
+                }));
   }
 
   private void initializeDropwizardMetricsBridge(Environment environment) {
