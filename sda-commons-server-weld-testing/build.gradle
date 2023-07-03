@@ -3,6 +3,9 @@ dependencies {
   api project(':sda-commons-server-weld')
 
   testImplementation project(':sda-commons-server-jackson')
-  testImplementation 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0'
+  testImplementation 'de.spinscale.dropwizard:dropwizard-jobs-core:3.0.0', {
+    exclude group: 'org.quartz-scheduler', module: 'quartz'
+  }
+  testImplementation 'org.quartz-scheduler:quartz:2.3.2'
   testImplementation 'jakarta.servlet:jakarta.servlet-api'
 }
