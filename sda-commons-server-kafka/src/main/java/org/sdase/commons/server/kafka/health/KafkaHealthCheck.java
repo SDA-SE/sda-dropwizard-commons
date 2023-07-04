@@ -8,7 +8,7 @@ import org.sdase.commons.server.kafka.KafkaConfiguration;
 import org.sdase.commons.server.kafka.KafkaProperties;
 import org.slf4j.LoggerFactory;
 
-@Async(period = 30, scheduleType = Async.ScheduleType.FIXED_DELAY)
+@Async(period = 30, initialDelay = 10, scheduleType = Async.ScheduleType.FIXED_DELAY)
 public class KafkaHealthCheck extends HealthCheck {
 
   private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(KafkaHealthCheck.class);
