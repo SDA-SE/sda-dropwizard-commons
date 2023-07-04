@@ -21,14 +21,14 @@ import java.util.TimeZone;
 /** YAML utility providing methods to interact with YAML files. */
 public class YamlUtil {
 
-  private static YAMLMapper mapper = configuredMapper();
-  private static YAMLFactory yamlFactory = new YAMLFactory();
+  private static final YAMLMapper MAPPER = configuredMapper();
+  private static final YAMLFactory YAML_FACTORY = new YAMLFactory();
 
   private YamlUtil() {}
 
   public static <T> T load(final URL resource, final Class<T> clazz) {
     try {
-      return mapper.readValue(resource, clazz);
+      return MAPPER.readValue(resource, clazz);
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -36,7 +36,7 @@ public class YamlUtil {
 
   public static <T> T load(final URL resource, final TypeReference<T> typeReference) {
     try {
-      return mapper.readValue(resource, typeReference);
+      return MAPPER.readValue(resource, typeReference);
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -44,7 +44,7 @@ public class YamlUtil {
 
   public static <T> T load(final InputStream resource, final Class<T> clazz) {
     try {
-      return mapper.readValue(resource, clazz);
+      return MAPPER.readValue(resource, clazz);
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -52,7 +52,7 @@ public class YamlUtil {
 
   public static <T> T load(final InputStream resource, final TypeReference<T> typeReference) {
     try {
-      return mapper.readValue(resource, typeReference);
+      return MAPPER.readValue(resource, typeReference);
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -60,7 +60,7 @@ public class YamlUtil {
 
   public static <T> T load(final String content, final Class<T> clazz) {
     try {
-      return mapper.readValue(content, clazz);
+      return MAPPER.readValue(content, clazz);
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -68,7 +68,7 @@ public class YamlUtil {
 
   public static <T> T load(final String content, final TypeReference<T> typeReference) {
     try {
-      return mapper.readValue(content, typeReference);
+      return MAPPER.readValue(content, typeReference);
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -76,8 +76,8 @@ public class YamlUtil {
 
   public static <T> List<T> loadList(final URL resource, final Class<T> clazz) {
     try {
-      YAMLParser parser = yamlFactory.createParser(resource);
-      return mapper.readValues(parser, clazz).readAll();
+      YAMLParser parser = YAML_FACTORY.createParser(resource);
+      return MAPPER.readValues(parser, clazz).readAll();
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -85,8 +85,8 @@ public class YamlUtil {
 
   public static <T> List<T> loadList(final URL resource, final TypeReference<T> typeReference) {
     try {
-      YAMLParser parser = yamlFactory.createParser(resource);
-      return mapper.<T>readValues(parser, typeReference).readAll();
+      YAMLParser parser = YAML_FACTORY.createParser(resource);
+      return MAPPER.readValues(parser, typeReference).readAll();
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -94,8 +94,8 @@ public class YamlUtil {
 
   public static <T> List<T> loadList(final InputStream resource, final Class<T> clazz) {
     try {
-      YAMLParser parser = yamlFactory.createParser(resource);
-      return mapper.readValues(parser, clazz).readAll();
+      YAMLParser parser = YAML_FACTORY.createParser(resource);
+      return MAPPER.readValues(parser, clazz).readAll();
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -104,8 +104,8 @@ public class YamlUtil {
   public static <T> List<T> loadList(
       final InputStream resource, final TypeReference<T> typeReference) {
     try {
-      YAMLParser parser = yamlFactory.createParser(resource);
-      return mapper.<T>readValues(parser, typeReference).readAll();
+      YAMLParser parser = YAML_FACTORY.createParser(resource);
+      return MAPPER.readValues(parser, typeReference).readAll();
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -113,8 +113,8 @@ public class YamlUtil {
 
   public static <T> List<T> loadList(final String content, final Class<T> clazz) {
     try {
-      YAMLParser parser = yamlFactory.createParser(content);
-      return mapper.readValues(parser, clazz).readAll();
+      YAMLParser parser = YAML_FACTORY.createParser(content);
+      return MAPPER.readValues(parser, clazz).readAll();
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -122,8 +122,8 @@ public class YamlUtil {
 
   public static <T> List<T> loadList(final String content, final TypeReference<T> typeReference) {
     try {
-      YAMLParser parser = yamlFactory.createParser(content);
-      return mapper.<T>readValues(parser, typeReference).readAll();
+      YAMLParser parser = YAML_FACTORY.createParser(content);
+      return MAPPER.readValues(parser, typeReference).readAll();
     } catch (IOException ioe) {
       throw new YamlLoadException(ioe);
     }
@@ -131,7 +131,7 @@ public class YamlUtil {
 
   public static String writeValueAsString(Object value) {
     try {
-      return mapper.writeValueAsString(value);
+      return MAPPER.writeValueAsString(value);
     } catch (JsonProcessingException jpe) {
       throw new YamlWriteException(jpe);
     }
