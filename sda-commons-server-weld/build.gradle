@@ -31,6 +31,12 @@ dependencies {
      * We keep the version managed by Dropwizard.
      */
     exclude group: 'org.jboss.spec.javax.annotation', module: 'jboss-annotations-api_1.3_spec'
+
+    /**
+     * The probe bundle is responsible for most vulnerabilities in the weld bundle.
+     * However, it is not needed at runtime as it is a developer tool.
+     */
+    exclude group: 'org.jboss.weld.probe', module: 'weld-probe-core'
   }
   api 'org.jboss.weld.servlet:weld-servlet-core', {
     /**
@@ -61,6 +67,12 @@ dependencies {
      * We keep the version managed by Dropwizard.
      */
     exclude group: 'org.jboss.spec.javax.annotation', module: 'jboss-annotations-api_1.3_spec'
+
+    /**
+     * The probe bundle is responsible for most vulnerabilities in the weld bundle.
+     * However, it is not needed at runtime as it is a developer tool.
+     */
+    exclude group: 'org.jboss.weld.probe', module: 'weld-probe-core'
   }
   api 'jakarta.inject:jakarta.inject-api'
   api 'org.glassfish:jakarta.el'
