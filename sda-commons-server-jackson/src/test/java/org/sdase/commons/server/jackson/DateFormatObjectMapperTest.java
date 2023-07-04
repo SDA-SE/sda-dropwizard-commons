@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,7 @@ class DateFormatObjectMapperTest {
     // this is why Date is not good for APIs
     ZoneOffset zoneOffset =
         ZoneOffset.systemDefault().getRules().getOffset(Instant.ofEpochMilli(date.getTime()));
-    date = new Date(date.getTime() - 1_000 * zoneOffset.getTotalSeconds());
+    date = new Date(date.getTime() - 1_000L * zoneOffset.getTotalSeconds());
 
     assertThat(date)
         .hasYear(2018)
@@ -491,6 +492,34 @@ class DateFormatObjectMapperTest {
 
   private String asJsonString(String rawString) {
     return '"' + rawString + '"';
+  }
+
+  /*
+   * This comparison is sometimes used in test cases for APIs of services, though String comparison of the API response should be preferred.
+   */
+  @Test
+  void readIso8601UtcTimeAsExactJavaZonedDateTime() throws Exception {
+    String given = asJsonString("2018-11-21T13:16:47Z");
+
+    ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
+
+    ZonedDateTime expected = ZonedDateTime.of(2018, 11, 21, 13, 16, 47, 0, ZoneId.of("UTC"));
+    assertThat(Map.of("date", date)).usingRecursiveComparison().isEqualTo(Map.of("date", expected));
+  }
+
+  /*
+   * This comparison is sometimes used in test cases for APIs of services, though String comparison of the API response should be preferred.
+   */
+  @Test
+  void readIso8601UtcTimeAsExactJavaZonedDateTimeFromLocalDateTime() throws Exception {
+    // regression test for sometimes used test cases
+    String given = asJsonString("2018-11-21T13:16:47Z");
+
+    ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
+
+    ZonedDateTime expected =
+        ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16, 47), ZoneId.of("UTC"));
+    assertThat(Map.of("date", date)).usingRecursiveComparison().isEqualTo(Map.of("date", expected));
   }
 
   @SuppressWarnings("WeakerAccess")
