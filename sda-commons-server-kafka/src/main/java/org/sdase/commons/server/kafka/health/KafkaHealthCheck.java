@@ -2,8 +2,8 @@ package org.sdase.commons.server.kafka.health;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.annotation.Async;
-import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 import org.sdase.commons.server.kafka.KafkaProperties;
 import org.slf4j.LoggerFactory;
@@ -24,13 +24,12 @@ public class KafkaHealthCheck extends HealthCheck {
 
   @Override
   protected Result check() {
-    int timeoutInSeconds = config.getHealthCheck().getTimeoutInSeconds();
+    int timeoutInMs = config.getHealthCheck().getTimeoutInSeconds() * 1000;
     try {
-      adminClient.listTopics().names().get(timeoutInSeconds, TimeUnit.SECONDS);
+      adminClient.listTopics(new ListTopicsOptions().timeoutMs(timeoutInMs)).names().get();
     } catch (Exception e) {
       LOGGER.warn("Kafka health check failed", e);
-      return Result.unhealthy(
-          "Connection to broker failed within " + timeoutInSeconds + " seconds");
+      return Result.unhealthy("Connection to broker failed within " + timeoutInMs + "ms");
     }
     return Result.healthy();
   }
