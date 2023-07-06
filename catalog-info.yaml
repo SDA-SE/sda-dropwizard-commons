@@ -21,28 +21,5 @@ metadata:
 spec:
   type: library
   lifecycle: production
-  system: sda-dropwizard-commons
-  owner: bedrock
----
-apiVersion: backstage.io/v1alpha1
-kind: System
-metadata:
-  name: sda-dropwizard-commons
-  description: |
-    SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow
-    the patterns and specifications promoted by the SDA SE.
-  annotations:
-    sda.se/summary: |
-      The [sda-dropwizard-commons](https://github.com/SDA-SE/sda-dropwizard-commons) library
-      includes several modules to speed up SDA-compliant microservice development. It is
-      based on the [Dropwizard](https://www.dropwizard.io) framework, which offers a
-      bundle mechanism for extensions. The bundles that are provided with _sda-dropwizard-commons_
-      configure the framework with default SDA specific settings and add support for an easy and
-      fast integration of standard technologies such as SQL, noSQL, or messaging frameworks.
-  links:
-    - url: https://github.com/SDA-SE/sda-dropwizard-commons
-      title: GitHub
-      icon: code
-spec:
-  domain: platform
+  system: backend
   owner: bedrock
