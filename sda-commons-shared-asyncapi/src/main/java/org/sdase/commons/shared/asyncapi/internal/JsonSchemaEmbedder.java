@@ -119,7 +119,10 @@ public class JsonSchemaEmbedder {
       }
 
       // Rewrite reference to embedded location
-      currentObject.put(REF, new JsonReference(embedPointer.append(refNamePointer)).toString());
+      currentObject.put(
+          REF,
+          new JsonReference(embedPointer.appendProperty(refNamePointer.getMatchingProperty()))
+              .toString());
     }
   }
 
