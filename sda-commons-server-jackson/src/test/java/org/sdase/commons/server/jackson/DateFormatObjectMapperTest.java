@@ -503,7 +503,7 @@ class DateFormatObjectMapperTest {
 
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
 
-    ZonedDateTime expected = ZonedDateTime.of(2018, 11, 21, 13, 16, 47, 0, ZoneId.of("UTC"));
+    ZonedDateTime expected = ZonedDateTime.of(2018, 11, 21, 13, 16, 47, 0, ZoneId.of("Z"));
     assertThat(Map.of("date", date)).usingRecursiveComparison().isEqualTo(Map.of("date", expected));
   }
 
@@ -518,7 +518,7 @@ class DateFormatObjectMapperTest {
     ZonedDateTime date = om.readValue(given, ZonedDateTime.class);
 
     ZonedDateTime expected =
-        ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16, 47), ZoneId.of("UTC"));
+        ZonedDateTime.of(LocalDateTime.of(2018, 11, 21, 13, 16, 47), ZoneId.of("Z"));
     assertThat(Map.of("date", date)).usingRecursiveComparison().isEqualTo(Map.of("date", expected));
   }
 
