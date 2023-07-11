@@ -9,6 +9,11 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
+import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
+import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
+import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
+import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.dropwizard.DropwizardExports;
@@ -61,6 +66,8 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
   public static final String APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS =
       "apache_http_client_request_duration_seconds";
 
+  public static final CollectorRegistry customPrometheusRegistry = new CollectorRegistry(true);
+
   private RequestDurationHistogramSpecification requestDurationHistogramSpecification;
 
   // use PrometheusBundle.builder()... to get an instance
@@ -78,6 +85,18 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     requestDurationHistogramSpecification = new RequestDurationHistogramSpecification();
     initializeDropwizardMetricsBridge(environment);
 
+    ServletRegistration.Dynamic micrometer =
+        environment.admin().addServlet("micrometer", new MetricsServlet(customPrometheusRegistry));
+    micrometer.addMapping("/metrics/micrometer");
+
+    new ClassLoaderMetrics().bindTo(Metrics.globalRegistry);
+    new JvmMemoryMetrics().bindTo(Metrics.globalRegistry);
+    new ProcessorMetrics().bindTo(Metrics.globalRegistry);
+    new JvmThreadMetrics().bindTo(Metrics.globalRegistry);
+    try (JvmGcMetrics jvmGcMetrics = new JvmGcMetrics(); ) {
+      jvmGcMetrics.bindTo(Metrics.globalRegistry);
+    }
+
     createPrometheusRegistry(environment);
   }
 
@@ -87,7 +106,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
    */
   private void createPrometheusRegistry(Environment environment) {
     PrometheusMeterRegistry meterRegistry =
-        new PrometheusMeterRegistry(key -> null, CollectorRegistry.defaultRegistry, Clock.SYSTEM);
+        new PrometheusMeterRegistry(key -> null, customPrometheusRegistry, Clock.SYSTEM);
 
     Metrics.addRegistry(meterRegistry);
 

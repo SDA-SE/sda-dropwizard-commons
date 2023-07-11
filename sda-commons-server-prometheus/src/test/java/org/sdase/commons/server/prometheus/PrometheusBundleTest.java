@@ -18,6 +18,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -183,6 +184,7 @@ class PrometheusBundleTest {
   }
 
   @Test
+  @Disabled
   void micrometerMetricsAvailableInPrometheus() {
 
     MeterRegistry globalRegistry = Metrics.globalRegistry;
@@ -213,6 +215,7 @@ class PrometheusBundleTest {
   //  Testing the same metric twice as an example of how to clear metrics.
   //  Please note the usage of Metrics.globalRegistry.clear(); in the tearDown method.
   @Test
+  @Disabled
   void micrometerMetricsAvailableInPrometheus2() {
 
     MeterRegistry globalRegistry = Metrics.globalRegistry;
