@@ -48,6 +48,9 @@ dependencies {
     api "net.javacrumbs.json-unit:json-unit-core:$jsonUnitVersion", {
       because "conflict between com.github.tomakehurst:wiremock-jre8 and net.javacrumbs.json-unit:json-unit-assertj"
     }
+    api "commons-fileupload:commons-fileupload:1.5", {
+      because "CVE-2023-24998 in 1.4"
+    }
 
     // overall testing dependencies
     api "org.awaitility:awaitility:4.2.0"
