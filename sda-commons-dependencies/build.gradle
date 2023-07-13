@@ -7,7 +7,7 @@ javaPlatform {
 }
 
 ext {
-  dropwizardVersion = '2.1.7'
+  dropwizardVersion = '4.0.1'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.11.2'
   swaggerCoreVersion = '1.6.9'
