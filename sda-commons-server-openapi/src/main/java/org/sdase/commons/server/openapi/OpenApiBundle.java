@@ -101,6 +101,7 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
             .prettyPrint(true)
             .resourcePackages(resourcePackages)
             .readAllResources(false)
+            .sortOutput(true)
             .filterClass(OpenAPISpecFilterSet.class.getName());
 
     // Register the resource that handles the openapi.{json|yaml} requests
