@@ -19,7 +19,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.ECNamedCurveTable;
@@ -57,9 +56,23 @@ class AuthServiceEcTest {
   @Test
   void validTokenWithKeyIdAndNoIssuerAndRequiredIssuerButJwks() {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
+    String token = createToken(keyPair, ISSUER, Map.of("kid", KEY_ID), 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(null, keyPair.getRight(), ISSUER, KEY_ID, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(null, keyPair.getRight(), ISSUER, KEY_ID, null, PRIVATE_KEY_ALG));
+
+    final Map<String, Claim> claims = this.service.auth(token);
+
+    assertThat(claims.get(CLAIM_ISSUER).asString()).isEqualTo(ISSUER);
+    assertThat(claims.get(CLAIM_NOT_BEFORE).asLong() * 1000L).isLessThan(new Date().getTime());
+    assertThat(claims.get(CLAIM_EXPIRE).asLong() * 1000L).isGreaterThan(new Date().getTime());
+  }
+
+  @Test
+  void validTokenWithX5t() {
+    final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
+    String token = createToken(keyPair, ISSUER, Map.of("x5t", KEY_ID), 0, 30);
+    keyLoader.addKeySource(
+        new JwksTestKeySource(null, keyPair.getRight(), ISSUER, null, KEY_ID, PRIVATE_KEY_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -73,7 +86,7 @@ class AuthServiceEcTest {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(null, keyPair.getRight(), ISSUER, null, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(null, keyPair.getRight(), ISSUER, null, null, PRIVATE_KEY_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -85,9 +98,9 @@ class AuthServiceEcTest {
   @Test
   void validTokenWithKeyIdAndNoIssuerButConfiguredRequiredIssuer() {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
-    String token = createToken(keyPair, null, KEY_ID, 0, 30);
+    String token = createToken(keyPair, null, Map.of("kid", KEY_ID), 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID, null, PRIVATE_KEY_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -101,7 +114,7 @@ class AuthServiceEcTest {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
     String token = createToken(keyPair, null, null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null, null, PRIVATE_KEY_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -113,9 +126,9 @@ class AuthServiceEcTest {
   @Test
   void validTokenWithKeyIdAndIssuerAndNoConfiguredRequiredIssuer() {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
+    String token = createToken(keyPair, ISSUER, Map.of("kid", KEY_ID), 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID, null, PRIVATE_KEY_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -129,7 +142,7 @@ class AuthServiceEcTest {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null, null, PRIVATE_KEY_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -141,9 +154,9 @@ class AuthServiceEcTest {
   @Test
   void validTokenWithKeyIdAndIssuerAndAndFutureNotBeforeFailed() throws InterruptedException {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 2, 30);
+    String token = createToken(keyPair, ISSUER, Map.of("kid", KEY_ID), 2, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, null, PRIVATE_KEY_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
     TimeUnit.SECONDS.sleep(2);
@@ -159,7 +172,7 @@ class AuthServiceEcTest {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 2, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, null, PRIVATE_KEY_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
     TimeUnit.SECONDS.sleep(2);
@@ -173,9 +186,9 @@ class AuthServiceEcTest {
   @Test
   void validTokenWithKeyIdAndIssuerAndWillExpire() throws InterruptedException {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 2);
+    String token = createToken(keyPair, ISSUER, Map.of("kid", KEY_ID), 0, 2);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, null, PRIVATE_KEY_ALG));
     final Map<String, Claim> claims = this.service.auth(token);
     assertThat(claims.get(CLAIM_ISSUER).asString()).isEqualTo(ISSUER);
     assertThat(claims.get(CLAIM_NOT_BEFORE).asLong() * 1000L).isLessThan(new Date().getTime());
@@ -189,7 +202,7 @@ class AuthServiceEcTest {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 2);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, null, PRIVATE_KEY_ALG));
     final Map<String, Claim> claims = this.service.auth(token);
     assertThat(claims.get(CLAIM_ISSUER).asString()).isEqualTo(ISSUER);
     assertThat(claims.get(CLAIM_NOT_BEFORE).asLong() * 1000L).isLessThan(new Date().getTime());
@@ -201,9 +214,9 @@ class AuthServiceEcTest {
   @Test
   void validTokenWithKeyIdAndIssuerAndConfiguredRequiredIssuer() {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
+    String token = createToken(keyPair, ISSUER, Map.of("kid", KEY_ID), 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, null, PRIVATE_KEY_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -217,7 +230,7 @@ class AuthServiceEcTest {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, null, PRIVATE_KEY_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -229,9 +242,9 @@ class AuthServiceEcTest {
   @Test
   void validTokenWithKeyIdAndWrongIssuerAndCorrectConfiguredRequiredIssuer() {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
-    String token = createToken(keyPair, "https://www.google.de", KEY_ID, 0, 30);
+    String token = createToken(keyPair, "https://www.google.de", Map.of("kid", KEY_ID), 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, null, PRIVATE_KEY_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
@@ -241,7 +254,7 @@ class AuthServiceEcTest {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
     String token = createToken(keyPair, "https://www.google.de", null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, PRIVATE_KEY_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, null, PRIVATE_KEY_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
@@ -249,10 +262,10 @@ class AuthServiceEcTest {
   @Test
   void validTokenWithKeyIdAndCorrectIssuerAndWrongConfiguredRequiredIssuer() {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
+    String token = createToken(keyPair, ISSUER, Map.of("kid", KEY_ID), 0, 30);
     keyLoader.addKeySource(
         new JwksTestKeySource(
-            ISSUER, keyPair.getRight(), "https://www.google.de", KEY_ID, PRIVATE_KEY_ALG));
+            ISSUER, keyPair.getRight(), "https://www.google.de", KEY_ID, null, PRIVATE_KEY_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
@@ -260,10 +273,10 @@ class AuthServiceEcTest {
   @Test
   void validTokenWithCorrectIssuerAndWrongConfiguredRequiredIssuer() {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, null, 0, 30);
+    String token = createToken(keyPair, ISSUER, Map.of("kid", KEY_ID), 0, 30);
     keyLoader.addKeySource(
         new JwksTestKeySource(
-            ISSUER, keyPair.getRight(), "https://www.google.de", null, PRIVATE_KEY_ALG));
+            ISSUER, keyPair.getRight(), "https://www.google.de", null, null, PRIVATE_KEY_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
@@ -271,10 +284,10 @@ class AuthServiceEcTest {
   @Test
   void validTokenWithKeyIdAndCorrectIssuerAndSameJwksSourceHostButDifferentPath() {
     final Pair<ECPrivateKey, ECPublicKey> keyPair = createEcKeyPair(EC_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
+    String token = createToken(keyPair, ISSUER, Map.of("kid", KEY_ID), 0, 30);
     keyLoader.addKeySource(
         new JwksTestKeySource(
-            ISSUER + "/subpath", keyPair.getRight(), ISSUER, KEY_ID, PRIVATE_KEY_ALG));
+            ISSUER + "/subpath", keyPair.getRight(), ISSUER, KEY_ID, null, PRIVATE_KEY_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -289,7 +302,7 @@ class AuthServiceEcTest {
     String token = createToken(keyPair, ISSUER, null, 0, 30);
     keyLoader.addKeySource(
         new JwksTestKeySource(
-            ISSUER + "/subpath", keyPair.getRight(), ISSUER, null, PRIVATE_KEY_ALG));
+            ISSUER + "/subpath", keyPair.getRight(), ISSUER, null, null, PRIVATE_KEY_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -303,7 +316,7 @@ class AuthServiceEcTest {
    *
    * @param keyPair The keypair to sign the token.
    * @param issuer The issuer of the token
-   * @param keyId the keyid for the jwt token
+   * @param headerClaims list with header claims that should be inserted into the token header
    * @param validAfterGivenSeconds the minimum passed time, when this token ia going to be valid.
    * @param expiresInGivenSeconds the maximum time is seconds until this jwt gets expired.
    * @return The newly generated jwt token.
@@ -311,22 +324,15 @@ class AuthServiceEcTest {
   private String createToken(
       Pair<ECPrivateKey, ECPublicKey> keyPair,
       String issuer,
-      String keyId,
+      Map<String, Object> headerClaims,
       int validAfterGivenSeconds,
       int expiresInGivenSeconds) {
     final Date currentDate = new Date();
-    if (StringUtils.isNotBlank(keyId)) {
-      return JWT.create()
-          .withExpiresAt(DateUtils.addSeconds(currentDate, expiresInGivenSeconds))
-          .withIssuer(issuer)
-          .withNotBefore(DateUtils.addSeconds(currentDate, validAfterGivenSeconds))
-          .withKeyId(keyId)
-          .sign(Algorithm.ECDSA384(keyPair.getRight(), keyPair.getLeft()));
-    }
     return JWT.create()
         .withExpiresAt(DateUtils.addSeconds(currentDate, expiresInGivenSeconds))
         .withIssuer(issuer)
         .withNotBefore(DateUtils.addSeconds(currentDate, validAfterGivenSeconds))
+        .withHeader(headerClaims)
         .sign(Algorithm.ECDSA384(keyPair.getRight(), keyPair.getLeft()));
   }
 

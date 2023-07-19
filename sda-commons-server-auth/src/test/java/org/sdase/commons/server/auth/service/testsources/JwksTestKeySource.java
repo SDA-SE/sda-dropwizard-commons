@@ -12,20 +12,27 @@ public class JwksTestKeySource extends JwksKeySource {
   private final PublicKey publicKey;
   private final String requiredIssuer;
   private final String kid;
+  private final String x5t;
   private final String alg;
 
   public JwksTestKeySource(
-      String jwksUri, PublicKey publicKey, String requiredIssuer, String kid, String alg) {
+      String jwksUri,
+      PublicKey publicKey,
+      String requiredIssuer,
+      String kid,
+      String x5t,
+      String alg) {
     super(jwksUri, null, requiredIssuer);
     this.publicKey = publicKey;
     this.requiredIssuer = requiredIssuer;
     this.kid = kid;
+    this.x5t = x5t;
     this.alg = alg;
   }
 
   @Override
   public List<LoadedPublicKey> loadKeysFromSource() throws KeyLoadFailedException {
     return Collections.singletonList(
-        new LoadedPublicKey(kid, publicKey, this, requiredIssuer, alg));
+        new LoadedPublicKey(kid, x5t, publicKey, this, requiredIssuer, alg));
   }
 }

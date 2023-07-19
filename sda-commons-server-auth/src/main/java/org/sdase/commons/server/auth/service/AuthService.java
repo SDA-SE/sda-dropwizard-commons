@@ -40,11 +40,14 @@ public class AuthService implements TokenAuthorizer {
   public Map<String, Claim> auth(String authorizationToken) {
     try {
       String keyId = JWT.decode(authorizationToken).getKeyId();
-      if (keyId == null) {
-        // check all keys without id
-        List<LoadedPublicKey> keysWithoutId = publicKeyLoader.getKeysWithoutId();
+      String x5t = JWT.decode(authorizationToken).getHeaderClaim("x5t").asString();
+      if (StringUtils.isBlank(keyId) && StringUtils.isBlank(x5t)) {
+        // Both supported identifier are null and therefore we check only keys without any id
+        // information
+        List<LoadedPublicKey> keysWithoutId = publicKeyLoader.getKeysWithoutAnyId();
         if (keysWithoutId.size() > 1) {
-          LOG.warn("Verifying token without kid trying {} public keys", keysWithoutId.size());
+          LOG.warn(
+              "Verifying token without kid and x5t trying {} public keys", keysWithoutId.size());
         }
         Collections.reverse(keysWithoutId);
         return keysWithoutId.stream()
@@ -52,10 +55,11 @@ public class AuthService implements TokenAuthorizer {
             .filter(Optional::isPresent)
             .map(Optional::get)
             .findFirst()
-            .orElseThrow(() -> new JwtAuthException("Could not verify JWT without kid."))
+            .orElseThrow(() -> new JwtAuthException("Could not verify JWT without kid nor x5t."))
             .getClaims();
       } else {
-        LoadedPublicKey loadedPublicKey = publicKeyLoader.getLoadedPublicKey(keyId);
+        // Either kid or x5t is not blank, thus try to get a public key
+        LoadedPublicKey loadedPublicKey = publicKeyLoader.getLoadedPublicKey(keyId, x5t);
 
         if (loadedPublicKey == null) {
           LOG.error("No key found for verification, matching the requested kid {}", keyId);
