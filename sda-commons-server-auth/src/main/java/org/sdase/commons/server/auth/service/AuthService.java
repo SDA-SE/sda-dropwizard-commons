@@ -39,8 +39,9 @@ public class AuthService implements TokenAuthorizer {
   @Override
   public Map<String, Claim> auth(String authorizationToken) {
     try {
-      String keyId = JWT.decode(authorizationToken).getKeyId();
-      String x5t = JWT.decode(authorizationToken).getHeaderClaim("x5t").asString();
+      DecodedJWT decodedJWT = JWT.decode(authorizationToken);
+      String keyId = decodedJWT.getKeyId();
+      String x5t = decodedJWT.getHeaderClaim("x5t").asString();
       if (StringUtils.isBlank(keyId) && StringUtils.isBlank(x5t)) {
         // Both supported identifier are null and therefore we check only keys without any id
         // information

@@ -152,7 +152,7 @@ class AuthClassExtensionIT {
     assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
     assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
         .containsOnly(
-            entry("title", "Could not verify JWT without kid."),
+            entry("title", "Could not verify JWT without kid nor x5t."),
             entry("invalidParams", emptyList()));
   }
 
