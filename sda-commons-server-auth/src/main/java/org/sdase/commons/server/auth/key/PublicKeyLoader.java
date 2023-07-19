@@ -1,11 +1,10 @@
 package org.sdase.commons.server.auth.key;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,18 +53,8 @@ public class PublicKeyLoader {
     return getKeyFromLocalStore(kid, x5t);
   }
 
-  @Deprecated
   public LoadedPublicKey getLoadedPublicKey(String kid) {
-    if (kid == null) {
-      return null;
-    }
-    LoadedPublicKey key = keysByKid.get(kid);
-    if (key != null) {
-      return key;
-    }
-    // we may need to avoid reloading every time and delay reloads if reloaded keys just moments ago
-    reloadKeys();
-    return keysByKid.get(kid);
+    return getLoadedPublicKey(kid, null);
   }
 
   private LoadedPublicKey getKeyFromLocalStore(String kid, String x5t) {
@@ -93,9 +82,12 @@ public class PublicKeyLoader {
   }
 
   public int getTotalNumberOfKeys() {
-    return Sets.newConcurrentHashSet(
-            Iterables.concat(keysByKid.values(), keysByx5t.values(), keysWithoutAnyId))
-        .size();
+    return (int)
+        Stream.concat(
+                Stream.concat(keysByKid.values().stream(), keysByx5t.values().stream()),
+                keysWithoutAnyId.stream())
+            .distinct()
+            .count();
   }
 
   void reloadKeys() {
@@ -122,7 +114,7 @@ public class PublicKeyLoader {
   private void removeOldKeysFromSource(KeySource keySource, List<LoadedPublicKey> newKeys) {
     keysWithoutAnyId.removeIf(k -> keySource.equals(k.getKeySource()) && !newKeys.contains(k));
     updateKeysByKid(keySource, newKeys);
-    updateKeysByx5t(keySource, newKeys);
+    updateKeysByX5t(keySource, newKeys);
   }
 
   private void updateKeysByKid(KeySource keySource, List<LoadedPublicKey> newKeys) {
@@ -138,7 +130,8 @@ public class PublicKeyLoader {
         .forEach(keysByKid::remove);
   }
 
-  private void updateKeysByx5t(KeySource keySource, List<LoadedPublicKey> newKeys) {
+  private void updateKeysByX5t(KeySource keySource, List<LoadedPublicKey> newKeys) {
+    @SuppressWarnings("DuplicatedCode")
     Set<String> newKeyIds =
         newKeys.stream() // NOSONAR squid:S1854 this assignment is not useless
             .map(LoadedPublicKey::getX5t)

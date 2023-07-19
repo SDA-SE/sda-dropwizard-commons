@@ -70,7 +70,7 @@ class PublicKeyLoaderTest {
   }
 
   @Test
-  void shouldAddKeyWithX5tAndKit() {
+  void shouldAddKeyWithX5tAndKid() {
     RSAPublicKey mockKey = Mockito.mock(RSAPublicKey.class);
     KeySource keySource =
         new KeySource() {
