@@ -60,7 +60,12 @@ public class OpenIdProviderDiscoveryKeySource implements KeySource {
           .map(
               k ->
                   new LoadedPublicKey(
-                      k.getKid(), k.getPublicKey(), this, requiredIssuer, k.getSigAlgorithm()))
+                      k.getKid(),
+                      k.getX5t(),
+                      k.getPublicKey(),
+                      this,
+                      requiredIssuer,
+                      k.getSigAlgorithm()))
           .collect(Collectors.toList());
     } catch (KeyLoadFailedException e) {
       throw e;

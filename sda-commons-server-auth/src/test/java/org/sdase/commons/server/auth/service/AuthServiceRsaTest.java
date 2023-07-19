@@ -25,7 +25,6 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +48,9 @@ class AuthServiceRsaTest {
   public static final String ISSUER = "https://localhost.com/issuer";
   public static final String KEY_ID = "myKeyId";
 
+  public static final String X5T_ID = "x5tfingerprint";
+  public static final Map<String, Object> KEY_ID_HEADER_MAP = Map.of("kid", KEY_ID);
+
   @BeforeEach
   void setUp() {
     this.keyLoader = new PublicKeyLoader();
@@ -58,9 +60,9 @@ class AuthServiceRsaTest {
   @Test
   void validTokenWithKeyIdAndNoIssuerAndRequiredIssuerButJwks() {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
+    String token = createToken(keyPair, ISSUER, KEY_ID_HEADER_MAP, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(null, keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
+        new JwksTestKeySource(null, keyPair.getRight(), ISSUER, KEY_ID, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -73,7 +75,8 @@ class AuthServiceRsaTest {
   void validTokenWithoutIssuerAndRequiredIssuerButJwks() {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(null, keyPair.getRight(), ISSUER, null, RSA_ALG));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(null, keyPair.getRight(), ISSUER, null, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -85,9 +88,9 @@ class AuthServiceRsaTest {
   @Test
   void validTokenWithKeyIdAndNoIssuerButConfiguredRequiredIssuer() {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
-    String token = createToken(keyPair, null, KEY_ID, 0, 30);
+    String token = createToken(keyPair, null, KEY_ID_HEADER_MAP, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID, RSA_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -100,7 +103,22 @@ class AuthServiceRsaTest {
   void validTokenWithoutIssuerButConfiguredRequiredIssuer() {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, null, null, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null, RSA_ALG));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null, null, RSA_ALG));
+
+    final Map<String, Claim> claims = this.service.auth(token);
+
+    assertThat(claims.get(CLAIM_ISSUER).isNull()).isTrue();
+    assertThat(claims.get(CLAIM_NOT_BEFORE).asLong() * 1000L).isLessThan(new Date().getTime());
+    assertThat(claims.get(CLAIM_EXPIRE).asLong() * 1000L).isGreaterThan(new Date().getTime());
+  }
+
+  @Test
+  void validTokenWithoutKidButWithX5tId() {
+    final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
+    String token = createToken(keyPair, null, Map.of("x5t", X5T_ID), 0, 30);
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, "123", X5T_ID, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -112,9 +130,9 @@ class AuthServiceRsaTest {
   @Test
   void validTokenWithKeyIdAndIssuerAndNoConfiguredRequiredIssuer() {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
+    String token = createToken(keyPair, ISSUER, KEY_ID_HEADER_MAP, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID, RSA_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, KEY_ID, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -127,7 +145,8 @@ class AuthServiceRsaTest {
   void validTokenWithIssuerAndNoConfiguredRequiredIssuer() {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
-    keyLoader.addKeySource(new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null, RSA_ALG));
+    keyLoader.addKeySource(
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), null, null, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -139,9 +158,9 @@ class AuthServiceRsaTest {
   @Test
   void validTokenWithKeyIdAndIssuerAndAndFutureNotBeforeFailed() throws InterruptedException {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 2, 30);
+    String token = createToken(keyPair, ISSUER, KEY_ID_HEADER_MAP, 2, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, null, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
     TimeUnit.SECONDS.sleep(2);
@@ -157,7 +176,7 @@ class AuthServiceRsaTest {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 2, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, RSA_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, null, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
     TimeUnit.SECONDS.sleep(2);
@@ -171,9 +190,9 @@ class AuthServiceRsaTest {
   @Test
   void validTokenWithKeyIdAndIssuerAndWillExpire() throws InterruptedException {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 2);
+    String token = createToken(keyPair, ISSUER, KEY_ID_HEADER_MAP, 0, 2);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, null, RSA_ALG));
     final Map<String, Claim> claims = this.service.auth(token);
     assertThat(claims.get(CLAIM_ISSUER).asString()).isEqualTo(ISSUER);
     assertThat(claims.get(CLAIM_NOT_BEFORE).asLong() * 1000L).isLessThan(new Date().getTime());
@@ -187,7 +206,7 @@ class AuthServiceRsaTest {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 2);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, RSA_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, null, RSA_ALG));
     final Map<String, Claim> claims = this.service.auth(token);
     assertThat(claims.get(CLAIM_ISSUER).asString()).isEqualTo(ISSUER);
     assertThat(claims.get(CLAIM_NOT_BEFORE).asLong() * 1000L).isLessThan(new Date().getTime());
@@ -199,9 +218,9 @@ class AuthServiceRsaTest {
   @Test
   void validTokenWithKeyIdAndIssuerAndConfiguredRequiredIssuer() {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
+    String token = createToken(keyPair, ISSUER, KEY_ID_HEADER_MAP, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -215,7 +234,7 @@ class AuthServiceRsaTest {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, RSA_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -227,9 +246,9 @@ class AuthServiceRsaTest {
   @Test
   void validTokenWithKeyIdAndWrongIssuerAndCorrectConfiguredRequiredIssuer() {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
-    String token = createToken(keyPair, "https://www.google.de", KEY_ID, 0, 30);
+    String token = createToken(keyPair, "https://www.google.de", KEY_ID_HEADER_MAP, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, KEY_ID, null, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
@@ -239,7 +258,7 @@ class AuthServiceRsaTest {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, "https://www.google.de", null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, RSA_ALG));
+        new JwksTestKeySource(ISSUER, keyPair.getRight(), ISSUER, null, null, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
@@ -247,10 +266,10 @@ class AuthServiceRsaTest {
   @Test
   void validTokenWithKeyIdAndCorrectIssuerAndWrongConfiguredRequiredIssuer() {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
+    String token = createToken(keyPair, ISSUER, KEY_ID_HEADER_MAP, 0, 30);
     keyLoader.addKeySource(
         new JwksTestKeySource(
-            ISSUER, keyPair.getRight(), "https://www.google.de", KEY_ID, RSA_ALG));
+            ISSUER, keyPair.getRight(), "https://www.google.de", KEY_ID, null, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
@@ -260,7 +279,8 @@ class AuthServiceRsaTest {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER, keyPair.getRight(), "https://www.google.de", null, RSA_ALG));
+        new JwksTestKeySource(
+            ISSUER, keyPair.getRight(), "https://www.google.de", null, null, RSA_ALG));
 
     assertThatThrownBy(() -> this.service.auth(token)).isInstanceOf(JwtAuthException.class);
   }
@@ -268,9 +288,10 @@ class AuthServiceRsaTest {
   @Test
   void validTokenWithKeyIdAndCorrectIssuerAndSameJwksSourceHostButDifferentPath() {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
-    String token = createToken(keyPair, ISSUER, KEY_ID, 0, 30);
+    String token = createToken(keyPair, ISSUER, KEY_ID_HEADER_MAP, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER + "/subpath", keyPair.getRight(), ISSUER, KEY_ID, RSA_ALG));
+        new JwksTestKeySource(
+            ISSUER + "/subpath", keyPair.getRight(), ISSUER, KEY_ID, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -284,7 +305,8 @@ class AuthServiceRsaTest {
     final Pair<RSAPrivateKey, RSAPublicKey> keyPair = createRsaKeyPair(RSA_PRIVATE_KEY);
     String token = createToken(keyPair, ISSUER, null, 0, 30);
     keyLoader.addKeySource(
-        new JwksTestKeySource(ISSUER + "/subpath", keyPair.getRight(), ISSUER, null, RSA_ALG));
+        new JwksTestKeySource(
+            ISSUER + "/subpath", keyPair.getRight(), ISSUER, null, null, RSA_ALG));
 
     final Map<String, Claim> claims = this.service.auth(token);
 
@@ -298,7 +320,7 @@ class AuthServiceRsaTest {
    *
    * @param keyPair The keypair to sign the token.
    * @param issuer The issuer of the token
-   * @param keyId the keyid for the jwt token
+   * @param headerClaims additional claims tat should be added to the header
    * @param validAfterGivenSeconds the minimum passed time, when this token ia going to be valid.
    * @param expiresInGivenSeconds the maximum time is seconds until this jwt gets expired.
    * @return The newly generated jwt token.
@@ -306,22 +328,16 @@ class AuthServiceRsaTest {
   private String createToken(
       Pair<RSAPrivateKey, RSAPublicKey> keyPair,
       String issuer,
-      String keyId,
+      Map<String, Object> headerClaims,
       int validAfterGivenSeconds,
       int expiresInGivenSeconds) {
     final Date currentDate = new Date();
-    if (StringUtils.isNotBlank(keyId)) {
-      return JWT.create()
-          .withExpiresAt(DateUtils.addSeconds(currentDate, expiresInGivenSeconds))
-          .withIssuer(issuer)
-          .withNotBefore(DateUtils.addSeconds(currentDate, validAfterGivenSeconds))
-          .withKeyId(keyId)
-          .sign(Algorithm.RSA256(keyPair.getRight(), keyPair.getLeft()));
-    }
+
     return JWT.create()
         .withExpiresAt(DateUtils.addSeconds(currentDate, expiresInGivenSeconds))
         .withIssuer(issuer)
         .withNotBefore(DateUtils.addSeconds(currentDate, validAfterGivenSeconds))
+        .withHeader(headerClaims)
         .sign(Algorithm.RSA256(keyPair.getRight(), keyPair.getLeft()));
   }
 

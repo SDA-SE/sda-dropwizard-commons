@@ -1,15 +1,12 @@
 package org.sdase.commons.server.auth.key;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,27 +14,47 @@ import org.slf4j.LoggerFactory;
 public class PublicKeyLoader {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PublicKeyLoader.class);
-
-  private Map<String, LoadedPublicKey> keysByKid = new ConcurrentHashMap<>();
-
-  private Set<LoadedPublicKey> keysWithoutKeyId = new CopyOnWriteArraySet<>();
-
-  private Map<KeySource, Boolean> keySources = new ConcurrentHashMap<>();
+  private final Map<String, LoadedPublicKey> keysByKid = new ConcurrentHashMap<>();
+  private final Map<String, LoadedPublicKey> keysByx5t = new ConcurrentHashMap<>();
+  private final Set<LoadedPublicKey> keysWithoutAnyId = new CopyOnWriteArraySet<>();
+  private final Map<KeySource, Boolean> keySources = new ConcurrentHashMap<>();
 
   private final Object loadingSemaphore = new Object();
 
   /**
    * @return All keys that have been registered without kid in the order they have been added.
    */
-  public List<LoadedPublicKey> getKeysWithoutId() {
-    if (keysWithoutKeyId.isEmpty()) {
+  public List<LoadedPublicKey> getKeysWithoutAnyId() {
+    if (keysWithoutAnyId.isEmpty()) {
       // we may need to avoid reloading every time and delay reloads if reloaded keys just moments
       // ago
       reloadKeys();
     }
-    return new ArrayList<>(keysWithoutKeyId);
+    return new ArrayList<>(keysWithoutAnyId);
   }
 
+  /**
+   * @deprecated Deprecated due to the extension of the loader managing more than one id
+   */
+  @Deprecated
+  public List<LoadedPublicKey> getKeysWithoutId() {
+    return getKeysWithoutAnyId();
+  }
+
+  public LoadedPublicKey getLoadedPublicKey(String kid, String x5t) {
+    if (StringUtils.isBlank(kid) && StringUtils.isBlank(x5t)) {
+      return null;
+    }
+    LoadedPublicKey existingKey = getKeyFromLocalStore(kid, x5t);
+    if (existingKey != null) {
+      return existingKey;
+    }
+    // we may need to avoid reloading every time and delay reloads if reloaded keys just moments ago
+    reloadKeys();
+    return getKeyFromLocalStore(kid, x5t);
+  }
+
+  @Deprecated
   public LoadedPublicKey getLoadedPublicKey(String kid) {
     if (kid == null) {
       return null;
@@ -51,6 +68,20 @@ public class PublicKeyLoader {
     return keysByKid.get(kid);
   }
 
+  private LoadedPublicKey getKeyFromLocalStore(String kid, String x5t) {
+    if (StringUtils.isBlank(kid) && StringUtils.isBlank(x5t)) {
+      return null;
+    }
+    LoadedPublicKey key = null;
+    if (StringUtils.isNotBlank(kid)) {
+      key = keysByKid.get(kid);
+    }
+    if (key == null && StringUtils.isNotBlank(x5t)) {
+      key = keysByx5t.get(x5t);
+    }
+    return key;
+  }
+
   public void addKeySource(KeySource keySource) {
     this.keySources.put(keySource, false);
     // avoid to slow down startup of the application
@@ -62,7 +93,9 @@ public class PublicKeyLoader {
   }
 
   public int getTotalNumberOfKeys() {
-    return keysWithoutKeyId.size() + keysByKid.size();
+    return Sets.newConcurrentHashSet(
+            Iterables.concat(keysByKid.values(), keysByx5t.values(), keysWithoutAnyId))
+        .size();
   }
 
   void reloadKeys() {
@@ -87,7 +120,12 @@ public class PublicKeyLoader {
   }
 
   private void removeOldKeysFromSource(KeySource keySource, List<LoadedPublicKey> newKeys) {
-    keysWithoutKeyId.removeIf(k -> keySource.equals(k.getKeySource()) && !newKeys.contains(k));
+    keysWithoutAnyId.removeIf(k -> keySource.equals(k.getKeySource()) && !newKeys.contains(k));
+    updateKeysByKid(keySource, newKeys);
+    updateKeysByx5t(keySource, newKeys);
+  }
+
+  private void updateKeysByKid(KeySource keySource, List<LoadedPublicKey> newKeys) {
     Set<String> newKeyIds =
         newKeys.stream() // NOSONAR squid:S1854 this assignment is not useless
             .map(LoadedPublicKey::getKid)
@@ -98,6 +136,19 @@ public class PublicKeyLoader {
         .map(LoadedPublicKey::getKid)
         .filter(kid -> !newKeyIds.contains(kid))
         .forEach(keysByKid::remove);
+  }
+
+  private void updateKeysByx5t(KeySource keySource, List<LoadedPublicKey> newKeys) {
+    Set<String> newKeyIds =
+        newKeys.stream() // NOSONAR squid:S1854 this assignment is not useless
+            .map(LoadedPublicKey::getX5t)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+    keysByx5t.values().stream()
+        .filter(k -> keySource.equals(k.getKeySource()))
+        .map(LoadedPublicKey::getX5t)
+        .filter(x5t -> !newKeyIds.contains(x5t))
+        .forEach(keysByx5t::remove);
   }
 
   private void loadAllNewKeys() {
@@ -130,10 +181,14 @@ public class PublicKeyLoader {
   }
 
   private void addKey(LoadedPublicKey key) {
-    if (key.getKid() == null) {
-      keysWithoutKeyId.add(key);
-    } else {
+    if (StringUtils.isBlank(key.getKid()) && StringUtils.isBlank(key.getX5t())) {
+      keysWithoutAnyId.add(key);
+    }
+    if (StringUtils.isNotBlank(key.getKid())) {
       keysByKid.put(key.getKid(), key);
+    }
+    if (StringUtils.isNotBlank(key.getX5t())) {
+      keysByx5t.put(key.getX5t(), key);
     }
   }
 }

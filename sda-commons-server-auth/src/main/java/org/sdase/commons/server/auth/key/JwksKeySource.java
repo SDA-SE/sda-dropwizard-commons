@@ -158,7 +158,8 @@ public class JwksKeySource implements KeySource {
     BigInteger modulus = readBase64AsBigInt(key.getN());
     BigInteger exponent = readBase64AsBigInt(key.getE());
     PublicKey publicKey = keyFactory.generatePublic(new RSAPublicKeySpec(modulus, exponent));
-    return new LoadedPublicKey(key.getKid(), publicKey, this, requiredIssuer, key.getAlg());
+    return new LoadedPublicKey(
+        key.getKid(), key.getX5t(), publicKey, this, requiredIssuer, key.getAlg());
   }
 
   private LoadedPublicKey toEcPublicKey(Key key, KeyFactory keyFactory)
@@ -174,7 +175,8 @@ public class JwksKeySource implements KeySource {
         keyFactory.generatePublic(
             new ECPublicKeySpec(
                 new ECPoint(x, y), parameters.getParameterSpec(ECParameterSpec.class)));
-    return new LoadedPublicKey(key.getKid(), publicKey, this, requiredIssuer, key.getAlg());
+    return new LoadedPublicKey(
+        key.getKid(), key.getX5t(), publicKey, this, requiredIssuer, key.getAlg());
   }
 
   private static BigInteger readBase64AsBigInt(String encodedBigInt) {
@@ -199,6 +201,7 @@ public class JwksKeySource implements KeySource {
   private static class Key {
     private String kid;
     private String kty;
+    private String x5t;
     private String alg;
     private String use;
     private String n;
@@ -213,6 +216,15 @@ public class JwksKeySource implements KeySource {
 
     public Key setKid(String kid) {
       this.kid = kid;
+      return this;
+    }
+
+    public String getX5t() {
+      return x5t;
+    }
+
+    public Key setX5t(String x5t) {
+      this.x5t = x5t;
       return this;
     }
 

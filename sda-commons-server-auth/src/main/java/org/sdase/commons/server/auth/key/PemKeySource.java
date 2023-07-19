@@ -55,13 +55,13 @@ public class PemKeySource implements KeySource {
       if (isPublicKey(pemKeyLocation)) {
         PublicKey publicKey = loadPublicKey(pemKeyLocation);
         return Collections.singletonList(
-            new LoadedPublicKey(kid, publicKey, this, requiredIssuer, alg));
+            new LoadedPublicKey(kid, null, publicKey, this, requiredIssuer, alg));
       } else {
         X509Certificate cer = loadCertificate(pemKeyLocation);
         PublicKey publicKey = extractPublicKeyFromCertificate(cer);
         LOG.info("Loaded public key for token signature verification from PEM {}", pemKeyLocation);
         return Collections.singletonList(
-            new LoadedPublicKey(kid, publicKey, this, requiredIssuer, alg));
+            new LoadedPublicKey(kid, null, publicKey, this, requiredIssuer, alg));
       }
     } catch (IOException | CertificateException | NullPointerException | ClassCastException e) {
 
