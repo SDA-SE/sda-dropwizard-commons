@@ -2,8 +2,14 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-certificates')
 
-  api 'dev.morphia.morphia:core'
+  api 'dev.morphia.morphia:core', {
+    // self managed to solve CVE
+    exclude group: 'org.mongodb', module: 'mongodb-driver-sync'
+  }
   api 'dev.morphia.morphia:validation', {
+    // self managed to solve CVE
+    exclude group: 'org.mongodb', module: 'mongodb-driver-sync'
+
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
      * javax.inject.
@@ -22,6 +28,7 @@ dependencies {
      */
     exclude group: 'aopalliance', module: 'aopalliance'
   }
+  api 'org.mongodb:mongodb-driver-sync'
   api 'jakarta.inject:jakarta.inject-api'
   api 'jakarta.validation:jakarta.validation-api'
   api 'org.glassfish.hk2.external:aopalliance-repackaged'
