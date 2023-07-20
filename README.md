@@ -56,7 +56,6 @@ The [SECURITY.md](./SECURITY.md) includes information on responsible disclosure 
 
 ## Modules in SDA Dropwizard Commons
 
-
 ### Server
 
 All modules prefixed with `sda-commons-server-` provide technology and configuration support used in backend services
