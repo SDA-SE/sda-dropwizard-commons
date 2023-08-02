@@ -9,6 +9,10 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
+import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
+import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
+import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.dropwizard.DropwizardExports;
@@ -91,6 +95,14 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
 
     Metrics.addRegistry(meterRegistry);
 
+    // JVM and System Metrics
+    new JvmMemoryMetrics().bindTo(Metrics.globalRegistry);
+    try (var jvmGcMetrics = new JvmGcMetrics()) {
+      jvmGcMetrics.bindTo(Metrics.globalRegistry);
+    }
+    new ProcessorMetrics().bindTo(Metrics.globalRegistry);
+    new JvmThreadMetrics().bindTo(Metrics.globalRegistry);
+
     environment
         .lifecycle()
         .manage(
@@ -98,6 +110,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
                 () -> {
                   Metrics.removeRegistry(meterRegistry);
                   Metrics.globalRegistry.close();
+                  Metrics.globalRegistry.clear();
                 }));
   }
 
