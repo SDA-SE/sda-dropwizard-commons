@@ -52,7 +52,7 @@ dependencies {
     exclude group: 'com.fasterxml.jackson.jaxrs'
     exclude group: 'com.fasterxml.jackson.module'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.519")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.522")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
   api enforcedPlatform("io.netty:netty-bom:4.1.96.Final"), {
