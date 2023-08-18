@@ -1,0 +1,65 @@
+# This workflow builds + tests using the latest Java version
+#
+# Disclaimer:
+# ----------
+# This workflow is only used to get early feedback about the compatibility of the library. It still
+# does not guarantee that services using this library will work in the given Java version.
+#
+# It was created by copying the 'official' java-ci.yml and applying the following changes:
+# - only runs on `master`
+# - only one `os` + `java_version` in the build matrix
+# - not a complete checkout (with fetch-depth: 0)
+# - only 3 retries
+# - no release (step 'semantic-release')
+# - no publication of the test results (step 'publish-test-results')
+name: Java CI Latest
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  # build library
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      # always run all tests to avoid having different amounts of tests.
+      fail-fast: false
+      matrix:
+        java_version: ['21-ea']
+        os: ['ubuntu-latest']
+
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
+
+      - name: Set up JDK ${{ matrix.java_version }}
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2 # v3.12.0
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java_version }}
+          cache: 'gradle'
+
+      - name: Test with Gradle
+        uses: nick-invision/retry@943e742917ac94714d2f408a0e8320f2d1fcafcd # v2
+        with:
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_wait_seconds: 10
+          warning_on_retry: false
+          command: ./gradlew --parallel --continue check -x spotlessCheck
+
+      - name: Generate Test Report
+        if: always()
+        run: ./gradlew -x test testReport codeCoverageReport
+
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3
+        if: always()
+        with:
+          name: ${{ matrix.os }}-${{ matrix.java_version }}-test-results
+          path: |
+            build/reports/
+            */build/test-results/**/*.xml
+          retention-days: 7
