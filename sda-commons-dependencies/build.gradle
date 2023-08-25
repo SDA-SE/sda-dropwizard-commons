@@ -7,21 +7,21 @@ javaPlatform {
 }
 
 ext {
-  dropwizardVersion = '2.1.7'
+  dropwizardVersion = '4.0.1'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.11.3'
   swaggerCoreVersion = '1.6.9'
   swaggerCoreV3Version = '2.2.15'
-  weldVersion = '3.1.9.Final'
+  weldVersion = '5.1.1.SP2'
   jacksonVersion = '2.15.2'
-  jsonUnitVersion = '2.38.0'
+  jsonUnitVersion = '3.0.0'
   scalaVersion = '2.13.11' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.5.1'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.39.0'
   kotlinVersion = '1.9.10'
   kotlinxCoroutinesVersion = '1.7.3'
-  resilience4jVersion = '1.7.1'
+  resilience4jVersion = '2.1.0'
   openTelemetryVersion= '1.27.0'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '4.6.1'
@@ -65,7 +65,7 @@ dependencies {
     api "commons-fileupload:commons-fileupload:1.5", {
       because "CVE-2023-24998 in 1.4"
     }
-    api "commons-codec:commons-codec:1.16.0", {
+    api "commons-codec:commons-codec:20041127.091804", {
       because "conflict between org.apache.httpcomponents:httpclient:4.5.12 and org.dbunit:dbunit:2.7.0"
     }
     api "io.github.classgraph:classgraph:4.8.162", {
@@ -116,7 +116,7 @@ dependencies {
     api "com.github.database-rider:rider-junit5:$dbRiderVersion"
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
-    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.4"
+    api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.9.2"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryVersion}-alpha"
     api "org.mongodb:mongodb-driver-core:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-sync:${mongoDbDriverVersion}"
@@ -174,7 +174,7 @@ dependencies {
     api "org.junit-pioneer:junit-pioneer:2.0.1"
 
     // sda-commons-shared-*
-    api 'commons-io:commons-io:2.13.0'
+    api 'commons-io:commons-io:20030203.000550'
 
     // sda-commons-server-opentelemetry
     api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:${openTelemetryVersion}-alpha"
