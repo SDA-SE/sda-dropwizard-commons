@@ -13,6 +13,9 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.binder.mongodb.MongoMetricsCommandListener;
+import io.micrometer.core.instrument.binder.mongodb.MongoMetricsConnectionPoolListener;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
@@ -149,6 +152,12 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
           });
     }
     clientSettingsBuilder.addCommandListener(createTracingCommandListener());
+    clientSettingsBuilder.addCommandListener(
+        new MongoMetricsCommandListener(Metrics.globalRegistry));
+    clientSettingsBuilder.applyToConnectionPoolSettings(
+        builder ->
+            builder.addConnectionPoolListener(
+                new MongoMetricsConnectionPoolListener(Metrics.globalRegistry)));
     return MongoClients.create(clientSettingsBuilder.build());
   }
 
