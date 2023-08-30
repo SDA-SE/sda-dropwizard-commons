@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
+import io.micrometer.core.instrument.ImmutableTag;
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.binder.httpcomponents.MicrometerHttpRequestExecutor;
+import io.micrometer.core.instrument.binder.httpcomponents.PoolingHttpClientConnectionManagerMetricsBinder;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
 import java.net.ProxySelector;
@@ -12,7 +16,9 @@ import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Feature;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.apache.http.protocol.HttpRequestExecutor;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
 import org.slf4j.Logger;
@@ -51,7 +57,22 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
         new HttpClientBuilder(environment) {
           @Override
           protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
-            return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
+            org.apache.http.impl.client.HttpClientBuilder httpClientBuilder =
+                ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
+            PoolingHttpClientConnectionManager connectionManager =
+                new PoolingHttpClientConnectionManager();
+            httpClientBuilder.setConnectionManager(connectionManager);
+            new PoolingHttpClientConnectionManagerMetricsBinder(
+                    connectionManager, "apache-http-client-pool")
+                .bindTo(Metrics.globalRegistry);
+            return httpClientBuilder;
+          }
+
+          @Override
+          protected HttpRequestExecutor createRequestExecutor(String name) {
+            return MicrometerHttpRequestExecutor.builder(Metrics.globalRegistry)
+                .tags(List.of(new ImmutableTag("name", name)))
+                .build();
           }
         });
     this.objectMapper = environment.getObjectMapper();
