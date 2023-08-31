@@ -26,7 +26,7 @@ jobs:
           cache: 'gradle'
 
       - name: Start MongoDB
-        run: docker run -d -e MONGO_INITDB_ROOT_USERNAME=test -e MONGO_INITDB_ROOT_PASSWORD=example -p 27017:27017 --name test_mongo mongo:4.4
+        run: docker run -d -e MONGO_INITDB_ROOT_USERNAME=test -e MONGO_INITDB_ROOT_PASSWORD=example -p 27017:27017 --name test_mongo mongo:5.0.20-focal
 
       - name: Test with Gradle
         run: ./gradlew :sda-commons-server-spring-data-mongo:test
