@@ -62,9 +62,18 @@ class AuthBundleTest {
   }
 
   @Test
-  void validateEmptyConfig() {
+  void shouldWarnAboutMissingAuthKeys() {
     authBundle.run(null, environment);
-    verify(mockAppender, never()).doAppend(any());
+    verify(mockAppender, times(1))
+        .doAppend(
+            ArgumentMatchers.argThat(
+                argument -> {
+                  assertThat(argument.getMessage())
+                      .isEqualTo(
+                          "Authentication may not be configured correctly. AUTH_KEYS are missing.");
+                  assertThat(argument.getLevel()).isEqualTo(Level.WARN);
+                  return true;
+                }));
   }
 
   @Test
