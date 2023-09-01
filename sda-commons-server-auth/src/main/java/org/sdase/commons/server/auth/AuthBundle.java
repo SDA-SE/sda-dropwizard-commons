@@ -77,6 +77,9 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
     Client client = createKeyLoaderClient(environment, config, currentTelemetryInstance);
     PublicKeyLoader keyLoader = new PublicKeyLoader();
+
+    validateAuthKeys(config);
+
     config.getKeys().stream()
         .map(k -> this.createKeySources(k, client))
         .forEach(keyLoader::addKeySource);
@@ -106,6 +109,12 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
     environment.jersey().register(JwtAuthExceptionMapper.class);
     environment.jersey().register(ForbiddenExceptionMapper.class);
+  }
+
+  private static void validateAuthKeys(AuthConfig config) {
+    if (!config.isDisableAuth() && config.getKeys().isEmpty()) {
+      LOG.warn("Authentication may not be configured correctly. AUTH_KEYS are missing.");
+    }
   }
 
   private Client createKeyLoaderClient(
