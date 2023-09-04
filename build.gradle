@@ -328,7 +328,7 @@ sonarqube {
     property 'sonar.projectKey', 'SDA-SE_sda-dropwizard-commons'
     property 'sonar.organization', 'sda-se'
     property 'sonar.host.url', 'https://sonarcloud.io'
-    property 'sonar.login', System.getenv('SONAR_LOGIN_TOKEN')
+    property 'sonar.token', System.getenv('SONAR_LOGIN_TOKEN')
 
     property 'sonar.pullrequest.provider', 'GitHub'
     property 'sonar.pullrequest.github.repository', System.getenv('GITHUB_REPOSITORY')
