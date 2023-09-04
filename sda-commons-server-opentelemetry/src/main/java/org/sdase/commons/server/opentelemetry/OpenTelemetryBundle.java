@@ -84,7 +84,7 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
     try {
       return AutoConfiguredOpenTelemetrySdk.builder()
           .addPropertiesSupplier(SdaConfigPropertyProvider::getProperties)
-          .setResultAsGlobal(true)
+          .setResultAsGlobal()
           .build()
           .getOpenTelemetrySdk();
     } catch (IllegalStateException | ConfigurationException e) {
