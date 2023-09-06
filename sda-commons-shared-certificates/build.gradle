@@ -1,7 +1,7 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
 
-  api 'org.bouncycastle:bcpkix-jdk15on'
+  api 'org.bouncycastle:bcpkix-jdk18on'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')

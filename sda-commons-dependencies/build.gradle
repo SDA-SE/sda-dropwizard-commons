@@ -51,6 +51,7 @@ dependencies {
     exclude group: 'com.fasterxml.jackson.datatype'
     exclude group: 'com.fasterxml.jackson.jaxrs'
     exclude group: 'com.fasterxml.jackson.module'
+    exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.540")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
@@ -100,7 +101,11 @@ dependencies {
 
     // sda-commons-server-auth
     api "com.auth0:java-jwt:4.4.0"
-    api "org.bouncycastle:bcpkix-jdk15on:1.70" // use the same version as bcprov-jdk15on in DW
+    api "org.bouncycastle:bcpkix-jdk18on:1.76" // use the same version as bcprov-jdk18on
+
+    api "org.bouncycastle:bcprov-jdk18on:1.76", {
+      because 'CVE-2023-33201 in 1.70'
+    }
 
     // sda-commons-server-circuitbreaker
     api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"

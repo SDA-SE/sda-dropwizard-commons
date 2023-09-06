@@ -7,7 +7,7 @@ dependencies {
   api 'io.dropwizard:dropwizard-client'
 
   api 'com.auth0:java-jwt'
-  api 'org.bouncycastle:bcpkix-jdk15on'
+  api 'org.bouncycastle:bcpkix-jdk18on'
   api 'javax.xml.bind:jaxb-api', {
     exclude group: 'javax.activation', module: 'javax.activation-api'
   }
