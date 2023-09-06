@@ -4,7 +4,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import org.sdase.commons.server.dropwizard.bundles.GenericLookupYamlConfigurationFactory.GenericLookupYamlConfigurationFactoryFactory;
 
 /**
  * The {@code ConfigurationSubstitutionBundle} allows to use placeholders for environment variables
@@ -35,15 +35,12 @@ public class ConfigurationSubstitutionBundle implements ConfiguredBundle<Configu
 
   @Override
   public void initialize(Bootstrap<?> bootstrap) {
+    bootstrap.addCommand(new GenericLookupConfigCommand<>());
     bootstrap.setConfigurationSourceProvider(
         new SubstitutingSourceProvider(
             bootstrap.getConfigurationSourceProvider(),
             new SystemPropertyAndEnvironmentSubstitutor(false, true)));
-  }
-
-  @Override
-  public void run(Configuration configuration, Environment environment) {
-    // nothing that has to be done in the run phase
+    bootstrap.setConfigurationFactoryFactory(new GenericLookupYamlConfigurationFactoryFactory<>());
   }
 
   public static class Builder {
