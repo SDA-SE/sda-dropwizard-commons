@@ -15,27 +15,55 @@ import org.sdase.commons.server.mongo.testing.MongoDbClassExtension;
 import org.sdase.commons.server.spring.data.mongo.example.MyApp;
 import org.sdase.commons.server.spring.data.mongo.example.MyConfiguration;
 
-class SpringDataMongoBundleHealthCheckIT {
+abstract class SpringDataMongoBundleHealthCheckIT {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends SpringDataMongoBundleHealthCheckIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<MyConfiguration> DW =
-      new DropwizardAppExtension<>(
-          MyApp.class,
-          null,
-          randomPorts(),
-          config("springDataMongo.connectionString", mongo::getConnectionString));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            MyApp.class,
+            null,
+            randomPorts(),
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
+
+  static class MongoDb50Test extends SpringDataMongoBundleHealthCheckIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            MyApp.class,
+            null,
+            randomPorts(),
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
 
   @Test
   void shouldRegisterHealthCheck() {
     String healthcheckName = "mongo";
     Map<String, HealthCheckResult> healthCheck =
-        DW.client()
-            .target("http://localhost:" + DW.getAdminPort())
+        getDW()
+            .client()
+            .target("http://localhost:" + getDW().getAdminPort())
             .path("/healthcheck")
             .request(APPLICATION_JSON)
             .get(new GenericType<>() {});
@@ -44,6 +72,8 @@ class SpringDataMongoBundleHealthCheckIT {
         .extracting(HealthCheckResult::getHealthy)
         .isEqualTo("true");
   }
+
+  abstract DropwizardAppExtension<MyConfiguration> getDW();
 
   static class HealthCheckResult {
     private String healthy;

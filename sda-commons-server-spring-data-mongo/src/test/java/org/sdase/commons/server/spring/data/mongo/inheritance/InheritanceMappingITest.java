@@ -24,26 +24,62 @@ import org.sdase.commons.server.spring.data.mongo.inheritance.model.AbstractPet.
 import org.sdase.commons.server.spring.data.mongo.inheritance.model.PrivateZoo;
 import org.springframework.data.mongodb.core.MongoOperations;
 
-class InheritanceMappingITest {
+abstract class InheritanceMappingITest {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension MONGO = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends InheritanceMappingITest {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension MONGO = MongoDbClassExtension.builder().build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<MyConfiguration> DW =
-      new DropwizardAppExtension<>(
-          ZooTestApp.class,
-          null,
-          config("springDataMongo.connectionString", MONGO::getConnectionString));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            ZooTestApp.class,
+            null,
+            config("springDataMongo.connectionString", MONGO::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+
+    @Override
+    MongoDbClassExtension getMongo() {
+      return MONGO;
+    }
+  }
+
+  static class MongoDb50Test extends InheritanceMappingITest {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension MONGO = MongoDbClassExtension.builder().build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            ZooTestApp.class,
+            null,
+            config("springDataMongo.connectionString", MONGO::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+
+    @Override
+    MongoDbClassExtension getMongo() {
+      return MONGO;
+    }
+  }
 
   MongoOperations mongoOperations;
 
   @BeforeEach
   void setUp() {
-    MONGO.clearCollections();
-    ZooTestApp app = DW.getApplication();
+    getMongo().clearCollections();
+    ZooTestApp app = getDW().getApplication();
     mongoOperations = app.getMongoOperations();
   }
 
@@ -54,9 +90,9 @@ class InheritanceMappingITest {
 
     mongoOperations.insert(given);
 
-    try (var mongoClient = MONGO.createClient()) {
+    try (var mongoClient = getMongo().createClient()) {
       Document privateZoo =
-          mongoClient.getDatabase(MONGO.getDatabase()).getCollection("zoo").find().first();
+          mongoClient.getDatabase(getMongo().getDatabase()).getCollection("zoo").find().first();
 
       assertThat(privateZoo)
           .isNotNull()
@@ -107,8 +143,8 @@ class InheritanceMappingITest {
                     Map.of("_class", "dog", "name", "Wuff"),
                     Map.of("_class", "cat", "name", "Miez"))));
 
-    try (var mongoClient = MONGO.createClient()) {
-      mongoClient.getDatabase(MONGO.getDatabase()).getCollection("zoo").insertOne(given);
+    try (var mongoClient = getMongo().createClient()) {
+      mongoClient.getDatabase(getMongo().getDatabase()).getCollection("zoo").insertOne(given);
 
       List<PrivateZoo> all = mongoOperations.findAll(PrivateZoo.class);
       assertThat(all).hasSize(1);
@@ -141,4 +177,8 @@ class InheritanceMappingITest {
       return springDataMongoBundle.getMongoOperations();
     }
   }
+
+  abstract DropwizardAppExtension<MyConfiguration> getDW();
+
+  abstract MongoDbClassExtension getMongo();
 }

@@ -20,23 +20,49 @@ import org.sdase.commons.server.spring.data.mongo.example.model.Person;
 import org.sdase.commons.server.spring.data.mongo.example.model.PhoneNumber;
 import org.springframework.data.mongodb.core.MongoOperations;
 
-class SpringDataMongoMetricsIT {
+abstract class SpringDataMongoMetricsIT {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends SpringDataMongoMetricsIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<MyConfiguration> DW =
-      new DropwizardAppExtension<>(
-          MyApp.class,
-          null,
-          config("springDataMongo.connectionString", mongo::getConnectionString));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            MyApp.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
+
+  static class MongoDb50Test extends SpringDataMongoMetricsIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            MyApp.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
 
   @Test
   void shouldStartup() {
-    assertThat((MyApp) DW.getApplication()).isNotNull();
+    assertThat((MyApp) getDW().getApplication()).isNotNull();
   }
 
   @Test
@@ -54,7 +80,7 @@ class SpringDataMongoMetricsIT {
             .setBirthday(LocalDate.now().minusYears(age))
             .setPhoneNumber(phoneNumber);
 
-    MyApp app = DW.getApplication();
+    MyApp app = getDW().getApplication();
     MongoOperations mongoOperations = app.getMongoOperations();
     Person savedPerson = mongoOperations.save(person);
     mongoOperations.findById(savedPerson.getId(), Person.class);
@@ -80,4 +106,6 @@ class SpringDataMongoMetricsIT {
     assertThat(commandsCompositeTime.get().getId().getTags().toString())
         .doesNotContain(List.of(telephoneNumber, Integer.toString(age), name));
   }
+
+  abstract DropwizardAppExtension<MyConfiguration> getDW();
 }

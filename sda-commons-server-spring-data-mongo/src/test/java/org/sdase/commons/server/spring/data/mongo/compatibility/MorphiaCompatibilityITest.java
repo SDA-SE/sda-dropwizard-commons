@@ -5,6 +5,7 @@ import static java.time.ZoneId.systemDefault;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import de.flapdoodle.embed.mongo.distribution.Version;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -43,31 +44,69 @@ import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEntityWi
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEnum;
 import org.springframework.data.mongodb.core.MongoOperations;
 
-class MorphiaCompatibilityITest {
+abstract class MorphiaCompatibilityITest {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension MONGO = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends MorphiaCompatibilityITest {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension MONGO =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V4_4).build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<CompatibilityTestApp.Config> DW =
-      new DropwizardAppExtension<>(
-          CompatibilityTestApp.class,
-          null,
-          config("springDataMongo.connectionString", MONGO::getConnectionString));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<CompatibilityTestApp.Config> DW =
+        new DropwizardAppExtension<>(
+            CompatibilityTestApp.class,
+            null,
+            config("springDataMongo.connectionString", MONGO::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<CompatibilityTestApp.Config> getDW() {
+      return DW;
+    }
+
+    @Override
+    MongoDbClassExtension getMongo() {
+      return MONGO;
+    }
+  }
+
+  static class MongoDb50Test extends MorphiaCompatibilityITest {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension MONGO =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V5_0).build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<CompatibilityTestApp.Config> DW =
+        new DropwizardAppExtension<>(
+            CompatibilityTestApp.class,
+            null,
+            config("springDataMongo.connectionString", MONGO::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<CompatibilityTestApp.Config> getDW() {
+      return DW;
+    }
+
+    @Override
+    MongoDbClassExtension getMongo() {
+      return MONGO;
+    }
+  }
 
   MongoOperations mongoOperations;
   MyEntityWithGenericsRepository myEntityWithGenericsRepository;
 
   @BeforeEach
   void cleanCollection() {
-    MONGO.clearCollections();
+    getMongo().clearCollections();
   }
 
   @BeforeEach
   void initMongoOperations() {
-    CompatibilityTestApp app = DW.getApplication();
+    CompatibilityTestApp app = getDW().getApplication();
     this.mongoOperations = app.getMongoOperations();
     this.myEntityWithGenericsRepository = app.getMyEntityWithGenericsRepository();
   }
@@ -201,10 +240,10 @@ class MorphiaCompatibilityITest {
 
     mongoOperations.insert(given);
 
-    try (var mongoClient = MONGO.createClient()) {
+    try (var mongoClient = getMongo().createClient()) {
       var actual =
           mongoClient
-              .getDatabase(MONGO.getDatabase())
+              .getDatabase(getMongo().getDatabase())
               .getCollection("MyEntity")
               .find(new BsonDocument("_id", new BsonString("ID_1234")))
               .first();
@@ -247,4 +286,8 @@ class MorphiaCompatibilityITest {
       throw new UncheckedIOException(e);
     }
   }
+
+  abstract DropwizardAppExtension<CompatibilityTestApp.Config> getDW();
+
+  abstract MongoDbClassExtension getMongo();
 }

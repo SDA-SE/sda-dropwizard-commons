@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
 import com.mongodb.MongoClient;
+import de.flapdoodle.embed.mongo.distribution.Version;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,23 +25,61 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 /** Tests if entities can be added by exact definition. */
-class SpringDataMongoBundleLocalDateConvertersIT {
+abstract class SpringDataMongoBundleLocalDateConvertersIT {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends SpringDataMongoBundleLocalDateConvertersIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V4_4).build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<MyConfiguration> DW =
-      new DropwizardAppExtension<>(
-          MyMorphiaCompatibleApp.class,
-          null,
-          config("springDataMongo.connectionString", mongo::getConnectionString));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            MyMorphiaCompatibleApp.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+
+    @Override
+    MongoDbClassExtension getMongo() {
+      return mongo;
+    }
+  }
+
+  static class MongoDb50Test extends SpringDataMongoBundleLocalDateConvertersIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V5_0).build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            MyMorphiaCompatibleApp.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+
+    @Override
+    MongoDbClassExtension getMongo() {
+      return mongo;
+    }
+  }
 
   @BeforeEach
   void cleanCollection() {
-    mongo.clearCollections();
+    getMongo().clearCollections();
   }
 
   @Test
@@ -73,9 +112,9 @@ class SpringDataMongoBundleLocalDateConvertersIT {
     LocalDate birthday = LocalDate.of(1979, 2, 8);
     getMongoOperations().save(new Person().setName("Peter Parker").setBirthday(birthday));
 
-    try (MongoClient client = mongo.createClient()) {
+    try (MongoClient client = getMongo().createClient()) {
       Document foundPerson =
-          client.getDatabase(mongo.getDatabase()).getCollection("people").find().first();
+          client.getDatabase(getMongo().getDatabase()).getCollection("people").find().first();
 
       assertThat(foundPerson).isNotNull();
       assertThat(foundPerson.get("birthday")).isInstanceOf(String.class).isEqualTo("1979-02-08");
@@ -84,6 +123,10 @@ class SpringDataMongoBundleLocalDateConvertersIT {
   }
 
   private MongoOperations getMongoOperations() {
-    return ((MyMorphiaCompatibleApp) DW.getApplication()).getMongoOperations();
+    return ((MyMorphiaCompatibleApp) getDW().getApplication()).getMongoOperations();
   }
+
+  abstract DropwizardAppExtension<MyConfiguration> getDW();
+
+  abstract MongoDbClassExtension getMongo();
 }

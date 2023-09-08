@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.entry;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
+import de.flapdoodle.embed.mongo.distribution.Version;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
 import java.util.UUID;
@@ -30,11 +31,12 @@ abstract class AbstractMetadataContextStorageIntegrationTest {
   static final Logger LOG =
       LoggerFactory.getLogger(AbstractMetadataContextStorageIntegrationTest.class);
 
-  static final class DefaultSpringDataMongoConfigTest
+  static final class DefaultSpringDataMongoConfigTestMongo44
       extends AbstractMetadataContextStorageIntegrationTest {
     @RegisterExtension
     @Order(0)
-    static final MongoDbClassExtension MONGO = MongoDbClassExtension.builder().build();
+    static final MongoDbClassExtension MONGO =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V4_4).build();
 
     @RegisterExtension
     @Order(1)
@@ -55,11 +57,64 @@ abstract class AbstractMetadataContextStorageIntegrationTest {
     }
   }
 
-  static final class MorphiaCompatibilityConfigTest
+  static final class DefaultSpringDataMongoConfigTestMongo50
       extends AbstractMetadataContextStorageIntegrationTest {
     @RegisterExtension
     @Order(0)
-    static final MongoDbClassExtension MONGO = MongoDbClassExtension.builder().build();
+    static final MongoDbClassExtension MONGO =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V5_0).build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MetadataTestAppConfig> DW =
+        new DropwizardAppExtension<>(
+            MetadataTestApp.class,
+            null,
+            config("mongo.connectionString", MONGO::getConnectionString));
+
+    @Override
+    MongoOperations getMongoOperations() {
+      return ((MetadataTestApp) DW.getApplication()).getMongoOperations();
+    }
+
+    @Override
+    MongoDbClassExtension getMongo() {
+      return MONGO;
+    }
+  }
+
+  static final class MorphiaCompatibilityConfigTestMongo44
+      extends AbstractMetadataContextStorageIntegrationTest {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension MONGO =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V4_4).build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MetadataTestAppConfig> DW =
+        new DropwizardAppExtension<>(
+            MetadataCompatibilityTestApp.class,
+            null,
+            config("mongo.connectionString", MONGO::getConnectionString));
+
+    @Override
+    MongoOperations getMongoOperations() {
+      return ((MetadataCompatibilityTestApp) DW.getApplication()).getMongoOperations();
+    }
+
+    @Override
+    MongoDbClassExtension getMongo() {
+      return MONGO;
+    }
+  }
+
+  static final class MorphiaCompatibilityConfigTestMongo50
+      extends AbstractMetadataContextStorageIntegrationTest {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension MONGO =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V5_0).build();
 
     @RegisterExtension
     @Order(1)

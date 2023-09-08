@@ -3,6 +3,7 @@ package org.sdase.commons.server.spring.data.mongo;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import de.flapdoodle.embed.mongo.distribution.Version;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Order;
@@ -18,27 +19,59 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoOperations;
 
-class SpringDataMongoNotConnectionStringIT {
+abstract class SpringDataMongoNotConnectionStringIT {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends SpringDataMongoNotConnectionStringIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V4_4).build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<MyConfiguration> DW =
-      new DropwizardAppExtension<>(
-          MyApp.class,
-          null,
-          config("springDataMongo.hosts", mongo::getHosts),
-          config("springDataMongo.username", mongo::getUsername),
-          config("springDataMongo.password", mongo::getPassword),
-          config("springDataMongo.options", mongo::getOptions),
-          config("springDataMongo.database", mongo::getDatabase));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            MyApp.class,
+            null,
+            config("springDataMongo.hosts", mongo::getHosts),
+            config("springDataMongo.username", mongo::getUsername),
+            config("springDataMongo.password", mongo::getPassword),
+            config("springDataMongo.options", mongo::getOptions),
+            config("springDataMongo.database", mongo::getDatabase));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
+
+  static class MongoDb50Test extends SpringDataMongoNotConnectionStringIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V5_0).build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            MyApp.class,
+            null,
+            config("springDataMongo.hosts", mongo::getHosts),
+            config("springDataMongo.username", mongo::getUsername),
+            config("springDataMongo.password", mongo::getPassword),
+            config("springDataMongo.options", mongo::getOptions),
+            config("springDataMongo.database", mongo::getDatabase));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
 
   @Test
   void shouldStartup() {
-    assertThat((MyApp) DW.getApplication()).isNotNull();
+    assertThat((MyApp) getDW().getApplication()).isNotNull();
   }
 
   @Test
@@ -51,7 +84,7 @@ class SpringDataMongoNotConnectionStringIT {
             .setBirthday(LocalDate.now().minusYears(44))
             .setPhoneNumber(phoneNumber);
 
-    MyApp app = DW.getApplication();
+    MyApp app = getDW().getApplication();
     MongoOperations mongoOperations = app.getMongoOperations();
     Person savedPerson = mongoOperations.save(person);
 
@@ -61,9 +94,11 @@ class SpringDataMongoNotConnectionStringIT {
 
   @Test
   void readsFirstPageCorrectly() {
-    MyApp app = DW.getApplication();
+    MyApp app = getDW().getApplication();
     PersonRepository repository = app.getPersonRepository();
     Page<Person> persons = repository.findAll(PageRequest.of(0, 10));
     assertThat(persons.isFirst()).isTrue();
   }
+
+  abstract DropwizardAppExtension<MyConfiguration> getDW();
 }
