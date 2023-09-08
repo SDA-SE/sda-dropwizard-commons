@@ -4,6 +4,7 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mongodb.client.MongoCollection;
+import de.flapdoodle.embed.mongo.distribution.Version;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -24,19 +25,47 @@ import org.sdase.commons.server.spring.data.mongo.example.model.StringToPhoneNum
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 
-class SpringDataMongoBundleCustomConverterIT {
+abstract class SpringDataMongoBundleCustomConverterIT {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends SpringDataMongoBundleCustomConverterIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V4_4).build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<MyConfiguration> DW =
-      new DropwizardAppExtension<>(
-          TestApp.class,
-          null,
-          config("springDataMongo.connectionString", mongo::getConnectionString));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            TestApp.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
+
+  static class MongoDb50Test extends SpringDataMongoBundleCustomConverterIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V5_0).build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            TestApp.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
 
   @BeforeEach
   void verifyIndexBeforeAccessAndClean() {
@@ -69,7 +98,7 @@ class SpringDataMongoBundleCustomConverterIT {
   }
 
   private MongoOperations getMongoOperations() {
-    return DW.<TestApp>getApplication().getMongoOperations();
+    return getDW().<TestApp>getApplication().getMongoOperations();
   }
 
   public static class TestApp extends Application<MyConfiguration> {
@@ -96,4 +125,6 @@ class SpringDataMongoBundleCustomConverterIT {
       return springDataMongoBundle.getMongoOperations();
     }
   }
+
+  abstract DropwizardAppExtension<MyConfiguration> getDW();
 }

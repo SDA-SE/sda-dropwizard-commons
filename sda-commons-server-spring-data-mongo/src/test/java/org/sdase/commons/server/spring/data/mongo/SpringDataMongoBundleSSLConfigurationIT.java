@@ -5,6 +5,7 @@ import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mongodb.client.internal.MongoClientImpl;
+import de.flapdoodle.embed.mongo.distribution.Version;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -18,47 +19,105 @@ import org.sdase.commons.server.mongo.testing.MongoDbClassExtension;
 import org.sdase.commons.server.spring.data.mongo.example.MyConfiguration;
 import org.springframework.data.mongodb.core.MongoOperations;
 
-class SpringDataMongoBundleSSLConfigurationIT {
+abstract class SpringDataMongoBundleSSLConfigurationIT {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends SpringDataMongoBundleSSLConfigurationIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V4_4).build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<MyConfiguration> DW =
-      new DropwizardAppExtension<>(
-          AutoIndexDisabledApp.class,
-          null,
-          randomPorts(),
-          config("springDataMongo.connectionString", mongo::getConnectionString),
-          config("springDataMongo.useSsl", "true"),
-          config(
-              "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            AutoIndexDisabledApp.class,
+            null,
+            randomPorts(),
+            config("springDataMongo.connectionString", mongo::getConnectionString),
+            config("springDataMongo.useSsl", "true"),
+            config(
+                "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
 
-  @RegisterExtension
-  @Order(2)
-  static final DropwizardAppExtension<MyConfiguration> DW_WITHOUT_SSL =
-      new DropwizardAppExtension<>(
-          AutoIndexDisabledApp.class,
-          null,
-          randomPorts(),
-          config("springDataMongo.connectionString", mongo::getConnectionString),
-          config("springDataMongo.useSsl", "false"),
-          config(
-              "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
+    @RegisterExtension
+    @Order(2)
+    static final DropwizardAppExtension<MyConfiguration> DW_WITHOUT_SSL =
+        new DropwizardAppExtension<>(
+            AutoIndexDisabledApp.class,
+            null,
+            randomPorts(),
+            config("springDataMongo.connectionString", mongo::getConnectionString),
+            config("springDataMongo.useSsl", "false"),
+            config(
+                "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDwWithoutSSL() {
+      return DW_WITHOUT_SSL;
+    }
+  }
+
+  static class MongoDb50Test extends SpringDataMongoBundleSSLConfigurationIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V5_0).build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            AutoIndexDisabledApp.class,
+            null,
+            randomPorts(),
+            config("springDataMongo.connectionString", mongo::getConnectionString),
+            config("springDataMongo.useSsl", "true"),
+            config(
+                "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
+
+    @RegisterExtension
+    @Order(2)
+    static final DropwizardAppExtension<MyConfiguration> DW_WITHOUT_SSL =
+        new DropwizardAppExtension<>(
+            AutoIndexDisabledApp.class,
+            null,
+            randomPorts(),
+            config("springDataMongo.connectionString", mongo::getConnectionString),
+            config("springDataMongo.useSsl", "false"),
+            config(
+                "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDwWithoutSSL() {
+      return DW_WITHOUT_SSL;
+    }
+  }
 
   @Test
   void shouldHaveCreatedSSLContext() {
-    var sslContext = getSSLContext(DW);
+    var sslContext = getSSLContext(getDW());
     assertThat(sslContext).isNotNull();
   }
 
   @Test
   void shouldHaveNotCreatedSSLContext() {
-    var sslContext = getSSLContext(DW_WITHOUT_SSL);
+    var sslContext = getSSLContext(getDwWithoutSSL());
     assertThat(sslContext).isNull();
   }
+
+  abstract DropwizardAppExtension<MyConfiguration> getDW();
+
+  abstract DropwizardAppExtension<MyConfiguration> getDwWithoutSSL();
 
   private SSLContext getSSLContext(DropwizardAppExtension<MyConfiguration> DW) {
     return ((MongoClientImpl)

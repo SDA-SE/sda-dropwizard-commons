@@ -28,23 +28,59 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-class SpringDataMongoBundleCustomConverterOverwriteIT {
+abstract class SpringDataMongoBundleCustomConverterOverwriteIT {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends SpringDataMongoBundleCustomConverterOverwriteIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<MyConfiguration> DW =
-      new DropwizardAppExtension<>(
-          DefaultConvertersOverwrite.class,
-          null,
-          config("springDataMongo.connectionString", mongo::getConnectionString));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            DefaultConvertersOverwrite.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+
+    @Override
+    MongoDbClassExtension getMongo() {
+      return mongo;
+    }
+  }
+
+  static class MongoDb50Test extends SpringDataMongoBundleCustomConverterOverwriteIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            DefaultConvertersOverwrite.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+
+    @Override
+    MongoDbClassExtension getMongo() {
+      return mongo;
+    }
+  }
 
   @BeforeEach
   void setup() {
-    mongo.clearCollections();
+    getMongo().clearCollections();
   }
 
   @Test
@@ -90,8 +126,12 @@ class SpringDataMongoBundleCustomConverterOverwriteIT {
   }
 
   private MongoOperations getMongoOperations() {
-    return DW.<DefaultConvertersOverwrite>getApplication().getMongoOperations();
+    return getDW().<DefaultConvertersOverwrite>getApplication().getMongoOperations();
   }
+
+  abstract DropwizardAppExtension<MyConfiguration> getDW();
+
+  abstract MongoDbClassExtension getMongo();
 
   public static class DefaultConvertersOverwrite extends Application<MyConfiguration> {
 

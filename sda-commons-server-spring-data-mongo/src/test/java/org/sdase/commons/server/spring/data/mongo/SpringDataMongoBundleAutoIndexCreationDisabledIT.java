@@ -3,6 +3,7 @@ package org.sdase.commons.server.spring.data.mongo;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import de.flapdoodle.embed.mongo.distribution.Version;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -15,19 +16,47 @@ import org.sdase.commons.server.spring.data.mongo.example.MyConfiguration;
 import org.sdase.commons.server.spring.data.mongo.example.model.Person;
 import org.springframework.data.mongodb.core.MongoOperations;
 
-class SpringDataMongoBundleAutoIndexCreationDisabledIT {
+abstract class SpringDataMongoBundleAutoIndexCreationDisabledIT {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends SpringDataMongoBundleAutoIndexCreationDisabledIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V4_4).build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<MyConfiguration> DW =
-      new DropwizardAppExtension<>(
-          AutoIndexDisabledApp.class,
-          null,
-          config("springDataMongo.connectionString", mongo::getConnectionString));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            AutoIndexDisabledApp.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
+
+  static class MongoDb50Test extends SpringDataMongoBundleAutoIndexCreationDisabledIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(Version.Main.V5_0).build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            AutoIndexDisabledApp.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
 
   @Test
   void shouldNotHaveCreatedIndexed() {
@@ -37,8 +66,10 @@ class SpringDataMongoBundleAutoIndexCreationDisabledIT {
   }
 
   private MongoOperations getMongoOperations() {
-    return DW.<AutoIndexDisabledApp>getApplication().getMongoOperations();
+    return getDW().<AutoIndexDisabledApp>getApplication().getMongoOperations();
   }
+
+  abstract DropwizardAppExtension<MyConfiguration> getDW();
 
   public static class AutoIndexDisabledApp extends Application<MyConfiguration> {
 

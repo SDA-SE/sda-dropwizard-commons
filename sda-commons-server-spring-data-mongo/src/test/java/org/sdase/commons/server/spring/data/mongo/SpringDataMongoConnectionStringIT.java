@@ -18,23 +18,49 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoOperations;
 
-class SpringDataMongoConnectionStringIT {
+abstract class SpringDataMongoConnectionStringIT {
 
-  @RegisterExtension
-  @Order(0)
-  static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+  static class MongoDb44Test extends SpringDataMongoConnectionStringIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
 
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<MyConfiguration> DW =
-      new DropwizardAppExtension<>(
-          MyApp.class,
-          null,
-          config("springDataMongo.connectionString", mongo::getConnectionString));
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            MyApp.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
+
+  static class MongoDb50Test extends SpringDataMongoConnectionStringIT {
+    @RegisterExtension
+    @Order(0)
+    static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+
+    @RegisterExtension
+    @Order(1)
+    static final DropwizardAppExtension<MyConfiguration> DW =
+        new DropwizardAppExtension<>(
+            MyApp.class,
+            null,
+            config("springDataMongo.connectionString", mongo::getConnectionString));
+
+    @Override
+    DropwizardAppExtension<MyConfiguration> getDW() {
+      return DW;
+    }
+  }
 
   @Test
   void shouldStartup() {
-    assertThat((MyApp) DW.getApplication()).isNotNull();
+    assertThat((MyApp) getDW().getApplication()).isNotNull();
   }
 
   @Test
@@ -47,7 +73,7 @@ class SpringDataMongoConnectionStringIT {
             .setBirthday(LocalDate.now().minusYears(44))
             .setPhoneNumber(phoneNumber);
 
-    MyApp app = DW.getApplication();
+    MyApp app = getDW().getApplication();
     MongoOperations mongoOperations = app.getMongoOperations();
     Person savedPerson = mongoOperations.save(person);
 
@@ -65,7 +91,7 @@ class SpringDataMongoConnectionStringIT {
             .setBirthday(LocalDate.now().minusYears(44))
             .setPhoneNumber(phoneNumber);
 
-    MyApp app = DW.getApplication();
+    MyApp app = getDW().getApplication();
     MongoOperations mongoOperations = app.getMongoOperations();
     Person savedPerson = mongoOperations.save(person);
 
@@ -77,9 +103,11 @@ class SpringDataMongoConnectionStringIT {
 
   @Test
   void readsFirstPageCorrectly() {
-    MyApp app = DW.getApplication();
+    MyApp app = getDW().getApplication();
     PersonRepository repository = app.getPersonRepository();
     Page<Person> persons = repository.findAll(PageRequest.of(0, 10));
     assertThat(persons.isFirst()).isTrue();
   }
+
+  abstract DropwizardAppExtension<MyConfiguration> getDW();
 }
