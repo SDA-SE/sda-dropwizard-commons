@@ -179,7 +179,7 @@ dependencies {
     api "org.junit-pioneer:junit-pioneer:2.0.1"
 
     // sda-commons-shared-*
-    api 'commons-io:commons-io:2.13.0'
+    api 'commons-io:commons-io:20030203.000550'
 
     // sda-commons-server-opentelemetry
     api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:${openTelemetryVersion}"
