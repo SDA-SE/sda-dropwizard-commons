@@ -14,6 +14,16 @@ updates:
     include: scope
   labels:
     - 'dependencies'
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: "weekly"
+  labels:
+    - "dependencies"
+  commit-message:
+    prefix: "chore"
+    prefix-development: "chore"
+    include: scope
 # maintaining v2
 - package-ecosystem: gradle
   target-branch: "release/2.x.x"
