@@ -66,7 +66,7 @@ dependencies {
     api "commons-fileupload:commons-fileupload:1.5", {
       because "CVE-2023-24998 in 1.4"
     }
-    api "commons-codec:commons-codec:1.16.0", {
+    api "commons-codec:commons-codec:20041127.091804", {
       because "conflict between org.apache.httpcomponents:httpclient:4.5.12 and org.dbunit:dbunit:2.7.0"
     }
     api "io.github.classgraph:classgraph:4.8.162", {
