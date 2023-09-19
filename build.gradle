@@ -194,7 +194,11 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   apply plugin: 'java-library'
   apply plugin: 'jacoco'
 
-  sourceCompatibility = JavaVersion.VERSION_11
+  java {
+    // preferring `sourceCompatibility` over `toolchains` to be able to do builds with different
+    // Java versions
+    sourceCompatibility = JavaVersion.VERSION_11
+  }
 
   tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
