@@ -12,8 +12,8 @@ import java.util.List;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import wiremock.org.slf4j.Logger;
+import wiremock.org.slf4j.LoggerFactory;
 
 /** Junit 5 replacement for {@link com.github.tomakehurst.wiremock.junit.WireMockRule} */
 public class WireMockExtension extends WireMockServer

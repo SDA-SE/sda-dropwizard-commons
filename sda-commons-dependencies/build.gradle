@@ -83,7 +83,7 @@ dependencies {
       because "vulnerability CVE-2022-1471 in 1.33 and below"
     }
     api "net.javacrumbs.json-unit:json-unit-core:$jsonUnitVersion", {
-      because "conflict between com.github.tomakehurst:wiremock-jre8 and net.javacrumbs.json-unit:json-unit-assertj"
+      because "conflict between com.github.tomakehurst:wiremock-jre8-standalone and net.javacrumbs.json-unit:json-unit-assertj"
     }
 
     // overall testing dependencies
@@ -91,7 +91,7 @@ dependencies {
     api 'org.assertj:assertj-core:3.24.2'
 
     // sda-commons-client-jersey-wiremock-testing
-    api "com.github.tomakehurst:wiremock-jre8:3.0.1"
+    api "com.github.tomakehurst:wiremock-jre8-standalone:3.0.1"
     api "org.ow2.asm:asm:9.5", {
       because "version conflict within Wiremock"
     }

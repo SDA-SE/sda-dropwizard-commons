@@ -14,11 +14,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import wiremock.org.apache.commons.io.IOUtils;
 
 class NoGuavaTest {
 

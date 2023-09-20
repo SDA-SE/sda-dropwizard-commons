@@ -8,8 +8,8 @@ import com.github.tomakehurst.wiremock.core.Options;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import wiremock.org.slf4j.Logger;
+import wiremock.org.slf4j.LoggerFactory;
 
 /** Junit 5 replacement for {@link com.github.tomakehurst.wiremock.junit.WireMockClassRule} */
 public class WireMockClassExtension extends WireMockServer

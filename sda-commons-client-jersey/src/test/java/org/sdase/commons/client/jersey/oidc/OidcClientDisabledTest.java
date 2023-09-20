@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.codahale.metrics.MetricFilter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
-import com.github.tomakehurst.wiremock.jetty9.JettyHttpServerFactory;
+import com.github.tomakehurst.wiremock.jetty.JettyHttpServerFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;

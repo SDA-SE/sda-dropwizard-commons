@@ -22,7 +22,7 @@ import static org.awaitility.Awaitility.given;
 
 import com.codahale.metrics.MetricFilter;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
-import com.github.tomakehurst.wiremock.jetty9.JettyHttpServerFactory;
+import com.github.tomakehurst.wiremock.jetty.JettyHttpServerFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
