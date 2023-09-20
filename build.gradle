@@ -293,9 +293,11 @@ configure(subprojects.findAll { javaPlatformModules.contains(it.name) }) {
 
 // Reconfigure the testReport task to display the results of all modules into a single report
 task testReport(type: TestReport) {
-  destinationDirectory = file("$buildDir/reports/allTests")
+  destinationDirectory = project.layout.buildDirectory.dir("reports/allTests")
   // Include the results from the `test` task in all subprojects
-  reportOn subprojects.findAll { !javaPlatformModules.contains(it.name) }*.test
+  testResults.from(
+      subprojects.findAll { !javaPlatformModules.contains(it.name) }*.test.binaryResultsDirectory
+      )
 }
 
 // Create a combined XML report of all modules in the root project
