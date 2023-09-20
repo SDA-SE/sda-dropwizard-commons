@@ -1,0 +1,27 @@
+// See documentation: https://docs.gradle.org/current/userguide/test_report_aggregation_plugin.html
+// Standalone example: https://docs.gradle.org/current/samples/sample_jvm_multi_project_with_test_aggregation_standalone.html
+plugins {
+  id 'base'
+  id 'test-report-aggregation'
+}
+
+// static dependencies
+dependencies {
+  "testReportAggregation" enforcedPlatform(project(':sda-commons-dependencies'))
+  "testReportAggregation" enforcedPlatform(project(':sda-commons-bom'))
+}
+
+// dynamic dependencies
+var excludedModules = List.of("sda-commons-dependencies", "sda-commons-bom")
+getParent().subprojects
+    .findAll {!excludedModules.contains(it.name) }
+    .findAll {it.name == "sda-commons-client-jersey" } // TODO remove line
+    .forEach { println("FOO: " + it.name); dependencies.add("testReportAggregation", project(":${it.name}"))}
+
+reporting {
+  reports {
+    testAggregateTestReport(AggregateTestReport) {
+      testType = TestSuiteType.UNIT_TEST
+    }
+  }
+}

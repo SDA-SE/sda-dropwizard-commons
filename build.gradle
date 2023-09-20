@@ -48,7 +48,7 @@ List<String> javaPlatformModules = Arrays.asList("sda-commons-bom", "sda-commons
 /**
  * There are some additional modules that are excluded from publishing
  */
-List<String> unpublishedModules = javaPlatformModules + Arrays.asList("sda-commons-dependency-check")
+List<String> unpublishedModules = javaPlatformModules + List.of("sda-commons-dependency-check", "test-results")
 project.ext.unpublishedModules = unpublishedModules
 
 spotless {
@@ -63,9 +63,12 @@ spotless {
  */
 subprojects {
   apply plugin: 'maven-publish'
-  apply plugin: 'com.diffplug.spotless'
   apply plugin: 'signing'
   apply plugin: 'project-report'
+
+  if (it.name != "test-results") {
+    apply plugin: 'com.diffplug.spotless'
+  }
 
   group 'org.sdase.commons'
 
@@ -84,22 +87,24 @@ subprojects {
     enabled = false
   }
 
-  spotless {
-    if (!javaPlatformModules.contains(project.name)) {
-      java {
-        googleJavaFormat('1.15.0')
+  if (project.name != "test-results") {
+    spotless {
+      if (!javaPlatformModules.contains(project.name)) {
+        java {
+          googleJavaFormat('1.15.0')
+        }
       }
-    }
-    groovyGradle {
-      greclipse()
-      indentWithSpaces(2)
+      groovyGradle {
+        greclipse()
+        indentWithSpaces(2)
+      }
     }
   }
 
   version = System.getenv('SEMANTIC_VERSION')
 
-  // Don't configure publishing for the example projects
-  if (!it.name.endsWith("-example")) {
+  // Don't configure publishing for some modules
+  if (!unpublishedModules.contains(it.name)) {
     signing {
       def signingKey = findProperty("signingKey")
       def signingPassword = findProperty("signingPassword")
@@ -190,7 +195,7 @@ subprojects {
  *
  * Problem is: You can't apply plugins 'java' and 'java-platform' at the same time.
  */
-configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
+configure(subprojects.findAll { !javaPlatformModules.contains(it.name) && "test-results" != it.name }) {
   apply plugin: 'java-library'
   apply plugin: 'jacoco'
 
@@ -230,8 +235,8 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     useJUnitPlatform()
   }
 
-  configurations.all {
-    resolutionStrategy {
+  configurations.matching { it.name != "testReportAggregation" }.forEach {
+    it.resolutionStrategy {
       // fail eagerly on version conflict (includes transitive dependencies)
       // e.g. multiple different versions of the same dependency (group and name are equal)
       failOnVersionConflict()
@@ -287,13 +292,6 @@ configure(subprojects.findAll { javaPlatformModules.contains(it.name) }) {
       }
     }
   }
-}
-
-// Reconfigure the testReport task to display the results of all modules into a single report
-task testReport(type: TestReport) {
-  destinationDirectory = file("$buildDir/reports/allTests")
-  // Include the results from the `test` task in all subprojects
-  reportOn subprojects.findAll { !javaPlatformModules.contains(it.name) }*.test
 }
 
 // Create a combined XML report of all modules in the root project

@@ -44,14 +44,14 @@ jobs:
 
       - name: Generate Test Report
         if: always()
-        run: ./gradlew -x test testReport codeCoverageReport
+        run: ./gradlew -x test testAggregateTestReport codeCoverageReport
 
       - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3
         if: always()
         with:
           name: ${{ matrix.os }}-${{ matrix.java_version }}-test-results
           path: |
-            build/reports/
+            test-results/build/reports/
             */build/test-results/**/*.xml
           retention-days: 7
 
