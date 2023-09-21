@@ -118,7 +118,7 @@ public class OpenApiBundleTestApp extends Application<Configuration>
               mediaType = APPLICATION_JSON,
               schema = @Schema(implementation = HouseSearchResource.class)))
   public HouseSearchResource searchHouse() {
-    return new HouseSearchResource(Collections.emptyList(), 0);
+    return new HouseSearchResource(Collections.emptyList(), Collections.emptyList(), 0);
   }
 
   @GET

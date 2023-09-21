@@ -112,6 +112,11 @@ components:
           type: "string"
           description: "Name of the animal"
           example: "Hasso"
+    AnimalFilter:
+      type: "object"
+      properties:
+        animal:
+          type: "string"
     HALLink:
       type: "object"
       description: "Representation of a link as defined in HAL"
@@ -170,6 +175,11 @@ components:
     HouseSearchResource:
       type: "object"
       properties:
+        filters:
+          type: "array"
+          description: "The filters to apply"
+          items:
+            $ref: "#/components/schemas/AnimalFilter"
         houses:
           type: "array"
           description: "A list of found houses"
@@ -180,6 +190,7 @@ components:
           format: "int32"
           description: "The total count of houses"
       required:
+      - "filters"
       - "houses"
       - "totalCount"
     NaturalPerson:

@@ -10,6 +10,9 @@ import java.util.List;
 @Schema(name = "HouseSearchResource")
 public class HouseSearchResource {
 
+  @ArraySchema(arraySchema = @Schema(description = "The filters to apply", required = true))
+  private List<AnimalFilter> filters = new ArrayList<>();
+
   @ArraySchema(arraySchema = @Schema(description = "A list of found houses", required = true))
   private List<HouseResource> houses = new ArrayList<>();
 
@@ -18,11 +21,17 @@ public class HouseSearchResource {
 
   @JsonCreator
   public HouseSearchResource(
+      @JsonProperty("filters") List<AnimalFilter> filters,
       @JsonProperty("houses") List<HouseResource> houses,
       @JsonProperty("totalCount") int totalCount) {
 
+    this.filters.addAll(filters);
     this.houses.addAll(houses);
     this.totalCount = totalCount;
+  }
+
+  public List<AnimalFilter> getFilters() {
+    return filters;
   }
 
   public List<HouseResource> getHouses() {
