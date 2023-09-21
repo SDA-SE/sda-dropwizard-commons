@@ -311,7 +311,7 @@ task codeCoverageReport(type: JacocoReport) {
 
   reports {
     xml.required = true
-    xml.destination file("${buildDir}/reports/jacoco/report.xml")
+    xml.outputLocation = project.layout.buildDirectory.file("reports/jacoco/report.xml")
   }
 
   dependsOn ":testReport"
