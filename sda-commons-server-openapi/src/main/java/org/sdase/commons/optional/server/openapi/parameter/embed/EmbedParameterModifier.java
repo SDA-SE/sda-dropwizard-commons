@@ -118,10 +118,21 @@ public class EmbedParameterModifier implements ReaderListener {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-    // only when there is a single list entry that supports embedding
-    if (nestedRefs.size() == 1) {
-      // get the model definition from the array
-      return getSchemaDefinition(definitions, nestedRefs.get(0));
+    // normally a search result model contains besides other meta information a list with the
+    // initially passed filters and a list with the search results therefore the correct list must
+    // be filtered
+    var schemaDefinition =
+        nestedRefs.stream()
+            // map refs to model definition
+            .map(schemaRef -> getSchemaDefinition(definitions, schemaRef))
+            // filter the model definition with embedded properties
+            .filter(
+                schema ->
+                    schema.getProperties() != null
+                        && schema.getProperties().containsKey(EMBEDDED_PROPERTY))
+            .findFirst();
+    if (schemaDefinition.isPresent()) {
+      return schemaDefinition.get();
     }
 
     return definition;

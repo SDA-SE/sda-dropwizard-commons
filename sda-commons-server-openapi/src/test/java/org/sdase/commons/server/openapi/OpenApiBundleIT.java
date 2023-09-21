@@ -171,6 +171,7 @@ class OpenApiBundleIT {
             NATURAL_PERSON_DEFINITION,
             PARTNER_DEFINITION,
             "HALLink",
+            "AnimalFilter",
             "Animal",
             "House",
             "HouseSearchResource",
