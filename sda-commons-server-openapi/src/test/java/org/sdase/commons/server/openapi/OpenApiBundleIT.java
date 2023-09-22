@@ -6,9 +6,12 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
+import static org.sdase.commons.server.openapi.OpenApiFileHelper.normalizeOpenApiYaml;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,6 +21,7 @@ import org.junitpioneer.jupiter.StdIo;
 import org.junitpioneer.jupiter.StdOut;
 import org.sdase.commons.server.openapi.apps.test.OpenApiBundleTestApp;
 import org.sdase.commons.server.openapi.test.OpenApiAssertions;
+import org.sdase.commons.server.testing.GoldenFileAssertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +56,14 @@ class OpenApiBundleIT {
 
   private static String getTarget() {
     return "http://localhost:" + DW.getLocalPort();
+  }
+
+  @Test
+  void shouldHaveSameOpenApiInRepository() throws Exception {
+    var actual = getYamlRequest().get(String.class);
+    Path expectedPath = Paths.get("src/test/resources/expected-openapi.yaml");
+    GoldenFileAssertions.assertThat(expectedPath)
+        .hasYamlContentAndUpdateGolden(normalizeOpenApiYaml(actual));
   }
 
   @Test
