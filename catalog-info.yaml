@@ -11,6 +11,7 @@ metadata:
       configure the framework with default SDA specific settings and add support for an easy and
       fast integration of standard technologies such as SQL, noSQL, or messaging frameworks.
     sda.se/federation-scopes: public
+    backstage.io/techdocs-ref: .
   description: |
     SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow
     the patterns and specifications promoted by the SDA SE.
