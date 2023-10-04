@@ -107,12 +107,13 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
                 }));
   }
 
+  @SuppressWarnings("java:S2095")
   private static void bindJvmAndSystemMetricsToGlobalRegistry() {
     // JVM and System Metrics
     new JvmMemoryMetrics().bindTo(Metrics.globalRegistry);
-    try (var jvmGcMetrics = new JvmGcMetrics()) {
-      jvmGcMetrics.bindTo(Metrics.globalRegistry);
-    }
+    // ignore Sonar and not using "try-with-resources" pattern to prevent closing of JVMMetrics
+    // otherwise jvm.gc.pause will not be available
+    new JvmGcMetrics().bindTo(Metrics.globalRegistry);
     new ProcessorMetrics().bindTo(Metrics.globalRegistry);
     new JvmThreadMetrics().bindTo(Metrics.globalRegistry);
   }
