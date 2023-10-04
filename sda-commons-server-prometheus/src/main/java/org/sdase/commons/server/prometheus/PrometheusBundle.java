@@ -9,6 +9,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
@@ -65,6 +66,8 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
   public static final String APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS =
       "apache_http_client_request_duration_seconds";
 
+  private static final String DEPRECATED = "deprecated";
+
   private RequestDurationHistogramSpecification requestDurationHistogramSpecification;
 
   // use PrometheusBundle.builder()... to get an instance
@@ -116,6 +119,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     new JvmGcMetrics().bindTo(Metrics.globalRegistry);
     new ProcessorMetrics().bindTo(Metrics.globalRegistry);
     new JvmThreadMetrics().bindTo(Metrics.globalRegistry);
+    new ClassLoaderMetrics().bindTo(Metrics.globalRegistry);
   }
 
   private void initializeDropwizardMetricsBridge(Environment environment) {
@@ -141,32 +145,32 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
   private List<MapperConfig> createMetricsMapperConfigs() {
     List<MapperConfig> mappers = new ArrayList<>();
     mappers.add(createMapperConfig("ch.qos.logback.core.*.*", "logback_appender", "name", "level"));
-    mappers.add(createMapperConfig("jvm.gc.*.count", "jvm_gc_total", "step", "deprecated"));
-    mappers.add(createMapperConfig("jvm.gc.*.time", "jvm_gc_seconds", "step", "deprecated"));
+    mappers.add(createMapperConfig("jvm.gc.*.count", "jvm_gc_total", "step", DEPRECATED));
+    mappers.add(createMapperConfig("jvm.gc.*.time", "jvm_gc_seconds", "step", DEPRECATED));
     mappers.add(
         createMapperConfig(
             "jvm.memory.pools.*.committed",
             "jvm_memory_pools_committed_bytes",
             "pool",
-            "deprecated"));
+            DEPRECATED));
     mappers.add(
         createMapperConfig(
-            "jvm.memory.pools.*.init", "jvm_memory_pools_init_bytes", "pool", "deprecated"));
+            "jvm.memory.pools.*.init", "jvm_memory_pools_init_bytes", "pool", DEPRECATED));
     mappers.add(
         createMapperConfig(
-            "jvm.memory.pools.*.max", "jvm_memory_pools_max_bytes", "pool", "deprecated"));
+            "jvm.memory.pools.*.max", "jvm_memory_pools_max_bytes", "pool", DEPRECATED));
     mappers.add(
         createMapperConfig(
-            "jvm.memory.pools.*.used", "jvm_memory_pools_used_bytes", "pool", "deprecated"));
+            "jvm.memory.pools.*.used", "jvm_memory_pools_used_bytes", "pool", DEPRECATED));
     mappers.add(
         createMapperConfig(
-            "jvm.memory.pools.*.usage", "jvm_memory_pools_usage_ratio", "pool", "deprecated"));
+            "jvm.memory.pools.*.usage", "jvm_memory_pools_usage_ratio", "pool", DEPRECATED));
     mappers.add(
         createMapperConfig(
             "jvm.memory.pools.*.used-after-gc",
             "jvm_memory_pools_used_after_gc_bytes",
             "pool",
-            "deprecated"));
+            DEPRECATED));
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.available-connections",

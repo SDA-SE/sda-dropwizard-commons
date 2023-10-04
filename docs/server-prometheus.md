@@ -70,6 +70,8 @@ following metrics are available so far.
 | `jvm_threads_live`                           |                         | The current number of live threads including both daemon and non-daemon threads.                                                                                                  | Bridged from Micrometer |
 | `jvm_threads_started_threads_total`          |                         | The total number of application threads started in the JVM.                                                                                                                       | Bridged from Micrometer |
 | `jvm_threads_states_threads`                 | `state`                 | The current number of threads.                                                                                                                                                    | Bridged from Micrometer |
+| `jvm_classes_loaded`                         |                         | The number of classes that are currently loaded in the Java virtual machine.                                                                                                      | Bridged from Micrometer |
+| `jvm_classes_unloaded`                       |                         | The total number of classes unloaded since the Java virtual machine has started execution.                                                                                        | Bridged from Micrometer |
 
 
 ### Kafka
