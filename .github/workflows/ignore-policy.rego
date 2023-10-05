@@ -10,7 +10,9 @@ ignore_cves := {
   # Quartz only used in test. Affected method: https://github.com/quartz-scheduler/quartz/issues/943
   "CVE-2023-39017",
   # Flapdoodle is only used in test.
-  "CVE-2023-42503"
+  "CVE-2023-42503",
+  # Netty is used by Zookeeper which is only used in test.
+  "CVE-2023-4586"
 }
 
 ignore {
