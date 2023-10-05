@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
 import io.prometheus.client.Collector;
@@ -13,6 +14,7 @@ import io.prometheus.client.CollectorRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
@@ -238,6 +240,46 @@ class PrometheusBundleTest {
     assertThat(sampleList.get(0).labelValues).contains("testTagValue");
 
     assertThat(sampleList.get(0).value).isEqualTo(2);
+  }
+
+  @Test
+  void micrometerJVMMetricsAvailable() {
+
+    MeterRegistry globalRegistry = Metrics.globalRegistry;
+
+    List<Meter> meters = globalRegistry.getMeters();
+
+    List<Meter> jvmBufferList =
+        meters.stream()
+            .filter(m -> m.getId().getName().startsWith("jvm.buffer"))
+            .collect(Collectors.toList());
+    List<Meter> jvmMemoryList =
+        meters.stream()
+            .filter(m -> m.getId().getName().startsWith("jvm.memory"))
+            .collect(Collectors.toList());
+    List<Meter> jvmProcessorList =
+        meters.stream()
+            .filter(m -> m.getId().getName().contains("cpu"))
+            .collect(Collectors.toList());
+    List<Meter> jvmThreadsList =
+        meters.stream()
+            .filter(m -> m.getId().getName().startsWith("jvm.threads"))
+            .collect(Collectors.toList());
+    List<Meter> jvmClassesList =
+        meters.stream()
+            .filter(m -> m.getId().getName().startsWith("jvm.classes"))
+            .collect(Collectors.toList());
+    List<Meter> jvmGcList =
+        meters.stream()
+            .filter(m -> m.getId().getName().startsWith("jvm.gc"))
+            .collect(Collectors.toList());
+
+    assertThat(jvmBufferList).hasSize(6);
+    assertThat(jvmMemoryList).hasSize(24);
+    assertThat(jvmProcessorList).hasSize(3);
+    assertThat(jvmThreadsList).hasSize(10);
+    assertThat(jvmClassesList).hasSize(2);
+    assertThat(jvmGcList).hasSize(5);
   }
 
   private Invocation.Builder prepareResourceRequest() {
