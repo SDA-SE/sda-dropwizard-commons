@@ -274,12 +274,13 @@ class PrometheusBundleTest {
             .filter(m -> m.getId().getName().startsWith("jvm.gc"))
             .collect(Collectors.toList());
 
-    assertThat(jvmBufferList).hasSize(6);
-    assertThat(jvmMemoryList).hasSize(24);
-    assertThat(jvmProcessorList).hasSize(3);
-    assertThat(jvmThreadsList).hasSize(10);
-    assertThat(jvmClassesList).hasSize(2);
-    assertThat(jvmGcList).hasSize(5);
+    // assertions are not strict since metrics depend on Java version
+    assertThat(jvmBufferList).hasSizeGreaterThanOrEqualTo(6);
+    assertThat(jvmMemoryList).hasSizeGreaterThanOrEqualTo(24);
+    assertThat(jvmProcessorList).hasSizeGreaterThanOrEqualTo(3);
+    assertThat(jvmThreadsList).hasSizeGreaterThanOrEqualTo(10);
+    assertThat(jvmClassesList).hasSizeGreaterThanOrEqualTo(2);
+    assertThat(jvmGcList).hasSizeGreaterThanOrEqualTo(5);
   }
 
   private Invocation.Builder prepareResourceRequest() {
