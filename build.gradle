@@ -19,8 +19,6 @@ allprojects {
   apply plugin: 'idea'
   idea.module.inheritOutputDirs = true
 
-  dependencyLocking { lockAllConfigurations() }
-
   // Task for creating gradle.lockfile per module. Needed for Trivy vulnerability scan.
   task resolveAndLockAll {
     doFirst {
@@ -193,6 +191,19 @@ subprojects {
 configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   apply plugin: 'java-library'
   apply plugin: 'jacoco'
+
+  // activate dependency locking for most configurations
+  var ignoredConfigurationPatternsForDependencyLocking = Set.of("test.*", "jacoco.*")
+  configurations.matching { configuration ->
+    var match = !ignoredConfigurationPatternsForDependencyLocking.any { configuration.name.matches(it) }
+    if (!match) {
+      println "Ignoring dependency locking for '${it.name}:${configuration.name}'"
+    }
+    return match
+  }.each {configuration ->
+    println "Activating dependency locking for '${it.name}:${configuration.name}'"
+    configuration.resolutionStrategy.activateDependencyLocking()
+  }
 
   java {
     // preferring `sourceCompatibility` over `toolchains` to be able to do builds with different
