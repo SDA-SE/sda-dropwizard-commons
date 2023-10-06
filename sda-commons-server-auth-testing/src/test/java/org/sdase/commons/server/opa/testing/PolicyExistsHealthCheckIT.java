@@ -18,7 +18,7 @@ import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
 
 class PolicyExistsHealthCheckIT {
 
-  @RegisterExtension private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
+  @RegisterExtension static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
   private PolicyExistsHealthCheck policyExistsHealthCheck;
 

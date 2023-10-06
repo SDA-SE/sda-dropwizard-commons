@@ -29,11 +29,11 @@ class AuthClassExtensionIT {
 
   @Order(0)
   @RegisterExtension
-  private static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
+  static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
   @Order(1)
   @RegisterExtension
-  private static final DropwizardAppExtension<AuthTestConfig> DW =
+  static final DropwizardAppExtension<AuthTestConfig> DW =
       new DropwizardAppExtension<>(
           AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 

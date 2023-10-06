@@ -29,12 +29,12 @@ class OpaResponsesIT {
 
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+  static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
       new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
           ResourceHelpers.resourceFilePath("test-opa-config.yaml"),

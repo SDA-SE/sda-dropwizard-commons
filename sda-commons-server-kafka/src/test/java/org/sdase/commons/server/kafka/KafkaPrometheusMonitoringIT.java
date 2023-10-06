@@ -39,7 +39,7 @@ class KafkaPrometheusMonitoringIT {
 
   @RegisterExtension
   @Order(0)
-  private static final SharedKafkaTestResource KAFKA =
+  static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           // we only need one consumer offsets partition
           .withBrokerProperty("offsets.topic.num.partitions", "1")
@@ -53,7 +53,7 @@ class KafkaPrometheusMonitoringIT {
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<KafkaTestConfiguration> DROPWIZARD_APP_EXTENSION =
+  static final DropwizardAppExtension<KafkaTestConfiguration> DROPWIZARD_APP_EXTENSION =
       new DropwizardAppExtension<>(
           KafkaTestApplication.class,
           resourceFilePath("test-config-default.yml"),

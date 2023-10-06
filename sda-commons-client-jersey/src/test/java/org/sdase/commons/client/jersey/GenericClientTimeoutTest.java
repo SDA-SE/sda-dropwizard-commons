@@ -32,12 +32,12 @@ class GenericClientTimeoutTest {
 
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<ClientTestConfig> dw =
+  static final DropwizardAppExtension<ClientTestConfig> dw =
       new DropwizardAppExtension<>(ClientTestApp.class, resourceFilePath("test-config.yaml"));
 
   private ClientTestApp app;

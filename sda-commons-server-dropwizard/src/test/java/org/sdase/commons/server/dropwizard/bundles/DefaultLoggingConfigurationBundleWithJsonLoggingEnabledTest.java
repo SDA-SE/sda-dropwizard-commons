@@ -24,7 +24,7 @@ import org.sdase.commons.server.dropwizard.bundles.test.LoggingTestApp;
 class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
 
   @RegisterExtension
-  private static final DropwizardAppExtension<Configuration> DW =
+  static final DropwizardAppExtension<Configuration> DW =
       new DropwizardAppExtension<>(
           LoggingTestApp.class, resourceFilePath("without-appenders-key-config.yaml"));
 

@@ -26,12 +26,12 @@ import org.sdase.commons.server.prometheus.PrometheusBundle;
 class CircuitBreakerBundleTestIT {
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<AppConfiguration> DW =
+  static final DropwizardAppExtension<AppConfiguration> DW =
       new DropwizardAppExtension<>(
           TestApp.class, ResourceHelpers.resourceFilePath("test-config.yml"));
 

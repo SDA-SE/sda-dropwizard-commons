@@ -18,7 +18,7 @@ import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 class OpaDisabledIT {
 
   @RegisterExtension
-  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+  static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
       new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
           resourceFilePath("test-opa-config.yaml"),

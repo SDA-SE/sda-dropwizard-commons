@@ -22,12 +22,11 @@ class S3WithExternalHealthCheckIT {
 
   @RegisterExtension
   @Order(0)
-  private static final S3ClassExtension S3 =
-      S3ClassExtension.builder().createBucket("testbucket").build();
+  static final S3ClassExtension S3 = S3ClassExtension.builder().createBucket("testbucket").build();
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<Config> DW =
+  static final DropwizardAppExtension<Config> DW =
       new DropwizardAppExtension<>(
           S3WithExternalHealthCheckTestApp.class,
           resourceFilePath("test-config.yml"),

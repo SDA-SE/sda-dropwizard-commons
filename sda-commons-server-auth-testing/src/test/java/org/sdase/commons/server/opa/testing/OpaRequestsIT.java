@@ -28,16 +28,16 @@ class OpaRequestsIT {
 
   @RegisterExtension
   @Order(0)
-  private static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
+  static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
   @RegisterExtension
   @Order(1)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   @RegisterExtension
   @Order(2)
-  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+  static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
       new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
           ResourceHelpers.resourceFilePath("test-config.yaml"),

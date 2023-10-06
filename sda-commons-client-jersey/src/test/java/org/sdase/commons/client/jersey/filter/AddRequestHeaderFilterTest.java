@@ -19,7 +19,7 @@ import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 class AddRequestHeaderFilterTest {
 
   @RegisterExtension
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   @BeforeEach

@@ -23,7 +23,7 @@ class AuthRuleCustomizationJUnit5IT {
 
   @Order(0)
   @RegisterExtension
-  private static final AuthClassExtension AUTH =
+  static final AuthClassExtension AUTH =
       AuthClassExtension.builder()
           .withKeyId(null)
           .withIssuer("customIssuer") // NOSONAR
@@ -35,7 +35,7 @@ class AuthRuleCustomizationJUnit5IT {
 
   @Order(1)
   @RegisterExtension
-  private static final DropwizardAppExtension<AuthTestConfig> DW =
+  static final DropwizardAppExtension<AuthTestConfig> DW =
       new DropwizardAppExtension<>(
           AuthTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 

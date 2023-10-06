@@ -21,7 +21,7 @@ class KafkaWithoutHealthCheckIT {
 
   @RegisterExtension
   @Order(0)
-  private static final SharedKafkaTestResource KAFKA =
+  static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           // we only need one consumer offsets partition
           .withBrokerProperty("offsets.topic.num.partitions", "1")
@@ -31,7 +31,7 @@ class KafkaWithoutHealthCheckIT {
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<KafkaTestConfiguration> DW =
+  static final DropwizardAppExtension<KafkaTestConfiguration> DW =
       new DropwizardAppExtension<>(
           KafkaWithoutHealthCheckTestApplication.class,
           resourceFilePath("test-config-default.yml"),

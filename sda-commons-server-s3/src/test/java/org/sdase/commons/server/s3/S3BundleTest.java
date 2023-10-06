@@ -26,14 +26,14 @@ class S3BundleTest {
 
   @RegisterExtension
   @Order(0)
-  private static final S3ClassExtension S3 =
+  static final S3ClassExtension S3 =
       S3ClassExtension.builder().putObject("bucket", "key", "data").build();
 
   @RegisterExtension static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<Config> DW =
+  static final DropwizardAppExtension<Config> DW =
       new DropwizardAppExtension<>(
           TestApp.class,
           null,

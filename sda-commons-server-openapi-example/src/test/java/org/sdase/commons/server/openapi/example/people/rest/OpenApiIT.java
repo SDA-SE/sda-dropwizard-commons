@@ -23,7 +23,7 @@ class OpenApiIT {
   // Connect provider for the tests
   @RegisterExtension
   @Order(0)
-  private static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
+  static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
   @RegisterExtension
   @Order(1)

@@ -18,7 +18,7 @@ import org.sdase.commons.server.dropwizard.bundles.test.LoggingTestApp;
 class DefaultLoggingConfigurationBundleWithConsoleAppenderTest {
 
   @RegisterExtension
-  private static final DropwizardAppExtension<Configuration> DW =
+  static final DropwizardAppExtension<Configuration> DW =
       new DropwizardAppExtension<>(
           LoggingTestApp.class, resourceFilePath("with-console-appender-config.yaml"));
 

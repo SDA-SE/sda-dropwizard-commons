@@ -29,7 +29,7 @@ class ApiClientWithoutConsumerTokenTest {
 
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   private static final ObjectMapper OM = new ObjectMapper();
@@ -40,7 +40,7 @@ class ApiClientWithoutConsumerTokenTest {
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<ClientTestConfig> DW =
+  static final DropwizardAppExtension<ClientTestConfig> DW =
       new DropwizardAppExtension<>(
           ClientWithoutConsumerTokenTestApp.class,
           resourceFilePath("test-config.yaml"),

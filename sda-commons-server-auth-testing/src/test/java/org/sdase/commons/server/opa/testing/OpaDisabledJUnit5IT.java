@@ -19,11 +19,11 @@ class OpaDisabledJUnit5IT {
 
   @RegisterExtension
   @Order(0)
-  private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
+  static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
+  static final DropwizardAppExtension<OpaBundeTestAppConfiguration> DW =
       new DropwizardAppExtension<>(
           OpaBundleTestApp.class,
           resourceFilePath("test-opa-config.yaml"),

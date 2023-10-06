@@ -19,12 +19,12 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 class OpenTelemetryTracingAppIT {
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<Configuration> APP =
+  static final DropwizardAppExtension<Configuration> APP =
       new DropwizardAppExtension<>(OpenTelemetryTracingApp.class, new Configuration());
 
   @RegisterExtension
   @Order(0)
-  private static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
+  static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
   @Test
   void shouldGetInstrumented() {

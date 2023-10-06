@@ -32,7 +32,7 @@ class KafkaBundleWithSslTruststoreIT {
 
   @RegisterExtension
   @Order(1)
-  private static final SystemPropertyClassExtension PROP =
+  static final SystemPropertyClassExtension PROP =
       new SystemPropertyClassExtension()
           .setProperty(
               "javax.net.ssl.trustStore",
@@ -41,7 +41,7 @@ class KafkaBundleWithSslTruststoreIT {
 
   @RegisterExtension
   @Order(2)
-  private static final SharedKafkaTestResource KAFKA =
+  static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           // Register and configure SSL authentication on cluster.
           .registerListener(
@@ -60,7 +60,7 @@ class KafkaBundleWithSslTruststoreIT {
 
   @RegisterExtension
   @Order(3)
-  private static final DropwizardAppExtension<KafkaTestConfiguration> DW =
+  static final DropwizardAppExtension<KafkaTestConfiguration> DW =
       new DropwizardAppExtension<>(
           KafkaTestApplication.class,
           resourceFilePath("test-config-default.yml"),

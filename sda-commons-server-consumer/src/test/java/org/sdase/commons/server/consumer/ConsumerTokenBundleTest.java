@@ -18,13 +18,13 @@ class ConsumerTokenBundleTest {
 
   @RegisterExtension
   @Order(0)
-  private static final DropwizardAppExtension<ConsumerTokenTestConfig> DW =
+  static final DropwizardAppExtension<ConsumerTokenTestConfig> DW =
       new DropwizardAppExtension<>(
           ConsumerTokenTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<ConsumerTokenTestConfig> DW_REQUIRED =
+  static final DropwizardAppExtension<ConsumerTokenTestConfig> DW_REQUIRED =
       new DropwizardAppExtension<>(
           ConsumerTokenRequiredTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 

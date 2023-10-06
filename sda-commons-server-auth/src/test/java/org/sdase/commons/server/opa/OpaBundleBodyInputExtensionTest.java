@@ -41,12 +41,12 @@ class OpaBundleBodyInputExtensionTest {
 
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<TestConfiguration> DW_WITH_EXTENSION =
+  static final DropwizardAppExtension<TestConfiguration> DW_WITH_EXTENSION =
       new DropwizardAppExtension<>(
           TestApplicationWithExtension.class,
           null,
@@ -58,7 +58,7 @@ class OpaBundleBodyInputExtensionTest {
 
   @RegisterExtension
   @Order(2)
-  private static final DropwizardAppExtension<TestConfiguration> DW_WITHOUT_EXTENSION =
+  static final DropwizardAppExtension<TestConfiguration> DW_WITHOUT_EXTENSION =
       new DropwizardAppExtension<>(
           TestApplicationWithoutExtension.class,
           null,

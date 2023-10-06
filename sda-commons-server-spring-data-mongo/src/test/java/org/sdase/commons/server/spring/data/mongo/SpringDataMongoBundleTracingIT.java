@@ -34,15 +34,15 @@ class SpringDataMongoBundleTracingIT {
 
   @RegisterExtension
   @Order(0)
-  private static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
+  static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
   @RegisterExtension
   @Order(1)
-  private static final MongoDbClassExtension MONGODB = MongoDbClassExtension.builder().build();
+  static final MongoDbClassExtension MONGODB = MongoDbClassExtension.builder().build();
 
   @RegisterExtension
   @Order(2)
-  private static final DropwizardAppExtension<MyConfiguration> DW =
+  static final DropwizardAppExtension<MyConfiguration> DW =
       new DropwizardAppExtension<>(
           TracingTestApp.class,
           null,

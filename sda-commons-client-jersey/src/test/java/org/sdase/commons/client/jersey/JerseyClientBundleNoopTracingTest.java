@@ -25,12 +25,12 @@ class JerseyClientBundleNoopTracingTest {
 
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<ClientTestConfig> DW =
+  static final DropwizardAppExtension<ClientTestConfig> DW =
       new DropwizardAppExtension<>(
           ClientTestApp.class,
           resourceFilePath("test-config.yaml"),

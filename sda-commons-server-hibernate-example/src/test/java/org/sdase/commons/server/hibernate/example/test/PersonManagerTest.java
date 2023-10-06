@@ -33,7 +33,7 @@ class PersonManagerTest {
 
   /** DAOTest rule creates the database and provide means to access it */
   @RegisterExtension
-  private final DAOTestExtension daoTestExtension =
+  final DAOTestExtension daoTestExtension =
       DAOTestExtension.newBuilder()
           .setProperty(AvailableSettings.URL, URL)
           .setProperty(AvailableSettings.USER, USER)

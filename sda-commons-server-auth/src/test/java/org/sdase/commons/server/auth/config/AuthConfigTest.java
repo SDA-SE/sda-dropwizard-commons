@@ -58,7 +58,7 @@ class AuthConfigTest {
   }
 
   @RegisterExtension
-  private static final SystemPropertyClassExtension PROP =
+  static final SystemPropertyClassExtension PROP =
       new SystemPropertyClassExtension()
           .setProperty("KEYS", KEYS_JSON)
           .setProperty("ISSUERS", ISSUERS);
