@@ -37,7 +37,7 @@ class HibernateNoPackageScanIT {
   static final String DB_URI = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
 
   @RegisterExtension
-  private static final DropwizardAppExtension<HibernateITestConfiguration> DW =
+  static final DropwizardAppExtension<HibernateITestConfiguration> DW =
       new DropwizardAppExtension<>(
           HibernateNoPackageScanApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 

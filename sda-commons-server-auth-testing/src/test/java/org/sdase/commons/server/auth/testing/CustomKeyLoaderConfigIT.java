@@ -32,7 +32,7 @@ class CustomKeyLoaderConfigIT {
 
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   static {
@@ -43,7 +43,7 @@ class CustomKeyLoaderConfigIT {
 
   @RegisterExtension
   @Order(2)
-  private static final DropwizardAppExtension<AuthTestConfig> DW =
+  static final DropwizardAppExtension<AuthTestConfig> DW =
       new DropwizardAppExtension<>(
           AuthTestApp.class,
           ResourceHelpers.resourceFilePath("test-config.yaml"),

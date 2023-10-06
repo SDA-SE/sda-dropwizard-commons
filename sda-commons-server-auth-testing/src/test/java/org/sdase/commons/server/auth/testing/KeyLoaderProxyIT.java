@@ -38,18 +38,18 @@ import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 class KeyLoaderProxyIT {
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension PROXY_WIRE =
+  static final WireMockClassExtension PROXY_WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   @RegisterExtension
   @Order(1)
-  private static final SystemPropertyClassExtension PROP =
+  static final SystemPropertyClassExtension PROP =
       new SystemPropertyClassExtension()
           .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port());
 
   @RegisterExtension
   @Order(2)
-  private static final DropwizardAppExtension<AuthTestConfig> DW =
+  static final DropwizardAppExtension<AuthTestConfig> DW =
       new DropwizardAppExtension<>(
           AuthTestApp.class,
           ResourceHelpers.resourceFilePath("test-config.yaml"),

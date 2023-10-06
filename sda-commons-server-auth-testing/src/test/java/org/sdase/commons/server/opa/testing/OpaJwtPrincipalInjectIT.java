@@ -24,15 +24,15 @@ class OpaJwtPrincipalInjectIT {
 
   @RegisterExtension
   @Order(0)
-  private static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
+  static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
   @RegisterExtension
   @Order(1)
-  private static final OpaClassExtension OPA = new OpaClassExtension();
+  static final OpaClassExtension OPA = new OpaClassExtension();
 
   @RegisterExtension
   @Order(2)
-  private static final DropwizardAppExtension<OpaJwtPrincipalInjectApp.Config> DW =
+  static final DropwizardAppExtension<OpaJwtPrincipalInjectApp.Config> DW =
       new DropwizardAppExtension<>(
           OpaJwtPrincipalInjectApp.class,
           resourceFilePath("test-config.yaml"),

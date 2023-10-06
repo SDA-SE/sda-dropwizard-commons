@@ -21,13 +21,13 @@ class OpenApiBundleMultipleApplicationsIT {
 
   @RegisterExtension
   @Order(0)
-  private static final DropwizardAppExtension<Configuration> DW =
+  static final DropwizardAppExtension<Configuration> DW =
       new DropwizardAppExtension<>(
           OpenApiBundleTestApp.class, resourceFilePath("test-config.yaml"));
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<Configuration> DW_ANOTHER_APP =
+  static final DropwizardAppExtension<Configuration> DW_ANOTHER_APP =
       new DropwizardAppExtension<>(AnotherTestApp.class, resourceFilePath("test-config.yaml"));
 
   @Test

@@ -31,7 +31,7 @@ class KafkaBundleWithSslIT {
 
   @RegisterExtension
   @Order(1)
-  private static final SharedKafkaTestResource KAFKA =
+  static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           .registerListener(
               new SslListener()
@@ -50,7 +50,7 @@ class KafkaBundleWithSslIT {
 
   @RegisterExtension
   @Order(2)
-  private static final DropwizardAppExtension<KafkaTestConfiguration> DW =
+  static final DropwizardAppExtension<KafkaTestConfiguration> DW =
       new DropwizardAppExtension<>(
           KafkaTestApplication.class,
           resourceFilePath("test-config-default.yml"),

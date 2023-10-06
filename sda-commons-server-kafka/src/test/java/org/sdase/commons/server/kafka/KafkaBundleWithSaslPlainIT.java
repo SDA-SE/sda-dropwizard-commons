@@ -32,7 +32,7 @@ class KafkaBundleWithSaslPlainIT {
 
   @RegisterExtension
   @Order(1)
-  private static final SystemPropertyClassExtension PROP =
+  static final SystemPropertyClassExtension PROP =
       new SystemPropertyClassExtension()
           .setProperty(
               JaasUtils.JAVA_LOGIN_CONFIG_PARAM,
@@ -40,7 +40,7 @@ class KafkaBundleWithSaslPlainIT {
 
   @RegisterExtension
   @Order(2)
-  private static final SharedKafkaTestResource KAFKA =
+  static final SharedKafkaTestResource KAFKA =
       new SharedKafkaTestResource()
           .registerListener(
               new SaslPlainListener().withUsername("kafkaclient").withPassword("client-secret"))
@@ -52,7 +52,7 @@ class KafkaBundleWithSaslPlainIT {
 
   @RegisterExtension
   @Order(3)
-  private static final DropwizardAppExtension<KafkaTestConfiguration> DW =
+  static final DropwizardAppExtension<KafkaTestConfiguration> DW =
       new DropwizardAppExtension<>(
           KafkaTestApplication.class,
           resourceFilePath("test-config-default.yml"),

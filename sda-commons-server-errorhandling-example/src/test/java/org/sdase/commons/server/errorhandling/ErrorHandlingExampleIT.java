@@ -18,7 +18,7 @@ import org.sdase.commons.shared.api.error.ApiInvalidParam;
 class ErrorHandlingExampleIT {
 
   @RegisterExtension
-  private static final DropwizardAppExtension<Configuration> DW =
+  static final DropwizardAppExtension<Configuration> DW =
       new DropwizardAppExtension<>(ErrorHandlingExampleApplication.class, null, randomPorts());
 
   @Test

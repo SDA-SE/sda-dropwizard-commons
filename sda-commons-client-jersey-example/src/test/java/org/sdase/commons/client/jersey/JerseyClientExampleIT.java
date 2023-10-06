@@ -28,12 +28,12 @@ class JerseyClientExampleIT {
 
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<JerseyClientExampleConfiguration> DW =
+  static final DropwizardAppExtension<JerseyClientExampleConfiguration> DW =
       new DropwizardAppExtension<>(
           JerseyClientExampleApplication.class,
           resourceFilePath("test-config.yaml"),

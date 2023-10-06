@@ -33,11 +33,11 @@ class KafkaBundleMetadataContextProducerIntegrationTest {
 
   @RegisterExtension
   @Order(0)
-  private static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
+  static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<KafkaTestConfiguration> DROPWIZARD_APP_EXTENSION =
+  static final DropwizardAppExtension<KafkaTestConfiguration> DROPWIZARD_APP_EXTENSION =
       new DropwizardAppExtension<>(
           KafkaTestApplication.class,
           resourceFilePath("test-config-default.yml"),

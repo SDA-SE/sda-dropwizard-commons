@@ -25,13 +25,13 @@ class HealthExampleIT {
   // Wiremock to mock external service
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   // create example application
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<HealthExampleConfiguration> DW =
+  static final DropwizardAppExtension<HealthExampleConfiguration> DW =
       new DropwizardAppExtension<>(
           HealthExampleApplication.class,
           null,

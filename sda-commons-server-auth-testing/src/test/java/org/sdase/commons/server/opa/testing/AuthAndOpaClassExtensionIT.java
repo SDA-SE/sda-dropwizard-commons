@@ -30,15 +30,15 @@ public class AuthAndOpaClassExtensionIT {
 
   @RegisterExtension
   @Order(0)
-  private static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
+  static final AuthClassExtension AUTH = AuthClassExtension.builder().build();
 
   @RegisterExtension
   @Order(1)
-  private static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
+  static final OpaClassExtension OPA_EXTENSION = new OpaClassExtension();
 
   @RegisterExtension
   @Order(2)
-  private static final DropwizardAppExtension<AuthAndOpaBundeTestAppConfiguration> DW =
+  static final DropwizardAppExtension<AuthAndOpaBundeTestAppConfiguration> DW =
       new DropwizardAppExtension<>(
           AuthAndOpaBundleTestApp.class,
           resourceFilePath("test-config.yaml"),

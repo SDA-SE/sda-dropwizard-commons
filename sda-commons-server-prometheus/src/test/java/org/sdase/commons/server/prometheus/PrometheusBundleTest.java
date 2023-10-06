@@ -33,7 +33,7 @@ class PrometheusBundleTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(PrometheusBundleTest.class);
 
   @RegisterExtension
-  private static final DropwizardAppExtension<Configuration> DW =
+  static final DropwizardAppExtension<Configuration> DW =
       new DropwizardAppExtension<>(PrometheusTestApplication.class, null, randomPorts());
 
   private static final String REST_URI = "http://localhost:%d";

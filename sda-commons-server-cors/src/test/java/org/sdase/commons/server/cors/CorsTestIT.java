@@ -25,26 +25,26 @@ class CorsTestIT {
 
   @RegisterExtension
   @Order(0)
-  private static final DropwizardAppExtension<CorsTestConfiguration> DW_ALLOW =
+  static final DropwizardAppExtension<CorsTestConfiguration> DW_ALLOW =
       new DropwizardAppExtension<>(
           CorsAllowTestApp.class, ResourceHelpers.resourceFilePath("test-config.yaml"));
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<CorsTestConfiguration> DW_DENY =
+  static final DropwizardAppExtension<CorsTestConfiguration> DW_DENY =
       new DropwizardAppExtension<>(
           CorsDenyTestApp.class, ResourceHelpers.resourceFilePath("test-config-deny.yaml"));
 
   @RegisterExtension
   @Order(2)
-  private static final DropwizardAppExtension<CorsTestConfiguration> DW_RESTRICTED =
+  static final DropwizardAppExtension<CorsTestConfiguration> DW_RESTRICTED =
       new DropwizardAppExtension<>(
           CorsRestrictedTestApp.class,
           ResourceHelpers.resourceFilePath("test-config-restricted.yaml"));
 
   @RegisterExtension
   @Order(3)
-  private static final DropwizardAppExtension<CorsTestConfiguration> DW_PATTERN =
+  static final DropwizardAppExtension<CorsTestConfiguration> DW_PATTERN =
       new DropwizardAppExtension<>(
           CorsRestrictedTestApp.class,
           ResourceHelpers.resourceFilePath("test-config-pattern.yaml"));

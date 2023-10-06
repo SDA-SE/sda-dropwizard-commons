@@ -22,7 +22,7 @@ import org.sdase.commons.server.auth.test.KeyProviderTestApp;
 class JwksKeySourceIT {
 
   @RegisterExtension
-  private static final DropwizardAppExtension<Configuration> DW =
+  static final DropwizardAppExtension<Configuration> DW =
       new DropwizardAppExtension<>(KeyProviderTestApp.class, null, randomPorts());
 
   @Test

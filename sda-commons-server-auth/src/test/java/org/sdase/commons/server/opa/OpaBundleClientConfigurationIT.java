@@ -42,14 +42,14 @@ import org.sdase.commons.server.opa.config.OpaConfig;
 class OpaBundleClientConfigurationIT {
   @RegisterExtension
   @Order(0)
-  private static final WireMockClassExtension WIRE =
+  static final WireMockClassExtension WIRE =
       new WireMockClassExtension(wireMockConfig().dynamicPort());
 
   @RegisterExtension static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
   @RegisterExtension
   @Order(1)
-  private static final DropwizardAppExtension<TestConfiguration> DW =
+  static final DropwizardAppExtension<TestConfiguration> DW =
       new DropwizardAppExtension<>(
           TestApplication.class,
           null,
