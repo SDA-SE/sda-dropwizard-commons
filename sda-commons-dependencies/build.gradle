@@ -201,7 +201,7 @@ dependencies {
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.8.2" // same version as Kafka Client 3.6.0
+    api "org.apache.zookeeper:zookeeper:3.8.3" // Kafka Client 3.6.0 also uses 3.x
     api "com.github.ftrossbach:club-topicana-core:0.1.0"
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
     api "org.apache.curator:curator-test:5.5.0", {
