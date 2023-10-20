@@ -7,6 +7,7 @@ class JsonReference {
 
   /** The url of the referenced external file if available or null in case of internal links. */
   final String url;
+
   /** The pointer to the node in the referenced file. */
   final JsonPointer pointer;
 

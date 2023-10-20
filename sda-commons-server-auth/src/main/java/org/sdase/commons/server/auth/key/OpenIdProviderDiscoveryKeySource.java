@@ -24,6 +24,7 @@ public class OpenIdProviderDiscoveryKeySource implements KeySource {
    */
   public static final String DISCOVERY_PATH =
       "/.well-known/openid-configuration"; // NOSONAR URL should be configurable but in this case
+
   // configuration makes no sense
 
   private final String issuerUrl;
@@ -31,6 +32,7 @@ public class OpenIdProviderDiscoveryKeySource implements KeySource {
   private final Client client;
 
   private final String requiredIssuer;
+
   /**
    * @param issuerUrl the url of the issuer without the {@link #DISCOVERY_PATH}, e.g. {@code
    *     http://keycloak.example.com/auth/realms/my-realm}

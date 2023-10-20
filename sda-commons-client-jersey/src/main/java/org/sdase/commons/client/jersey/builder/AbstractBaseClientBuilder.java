@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseClientBuilder.class);
+
   /**
    * As default, the client will follow redirects so that redirect status codes are automatically
    * resolved by the client.
