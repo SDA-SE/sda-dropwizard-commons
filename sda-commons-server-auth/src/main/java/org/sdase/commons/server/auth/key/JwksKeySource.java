@@ -46,6 +46,7 @@ public class JwksKeySource implements KeySource {
   private final Client client;
 
   private final String requiredIssuer;
+
   /**
    * @param jwksUri the uri providing a <a
    *     href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5">JSON Web Key
