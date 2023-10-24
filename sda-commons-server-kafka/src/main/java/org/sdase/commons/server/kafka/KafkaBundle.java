@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import javax.validation.constraints.NotNull;
@@ -67,6 +68,8 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
   private MicrometerProducerListener micrometerProducerListener;
 
+  private MicrometerConsumerListener micrometerConsumerListener;
+
   private KafkaBundle(
       KafkaConfigurationProvider<C> configurationProvider, boolean healthCheckDisabled) {
     this.configurationProvider = configurationProvider;
@@ -100,6 +103,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     new KafkaConsumerMetrics(messageListeners);
 
     micrometerProducerListener = new MicrometerProducerListener(Metrics.globalRegistry);
+    micrometerConsumerListener = new MicrometerConsumerListener(Metrics.globalRegistry);
     setupManagedThreadManager(environment);
   }
 
@@ -172,7 +176,13 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       Thread t = new Thread(instance);
       t.start();
 
-      threadedMessageListeners.add(new ThreadedMessageListener<>(instance, t));
+      Optional<String> clientIdOptional =
+          instance.getConsumer().metrics().entrySet().stream()
+              .findFirst()
+              .map(m -> m.getKey().tags().get("client-id"));
+
+      threadedMessageListeners.add(
+          new ThreadedMessageListener<>(instance, t, clientIdOptional.orElse("")));
     }
     messageListeners.addAll(listener);
     return listener;
@@ -272,8 +282,17 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
           org.apache.kafka.clients.consumer.ConsumerConfig.CLIENT_ID_CONFIG,
           consumerConfig.getClientId() + "-" + instanceId);
     }
+    KafkaConsumer<K, V> consumer =
+        new KafkaConsumer<>(consumerProperties, keyDeSerializer, valueDeSerializer);
 
-    return new KafkaConsumer<>(consumerProperties, keyDeSerializer, valueDeSerializer);
+    if (micrometerConsumerListener != null) {
+      micrometerConsumerListener.consumerAdded(
+          consumerProperties.getProperty(
+              org.apache.kafka.clients.consumer.ConsumerConfig.CLIENT_ID_CONFIG),
+          consumer);
+    }
+
+    return consumer;
   }
 
   /**
@@ -470,6 +489,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
   private void shutdownConsumerThreads() {
     threadedMessageListeners.forEach(l -> l.messageListener.stopConsumer());
+    threadedMessageListeners.forEach(l -> micrometerConsumerListener.consumerRemoved(l.clientId));
     threadedMessageListeners.forEach(
         l -> {
           try {
@@ -548,9 +568,13 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     private final MessageListener<K, V> messageListener;
     private final Thread thread;
 
-    private ThreadedMessageListener(MessageListener<K, V> messageListener, Thread thread) {
+    private final String clientId;
+
+    private ThreadedMessageListener(
+        MessageListener<K, V> messageListener, Thread thread, String clientId) {
       this.messageListener = messageListener;
       this.thread = thread;
+      this.clientId = clientId;
     }
   }
 }

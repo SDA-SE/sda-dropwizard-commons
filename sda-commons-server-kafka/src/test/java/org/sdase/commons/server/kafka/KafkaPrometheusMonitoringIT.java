@@ -214,11 +214,12 @@ class KafkaPrometheusMonitoringIT {
         .atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS)
         .until(() -> resultsLong.size() == 2);
 
-    assertThat(MetricsHelper.getListOfMetrics()).containsAll(getMetricsThatShouldExist());
+    assertThat(MetricsHelper.getListOfMetrics()).containsAll(getProducerMetricsThatShouldExist());
+    assertThat(MetricsHelper.getListOfMetrics()).containsAll(getConsumerMetricsThatShouldExist());
   }
 
   //  Keep in mind that internal metrics use minus while prometheus uses underscore
-  private List<String> getMetricsThatShouldExist() {
+  private List<String> getProducerMetricsThatShouldExist() {
 
     List<String> result =
         List.of(
@@ -322,6 +323,121 @@ class KafkaPrometheusMonitoringIT {
             "producer-topic-metrics-record-retry-rate",
             "producer-topic-metrics-record-error-total",
             "producer-topic-metrics-record-error-rate");
+
+    return result;
+  }
+
+  private List<String> getConsumerMetricsThatShouldExist() {
+
+    List<String> result =
+        List.of(
+            "consumer-fetch-manager-metrics-fetch-throttle-time-avg",
+            "consumer-fetch-manager-metrics-fetch-throttle-time-max",
+            "consumer-fetch-manager-metrics-fetch-size-avg",
+            "consumer-fetch-manager-metrics-fetch-size-max",
+            "consumer-fetch-manager-metrics-bytes-consumed-total",
+            "consumer-fetch-manager-metrics-bytes-consumed-rate",
+            "consumer-fetch-manager-metrics-records-per-request-avg",
+            "consumer-fetch-manager-metrics-records-consumed-total",
+            "consumer-fetch-manager-metrics-records-consumed-rate",
+            "consumer-fetch-manager-metrics-fetch-latency-avg",
+            "consumer-fetch-manager-metrics-fetch-latency-max",
+            "consumer-fetch-manager-metrics-fetch-total",
+            "consumer-fetch-manager-metrics-fetch-rate",
+            "consumer-fetch-manager-metrics-records-lag-max",
+            "consumer-fetch-manager-metrics-records-lead-min",
+            "consumer-metrics-connection-close-total",
+            "consumer-metrics-connection-close-rate",
+            "consumer-metrics-connection-creation-rate",
+            "consumer-metrics-successful-authentication-total",
+            "consumer-metrics-successful-authentication-rate",
+            "consumer-metrics-connection-creation-total",
+            "consumer-metrics-successful-reauthentication-total",
+            "consumer-metrics-successful-reauthentication-rate",
+            "consumer-metrics-successful-authentication-no-reauth-total",
+            "consumer-metrics-failed-authentication-total",
+            "consumer-metrics-failed-authentication-rate",
+            "consumer-metrics-failed-reauthentication-total",
+            "consumer-metrics-failed-reauthentication-rate",
+            "consumer-metrics-reauthentication-latency-max",
+            "consumer-metrics-reauthentication-latency-avg",
+            "consumer-metrics-network-io-total",
+            "consumer-metrics-network-io-rate",
+            "consumer-metrics-outgoing-byte-total",
+            "consumer-metrics-outgoing-byte-rate",
+            "consumer-metrics-request-total",
+            "consumer-metrics-request-rate",
+            "consumer-metrics-request-size-avg",
+            "consumer-metrics-request-size-max",
+            "consumer-metrics-incoming-byte-total",
+            "consumer-metrics-incoming-byte-rate",
+            "consumer-metrics-response-total",
+            "consumer-metrics-response-rate",
+            "consumer-metrics-select-total",
+            "consumer-metrics-select-rate",
+            "consumer-metrics-io-wait-time-ns-avg",
+            "consumer-metrics-io-waittime-total",
+            "consumer-metrics-io-wait-ratio",
+            "consumer-metrics-io-wait-time-ns-total",
+            "consumer-metrics-io-time-ns-avg",
+            "consumer-metrics-iotime-total",
+            "consumer-metrics-io-ratio",
+            "consumer-metrics-io-time-ns-total",
+            "consumer-metrics-connection-count",
+            "consumer-coordinator-metrics-heartbeat-response-time-max",
+            "consumer-coordinator-metrics-heartbeat-total",
+            "consumer-coordinator-metrics-heartbeat-rate",
+            "consumer-coordinator-metrics-join-time-avg",
+            "consumer-coordinator-metrics-join-time-max",
+            "consumer-coordinator-metrics-join-total",
+            "consumer-coordinator-metrics-join-rate",
+            "consumer-coordinator-metrics-sync-time-avg",
+            "consumer-coordinator-metrics-sync-time-max",
+            "consumer-coordinator-metrics-sync-total",
+            "consumer-coordinator-metrics-sync-rate",
+            "consumer-coordinator-metrics-rebalance-latency-avg",
+            "consumer-coordinator-metrics-rebalance-latency-max",
+            "consumer-coordinator-metrics-rebalance-latency-total",
+            "consumer-coordinator-metrics-rebalance-total",
+            "consumer-coordinator-metrics-rebalance-rate-per-hour",
+            "consumer-coordinator-metrics-failed-rebalance-total",
+            "consumer-coordinator-metrics-failed-rebalance-rate-per-hour",
+            "consumer-coordinator-metrics-last-rebalance-seconds-ago",
+            "consumer-coordinator-metrics-last-heartbeat-seconds-ago",
+            "consumer-coordinator-metrics-commit-latency-avg",
+            "consumer-coordinator-metrics-commit-latency-max",
+            "consumer-coordinator-metrics-commit-total",
+            "consumer-coordinator-metrics-commit-rate",
+            "consumer-coordinator-metrics-partition-revoked-latency-avg",
+            "consumer-coordinator-metrics-partition-revoked-latency-max",
+            "consumer-coordinator-metrics-partition-assigned-latency-avg",
+            "consumer-coordinator-metrics-partition-assigned-latency-max",
+            "consumer-coordinator-metrics-partition-lost-latency-avg",
+            "consumer-coordinator-metrics-partition-lost-latency-max",
+            "consumer-coordinator-metrics-assigned-partitions",
+            "consumer-metrics-last-poll-seconds-ago",
+            "consumer-metrics-time-between-poll-avg",
+            "consumer-metrics-time-between-poll-max",
+            "consumer-metrics-poll-idle-ratio-avg",
+            "consumer-metrics-commit-sync-time-ns-total",
+            "consumer-metrics-committed-time-ns-total",
+            "consumer-node-metrics-request-total",
+            "consumer-node-metrics-request-rate",
+            "consumer-node-metrics-request-size-avg",
+            "consumer-node-metrics-request-size-max",
+            "consumer-node-metrics-outgoing-byte-total",
+            "consumer-node-metrics-outgoing-byte-rate",
+            "consumer-node-metrics-response-total",
+            "consumer-node-metrics-response-rate",
+            "consumer-node-metrics-incoming-byte-total",
+            "consumer-node-metrics-incoming-byte-rate",
+            "consumer-node-metrics-request-latency-avg",
+            "consumer-node-metrics-request-latency-max",
+            "consumer-fetch-manager-metrics-preferred-read-replica",
+            "consumer-fetch-manager-metrics-records-lag",
+            "consumer-fetch-manager-metrics-records-lag-avg",
+            "consumer-fetch-manager-metrics-records-lead",
+            "consumer-fetch-manager-metrics-records-lead-avg");
 
     return result;
   }
