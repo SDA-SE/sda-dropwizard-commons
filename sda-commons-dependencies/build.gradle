@@ -7,7 +7,7 @@ javaPlatform {
 }
 
 ext {
-  dropwizardVersion = '2.1.7'
+  dropwizardVersion = '2.1.9'
   morphiaVersion = '1.6.1'
   mongoClientVersion = '4.1.2' // should align with major/minor provided by Morphia
   prometheusVersion = '0.16.0'
