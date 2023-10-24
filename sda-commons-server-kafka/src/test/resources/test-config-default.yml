@@ -18,6 +18,8 @@ kafka:
       config:
         key.deserializer: "org.apache.kafka.common.serialization.LongDeserializer"
         value.deserializer: "org.apache.kafka.common.serialization.LongDeserializer"
+        metric.reporters: "org.sdase.commons.server.kafka.helper.KafkaMetricsReporter"
+        metrics.sample.window.ms: 5000
     consumer2:
       clientId: c2
     consumer3:
