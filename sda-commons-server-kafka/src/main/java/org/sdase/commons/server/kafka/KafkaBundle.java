@@ -222,9 +222,12 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
         new KafkaMessageProducer<>(
             registration.getTopic().getName(), producer, topicProducerCounterSpec, clientId);
 
-    if (micrometerProducerListener != null) {
+    if (micrometerProducerListener == null) {
+      LOGGER.warn("MicrometerProducerListener is not initialized! Metrics will not be recorded.");
+    } else {
       micrometerProducerListener.producerAdded(clientId, producer);
     }
+
     messageProducers.put(clientId, messageProducer);
     return messageProducer;
   }
@@ -275,6 +278,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       Deserializer<V> valueDeSerializer,
       ConsumerConfig consumerConfig,
       int instanceId) {
+
     KafkaProperties consumerProperties = KafkaProperties.forConsumer(kafkaConfiguration);
     if (consumerConfig != null) {
       consumerProperties.putAll(consumerConfig.getConfig());
@@ -285,7 +289,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     KafkaConsumer<K, V> consumer =
         new KafkaConsumer<>(consumerProperties, keyDeSerializer, valueDeSerializer);
 
-    if (micrometerConsumerListener != null) {
+    if (micrometerConsumerListener == null) {
+      LOGGER.warn("MicrometerConsumerListener is not initialized! Metrics will not be recorded.");
+    } else {
       micrometerConsumerListener.consumerAdded(
           consumerProperties.getProperty(
               org.apache.kafka.clients.consumer.ConsumerConfig.CLIENT_ID_CONFIG),
@@ -451,7 +457,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
   /** Initial checks. Configuration mus be initialized */
   private void checkInit() {
-    if (kafkaConfiguration == null) {
+    if (kafkaConfiguration == null
+        || micrometerProducerListener == null
+        || micrometerConsumerListener == null) {
       throw new IllegalStateException("KafkaConfiguration not yet initialized!");
     }
   }
