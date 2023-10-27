@@ -183,7 +183,7 @@ dependencies {
     api "org.junit-pioneer:junit-pioneer:2.1.0"
 
     // sda-commons-shared-*
-    api 'commons-io:commons-io:2.14.0'
+    api 'commons-io:commons-io:2.15.0'
 
     // sda-commons-server-opentelemetry
     api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:${openTelemetryVersion}"
