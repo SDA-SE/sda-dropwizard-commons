@@ -28,9 +28,13 @@ ext {
 dependencies {
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion") // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
+  api enforcedPlatform("org.eclipse.jetty:jetty-bom:9.4.53.v20231009"), {
+    because "version defined in Dropwizard not enforced for consumers"
+  }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
+    exclude group: 'org.eclipse.jetty'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.552")
   api enforcedPlatform("io.netty:netty-bom:4.1.100.Final"), {
