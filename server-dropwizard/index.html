@@ -1,0 +1,1272 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../server-cors/">
+      
+      
+        <link rel="next" href="../server-error-handling/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Server Dropwizard - sda-dropwizard-commons</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.c4a75a56.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sda-commons-server-dropwizard" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="sda-dropwizard-commons" class="md-header__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sda-dropwizard-commons
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Server Dropwizard
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+      </form>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="sda-dropwizard-commons" class="md-nav__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    sda-dropwizard-commons
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metadata-context/" class="md-nav__link">
+        Metadata Context
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bom/" class="md-nav__link">
+        Bom
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey/" class="md-nav__link">
+        Client Jersey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-example/" class="md-nav__link">
+        Client Jersey Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-wiremock-testing/" class="md-nav__link">
+        Client Jersey Wiremock Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        Dependencies
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth-testing/" class="md-nav__link">
+        Server Auth Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth/" class="md-nav__link">
+        Server Auth
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-circuit-breaker/" class="md-nav__link">
+        Server Circuit Breaker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cloud-events/" class="md-nav__link">
+        Server Cloud Events
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-consumer/" class="md-nav__link">
+        Server Consumer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cors/" class="md-nav__link">
+        Server Cors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Server Dropwizard
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Server Dropwizard
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#provided-bundles" class="md-nav__link">
+    Provided Bundles
+  </a>
+  
+    <nav class="md-nav" aria-label="Provided Bundles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configurationsubstitutionbundle" class="md-nav__link">
+    ConfigurationSubstitutionBundle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configurationvaluesupplierbundle" class="md-nav__link">
+    ConfigurationValueSupplierBundle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defaultloggingconfigurationbundle" class="md-nav__link">
+    DefaultLoggingConfigurationBundle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadatacontextbundle" class="md-nav__link">
+    MetadataContextBundle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-logging" class="md-nav__link">
+    JSON Logging
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#healthcheck-request-logging" class="md-nav__link">
+    Healthcheck Request Logging
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-error-handling/" class="md-nav__link">
+        Server Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck-example/" class="md-nav__link">
+        Server Healthcheck Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck/" class="md-nav__link">
+        Server Healthcheck
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-example/" class="md-nav__link">
+        Server Hibernate Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-testing/" class="md-nav__link">
+        Server Hibernate Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate/" class="md-nav__link">
+        Server Hibernate
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-jackson/" class="md-nav__link">
+        Server Jackson
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-example/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-testing/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-key-mgmt/" class="md-nav__link">
+        Server key Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-mongo-testing/" class="md-nav__link">
+        Server Mongo Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-open-api/" class="md-nav__link">
+        Server OpenApi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-openapi-example/" class="md-nav__link">
+        Server OpenApi Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry-example/" class="md-nav__link">
+        Server Open Telemetry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry/" class="md-nav__link">
+        Server Open
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-prometheus/" class="md-nav__link">
+        Server Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3-testing/" class="md-nav__link">
+        Server S3 Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3/" class="md-nav__link">
+        Server S3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-security/" class="md-nav__link">
+        Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-spring-data-mongo/" class="md-nav__link">
+        Server Spring Data Mongo
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-testing/" class="md-nav__link">
+        Server Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-trace/" class="md-nav__link">
+        Server Trace
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld/" class="md-nav__link">
+        Server Weld
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-example/" class="md-nav__link">
+        Server Weld Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-testing/" class="md-nav__link">
+        Server Weld Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-asyncapi/" class="md-nav__link">
+        Shared Async API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-certificates/" class="md-nav__link">
+        Shared Certificates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-error/" class="md-nav__link">
+        Shared Error
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-forms/" class="md-nav__link">
+        Shared Forms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-tracing/" class="md-nav__link">
+        Shared Tracing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-yaml/" class="md-nav__link">
+        Shared Yaml
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter/" class="md-nav__link">
+        Starter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter-example/" class="md-nav__link">
+        Starter Example
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#provided-bundles" class="md-nav__link">
+    Provided Bundles
+  </a>
+  
+    <nav class="md-nav" aria-label="Provided Bundles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configurationsubstitutionbundle" class="md-nav__link">
+    ConfigurationSubstitutionBundle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configurationvaluesupplierbundle" class="md-nav__link">
+    ConfigurationValueSupplierBundle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defaultloggingconfigurationbundle" class="md-nav__link">
+    DefaultLoggingConfigurationBundle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadatacontextbundle" class="md-nav__link">
+    MetadataContextBundle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-logging" class="md-nav__link">
+    JSON Logging
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#healthcheck-request-logging" class="md-nav__link">
+    Healthcheck Request Logging
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="sda-commons-server-dropwizard">SDA Commons Server Dropwizard<a class="headerlink" href="#sda-commons-server-dropwizard" title="Permanent link">&para;</a></h1>
+<p><a href="https://javadoc.io/doc/org.sdase.commons/sda-commons-server-dropwizard"><img alt="javadoc" src="https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-dropwizard/javadoc.svg" /></a></p>
+<p><code>sda-commons-server-dropwizard</code> is an aggregator module that provides <code>io.dropwizard:dropwizard-core</code> with convergent
+dependencies and some common Dropwizard bundles for easier configuration that are not dependent on other technology
+than Dropwizard.</p>
+<p>This module fixes some version mixes of transitive dependencies in Dropwizard. Dependency convergence should be checked 
+with <code>gradlew dependencies</code> on upgrades.</p>
+<h2 id="provided-bundles">Provided Bundles<a class="headerlink" href="#provided-bundles" title="Permanent link">&para;</a></h2>
+<p>The Dropwizard module provides default Bundles that are useful for most Dropwizard applications.</p>
+<h3 id="configurationsubstitutionbundle">ConfigurationSubstitutionBundle<a class="headerlink" href="#configurationsubstitutionbundle" title="Permanent link">&para;</a></h3>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java"><code>ConfigurationSubstitutionBundle</code></a>
+allows to use placeholders for environment variables or system properties in the <code>config.yaml</code> of
+the application to dynamically configure the application at startup. Default values can be added
+after the variable name separated by <code>:-</code></p>
+<p>The <code>ConfigurationSubstitutionBundle</code> supports the modifier <code>toJsonString</code> to convert String values
+in the <code>config.yaml</code> into valid Json String values by escaping the value and wrapping it in quotes.
+The default value of a value modified by <code>toJsonString</code> must be valid Json itself, e.g. <code>null</code> or
+<code>"my\nmultiline\nstring"</code>.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">database</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">driverClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.postgresql.Driver</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_USER:-dev}</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD | toJsonString:-&quot;s3cr3t&quot;}</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_URL:-localhost:12345}</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="configurationvaluesupplierbundle">ConfigurationValueSupplierBundle<a class="headerlink" href="#configurationvaluesupplierbundle" title="Permanent link">&para;</a></h3>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationValueSupplierBundle.java"><code>ConfigurationValueSupplierBundle</code></a>
+provides a <code>Supplier</code> for a configuration value. It may be used if the type of the configuration itself should not be 
+known by the class that is configured. This may be the case if another bundle or a service should be configured either
+by a configuration property or another service.</p>
+<p>A configuration value may be supplied like this:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyApplication</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">MyApplication</span><span class="p">().</span><span class="na">run</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="n">ConfigurationValueSupplierBundle</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">configStringBundle</span><span class="w"> </span><span class="o">=</span>
+<span class="w">            </span><span class="n">ConfigurationValueSupplierBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">withAccessor</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="p">::</span><span class="n">getConfigString</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+<span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">configStringBundle</span><span class="p">);</span>
+<span class="w">      </span><span class="n">Supplier</span><span class="o">&lt;</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">configStringSupplier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">configStringBundle</span><span class="p">.</span><span class="na">supplier</span><span class="p">();</span>
+<span class="w">      </span><span class="c1">// configStringSupplier may be added to other bundles and services, it&#39;s get() method can be access after run()</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="defaultloggingconfigurationbundle">DefaultLoggingConfigurationBundle<a class="headerlink" href="#defaultloggingconfigurationbundle" title="Permanent link">&para;</a></h3>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/DefaultLoggingConfigurationBundle.java"><code>DefaultLoggingConfigurationBundle</code></a>, 
+is used to configure the console logger with the settings desired by the SDA.</p>
+<p>The bundle sets the log threshold for the console appender to <code>INFO</code> and uses the following log format:</p>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>[%d] [%-5level] [%X{Trace-Token}] %logger{36} - %msg%n
+</code></pre></div></td></tr></table></div>
+<p>Make sure to add the bundle <strong>after the <code>ConfigurationSubstitutionBundle</code></strong> if it's present.
+Logging related configuration is not required by this bundle. </p>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>public void initialize(Bootstrap&lt;Configuration&gt; bootstrap) {
+    bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
+}
+</code></pre></div></td></tr></table></div>
+<h3 id="metadatacontextbundle">MetadataContextBundle<a class="headerlink" href="#metadatacontextbundle" title="Permanent link">&para;</a></h3>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/MetadataContextBundle.java"><code>MetadataContextBundle</code></a>
+enables the metadata context handling for an application.</p>
+<p>If you want to make use of the data in the metadata context, you should read the <a href="../metadata-context/">dedicated documentation</a>.
+If your service is required to support the metadata context but is not interested in the data,
+continue here:</p>
+<p>Services that use the bundle
+- can access the current <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/metadata/MetadataContext.java"><code>MetadataContext</code></a>
+  in their implementation
+- will automatically load the context from incoming HTTP requests into the thread handling the
+  request
+- will automatically load the context from consumed Kafka messages into the thread handling the
+  message and the error when handling the message fails when the consumer is configured with one of
+  the provided <code>MessageListenerStrategy</code> implementations
+- will automatically propagate the context to other services via HTTP when using a platform client
+  from the <code>JerseyClientBundle</code>
+- will automatically propagate the context in produced Kafka messages when the producer is created
+  or registered by the <code>KafkaBundle</code>
+- are configurable by the property or environment variable <code>METADATA_FIELDS</code> to be aware of the
+  metadata used in a specific environment</p>
+<p>Services that interrupt a business process should persist the context from
+<code>MetadataContext.detachedCurrent()</code> and restore it with <code>MetadataContext.createContext(…)</code> when the
+process continues.
+Interrupting a business process means that processing is stopped and continued later in a new thread
+or even another instance of the service.
+Most likely, this will happen when a business entity is stored based on a request and loaded later
+for further processing by a scheduler or due to a new user interaction.
+In this case, the <code>DetachedMetadataContext</code> must be persisted along with the entity and recreated
+when the entity is loaded.
+The <code>DetachedMetadataContext</code> can be defined as field in any MongoDB entity.</p>
+<p>Services that handle requests or messages in parallel must transfer the metadata context to their
+<code>Runnable</code> or <code>Callable</code> with <code>MetadataContext.transferMetadataContext(…)</code>.
+In most cases, developers should prefer<code>ContainerRequestContextHolder.transferRequestContext(…)</code>,
+which also transfers the metadata context.</p>
+<p>Services that use the <code>MetadataContextBundle</code> and take care of interrupted processes and parallel
+execution, may add a link like this in their deployment documentation:</p>
+<div class="language-md highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>This service keeps track of the [<span class="nt">metadata context</span>](<span class="na">https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-server-dropwizard/README.md#metadatacontextbundle</span>).
+</code></pre></div></td></tr></table></div>
+<h3 id="json-logging">JSON Logging<a class="headerlink" href="#json-logging" title="Permanent link">&para;</a></h3>
+<p>To enable <a href="https://www.dropwizard.io/en/latest/manual/core.html#logging">JSON logging</a>, set the environment variable <code>ENABLE_JSON_LOGGING</code> to <code>"true"</code>.
+We recommend JSON logging in production as they are better parsable by tools.
+However, they are hard to read for human beings, so better deactivate them when working with a service locally.</p>
+<h3 id="healthcheck-request-logging">Healthcheck Request Logging<a class="headerlink" href="#healthcheck-request-logging" title="Permanent link">&para;</a></h3>
+<p>By default, Dropwizard logs all incoming requests to the console, this includes health checks like <code>/ping</code> and <code>/healthcheck/internal</code>.
+As these are very frequent and can quickly pollute the logs, they can be disabled by setting the environment variable <code>DISABLE_HEALTHCHECK_LOGS</code> to <code>"true"</code>.
+This will be overwritten by any manual configuration to the FilterFactories.
+With <code>DISABLE_HEALTHCHECK_LOGS</code> active request logs for all paths related to monitoring are disabled:
+- <code>/ping</code>
+- <code>/healthcheck</code>
+- <code>/healthcheck/internal</code>
+- <code>/metrics</code>
+- <code>/metrics/prometheus</code></p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../server-cors/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Server Cors" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Server Cors
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../server-error-handling/" class="md-footer__link md-footer__link--next" aria-label="Next: Server Error Handling" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Server Error Handling
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="../search/main.js"></script>
+      
+    
+  </body>
+</html>

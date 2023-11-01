@@ -1,0 +1,1664 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../bom/">
+      
+      
+        <link rel="next" href="../client-jersey-example/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Client Jersey - sda-dropwizard-commons</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.c4a75a56.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sda-commons-client-jersey" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="sda-dropwizard-commons" class="md-header__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sda-dropwizard-commons
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Client Jersey
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+      </form>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="sda-dropwizard-commons" class="md-nav__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    sda-dropwizard-commons
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metadata-context/" class="md-nav__link">
+        Metadata Context
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bom/" class="md-nav__link">
+        Bom
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Client Jersey
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Client Jersey
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#writing-api-clients-as-interfaces" class="md-nav__link">
+    Writing API Clients as interfaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-jersey-client" class="md-nav__link">
+    Using Jersey Client
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multipart-support" class="md-nav__link">
+    Multipart Support
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concurrency" class="md-nav__link">
+    Concurrency
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#http-client-configuration-and-proxy-support" class="md-nav__link">
+    HTTP Client Configuration and Proxy Support
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#oidc-client" class="md-nav__link">
+    OIDC Client
+  </a>
+  
+    <nav class="md-nav" aria-label="OIDC Client">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage_1" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration_1" class="md-nav__link">
+    Configuration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips-and-tricks" class="md-nav__link">
+    Tips and Tricks
+  </a>
+  
+    <nav class="md-nav" aria-label="Tips and Tricks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-authentication" class="md-nav__link">
+    Basic Authentication
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3rd-party-javaxwsrs-api-client-implementations-in-classpath" class="md-nav__link">
+    3rd Party javax.ws.rs-api Client Implementations in Classpath
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consume-api-clients-without-catching-exceptions" class="md-nav__link">
+    Consume API clients without catching exceptions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-example/" class="md-nav__link">
+        Client Jersey Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-wiremock-testing/" class="md-nav__link">
+        Client Jersey Wiremock Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        Dependencies
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth-testing/" class="md-nav__link">
+        Server Auth Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth/" class="md-nav__link">
+        Server Auth
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-circuit-breaker/" class="md-nav__link">
+        Server Circuit Breaker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cloud-events/" class="md-nav__link">
+        Server Cloud Events
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-consumer/" class="md-nav__link">
+        Server Consumer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cors/" class="md-nav__link">
+        Server Cors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-dropwizard/" class="md-nav__link">
+        Server Dropwizard
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-error-handling/" class="md-nav__link">
+        Server Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck-example/" class="md-nav__link">
+        Server Healthcheck Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck/" class="md-nav__link">
+        Server Healthcheck
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-example/" class="md-nav__link">
+        Server Hibernate Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-testing/" class="md-nav__link">
+        Server Hibernate Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate/" class="md-nav__link">
+        Server Hibernate
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-jackson/" class="md-nav__link">
+        Server Jackson
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-example/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-testing/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-key-mgmt/" class="md-nav__link">
+        Server key Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-mongo-testing/" class="md-nav__link">
+        Server Mongo Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-open-api/" class="md-nav__link">
+        Server OpenApi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-openapi-example/" class="md-nav__link">
+        Server OpenApi Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry-example/" class="md-nav__link">
+        Server Open Telemetry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry/" class="md-nav__link">
+        Server Open
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-prometheus/" class="md-nav__link">
+        Server Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3-testing/" class="md-nav__link">
+        Server S3 Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3/" class="md-nav__link">
+        Server S3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-security/" class="md-nav__link">
+        Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-spring-data-mongo/" class="md-nav__link">
+        Server Spring Data Mongo
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-testing/" class="md-nav__link">
+        Server Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-trace/" class="md-nav__link">
+        Server Trace
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld/" class="md-nav__link">
+        Server Weld
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-example/" class="md-nav__link">
+        Server Weld Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-testing/" class="md-nav__link">
+        Server Weld Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-asyncapi/" class="md-nav__link">
+        Shared Async API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-certificates/" class="md-nav__link">
+        Shared Certificates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-error/" class="md-nav__link">
+        Shared Error
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-forms/" class="md-nav__link">
+        Shared Forms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-tracing/" class="md-nav__link">
+        Shared Tracing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-yaml/" class="md-nav__link">
+        Shared Yaml
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter/" class="md-nav__link">
+        Starter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter-example/" class="md-nav__link">
+        Starter Example
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#writing-api-clients-as-interfaces" class="md-nav__link">
+    Writing API Clients as interfaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-jersey-client" class="md-nav__link">
+    Using Jersey Client
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multipart-support" class="md-nav__link">
+    Multipart Support
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concurrency" class="md-nav__link">
+    Concurrency
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#http-client-configuration-and-proxy-support" class="md-nav__link">
+    HTTP Client Configuration and Proxy Support
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#oidc-client" class="md-nav__link">
+    OIDC Client
+  </a>
+  
+    <nav class="md-nav" aria-label="OIDC Client">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage_1" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration_1" class="md-nav__link">
+    Configuration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips-and-tricks" class="md-nav__link">
+    Tips and Tricks
+  </a>
+  
+    <nav class="md-nav" aria-label="Tips and Tricks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-authentication" class="md-nav__link">
+    Basic Authentication
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3rd-party-javaxwsrs-api-client-implementations-in-classpath" class="md-nav__link">
+    3rd Party javax.ws.rs-api Client Implementations in Classpath
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consume-api-clients-without-catching-exceptions" class="md-nav__link">
+    Consume API clients without catching exceptions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="sda-commons-client-jersey">SDA Commons Client Jersey<a class="headerlink" href="#sda-commons-client-jersey" title="Permanent link">&para;</a></h1>
+<p><a href="https://javadoc.io/doc/org.sdase.commons/sda-commons-client-jersey"><img alt="javadoc" src="https://javadoc.io/badge2/org.sdase.commons/sda-commons-client-jersey/javadoc.svg" /></a></p>
+<p>The module <code>sda-commons-client-jersey</code> provides support for using Jersey clients within the Dropwizard application.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/JerseyClientBundle.java"><code>JerseyClientBundle</code></a> must be added to the 
+application. It provides a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java"><code>ClientFactory</code></a> to 
+create clients. The <code>ClientFactory</code> needs to be initialized and be available in the <code>run(...)</code> phase. Therefore, the 
+bundle should be declared as field and not in the <code>initialize</code> method.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyApplication</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">JerseyClientBundle</span><span class="w"> </span><span class="n">jerseyClientBundle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JerseyClientBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">build</span><span class="p">();</span>
+
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">new</span><span class="w"> </span><span class="n">MyApplication</span><span class="p">().</span><span class="na">run</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">jerseyClientBundle</span><span class="p">);</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="n">ClientFactory</span><span class="w"> </span><span class="n">clientFactory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jerseyClientBundle</span><span class="p">.</span><span class="na">getClientFactory</span><span class="p">();</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>The <code>ClientFactory</code> is able to create Jersey clients from interfaces defining the API with JAX-RS annotations. It may 
+also create generic Jersey clients that can build the request definition with a fluent API:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">Client</span><span class="w"> </span><span class="n">googleClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clientFactory</span><span class="p">.</span><span class="na">externalClient</span><span class="p">()</span>
+<span class="w">      </span><span class="p">.</span><span class="na">buildGenericClient</span><span class="p">(</span><span class="s">&quot;google&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="na">target</span><span class="p">(</span><span class="s">&quot;https://maps.google.com&quot;</span><span class="p">);</span>
+<span class="n">Response</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">googleClient</span><span class="p">.</span><span class="na">path</span><span class="p">(</span><span class="s">&quot;api&quot;</span><span class="p">)</span><span class="cm">/* ... */</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<p>All clients defined with the <code>ClientFactory</code> can be built either for the SDA Platform or for external services. 
+Both SDA Platform and external clients are <a href="https://opentelemetry.io/">OpenTelemetry</a> enabled.
+Clients for the SDA Platform have some magic added that clients for an external service don't have:</p>
+<ul>
+<li>
+<p><em>Trace-Token</em></p>
+<p>SDA Platform clients always add the Trace-Token of the current incoming request context to the headers of the outgoing
+request. If no incoming request context is found, a new unique Trace-Token is generated for each request. It will be
+discarded when the outgoing request completes.</p>
+</li>
+</ul>
+<ul>
+<li>
+<p><em>Authorization</em></p>
+<p>SDA Platform clients can be configured to pass through the Authorization header of an incoming request context:</p>
+<p><div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">clientFactory</span><span class="p">.</span><span class="na">platformClient</span><span class="p">()</span>
+<span class="w">      </span><span class="p">.</span><span class="na">enableAuthenticationPassThrough</span><span class="p">()</span>
+<span class="w">      </span><span class="p">.</span><span class="na">api</span><span class="p">(</span><span class="n">OtherSdaServiceClient</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="na">atTarget</span><span class="p">(</span><span class="s">&quot;http://other-sda-service.sda.net/api&quot;</span><span class="p">);</span>
+</code></pre></div></td></tr></table></div>
+- <em>Consumer-Token</em></p>
+<p>SDA Platform clients are able to send a Consumer-Token header to identify the caller. The token that is used has to be
+configured and published to the bundle. Currently, the token is only the name of the consumer.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">private</span><span class="w"> </span><span class="n">JerseyClientBundle</span><span class="w"> </span><span class="n">jerseyClientBundle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JerseyClientBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">      </span><span class="p">.</span><span class="na">withConsumerTokenProvider</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="p">::</span><span class="n">getConsumerToken</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div>
+<p>Then the clients can be configured to add a Consumer-Token header:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">clientFactory</span><span class="p">.</span><span class="na">platformClient</span><span class="p">()</span>
+<span class="w">      </span><span class="p">.</span><span class="na">enableConsumerToken</span><span class="p">()</span>
+<span class="w">      </span><span class="p">.</span><span class="na">api</span><span class="p">(</span><span class="n">OtherSdaServiceClient</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="na">atTarget</span><span class="p">(</span><span class="s">&quot;http://other-sda-service.sda.net/api&quot;</span><span class="p">);</span>
+</code></pre></div></td></tr></table></div>
+</li>
+</ul>
+<h2 id="writing-api-clients-as-interfaces">Writing API Clients as interfaces<a class="headerlink" href="#writing-api-clients-as-interfaces" title="Permanent link">&para;</a></h2>
+<p>Client interfaces use the same annotations as the service definitions for REST endpoints. An example is the 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/test/java/org/sdase/commons/client/jersey/test/MockApiClient.java"><code>MockApiClient</code></a> in the integration tests
+of this module.</p>
+<p>Error handling is different based on the return type:</p>
+<p>If a specific return type is defined (e.g. <code>List&lt;MyResource&gt; getMyResources();</code>), it is only returned for successful 
+requests. In any error or redirect case, an exception is thrown. The thrown exception is a 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestException.java"><code>ClientRequestException</code></a>
+wrapping <code>javax.ws.rs.ProcessingException</code> or subclasses of <code>javax.ws.rs.WebApplicationException</code>: 
+- <code>javax.ws.rs.RedirectionException</code> to indicate redirects 
+- <code>javax.ws.rs.ClientErrorException</code> for client errors
+- <code>javax.ws.rs.ServerErrorException</code> for server errors</p>
+<p>If the <code>ClientRequestException</code> exception is handled in the application code <strong>the application must <code>close()</code> the 
+exception</strong>.</p>
+<p>If a <code>javax.ws.rs.core.Response</code> is defined as return type, HTTP errors and redirects can be read from the <code>Response</code>
+object. <strong>Remember to always close the <code>Response</code> object. It references open socket streams.</strong></p>
+<p>In both variants a <code>java.net.ConnectException</code> may be thrown if the client can't connect to the server.</p>
+<h2 id="using-jersey-client">Using Jersey <code>Client</code><a class="headerlink" href="#using-jersey-client" title="Permanent link">&para;</a></h2>
+<p>Jersey Clients can be built using the client factory for cases where the API variant with an interface is not suitable.</p>
+<p>Jersey clients can not automatically convert <code>javax.ws.rs.WebApplicationException</code> into our 
+<code>ClientRequestException</code>. To avoid passing through the error the application received to the caller of the application,
+the exceptions must be handled for all usages that expect a specific type as return value.</p>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientErrorUtil.java"><code>ClientErrorUtil</code></a> can be used to 
+convert the exceptions. In the following example, a 4xx or 5xx response will result in a <code>ClientRequestException</code> that
+causes a 500 response for the incoming request:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">Client</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clientFactory</span><span class="p">.</span><span class="na">platformClient</span><span class="p">().</span><span class="na">buildGenericClient</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">)</span>
+<span class="n">Invocation</span><span class="p">.</span><span class="na">Builder</span><span class="w"> </span><span class="n">requestBuilder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="na">target</span><span class="p">(</span><span class="n">BASE_URL</span><span class="p">).</span><span class="na">request</span><span class="p">(</span><span class="n">MediaType</span><span class="p">.</span><span class="na">APPLICATION_JSON</span><span class="p">);</span><span class="w"> </span>
+<span class="n">MyResource</span><span class="w"> </span><span class="n">myResource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ClientErrorUtil</span><span class="p">.</span><span class="na">convertExceptions</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">requestBuilder</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">MyResource</span><span class="p">.</span><span class="na">class</span><span class="p">));</span>
+</code></pre></div></td></tr></table></div>
+<p>If the error should be handled in the application, the exception may be caught and the error can be read from the 
+response.
+If the <code>ClientRequestException</code> is caught the implementation <strong>must <code>close()</code> it</strong>.
+If it is not handled or rethrown, the <code>ClientRequestExceptionMapper</code> will take care about closing the underlying open 
+socket.
+Therefore, the <code>ClientRequestException</code> <strong>must not</strong> be wrapped as <code>cause</code> in another exception!</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">Client</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clientFactory</span><span class="p">.</span><span class="na">platformClient</span><span class="p">().</span><span class="na">buildGenericClient</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">)</span>
+<span class="n">Invocation</span><span class="p">.</span><span class="na">Builder</span><span class="w"> </span><span class="n">requestBuilder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="na">target</span><span class="p">(</span><span class="n">BASE_URL</span><span class="p">).</span><span class="na">request</span><span class="p">(</span><span class="n">MediaType</span><span class="p">.</span><span class="na">APPLICATION_JSON</span><span class="p">);</span><span class="w"> </span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="n">MyResource</span><span class="w"> </span><span class="n">myResource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ClientErrorUtil</span><span class="p">.</span><span class="na">convertExceptions</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">requestBuilder</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">MyResource</span><span class="p">.</span><span class="na">class</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">ClientRequestException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="n">ApiError</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ClientErrorUtil</span><span class="p">.</span><span class="na">readErrorBody</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<span class="w">   </span><span class="n">e</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="multipart-support">Multipart Support<a class="headerlink" href="#multipart-support" title="Permanent link">&para;</a></h2>
+<p>To support sending multipart requests like file uploads, <code>sda-commons-shared-forms</code> has to be added to the project. </p>
+<p>The client is the configured automatically to support multipart.</p>
+<h2 id="concurrency">Concurrency<a class="headerlink" href="#concurrency" title="Permanent link">&para;</a></h2>
+<p>If you plan to use the Jersey client from another thread, note that the authorization from the request context and the trace token are missing.
+This can cause issues.
+You can use <code>ContainerRequestContextHolder.transferRequestContext</code> to transfer the request context and <code>MDC</code> to another thread.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">executorService</span><span class="p">.</span><span class="na">submit</span><span class="p">(</span><span class="n">transferRequestContext</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// MDC.get(&quot;Trace-Token&quot;) returns the same value as the parent thread</span>
+<span class="p">})).</span><span class="na">get</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="http-client-configuration-and-proxy-support">HTTP Client Configuration and Proxy Support<a class="headerlink" href="#http-client-configuration-and-proxy-support" title="Permanent link">&para;</a></h2>
+<p>Each client can be configured with the standard
+<a href="https://www.dropwizard.io/en/latest/manual/configuration.html#man-configuration-clients-http">Dropwizard configuration</a>.
+Please note that this requires that there is a property in your Application's <code>Configuration</code> class. </p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">org.sdase.commons.client.jersey.HttpClientConfiguration</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyConfiguration</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Configuration</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">HttpClientConfiguration</span><span class="w"> </span><span class="n">myClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HttpClientConfiguration</span><span class="p">();</span>
+
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="n">HttpClientConfiguration</span><span class="w"> </span><span class="nf">getMyClient</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="n">myClient</span><span class="p">;</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMyClient</span><span class="p">(</span><span class="n">HttpClientConfiguration</span><span class="w"> </span><span class="n">myClient</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="na">myClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myClient</span><span class="p">;</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">Client</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clientFactory</span><span class="p">.</span><span class="na">platformClient</span><span class="p">(</span><span class="n">configuration</span><span class="p">.</span><span class="na">getMyClient</span><span class="p">()).</span><span class="na">buildGenericClient</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">);</span>
+</code></pre></div></td></tr></table></div>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">myClient</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500ms</span>
+<span class="w">  </span><span class="nt">proxy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.52.11</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">    </span><span class="nt">scheme </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+</code></pre></div></td></tr></table></div>
+<blockquote>
+<p>Tip: There is no need to make all configuration properties available as environment variables.
+Seldomly used properties can always be configured using <a href="https://www.dropwizard.io/en/latest/manual/core.html#man-core-configuration">System Properties</a>.</p>
+</blockquote>
+<p>This configuration can be used to configure a proxy server if needed.
+Use this if all clients should use individual proxy configurations.</p>
+<p>In addition, each client can consume the standard <a href="https://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html#Proxies">proxy system properties</a>.
+Please note that a specific proxy configuration in the <code>HttpClientConfiguration</code> disables the proxy system properties for the client using that configuration.
+This can be helpful when all clients in an Application should use the same proxy configuration (this includes the clients that are used by the <a href="../server-auth/"><code>sda-commons-server-auth</code> bundle</a>).</p>
+<h2 id="oidc-client">OIDC Client<a class="headerlink" href="#oidc-client" title="Permanent link">&para;</a></h2>
+<p>This module also provides support for requesting OIDC access tokens from
+respective providers (e.g. Keycloak) for subsequent requests to other services.</p>
+<h3 id="usage_1">Usage<a class="headerlink" href="#usage_1" title="Permanent link">&para;</a></h3>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/OidcClient.java"><code>OidcClient</code></a> can be instantiated
+with a Jersey <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java"><code>ClientFactory</code></a>
+and the respectable <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/OidcConfiguration.java"><code>OidcConfiguration</code></a>.
+The client also implements caching that is configured according to the access tokens expiration time claim.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">OidcClient</span><span class="w"> </span><span class="n">oidcClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">OidcClient</span><span class="p">(</span><span class="n">jerseyClientBundle</span><span class="p">.</span><span class="na">getClientFactory</span><span class="p">(),</span><span class="w"> </span><span class="n">configuration</span><span class="p">.</span><span class="na">getOidc</span><span class="p">());</span>
+<span class="n">OidcResult</span><span class="w"> </span><span class="n">oidcResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oidcClient</span><span class="p">.</span><span class="na">createAccessToken</span><span class="p">();</span>
+<span class="n">String</span><span class="w"> </span><span class="n">accessToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oidcResult</span><span class="p">.</span><span class="na">getAccessToken</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div>
+<p>An easy way to integrate the OidcClient into existing PlatformClients is by using the provided <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/filter/OidcRequestFilter.java"><code>OidcRequestFilter</code></a>
+and passing it to the PlatformClientBuilder:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">OidcRequestFilter</span><span class="w"> </span><span class="n">oidcRequestFilter</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="k">new</span><span class="w"> </span><span class="n">OidcRequestFilter</span><span class="p">(</span><span class="n">jerseyClientBundle</span><span class="p">.</span><span class="na">getClientFactory</span><span class="p">(),</span><span class="w"> </span><span class="n">configuration</span><span class="p">.</span><span class="na">getOidc</span><span class="p">(),</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+
+<span class="n">ExternalServiceClient</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">    </span><span class="n">jerseyClientBundle</span>
+<span class="w">      </span><span class="p">.</span><span class="na">getClientFactory</span><span class="p">()</span>
+<span class="w">      </span><span class="p">.</span><span class="na">platformClient</span><span class="p">(</span><span class="n">configuration</span><span class="p">.</span><span class="na">getAuditableArchiveHttpClient</span><span class="p">())</span>
+<span class="w">      </span><span class="p">.</span><span class="na">addFilter</span><span class="p">(</span><span class="n">oidcRequestFilter</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="na">api</span><span class="p">(</span><span class="n">ExternalServiceClient</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="na">atTarget</span><span class="p">(</span><span class="n">externalServiceUrl</span><span class="p">);</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="configuration_1">Configuration<a class="headerlink" href="#configuration_1" title="Permanent link">&para;</a></h3>
+<p>The oidc client is configured in the <code>config.yaml</code> of the application.</p>
+<p>Example config for <strong>production</strong> to be used with environment variables of the cluster configuration:
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">oidc</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">disabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_DISABLED:-false}</span>
+<span class="w">  </span><span class="nt">grantType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_GRANT_TYPE:-client_credentials}</span>
+<span class="w">  </span><span class="nt">clientId</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_CLIENT_ID}</span>
+<span class="w">  </span><span class="nt">clientSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_CLIENT_SECRET}</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_USERNAME}</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_PASSWORD}</span>
+<span class="w">  </span><span class="nt">issuerUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_ISSUER_URL}</span>
+<span class="w">  </span><span class="nt">cache</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">disabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_CACHE_DISABLED:-false}</span>
+</code></pre></div></td></tr></table></div></p>
+<ul>
+<li><em>OIDC_DISABLED</em><ul>
+<li>Disable retrieving a new token completely. Not meant for production! </li>
+<li>Example: <code>false</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><em>OIDC_GRANT_TYPE</em><ul>
+<li>Sets the OIDC grant type.</li>
+<li>Default: <code>client_credentials</code></li>
+<li>Supported values:<ul>
+<li><code>client_credentials</code></li>
+<li><em>Deprecated</em>: <code>password</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><em>OIDC_CLIENT_ID</em><ul>
+<li>The client id.</li>
+<li>Example: <code>client_id</code></li>
+</ul>
+</li>
+<li><em>OIDC_CLIENT_SECRET</em><ul>
+<li>The client secret.</li>
+<li>Example: <code>s3cr3t</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><em>OIDC_USERNAME</em><ul>
+<li><em>Deprecated</em>: A username. Only used for grant type 'password'.</li>
+<li>Example: <code>john</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><em>OIDC_PASSWORD</em><ul>
+<li><em>Deprecated</em>: A password. Only used for grant type 'password'.</li>
+<li>Example: <code>pa$$word</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><em>OIDC_ISSUER_URL</em><ul>
+<li>Contains the URL to the OpenID provider configuration document.</li>
+<li>Example: <code>https://&lt;keycloak.domain&gt;/auth/realms/&lt;realm&gt;</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><em>OIDC_CACHE_DISABLED</em><ul>
+<li>Disable the caching of retrieved tokens.</li>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+</ul>
+<p>The grant type <code>password</code> is no longer allowed in OAuth2/2.1 and the support for it in this module will be deprecated at some point.
+It is highly recommended to use the grant type <code>client_credentials</code>.</p>
+<h2 id="tips-and-tricks">Tips and Tricks<a class="headerlink" href="#tips-and-tricks" title="Permanent link">&para;</a></h2>
+<h3 id="basic-authentication">Basic Authentication<a class="headerlink" href="#basic-authentication" title="Permanent link">&para;</a></h3>
+<p>In order to call http endpoints which require a Basic Authentication header set you can register
+the <code>org.glassfish.jersey.client.authentication.HttpAuthenticationFeature</code> using the
+JerseyClientBuilder.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">jerseyClientBundle</span>
+<span class="w">    </span><span class="p">.</span><span class="na">getClientFactory</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">externalClient</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">addFeature</span><span class="p">(</span><span class="n">HttpAuthenticationFeature</span><span class="p">.</span><span class="na">basic</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="na">api</span><span class="p">(</span><span class="n">ApiA</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">atTarget</span><span class="p">(</span><span class="n">apiABaseUrl</span><span class="p">);</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="3rd-party-javaxwsrs-api-client-implementations-in-classpath">3<sup>rd</sup> Party <code>javax.ws.rs-api</code> Client Implementations in Classpath<a class="headerlink" href="#3rd-party-javaxwsrs-api-client-implementations-in-classpath" title="Permanent link">&para;</a></h3>
+<p>The clients used in sda-commons require the Jersey Client implementation. 
+If you are facing problems with other <code>javax.ws.rs-api</code> implementations in the classpath (e.g. RestEasy which comes
+with the Keycloak SDK) the Jersey Client Builder must be propagated in your project as service.
+Therefore, the service definition <code>src/main/resources/META-INF/services/javax.ws.rs.client.ClientBuilder</code> must be added
+to your project containing:</p>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>org.glassfish.jersey.client.JerseyClientBuilder
+</code></pre></div></td></tr></table></div>
+<p>This works if the library that requires the other implementation does not rely on the Java ServiceLoader.</p>
+<h3 id="consume-api-clients-without-catching-exceptions">Consume API clients without catching exceptions<a class="headerlink" href="#consume-api-clients-without-catching-exceptions" title="Permanent link">&para;</a></h3>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation"><code>Suppress*</code></a> annotations can be used to suppress
+specific <code>ClientRequestException</code> thrown in any defined API method where the return type is not a <code>Response</code>.
+There are configurable suppressors for 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressHttpErrorsToNull.java">HTTP errors</a>,
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressConnectTimeoutErrorsToNull.java">connection timeouts</a>,
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressReadTimeoutErrorsToNull.java">read timeouts</a>
+and all other <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressProcessingErrorsToNull.java">processing errors</a>.</p>
+<p>Suppressed exceptions are logged at info level.</p>
+<p>The following client will convert a <em>404 Not Found</em> error to <code>null</code> so that the consumer can handle 
+an entity that is not found by checking if the return value is <code>null</code>.
+Any other error will lead to a <em>500 Internal Server Error</em> because the <code>ClientRequestException</code> is converted in the
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestExceptionMapper.java"><code>ClientRequestExceptionMapper</code></a>.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@Path</span><span class="p">(</span><span class="s">&quot;/examples&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">ExampleClient</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="nd">@GET</span>
+<span class="w">  </span><span class="nd">@Path</span><span class="p">(</span><span class="s">&quot;/{exampleId}&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="nd">@Produces</span><span class="p">(</span><span class="n">MediaType</span><span class="p">.</span><span class="na">APPLICATION_JSON</span><span class="p">)</span>
+<span class="w">  </span><span class="nd">@SuppressHttpErrorsToNull</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+<span class="w">  </span><span class="n">Example</span><span class="w"> </span><span class="nf">getExample</span><span class="p">(</span><span class="nd">@PathParam</span><span class="p">(</span><span class="s">&quot;exampleId&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">exampleId</span><span class="p">);</span>
+
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ExampleService</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">ExampleClient</span><span class="w"> </span><span class="n">exampleClient</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">DoSomethingService</span><span class="w"> </span><span class="n">doSomethingService</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doSomethingIfExampleExists</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">exampleId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Example</span><span class="w"> </span><span class="n">example</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exampleClient</span><span class="p">.</span><span class="na">getExample</span><span class="p">(</span><span class="n">exampleId</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">example</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">doSomethingService</span><span class="p">(</span><span class="n">example</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../bom/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Bom" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Bom
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../client-jersey-example/" class="md-footer__link md-footer__link--next" aria-label="Next: Client Jersey Example" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Client Jersey Example
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="../search/main.js"></script>
+      
+    
+  </body>
+</html>

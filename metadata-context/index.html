@@ -1,0 +1,1271 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../bom/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Metadata Context - sda-dropwizard-commons</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.c4a75a56.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-metadata-context" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="sda-dropwizard-commons" class="md-header__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sda-dropwizard-commons
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Metadata Context
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+      </form>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="sda-dropwizard-commons" class="md-nav__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    sda-dropwizard-commons
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Metadata Context
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Metadata Context
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    Purpose
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-and-structure" class="md-nav__link">
+    Configuration and structure
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-metadata-context-information" class="md-nav__link">
+    Creating metadata context information
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-metadata-context-in-a-service" class="md-nav__link">
+    Support metadata context in a service
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-template-selection" class="md-nav__link">
+    Example: Template selection
+  </a>
+  
+    <nav class="md-nav" aria-label="Example: Template selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#variant-of-template-selection" class="md-nav__link">
+    Variant of template selection
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bom/" class="md-nav__link">
+        Bom
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey/" class="md-nav__link">
+        Client Jersey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-example/" class="md-nav__link">
+        Client Jersey Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-wiremock-testing/" class="md-nav__link">
+        Client Jersey Wiremock Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        Dependencies
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth-testing/" class="md-nav__link">
+        Server Auth Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth/" class="md-nav__link">
+        Server Auth
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-circuit-breaker/" class="md-nav__link">
+        Server Circuit Breaker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cloud-events/" class="md-nav__link">
+        Server Cloud Events
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-consumer/" class="md-nav__link">
+        Server Consumer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cors/" class="md-nav__link">
+        Server Cors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-dropwizard/" class="md-nav__link">
+        Server Dropwizard
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-error-handling/" class="md-nav__link">
+        Server Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck-example/" class="md-nav__link">
+        Server Healthcheck Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck/" class="md-nav__link">
+        Server Healthcheck
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-example/" class="md-nav__link">
+        Server Hibernate Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-testing/" class="md-nav__link">
+        Server Hibernate Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate/" class="md-nav__link">
+        Server Hibernate
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-jackson/" class="md-nav__link">
+        Server Jackson
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-example/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-testing/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-key-mgmt/" class="md-nav__link">
+        Server key Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-mongo-testing/" class="md-nav__link">
+        Server Mongo Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-open-api/" class="md-nav__link">
+        Server OpenApi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-openapi-example/" class="md-nav__link">
+        Server OpenApi Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry-example/" class="md-nav__link">
+        Server Open Telemetry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry/" class="md-nav__link">
+        Server Open
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-prometheus/" class="md-nav__link">
+        Server Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3-testing/" class="md-nav__link">
+        Server S3 Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3/" class="md-nav__link">
+        Server S3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-security/" class="md-nav__link">
+        Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-spring-data-mongo/" class="md-nav__link">
+        Server Spring Data Mongo
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-testing/" class="md-nav__link">
+        Server Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-trace/" class="md-nav__link">
+        Server Trace
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld/" class="md-nav__link">
+        Server Weld
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-example/" class="md-nav__link">
+        Server Weld Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-testing/" class="md-nav__link">
+        Server Weld Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-asyncapi/" class="md-nav__link">
+        Shared Async API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-certificates/" class="md-nav__link">
+        Shared Certificates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-error/" class="md-nav__link">
+        Shared Error
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-forms/" class="md-nav__link">
+        Shared Forms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-tracing/" class="md-nav__link">
+        Shared Tracing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-yaml/" class="md-nav__link">
+        Shared Yaml
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter/" class="md-nav__link">
+        Starter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter-example/" class="md-nav__link">
+        Starter Example
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    Purpose
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-and-structure" class="md-nav__link">
+    Configuration and structure
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-metadata-context-information" class="md-nav__link">
+    Creating metadata context information
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-metadata-context-in-a-service" class="md-nav__link">
+    Support metadata context in a service
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-template-selection" class="md-nav__link">
+    Example: Template selection
+  </a>
+  
+    <nav class="md-nav" aria-label="Example: Template selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#variant-of-template-selection" class="md-nav__link">
+    Variant of template selection
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="the-metadata-context">The Metadata Context<a class="headerlink" href="#the-metadata-context" title="Permanent link">&para;</a></h1>
+<h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
+<p>The metadata context keeps contextual information of a business process across all involved
+microservices.
+The information that is stored in the metadata context is solely defined by the environment.
+Defining a metadata context for an environment is optional.<br />
+If no context is defined, no metadata will be available for any service.</p>
+<p>The metadata should not affect the core business logic of a service but can be used to affect how a
+service communicates with the user (e.g. communication methods, templates or domains used for links)
+or how statistical data is evaluated.
+As the metadata is tracked for a whole business process across all involved services, it supports
+that services which are not in a synchronous call chain, can behave differently based on the entry
+point.
+All services in between and the service that uses information from the metadata context don't need
+to clutter their API with non-functional information, that may be different in each environment, to
+support features a service in the end of a process provides based on the initial user request.</p>
+<p>A service must be able to fulfill its purpose without any information from the metadata context.
+A service may use information from the metadata context to use or apply different business related
+or non-functional configuration for a specific business process but must have a default for these
+configurations as well.</p>
+<p>The metadata context is technically transferred via HTTP headers and Kafka message headers between
+services in the same environment.
+At runtime, it is held in a thread local variable to be available for the current process.</p>
+<p><a href="#example-template-selection">The example below</a> explains what kind of problems the metadata context
+can solve.</p>
+<h2 id="configuration-and-structure">Configuration and structure<a class="headerlink" href="#configuration-and-structure" title="Permanent link">&para;</a></h2>
+<p>A metadata context consists of well-defined fields.
+They must be defined equally for all services in the same environment.
+Services based on this library use the environment variable <code>METADATA_FIELDS</code> as comma separated
+list of field names automatically.
+Field names are used as HTTP and Kafka message header keys.
+The fields must not conflict with officially defined header keys.</p>
+<p>The data type of the value is always text, represented as <code>String</code> in this library.
+Multiple values are supported for each field in a specific context.
+To simplify parsing, according to
+<a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-field-lines-and-combined-fi">RFC 9110 5.2</a>, values
+must not contain commas.</p>
+<h2 id="creating-metadata-context-information">Creating metadata context information<a class="headerlink" href="#creating-metadata-context-information" title="Permanent link">&para;</a></h2>
+<p>A metadata context for a specific business process should be initialized as early as possible.
+Technically the context is created by passing the headers of defined metadata fields to a service
+that supports the metadata context.</p>
+<p>No standard component should create a metadata context initially, because the metadata context
+always depends on the environment.</p>
+<p>The easiest way to initially create a metadata context is to add the respective headers in a proxy
+that exposes a service, e.g. an Ingress in Kubernetes.
+The proxy may derive the metadata information from the used domain, query params, user agent
+headers and other information available in the request.</p>
+<p>If getting the metadata information is more complex, an environment specific interaction service
+(according to the SDA service architecture) may be implemented and create the context
+programmatically.
+This service should act like a proxy and forward the request to a standard business service.</p>
+<p>Services that recreate a context for a process that was interrupted, use the context they stored
+along with the entity to activate it for current thread.</p>
+<h2 id="support-metadata-context-in-a-service">Support metadata context in a service<a class="headerlink" href="#support-metadata-context-in-a-service" title="Permanent link">&para;</a></h2>
+<p>Any service that communicates synchronously with the HTTP platform clients provided by this
+library and asynchronously with Kafka consumers and producers initialized by this library and has no
+persistence layer most likely supports the metadata context.
+Exceptions may apply if business processes are interrupted or asynchronously processed without
+saving business data in a database.</p>
+<p>Services that persist data and therefore interrupt the business process until the data is loaded
+into memory again can support the metadata context if they store it along with the entity and
+recreate the runtime context when the entity is loaded and processed.</p>
+<p>Service that interrupts a process in memory or proceeds asynchronously must transfer the metadata
+context to the new thread to support the metadata context.</p>
+<p>Services that fulfill these requirements should mention the support of the metadata context in their
+deployment documentation.
+They should also mention the configuration environment variable <code>METADATA_FIELDS</code> that is
+automatically available for all services based on this library.</p>
+<p>Services that read information from the metadata context shall not use hard coded field names.
+They must not expect that specific fields are available in an environment.
+The environment, technically the operations team, is in the lead to define which metadata is
+available.</p>
+<p>A service only knows a specific purpose for which it supports metadata information.
+Whenever a service supports decisions based on metadata configuration, it must provide a
+configuration option which naming is based on the purpose to let the operations team define which
+metadata field should be used.
+The library supports to derive the actual field names from environment variables.
+The values are dependent on the environment as well.
+Therefore, the service must provide configuration options to map values of the metadata field to
+values it understands.</p>
+<p>Supporting information from the metadata context to distinguish the behavior of the service can be
+very complex due to the loose coupling and the high flexibility for the owners of the environment.
+Every configuration that can be modified by information of the metadata context must have a default
+as well, because the service may be used in an environment without configured metadata context or in
+a specific business process is no context available. 
+How a service behaves and is configured when metadata context is available must be described in the
+deployment documentation to make this complex flexibility manageable by the operations team.</p>
+<h2 id="example-template-selection">Example: Template selection<a class="headerlink" href="#example-template-selection" title="Permanent link">&para;</a></h2>
+<p>Imagine a business case that is advertised on different landing pages, where the user enters
+information and receives a result asynchronously via email.
+The email sent to the user should match the style of the landing page.</p>
+<p>Each landing page is available on a dedicated domain but all lead to the same backend services.
+The services may communicate asynchronously or even need additional information from the backoffice
+team to create the result.</p>
+<p>The operations team defines the <code>METADATA_FIELDS</code> as <code>landing-page-source</code> for all services in the
+environment to identify the landing page where the user entered their data.
+They configure the Ingress, to set either <code>christmas-special</code> or <code>summer-edition</code> as
+<code>landing-page-source</code> header - based on the domain of two landing pages.</p>
+<p>No service but the one that is generating the email is affected by this information.
+The core business rules that determine the result only need the information the user entered.
+The email content can be created independently as well.</p>
+<p>Only the service that renders the HTML part of the email must be aware of the source of the request.
+Therefore, it must have the ability to use multiple templates.
+Besides other optional input to determine the template to use, it must be configurable to use
+information from the metadata context.</p>
+<p>To keep the flexibility the metadata context offers, it defines the environment variable
+<code>TEMPLATE_HINT_METADATA_FIELD</code>.
+The operations team configures it as <code>landing-page-source</code>.
+The service developer can use <code>TEMPLATE_HINT_METADATA_FIELD</code> in the
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/metadata/MetadataContext.java"><code>MetadataContext</code></a>
+API to get the values of current context, but must be aware that the result is empty or contains
+multiple values.</p>
+<p>Additionally, the email templating service must provide configuration options to select a template
+based on the value as well as providing the templates.</p>
+<p>The templates and the configuration could be mounted as files in the container.
+The latter may be a yaml file and look like this:</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># templates.yaml</span>
+<span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mounts/templates/default.hbs</span>
+<span class="nt">byMetadata</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">metadataValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">christmas-special</span>
+<span class="w">    </span><span class="nt">templateFile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mounts/templates/xmas.hbs</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">metadataValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">summer-edition</span>
+<span class="w">    </span><span class="nt">templateFile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mounts/templates/summer.hbs</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="variant-of-template-selection">Variant of template selection<a class="headerlink" href="#variant-of-template-selection" title="Permanent link">&para;</a></h3>
+<p>The email example is very flexible and would support other environments as well, e.g. when
+A/B testing is used to find the perfect color for the use case.
+The email service is not involved in the evaluation of the A/B test, but has to send emails that
+match the styles of the A/B test.
+Such user tests will most likely be evaluated by dedicated UX tools and not by the backend services
+in the environment.
+No business service should be affected by this information.
+However, a service creating statistics for the use case could support the metadata context as well
+and provide additional evaluation for each variant.</p>
+<p>The frontend must provide any information in the request to distinguish between A and B.
+Then the proxy can convert the information in a header that is sent to the backend service, e.g.
+<code>ab-variant=neon</code>.</p>
+<p>The operations team of this environment will configure <code>METADATA_FIELDS</code> for all services and
+<code>TEMPLATE_HINT_METADATA_FIELD</code> as <code>ab-variant</code> and the email templating like this:</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># templates.yaml</span>
+<span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mounts/templates/default.hbs</span>
+<span class="nt">byMetadata</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">metadataValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pastel</span>
+<span class="w">    </span><span class="nt">templateFile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mounts/templates/pastel.hbs</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">metadataValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">neon</span>
+<span class="w">    </span><span class="nt">templateFile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mounts/templates/neon.hbs</span>
+</code></pre></div></td></tr></table></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Overview
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../bom/" class="md-footer__link md-footer__link--next" aria-label="Next: Bom" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Bom
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="../search/main.js"></script>
+      
+    
+  </body>
+</html>

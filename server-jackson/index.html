@@ -1,0 +1,1500 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../server-hibernate/">
+      
+      
+        <link rel="next" href="../server-kafka/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Server Jackson - sda-dropwizard-commons</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.c4a75a56.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sda-commons-server-jackson" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="sda-dropwizard-commons" class="md-header__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sda-dropwizard-commons
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Server Jackson
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+      </form>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="sda-dropwizard-commons" class="md-nav__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    sda-dropwizard-commons
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metadata-context/" class="md-nav__link">
+        Metadata Context
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bom/" class="md-nav__link">
+        Bom
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey/" class="md-nav__link">
+        Client Jersey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-example/" class="md-nav__link">
+        Client Jersey Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-wiremock-testing/" class="md-nav__link">
+        Client Jersey Wiremock Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        Dependencies
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth-testing/" class="md-nav__link">
+        Server Auth Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth/" class="md-nav__link">
+        Server Auth
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-circuit-breaker/" class="md-nav__link">
+        Server Circuit Breaker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cloud-events/" class="md-nav__link">
+        Server Cloud Events
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-consumer/" class="md-nav__link">
+        Server Consumer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cors/" class="md-nav__link">
+        Server Cors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-dropwizard/" class="md-nav__link">
+        Server Dropwizard
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-error-handling/" class="md-nav__link">
+        Server Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck-example/" class="md-nav__link">
+        Server Healthcheck Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck/" class="md-nav__link">
+        Server Healthcheck
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-example/" class="md-nav__link">
+        Server Hibernate Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-testing/" class="md-nav__link">
+        Server Hibernate Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate/" class="md-nav__link">
+        Server Hibernate
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Server Jackson
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Server Jackson
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#date-and-time-formatting" class="md-nav__link">
+    Date and Time formatting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-hal-links-to-resources" class="md-nav__link">
+    Adding HAL links to resources
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding HAL links to resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#embedhelper" class="md-nav__link">
+    EmbedHelper
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-filtering-feature-for-resources" class="md-nav__link">
+    Field filtering feature for resources
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disable-hal-support" class="md-nav__link">
+    Disable HAL support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customize-the-objectmapper" class="md-nav__link">
+    Customize the ObjectMapper
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yaml" class="md-nav__link">
+    YAML
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-format" class="md-nav__link">
+    Error Format
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-example/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-testing/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-key-mgmt/" class="md-nav__link">
+        Server key Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-mongo-testing/" class="md-nav__link">
+        Server Mongo Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-open-api/" class="md-nav__link">
+        Server OpenApi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-openapi-example/" class="md-nav__link">
+        Server OpenApi Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry-example/" class="md-nav__link">
+        Server Open Telemetry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry/" class="md-nav__link">
+        Server Open
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-prometheus/" class="md-nav__link">
+        Server Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3-testing/" class="md-nav__link">
+        Server S3 Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3/" class="md-nav__link">
+        Server S3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-security/" class="md-nav__link">
+        Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-spring-data-mongo/" class="md-nav__link">
+        Server Spring Data Mongo
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-testing/" class="md-nav__link">
+        Server Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-trace/" class="md-nav__link">
+        Server Trace
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld/" class="md-nav__link">
+        Server Weld
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-example/" class="md-nav__link">
+        Server Weld Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-testing/" class="md-nav__link">
+        Server Weld Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-asyncapi/" class="md-nav__link">
+        Shared Async API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-certificates/" class="md-nav__link">
+        Shared Certificates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-error/" class="md-nav__link">
+        Shared Error
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-forms/" class="md-nav__link">
+        Shared Forms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-tracing/" class="md-nav__link">
+        Shared Tracing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-yaml/" class="md-nav__link">
+        Shared Yaml
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter/" class="md-nav__link">
+        Starter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter-example/" class="md-nav__link">
+        Starter Example
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#date-and-time-formatting" class="md-nav__link">
+    Date and Time formatting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-hal-links-to-resources" class="md-nav__link">
+    Adding HAL links to resources
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding HAL links to resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#embedhelper" class="md-nav__link">
+    EmbedHelper
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-filtering-feature-for-resources" class="md-nav__link">
+    Field filtering feature for resources
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disable-hal-support" class="md-nav__link">
+    Disable HAL support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customize-the-objectmapper" class="md-nav__link">
+    Customize the ObjectMapper
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yaml" class="md-nav__link">
+    YAML
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-format" class="md-nav__link">
+    Error Format
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="sda-commons-server-jackson">SDA Commons Server Jackson<a class="headerlink" href="#sda-commons-server-jackson" title="Permanent link">&para;</a></h1>
+<p><a href="https://javadoc.io/doc/org.sdase.commons/sda-commons-server-jackson"><img alt="javadoc" src="https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-jackson/javadoc.svg" /></a></p>
+<p>The module <code>sda-commons-server-jackson</code> is used to configure the <code>ObjectMapper</code> with the recommended default settings 
+of SDA SE services. It also provides support for linking resources with HAL and adds the ability to filter fields on 
+client request.</p>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/JacksonConfigurationBundle.java"><code>JacksonConfigurationBundle</code></a> is
+used to configure the JSON serializer. It adds various error mappers to support the SDA error message standard. These
+replace the default Dropwizard error mappers but also additional new mappers are added, e.g. mapping JaxRs Exceptions, 
+such as NotFound and NotAuthorized. All mappers do log the errors when mapping.
+The framework already provides a predefined exception mapper for <code>InvalidTypeException</code> if the framework default
+for feature <code>FAIL_ON_INVALID_SUBTYPE</code> is customized. See section <a href="#customize-the-objectmapper"><code>Customize the ObjectMapper</code></a> below for details
+about customizing the default object mapper settings. If the feature is enabled the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/errors/InvalidTypeIdExceptionMapper.java"><code>InvalidTypeIdExceptionMapper</code></a>
+produces a response in the common error format.</p>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/ObjectMapperConfigurationUtil.java"><code>ObjectMapperConfigurationUtil</code></a>
+can be used to receive an <code>ObjectMapper</code> with the recommended settings for usage outside a Dropwizard application.  </p>
+<p>The default <code>ObjectMapper</code> is configured to be fault-tolerant to avoid failures in deserialization. JSR-303 validations
+should be used to validate input data. For serialization the bundle disables 
+<a href="https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/SerializationFeature.html#FAIL_ON_EMPTY_BEANS"><code>FAIL_ON_EMPTY_BEANS</code></a>,
+<a href="https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/SerializationFeature.html#WRITE_DATES_AS_TIMESTAMPS"><code>WRITE_DATES_AS_TIMESTAMPS</code></a>,
+<a href="https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/SerializationFeature.html#WRITE_DURATIONS_AS_TIMESTAMPS"><code>WRITE_DURATIONS_AS_TIMESTAMPS</code></a>.
+For deserialization the bundle disables 
+<a href="https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#FAIL_ON_UNKNOWN_PROPERTIES"><code>FAIL_ON_UNKNOWN_PROPERTIES</code></a>,
+<a href="https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#FAIL_ON_IGNORED_PROPERTIES"><code>FAIL_ON_IGNORED_PROPERTIES</code></a>,
+<a href="https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#FAIL_ON_INVALID_SUBTYPE"><code>FAIL_ON_INVALID_SUBTYPE</code></a> 
+and enables
+<a href="https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#ACCEPT_SINGLE_VALUE_AS_ARRAY"><code>ACCEPT_SINGLE_VALUE_AS_ARRAY</code></a>,
+<a href="https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#READ_UNKNOWN_ENUM_VALUES_AS_NULL"><code>READ_UNKNOWN_ENUM_VALUES_AS_NULL</code></a>, 
+<a href="https://static.javadoc.io/com.fasterxml.jackson.core/jackson-databind/2.9.7/com/fasterxml/jackson/databind/DeserializationFeature.html#READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE"><code>READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE</code></a>.
+The <code>FuzzyEnumModule</code> from Dropwizard is removed as it lacks support of newer Jackson features for enumerations.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>In the application class, the bundle is added in the <code>initialize</code> method:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">JacksonConfigurationBundle</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io.dropwizard.Application</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyApplication</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">MyApplication</span><span class="p">().</span><span class="na">run</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">JacksonConfigurationBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">build</span><span class="p">());</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="date-and-time-formatting">Date and Time formatting<a class="headerlink" href="#date-and-time-formatting" title="Permanent link">&para;</a></h3>
+<p>It is strongly recommended to use </p>
+<ul>
+<li><code>LocalDate</code> for dates without time</li>
+<li><code>ZonedDateTime</code> for date and times</li>
+<li><code>Duration</code> for durations with time resolution</li>
+<li><code>Period</code> for durations with day resolution</li>
+</ul>
+<p>All these types can be read and written in JSON as ISO 8601 formats. <code>ZonedDateTime</code> is formatted with milliseconds or 
+nanoseconds according to the detail set in the instance.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Resolution</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LocalDate</code></td>
+<td>Day of Month</td>
+<td><em>2018-09-23</em></td>
+</tr>
+<tr>
+<td><code>ZonedDateTime</code></td>
+<td>Any time unit</td>
+<td><em>2018-09-23T14:21:41.123+01:00</em></td>
+</tr>
+<tr>
+<td><code>Duration</code></td>
+<td>Any time unit</td>
+<td><em>P1DT13M</em></td>
+</tr>
+<tr>
+<td><code>Period</code></td>
+<td>Days</td>
+<td><em>P1Y2D</em></td>
+</tr>
+</tbody>
+</table>
+<p>Reading <code>ZonedDateTime</code> is configured to be tolerant so that added nanoseconds or missing milliseconds or missing 
+seconds are supported.</p>
+<p>Please do not use <code>@JsonFormat(pattern = "...")</code> for customizing serialization because it breaks tolerant reading of 
+formatting variants. If output should be customized, use <code>@JsonSerializer</code>.</p>
+<p>SDA-Commons provides two default serializers for <code>ZonedDateTime</code> to use a fixed resolution in the output.
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java">Iso8601Serializer</a> is used to omit 
+milliseconds and 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java#L90">Iso8601Serializer.WithMillis</a> is used to
+render the time with 3 digits for milliseconds.</p>
+<p>Usage:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">class</span> <span class="nc">MyResource</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="nd">@JsonSerialize</span><span class="p">(</span><span class="n">using</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">sdase</span><span class="p">.</span><span class="na">commons</span><span class="p">.</span><span class="na">server</span><span class="p">.</span><span class="na">jackson</span><span class="p">.</span><span class="na">Iso8601Serializer</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">ZonedDateTime</span><span class="w"> </span><span class="n">zonedDateTime</span><span class="p">;</span>
+
+<span class="w">   </span><span class="nd">@JsonSerialize</span><span class="p">(</span><span class="n">using</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">sdase</span><span class="p">.</span><span class="na">commons</span><span class="p">.</span><span class="na">server</span><span class="p">.</span><span class="na">jackson</span><span class="p">.</span><span class="na">Iso8601Serializer</span><span class="p">.</span><span class="na">WithMillis</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">ZonedDateTime</span><span class="w"> </span><span class="n">zonedDateTimeWithMillis</span><span class="p">;</span>
+
+<span class="w">   </span><span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="adding-hal-links-to-resources">Adding HAL links to resources<a class="headerlink" href="#adding-hal-links-to-resources" title="Permanent link">&para;</a></h3>
+<p>Resources that should be processed for HAL links must be annotated as <code>@Resource</code>. Links are added directly in the 
+resource class and are annotated as <code>@Link</code>. Embedded resources can be added as <code>@EmbeddedResource</code>. The 
+<a href="https://github.com/openapi-tools/jackson-dataformat-hal">Open API Tools</a> are used to render them in appropriate 
+<code>_links</code> and <code>_embedded</code> properties. Links are properly documented in Swagger when <code>io.openapitools.hal:swagger-hal</code> is
+added to the dependencies. <code>io.openapitools.hal:swagger-hal</code> is shipped with 
+<a href="../server-open-api/"><code>sda-commons-server-openapi</code></a>.</p>
+<p>HAL link support may be disabled in the <code>JacksonConfigurationBundle.builder()</code>.</p>
+<p>Example:</p>
+<p><div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@Resource</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Person</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="nd">@Link</span><span class="w"> </span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">HALLink</span><span class="w"> </span><span class="n">self</span><span class="p">;</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">   </span><span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<div class="language-javascript highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nx">GET</span><span class="w"> </span><span class="o">/</span><span class="nx">persons</span><span class="o">/</span><span class="mf">123</span>
+
+<span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;_links&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;self&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;href&quot;</span><span class="o">:</span><span class="s2">&quot;/persons/123&quot;</span><span class="p">}},</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;John Doe&quot;</span><span class="p">}</span>
+</code></pre></div></td></tr></table></div></p>
+<h4 id="embedhelper">EmbedHelper<a class="headerlink" href="#embedhelper" title="Permanent link">&para;</a></h4>
+<p>To decide whether a resource is just linked or embedded, the 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/EmbedHelper.java"><code>EmbedHelper</code></a> can be used. If query parameters for 
+embedding are passed, like <code>/api/cars?embed=drivers,owner</code>, <code>EmbedHelper.isEmbeddingOfRelationRequested(relationName)</code> 
+can be used to check whether a resource should be embedded:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">EmbedHelper</span><span class="w"> </span><span class="n">embedHelper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">EmbedHelper</span><span class="p">(</span><span class="n">environment</span><span class="p">);</span>
+
+<span class="p">...</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">embedHelper</span><span class="p">.</span><span class="na">isEmbeddingOfRelationRequested</span><span class="p">(</span><span class="s">&quot;owner&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="n">carResource</span><span class="p">.</span><span class="na">setOwner</span><span class="p">(</span><span class="n">createPerson</span><span class="p">(</span><span class="n">ownerId</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>In an application that uses CDI the <code>EmbedHelper</code> should be instantiated the same way and provided by a producer method:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">EmbedHelper</span><span class="w"> </span><span class="n">embedHelper</span><span class="p">;</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">Configuration</span><span class="w"> </span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="na">embedHelper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">EmbedHelper</span><span class="p">(</span><span class="n">environment</span><span class="p">);</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Produces</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="n">EmbedHelper</span><span class="w"> </span><span class="nf">embedHelper</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">embedHelper</span><span class="p">;</span>
+<span class="w">   </span><span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="field-filtering-feature-for-resources">Field filtering feature for resources<a class="headerlink" href="#field-filtering-feature-for-resources" title="Permanent link">&para;</a></h3>
+<p>The <code>JacksonConfigurationBundle</code> registers the <code>FieldFilterModule</code> to add the <code>FieldFilterSerializerModifier</code>. The
+modifier uses the JAX-RS request context to identify the query param <code>fields</code>. If such a query param is present, only
+the requested fields (comma separated) are rendered in the resource view. additionally HAL links and embedded resources
+are rendered as well.  </p>
+<p>Field filtering support may be disabled in the <code>JacksonConfigurationBundle.builder()</code>.</p>
+<p>Example:</p>
+<p><div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@EnableFieldFilter</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Person</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">firstName</span><span class="p">;</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">surName</span><span class="p">;</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">nickName</span><span class="p">;</span>
+<span class="w">   </span><span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<div class="language-javascript highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nx">GET</span><span class="w"> </span><span class="o">/</span><span class="nx">persons</span><span class="o">/</span><span class="mf">123</span><span class="o">?</span><span class="nx">fields</span><span class="o">=</span><span class="nx">firstName</span><span class="p">,</span><span class="nx">nickName</span>
+
+<span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;firstName&quot;</span><span class="o">:</span><span class="s2">&quot;John&quot;</span><span class="p">,</span><span class="s2">&quot;nickName&quot;</span><span class="o">:</span><span class="s2">&quot;Johnny&quot;</span><span class="p">}</span>
+</code></pre></div></td></tr></table></div></p>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<h3 id="disable-hal-support">Disable HAL support<a class="headerlink" href="#disable-hal-support" title="Permanent link">&para;</a></h3>
+<p>The <code>JacksonConfigurationBundle</code> may be initialized without HAL support, if links are not needed or achieved in another
+way in the application:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">JacksonConfigurationBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">withoutHalSupport</span><span class="p">().</span><span class="na">build</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="customize-the-objectmapper">Customize the <code>ObjectMapper</code><a class="headerlink" href="#customize-the-objectmapper" title="Permanent link">&para;</a></h3>
+<p>Custom configurations of the <code>ObjectMapper</code> can be achieved by adding a customization consumer which receives the used
+<code>ObjectMapper</code> instance:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">JacksonConfigurationBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">withCustomization</span><span class="p">(</span><span class="n">om</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">om</span><span class="p">.</span><span class="na">enable</span><span class="p">(</span><span class="n">SerializationFeature</span><span class="p">.</span><span class="na">INDENT_OUTPUT</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="yaml">YAML<a class="headerlink" href="#yaml" title="Permanent link">&para;</a></h3>
+<p>If the <code>JacksonYAMLProvider</code> is available in the classpath, it will be registered to support requests that 
+<code>Accept application/yaml</code>. This is especially useful for Swagger which provides the <code>swagger.json</code> also as 
+<code>swagger.yaml</code>.</p>
+<p>To activate YAML support, a dependency to <code>com.fasterxml.jackson.jaxrs:jackson-jaxrs-yaml-provider</code> has to be added. It
+is shipped in an appropriate version with <a href="../server-open-api/"><code>sda-commons-server-openapi</code></a>.</p>
+<h2 id="error-format">Error Format<a class="headerlink" href="#error-format" title="Permanent link">&para;</a></h2>
+<p>Exceptions are mapped to a common error format that looks like the following example
+<div class="language-javascript highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="mf">422</span><span class="w"> </span><span class="nx">Unprocessable</span><span class="w"> </span><span class="nx">Entity</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="s2">&quot;title&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Request parameters are not valid&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;invalidParams&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">            </span><span class="s2">&quot;field&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;manufacture&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;reason&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Audi has no Golf GTI model (not found)&quot;</span>
+<span class="w">            </span><span class="s2">&quot;errorCode&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;FIELD_CORRELATION_ERROR&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="s2">&quot;field&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;model&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;reason&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Golf GTI is unkown by Audi (not found)&quot;</span>
+<span class="w">            </span><span class="s2">&quot;errorCode&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;FIELD_CORRELATION_ERROR&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div></p>
+<p>For validation errors, the invalidParams section is filled. For other errors, just a title is given.</p>
+<ul>
+<li><code>"field"</code> defines the invalid field within the JSON structure</li>
+<li><code>"reason"</code> gives a hint why the value is not valid. This is the error message of the validation.</li>
+<li><code>"errorCode"</code> is the validation annotation given in uppercase underscore notation </li>
+</ul>
+<p>The reason might be in different language due to internationalization.</p>
+<p>Examples how exceptions and the error structure should be used, can be found within the example project 
+<a href="../server-error-handling/"><code>sda-commons-server-errorhandling-example</code></a></p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../server-hibernate/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Server Hibernate" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Server Hibernate
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../server-kafka/" class="md-footer__link md-footer__link--next" aria-label="Next: Server Kafka" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Server Kafka
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="../search/main.js"></script>
+      
+    
+  </body>
+</html>

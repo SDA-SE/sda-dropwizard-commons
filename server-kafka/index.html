@@ -1,0 +1,2455 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../server-jackson/">
+      
+      
+        <link rel="next" href="../server-kafka-example/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Server Kafka - sda-dropwizard-commons</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.c4a75a56.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sda-dropwizard-commons-server-kafka" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="sda-dropwizard-commons" class="md-header__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sda-dropwizard-commons
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Server Kafka
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+      </form>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="sda-dropwizard-commons" class="md-nav__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    sda-dropwizard-commons
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metadata-context/" class="md-nav__link">
+        Metadata Context
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bom/" class="md-nav__link">
+        Bom
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey/" class="md-nav__link">
+        Client Jersey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-example/" class="md-nav__link">
+        Client Jersey Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-wiremock-testing/" class="md-nav__link">
+        Client Jersey Wiremock Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        Dependencies
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth-testing/" class="md-nav__link">
+        Server Auth Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth/" class="md-nav__link">
+        Server Auth
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-circuit-breaker/" class="md-nav__link">
+        Server Circuit Breaker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cloud-events/" class="md-nav__link">
+        Server Cloud Events
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-consumer/" class="md-nav__link">
+        Server Consumer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cors/" class="md-nav__link">
+        Server Cors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-dropwizard/" class="md-nav__link">
+        Server Dropwizard
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-error-handling/" class="md-nav__link">
+        Server Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck-example/" class="md-nav__link">
+        Server Healthcheck Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck/" class="md-nav__link">
+        Server Healthcheck
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-example/" class="md-nav__link">
+        Server Hibernate Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-testing/" class="md-nav__link">
+        Server Hibernate Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate/" class="md-nav__link">
+        Server Hibernate
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-jackson/" class="md-nav__link">
+        Server Jackson
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Server Kafka
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Server Kafka
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#known-kafka-problems" class="md-nav__link">
+    Known Kafka Problems
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#security-settings" class="md-nav__link">
+    Security Settings
+  </a>
+  
+    <nav class="md-nav" aria-label="Security Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plaintext" class="md-nav__link">
+    PLAINTEXT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssl" class="md-nav__link">
+    SSL
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sasl_plaintext" class="md-nav__link">
+    SASL_PLAINTEXT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sasl_ssl" class="md-nav__link">
+    SASL_SSL
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-sasl-mechanisms" class="md-nav__link">
+    Other SASL mechanisms
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-certificate-authority-and-client-certificates" class="md-nav__link">
+    Custom Certificate Authority and Client Certificates
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-value-defaults-extendingchanging-the-kafka-defaults" class="md-nav__link">
+    Configuration value defaults (extending/changing the Kafka defaults)
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration value defaults (extending/changing the Kafka defaults)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#brokers" class="md-nav__link">
+    brokers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    security
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumers" class="md-nav__link">
+    consumers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producers" class="md-nav__link">
+    producers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listenerconfig" class="md-nav__link">
+    listenerConfig
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#messagelistener" class="md-nav__link">
+    MessageListener
+  </a>
+  
+    <nav class="md-nav" aria-label="MessageListener">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#included-messagelistenerstrategies" class="md-nav__link">
+    Included MessageListenerStrategies
+  </a>
+  
+    <nav class="md-nav" aria-label="Included MessageListenerStrategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#autocommit-messagelistenerstrategy" class="md-nav__link">
+    Autocommit MessageListenerStrategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synccommit-messagelistenerstrategy" class="md-nav__link">
+    SyncCommit MessageListenerStrategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry-processing-error-messagelistenerstrategy" class="md-nav__link">
+    Retry processing error MessageListenerStrategy
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-preconfigured-consumers-and-producers" class="md-nav__link">
+    Create preconfigured consumers and producers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-information-from-kafka-commons" class="md-nav__link">
+    Migration information (from kafka-commons)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-bundle-with-managed-kafka" class="md-nav__link">
+    Kafka Bundle with Managed Kafka
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#health-check" class="md-nav__link">
+    Health check
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    Testing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#eventing" class="md-nav__link">
+    Eventing
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-example/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-testing/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-key-mgmt/" class="md-nav__link">
+        Server key Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-mongo-testing/" class="md-nav__link">
+        Server Mongo Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-open-api/" class="md-nav__link">
+        Server OpenApi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-openapi-example/" class="md-nav__link">
+        Server OpenApi Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry-example/" class="md-nav__link">
+        Server Open Telemetry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry/" class="md-nav__link">
+        Server Open
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-prometheus/" class="md-nav__link">
+        Server Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3-testing/" class="md-nav__link">
+        Server S3 Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3/" class="md-nav__link">
+        Server S3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-security/" class="md-nav__link">
+        Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-spring-data-mongo/" class="md-nav__link">
+        Server Spring Data Mongo
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-testing/" class="md-nav__link">
+        Server Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-trace/" class="md-nav__link">
+        Server Trace
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld/" class="md-nav__link">
+        Server Weld
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-example/" class="md-nav__link">
+        Server Weld Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-testing/" class="md-nav__link">
+        Server Weld Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-asyncapi/" class="md-nav__link">
+        Shared Async API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-certificates/" class="md-nav__link">
+        Shared Certificates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-error/" class="md-nav__link">
+        Shared Error
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-forms/" class="md-nav__link">
+        Shared Forms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-tracing/" class="md-nav__link">
+        Shared Tracing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-yaml/" class="md-nav__link">
+        Shared Yaml
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter/" class="md-nav__link">
+        Starter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter-example/" class="md-nav__link">
+        Starter Example
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#known-kafka-problems" class="md-nav__link">
+    Known Kafka Problems
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#security-settings" class="md-nav__link">
+    Security Settings
+  </a>
+  
+    <nav class="md-nav" aria-label="Security Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plaintext" class="md-nav__link">
+    PLAINTEXT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssl" class="md-nav__link">
+    SSL
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sasl_plaintext" class="md-nav__link">
+    SASL_PLAINTEXT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sasl_ssl" class="md-nav__link">
+    SASL_SSL
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-sasl-mechanisms" class="md-nav__link">
+    Other SASL mechanisms
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-certificate-authority-and-client-certificates" class="md-nav__link">
+    Custom Certificate Authority and Client Certificates
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-value-defaults-extendingchanging-the-kafka-defaults" class="md-nav__link">
+    Configuration value defaults (extending/changing the Kafka defaults)
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration value defaults (extending/changing the Kafka defaults)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#brokers" class="md-nav__link">
+    brokers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    security
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumers" class="md-nav__link">
+    consumers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producers" class="md-nav__link">
+    producers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listenerconfig" class="md-nav__link">
+    listenerConfig
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#messagelistener" class="md-nav__link">
+    MessageListener
+  </a>
+  
+    <nav class="md-nav" aria-label="MessageListener">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#included-messagelistenerstrategies" class="md-nav__link">
+    Included MessageListenerStrategies
+  </a>
+  
+    <nav class="md-nav" aria-label="Included MessageListenerStrategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#autocommit-messagelistenerstrategy" class="md-nav__link">
+    Autocommit MessageListenerStrategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synccommit-messagelistenerstrategy" class="md-nav__link">
+    SyncCommit MessageListenerStrategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry-processing-error-messagelistenerstrategy" class="md-nav__link">
+    Retry processing error MessageListenerStrategy
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-preconfigured-consumers-and-producers" class="md-nav__link">
+    Create preconfigured consumers and producers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-information-from-kafka-commons" class="md-nav__link">
+    Migration information (from kafka-commons)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-bundle-with-managed-kafka" class="md-nav__link">
+    Kafka Bundle with Managed Kafka
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#health-check" class="md-nav__link">
+    Health check
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    Testing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#eventing" class="md-nav__link">
+    Eventing
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="sda-dropwizard-commons-server-kafka">SDA Dropwizard Commons Server Kafka<a class="headerlink" href="#sda-dropwizard-commons-server-kafka" title="Permanent link">&para;</a></h1>
+<p><a href="https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka"><img alt="javadoc" src="https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka/javadoc.svg" /></a></p>
+<p>This module provides a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/KafkaBundle.java"><code>KafkaBundle</code></a> adds convenient
+functionality to create Kafka consumers, producers, and topics via configuration or Java DSL.</p>
+<p>It additionally provides a default <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java"><code>MessageListener</code></a> that
+implements a polling loop for Kafka consumers. The user of this bundle must only implement the functional logic.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>Add the following dependency:
+<div class="language-groovy highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">compile</span><span class="w"> </span><span class="s1">&#39;org.sdase.commons:sda-commons-server-kafka:&lt;current-version&gt;&#39;</span>
+</code></pre></div></td></tr></table></div></p>
+<p>Add the Kafka Configuration to your configuration class:
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">YourConfiguration</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">SdaPlatformConfiguration</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// ...</span>
+
+<span class="w">  </span><span class="nd">@NotNull</span><span class="w"> </span><span class="nd">@Valid</span><span class="w"> </span><span class="kd">private</span><span class="w"> </span><span class="n">KafkaConfiguration</span><span class="w"> </span><span class="n">kafka</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">KafkaConfiguration</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div></p>
+<p>Bootstrap the bundle (see below).</p>
+<p><strong>Configuration Summary</strong></p>
+<p>The following configuration can be used as base for a production-ready configuration.</p>
+<p>Not every service both <em>consumes</em> and <em>produces</em>, so the properties for <code>producers</code>, <code>consumers</code>, or <code>listenerConfig</code> can be removed if they don't apply to the service.
+Other defaults can be added, if needed by the service.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># List of brokers to bootstrap consumer and provider connection.</span>
+<span class="w">  </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${KAFKA_BROKERS:-[]}</span>
+
+<span class="w">  </span><span class="c1"># Security information used for all consumers and providers to connect to kafka.</span>
+<span class="w">  </span><span class="nt">security</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${KAFKA_SECURITY_USER}&quot;</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${KAFKA_SECURITY_PASSWORD}&quot;</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${KAFKA_SECURITY_PROTOCOL:-PLAINTEXT}</span>
+<span class="w">    </span><span class="nt">saslMechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${KAFKA_SECURITY_SASL_MECHANISM:-PLAIN}</span>
+
+<span class="w">  </span><span class="c1"># Map with topic configurations. The key is the used as name to address the configuration within the code.</span>
+<span class="w">  </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">&lt;your-topic-config-key&gt;</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${KAFKA_TOPICS_&lt;YOUR_CONFIG&gt;_NAME:-default}</span>
+
+<span class="w">  </span><span class="c1"># Map with producer configurations. The key is used as name to address the configuration within the code.</span>
+<span class="w">  </span><span class="c1"># Can be removed if no producers are used.</span>
+<span class="w">  </span><span class="nt">producers</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">&lt;your-producer-config-key&gt;</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># Empty by default. Can be overridden by System Properties, so it must be part of this configuration.</span>
+
+<span class="w">  </span><span class="c1"># Map with consumer configurations. The key is used as name/id to address the configuration within the code.</span>
+<span class="w">  </span><span class="c1"># Can be removed if no consumers are used.</span>
+<span class="w">  </span><span class="nt">consumers</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">&lt;your-consumer-config-key&gt;</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${KAFKA_CONSUMERS_&lt;YOUR_CONFIG&gt;_GROUP:-default}</span>
+
+<span class="w">  </span><span class="c1"># Map with listener configurations that can be used within MessageListener creation.</span>
+<span class="w">  </span><span class="nt">listenerConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">&lt;your-listener-config-key&gt;</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># Empty by default. Can be overridden by System Properties, so it must be part of this configuration.</span>
+</code></pre></div></td></tr></table></div>
+<p>A possible documentation could look like this:</p>
+<div class="language-md highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gu">## Environment Variables</span>
+
+The following environment variables can be used to configure the Docker container:
+
+// ...
+
+<span class="gu">### Kafka</span>
+
+A short overview about what kind of messages the service consumes or produces.
+
+The following properties can be set:
+
+<span class="gu">#### Broker connection</span>
+
+<span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_BROKERS`</span> <span class="ge">_array_</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>The list of Kafka brokers
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`[&quot;kafka-broker1:9092&quot;, &quot;kafka-broker2:9092&quot;]`</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Default: <span class="sb">`[]`</span>
+<span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_SECURITY_USER`</span> <span class="ge">_string_</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>The username used to connect to Kafka.
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`&quot;&quot;`</span>
+<span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_SECURITY_PASSWORD`</span> <span class="ge">_string_</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>The password used to connect to Kafka.
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`&quot;&quot;`</span>
+<span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_SECURITY_PROTOCOL`</span> <span class="ge">_string_</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>The security protocol used by Kafka.
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`PLAINTEXT`</span> or <span class="sb">`SASL_SSL`</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Default: <span class="sb">`PLAINTEXT`</span>
+<span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_SECURITY_SASL_MECHANISM`</span> <span class="ge">_string_</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>The SASL mechanism to use to connect to the Kafka.
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`PLAIN, SCRAM-SHA-256, or SCRAM-SHA-512`</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Default: <span class="sb">`PLAIN`</span>
+
+<span class="gu">#### Topics</span>
+<span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_TOPICS_&lt;YOUR_CONFIG&gt;_NAME`</span> <span class="ge">_string_</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Topic name where to read medical record updates. It is checked that the topic is configured in &quot;compact&quot; mode.
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`medicalRecordsTopic`</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Default: <span class="sb">`default`</span>
+
+<span class="gu">#### Consumers</span>
+<span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_CONSUMERS_&lt;YOUR_CONFIG&gt;_GROUP`</span> <span class="ge">_string_</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Consumer group name for the consumer <span class="sb">`YOUR_CONFIG`</span>.
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`myConsumer`</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Default: <span class="sb">`default`</span>
+</code></pre></div></td></tr></table></div>
+<p><strong>Bootstrap</strong></p>
+<p>The bundle got enhanced to allow more control and flexibility how Kafka messages are consumed and which commit strategy is used.</p>
+<p>The bundle should be added as field to the application since it provides methods for the creation of <code>MessageProducer</code> and <code>MessageListener</code>.
+The Builders for <code>MessageListenerRegistration</code> and <code>ProducerRegistration</code> supports the user in the creation of these complex configurable objects.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DemoApplication</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">KafkaBundle</span><span class="o">&lt;</span><span class="n">AppConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">kafkaBundle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">KafkaBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">withConfigurationProvider</span><span class="p">(</span><span class="n">AppConfiguration</span><span class="p">::</span><span class="n">getKafka</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">MessageProducer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">ProductBundle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">producer</span><span class="p">;</span>
+
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">AppConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">kafkaBundle</span><span class="p">);</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">AppConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// register with default consumer and listener config</span>
+<span class="w">      </span><span class="c1">// The handler implements the actual logic for the message processing</span>
+
+<span class="w">      </span><span class="c1">// replace with your handler implementation</span>
+<span class="w">      </span><span class="n">MessageHandler</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">results</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">record</span><span class="p">.</span><span class="na">value</span><span class="p">());</span>
+<span class="w">      </span><span class="n">ErrorHandler</span><span class="o">&lt;</span><span class="n">Sting</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">errorHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IgnoreAndProceedErrorHandler</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">      </span><span class="n">kafkaBundle</span><span class="p">.</span><span class="na">createMessageListener</span><span class="p">(</span><span class="n">MessageListenerRegistration</span><span class="p">.</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">builder</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">withDefaultListenerConfig</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span><span class="w"> </span><span class="c1">// replace topic with your topic name</span>
+<span class="w">                </span><span class="p">.</span><span class="na">withDefaultConsumer</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">withValueDeserializer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">())</span>
+<span class="w">                </span><span class="p">.</span><span class="na">withListenerStrategy</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">AutocommitMLS</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span><span class="w"> </span><span class="n">errorHandler</span><span class="p">))</span>
+<span class="w">                </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
+
+<span class="w">      </span><span class="c1">// register with custom consumer and listener configuration (e.g. 2 instances, poll every minute)</span>
+<span class="w">      </span><span class="c1">// method returns list of listeners, one for each instance</span>
+<span class="w">      </span><span class="n">List</span><span class="o">&lt;</span><span class="n">MessageListener</span><span class="o">&gt;</span><span class="w"> </span><span class="n">listener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span>
+<span class="w">            </span><span class="p">.</span><span class="na">createMessageListener</span><span class="p">(</span><span class="n">MessageListenerRegistration</span><span class="p">.</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">builder</span><span class="p">()</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withListenerConfig</span><span class="p">(</span><span class="n">ListenerConfig</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">withPollInterval</span><span class="p">(</span><span class="mi">60000</span><span class="p">).</span><span class="na">build</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="s">&quot;topic&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// replace topic with your topic name</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withConsumerConfig</span><span class="p">(</span><span class="s">&quot;consumer2&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// use consumer config from config yaml</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withListenerStrategy</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">AutocommitMLS</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span><span class="w"> </span><span class="n">errorHandler</span><span class="p">))</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
+
+<span class="w">      </span><span class="c1">// Create message producer with default KafkaProducer</span>
+<span class="w">      </span><span class="n">MessageProducer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">ProductBundle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">producer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span>
+<span class="w">            </span><span class="p">.</span><span class="na">registerProducerForTopic</span><span class="p">(</span><span class="n">ProducerRegistration</span>
+<span class="w">                  </span><span class="p">.</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">builder</span><span class="p">()</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="s">&quot;topic&quot;</span><span class="p">)</span><span class="w">         </span><span class="c1">// simple topic definition (name only, partition and replication Factor 1)</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withDefaultProducer</span><span class="p">()</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
+
+<span class="w">      </span><span class="c1">// Create message with a detailed topic specification that checks the topic</span>
+<span class="w">      </span><span class="n">MessageProducer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">producerConfigured</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span>
+<span class="w">            </span><span class="p">.</span><span class="na">registerProducer</span><span class="p">(</span><span class="n">ProducerRegistration</span><span class="p">.</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">builder</span><span class="p">()</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="n">TopicConfig</span><span class="p">.</span><span class="na">builder</span><span class="p">(</span><span class="s">&quot;mytopic&quot;</span><span class="p">).</span><span class="na">build</span><span class="p">())</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withProducerConfig</span><span class="p">(</span><span class="s">&quot;producer1&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// use producer config from config yaml</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
+
+<span class="w">      </span><span class="c1">// JSON Example</span>
+<span class="w">      </span><span class="n">MessageHandler</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">SimpleEntity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">jsonHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">jsonResults</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">record</span><span class="p">.</span><span class="na">value</span><span class="p">());</span>
+<span class="w">      </span><span class="n">ErrorHandler</span><span class="o">&lt;</span><span class="n">Sting</span><span class="p">,</span><span class="w"> </span><span class="n">SimpleEntity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">errorHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IgnoreAndProceedErrorHandler</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">      </span><span class="n">List</span><span class="o">&lt;</span><span class="n">MessageListener</span><span class="o">&gt;</span><span class="w"> </span><span class="n">jsonListener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span>
+<span class="w">            </span><span class="p">.</span><span class="na">createMessageListener</span><span class="p">(</span><span class="n">MessageListenerRegistration</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withDefaultListenerConfig</span><span class="p">()</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withDefaultConsumer</span><span class="p">()</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withValueDeserializer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">KafkaJsonDeserializer</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ObjectMapper</span><span class="p">(),</span><span class="w"> </span><span class="n">SimpleEntity</span><span class="p">.</span><span class="na">class</span><span class="p">))</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withListenerStrategy</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">AutocommitMLS</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">SimpleEntity</span><span class="o">&gt;</span><span class="p">(</span><span class="n">jsonHandler</span><span class="p">,</span><span class="w"> </span><span class="n">errorHandler</span><span class="p">))</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">build</span><span class="p">()</span>
+<span class="w">            </span><span class="p">);</span>
+
+<span class="w">      </span><span class="n">MessageProducer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">SimpleEntity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">jsonProducer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span><span class="p">.</span><span class="na">registerProducer</span><span class="p">(</span><span class="n">ProducerRegistration</span>
+<span class="w">            </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="na">withDefaultProducer</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="na">withKeySerializer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">StringSerializer</span><span class="p">())</span>
+<span class="w">            </span><span class="p">.</span><span class="na">withValueSerializer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">KafkaJsonSerializer</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ObjectMapper</span><span class="p">())).</span><span class="na">build</span><span class="p">());</span>
+
+<span class="w">      </span><span class="c1">// plain consumer where the user has full control and take over responsibility to close te consumer</span>
+<span class="w">      </span><span class="c1">// by name of a valid consumer configuration from config yaml</span>
+<span class="w">      </span><span class="n">KafkaConsumer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">consumer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span><span class="p">.</span><span class="na">createConsumer</span><span class="p">(</span>
+<span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">(),</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;consumer1&quot;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// by given consumer configuration</span>
+<span class="w">      </span><span class="n">KafkaConsumer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">consumer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span><span class="p">.</span><span class="na">createConsumer</span><span class="p">(</span>
+<span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">(),</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">(),</span><span class="w"> </span><span class="n">ConsumerConfig</span><span class="p">.</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="n">builder</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">withGroup</span><span class="p">(</span><span class="s">&quot;test-consumer&quot;</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">addConfig</span><span class="p">(</span><span class="s">&quot;max.poll.records&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;100&quot;</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">addConfig</span><span class="p">(</span><span class="s">&quot;enable.auto.commit&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="p">).</span><span class="na">build</span><span class="p">());</span>
+
+<span class="w">      </span><span class="c1">// There are similar methods for producer creation</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="c1">// Optional: make producer available via CDI @Produces annotation</span>
+<span class="w">   </span><span class="c1">// Note: CDI is not included within the bundle.</span>
+<span class="w">   </span><span class="nd">@Produces</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="n">MessageProducer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">ProductBundle</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">produceKafkaProductBundleProducer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">producer</span><span class="p">;</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="known-kafka-problems">Known Kafka Problems<a class="headerlink" href="#known-kafka-problems" title="Permanent link">&para;</a></h3>
+<p>There exists a known Kafka issue in the new consumer API <a href="https://issues.apache.org/jira/browse/KAFKA-4740">KAFAK-4740</a>
+that throws potentially a <code>org.apache.kafka.commons.errors.SerializationException</code> when a record key/value can't be deserialized depending on
+deserializer implementation. This can result in an infinite loop because the poll is not committed and the next poll will throw this exception
+again. The wrapped deserialization approach offers a workaround where this exception is prevented and the processing can continue.
+But be aware that the <code>key</code> or <code>value</code> can be <code>null</code> in this case in both <code>MessageHandler.handle()</code> and <code>ErrorHandler.handleError()</code> methods.
+Another alternative is to implement your own Deserializer to have even more control and where you can potentially apply any fallback deserialization
+strategy.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DemoApplication</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">KafkaBundle</span><span class="o">&lt;</span><span class="n">AppConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">kafkaBundle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">KafkaBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">      </span><span class="p">.</span><span class="na">withConfigurationProvider</span><span class="p">(</span><span class="n">AppConfiguration</span><span class="p">::</span><span class="n">getKafka</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">MessageProducer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">ProductBundle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">producer</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">AppConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">kafkaBundle</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">AppConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// register with default consumer and listener config</span>
+<span class="w">    </span><span class="c1">// The handler implements the actual logic for the message processing</span>
+<span class="w">      </span><span class="p">...</span>
+
+<span class="w">    </span><span class="c1">// JSON Example with wrapped Deserializer to avoid DeseriliazationException, see Note below</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">MessageListener</span><span class="o">&gt;</span><span class="w"> </span><span class="n">jsonListener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span><span class="p">.</span><span class="na">registerMessageHandler</span><span class="p">(</span>
+<span class="w">        </span><span class="n">MessageHandlerRegistration</span>
+<span class="w">            </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="na">withDefaultListenerConfig</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="na">withDefaultConsumer</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="na">withValueDeserializer</span><span class="p">(</span>
+<span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">WrappedNoSerializationErrorDeserializer</span><span class="o">&lt;&gt;</span><span class="p">(</span>
+<span class="w">                    </span><span class="k">new</span><span class="w"> </span><span class="n">KafkaJsonDeserializer</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ObjectMapper</span><span class="p">(),</span><span class="w"> </span><span class="n">SimpleEntity</span><span class="p">.</span><span class="na">class</span><span class="p">)))</span>
+<span class="w">            </span><span class="p">.</span><span class="na">withListenerStrategy</span><span class="p">(</span>
+<span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">AutocommitMLS</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">SimpleEntity</span><span class="o">&gt;</span><span class="p">(</span><span class="n">jsonHandler</span><span class="p">,</span><span class="w"> </span><span class="n">errorHandler</span><span class="p">))</span>
+<span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">()</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<p>To configure KafkaBundle add the following <code>kafka</code> block to your Dropwizard config.yml. The following config snippet shows an example configuration with descriptive comments:
+<div class="language-YAML highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># For testing without a kafka in integration tests, the bundle api can be disabled. No consumers and providers will be created</span>
+<span class="w">  </span><span class="nt">disabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="w">  </span><span class="c1"># Admin client is used for checking and creating topics as well as for Health Checks</span>
+<span class="w">  </span><span class="nt">adminConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Timeout for request to the kafka admin url used by admin clients</span>
+<span class="w">    </span><span class="nt">adminClientRequestTimeoutMs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000</span>
+
+<span class="w">    </span><span class="c1"># Admin Rest Api for accessing the accessing admin functionality</span>
+<span class="w">    </span><span class="nt">adminEndpoint</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-admin-api-1:9092</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-admin-api-2:9092</span>
+
+<span class="w">    </span><span class="c1"># Admin Security information used for all calls against the Admin Rest API</span>
+<span class="w">    </span><span class="nt">adminSecurity </span><span class="p">:</span>
+<span class="w">      </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+<span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
+<span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SASL_SSL</span>
+
+<span class="w">  </span><span class="c1"># List of brokers to bootstrap consumer and provider connection</span>
+<span class="w">  </span><span class="nt">brokers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-broker-1:9092</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-broker-2:9092</span>
+
+<span class="w">  </span><span class="c1"># Security information used for all consumers and providers to connect to kafka</span>
+<span class="w">  </span><span class="nt">security </span><span class="p">:</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SASL_SSL</span>
+<span class="w">    </span><span class="nt">saslMechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PLAIN</span>
+
+<span class="w">  </span><span class="c1"># Additional configuration properties that are added to all consumers, producers, and the admin client</span>
+<span class="w">  </span><span class="c1"># configuration key -&gt; values as defined in the kafka documentation</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ssl.truststore.location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/my/truststore/location.jks</span>
+
+<span class="w">  </span><span class="c1"># Map with consumer configurations. The key is used as name/id to address the configuration within the code.</span>
+<span class="w">  </span><span class="nt">consumers</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># id/name of the consumer configuration</span>
+<span class="w">    </span><span class="nt">consumer1</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># name of the consumer group the consumer belongs to. If not defined, &#39;default&#39; is the default</span>
+<span class="w">      </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">newGroup</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># Deserializers can be set here within the configuration or within the builder DSL</span>
+<span class="w">        </span><span class="nt">key.deserializer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.serialization.LongDeserializer</span>
+<span class="w">        </span><span class="nt">value.deserializer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.serialization.LongDeserializer</span>
+<span class="w">    </span><span class="nt">cons2</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># if no attribute &quot;group&quot; is given, a default is used</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">         </span><span class="nt">fetch.min.bytes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
+<span class="w">         </span><span class="nt">auto.offset.reset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">latest</span>
+<span class="w">  </span><span class="c1"># Map with producer configurations. The key is used as name to address the configuration within the code.</span>
+<span class="w">  </span><span class="nt">producers</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># id/name of the producer config</span>
+<span class="w">    </span><span class="nt">producer1</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># configuration key -&gt; values as defined in the kafka documentation</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># Serializers can be set here within the configuration or within the builder DSL</span>
+<span class="w">        </span><span class="nt">key.serializer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.serialization.LongSerializer</span>
+<span class="w">        </span><span class="nt">value.serializer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.serialization.LongSerializer</span>
+<span class="w">        </span><span class="nt">acks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
+<span class="w">        </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">  </span><span class="c1"># Map with topic configurations. The key is the name of the topic and is also used to address the configuration within the code</span>
+<span class="w">  </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># id of the topic configuration</span>
+<span class="w">    </span><span class="nt">topic1</span><span class="p">:</span><span class="w"> </span><span class="c1"># topic key</span>
+<span class="w">      </span><span class="c1"># topic name</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">topic1-name</span>
+<span class="w">    </span><span class="nt">topic2</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">topic2-name</span>
+<span class="w">  </span><span class="c1"># Map with listener configurations that can be used within MessageListener creation.</span>
+<span class="w">  </span><span class="nt">listenerConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># id/name of the listener configuration</span>
+<span class="w">    </span><span class="nt">listenerConfig1</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># Number of listener instances that will be generated. If &gt; 1, several KafkaConsumer are generated. Kafka assigns these consumers</span>
+<span class="w">      </span><span class="c1"># to different partitions of the consumed topic. Number instances should be smaller or equal to the number of partitions.</span>
+<span class="w">      </span><span class="nt">instances</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="c1"># If the topic check is configured within the DSL, the listener waits this amount of ms before checking topic existence again. 0 will disable existence check even when configured in DSL</span>
+<span class="w">      </span><span class="nt">topicMissingRetryMs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60000</span>
+<span class="w">      </span><span class="c1"># Milliseconds to sleep between two poll intervals if no messages are available</span>
+<span class="w">      </span><span class="nt">pollInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
+</code></pre></div></td></tr></table></div></p>
+<p>You can disable the  health check manually if Kafka is not essential for the functionality of your service,
+e.g. it's only used to invalidate a cache, notify about updates or other minor tasks that could fail without
+affecting the service so much it's no longer providing a viable functionality.</p>
+<p>This way your service can stay healthy even if the connection to Kafka is disrupted.</p>
+<p><div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">private</span><span class="w"> </span><span class="n">KafkaBundle</span><span class="o">&lt;</span><span class="n">KafkaTestConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bundle</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="n">KafkaBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">withConfigurationProvider</span><span class="p">(</span><span class="n">KafkaTestConfiguration</span><span class="p">::</span><span class="n">getKafka</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">withoutHealthCheck</span><span class="p">()</span><span class="w"> </span><span class="c1">// disable kafkas health check</span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div>
+Keep in mind that in this case a producer might fail if the broker is not available, so depending on the
+use case the producer should do appropriate error handling e.g. storing unprocessed messages in a queue until the broker is available again.
+If no error handling is done you might be better off not disabling the health check.</p>
+<p>Disabling the internal health check registers an external health check for monitoring purposes
+and to determine the fitness of the service. The connection to the broker can be monitored through
+Prometheus metrics without impacting the health of the service.</p>
+<h3 id="security-settings">Security Settings<a class="headerlink" href="#security-settings" title="Permanent link">&para;</a></h3>
+<p>There are different configuration options to connect to a Kafka Broker.</p>
+<h4 id="plaintext">PLAINTEXT<a class="headerlink" href="#plaintext" title="Permanent link">&para;</a></h4>
+<p>The server uses an unencrypted connection with no authentication.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="nt">security </span><span class="p">:</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PLAINTEXT</span><span class="w"> </span><span class="c1"># can be omitted, default value</span>
+</code></pre></div></td></tr></table></div>
+<h4 id="ssl">SSL<a class="headerlink" href="#ssl" title="Permanent link">&para;</a></h4>
+<p>The server uses an encrypted connection with no authentication.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="nt">security </span><span class="p">:</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SSL</span>
+</code></pre></div></td></tr></table></div>
+<h4 id="sasl_plaintext">SASL_PLAINTEXT<a class="headerlink" href="#sasl_plaintext" title="Permanent link">&para;</a></h4>
+<p>The server uses an unencrypted connection with <code>PLAIN</code> authentication.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="nt">security </span><span class="p">:</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SASL_PLAINTEXT</span>
+<span class="w">    </span><span class="nt">saslMechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PLAIN</span><span class="w"> </span><span class="c1"># can be omitted, default value when username and password are specified</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
+</code></pre></div></td></tr></table></div>
+<h4 id="sasl_ssl">SASL_SSL<a class="headerlink" href="#sasl_ssl" title="Permanent link">&para;</a></h4>
+<p>The server uses an encrypted connection with <code>PLAIN</code> authentication.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="nt">security </span><span class="p">:</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SASL_SSL</span>
+<span class="w">    </span><span class="nt">saslMechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PLAIN</span><span class="w"> </span><span class="c1"># can be omitted, default value when username and password are specified</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
+</code></pre></div></td></tr></table></div>
+<h4 id="other-sasl-mechanisms">Other SASL mechanisms<a class="headerlink" href="#other-sasl-mechanisms" title="Permanent link">&para;</a></h4>
+<p>Beside <code>sasl.mechanism: PLAIN</code>, the bundle also supports <code>SCRAM-SHA-256</code> and <code>SCRAM-SHA-512</code>.
+All mechanisms can be used with both <code>SASL_PLAINTEXT</code> and <code>SASL_SSL</code>.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="nt">security </span><span class="p">:</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SASL_PLAINTEXT</span><span class="w"> </span><span class="c1"># or SASL_SSL</span>
+<span class="w">    </span><span class="nt">saslMechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SCRAM-SHA-512</span><span class="w"> </span><span class="c1"># or SCRAM-SHA-256</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
+</code></pre></div></td></tr></table></div>
+<p>Other mechanisms can be configured by overriding the config properties.
+Note that the properties can also be configured individually for each consumer, each producer, and the admin client.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OTHER-VALUE</span>
+<span class="w">    </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username=&#39;youruser&#39;</span><span class="nv"> </span><span class="s">password=&#39;yourpassword&#39;;&quot;</span>
+</code></pre></div></td></tr></table></div>
+<p>OR</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="nt">consumers</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">yourConsumer</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OTHER-VALUE</span>
+<span class="w">        </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username=&#39;youruser&#39;</span><span class="nv"> </span><span class="s">password=&#39;yourpassword&#39;;&quot;</span>
+
+<span class="w">  </span><span class="nt">producers</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">yourProducer</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OTHER-VALUE</span>
+<span class="w">        </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username=&#39;youruser&#39;</span><span class="nv"> </span><span class="s">password=&#39;yourpassword&#39;;&quot;</span>
+
+<span class="w">  </span><span class="nt">adminConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OTHER-VALUE</span>
+<span class="w">      </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username=&#39;youruser&#39;</span><span class="nv"> </span><span class="s">password=&#39;yourpassword&#39;;&quot;</span>
+</code></pre></div></td></tr></table></div>
+<h4 id="custom-certificate-authority-and-client-certificates">Custom Certificate Authority and Client Certificates<a class="headerlink" href="#custom-certificate-authority-and-client-certificates" title="Permanent link">&para;</a></h4>
+<p><code>SSL</code> or <code>SASL_SSL</code> can also use Kafka brokers that have a self-signed or private-CA certificate. 
+Use the Java-default system properties <code>javax.net.ssl.trustStore</code> and <code>javax.net.ssl.trustStorePassword</code> to provide the certificates (see <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/test/java/org/sdase/commons/server/kafka/KafkaBundleWithSslTruststoreIT.java"><code>KafkaBundleWithSslTruststoreIT</code></a>).</p>
+<p>For more control, configure the truststore only for the Kafka bundle and not for the complete JVM (see <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/test/java/org/sdase/commons/server/kafka/KafkaBundleWithSslIT.java"><code>KafkaBundleWithSslIT</code></a>): </p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="nt">security </span><span class="p">:</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SSL</span>
+
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ssl.truststore.location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/your/truststore/location.jks</span>
+<span class="w">    </span><span class="nt">ssl.truststore.password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">truststore-password</span>
+</code></pre></div></td></tr></table></div>
+<p>This configuration option also supports providing client certificates in a custom keystore:</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="nt">security </span><span class="p">:</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SSL</span>
+
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># configure the truststore</span>
+<span class="w">    </span><span class="nt">ssl.truststore.location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/your/truststore/location.jks</span>
+<span class="w">    </span><span class="nt">ssl.truststore.password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">truststore-password</span>
+
+<span class="w">    </span><span class="c1"># configure the keystore with client-certificates</span>
+<span class="w">    </span><span class="nt">ssl.keystore.location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/your/keystore/location.jks</span>
+<span class="w">    </span><span class="nt">ssl.keystore.password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">keystore-password</span>
+<span class="w">    </span><span class="nt">ssl.key.password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-key-password</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="configuration-value-defaults-extendingchanging-the-kafka-defaults">Configuration value defaults (extending/changing the Kafka defaults)<a class="headerlink" href="#configuration-value-defaults-extendingchanging-the-kafka-defaults" title="Permanent link">&para;</a></h3>
+<p>These are only the defaults that are explicitly set within the code of the bundle. All other properties depends on the actual broker configuration or the Kafka defaults are used.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>disabled</td>
+<td>false</td>
+</tr>
+<tr>
+<td>adminClientRequestTimeoutMs</td>
+<td>5000</td>
+</tr>
+</tbody>
+</table>
+<h4 id="brokers">brokers<a class="headerlink" href="#brokers" title="Permanent link">&para;</a></h4>
+<p>No defaults</p>
+<h4 id="security">security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>protocol</td>
+<td>PLAINTEXT</td>
+</tr>
+</tbody>
+</table>
+<h4 id="consumers">consumers<a class="headerlink" href="#consumers" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>group</td>
+<td>default</td>
+</tr>
+<tr>
+<td>clientId</td>
+<td>Name of the consumer configuration. Sets Kafka's <code>client.id</code>.</td>
+</tr>
+<tr>
+<td>config -&gt; enable.auto.commit</td>
+<td>true</td>
+</tr>
+<tr>
+<td>config -&gt; auto.commit.interval.ms</td>
+<td>1000</td>
+</tr>
+<tr>
+<td>config -&gt; auto.offset.reset</td>
+<td>earliest</td>
+</tr>
+<tr>
+<td>config -&gt; key.deserializer</td>
+<td>org.apache.kafka.common.serialization.StringDeserializer</td>
+</tr>
+<tr>
+<td>config -&gt; value.deserializer</td>
+<td>org.apache.kafka.common.serialization.StringDeserializer</td>
+</tr>
+</tbody>
+</table>
+<h4 id="producers">producers<a class="headerlink" href="#producers" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>clientId</td>
+<td>Name of the producer configuration. Sets Kafka's <code>client.id</code>.</td>
+</tr>
+<tr>
+<td>config -&gt; acks</td>
+<td>all</td>
+</tr>
+<tr>
+<td>config -&gt; retries</td>
+<td>0</td>
+</tr>
+<tr>
+<td>config -&gt; linger.ms</td>
+<td>0</td>
+</tr>
+<tr>
+<td>config -&gt; key.serializer</td>
+<td>org.apache.kafka.common.serialization.StringSerializer</td>
+</tr>
+<tr>
+<td>config -&gt; value.serializer</td>
+<td>org.apache.kafka.common.serialization.StringSerializer</td>
+</tr>
+</tbody>
+</table>
+<h4 id="listenerconfig">listenerConfig<a class="headerlink" href="#listenerconfig" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>instances</td>
+<td>1</td>
+</tr>
+<tr>
+<td>topicMissingRetryMs</td>
+<td>0</td>
+</tr>
+<tr>
+<td>pollInterval</td>
+<td>100</td>
+</tr>
+</tbody>
+</table>
+<h2 id="messagelistener">MessageListener<a class="headerlink" href="#messagelistener" title="Permanent link">&para;</a></h2>
+<p>A MessageListener <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java"><code>MessageListener</code></a>
+is a default poll loop implementation that correctly subscribes for some topics and
+includes additional features such as a graceful shutdown when the application stops.</p>
+<p>The message listener hands over the received consumer records to a
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/MessageListenerStrategy.java"><code>MessageListenerStrategy</code></a>
+that defines the message handling and the commit behavior. A strategy should use a
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageHandler.java"><code>MessageHandler</code></a> and
+a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/ErrorHandler.java"><code>ErrorHandler</code></a>
+to separate business logic from commit logic as shown e.g. in <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/autocommit/AutocommitMLS.java"><code>AutocommitStrategy</code></a>
+to make the strategy reusable</p>
+<h3 id="included-messagelistenerstrategies">Included MessageListenerStrategies<a class="headerlink" href="#included-messagelistenerstrategies" title="Permanent link">&para;</a></h3>
+<p>The bundle provides some <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/MessageListenerStrategy.java"><code>MessageListenerStrategy</code></a>
+that can be reused in projects.</p>
+<p>A strategy is automatically inited with the Prometheus histogram class when using the builder methods.
+You may need to do that explicitly if you use strategies, e.g. in tests.</p>
+<h4 id="autocommit-messagelistenerstrategy">Autocommit MessageListenerStrategy<a class="headerlink" href="#autocommit-messagelistenerstrategy" title="Permanent link">&para;</a></h4>
+<p>This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle.</p>
+<p>The underlying consumer commits records periodically using the kafka config defaults. But, the <code>MessageListener</code> does not implement
+any extra logic in case of re-balancing. Therefore, the listener does not support an exact once semantic. It might occur
+that messages are redelivered after re-balance activities.</p>
+<h4 id="synccommit-messagelistenerstrategy">SyncCommit MessageListenerStrategy<a class="headerlink" href="#synccommit-messagelistenerstrategy" title="Permanent link">&para;</a></h4>
+<p>This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle.</p>
+<p>The strategy requires <code>enable.auto.commit</code> set to <code>false</code> and uses sync commit explicitly before polling a new chunk.</p>
+<h4 id="retry-processing-error-messagelistenerstrategy">Retry processing error MessageListenerStrategy<a class="headerlink" href="#retry-processing-error-messagelistenerstrategy" title="Permanent link">&para;</a></h4>
+<p>This strategy reads messages from the broker and passes the records to a message handler that must be implemented by the user of the bundle.</p>
+<p>The strategy requires <code>enable.auto.commit</code> set to <code>false</code> and the underlying consumer commits records for each partition. In case of processing errors the
+handler should throw <code>ProcessingErrorRetryException</code> which is then delegated to the <code>ErrorHandler</code> where finally can be decided if the processing should be
+stopped or retried (handleError returns <code>false</code>). In case of retry the consumer set the offset on the failing record and interrupt the processing of further
+records. The next poll will retry the records on this partition starting with the failing record.</p>
+<h2 id="create-preconfigured-consumers-and-producers">Create preconfigured consumers and producers<a class="headerlink" href="#create-preconfigured-consumers-and-producers" title="Permanent link">&para;</a></h2>
+<p>To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config YAML or
+by specifying a configuration in code. The user takes over the full responsibility and have to ensure that the consumer is closed when no
+longer used.</p>
+<h2 id="migration-information-from-kafka-commons">Migration information (from kafka-commons)<a class="headerlink" href="#migration-information-from-kafka-commons" title="Permanent link">&para;</a></h2>
+<p><strong>Compatibility with older broker versions</strong></p>
+<p><img alt="❗️" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/svg/2757.svg" title=":exclamation:" />
+<strong>Newer versions than kafka-commons v0.19.0 assumes at least version 1.0.0 of the broker, since some admin client commands are not supported in earlier broker versions</strong></p>
+<p>If you use older versions of the broker, you MUST not use the options to check or create topics for MessageHandlers and MessageProducers.</p>
+<hr />
+<p><strong>Now each <code>MessageListener</code> uses exactly one thread to handle the incoming consumer records.</strong> Commit is done after this thread returns from processing the implemented functional logic.
+In former versions of this bundle, there was a shared ThreadPool used by all <code>MessageListener</code>s. The business logic was handled in an own thread executed within the thread pool.
+Records has been committed directly after creating the threads and not after business logic execution. This hinder an ordered message processing as well as committing an offset after the
+business logic processing.
+This implementation must be considered when migrating older implementations since it might affect the performance. If you prefer the old behavior, you should create a thread pool within your
+<code>MessageHandler</code> implementation.</p>
+<h2 id="kafka-bundle-with-managed-kafka">Kafka Bundle with Managed Kafka<a class="headerlink" href="#kafka-bundle-with-managed-kafka" title="Permanent link">&para;</a></h2>
+<p>See below for example configuration. Of course, you can configure further properties, analogously.
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code>kafka:
+  brokers:
+      ${KAFKA_BROKERS:-[]}
+  security:
+      user: ${SECRET_KAFKA_USERNAME}
+      password: ${SECRET_KAFKA_PASSWORD}
+      protocol: ${KAFKA_SECURITY_PROTOCOL}
+  producers:
+    producer1:
+      config:
+        key.serializer: org.apache.kafka.common.serialization.LongSerializer
+        value.serializer: org.apache.kafka.common.serialization.LongSerializer
+        acks: all
+        ...
+</code></pre></div></td></tr></table></div>
+<em>Note</em>: Do not use <code>;</code> in passwords, as this will crash your application.</p>
+<p>In this case, the <code>KAFKA_BROKERS</code> variable should contain a JSON array with a list of broker</p>
+<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">[</span>
+<span class="w">  </span><span class="s2">&quot;kafka-broker:12345&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;kafka-broker:54321&quot;</span>
+<span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="health-check">Health check<a class="headerlink" href="#health-check" title="Permanent link">&para;</a></h2>
+<p>A health check with the name kafkaConnection is automatically registered to test the Kafka connection. The health check tries to list the topics available at the broker.</p>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
+<p><a href="../server-kafka-testing/"><code>sda-commons-server-kafka-testing</code></a> provides support for integration testing with Kafka with JUnit 4.</p>
+<h2 id="eventing">Eventing<a class="headerlink" href="#eventing" title="Permanent link">&para;</a></h2>
+<p>If you want to use Kafka in the context of eventing when consuming or producing messages, you 
+might check out our module <a href="../server-cloud-events/"><code>sda-commons-server-cloudevents</code></a>.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../server-jackson/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Server Jackson" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Server Jackson
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../server-kafka-example/" class="md-footer__link md-footer__link--next" aria-label="Next: Server Kafka" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Server Kafka
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="../search/main.js"></script>
+      
+    
+  </body>
+</html>

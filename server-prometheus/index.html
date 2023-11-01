@@ -1,0 +1,2602 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../server-opentelemetry/">
+      
+      
+        <link rel="next" href="../server-s3-testing/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Server Prometheus - sda-dropwizard-commons</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.c4a75a56.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sda-commons-server-prometheus" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="sda-dropwizard-commons" class="md-header__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sda-dropwizard-commons
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Server Prometheus
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+      </form>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="sda-dropwizard-commons" class="md-nav__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    sda-dropwizard-commons
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metadata-context/" class="md-nav__link">
+        Metadata Context
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bom/" class="md-nav__link">
+        Bom
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey/" class="md-nav__link">
+        Client Jersey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-example/" class="md-nav__link">
+        Client Jersey Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-wiremock-testing/" class="md-nav__link">
+        Client Jersey Wiremock Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        Dependencies
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth-testing/" class="md-nav__link">
+        Server Auth Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth/" class="md-nav__link">
+        Server Auth
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-circuit-breaker/" class="md-nav__link">
+        Server Circuit Breaker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cloud-events/" class="md-nav__link">
+        Server Cloud Events
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-consumer/" class="md-nav__link">
+        Server Consumer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cors/" class="md-nav__link">
+        Server Cors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-dropwizard/" class="md-nav__link">
+        Server Dropwizard
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-error-handling/" class="md-nav__link">
+        Server Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck-example/" class="md-nav__link">
+        Server Healthcheck Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck/" class="md-nav__link">
+        Server Healthcheck
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-example/" class="md-nav__link">
+        Server Hibernate Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-testing/" class="md-nav__link">
+        Server Hibernate Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate/" class="md-nav__link">
+        Server Hibernate
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-jackson/" class="md-nav__link">
+        Server Jackson
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-example/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-testing/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-key-mgmt/" class="md-nav__link">
+        Server key Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-mongo-testing/" class="md-nav__link">
+        Server Mongo Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-open-api/" class="md-nav__link">
+        Server OpenApi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-openapi-example/" class="md-nav__link">
+        Server OpenApi Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry-example/" class="md-nav__link">
+        Server Open Telemetry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry/" class="md-nav__link">
+        Server Open
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Server Prometheus
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Server Prometheus
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#provided-metrics" class="md-nav__link">
+    Provided metrics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#micrometer-metrics" class="md-nav__link">
+    Micrometer Metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Micrometer Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jvm" class="md-nav__link">
+    JVM
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kafka" class="md-nav__link">
+    Kafka
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mongodb" class="md-nav__link">
+    MongoDB
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#health-checks" class="md-nav__link">
+    Health Checks
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3-testing/" class="md-nav__link">
+        Server S3 Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3/" class="md-nav__link">
+        Server S3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-security/" class="md-nav__link">
+        Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-spring-data-mongo/" class="md-nav__link">
+        Server Spring Data Mongo
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-testing/" class="md-nav__link">
+        Server Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-trace/" class="md-nav__link">
+        Server Trace
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld/" class="md-nav__link">
+        Server Weld
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-example/" class="md-nav__link">
+        Server Weld Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-testing/" class="md-nav__link">
+        Server Weld Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-asyncapi/" class="md-nav__link">
+        Shared Async API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-certificates/" class="md-nav__link">
+        Shared Certificates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-error/" class="md-nav__link">
+        Shared Error
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-forms/" class="md-nav__link">
+        Shared Forms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-tracing/" class="md-nav__link">
+        Shared Tracing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-yaml/" class="md-nav__link">
+        Shared Yaml
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter/" class="md-nav__link">
+        Starter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter-example/" class="md-nav__link">
+        Starter Example
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#provided-metrics" class="md-nav__link">
+    Provided metrics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#micrometer-metrics" class="md-nav__link">
+    Micrometer Metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Micrometer Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jvm" class="md-nav__link">
+    JVM
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kafka" class="md-nav__link">
+    Kafka
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mongodb" class="md-nav__link">
+    MongoDB
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#health-checks" class="md-nav__link">
+    Health Checks
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="sda-commons-server-prometheus">SDA Commons Server Prometheus<a class="headerlink" href="#sda-commons-server-prometheus" title="Permanent link">&para;</a></h1>
+<p><a href="https://javadoc.io/doc/org.sdase.commons/sda-commons-server-prometheus"><img alt="javadoc" src="https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-prometheus/javadoc.svg" /></a></p>
+<p>The module <code>sda-commons-server-prometheus</code> provides an admin endpoint to serve metrics and health check results in a format that Prometheus can read. 
+The endpoint is available at the applications admin port at <code>/metrics/prometheus</code>.</p>
+<h2 id="provided-metrics">Provided metrics<a class="headerlink" href="#provided-metrics" title="Permanent link">&para;</a></h2>
+<p>Default metrics that are provided at <code>/metrics/prometheus</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Metric name</th>
+<th>Labels</th>
+<th>Description</th>
+<th>Source</th>
+<th>Deprecated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>http_request_duration_seconds</code></strong></td>
+<td></td>
+<td>Tracks the time needed to handle a request</td>
+<td><code>RequestDurationFilter</code></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>implementing_method</code></em></td>
+<td>The name of the method that handled the request.</td>
+<td>Request Context</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>http_method</code></em></td>
+<td>The HTTP method the client used for the request.</td>
+<td>Request Context</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>resource_path</code></em></td>
+<td>The mapped path of the request with path param placeholders.</td>
+<td>Request Context</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>status_code</code></em></td>
+<td>The HTTP status code sent with the response.</td>
+<td>Response Context</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>consumer_name</code></em></td>
+<td>Name of the consumer that started the request.</td>
+<td>Request Context Property <code>Consumer-Name</code>*</td>
+<td></td>
+</tr>
+<tr>
+<td><strong><code>kafka_consumer_records_lag</code></strong></td>
+<td></td>
+<td>See <a href="https://kafka.apache.org/documentation/#consumer_fetch_monitoring">Kafka Documentation</a></td>
+<td>Bridged from Kafka</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>consumer_name</code></em></td>
+<td>Name of the consumer that processed the message</td>
+<td>Bridged from Kafka</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>topic_name</code></em></td>
+<td>Name of the topic where messages where consumed from</td>
+<td>Bridged from Kafka</td>
+<td></td>
+</tr>
+<tr>
+<td><strong><code>kafka_consumer_topic_message_duration</code></strong></td>
+<td>Tracks the time needed to handle consumed Kafka message</td>
+<td><code>MessageListener</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>consumer_name</code></em></td>
+<td>Name of the consumer that processed the message</td>
+<td>Bridged from Kafka</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>topic_name</code></em></td>
+<td>Name of the topic where messages where consumed from</td>
+<td>Bridged from Kafka</td>
+<td></td>
+</tr>
+<tr>
+<td><strong><code>kafka_producer_topic_message_total</code></strong></td>
+<td>Tracks the number of messaged published to a Kafka topic</td>
+<td><code>KafkaMessageProducer</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>consumer_name</code></em></td>
+<td>Name of the consumer that processed the message</td>
+<td>Bridged from Kafka</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><em><code>topic_name</code></em></td>
+<td>Name of the topic where messages where consumed from</td>
+<td>Bridged from Kafka</td>
+<td></td>
+</tr>
+<tr>
+<td><strong><code>jvm_</code></strong>*</td>
+<td></td>
+<td>Multiple metrics about the JVM</td>
+<td>Bridged from Dropwizard</td>
+<td>Since v5.3.13</td>
+</tr>
+<tr>
+<td><strong><code>io_dropwizard_jetty_</code></strong></td>
+<td></td>
+<td>Multiple metrics from the embedded Jetty server</td>
+<td>Bridged from Dropwizard</td>
+<td></td>
+</tr>
+<tr>
+<td><strong><code>io_dropwizard_db_</code></strong></td>
+<td></td>
+<td>Multiple metrics from the database if a database is used</td>
+<td>Bridged from Dropwizard</td>
+<td></td>
+</tr>
+<tr>
+<td><strong><code>healthcheck_status</code></strong></td>
+<td><em><code>name</code></em></td>
+<td>Metrics that represent the state of the health checks</td>
+<td><code>HealthCheckMetricsCollector</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>A filter that extracts the consumer from the HTTP headers should add <code>Consumer-Name</code> to the request properties. That
+   filter is not part of the <code>PrometheusBundle</code>.</p>
+<h2 id="micrometer-metrics">Micrometer Metrics<a class="headerlink" href="#micrometer-metrics" title="Permanent link">&para;</a></h2>
+<p>We are slowly shifting over from Dropwizard-Metrics to <a href="https://micrometer.io/">Micrometer</a>. The
+following metrics are available so far.</p>
+<h3 id="jvm">JVM<a class="headerlink" href="#jvm" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Metric Name</th>
+<th>Labels</th>
+<th>Description</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jvm_classes_loaded_classes</code></td>
+<td></td>
+<td>The number of classes that are currently loaded in the Java virtual machine.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_classes_unloaded_classes</code></td>
+<td></td>
+<td>The total number of classes unloaded since the Java virtual machine has started execution.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_buffer_count_buffers</code></td>
+<td><code>id</code></td>
+<td>An estimate of the number of buffers in the pool.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_buffer_memory_used_bytes</code></td>
+<td><code>id</code></td>
+<td>An estimate of the memory that the Java virtual machine is using for this buffer pool.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_buffer_total_capacity_bytes</code></td>
+<td><code>id</code></td>
+<td>An estimate of the total capacity of the buffers in this pool.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_memory_used_bytes</code></td>
+<td><code>id</code>, <code>area</code></td>
+<td>The amount of used memory.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_memory_committed_bytes</code></td>
+<td><code>id</code>, <code>area</code></td>
+<td>The amount of memory in bytes that is committed for the Java virtual machine to use.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_memory_max_bytes</code></td>
+<td><code>id</code>, <code>area</code></td>
+<td>The maximum amount of memory in bytes that can be used for memory management.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_gc_max_data_size_bytes</code></td>
+<td></td>
+<td>Max size of long-lived heap memory pool.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_gc_live_data_size_bytes</code></td>
+<td></td>
+<td>Size of long-lived heap memory pool after reclamation.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_gc_memory_allocated_bytes_total</code></td>
+<td></td>
+<td>Incremented for an increase in the size of the (young) heap memory pool after one GC to before the next.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_gc_memory_promoted_bytes_total</code></td>
+<td></td>
+<td>Count of positive increases in the size of the old generation memory pool before GC to after GC.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_gc_concurrent_phase_time_seconds_count</code></td>
+<td><code>gc</code>, <code>action</code>, <code>cause</code></td>
+<td>Time spent in concurrent phase.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_gc_concurrent_phase_time_seconds_sum</code></td>
+<td><code>gc</code>, <code>action</code>, <code>cause</code></td>
+<td></td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_gc_concurrent_phase_time_seconds_max</code></td>
+<td><code>gc</code>, <code>action</code>, <code>cause</code></td>
+<td></td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_gc_pause_seconds_count</code></td>
+<td><code>gc</code>, <code>action</code>, <code>cause</code></td>
+<td>Time spent in GC pause.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_gc_pause_seconds_sum</code></td>
+<td><code>gc</code>, <code>action</code>, <code>cause</code></td>
+<td></td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_gc_pause_seconds_max</code></td>
+<td><code>gc</code>, <code>action</code>, <code>cause</code></td>
+<td></td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>system_cpu_count</code></td>
+<td></td>
+<td>The number of processors available to the Java virtual machine.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>system_load_average_1m</code></td>
+<td></td>
+<td>The sum of the number of runnable entities queued to available processors and the number of runnable entities running on the available processors averaged over a period of time.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>system_cpu_usage</code></td>
+<td></td>
+<td>The "recent cpu usage" of the system the application is running in.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>process_cpu_usage</code></td>
+<td></td>
+<td>The "recent cpu usage" for the Java Virtual Machine process.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_threads_peak_threads</code></td>
+<td></td>
+<td>The peak live thread count since the Java virtual machine started or peak was reset.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_threads_daemon_threads</code></td>
+<td></td>
+<td>The current number of live daemon threads.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_threads_live</code></td>
+<td></td>
+<td>The current number of live threads including both daemon and non-daemon threads.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_threads_started_threads_total</code></td>
+<td></td>
+<td>The total number of application threads started in the JVM.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_threads_states_threads</code></td>
+<td><code>state</code></td>
+<td>The current number of threads.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_classes_loaded</code></td>
+<td></td>
+<td>The number of classes that are currently loaded in the Java virtual machine.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jvm_classes_unloaded</code></td>
+<td></td>
+<td>The total number of classes unloaded since the Java virtual machine has started execution.</td>
+<td>Bridged from Micrometer</td>
+</tr>
+</tbody>
+</table>
+<h3 id="kafka">Kafka<a class="headerlink" href="#kafka" title="Permanent link">&para;</a></h3>
+<p>Kafka internal producer metrics have been exposed</p>
+<table>
+<thead>
+<tr>
+<th>Metric name</th>
+<th>Labels</th>
+<th>Description</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kafka_producer_batch_split_rate</code></td>
+<td><code>client.id</code></td>
+<td>The average number of batch splits per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_batch_split_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of batch splits</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_batch_size_max</code></td>
+<td><code>client.id</code></td>
+<td>The max number of bytes sent per partition per-request.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_batch_size_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average number of bytes sent per partition per-request.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_buffer_exhausted_rate</code></td>
+<td><code>client.id</code></td>
+<td>The average per-second number of record sends that are dropped due to buffer exhaustion</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_buffer_total_bytes</code></td>
+<td><code>client.id</code></td>
+<td>The maximum amount of buffer memory the client can use (whether or not it is currently used).</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_buffer_available_bytes</code></td>
+<td><code>client.id</code></td>
+<td>The total amount of buffer memory that is not being used (either unallocated or in the free list).</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_buffer_exhausted_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of record sends that are dropped due to buffer exhaustion</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_bufferpool_wait_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>The total time in nanoseconds an appender waits for space allocation.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_bufferpool_wait_ratio</code></td>
+<td><code>client.id</code></td>
+<td>The fraction of time an appender waits for space allocation.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_compression_rate_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average compression rate of record batches, defined as the average ratio of the compressed batch size over the uncompressed size.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_connection_creation_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of new connections established</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_connection_close_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of connections closed per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_connection_count</code></td>
+<td><code>client.id</code></td>
+<td>The current number of active connections.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_connection_creation_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of new connections established per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_connection_close_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of connections closed</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_incoming_byte_total</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The total number of incoming bytes</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_request_total</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The total number of requests sent</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_request_size_max</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The maximum size of any request sent.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_outgoing_byte_total</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The total number of outgoing bytes</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_response_total</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The total number of responses received</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_request_size_avg</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The average size of requests sent.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_response_rate</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The number of responses received per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_request_latency_avg</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The average latency of a producer request</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_incoming_byte_rate</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The number of incoming bytes per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_outgoing_byte_rate</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The number of outgoing bytes per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_request_rate</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The number of requests sent per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_node_request_latency_max</code></td>
+<td><code>client.id</code>, <code>node.id</code></td>
+<td>The maximum latency of a producer request</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_record_queue_time_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average time in ms record batches spent in the send buffer.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_record_send_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of records sent.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_record_size_max</code></td>
+<td><code>client.id</code></td>
+<td>The maximum record size</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_record_error_rate</code></td>
+<td><code>client.id</code></td>
+<td>The average per-second number of record sends that resulted in errors</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_record_error_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of record sends that resulted in errors</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_records_per_request_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average number of records per request.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_record_size_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average record size</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_record_queue_time_max</code></td>
+<td><code>client.id</code></td>
+<td>The maximum time in ms record batches spent in the send buffer.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_record_send_rate</code></td>
+<td><code>client.id</code></td>
+<td>The average number of records sent per second.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_record_retry_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of retried record sends</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_record_retry_rate</code></td>
+<td><code>client.id</code></td>
+<td>The average per-second number of retried record sends</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_requests_in_flight</code></td>
+<td><code>client.id</code></td>
+<td>The current number of in-flight requests awaiting a response.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_request_size_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average size of requests sent.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_request_size_max</code></td>
+<td><code>client.id</code></td>
+<td>The maximum size of any request sent.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_request_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of requests sent.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_request_latency_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average request latency in ms</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_request_latency_max</code></td>
+<td><code>client.id</code></td>
+<td>The maximum request latency in ms</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_request_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of requests sent per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_reauthentication_latency_max</code></td>
+<td><code>client.id</code></td>
+<td>The max latency observed due to re-authentication</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_produce_throttle_time_max</code></td>
+<td><code>client.id</code></td>
+<td>The maximum time in ms a request was throttled by a broker</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_produce_throttle_time_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average time in ms a request was throttled by a broker</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_io_wait_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>The total time the I/O thread spent waiting</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_incoming_byte_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of bytes read off all sockets per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_incoming_byte_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of bytes read off all sockets</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_io_time_ns_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average length of time for I/O per select call in nanoseconds.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_io_wait_time_ns_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average length of time the I/O thread spent waiting for a socket ready for reads or writes in nanoseconds.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_io_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>The total time the I/O thread spent doing I/O</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_metadata_age</code></td>
+<td><code>client.id</code></td>
+<td>The age in seconds of the current producer metadata being used.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_network_io_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of network operations (reads or writes) on all connections per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_network_io_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of network operations (reads or writes) on all connections</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_flush_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>Total time producer has spent in flush in nanoseconds.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_waiting_threads</code></td>
+<td><code>client.id</code></td>
+<td>The number of user threads blocked waiting for buffer memory to enqueue their records</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_reauthentication_latency_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average latency observed due to re-authentication</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_metadata_wait_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>Total time producer has spent waiting on topic metadata in nanoseconds.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_outgoing_byte_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of outgoing bytes sent to all servers per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_outgoing_byte_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of outgoing bytes sent to all servers</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_response_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of responses received per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_response_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of responses received</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_txn_send_offsets_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>Total time producer has spent in sendOffsetsToTransaction in nanoseconds.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_txn_init_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>Total time producer has spent in initTransactions in nanoseconds.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_txn_abort_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>Total time producer has spent in abortTransaction in nanoseconds.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_txn_commit_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>Total time producer has spent in commitTransaction in nanoseconds.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_txn_begin_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>Total time producer has spent in beginTransaction in nanoseconds.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_failed_authentication_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of connections with failed authentication per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_failed_authentication_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of connections with failed authentication</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_failed_reauthentication_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of failed re-authentication of connections</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_failed_reauthentication_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of failed re-authentication of connections per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_app_info_start_time_ms</code></td>
+<td><code>client.id</code></td>
+<td>Metric indicating start-time-ms</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_select_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of times the I/O layer checked for new I/O to perform per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_select_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of times the I/O layer checked for new I/O to perform</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_successful_authentication_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of connections with successful authentication per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_successful_authentication_no_reauth_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of connections with successful authentication where the client does not support re-authentication</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_successful_reauthentication_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of successful re-authentication of connections</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_successful_authentication_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of connections with successful authentication</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_producer_successful_reauthentication_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of successful re-authentication of connections per second</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Kafka internal consumer metrics have been exposed</p>
+<table>
+<thead>
+<tr>
+<th>Metric name</th>
+<th>Labels</th>
+<th>Description</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kafka_consumer_failed_reauthentication_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of failed re-authentication of connections per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_connection_close_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of connections closed per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_partition_assigned_latency_max</code></td>
+<td><code>client.id</code></td>
+<td>The max time taken for a partition-assigned rebalance listener callback</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_records_consumed_rate</code></td>
+<td><code>client.id</code></td>
+<td>The average number of records consumed per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_fetch_latency_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average time taken for a fetch request.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_io_wait_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>The total time the I/O thread spent waiting</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_successful_reauthentication_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of successful re-authentication of connections per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_last_rebalance_seconds_ago</code></td>
+<td><code>client.id</code></td>
+<td>The number of seconds since the last successful rebalance event</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_failed_reauthentication_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of failed re-authentication of connections</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_commit_latency_max</code></td>
+<td><code>client.id</code></td>
+<td>The max time taken for a commit request</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_last_poll_seconds_ago</code></td>
+<td><code>client.id</code></td>
+<td>The number of seconds since the last poll() invocation.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_outgoing_byte_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of outgoing bytes sent to all servers</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_request_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of requests sent per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_request_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of requests sent</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_failed_authentication_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of connections with failed authentication per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_response_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of responses received per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_records_lag_max</code></td>
+<td><code>client.id</code></td>
+<td>The maximum lag in terms of number of records for any partition in this window_ NOTE: This is based on current offset and not committed offset</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_time_between_poll_max</code></td>
+<td><code>client.id</code></td>
+<td>The max delay between invocations of poll() in milliseconds</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_join_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of group joins</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_join_time_max</code></td>
+<td><code>client.id</code></td>
+<td>The max time taken for a group rejoin</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_rebalance_latency_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average time taken for a group to complete a successful rebalance, which may be composed of several failed re-trials until it succeeded</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_sync_time_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average time taken for a group sync</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_network_io_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of network operations (reads or writes) on all connections</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_reauthentication_latency_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average latency observed due to re-authentication</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_failed_authentication_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of connections with failed authentication</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_bytes_consumed_rate</code></td>
+<td><code>client.id</code></td>
+<td>The average number of bytes consumed per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_partition_revoked_latency_max</code></td>
+<td><code>client.id</code></td>
+<td>The max time taken for a partition-revoked rebalance listener callback</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_commit_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of commit calls</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_fetch_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of fetch requests</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_io_time_ns_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average length of time for I/O per select call in nanoseconds</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_connection_count</code></td>
+<td><code>client.id</code></td>
+<td>The current number of active connections</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_rebalance_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of successful rebalance events, each event is composed of several failed re-trials until it succeeded</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_incoming_byte_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of bytes read off all sockets</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_records_lead_min</code></td>
+<td><code>client.id</code></td>
+<td>The minimum lead in terms of number of records for any partition in this window</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_committed_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>The total time the consumer has spent in committed in nanoseconds</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_partition_assigned_latency_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average time taken for a partition-assigned rebalance listener callback</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_select_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of times the I/O layer checked for new I/O to perform per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_rebalance_latency_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of milliseconds this consumer has spent in successful rebalances since creation</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_failed_rebalance_rate_per_hour</code></td>
+<td><code>client.id</code></td>
+<td>The number of failed rebalance events per hour</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_successful_authentication_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of connections with successful authentication per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_records_per_request_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average number of records in each request</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_outgoing_byte_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of outgoing bytes sent to all servers per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_connection_close_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of connections closed</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_sync_time_max</code></td>
+<td><code>client.id</code></td>
+<td>The max time taken for a group sync</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_network_io_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of network operations (reads or writes) on all connections per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_join_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of group joins per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_bytes_consumed_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of bytes consumed</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_fetch_size_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average number of bytes fetched per request</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_response_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of responses received</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_rebalance_latency_max</code></td>
+<td><code>client.id</code></td>
+<td>The max time taken for a group to complete a successful rebalance, which may be composed of several failed re-trials until it succeeded</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_records_consumed_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of records consumed</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_fetch_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of fetch requests per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_commit_sync_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>The total time the consumer has spent in commitSync in nanoseconds</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_successful_authentication_no_reauth_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of connections with successful authentication where the client does not support re-authentication</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_io_wait_time_ns_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average length of time the I/O thread spent waiting for a socket ready for reads or writes in nanoseconds</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_incoming_byte_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of bytes read off all sockets per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_heartbeat_response_time_max</code></td>
+<td><code>client.id</code></td>
+<td>The max time taken to receive a response to a heartbeat request</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_failed_rebalance_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of failed rebalance events</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_rebalance_rate_per_hour</code></td>
+<td><code>client.id</code></td>
+<td>The number of successful rebalance events per hour, each event is composed of several failed re-trials until it succeeded</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_request_size_max</code></td>
+<td><code>client.id</code></td>
+<td>The maximum size of any request sent</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_fetch_latency_max</code></td>
+<td><code>client.id</code></td>
+<td>The max time taken for any fetch request</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_fetch_throttle_time_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average throttle time in ms.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_assigned_partitions</code></td>
+<td><code>client.id</code></td>
+<td>The number of partitions currently assigned to this consumer</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_heartbeat_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of heartbeats per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_sync_total                      |</code>client.id`</td>
+<td>The total number of group syncs</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_successful_reauthentication_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of successful re-authentication of connections</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_fetch_size_max</code></td>
+<td><code>client.id</code></td>
+<td>The maximum number of bytes fetched per request</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_partition_lost_latency_max</code></td>
+<td><code>client.id</code></td>
+<td>The max time taken for a partition-lost rebalance listener callback.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_last_heartbeat_seconds_ago</code></td>
+<td><code>client.id</code></td>
+<td>The number of seconds since the last coordinator heartbeat was sent.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_io_time_ns_total</code></td>
+<td><code>client.id</code></td>
+<td>The total time the I/O thread spent doing I/O.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_commit_latency_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average time taken for a commit request.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_partition_lost_latency_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average time taken for a partition-lost rebalance listener callback</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_poll_idle_ratio_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average fraction of time the consumer's poll() is idle as opposed to waiting for the user code to process records.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_connection_creation_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of new connections established per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_connection_creation_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of new connections established</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_select_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of times the I/O layer checked for new I/O to perform</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_reauthentication_latency_max</code></td>
+<td><code>client.id</code></td>
+<td>The max latency observed due to re-authentication</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_request_size_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average size of requests sent</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_fetch_manager_fetch_throttle_time_max</code></td>
+<td><code>client.id</code></td>
+<td>The maximum throttle time in ms</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_time_between_poll_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average delay between invocations of poll() in milliseconds</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_join_time_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average time taken for a group rejoin</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_sync_rate</code></td>
+<td><code>client.id</code></td>
+<td>The number of group syncs per second</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_partition_revoked_latency_avg</code></td>
+<td><code>client.id</code></td>
+<td>The average time taken for a partition-revoked rebalance listener callback</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_successful_authentication_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of connections with successful authentication</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kafka_consumer_coordinator_heartbeat_total</code></td>
+<td><code>client.id</code></td>
+<td>The total number of heartbeats</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="mongodb">MongoDB<a class="headerlink" href="#mongodb" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Metric Name</th>
+<th>Labels</th>
+<th>Description</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mongodb.driver.pool.waitqueuesize</code></td>
+<td><code>cluster.id</code>, <code>server.address</code></td>
+<td>The current size of the wait queue for a connection from the pool</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>mongodb.driver.pool.checkedout</code></td>
+<td><code>cluster.id</code>, <code>server.address</code></td>
+<td>The count of connections that are currently in use</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>mongodb.driver.pool.size</code></td>
+<td><code>cluster.id</code>, <code>server.address</code></td>
+<td>The current size of the connection pool, including idle and and in-use members</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>mongodb.driver.commands</code></td>
+<td><code>cluster.id</code>, <code>server.address</code> <code>collection</code>, <code>command</code>, <code>status</code></td>
+<td>Timer of mongodb commands</td>
+<td>Bridged from Micrometer</td>
+</tr>
+</tbody>
+</table>
+<h2 id="health-checks">Health Checks<a class="headerlink" href="#health-checks" title="Permanent link">&para;</a></h2>
+<p>All health checks are provided as a Gauge metric <code>healthcheck_status</code> and are included in the metrics endpoint.
+They are also available at the applications admin port at <code>/healthcheck/prometheus</code>.
+This endpoint is only available for backward compatibility and will be removed in the future.
+The name of the Health Check is used as label <code>name</code>.
+The metric value is <code>1.0</code> for healthy and <code>0.0</code> for unhealthy. Example:</p>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>healthcheck_status{name=&quot;hibernate&quot;,} 1.0
+healthcheck_status{name=&quot;disk_space&quot;,} 0.0
+</code></pre></div></td></tr></table></div>
+<p>Currently, health checks are evaluated when their status is requested. Slow health checks should be annotated with 
+<a href="https://github.com/dropwizard/metrics/blob/v4.0.2/metrics-healthchecks/src/main/java/com/codahale/metrics/health/annotation/Async.java"><code>com.codahale.metrics.health.annotation.Async</code></a>
+to avoid blocking collection of the results.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-prometheus/src/main/java/org/sdase/commons/server/prometheus/PrometheusBundle.java"><code>PrometheusBundle</code></a> has to be added in
+the application:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">PrometheusBundle</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io.dropwizard.Application</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyApplication</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">MyApplication</span><span class="p">().</span><span class="na">run</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">PrometheusBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">build</span><span class="p">());</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../server-opentelemetry/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Server Open" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Server Open
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../server-s3-testing/" class="md-footer__link md-footer__link--next" aria-label="Next: Server S3 Testing" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Server S3 Testing
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="../search/main.js"></script>
+      
+    
+  </body>
+</html>

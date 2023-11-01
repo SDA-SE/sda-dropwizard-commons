@@ -1,0 +1,1737 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../server-auth-testing/">
+      
+      
+        <link rel="next" href="../server-circuit-breaker/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Server Auth - sda-dropwizard-commons</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.c4a75a56.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sda-commons-server-auth" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="sda-dropwizard-commons" class="md-header__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sda-dropwizard-commons
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Server Auth
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+      </form>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="sda-dropwizard-commons" class="md-nav__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    sda-dropwizard-commons
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metadata-context/" class="md-nav__link">
+        Metadata Context
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bom/" class="md-nav__link">
+        Bom
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey/" class="md-nav__link">
+        Client Jersey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-example/" class="md-nav__link">
+        Client Jersey Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client-jersey-wiremock-testing/" class="md-nav__link">
+        Client Jersey Wiremock Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        Dependencies
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-auth-testing/" class="md-nav__link">
+        Server Auth Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Server Auth
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Server Auth
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#auth-bundle" class="md-nav__link">
+    Auth Bundle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#periodical-reloading-of-public-keys-provided-via-jwks" class="md-nav__link">
+    Periodical reloading of public keys provided via JWKS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http-client-configuration-and-proxy-support" class="md-nav__link">
+    HTTP Client Configuration and Proxy Support
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opa-bundle" class="md-nav__link">
+    OPA Bundle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration_1" class="md-nav__link">
+    Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http-client-configuration-and-proxy-support_1" class="md-nav__link">
+    HTTP Client Configuration and Proxy Support
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    Testing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-extensions" class="md-nav__link">
+    Input Extensions
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-circuit-breaker/" class="md-nav__link">
+        Server Circuit Breaker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cloud-events/" class="md-nav__link">
+        Server Cloud Events
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-consumer/" class="md-nav__link">
+        Server Consumer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-cors/" class="md-nav__link">
+        Server Cors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-dropwizard/" class="md-nav__link">
+        Server Dropwizard
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-error-handling/" class="md-nav__link">
+        Server Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck-example/" class="md-nav__link">
+        Server Healthcheck Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-healthcheck/" class="md-nav__link">
+        Server Healthcheck
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-example/" class="md-nav__link">
+        Server Hibernate Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate-testing/" class="md-nav__link">
+        Server Hibernate Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-hibernate/" class="md-nav__link">
+        Server Hibernate
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-jackson/" class="md-nav__link">
+        Server Jackson
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-example/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-kafka-testing/" class="md-nav__link">
+        Server Kafka
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-key-mgmt/" class="md-nav__link">
+        Server key Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-mongo-testing/" class="md-nav__link">
+        Server Mongo Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-open-api/" class="md-nav__link">
+        Server OpenApi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-openapi-example/" class="md-nav__link">
+        Server OpenApi Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry-example/" class="md-nav__link">
+        Server Open Telemetry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-opentelemetry/" class="md-nav__link">
+        Server Open
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-prometheus/" class="md-nav__link">
+        Server Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3-testing/" class="md-nav__link">
+        Server S3 Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-s3/" class="md-nav__link">
+        Server S3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-security/" class="md-nav__link">
+        Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-spring-data-mongo/" class="md-nav__link">
+        Server Spring Data Mongo
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-testing/" class="md-nav__link">
+        Server Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-trace/" class="md-nav__link">
+        Server Trace
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld/" class="md-nav__link">
+        Server Weld
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-example/" class="md-nav__link">
+        Server Weld Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-weld-testing/" class="md-nav__link">
+        Server Weld Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-asyncapi/" class="md-nav__link">
+        Shared Async API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-certificates/" class="md-nav__link">
+        Shared Certificates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-error/" class="md-nav__link">
+        Shared Error
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-forms/" class="md-nav__link">
+        Shared Forms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-tracing/" class="md-nav__link">
+        Shared Tracing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shared-yaml/" class="md-nav__link">
+        Shared Yaml
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter/" class="md-nav__link">
+        Starter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../starter-example/" class="md-nav__link">
+        Starter Example
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#auth-bundle" class="md-nav__link">
+    Auth Bundle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#periodical-reloading-of-public-keys-provided-via-jwks" class="md-nav__link">
+    Periodical reloading of public keys provided via JWKS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http-client-configuration-and-proxy-support" class="md-nav__link">
+    HTTP Client Configuration and Proxy Support
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opa-bundle" class="md-nav__link">
+    OPA Bundle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration_1" class="md-nav__link">
+    Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http-client-configuration-and-proxy-support_1" class="md-nav__link">
+    HTTP Client Configuration and Proxy Support
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    Testing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-extensions" class="md-nav__link">
+    Input Extensions
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="sda-commons-server-auth">SDA Commons Server Auth<a class="headerlink" href="#sda-commons-server-auth" title="Permanent link">&para;</a></h1>
+<p><a href="https://javadoc.io/doc/org.sdase.commons/sda-commons-server-auth"><img alt="javadoc" src="https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-auth/javadoc.svg" /></a></p>
+<p>This module provides an <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/AuthBundle.java"><code>AuthBundle</code></a> to authenticate
+users based on JSON Web Tokens and an <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaBundle.java"><code>OpaBundle</code></a> to
+authorize the request with help of the <a href="http://www.openpolicyagent.org"><code>Open Policy Agent</code></a>.</p>
+<p>To use the bundle, a dependency to this module has to be added:</p>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>compile &#39;org.sdase.commons:sda-commons-server-auth:&lt;current-version&gt;&#39;
+</code></pre></div></td></tr></table></div>
+<h2 id="auth-bundle">Auth Bundle<a class="headerlink" href="#auth-bundle" title="Permanent link">&para;</a></h2>
+<p>The authentication creates a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java"><code>JwtPrincipal</code></a> per 
+request. This can be accessed from the <code>SecurityContext</code>:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@PermitAll</span>
+<span class="nd">@Path</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SecureEndPoint</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">   </span><span class="nd">@Context</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">SecurityContext</span><span class="w"> </span><span class="n">securityContext</span><span class="p">;</span>
+
+<span class="w">   </span><span class="nd">@GET</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">getSomethingSecure</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">JwtPrincipal</span><span class="w"> </span><span class="n">jwtPrincipal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JwtPrincipal</span><span class="p">)</span><span class="w"> </span><span class="n">securityContext</span><span class="p">.</span><span class="na">getUserPrincipal</span><span class="p">();</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>To activate the authentication in an application, the bundle has to be added to the application:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyApplication</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">MyApplication</span><span class="p">().</span><span class="na">run</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">AuthBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">withAuthConfigProvider</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="p">::</span><span class="n">getAuth</span><span class="p">).</span><span class="na">withAnnotatedAuthorization</span><span class="p">().</span><span class="na">build</span><span class="p">());</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>The Bundle can be configured to perform basic authorization based on whether a token is presented or not on endpoints
+that are annotated with <code>@PermitAll</code> with the setting <code>.withAnnotatedAuthorization()</code>.
+If the authorization should be handled by e.g. the <code>OpaBundle</code>, the option <code>.withExternalAuthorization()</code> still validates
+tokens sent in the <code>Authorization</code> header but also accepts requests <em>without header</em> to be processed and eventually
+rejected in a later stage.</p>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<p>The configuration relies on the <code>config.yaml</code> of the application and the custom property where the 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/config/AuthConfig.java"><code>AuthConfig</code></a> is mapped. Usually this should be 
+<code>auth</code>.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyConfig</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Configuration</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">AuthConfig</span><span class="w"> </span><span class="n">auth</span><span class="p">;</span>
+
+<span class="w">   </span><span class="c1">// getters and setters</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>The config allows to set the <em>leeway</em> in seconds for validation of 
+<a href="https://tools.ietf.org/html/rfc7519#section-4.1.4"><code>exp</code></a> and 
+<a href="https://tools.ietf.org/html/rfc7519#section-4.1.5"><code>nbf</code></a>.</p>
+<p>Multiple sources for public keys for verification of the signature can be configured. Each source may refer to a </p>
+<ul>
+<li>certificate in PEM format</li>
+<li>an authentication provider root URL or</li>
+<li>a URL providing a <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5"><code>JSON Web Key Set</code></a></li>
+</ul>
+<p>The authentication can be disabled for use in test and development environments. <strong>Be careful to NEVER disable
+authentication in production.</strong></p>
+<p>For the authentication provider root URL and a jwks source a required issuer can be configured by the attribute <code>requiredIssuer</code>.
+If the attribute <code>requiredIssuer</code> is set, the issuer of the token must match to the provided required issuer.
+A warning will be logged if the host name of the source url does not match the host name of the required issuer.
+Example config:
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">auth</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Disable all authentication, should be NEVER true in production</span>
+<span class="w">  </span><span class="nt">disableAuth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="c1"># The accepted leeway in seconds:</span>
+<span class="w">  </span><span class="nt">leeway</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="c1"># Definition of key sources providing public keys to verify signed tokens.</span>
+<span class="w">  </span><span class="nt">keys</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># A public key derived from a local PEM certificate.</span>
+<span class="w">    </span><span class="c1"># The pemKeyId must match the &#39;kid&#39; the signing authority sets in the token.</span>
+<span class="w">    </span><span class="c1"># It may be null if the &#39;kid&#39; in the token is not set by the signing authority.</span>
+<span class="w">    </span><span class="c1"># The pemKeyId is only considered for type: PEM</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PEM</span>
+<span class="w">    </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">file:///secure/example.pem</span>
+<span class="w">    </span><span class="nt">pemKeyId</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example</span>
+<span class="w">    </span><span class="c1"># A public key derived from a PEM certificate that is provided from a http server</span>
+<span class="w">    </span><span class="c1"># The pemKeyId must match the &#39;kid&#39; the signing authority sets in the token.</span>
+<span class="w">    </span><span class="c1"># It may be null if the &#39;kid&#39; in the token is not set by the signing authority.</span>
+<span class="w">    </span><span class="c1"># The pemSignAlg must match the signing algorithm used in the PEM. Defaults to RS256.</span>
+<span class="w">    </span><span class="c1"># The pemKeyId and pemSignAlg is only considered for type: PEM</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PEM</span>
+<span class="w">    </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://example.com/keys/example.pem</span>
+<span class="w">    </span><span class="nt">pemKeyId</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
+<span class="w">    </span><span class="nt">pemSignAlg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RS256</span>
+<span class="w">    </span><span class="c1"># Public keys will be loaded from the OpenID provider using discovery.</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OPEN_ID_DISCOVERY</span>
+<span class="w">    </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://keycloak.example.com/auth/realms/my-realm</span>
+<span class="w">    </span><span class="nt">requiredIssuer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://keycloak.example.com/auth/realms/my-realm</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="c1"># Public keys will be loaded directly from the JWKS url of the OpenID provider.</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">JWKS</span>
+<span class="w">    </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://keycloak.example.com/auth/realms/my-realm/protocol/openid-connect/certs</span>
+<span class="w">    </span><span class="nt">requiredIssuer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://keycloak.example.com/auth/realms/my-realm</span>
+<span class="w">  </span><span class="c1"># Comma separated string of OPEN_ID_DISCOVERY key sources with required issuer. Can be used to</span>
+<span class="w">  </span><span class="c1"># shorten the configuration when the discovery base URL matches the iss claim, the IDP sets.</span>
+<span class="w">  </span><span class="c1"># The value used for configuration here must exactly match the iss claim.</span>
+<span class="w">  </span><span class="c1"># keys and issuers can be used at the same time. Both are added to the accepted key sources.</span>
+<span class="w">  </span><span class="nt">issuers</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://keycloak.example.com/auth/realms/my-realm,</span><span class="nv"> </span><span class="s">https://keycloak.example.com/auth/realms/my-other-realm&quot;</span>
+</code></pre></div></td></tr></table></div></p>
+<p>The config may be filled from environment variables if the
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java"><code>ConfigurationSubstitutionBundle</code></a>
+is used:</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">auth</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">disableAuth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${DISABLE_AUTH:-false}</span>
+<span class="w">  </span><span class="nt">leeway</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${AUTH_LEEWAY:-0}</span>
+<span class="w">  </span><span class="nt">keys</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${AUTH_KEYS:-[]}</span>
+<span class="w">  </span><span class="nt">issuers</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${AUTH_ISSUERS:-}&quot;</span>
+</code></pre></div></td></tr></table></div>
+<p>In this case, the <code>AUTH_KEYS</code> variable should contain a JSON array of 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/config/KeyLocation.java"><code>KeyLocation</code></a> objects:</p>
+<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OPEN_ID_DISCOVERY&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">&quot;location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://keycloak.example.com/auth/realms/my-realm&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OPEN_ID_DISCOVERY&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">&quot;location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://keycloak.example.com/auth/realms/my-other-realm&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="periodical-reloading-of-public-keys-provided-via-jwks">Periodical reloading of public keys provided via JWKS<a class="headerlink" href="#periodical-reloading-of-public-keys-provided-via-jwks" title="Permanent link">&para;</a></h3>
+<p>Public keys provided via a <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5">JSON Web Key Set</a> (JWKS) are stored in a local key-cache.
+The cache updates every 5 minutes.
+It will also update when a JWT with unknown <a href="https://tools.ietf.org/html/rfc7515#section-4.1.4">kid</a> must be validated.
+No changes apply when the JWKS is unreachable.</p>
+<p>To avoid acceptance of tokens signed by revoked keys, all keys not available in the JWKS are removed on update.</p>
+<h3 id="http-client-configuration-and-proxy-support">HTTP Client Configuration and Proxy Support<a class="headerlink" href="#http-client-configuration-and-proxy-support" title="Permanent link">&para;</a></h3>
+<p>The client that calls the OpenID Discovery endpoint or the JWKS url, is configurable with the standard
+<a href="https://www.dropwizard.io/en/latest/manual/configuration.html#man-configuration-clients-http">Dropwizard configuration</a>.</p>
+<blockquote>
+<p>Tip: There is no need to make all configuration properties available as environment variables.
+Seldomly used properties can always be configured using <a href="https://www.dropwizard.io/en/latest/manual/core.html#man-core-configuration">System Properties</a>.</p>
+</blockquote>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">auth</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">keyLoaderClient</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500ms</span>
+<span class="w">    </span><span class="nt">proxy</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.52.11</span>
+<span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">      </span><span class="nt">scheme </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+</code></pre></div></td></tr></table></div>
+<p>This configuration can be used to configure a proxy server if needed.
+Use this if all clients should use an individual proxy configuration.</p>
+<p>In addition, the client consumes the standard <a href="https://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html#Proxies">proxy system properties</a>.
+Please note that a specific proxy configuration in the <code>HttpClientConfiguration</code> disables the proxy system properties for the client using that configuration.
+This can be helpful when all clients in an Application should use the same proxy configuration (this includes all clients that are created by the <a href="../client-jersey/"><code>sda-commons-client-jersey</code> bundle</a>).</p>
+<h2 id="opa-bundle">OPA Bundle<a class="headerlink" href="#opa-bundle" title="Permanent link">&para;</a></h2>
+<p>Details about the authorization with Open Policy Agent are documented within the authorization concept (see Confluence). 
+In short, Open Policy Agent acts as policy decision point and is started as sidecar to the actual service.</p>
+<p>The OPA Bundle acts as a client to the Open Policy Agent and is hooked in as request filter handling requests after they have 
+been validated by the <code>JwtAuthenticator</code> and before they reach the service implementation.</p>
+<p>The OPA Bundle requires the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/AuthBundle.java"><code>AuthBundle</code></a> in place, so that the JWT can be verified against public keys before it is handed over to OPA. 
+In case the request does not contain a JWT token at all, the JWT verification in the <code>AuthBundle</code> will be skipped without error and further 
+checks should be part of the OPA policy.</p>
+<p>If it is still required to reject requests that do not contain a JWT token the <code>AuthBundle</code> needs to be configured to perform basic authorization. This is achieved 
+by setting <code>.withAnnotatedAuthorization()</code> on the <code>AuhtBundle</code> and annotate endpoints with <code>@PermitAll</code>.</p>
+<p><img alt="Overview" src="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/docs/Overview.svg" /></p>
+<p>The OPA bundle requests the policy decision providing the following inputs
+ * HTTP path as Array
+ * HTTP method as String
+ * validated JWT (if available) 
+ * all request headers (can be disabled in the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaBundle.java"><code>OpaBundle</code></a> builder)</p>
+<p><em>Remark to HTTP request headers:</em><br />
+The bundle normalizes  header names to lower case to simplify handling in OPA since HTTP specification defines header names as case-insensitive.
+Multivalued headers are not normalized with respect to the representation as list or single string with separator char.
+They are forwarded as parsed by the framework. </p>
+<p><em>Security note:</em>
+Please be aware while a service might only consider one value of a specific header, the OPA is able to authorize on an array of those.
+Consider this in your policy when you want to make sure you authorize on the same value that a service might use to evaluate the output.</p>
+<p>These <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/filter/model/OpaInput.java">inputs</a> can be accessed inside a policy <code>.rego</code>-file in this way:
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code># each policy lies in a package that is referenced in the configuration of the OpaBundle
+package example
+
+# decode the JWT as new variable &#39;token&#39;
+token = {&quot;payload&quot;: payload} {
+    not input.jwt == null
+    io.jwt.decode(input.jwt, [_, payload, _])
+}
+
+# deny by default
+default allow = false
+
+allow {
+    # allow if path match &#39;/contracts/:anyid&#39; 
+    input.path = [&quot;contracts&quot;, _]
+
+    # allow if request method &#39;GET&#39; is used
+    input.httpMethod == &quot;GET&quot;
+
+    # allow if &#39;claim&#39; exists in the JWT payload
+    token.payload.claim
+
+    # allow if a request header &#39;HttpRequestHeaderName&#39; has a certain value 
+    input.headers[&quot;httprequestheadername&quot;][_] == &quot;certain-value&quot;
+}
+
+# set some example constraints 
+constraint1 := true                # always true
+constraint2 := [ &quot;v2.1&quot;, &quot;v2.2&quot; ]  # always an array of &quot;v2.1&quot; and &quot;v2.2&quot;
+constraint3[token.payload.sub].    # always a set that contains the &#39;sub&#39; claim from the token
+                                   # or is empty if no token is present
+</code></pre></div></td></tr></table></div></p>
+<p>The response consists of two parts: The overall <code>allow</code> decision, and optional rules that represent <em>constraints</em> to limit data access
+within the service. These constraints are fully service dependent and MUST be applied when querying the database or
+filtering received data.</p>
+<p>The following listing presents a sample OPA result with a positive allow decision and two constraints, the first with boolean value and second
+with a list of string values.
+<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;allow&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;constraint1&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;constraint2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;v2.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;v2.2&quot;</span><span class="w"> </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;constraint3&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;my-sub&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div></p>
+<p>The following listing shows a corresponding model class to the example above:
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ConstraintModel</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">constraint1</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">constraint2</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// could also be a Set&lt;String&gt;</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">constraint3</span><span class="p">;</span>
+
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div></p>
+<p>The bundle creates a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java"><code>OpaJwtPrincipal</code></a> 
+for each request. You can retrieve the constraint model's data from the principal by invoking <code>OpaJwtPrincipal#getConstraintsAsEntity</code>.
+Data from an <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java"><code>JwtPrincipal</code></a> is 
+copied to the new principal if existing.
+Beside the JWT, the constraints are included in this principal. The <code>OpaJwtPrincipal</code> includes a 
+method to parse the constraints JSON string to a Java object.
+The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java"><code>OpaJwtPrincipal</code></a> can be 
+injected as field using <code>@Context</code> in 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaJwtPrincipalEndpoint.java">request scoped beans like endpoint implementations</a> or accessed from the <code>SecurityContext</code>.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@Path</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SecureEndPoint</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">   </span><span class="nd">@Context</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">OpaJwtPrincipal</span><span class="w"> </span><span class="n">opaJwtPrincipal</span><span class="p">;</span>
+
+<span class="w">   </span><span class="nd">@GET</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">getSomethingSecure</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>To activate the OPA integration in an application, the bundle has to be added to the application. The Kubernetes file of the 
+service must also be adjusted to start OPA as sidecar.</p>
+<blockquote>
+<p>If you use the SdaPlatformBundle, there is a <a href="../starter/">more convenient way to enable OPA support</a>.</p>
+</blockquote>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyApplication</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">MyApplication</span><span class="p">().</span><span class="na">run</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">OpaBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">withOpaConfigProvider</span><span class="p">(</span><span class="n">OpaBundeTestAppConfiguration</span><span class="p">::</span><span class="n">getOpaConfig</span><span class="p">).</span><span class="na">build</span><span class="p">());</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="configuration_1">Configuration<a class="headerlink" href="#configuration_1" title="Permanent link">&para;</a></h2>
+<p>The configuration relies on the <code>config.yaml</code> of the application and the custom property where the 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/config/OpaConfig.java"><code>OpaConfig</code></a> is mapped. Usually this should be 
+<code>opa</code>.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyConfig</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Configuration</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">OpaConfig</span><span class="w"> </span><span class="n">opa</span><span class="p">;</span>
+
+<span class="w">   </span><span class="c1">// getters and setters</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>The config includes the connection data to the OPA sidecar and the path to the used policy endpoint.</p>
+<p>Example config:
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">opa</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Disable authorization. An empty prinicpal is created with an empty set of constraints</span>
+<span class="w">  </span><span class="nt">disableOpa</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="c1"># Url to the OPA sidecar</span>
+<span class="w">  </span><span class="nt">baseUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:8181</span>
+<span class="w">  </span><span class="c1"># Package name of the policy file that should be evaluated for authorization decision</span>
+<span class="w">  </span><span class="c1"># The package name is used to resolve the full path</span>
+<span class="w">  </span><span class="nt">policyPackage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http.authz</span>
+<span class="w">  </span><span class="c1"># Advanced configuration of the HTTP client that is used to call the Open Policy Agent</span>
+<span class="w">  </span><span class="nt">opaClient</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># timeout for OPA requests, default 500ms</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500ms</span>
+</code></pre></div></td></tr></table></div></p>
+<p>The config may be filled from environment variables if the
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java"><code>ConfigurationSubstitutionBundle</code></a>
+is used:</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">opa</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">disableOpa</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${DISABLE_OPA:-false}</span>
+<span class="w">  </span><span class="nt">baseUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OPA_URL:-http://localhost:8181}</span>
+<span class="w">  </span><span class="nt">policyPackage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OPA_POLICY_PACKAGE}</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="http-client-configuration-and-proxy-support_1">HTTP Client Configuration and Proxy Support<a class="headerlink" href="#http-client-configuration-and-proxy-support_1" title="Permanent link">&para;</a></h3>
+<p>The client that calls the Open Policy Agent is configurable with the standard
+<a href="https://www.dropwizard.io/en/latest/manual/configuration.html#man-configuration-clients-http">Dropwizard configuration</a>.</p>
+<blockquote>
+<p>Tip: There is no need to make all configuration properties available as environment variables.
+Seldomly used properties can always be configured using <a href="https://www.dropwizard.io/en/latest/manual/core.html#man-core-configuration">System Properties</a>.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">opa</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">opaClient</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500ms</span>
+</code></pre></div></td></tr></table></div>
+</blockquote>
+<p>This configuration can be used to configure a proxy server if needed.</p>
+<p><em>Please note that this client <strong>does not</strong> consume the standard proxy system properties but needs to be configured manually! 
+The OPA should be deployed as near to the service as possible, so we don't expect the need for universal proxy settings.</em></p>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/README.md"><code>sda-commons-server-auth-testing</code></a> provides support for testing
+applications with authentication.</p>
+<h2 id="input-extensions">Input Extensions<a class="headerlink" href="#input-extensions" title="Permanent link">&para;</a></h2>
+<p>The Bundle offers the option to register extensions that send custom data to the Open Policy Agent to be accessed during policy execution.
+Such extensions implement the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/extension/OpaInputExtension.java"><code>OpaInputExtension</code></a> interface and are registered in a dedicated namespace.
+The extension is called in the <code>OpaAuthFilter</code> and is able to access the current <code>RequestContext</code> to for example extract additional data from the request.
+<em>Overriding existing input properties (<code>path</code>, <code>jwt</code>, <code>httpMethod</code>) is not possible.</em></p>
+<p>This extension option should only be used if the normal authorization via constraints is not powerful enough.
+In general, a custom extension should not be necessary for most use cases.</p>
+<p><em>Remark on accessing the request body in an input extension:</em>
+The extension gets the <code>ContainerRequestContext</code> as input to access information about the request.
+Please be aware to not access the request entity since this might break your service.
+A test that shows the erroneous behavior can be found in <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/test/java/org/sdase/commons/server/opa/OpaBundleBodyInputExtensionTest.java"><code>OpaBundleBodyInputExtensionTest.java</code></a></p>
+<p><em>Security note:</em>
+When creating new extensions, be aware that you might access properties of a request that are not yet validated in the method interface.
+This is especially important if your service expects single values that might be accessible as array value to the OPA.
+While the service (e.g. in case of query parameters) only considers the first value, make sure to not authorize on other values in the OPA.  </p>
+<p>The following listing shows an example extension that adds a fixed boolean entry:
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ExampleOpaInputExtension</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">OpaInputExtension</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@Override</span>
+<span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">Boolean</span><span class="w"> </span><span class="nf">createAdditionalInputContent</span><span class="p">(</span><span class="n">ContainerRequestContext</span><span class="w"> </span><span class="n">requestContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div></p>
+<p>Register the extension during the <code>OpaBundle</code> creation:
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">OpaBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">withOpaConfigProvider</span><span class="p">(</span><span class="n">YourConfiguration</span><span class="p">::</span><span class="n">getOpa</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">withInputExtension</span><span class="p">(</span><span class="s">&quot;myExtension&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ExampleOpaInputExtension</span><span class="p">())</span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div></p>
+<p>Access the additional input inside a policy <code>.rego</code>-file in this way:
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code>exampleExtensionWorks {
+    # check if path match &#39;/contracts&#39; 
+    input.path = [&quot;contracts&quot;]
+
+    # check if the custom input has a certain value 
+    input.myExtension == true 
+}
+</code></pre></div></td></tr></table></div></p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../server-auth-testing/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Server Auth Testing" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Server Auth Testing
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../server-circuit-breaker/" class="md-footer__link md-footer__link--next" aria-label="Next: Server Circuit Breaker" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Server Circuit Breaker
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="../search/main.js"></script>
+      
+    
+  </body>
+</html>
