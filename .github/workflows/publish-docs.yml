@@ -1,0 +1,42 @@
+name: Publish mkdocs
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+        with:
+          fetch-depth: 1
+      - run: git config user.name 'github-actions[bot]' && git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - run: sudo apt-get update && sudo apt-get -yq install graphviz git fonts-ipafont fonts-ipaexfont python3-distutils
+      - run: >
+          wget -q -O /usr/local/bin/plantuml https://github.com/mikaelhg/puni2/releases/download/1.2022.7/plantuml-1.2022.7-glibc-x86_64
+          && chmod 755 /usr/local/bin/plantuml
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 #v.4.7.1
+        with:
+          python-version: 3.11
+      - run: pip install mkdocs-techdocs-core # Includes material theme
+      - run: pip install mkdocs-build-plantuml-plugin
+      - run: git fetch origin gh-pages # Get latest history
+      - run: > # required for mkdocs, not for techdocs
+          yq -i '.plugins |= . +
+          [{"build_plantuml": {"render":"server", "server":"http://www.plantuml.com/plantuml", "output_format": "svg"}}]'
+          mkdocs.yaml
+      - name: Dry run generated mkdocs
+        if: github.event_name == 'pull_request'
+        run: mkdocs build --config-file mkdocs.yaml && ls -al
+      - name: Archive test build
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v3.1.3
+        with:
+          name: site
+          path: |
+            site
+          retention-days: 1
+      - name: Publish generated mkdocs
+        if: github.event_name != 'pull_request'
+        run: mkdocs gh-deploy --config-file mkdocs.yaml
