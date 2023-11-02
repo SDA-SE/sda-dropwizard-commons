@@ -1,4 +1,5 @@
-# sda-commons-server-key-mgmt
+# SDA Commons Server Key Management
+
 Bundle for key management in microservices.
 
 The main purpose is to provide configurable key management and mappings for keys and its values.

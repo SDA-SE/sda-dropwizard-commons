@@ -1,4 +1,4 @@
-# SDA Commons error handling example
+# SDA Commons Error Handling example
 
 The SDA commons libraries provide support to generate the common error structures as described in the REST guide. This 
 implementation is part of the [`sda-commons-server-jackson`](server-jackson.md#error-format) bundle.

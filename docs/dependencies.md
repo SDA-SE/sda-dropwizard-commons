@@ -1,4 +1,4 @@
-# SDA Commons dependencies
+# SDA Commons Dependencies
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-dependencies/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-dependencies)
 

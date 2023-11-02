@@ -1,4 +1,4 @@
-# SDA Commons OpenApi
+# SDA Commons Server OpenAPI
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-openapi/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-openapi)
 
