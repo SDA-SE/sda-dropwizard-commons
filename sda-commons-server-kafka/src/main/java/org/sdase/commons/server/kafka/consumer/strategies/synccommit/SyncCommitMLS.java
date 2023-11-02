@@ -2,10 +2,7 @@ package org.sdase.commons.server.kafka.consumer.strategies.synccommit;
 
 import java.util.Collections;
 import java.util.Map;
-import org.apache.kafka.clients.consumer.CommitFailedException;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
 import org.sdase.commons.server.kafka.consumer.ErrorHandler;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.MessageListenerStrategy;
@@ -19,8 +16,30 @@ public class SyncCommitMLS<K, V> extends AutocommitMLS<K, V> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SyncCommitMLS.class);
 
+  private final SyncCommitErrorHandler<K, V> syncCommitErrorHandler;
+
   public SyncCommitMLS(MessageHandler<K, V> handler, ErrorHandler<K, V> errorHandler) {
+    this(
+        handler,
+        errorHandler,
+        (RuntimeException e, Consumer<K, V> consumer) -> {
+          if (!(e instanceof CommitFailedException)) {
+            /*
+             rethrow everything that is not a CommitFailedException to keep the original behaviour
+             if no custom syncCommitErrorHandler is used
+            */
+
+            throw e;
+          }
+        });
+  }
+
+  public SyncCommitMLS(
+      MessageHandler<K, V> handler,
+      ErrorHandler<K, V> errorHandler,
+      SyncCommitErrorHandler<K, V> syncCommitErrorHandler) {
     super(handler, errorHandler);
+    this.syncCommitErrorHandler = syncCommitErrorHandler;
   }
 
   @Override
@@ -32,8 +51,9 @@ public class SyncCommitMLS<K, V> extends AutocommitMLS<K, V> {
   private void commitSync(KafkaConsumer<K, V> consumer) {
     try {
       consumer.commitSync();
-    } catch (CommitFailedException e) {
-      LOGGER.error("Commit failed", e);
+    } catch (RuntimeException exception) {
+      LOGGER.error("Commit failed", exception);
+      syncCommitErrorHandler.handleError(exception, consumer);
     }
   }
 
