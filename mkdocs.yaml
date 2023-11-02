@@ -17,32 +17,33 @@ nav:
     - Client Jersey Example: client-jersey-example.md
     - Client Jersey Wiremock Testing: client-jersey-wiremock-testing.md
     - Dependencies: dependencies.md
-    - Server Auth Testing: server-auth-testing.md
+    - Metadata Context: metadata-context.md
     - Server Auth: server-auth.md
+    - Server Auth Testing: server-auth-testing.md
     - Server Circuit Breaker: server-circuit-breaker.md
     - Server Cloud Events: server-cloud-events.md
     - Server Consumer: server-consumer.md
     - Server Cors: server-cors.md
     - Server Dropwizard: server-dropwizard.md
     - Server Error Handling: server-error-handling.md
-    - Server Healthcheck Example: server-healthcheck-example.md
     - Server Healthcheck: server-healthcheck.md
+    - Server Healthcheck Example: server-healthcheck-example.md
+    - Server Hibernate: server-hibernate.md
     - Server Hibernate Example: server-hibernate-example.md
     - Server Hibernate Testing: server-hibernate-testing.md
-    - Server Hibernate: server-hibernate.md
     - Server Jackson: server-jackson.md
     - Server Kafka: server-kafka.md
-    - Server Kafka: server-kafka-example.md
-    - Server Kafka: server-kafka-testing.md
-    - Server key Management: server-key-mgmt.md
+    - Server Kafka Example: server-kafka-example.md
+    - Server Kafka Testing: server-kafka-testing.md
+    - Server Key Management: server-key-mgmt.md
     - Server Mongo Testing: server-mongo-testing.md
     - Server OpenApi: server-open-api.md
     - Server OpenApi Example: server-openapi-example.md
-    - Server Open Telemetry: server-opentelemetry-example.md
-    - Server Open: server-opentelemetry.md
+    - Server Open Telemetry: server-opentelemetry.md
+    - Server Open Telemetry Example: server-opentelemetry-example.md
     - Server Prometheus: server-prometheus.md
-    - Server S3 Testing: server-s3-testing.md
     - Server S3: server-s3.md
+    - Server S3 Testing: server-s3-testing.md
     - Server Security: server-security.md
     - Server Spring Data Mongo: server-spring-data-mongo.md
     - Server Testing: server-testing.md
