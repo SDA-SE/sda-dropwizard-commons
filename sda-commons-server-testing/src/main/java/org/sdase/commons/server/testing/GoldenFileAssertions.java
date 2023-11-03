@@ -20,11 +20,12 @@ import org.slf4j.LoggerFactory;
  * <p>These assertions are helpful to check if certain files are stored in the repository (like
  * OpenAPI or AsyncApi).
  */
+@SuppressWarnings("java:S2160") // no need to override equals here
 public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, Path> {
 
   private static final Logger LOG = LoggerFactory.getLogger(GoldenFileAssertions.class);
 
-  private static final CiUtil CI_UTIL = new CiUtil();
+  private CiUtil ciUtil = new CiUtil();
 
   private static final String ASSERTION_TEXT =
       "The current %s file is not up-to-date. If this "
@@ -39,6 +40,11 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
    */
   private GoldenFileAssertions(Path actual) {
     super(actual, GoldenFileAssertions.class);
+  }
+
+  GoldenFileAssertions withCiUtil(CiUtil ciUtil) {
+    this.ciUtil = ciUtil;
+    return this;
   }
 
   /**
@@ -102,7 +108,7 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
 
     } finally {
       // eventually update the file content
-      if (CI_UTIL.isRunningInCiPipeline()) {
+      if (ciUtil.isRunningInCiPipeline()) {
         LOG.info("Not updating file {} when running in CI pipeline", actual);
       } else {
         Files.write(actual, expected.getBytes(StandardCharsets.UTF_8));
@@ -158,8 +164,12 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
           .as(ASSERTION_TEXT, fileName, fileName, fileName)
           .isEqualTo(objectMapper.readTree(expected));
     } finally {
-      // always update the file content
-      Files.write(actual, expected.getBytes(StandardCharsets.UTF_8));
+      // eventually update the file content
+      if (ciUtil.isRunningInCiPipeline()) {
+        LOG.info("Not updating file {} when running in CI pipeline", actual);
+      } else {
+        Files.write(actual, expected.getBytes(StandardCharsets.UTF_8));
+      }
     }
 
     return this;
