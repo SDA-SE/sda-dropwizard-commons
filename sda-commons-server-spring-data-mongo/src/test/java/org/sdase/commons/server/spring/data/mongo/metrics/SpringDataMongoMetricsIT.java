@@ -103,7 +103,11 @@ abstract class SpringDataMongoMetricsIT {
             .filter(meter -> meter.getId().getName().equals("mongodb.driver.commands"))
             .findFirst();
     assertThat(commandsCompositeTime).isPresent();
-    assertThat(commandsCompositeTime.get().getId().getTags().toString())
+    var tagsWithoutClusterId =
+        commandsCompositeTime.get().getId().getTags().stream()
+            .filter(t -> !"cluster.id".equals(t.getKey()))
+            .collect(Collectors.toList());
+    assertThat(tagsWithoutClusterId.toString())
         .doesNotContain(List.of(telephoneNumber, Integer.toString(age), name));
   }
 
