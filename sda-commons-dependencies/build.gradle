@@ -36,7 +36,7 @@ dependencies {
     exclude group: 'org.awaitility', module: 'awaitility'
     exclude group: 'org.eclipse.jetty'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.552")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.581")
   api enforcedPlatform("io.netty:netty-bom:4.1.100.Final"), {
     because "various CVEs in earlier versions"
   }
