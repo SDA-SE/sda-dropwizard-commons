@@ -28,7 +28,7 @@ ext {
 dependencies {
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion") // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
-  api enforcedPlatform("org.eclipse.jetty:jetty-bom:9.4.53.v20231009"), {
+  api enforcedPlatform("org.eclipse.jetty:jetty-bom:12.0.3"), {
     because "version defined in Dropwizard not enforced for consumers"
   }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
