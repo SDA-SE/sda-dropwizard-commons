@@ -270,18 +270,18 @@ Kafka internal consumer metrics have been exposed
 
 More details about resilience4j circuit breaker metrics can be found [here](https://resilience4j.readme.io/docs/micrometer).
 
-| Metric Name                                             | Labels  | Description                                                              | Source                    |
-|---------------------------------------------------------|---------|--------------------------------------------------------------------------|---------------------------|
-| `resilience4j_circuitbreaker_buffered_calls`            | `kind`  | The number of buffered failed calls stored in the ring buffer            | Bridged from Micrometer   |
-| `resilience4j_circuitbreaker_slow_calls`                | `kind`  | The number of slow successful which were slower than a certain threshold | Bridged from Micrometer   |
-| `resilience4j_circuitbreaker_calls_seconds`             | `kind`  | Total number of successful calls by kind summary                         | Bridged from Micrometer   |
-| `resilience4j_circuitbreaker_calls_seconds_max`         | `kind`  | Total number of successful calls by kind                                 | Bridged from Micrometer   |
-| `resilience4j_circuitbreaker_state`                     | `sate`  | The states of the circuit breaker                                        | Bridged from Micrometer   |
-| `resilience4j_circuitbreaker_slow_call_rate`            |         | The slow call of the circuit breaker                                     | Bridged from Micrometer   |
-| `resilience4j_circuitbreaker_calls_bucket`              | `kind`  | **Deprecated** Total number of calls by kind                             | Prometheus                |
-| `resilience4j_circuitbreaker_failure_rate`              |         | The failure rate of the circuit breaker                                  | Bridged from Micrometer   |
-| `resilience4j_circuitbreaker_not_permitted_calls_total` | `kind`  | Total number of not permitted calls                                      | Bridged from Micrometer   |
-| `resilience4j_circuitbreaker_calls_created`             | `kind`  | Total number of calls by kind                                            | Bridged from Micrometer   |
+| Metric Name                                             | Labels  | Description                                                                                   | Source                    |
+|---------------------------------------------------------|---------|-----------------------------------------------------------------------------------------------|---------------------------|
+| `resilience4j_circuitbreaker_buffered_calls`            | `kind`  | The number of buffered failed calls stored in the ring buffer                                 | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_slow_calls`                | `kind`  | The number of slow successful which were slower than a certain threshold                      | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_calls_seconds`             | `kind`  | Total number of successful calls by kind summary                                              | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_calls_seconds_max`         | `kind`  | Total number of successful calls by kind                                                      | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_state`                     | `sate`  | The states of the circuit breaker                                                             | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_slow_call_rate`            |         | The slow call of the circuit breaker                                                          | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_calls_bucket`              | `kind`  | **Deprecated** use `resilience4j_circuitbreaker_calls_seconds` Total number of calls by kind  | Prometheus                |
+| `resilience4j_circuitbreaker_failure_rate`              |         | The failure rate of the circuit breaker                                                       | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_not_permitted_calls_total` | `kind`  | Total number of not permitted calls                                                           | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_calls_created`             | `kind`  | **Deprecated** Total number of calls by kind                                                  | Bridged from Micrometer   |
 
 
 ## Health Checks
