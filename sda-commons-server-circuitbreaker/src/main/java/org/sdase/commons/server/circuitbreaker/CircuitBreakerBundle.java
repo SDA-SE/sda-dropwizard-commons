@@ -1,6 +1,5 @@
 package org.sdase.commons.server.circuitbreaker;
 
-import static io.github.resilience4j.prometheus.collectors.CircuitBreakerMetricsCollector.ofCircuitBreakerRegistry;
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
 import io.dropwizard.Configuration;
@@ -9,10 +8,12 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import io.github.resilience4j.prometheus.collectors.CircuitBreakerMetricsCollector;
+import io.github.resilience4j.micrometer.tagged.TaggedCircuitBreakerMetrics;
+import io.micrometer.core.instrument.Metrics;
 import io.prometheus.client.CollectorRegistry;
 import org.sdase.commons.server.circuitbreaker.builder.CircuitBreakerBuilder;
 import org.sdase.commons.server.circuitbreaker.builder.CircuitBreakerConfigurationBuilder;
+import org.sdase.commons.server.circuitbreaker.metrics.SdaCircuitBreakerMetricsCollector;
 
 /**
  * Bundle that provides access to an implementation of the circuit breaker pattern to handle
@@ -64,13 +65,18 @@ public class CircuitBreakerBundle<T extends Configuration> implements Configured
     registry = CircuitBreakerRegistry.of(config);
 
     CollectorRegistry collectorRegistry = CollectorRegistry.defaultRegistry;
-    CircuitBreakerMetricsCollector circuitBreakerMetricsCollector =
-        ofCircuitBreakerRegistry(registry);
-    collectorRegistry.register(circuitBreakerMetricsCollector);
+    //    adds resilience4j_circuitbreaker_calls_bucket metric to not introduce a breaking changes.
+    //    should be removed with the next major release
+    SdaCircuitBreakerMetricsCollector sdaCircuitBreakerMetricsCollector =
+        SdaCircuitBreakerMetricsCollector.ofCircuitBreakerRegistry(registry);
+    collectorRegistry.register(sdaCircuitBreakerMetricsCollector);
+
+    //    adds metrics using resilience4j micrometer library
+    TaggedCircuitBreakerMetrics.ofCircuitBreakerRegistry(registry).bindTo(Metrics.globalRegistry);
 
     environment
         .lifecycle()
-        .manage(onShutdown(() -> collectorRegistry.unregister(circuitBreakerMetricsCollector)));
+        .manage(onShutdown(() -> collectorRegistry.unregister(sdaCircuitBreakerMetricsCollector)));
   }
 
   /**

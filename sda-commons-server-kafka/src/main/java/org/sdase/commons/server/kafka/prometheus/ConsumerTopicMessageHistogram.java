@@ -4,17 +4,21 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Histogram;
 
 /**
- * The central definition of the message consumer duration histogram. This is the definition of the
- * message consumed duration histogram as it should be provided by all Kafka consumers to measure
- * message process durations with Prometheus.
+ * @deprecated use micrometer library to expose Kafka metrics see {@link
+ *     org.sdase.commons.server.kafka.MicrometerConsumerListener}.
+ *     <p>The central definition of the message consumer duration histogram. This is the definition
+ *     of the message consumed duration histogram as it should be provided by all Kafka consumers to
+ *     measure message process durations with Prometheus.
  */
+@Deprecated(since = "5.8.1", forRemoval = true)
 public class ConsumerTopicMessageHistogram {
 
   /** The histogram name as it is published to Prometheus. */
   private static final String METRIC_NAME = "kafka_consumer_topic_message_duration";
 
   /** The help message description that describes the Histogram. */
-  private static final String HELP = "Duration of Kafka Messages consumed in seconds.";
+  private static final String HELP =
+      "**DEPRECATED** Duration of Kafka Messages consumed in seconds.";
 
   /**
    * The labels added by {@code ConsumerTopicMessageHistogram}. The labels and their order have to
