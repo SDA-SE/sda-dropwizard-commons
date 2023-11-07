@@ -28,8 +28,6 @@ public class KafkaConsumerMetrics extends Collector {
   /** The prefix for the metrics name as they are published to Prometheus */
   private static final String METRIC_NAME_PREFIX = "kafka_consumer_";
 
-  private static final String METRIC_DESCRIPTION_PREFIX = "**DEPRECATED** ";
-
   /**
    * <a href= "https://kafka.apache.org/documentation/#consumer_monitoring">Kafka Metrics</a>
    * scraped by this class.
@@ -89,7 +87,7 @@ public class KafkaConsumerMetrics extends Collector {
     GaugeMetricFamily labeledGauge =
         new GaugeMetricFamily(
             normalizedMetricName,
-            METRIC_DESCRIPTION_PREFIX + kafkaMetric.getKey().description(),
+            "**DEPRECATED** " + kafkaMetric.getKey().description(),
             Arrays.asList(LABELS));
 
     String[] labelValues =
