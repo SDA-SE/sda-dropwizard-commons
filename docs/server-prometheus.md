@@ -9,27 +9,27 @@ The endpoint is available at the applications admin port at `/metrics/prometheus
 
 Default metrics that are provided at `/metrics/prometheus`:
 
-| Metric name                                 | Labels                                                   | Description                                                                                  | Source                                    | Deprecated    |
-|---------------------------------------------|----------------------------------------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------|---------------|
-| **`http_request_duration_seconds`**         |                                                          | Tracks the time needed to handle a request                                                   | `RequestDurationFilter`                   |               | 
-|                                             | _`implementing_method`_                                  | The name of the method that handled the request.                                             | Request Context                           |               |
-|                                             | _`http_method`_                                          | The HTTP method the client used for the request.                                             | Request Context                           |               |
-|                                             | _`resource_path`_                                        | The mapped path of the request with path param placeholders.                                 | Request Context                           |               |
-|                                             | _`status_code`_                                          | The HTTP status code sent with the response.                                                 | Response Context                          |               |
-|                                             | _`consumer_name`_                                        | Name of the consumer that started the request.                                               | Request Context Property `Consumer-Name`* |               |
-| **`kafka_consumer_records_lag`**            |                                                          | See [Kafka Documentation](https://kafka.apache.org/documentation/#consumer_fetch_monitoring) | Bridged from Kafka                        |               | 
-|                                             | _`consumer_name`_                                        | Name of the consumer that processed the message                                              | Bridged from Kafka                        |               |
-|                                             | _`topic_name`_                                           | Name of the topic where messages where consumed from                                         | Bridged from Kafka                        |               |
-| **`kafka_consumer_topic_message_duration`** | Tracks the time needed to handle consumed Kafka message  | `MessageListener`                                                                            |
-|                                             | _`consumer_name`_                                        | Name of the consumer that processed the message                                              | Bridged from Kafka                        |               |
-|                                             | _`topic_name`_                                           | Name of the topic where messages where consumed from                                         | Bridged from Kafka                        |               |
-| **`kafka_producer_topic_message_total`**    | Tracks the number of messaged published to a Kafka topic | `KafkaMessageProducer`                                                                       |
-|                                             | _`consumer_name`_                                        | Name of the consumer that processed the message                                              | Bridged from Kafka                        |               |
-|                                             | _`topic_name`_                                           | Name of the topic where messages where consumed from                                         | Bridged from Kafka                        |               |
-| **`jvm_`***                                 |                                                          | Multiple metrics about the JVM                                                               | Bridged from Dropwizard                   | Since v5.3.13 |
-| **`io_dropwizard_jetty_`**                  |                                                          | Multiple metrics from the embedded Jetty server                                              | Bridged from Dropwizard                   |               |
-| **`io_dropwizard_db_`**                     |                                                          | Multiple metrics from the database if a database is used                                     | Bridged from Dropwizard                   |               |
-| **`healthcheck_status`**                    | _`name`_                                                 | Metrics that represent the state of the health checks                                        | `HealthCheckMetricsCollector`             |               | 
+| Metric name                                 | Labels                  | Description                                                                                                 | Source                                    | Deprecated    |
+|---------------------------------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|-------------------------------------------|---------------|
+| **`http_request_duration_seconds`**         |                         | Tracks the time needed to handle a request                                                                  | `RequestDurationFilter`                   |               | 
+|                                             | _`implementing_method`_ | The name of the method that handled the request.                                                            | Request Context                           |               |
+|                                             | _`http_method`_         | The HTTP method the client used for the request.                                                            | Request Context                           |               |
+|                                             | _`resource_path`_       | The mapped path of the request with path param placeholders.                                                | Request Context                           |               |
+|                                             | _`status_code`_         | The HTTP status code sent with the response.                                                                | Response Context                          |               |
+|                                             | _`consumer_name`_       | Name of the consumer that started the request.                                                              | Request Context Property `Consumer-Name`* |               |
+| **`kafka_consumer_records_lag`**            |                         | **DEPRECATED** See [Kafka Documentation](https://kafka.apache.org/documentation/#consumer_fetch_monitoring) | Bridged from Kafka                        |               | 
+|                                             | _`consumer_name`_       | Name of the consumer that processed the message                                                             | Bridged from Kafka                        |               |
+|                                             | _`topic_name`_          | Name of the topic where messages where consumed from                                                        | Bridged from Kafka                        |               |
+| **`kafka_consumer_topic_message_duration`** |                         | **DEPRECATED** Tracks the time needed to handle consumed Kafka message                                      | `MessageListener`                         |               |
+|                                             | _`consumer_name`_       | Name of the consumer that processed the message                                                             | Bridged from Kafka                        |               |
+|                                             | _`topic_name`_          | Name of the topic where messages where consumed from                                                        | Bridged from Kafka                        |               |
+| **`kafka_producer_topic_message_total`**    |                         | **DEPRECATED** Tracks the number of messaged published to a Kafka topic                                     | `KafkaMessageProducer`                    |               |
+|                                             | _`consumer_name`_       | Name of the consumer that processed the message                                                             | Bridged from Kafka                        |               |
+|                                             | _`topic_name`_          | Name of the topic where messages where consumed from                                                        | Bridged from Kafka                        |               |
+| **`jvm_`***                                 |                         | Multiple metrics about the JVM                                                                              | Bridged from Dropwizard                   | Since v5.3.13 |
+| **`io_dropwizard_jetty_`**                  |                         | Multiple metrics from the embedded Jetty server                                                             | Bridged from Dropwizard                   |               |
+| **`io_dropwizard_db_`**                     |                         | Multiple metrics from the database if a database is used                                                    | Bridged from Dropwizard                   |               |
+| **`healthcheck_status`**                    | _`name`_                | Metrics that represent the state of the health checks                                                       | `HealthCheckMetricsCollector`             |               | 
 
 A filter that extracts the consumer from the HTTP headers should add `Consumer-Name` to the request properties. That
    filter is not part of the `PrometheusBundle`.
@@ -264,6 +264,24 @@ Kafka internal consumer metrics have been exposed
 | `mongodb.driver.pool.checkedout`    | `cluster.id`, `server.address`                                   | The count of connections that are currently in use                                   | Bridged from Micrometer  |
 | `mongodb.driver.pool.size`          | `cluster.id`, `server.address`                                   | The current size of the connection pool, including idle and and in-use members       | Bridged from Micrometer  |
 | `mongodb.driver.commands`           | `cluster.id`, `server.address` `collection`, `command`, `status` | Timer of mongodb commands                                                            | Bridged from Micrometer  |
+
+
+### Circuit Breaker
+
+More details about resilience4j circuit breaker metrics can be found [here](https://resilience4j.readme.io/docs/micrometer).
+
+| Metric Name                                             | Labels  | Description                                                              | Source                    |
+|---------------------------------------------------------|---------|--------------------------------------------------------------------------|---------------------------|
+| `resilience4j_circuitbreaker_buffered_calls`            | `kind`  | The number of buffered failed calls stored in the ring buffer            | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_slow_calls`                | `kind`  | The number of slow successful which were slower than a certain threshold | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_calls_seconds`             | `kind`  | Total number of successful calls by kind summary                         | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_calls_seconds_max`         | `kind`  | Total number of successful calls by kind                                 | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_state`                     | `sate`  | The states of the circuit breaker                                        | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_slow_call_rate`            |         | The slow call of the circuit breaker                                     | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_calls_bucket`              | `kind`  | **Deprecated** Total number of calls by kind                             | Prometheus                |
+| `resilience4j_circuitbreaker_failure_rate`              |         | The failure rate of the circuit breaker                                  | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_not_permitted_calls_total` | `kind`  | Total number of not permitted calls                                      | Bridged from Micrometer   |
+| `resilience4j_circuitbreaker_calls_created`             | `kind`  | Total number of calls by kind                                            | Bridged from Micrometer   |
 
 
 ## Health Checks

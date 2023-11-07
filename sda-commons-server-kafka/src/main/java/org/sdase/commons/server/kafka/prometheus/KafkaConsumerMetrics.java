@@ -15,15 +15,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Custom Prometheus Collector scraping Kafka Metrics for all registered message listeners.<br>
- * Specify the metrics to be handled by Prometheus in {@link #KAFKA_METRICS}.
+ * @deprecated use micrometer library to expose Kafka metrics see {@link
+ *     org.sdase.commons.server.kafka.MicrometerConsumerListener}. Custom Prometheus Collector
+ *     scraping Kafka Metrics for all registered message listeners.<br>
+ *     Specify the metrics to be handled by Prometheus in {@link #KAFKA_METRICS}.
  */
+@Deprecated(since = "5.8.1", forRemoval = true)
 public class KafkaConsumerMetrics extends Collector {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerMetrics.class);
 
   /** The prefix for the metrics name as they are published to Prometheus */
   private static final String METRIC_NAME_PREFIX = "kafka_consumer_";
+
+  private static final String METRIC_DESCRIPTION_PREFIX = "**DEPRECATED** ";
 
   /**
    * <a href= "https://kafka.apache.org/documentation/#consumer_monitoring">Kafka Metrics</a>
@@ -83,7 +88,9 @@ public class KafkaConsumerMetrics extends Collector {
         METRIC_NAME_PREFIX + kafkaMetric.getKey().name().replace('-', '_');
     GaugeMetricFamily labeledGauge =
         new GaugeMetricFamily(
-            normalizedMetricName, kafkaMetric.getKey().description(), Arrays.asList(LABELS));
+            normalizedMetricName,
+            METRIC_DESCRIPTION_PREFIX + kafkaMetric.getKey().description(),
+            Arrays.asList(LABELS));
 
     String[] labelValues =
         createLabelValuesForCurrentMessage(

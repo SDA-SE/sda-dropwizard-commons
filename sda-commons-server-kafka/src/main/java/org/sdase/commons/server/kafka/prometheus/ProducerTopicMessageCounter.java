@@ -4,17 +4,20 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 
 /**
- * The central definition of the response duration histogram. This is the definition of the response
- * duration histogram as it should be provided by all SDA services to measure message durations with
- * Prometheus.
+ * @deprecated use micrometer library to expose Kafka metrics see {@link
+ *     org.sdase.commons.server.kafka.MicrometerProducerListener}. The central definition of the
+ *     response duration histogram. This is the definition of the response duration histogram as it
+ *     should be provided by all SDA services to measure message durations with Prometheus.
  */
+@Deprecated(since = "5.8.1", forRemoval = true)
 public class ProducerTopicMessageCounter {
 
   /** The counter name as it is published to Prometheus. */
   private static final String METRIC_NAME = "kafka_producer_topic_message";
 
   /** The help message description that describes the Histogram. */
-  private static final String HELP = "Amount of messages published by Kafka producers.";
+  private static final String HELP =
+      "**DEPRECATED** Amount of messages published by Kafka producers.";
 
   /**
    * The labels added by {@code RequestDurationHistogram}. The labels and their order have to be

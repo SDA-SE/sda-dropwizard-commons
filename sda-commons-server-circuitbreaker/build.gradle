@@ -7,6 +7,8 @@ dependencies {
     // version clash with latest client 0.9.0 -> 0.16.0
     exclude group: 'io.prometheus', module: 'simpleclient_common'
   }
+  implementation 'io.micrometer:micrometer-core'
+  api 'io.github.resilience4j:resilience4j-micrometer'
   api 'io.prometheus:simpleclient_common'
   api 'org.objenesis:objenesis'
 

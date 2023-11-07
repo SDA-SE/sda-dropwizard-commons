@@ -114,6 +114,7 @@ dependencies {
     // sda-commons-server-circuitbreaker
     api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
     api "io.github.resilience4j:resilience4j-prometheus:$resilience4jVersion"
+    api "io.github.resilience4j:resilience4j-micrometer:${resilience4jVersion}"
     api "org.objenesis:objenesis:3.3"
 
     // sda-commons-server-hibernate
