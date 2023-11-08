@@ -687,6 +687,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#circuit-breaker" class="md-nav__link">
+    Circuit Breaker
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1021,6 +1028,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#circuit-breaker" class="md-nav__link">
+    Circuit Breaker
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1117,7 +1131,7 @@ The endpoint is available at the applications admin port at <code>/metrics/prome
 <tr>
 <td><strong><code>kafka_consumer_records_lag</code></strong></td>
 <td></td>
-<td>See <a href="https://kafka.apache.org/documentation/#consumer_fetch_monitoring">Kafka Documentation</a></td>
+<td><strong>DEPRECATED</strong> use <code>kafka_consumer_fetch_manager_records_lag</code></td>
 <td>Bridged from Kafka</td>
 <td></td>
 </tr>
@@ -1137,9 +1151,9 @@ The endpoint is available at the applications admin port at <code>/metrics/prome
 </tr>
 <tr>
 <td><strong><code>kafka_consumer_topic_message_duration</code></strong></td>
-<td>Tracks the time needed to handle consumed Kafka message</td>
-<td><code>MessageListener</code></td>
 <td></td>
+<td><strong>DEPRECATED</strong> use <code>kafka_consumer_fetch_manager_records_consumed_rate</code> Tracks the time needed to handle consumed Kafka message</td>
+<td><code>MessageListener</code></td>
 <td></td>
 </tr>
 <tr>
@@ -1158,9 +1172,9 @@ The endpoint is available at the applications admin port at <code>/metrics/prome
 </tr>
 <tr>
 <td><strong><code>kafka_producer_topic_message_total</code></strong></td>
-<td>Tracks the number of messaged published to a Kafka topic</td>
-<td><code>KafkaMessageProducer</code></td>
 <td></td>
+<td><strong>DEPRECATED</strong> use <code>kafka_producer_record_send_total</code>, Tracks the number of messaged published to a Kafka topic</td>
+<td><code>KafkaMessageProducer</code></td>
 <td></td>
 </tr>
 <tr>
@@ -2467,6 +2481,80 @@ following metrics are available so far.</p>
 <td><code>mongodb.driver.commands</code></td>
 <td><code>cluster.id</code>, <code>server.address</code> <code>collection</code>, <code>command</code>, <code>status</code></td>
 <td>Timer of mongodb commands</td>
+<td>Bridged from Micrometer</td>
+</tr>
+</tbody>
+</table>
+<h3 id="circuit-breaker">Circuit Breaker<a class="headerlink" href="#circuit-breaker" title="Permanent link">&para;</a></h3>
+<p>More details about resilience4j circuit breaker metrics can be found <a href="https://resilience4j.readme.io/docs/micrometer">here</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Metric Name</th>
+<th>Labels</th>
+<th>Description</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resilience4j_circuitbreaker_buffered_calls</code></td>
+<td><code>kind</code></td>
+<td>The number of buffered failed calls stored in the ring buffer</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>resilience4j_circuitbreaker_slow_calls</code></td>
+<td><code>kind</code></td>
+<td>The number of slow successful which were slower than a certain threshold</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>resilience4j_circuitbreaker_calls_seconds</code></td>
+<td><code>kind</code></td>
+<td>Total number of successful calls by kind summary</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>resilience4j_circuitbreaker_calls_seconds_max</code></td>
+<td><code>kind</code></td>
+<td>Total number of successful calls by kind</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>resilience4j_circuitbreaker_state</code></td>
+<td><code>sate</code></td>
+<td>The states of the circuit breaker</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>resilience4j_circuitbreaker_slow_call_rate</code></td>
+<td></td>
+<td>The slow call of the circuit breaker</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>resilience4j_circuitbreaker_calls_bucket</code></td>
+<td><code>kind</code></td>
+<td><strong>Deprecated</strong> use <code>resilience4j_circuitbreaker_calls_seconds</code> Total number of calls by kind</td>
+<td>Prometheus</td>
+</tr>
+<tr>
+<td><code>resilience4j_circuitbreaker_failure_rate</code></td>
+<td></td>
+<td>The failure rate of the circuit breaker</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>resilience4j_circuitbreaker_not_permitted_calls_total</code></td>
+<td><code>kind</code></td>
+<td>Total number of not permitted calls</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>resilience4j_circuitbreaker_calls_created</code></td>
+<td><code>kind</code></td>
+<td><strong>Deprecated</strong> Total number of calls by kind</td>
 <td>Bridged from Micrometer</td>
 </tr>
 </tbody>
