@@ -28,6 +28,7 @@ public class DefaultLoggingConfigurationBundle implements ConfiguredBundle<Confi
   }
 
   public static class Builder {
+
     public DefaultLoggingConfigurationBundle build() {
       return new DefaultLoggingConfigurationBundle();
     }

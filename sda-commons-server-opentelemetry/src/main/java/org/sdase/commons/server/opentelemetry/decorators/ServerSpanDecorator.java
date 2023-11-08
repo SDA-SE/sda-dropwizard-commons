@@ -23,6 +23,7 @@ public class ServerSpanDecorator {
     updateSpanName(requestContext.getMethod(), route, span);
     // Add the attributes defined in the Semantic Conventions
     span.setAttribute(SemanticAttributes.HTTP_ROUTE, route);
+    span.setAttribute("TraceID", span.getSpanContext().getTraceId());
   }
 
   public static void decorateRequest(HttpServletRequest request, Span span) {
@@ -33,6 +34,7 @@ public class ServerSpanDecorator {
         String.format("%s:%s", request.getRemoteHost(), request.getServerPort()));
     span.setAttribute(SemanticAttributes.HTTP_URL, request.getRequestURI());
     span.setAttribute(SemanticAttributes.HTTP_FLAVOR, request.getProtocol());
+    span.setAttribute("TraceID", span.getSpanContext().getTraceId());
   }
 
   public static void decorateResponse(ContainerResponseContext responseContext, Span span) {

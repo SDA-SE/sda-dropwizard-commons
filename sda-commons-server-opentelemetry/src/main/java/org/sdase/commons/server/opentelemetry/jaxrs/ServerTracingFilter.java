@@ -9,6 +9,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import org.sdase.commons.server.opentelemetry.decorators.ServerSpanDecorator;
+import org.slf4j.MDC;
 
 /**
  * This is only responsible for adding additional attributes to the server span create by a servlet
@@ -36,6 +37,13 @@ public class ServerTracingFilter implements ContainerRequestFilter, ContainerRes
     if (!current.getSpanContext().isValid()) {
       return;
     }
+    addTraceIdToResponseAndMdc(responseContext, current);
+  }
+
+  private static void addTraceIdToResponseAndMdc(
+      ContainerResponseContext responseContext, Span current) {
     ServerSpanDecorator.decorateResponse(responseContext, current);
+    responseContext.getHeaders().add("TraceID", current.getSpanContext().getTraceId());
+    MDC.put("TraceID", current.getSpanContext().getTraceId());
   }
 }

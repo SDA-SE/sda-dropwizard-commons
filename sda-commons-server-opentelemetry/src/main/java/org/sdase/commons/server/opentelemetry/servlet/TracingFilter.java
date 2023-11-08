@@ -17,6 +17,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.sdase.commons.server.opentelemetry.decorators.ServerSpanDecorator;
+import org.slf4j.MDC;
 
 public class TracingFilter implements Filter {
   private static final String INSTRUMENTATION_NAME = "sda-commons.servlet";
@@ -67,6 +68,7 @@ public class TracingFilter implements Filter {
                       httpRequest)) // A more specific name is provided by the jaxrs filter
               .setSpanKind(SpanKind.SERVER)
               .startSpan();
+      MDC.put("TraceID", serverSpan.getSpanContext().getTraceId());
 
       try (Scope ignored = serverSpan.makeCurrent()) {
         // Add the attributes defined in the Semantic Conventions
