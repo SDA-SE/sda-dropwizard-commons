@@ -57,7 +57,7 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.eclipse.jetty'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.585")
+  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.586")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
   api enforcedPlatform("io.netty:netty-bom:4.1.100.Final"), {
