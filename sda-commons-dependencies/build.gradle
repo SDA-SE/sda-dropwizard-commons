@@ -9,7 +9,7 @@ javaPlatform {
 ext {
   dropwizardVersion = '2.1.10'
   morphiaVersion = '1.6.1'
-  mongoClientVersion = '4.1.2' // should align with major/minor provided by Morphia
+  mongoClientVersion = '4.11.1' // should align with major/minor provided by Morphia
   prometheusVersion = '0.16.0'
   swaggerCoreVersion = '1.6.12'
   swaggerCoreV3Version = '2.2.18'
