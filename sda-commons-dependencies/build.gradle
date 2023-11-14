@@ -94,7 +94,7 @@ dependencies {
     // sda-commons-server-jaeger
     api "io.jaegertracing:jaeger-client:1.8.1"
     api "io.jaegertracing:jaeger-core:1.8.1"
-    api "com.squareup.okhttp3:okhttp:4.11.0" // fixes CVE-2021-0341 (bump from 4.9.0 used in jaeger-thrift:1.8.0)
+    api "com.squareup.okhttp3:okhttp:4.12.0" // fixes CVE-2021-0341 (bump from 4.9.0 used in jaeger-thrift:1.8.0)
     api "com.google.code.gson:gson:2.10.1" // resolve conflict between jaeger-core + google-cloud-secretmanager
     api 'com.squareup.okio:okio:3.6.0', {
       because 'CVE-2023-3635 in 3.2.0'
