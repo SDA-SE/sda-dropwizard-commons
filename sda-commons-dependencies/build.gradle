@@ -25,6 +25,7 @@ ext {
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '4.6.1'
   tuprologVersion = '0.20.9'
+  bouncyCastleVersion = '1.77'
 }
 
 dependencies {
@@ -56,6 +57,7 @@ dependencies {
     exclude group: 'com.fasterxml.jackson.jaxrs'
     exclude group: 'com.fasterxml.jackson.module'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
+    exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
     exclude group: 'org.eclipse.jetty'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.589")
@@ -106,9 +108,8 @@ dependencies {
 
     // sda-commons-server-auth
     api "com.auth0:java-jwt:4.4.0"
-    api "org.bouncycastle:bcpkix-jdk18on:1.76" // use the same version as bcprov-jdk18on
-
-    api "org.bouncycastle:bcprov-jdk18on:1.76", {
+    api "org.bouncycastle:bcpkix-jdk18on:$bouncyCastleVersion"
+    api "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion", {
       because 'CVE-2023-33201 in 1.70'
     }
 
