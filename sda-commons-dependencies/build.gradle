@@ -24,6 +24,7 @@ ext {
   openTelemetryVersion= '1.29.0'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '4.6.1'
+  tuprologVersion = '0.20.9'
 }
 
 dependencies {
@@ -124,6 +125,8 @@ dependencies {
     // sda-commons-server-hibernate-testing
     api "com.github.database-rider:rider-core:$dbRiderVersion"
     api "com.github.database-rider:rider-junit5:$dbRiderVersion"
+    api "it.unibo.tuprolog:solve-classic-jvm:$tuprologVersion"
+    api "it.unibo.tuprolog:parser-theory-jvm:$tuprologVersion"
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.4"
