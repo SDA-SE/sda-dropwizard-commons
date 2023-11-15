@@ -108,7 +108,7 @@ dependencies {
     api "com.auth0:java-jwt:4.4.0"
     api "org.bouncycastle:bcpkix-jdk18on:1.76" // use the same version as bcprov-jdk18on
 
-    api "org.bouncycastle:bcprov-jdk18on:1.76", {
+    api "org.bouncycastle:bcprov-jdk18on:1.77", {
       because 'CVE-2023-33201 in 1.70'
     }
 
