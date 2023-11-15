@@ -23,6 +23,7 @@ ext {
   kotlinVersion = '1.9.20'
   kotlinxCoroutinesVersion = '1.6.4'
   resilience4jVersion = '1.7.1'
+  tuprologVersion = '0.20.9'
 }
 
 dependencies {
@@ -90,6 +91,8 @@ dependencies {
     // sda-commons-server-hibernate-testing
     api "com.github.database-rider:rider-core:$dbRiderVersion"
     api "com.github.database-rider:rider-junit5:$dbRiderVersion"
+    api "it.unibo.tuprolog:solve-classic-jvm:$tuprologVersion"
+    api "it.unibo.tuprolog:parser-theory-jvm:$tuprologVersion"
 
     // sda-commons-server-jaeger
     api "io.jaegertracing:jaeger-client:1.8.1"
