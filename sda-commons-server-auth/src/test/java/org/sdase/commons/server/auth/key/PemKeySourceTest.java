@@ -1,5 +1,6 @@
 package org.sdase.commons.server.auth.key;
 
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -27,7 +28,7 @@ class PemKeySourceTest {
 
   @RegisterExtension
   static final DropwizardAppExtension<Configuration> DW =
-      new DropwizardAppExtension<>(KeyProviderTestApp.class);
+      new DropwizardAppExtension<>(KeyProviderTestApp.class, null, randomPorts());
 
   @ParameterizedTest
   @CsvSource({"/rsa-key.pem, RS256", "/ec-key.pem, ES256"})
