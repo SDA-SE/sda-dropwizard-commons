@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import org.sdase.commons.server.kafka.KafkaConfiguration;
+import org.sdase.commons.starter.SdaPlatformConfiguration;
 
 class JacksonTypeScannerTest {
 
@@ -15,9 +17,7 @@ class JacksonTypeScannerTest {
 
   @Test
   void shouldFindPossibleEnvs() {
-    var actual =
-        jacksonTypeScanner.createConfigurationHints(
-            GenericEnvironmentMapperTest.CustomConfig.class);
+    var actual = jacksonTypeScanner.createConfigurationHints(CustomConfig.class);
     assertThat(actual)
         .contains("AUTH_KEYLOADERCLIENT_TIMEOUT (Duration)")
         .contains("AUTH_KEYLOADERCLIENT_CONNECTIONTIMEOUT (Duration)")
@@ -167,5 +167,20 @@ class JacksonTypeScannerTest {
         .contains("HEALTH_SHUTDOWNWAITPERIOD (Duration)")
         .contains("HEALTH_RESPONDER_CACHECONTROLENABLED (boolean)")
         .contains("HEALTH_RESPONDER_CACHECONTROLVALUE (String)");
+  }
+
+  @SuppressWarnings("unused")
+  public static class CustomConfig extends SdaPlatformConfiguration {
+
+    private KafkaConfiguration kafka = new KafkaConfiguration();
+
+    public KafkaConfiguration getKafka() {
+      return kafka;
+    }
+
+    public CustomConfig setKafka(KafkaConfiguration kafka) {
+      this.kafka = kafka;
+      return this;
+    }
   }
 }
