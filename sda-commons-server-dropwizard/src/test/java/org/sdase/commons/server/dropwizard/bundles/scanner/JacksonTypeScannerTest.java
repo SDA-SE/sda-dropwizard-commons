@@ -1,4 +1,4 @@
-package org.sdase.commons.server.dropwizard.bundles;
+package org.sdase.commons.server.dropwizard.bundles.scanner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -109,11 +109,11 @@ class JacksonTypeScannerTest {
         .contains("OPA_BASEURL (String)")
         .contains("OPA_POLICYPACKAGE (String)")
         .contains("KAFKA_DISABLED (boolean)")
-        .contains("KAFKA_CONFIG_<KEY> (Map [not supported])")
-        // .contains("KAFKA_PRODUCERS (Map [not supported])")
-        // .contains("KAFKA_CONSUMERS (Map [not supported])")
-        // .contains("KAFKA_LISTENERCONFIG (Map [not supported])")
-        // .contains("KAFKA_TOPICS (Map [not supported])")
+        .contains("KAFKA_CONFIG_<KEY> (Map)")
+        // .contains("KAFKA_PRODUCERS (Map)")
+        // .contains("KAFKA_CONSUMERS (Map)")
+        // .contains("KAFKA_LISTENERCONFIG (Map)")
+        // .contains("KAFKA_TOPICS (Map)")
         .contains("KAFKA_SECURITY_USER (String)")
         .contains("KAFKA_SECURITY_PASSWORD (String)")
         .contains("KAFKA_SECURITY_PROTOCOL (enum ProtocolType)")
@@ -123,12 +123,12 @@ class JacksonTypeScannerTest {
         .contains("KAFKA_ADMINCONFIG_ADMINSECURITY_PASSWORD (String)")
         .contains("KAFKA_ADMINCONFIG_ADMINSECURITY_PROTOCOL (enum ProtocolType)")
         .contains("KAFKA_ADMINCONFIG_ADMINSECURITY_SASLMECHANISM (String)")
-        // .contains("KAFKA_ADMINCONFIG_CONFIG (Map [not supported])")
+        // .contains("KAFKA_ADMINCONFIG_CONFIG (Map)")
         .contains("KAFKA_HEALTHCHECK_TIMEOUTINSECONDS (int)")
         .contains("METRICS_FREQUENCY (Duration)")
         .contains("METRICS_REPORTONSTOP (boolean)")
         .contains("LOGGING_LEVEL (String)")
-        // .contains("LOGGING_LOGGERS (Map [not supported])")
+        // .contains("LOGGING_LOGGERS (Map)")
         .contains("SERVER_MAXTHREADS (int)")
         .contains("SERVER_MINTHREADS (int)")
         .contains("SERVER_MAXQUEUEDREQUESTS (int)")

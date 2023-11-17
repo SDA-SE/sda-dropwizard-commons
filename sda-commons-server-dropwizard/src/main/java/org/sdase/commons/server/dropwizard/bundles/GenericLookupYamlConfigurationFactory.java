@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.validation.Validator;
 import org.apache.commons.text.lookup.StringLookup;
-import org.sdase.commons.server.dropwizard.bundles.JacksonTypeScanner.MappableField;
+import org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner;
+import org.sdase.commons.server.dropwizard.bundles.scanner.MappableField;
 
 /**
  * A {@link YamlConfigurationFactory} that consumes all environment variables that match known

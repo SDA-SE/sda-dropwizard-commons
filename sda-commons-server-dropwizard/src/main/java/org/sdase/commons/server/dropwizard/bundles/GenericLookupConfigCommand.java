@@ -5,6 +5,7 @@ import io.dropwizard.cli.ConfiguredCommand;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
+import org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner;
 
 public class GenericLookupConfigCommand<T extends Configuration> extends ConfiguredCommand<T> {
 
