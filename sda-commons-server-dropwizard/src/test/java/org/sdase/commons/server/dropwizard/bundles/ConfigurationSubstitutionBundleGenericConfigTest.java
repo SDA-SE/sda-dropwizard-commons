@@ -13,7 +13,9 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.DropwizardTestSupport;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import javax.validation.constraints.NotNull;
 import org.assertj.core.api.AbstractObjectAssert;
@@ -70,7 +72,10 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
             "SERVER_APPLICATIONCONTEXTPATH",
             "/new-api",
             List.of("server", "applicationContextPath"),
-            "/new-api"));
+            "/new-api"),
+        of("TRICKY_MAPSTRINGSTRING_foo", "bar", List.of("tricky", "mapStringString", "foo"), "bar")
+        // force line break
+        );
   }
 
   void startAppToTestConfiguration(ThrowingConsumer<Configuration> assertions) throws Throwable {
@@ -113,6 +118,8 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
 
     @NotNull private String forTestingCommandOnly = "foo";
 
+    private Tricky tricky = new Tricky();
+
     public String getOriginalName() {
       return originalName;
     }
@@ -137,6 +144,30 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
 
     public TestConfiguration setForTestingCommandOnly(String forTestingCommandOnly) {
       this.forTestingCommandOnly = forTestingCommandOnly;
+      return this;
+    }
+
+    public Tricky getTricky() {
+      return tricky;
+    }
+
+    public TestConfiguration setTricky(Tricky tricky) {
+      this.tricky = tricky;
+      return this;
+    }
+  }
+
+  @SuppressWarnings("unused")
+  public static class Tricky {
+
+    private Map<String, String> mapStringString = new LinkedHashMap<>(); // maps must be initialized
+
+    public Map<String, String> getMapStringString() {
+      return mapStringString;
+    }
+
+    public Tricky setMapStringString(Map<String, String> mapStringString) {
+      this.mapStringString = mapStringString;
       return this;
     }
   }

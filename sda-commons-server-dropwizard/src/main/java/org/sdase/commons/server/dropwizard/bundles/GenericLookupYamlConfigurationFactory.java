@@ -7,7 +7,9 @@ import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.validation.Validator;
 import org.apache.commons.text.lookup.StringLookup;
@@ -54,15 +56,24 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
 
   @Override
   protected T build(JsonNode node, String path) throws IOException, ConfigurationException {
+    HashSet<String> contextKeys = findKeysInEnvironmentContext();
     List<MappableField> mappableFields = jacksonTypeScanner.scan(configurationClass);
     mappableFields.stream()
-        .filter(this::canLookup)
+        .map(m -> m.expand(contextKeys))
+        .flatMap(List::stream)
         .forEach(mappableField -> configure(node, mappableField));
     return super.build(node, path);
   }
 
-  private boolean canLookup(MappableField mappableField) {
-    return lookup.lookup(mappableField.getEnvironmentVariableName()) != null;
+  private HashSet<String> findKeysInEnvironmentContext() {
+    // TODO this is probably too related to the given lookup so both may be a separate kind of
+    //      properties resolve mechanism just for this purpose
+    var contextKeys = new HashSet<>(System.getenv().keySet());
+    contextKeys.addAll(
+        System.getProperties().keySet().stream()
+            .map(Object::toString)
+            .collect(Collectors.toList()));
+    return contextKeys;
   }
 
   private void configure(JsonNode baseNode, MappableField mappableField) {
