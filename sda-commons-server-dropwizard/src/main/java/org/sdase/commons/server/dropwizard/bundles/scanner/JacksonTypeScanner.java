@@ -24,6 +24,9 @@ public class JacksonTypeScanner {
       Set.of(String.class, File.class, Duration.class, DataSize.class);
 
   private static final Logger LOG = LoggerFactory.getLogger(JacksonTypeScanner.class);
+
+  private static final int MAX_DEPTH = 25;
+
   static final String MAP_STRING_KEY_NAME = "<key>";
 
   private final ObjectMapper mapper;
@@ -47,6 +50,12 @@ public class JacksonTypeScanner {
   }
 
   private List<MappableField> scan(List<String> rootPath, JavaType type) {
+    if (rootPath.size() > MAX_DEPTH) {
+      LOG.warn(
+          "Parsed configuration class is too nested for further override evaluation at path {}",
+          rootPath);
+      return List.of();
+    }
     try {
       BeanDescription introspect = mapper.getSerializationConfig().introspect(type);
       List<MappableField> fields = new ArrayList<>();
@@ -80,15 +89,19 @@ public class JacksonTypeScanner {
   }
 
   private Collection<MappableField> createMapFields(
-      JavaType propertyType, List<String> newRootPath) {
+      JavaType propertyType, List<String> mapRootPath) {
     try {
+      var newRootPath = new ArrayList<>(mapRootPath);
+      newRootPath.add(MAP_STRING_KEY_NAME);
       if (isTypedMap(propertyType, String.class, String.class)) {
-        var actualRootPath = new ArrayList<>(newRootPath);
-        actualRootPath.add(MAP_STRING_KEY_NAME);
-        return List.of(new MappableField(actualRootPath, propertyType.getRawClass()));
+        return List.of(new MappableField(newRootPath, propertyType.getRawClass()));
       }
+      if (isTypedMap(propertyType, String.class, Object.class)) {
+        return scan(newRootPath, propertyType.findTypeParameters(Map.class)[1]);
+      }
+      // TODO loggers.config = Map<String, JsonNode> -> ???
     } catch (Exception e) {
-      LOG.debug("Failed to identify types of {} in {}", propertyType.getRawClass(), newRootPath);
+      LOG.debug("Failed to identify types of {} in {}", propertyType.getRawClass(), mapRootPath);
     }
     return List.of();
   }

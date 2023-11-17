@@ -13,6 +13,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.DropwizardTestSupport;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,17 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
             "/new-api",
             List.of("server", "applicationContextPath"),
             "/new-api"),
-        of("TRICKY_MAPSTRINGSTRING_foo", "bar", List.of("tricky", "mapStringString", "foo"), "bar")
+        of("MAPSTRINGSTRING_foo", "bar", List.of("mapStringString", "foo"), "bar"),
+        of(
+            "KAFKA_PRODUCERS_fooSender_CONFIG_auth",
+            "admin",
+            List.of("kafka", "producers", "fooSender", "config", "auth"),
+            "admin"),
+        of(
+            "KAFKA_PRODUCERS_fooSender_CLIENTID",
+            "i-am-unique",
+            List.of("kafka", "producers", "fooSender", "clientId"),
+            "i-am-unique")
         // force line break
         );
   }
@@ -114,11 +125,13 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
     @JsonProperty("changedName")
     private String originalName;
 
-    private KafkaConfiguration kafka;
+    private KafkaConfiguration kafka = new KafkaConfiguration(); // must be initialized
 
     @NotNull private String forTestingCommandOnly = "foo";
 
-    private Tricky tricky = new Tricky();
+    private Map<String, String> mapStringString = new LinkedHashMap<>(); // maps must be initialized
+
+    private RecursiveDesaster recursive = new RecursiveDesaster();
 
     public String getOriginalName() {
       return originalName;
@@ -147,27 +160,36 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
       return this;
     }
 
-    public Tricky getTricky() {
-      return tricky;
+    public Map<String, String> getMapStringString() {
+      return mapStringString;
     }
 
-    public TestConfiguration setTricky(Tricky tricky) {
-      this.tricky = tricky;
+    public TestConfiguration setMapStringString(Map<String, String> mapStringString) {
+      this.mapStringString = mapStringString;
+      return this;
+    }
+
+    public RecursiveDesaster getRecursive() {
+      return recursive;
+    }
+
+    public TestConfiguration setRecursive(RecursiveDesaster recursive) {
+      this.recursive = recursive;
       return this;
     }
   }
 
   @SuppressWarnings("unused")
-  public static class Tricky {
+  public static class RecursiveDesaster {
 
-    private Map<String, String> mapStringString = new LinkedHashMap<>(); // maps must be initialized
+    private Map<String, RecursiveDesaster> child = new HashMap<>();
 
-    public Map<String, String> getMapStringString() {
-      return mapStringString;
+    public Map<String, RecursiveDesaster> getChild() {
+      return child;
     }
 
-    public Tricky setMapStringString(Map<String, String> mapStringString) {
-      this.mapStringString = mapStringString;
+    public RecursiveDesaster setChild(Map<String, RecursiveDesaster> child) {
+      this.child = child;
       return this;
     }
   }
