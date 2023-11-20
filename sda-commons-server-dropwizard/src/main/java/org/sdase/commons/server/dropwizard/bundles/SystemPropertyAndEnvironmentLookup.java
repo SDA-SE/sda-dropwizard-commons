@@ -1,8 +1,8 @@
 package org.sdase.commons.server.dropwizard.bundles;
 
 import com.fasterxml.jackson.core.io.CharTypes;
-import java.util.Optional;
 import org.apache.commons.text.lookup.StringLookup;
+import org.sdase.commons.server.dropwizard.bundles.configuration.ConfigurationRuntimeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +66,7 @@ public class SystemPropertyAndEnvironmentLookup implements StringLookup {
 
   private String lookupValue(LookupKeyAndOperators lookupKeyAndOperators) {
     String keyToLookup = lookupKeyAndOperators.getKey();
-    return Optional.ofNullable(System.getProperty(keyToLookup)).orElse(System.getenv(keyToLookup));
+    return ConfigurationRuntimeContext.FROM_SYSTEM_PROPERTIES_AND_ENVIRONMENT.getValue(keyToLookup);
   }
 
   private String toJsonString(String source) {

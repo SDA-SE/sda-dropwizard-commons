@@ -1,4 +1,4 @@
-package org.sdase.commons.server.dropwizard.bundles;
+package org.sdase.commons.server.dropwizard.bundles.configuration.generic;
 
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.DROPWIZARD_PLAIN_TYPES;
 
@@ -9,12 +9,11 @@ import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.validation.Validator;
 import org.apache.commons.text.lookup.StringLookup;
+import org.sdase.commons.server.dropwizard.bundles.configuration.ConfigurationRuntimeContext;
 import org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner;
 import org.sdase.commons.server.dropwizard.bundles.scanner.MappableField;
 
@@ -31,7 +30,7 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
 
   private final Class<T> configurationClass;
   private final JacksonTypeScanner jacksonTypeScanner;
-  private final StringLookup lookup;
+  private final ConfigurationRuntimeContext configurationRuntimeContext;
 
   /**
    * Creates a new configuration factory for the given class.
@@ -41,7 +40,7 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
    * @param objectMapper the Jackson {@link ObjectMapper} to use
    * @param propertyPrefix the system property name prefix used by overrides
    * @param jacksonTypeScanner the scanner to derive available properties
-   * @param lookup the {@link StringLookup} to lookup values for {@link
+   * @param configurationRuntimeContext the {@link StringLookup} to lookup values for {@link
    *     MappableField#getContextKey()}
    */
   public GenericLookupYamlConfigurationFactory(
@@ -50,38 +49,29 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
       ObjectMapper objectMapper,
       String propertyPrefix,
       JacksonTypeScanner jacksonTypeScanner,
-      StringLookup lookup) {
+      ConfigurationRuntimeContext configurationRuntimeContext) {
     super(configurationClass, validator, objectMapper, propertyPrefix);
     this.configurationClass = configurationClass;
     this.jacksonTypeScanner = jacksonTypeScanner;
-    this.lookup = lookup;
+    this.configurationRuntimeContext = configurationRuntimeContext;
   }
 
   @Override
   protected T build(JsonNode node, String path) throws IOException, ConfigurationException {
-    HashSet<String> contextKeys = findKeysInEnvironmentContext();
     List<MappableField> mappableFields = jacksonTypeScanner.scan(configurationClass);
     mappableFields.stream()
-        .map(m -> m.expand(contextKeys))
+        .map(m -> m.expand(configurationRuntimeContext.getDefinedKeys()))
         .flatMap(List::stream)
         .forEach(mappableField -> configure(node, mappableField));
     return super.build(node, path);
   }
 
-  private HashSet<String> findKeysInEnvironmentContext() {
-    // TODO this is probably too related to the given lookup so both may be a separate kind of
-    //      properties resolve mechanism just for this purpose
-    var contextKeys = new HashSet<>(System.getenv().keySet());
-    contextKeys.addAll(
-        System.getProperties().keySet().stream()
-            .map(Object::toString)
-            .collect(Collectors.toList()));
-    return contextKeys;
-  }
-
   private void configure(JsonNode baseNode, MappableField mappableField) {
     String jsonPathOfField = String.join(".", mappableField.getJsonPathToProperty());
-    addOverride(baseNode, jsonPathOfField, lookup.lookup(mappableField.getContextKey()));
+    addOverride(
+        baseNode,
+        jsonPathOfField,
+        configurationRuntimeContext.getValue(mappableField.getContextKey()));
   }
 
   public static class GenericLookupYamlConfigurationFactoryFactory<T>
@@ -95,7 +85,7 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
           objectMapper,
           propertyPrefix,
           new JacksonTypeScanner(objectMapper, DROPWIZARD_PLAIN_TYPES),
-          new SystemPropertyAndEnvironmentLookup());
+          ConfigurationRuntimeContext.FROM_SYSTEM_PROPERTIES_AND_ENVIRONMENT);
     }
   }
 }

@@ -1,4 +1,4 @@
-package org.sdase.commons.server.dropwizard.bundles;
+package org.sdase.commons.server.dropwizard.bundles.configuration.generic;
 
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +24,7 @@ import org.assertj.core.api.ThrowingConsumer;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 
 class ConfigurationSubstitutionBundleGenericConfigTest {

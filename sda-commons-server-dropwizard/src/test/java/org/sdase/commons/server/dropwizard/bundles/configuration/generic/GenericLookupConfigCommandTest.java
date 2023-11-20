@@ -1,4 +1,4 @@
-package org.sdase.commons.server.dropwizard.bundles;
+package org.sdase.commons.server.dropwizard.bundles.configuration.generic;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;

@@ -4,7 +4,8 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
-import org.sdase.commons.server.dropwizard.bundles.GenericLookupYamlConfigurationFactory.GenericLookupYamlConfigurationFactoryFactory;
+import org.sdase.commons.server.dropwizard.bundles.configuration.generic.GenericLookupConfigCommand;
+import org.sdase.commons.server.dropwizard.bundles.configuration.generic.GenericLookupYamlConfigurationFactory.GenericLookupYamlConfigurationFactoryFactory;
 
 /**
  * The {@code ConfigurationSubstitutionBundle} allows to use placeholders for environment variables
