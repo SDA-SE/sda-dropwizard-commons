@@ -18,33 +18,76 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Scans configuration classes for configurable properties recursively (up to {@value MAX_DEPTH}
+ * nesting depth). Property names are derived from the Json representation according the used {@link
+ * ObjectMapper} instead of the Java property names. Dynamic parts like keys of maps are represented
+ * by placeholders.
+ *
+ * <p>This implementation is not feature complete. There are some types that are not considered
+ * mappable yet.
+ */
 public class JacksonTypeScanner {
 
-  private static final Set<Class<?>> DEFAULT_PLAIN_TYPES =
+  /** Types that can be mapped from {@code String} in Dropwizard configuration. */
+  public static final Set<Class<?>> DROPWIZARD_PLAIN_TYPES =
       Set.of(String.class, File.class, Duration.class, DataSize.class);
 
-  private static final Logger LOG = LoggerFactory.getLogger(JacksonTypeScanner.class);
+  /**
+   * The maximum nested depth of properties. This limits recursion when scanning for properties to
+   * avoid stack-overflows.
+   */
+  static final int MAX_DEPTH = 25;
 
-  private static final int MAX_DEPTH = 25;
+  /** The placeholder used in property paths for keys of a {@code Map}. */
+  static final String MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH = "<key>";
 
-  static final String MAP_STRING_KEY_NAME = "<key>";
+  /** The placeholder used in context keys for keys of a {@code Map}. */
+  static final String MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY =
+      MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH.toUpperCase();
 
   private final ObjectMapper mapper;
   private final Set<Class<?>> plainTypes;
 
-  public JacksonTypeScanner(ObjectMapper mapper) {
+  private static final Logger LOG = LoggerFactory.getLogger(JacksonTypeScanner.class);
+
+  /**
+   * @param mapper the {@link ObjectMapper} used for mapping the property names to expected name
+   *     parts in the configuration.
+   * @param plainTypes Types of properties that can be configured with a plain {@code String} value.
+   *     Which types are configurable from {@code String} values depends on the given {@code
+   *     objectMapper} and the implementation of the actual mapping from a context value to the
+   *     configuration property.
+   */
+  public JacksonTypeScanner(ObjectMapper mapper, Set<Class<?>> plainTypes) {
     this.mapper = mapper;
-    plainTypes = DEFAULT_PLAIN_TYPES;
+    this.plainTypes = plainTypes;
   }
 
+  /**
+   * Scans the given {@code rootType} for configurable fields recursively.
+   *
+   * @param rootType The root type of the configuration class that has configurable properties.
+   * @return All properties that are configurable with information about (Json) mapping, type,
+   *     minimal documentation and expected property key in the configured runtime context. The
+   *     returned fields may define patterns with placeholders that are not found as is. When
+   *     {@linkplain MappableField#expand(Set) expanded} for a defined context, these fields can be
+   *     used to derive and map values to the configuration.
+   */
   public List<MappableField> scan(Type rootType) {
     JavaType javaType = mapper.constructType(rootType);
     return scan(List.of(), javaType);
   }
 
+  /**
+   * Creates a multi-line text that describes each found property briefly.
+   *
+   * @param rootType The root type of the configuration class that has configurable properties.
+   * @return human readable text for minimal documentation.
+   */
   public String createConfigurationHints(Type rootType) {
     return scan(rootType).stream()
-        .map(t -> t.getEnvironmentVariableName() + " (" + t.createTypeDescription() + ")")
+        .map(t -> t.getContextKey() + " (" + t.getPropertyTypeDescription() + ")")
         .sorted()
         .collect(Collectors.joining(System.lineSeparator()));
   }
@@ -73,8 +116,7 @@ public class JacksonTypeScanner {
             || propertyType.isEnumImplType()
             || isPlainType(propertyType)) {
           fields.add(new MappableField(newRootPath, propertyType.getRawClass()));
-        } else if (propertyType.isArrayType()) {
-          LOG.info("Found array type for {}. Arrays are not supported yet.", newRootPath);
+          // TODO not supported yet: propertyType.isArrayType()
         } else if (Map.class.isAssignableFrom(propertyType.getRawClass())) {
           fields.addAll(createMapFields(propertyType, newRootPath));
         } else {
@@ -92,7 +134,7 @@ public class JacksonTypeScanner {
       JavaType propertyType, List<String> mapRootPath) {
     try {
       var newRootPath = new ArrayList<>(mapRootPath);
-      newRootPath.add(MAP_STRING_KEY_NAME);
+      newRootPath.add(MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH);
       if (isTypedMap(propertyType, String.class, String.class)) {
         return List.of(new MappableField(newRootPath, propertyType.getRawClass()));
       }
