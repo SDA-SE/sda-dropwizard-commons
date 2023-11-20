@@ -1,4 +1,4 @@
-package org.sdase.commons.server.dropwizard.bundles;
+package org.sdase.commons.server.dropwizard.bundles.configuration.generic;
 
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.DROPWIZARD_PLAIN_TYPES;
 
@@ -6,7 +6,6 @@ import io.dropwizard.Configuration;
 import io.dropwizard.cli.ConfiguredCommand;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
 import org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner;
 
 /**
@@ -55,11 +54,6 @@ public class GenericLookupConfigCommand<T extends Configuration> extends Configu
 
   public GenericLookupConfigCommand() {
     super("config", "Shows available generic environment variables for configuration.");
-  }
-
-  @Override
-  public void configure(Subparser subparser) {
-    // nothing to configure
   }
 
   @Override
