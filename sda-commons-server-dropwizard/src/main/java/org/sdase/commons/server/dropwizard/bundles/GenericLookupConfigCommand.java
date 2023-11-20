@@ -37,7 +37,7 @@ public class GenericLookupConfigCommand<T extends Configuration> extends Configu
           "  - PiB: pebibytes",
           "",
           "The type Map supports String values and uses <KEY> in the environment variable.",
-          "<KEY> must be changed to the desired key. <KE> may occur in other types to fill",
+          "<KEY> must be changed to the desired key. <KEY> may occur in other types to fill",
           "a Map of well defined objects.",
           "",
           "All supported environment variable keys:",
