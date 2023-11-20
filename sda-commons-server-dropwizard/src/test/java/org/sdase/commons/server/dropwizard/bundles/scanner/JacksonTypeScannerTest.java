@@ -1,6 +1,7 @@
 package org.sdase.commons.server.dropwizard.bundles.scanner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.DROPWIZARD_PLAIN_TYPES;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -13,7 +14,8 @@ class JacksonTypeScannerTest {
 
   JacksonTypeScanner jacksonTypeScanner =
       new JacksonTypeScanner(
-          new ObjectMapper(new YAMLFactory()).disable(SerializationFeature.FAIL_ON_EMPTY_BEANS));
+          new ObjectMapper(new YAMLFactory()).disable(SerializationFeature.FAIL_ON_EMPTY_BEANS),
+          DROPWIZARD_PLAIN_TYPES);
 
   @Test
   void shouldFindPossibleEnvs() {

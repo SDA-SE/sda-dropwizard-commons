@@ -1,5 +1,7 @@
 package org.sdase.commons.server.dropwizard.bundles;
 
+import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.DROPWIZARD_PLAIN_TYPES;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ConfigurationException;
@@ -40,7 +42,7 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
    * @param propertyPrefix the system property name prefix used by overrides
    * @param jacksonTypeScanner the scanner to derive available properties
    * @param lookup the {@link StringLookup} to lookup values for {@link
-   *     MappableField#getEnvironmentVariableName()}
+   *     MappableField#getContextKey()}
    */
   public GenericLookupYamlConfigurationFactory(
       Class<T> configurationClass,
@@ -79,8 +81,7 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
 
   private void configure(JsonNode baseNode, MappableField mappableField) {
     String jsonPathOfField = String.join(".", mappableField.getJsonPathToProperty());
-    addOverride(
-        baseNode, jsonPathOfField, lookup.lookup(mappableField.getEnvironmentVariableName()));
+    addOverride(baseNode, jsonPathOfField, lookup.lookup(mappableField.getContextKey()));
   }
 
   public static class GenericLookupYamlConfigurationFactoryFactory<T>
@@ -93,7 +94,7 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
           validator,
           objectMapper,
           propertyPrefix,
-          new JacksonTypeScanner(objectMapper),
+          new JacksonTypeScanner(objectMapper, DROPWIZARD_PLAIN_TYPES),
           new SystemPropertyAndEnvironmentLookup());
     }
   }

@@ -16,7 +16,7 @@ class MappableFieldTest {
     var givenContext = Set.of("AMAP_foo", "AMAP_BAR");
     var actual = given.expand(givenContext);
     assertThat(actual)
-        .extracting(MappableField::getJsonPathToProperty, MappableField::getEnvironmentVariableName)
+        .extracting(MappableField::getJsonPathToProperty, MappableField::getContextKey)
         .containsExactlyInAnyOrder(
             tuple(List.of("aMap", "foo"), "AMAP_foo"), tuple(List.of("aMap", "BAR"), "AMAP_BAR"));
   }

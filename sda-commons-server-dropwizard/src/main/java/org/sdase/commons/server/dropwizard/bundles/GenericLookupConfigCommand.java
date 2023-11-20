@@ -1,5 +1,7 @@
 package org.sdase.commons.server.dropwizard.bundles;
 
+import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.DROPWIZARD_PLAIN_TYPES;
+
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.ConfiguredCommand;
 import io.dropwizard.setup.Bootstrap;
@@ -7,6 +9,12 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner;
 
+/**
+ * A {@link io.dropwizard.cli.Command} that documents the configuration keys as {@linkplain
+ * System#out standard output} that are discovered dynamically by the {@link JacksonTypeScanner}.
+ *
+ * @param <T> the type of the configuration class of this service
+ */
 public class GenericLookupConfigCommand<T extends Configuration> extends ConfiguredCommand<T> {
 
   private static final String HELP_TEMPLATE =
@@ -59,7 +67,7 @@ public class GenericLookupConfigCommand<T extends Configuration> extends Configu
   protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration)
       throws Exception {
     String configurationHints =
-        new JacksonTypeScanner(bootstrap.getObjectMapper())
+        new JacksonTypeScanner(bootstrap.getObjectMapper(), DROPWIZARD_PLAIN_TYPES)
             .createConfigurationHints(configuration.getClass());
     System.out.printf(HELP_TEMPLATE, configurationHints);
   }
