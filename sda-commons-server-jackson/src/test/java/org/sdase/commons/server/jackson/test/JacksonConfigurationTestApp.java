@@ -3,10 +3,10 @@ package org.sdase.commons.server.jackson.test;
 import static java.util.Collections.singletonList;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.openapitools.jackson.dataformat.hal.HALLink;
 import java.io.InputStream;
 import java.net.URI;

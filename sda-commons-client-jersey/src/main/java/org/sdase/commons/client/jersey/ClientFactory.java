@@ -1,6 +1,6 @@
 package org.sdase.commons.client.jersey;
 
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.OpenTelemetry;
 import org.sdase.commons.client.jersey.builder.ExternalClientBuilder;
 import org.sdase.commons.client.jersey.builder.PlatformClientBuilder;

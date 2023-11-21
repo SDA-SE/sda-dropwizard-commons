@@ -1,8 +1,8 @@
 package org.sdase.commons.server.openapi.example;
 
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import org.sdase.commons.server.openapi.example.people.rest.PersonEndpoint;
 import org.sdase.commons.starter.SdaPlatformBundle;
 import org.sdase.commons.starter.SdaPlatformConfiguration;

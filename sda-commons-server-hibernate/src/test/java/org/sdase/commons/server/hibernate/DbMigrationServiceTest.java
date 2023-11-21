@@ -41,7 +41,9 @@ class DbMigrationServiceTest {
     new DbMigrationService(dataSourceFactory).migrateDatabase();
     // then see annotation
     Connection connection =
-        ((SessionImpl) daoTestExtension.getSessionFactory().openSession()).connection();
+        ((SessionImpl) daoTestExtension.getSessionFactory().openSession())
+            .getJdbcConnectionAccess()
+            .obtainConnection();
     ResultSet tables =
         connection.getMetaData().getTables("", "public", "flyway_schema_history", null);
     assertTrue(tables.first(), "Expect a result for schema_version");
