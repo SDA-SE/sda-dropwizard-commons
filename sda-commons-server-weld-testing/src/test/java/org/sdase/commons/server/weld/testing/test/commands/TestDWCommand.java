@@ -1,9 +1,9 @@
 package org.sdase.commons.server.weld.testing.test.commands;
 
-import io.dropwizard.Configuration;
-import io.dropwizard.cli.ConfiguredCommand;
-import io.dropwizard.setup.Bootstrap;
 import javax.inject.Inject;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.cli.ConfiguredCommand;
+import io.dropwizard.core.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.sdase.commons.server.weld.testing.test.util.BarSupplier;
 

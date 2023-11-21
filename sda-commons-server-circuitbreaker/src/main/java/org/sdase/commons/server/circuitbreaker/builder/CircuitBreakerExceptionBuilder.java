@@ -1,6 +1,6 @@
 package org.sdase.commons.server.circuitbreaker.builder;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 
 public interface CircuitBreakerExceptionBuilder<T extends Configuration>
     extends CircuitBreakerFinalBuilder {

@@ -1,6 +1,6 @@
 package org.sdase.commons.server.hibernate;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.hibernate.SessionFactoryFactory;
 import java.util.ArrayList;

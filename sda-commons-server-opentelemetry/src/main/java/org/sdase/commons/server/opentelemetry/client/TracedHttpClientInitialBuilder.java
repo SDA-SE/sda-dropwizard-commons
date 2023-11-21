@@ -1,7 +1,7 @@
 package org.sdase.commons.server.opentelemetry.client;
 
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
 import org.apache.http.impl.client.HttpClientBuilder;

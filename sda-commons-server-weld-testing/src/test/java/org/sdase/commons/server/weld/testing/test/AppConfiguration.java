@@ -1,6 +1,5 @@
 package org.sdase.commons.server.weld.testing.test;
 
-import de.spinscale.dropwizard.jobs.JobConfiguration;
-import io.dropwizard.Configuration;
+import io.dropwizard.jobs.JobConfiguration;
 
-public class AppConfiguration extends Configuration implements JobConfiguration {}
+public class AppConfiguration extends JobConfiguration {}

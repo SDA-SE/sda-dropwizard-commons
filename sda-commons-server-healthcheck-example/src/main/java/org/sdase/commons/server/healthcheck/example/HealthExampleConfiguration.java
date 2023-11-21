@@ -1,6 +1,6 @@
 package org.sdase.commons.server.healthcheck.example;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 
 @SuppressWarnings("WeakerAccess")
 public class HealthExampleConfiguration extends Configuration {
