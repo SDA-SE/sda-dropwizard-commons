@@ -1,7 +1,7 @@
 package org.sdase.commons.client.jersey.test;
 
-import io.dropwizard.Configuration;
 import javax.validation.Valid;
+import io.dropwizard.core.Configuration;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
 import org.sdase.commons.client.jersey.oidc.OidcConfiguration;
 

@@ -1,6 +1,6 @@
 package org.sdase.commons.server.spring.data.mongo.metadata.test;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.spring.data.mongo.MongoConfiguration;
 
 public class MetadataTestAppConfig extends Configuration {

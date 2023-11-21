@@ -1,9 +1,9 @@
 package org.sdase.commons.client.jersey.test;
 
-import io.dropwizard.Application;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.forms.MultiPartBundle;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
 import org.sdase.commons.client.jersey.oidc.OidcClient;

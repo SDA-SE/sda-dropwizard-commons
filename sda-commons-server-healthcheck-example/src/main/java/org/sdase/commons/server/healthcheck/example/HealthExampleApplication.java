@@ -1,8 +1,8 @@
 package org.sdase.commons.server.healthcheck.example;
 
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.healthcheck.example.health.CountingThreadAliveHealthCheck;
 import org.sdase.commons.server.healthcheck.example.thread.CountingThread;

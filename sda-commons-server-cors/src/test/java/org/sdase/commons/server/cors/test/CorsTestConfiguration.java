@@ -1,6 +1,6 @@
 package org.sdase.commons.server.cors.test;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.cors.CorsConfiguration;
 
 public class CorsTestConfiguration extends Configuration {

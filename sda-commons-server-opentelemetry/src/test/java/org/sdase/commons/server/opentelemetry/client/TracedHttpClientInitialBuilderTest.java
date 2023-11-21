@@ -2,7 +2,7 @@ package org.sdase.commons.server.opentelemetry.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ class TracedHttpClientInitialBuilderTest {
         new TracedHttpClientInitialBuilder(
                 Mockito.mock(Environment.class, Mockito.RETURNS_DEEP_STUBS))
             .usingTelemetryInstance(given)
-            .createBuilder();
+            .build("otel"); // TODO verify if this is the correct approach
     assertThat(actual).extracting("propagators").isSameAs(givenPropagators);
   }
 }

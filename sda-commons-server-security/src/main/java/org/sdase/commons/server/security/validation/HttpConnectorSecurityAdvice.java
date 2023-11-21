@@ -1,8 +1,8 @@
 package org.sdase.commons.server.security.validation;
 
+import io.dropwizard.core.server.ServerFactory;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.server.ServerFactory;
 import java.util.List;
 import java.util.Objects;
 import org.sdase.commons.server.security.exception.InsecureConfigurationException;

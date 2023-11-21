@@ -1,8 +1,8 @@
 package org.sdase.commons.server.cloudevents.app;
 
-import io.dropwizard.Configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 
 public class CloudEventsTestConfig extends Configuration {

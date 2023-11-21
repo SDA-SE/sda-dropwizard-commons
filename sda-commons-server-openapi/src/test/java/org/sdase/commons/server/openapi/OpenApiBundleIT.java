@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
 import static org.sdase.commons.server.openapi.OpenApiFileHelper.normalizeOpenApiYaml;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.nio.file.Path;
 import java.nio.file.Paths;

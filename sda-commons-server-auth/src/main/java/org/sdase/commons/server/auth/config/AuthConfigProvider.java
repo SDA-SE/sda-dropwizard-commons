@@ -1,6 +1,6 @@
 package org.sdase.commons.server.auth.config;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import java.util.function.Function;
 import org.sdase.commons.server.auth.AuthBundle;
 
