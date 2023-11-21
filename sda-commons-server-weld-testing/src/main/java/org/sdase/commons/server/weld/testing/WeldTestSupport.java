@@ -1,7 +1,7 @@
 package org.sdase.commons.server.weld.testing;
 
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import javax.annotation.Nullable;

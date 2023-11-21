@@ -1,9 +1,9 @@
 package org.sdase.commons.server.s3.test;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import org.sdase.commons.server.s3.S3Bundle;
 
 public class S3WithoutHealthCheckTestApp extends Application<Config> {

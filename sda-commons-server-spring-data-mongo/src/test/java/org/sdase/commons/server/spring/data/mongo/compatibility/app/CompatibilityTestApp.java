@@ -1,11 +1,11 @@
 package org.sdase.commons.server.spring.data.mongo.compatibility.app;
 
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import org.sdase.commons.server.spring.data.mongo.MongoConfiguration;
 import org.sdase.commons.server.spring.data.mongo.SpringDataMongoBundle;
 import org.sdase.commons.server.spring.data.mongo.compatibility.model.MyEntity;

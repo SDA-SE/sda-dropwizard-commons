@@ -1,6 +1,6 @@
 package org.sdase.commons.server.jackson.test;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 
 public class JacksonConfigurationTestAppConfig extends Configuration {
 

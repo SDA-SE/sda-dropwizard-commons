@@ -1,5 +1,7 @@
 package org.sdase.commons.server.prometheus.health;
 
+import static io.dropwizard.metrics.servlets.HealthCheckServlet.HEALTH_CHECK_REGISTRY;
+
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import io.prometheus.client.CollectorRegistry;
