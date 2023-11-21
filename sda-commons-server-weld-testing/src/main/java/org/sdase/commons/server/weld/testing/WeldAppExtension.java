@@ -4,7 +4,7 @@ import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * An App Rule that uses WELD to inject the application class.

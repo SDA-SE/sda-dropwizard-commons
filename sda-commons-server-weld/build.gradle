@@ -6,7 +6,7 @@ dependencies {
     exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
-     * javax.inject.
+     * jakarta.inject.
      * Both contain the same classes.
      */
     exclude group: 'jakarta.inject', module: 'jakarta.inject-api'
@@ -27,7 +27,7 @@ dependencies {
     exclude group: 'org.jboss.spec.javax.interceptor', module: 'jboss-interceptors-api_1.2_spec'
     /**
      * Dropwizard manages jakarta.annotation:jakarta.annotation-api while Weld brings
-     * org.jboss.spec.javax.annotation:jboss-annotations-api_1.3_spec. Both have identical contents.
+     * org.jboss.spec.jakarta.annotation:jboss-annotations-api_1.3_spec. Both have identical contents.
      * We keep the version managed by Dropwizard.
      */
     exclude group: 'org.jboss.spec.javax.annotation', module: 'jboss-annotations-api_1.3_spec'
@@ -48,7 +48,7 @@ dependencies {
     exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
-     * javax.inject.
+     * jakarta.inject.
      * Both contain the same classes.
      */
     exclude group: 'jakarta.inject', module: 'jakarta.inject-api'
@@ -63,7 +63,7 @@ dependencies {
     exclude group: 'org.jboss.spec.javax.interceptor', module: 'jboss-interceptors-api_1.2_spec'
     /**
      * Dropwizard manages jakarta.annotation:jakarta.annotation-api while Weld brings
-     * org.jboss.spec.javax.annotation:jboss-annotations-api_1.3_spec. Both have identical contents.
+     * org.jboss.spec.jakarta.annotation:jboss-annotations-api_1.3_spec. Both have identical contents.
      * We keep the version managed by Dropwizard.
      */
     exclude group: 'org.jboss.spec.javax.annotation', module: 'jboss-annotations-api_1.3_spec'
@@ -82,7 +82,7 @@ dependencies {
     exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
-     * javax.inject.
+     * jakarta.inject.
      * Both contain the same classes.
      */
     exclude group: 'jakarta.inject', module: 'jakarta.inject-api'
@@ -91,6 +91,6 @@ dependencies {
      */
     exclude group: 'jakarta.el', module: 'jakarta.el-api'
   }
-  api 'javax.transaction:javax.transaction-api'
+  api 'jakarta.transaction:jakarta.transaction-api'
   api 'org.glassfish.jersey.ext.cdi:jersey-cdi1x-servlet'
 }

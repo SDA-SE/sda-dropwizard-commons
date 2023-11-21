@@ -1,9 +1,9 @@
 package org.sdase.commons.server.opentelemetry;
 
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
-import static javax.servlet.http.HttpServletResponse.SC_CREATED;
-import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static jakarta.servlet.http.HttpServletResponse.SC_CREATED;
+import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
@@ -19,12 +19,12 @@ import io.opentelemetry.sdk.trace.data.EventData;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.data.StatusData;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
@@ -117,13 +117,13 @@ class OpenTelemetryBundleIT {
                       attributes ->
                           StringUtils.contains(
                                   attributes.get(SemanticAttributes.EXCEPTION_TYPE),
-                                  "javax.ws.rs.InternalServerErrorException")
+                                  "jakarta.ws.rs.InternalServerErrorException")
                               && StringUtils.contains(
                                   attributes.get(SemanticAttributes.EXCEPTION_MESSAGE),
                                   "Something went wrong")
                               && StringUtils.contains(
                                   attributes.get(SemanticAttributes.EXCEPTION_STACKTRACE),
-                                  "javax.ws.rs.InternalServerErrorException: Something went wrong"));
+                                  "jakarta.ws.rs.InternalServerErrorException: Something went wrong"));
             });
   }
 

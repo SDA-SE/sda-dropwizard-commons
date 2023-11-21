@@ -2,12 +2,12 @@ package org.sdase.commons.server.prometheus.metric.request.duration;
 
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Histogram;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerResponseContext;
+import jakarta.ws.rs.container.ResourceInfo;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ResourceInfo;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

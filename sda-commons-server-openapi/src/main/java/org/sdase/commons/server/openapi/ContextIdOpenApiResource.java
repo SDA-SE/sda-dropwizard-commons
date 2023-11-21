@@ -1,7 +1,7 @@
 package org.sdase.commons.server.openapi;
 
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-import javax.servlet.ServletConfig;
+import jakarta.servlet.ServletConfig;
 
 /** An {@link OpenApiResource} that sets a custom context id. */
 public class ContextIdOpenApiResource extends OpenApiResource {

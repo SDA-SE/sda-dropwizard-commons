@@ -1,6 +1,6 @@
 package org.sdase.commons.optional.server.openapi.parameter.embed;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import io.swagger.v3.jaxrs2.ReaderListener;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;

@@ -4,7 +4,7 @@ import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.sdase.commons.server.weld.internal.WeldSupport;
 
@@ -41,7 +41,7 @@ public class WeldTestSupport<C extends Configuration> extends DropwizardTestSupp
 
     WeldSupport.initializeCDIProviderIfRequired();
 
-    return container.select(applicationClass).get();
+    return container.select(applicationClass).getHandler().get();
   }
 
   @Override

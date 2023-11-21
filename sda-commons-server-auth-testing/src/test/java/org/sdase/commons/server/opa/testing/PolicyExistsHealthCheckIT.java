@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.opa.testing.AbstractOpa.onAnyRequest;
 
 import com.codahale.metrics.health.HealthCheck.Result;
-import javax.ws.rs.client.WebTarget;
+import jakarta.ws.rs.client.WebTarget;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

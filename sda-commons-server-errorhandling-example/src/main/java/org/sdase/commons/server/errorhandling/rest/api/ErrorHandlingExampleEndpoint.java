@@ -1,7 +1,7 @@
 package org.sdase.commons.server.errorhandling.rest.api;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 import org.sdase.commons.server.errorhandling.rest.model.RequestObject;
 import org.sdase.commons.server.errorhandling.rest.model.ResponseObject;
 import org.sdase.commons.shared.api.error.ApiError;

@@ -2,14 +2,14 @@ package org.sdase.commons.client.jersey.oidc.rest;
 
 import static org.sdase.commons.client.jersey.proxy.ApiClientInvocationHandler.createProxy;
 
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.proxy.WebResourceFactory;
 import org.sdase.commons.client.jersey.ClientFactory;
 import org.sdase.commons.client.jersey.oidc.OidcConfiguration;

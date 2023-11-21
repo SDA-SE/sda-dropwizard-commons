@@ -1,18 +1,18 @@
 package org.sdase.commons.server.opentelemetry.decorators;
 
+import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.HttpHeaders.COOKIE;
+import static jakarta.ws.rs.core.HttpHeaders.LOCATION;
+import static jakarta.ws.rs.core.HttpHeaders.SET_COOKIE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
-import static javax.ws.rs.core.HttpHeaders.COOKIE;
-import static javax.ws.rs.core.HttpHeaders.LOCATION;
-import static javax.ws.rs.core.HttpHeaders.SET_COOKIE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.opentelemetry.decorators.HeadersUtils.convertHeadersToString;
 import static org.sdase.commons.server.opentelemetry.decorators.HeadersUtils.sanitizeHeaders;
 
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.List;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
 import org.junit.jupiter.api.Test;
 
 class HeadersUtilsTest {
