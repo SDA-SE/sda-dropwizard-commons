@@ -62,7 +62,9 @@ public class GenericLookupConfigCommand<T extends Configuration> extends Configu
       throws Exception {
     String configurationHints =
         new JacksonTypeScanner(bootstrap.getObjectMapper(), DROPWIZARD_PLAIN_TYPES)
-            .createConfigurationHints(configuration.getClass());
+            // Use generic type parameter from reflection.
+            // configuration.getClass() does not work in Docker (for unknown reason)
+            .createConfigurationHints(bootstrap.getApplication().getConfigurationClass());
     System.out.printf(HELP_TEMPLATE, configurationHints);
   }
 }
