@@ -2,13 +2,13 @@ package org.sdase.commons.server.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.server.AbstractServerFactory;
+import io.dropwizard.core.server.DefaultServerFactory;
+import io.dropwizard.core.server.ServerFactory;
+import io.dropwizard.core.server.SimpleServerFactory;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.server.AbstractServerFactory;
-import io.dropwizard.server.DefaultServerFactory;
-import io.dropwizard.server.ServerFactory;
-import io.dropwizard.server.SimpleServerFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
 import java.util.Set;

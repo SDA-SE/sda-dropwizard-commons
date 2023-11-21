@@ -1,6 +1,6 @@
 package org.sdase.commons.server.s3.test;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.s3.S3Configuration;
 
 public class Config extends Configuration {

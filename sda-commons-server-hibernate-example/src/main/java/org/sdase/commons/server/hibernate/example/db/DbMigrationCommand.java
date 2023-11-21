@@ -1,7 +1,7 @@
 package org.sdase.commons.server.hibernate.example.db;
 
-import io.dropwizard.cli.ConfiguredCommand;
-import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.core.cli.ConfiguredCommand;
+import io.dropwizard.core.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.sdase.commons.server.hibernate.DbMigrationService;
 import org.sdase.commons.server.hibernate.example.HibernateExampleConfiguration;

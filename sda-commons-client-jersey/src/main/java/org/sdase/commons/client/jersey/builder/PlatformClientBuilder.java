@@ -1,6 +1,6 @@
 package org.sdase.commons.client.jersey.builder;
 
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.OpenTelemetry;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -30,8 +30,8 @@ public class PlatformClientBuilder extends AbstractBaseClientBuilder<PlatformCli
 
   /**
    * If authentication pass through is enabled, the JWT in the {@value
-   * javax.ws.rs.core.HttpHeaders#AUTHORIZATION} header of an incoming request will be added to the
-   * outgoing request.
+   * jakarta.ws.rs.core.HttpHeaders#AUTHORIZATION} header of an incoming request will be added to
+   * the outgoing request.
    *
    * @return this builder instance
    */

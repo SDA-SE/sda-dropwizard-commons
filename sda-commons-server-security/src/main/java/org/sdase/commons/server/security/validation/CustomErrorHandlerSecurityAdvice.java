@@ -1,8 +1,8 @@
 package org.sdase.commons.server.security.validation;
 
-import io.dropwizard.server.AbstractServerFactory;
-import io.dropwizard.server.ServerFactory;
-import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.core.server.AbstractServerFactory;
+import io.dropwizard.core.server.ServerFactory;
+import io.dropwizard.core.setup.Bootstrap;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,10 +1,10 @@
 package org.sdase.commons.starter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Configuration;
-import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.ConfiguredBundle;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

@@ -1,12 +1,12 @@
 package org.sdase.commons.server.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Configuration;
-import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.ConfiguredBundle;
+import io.dropwizard.core.server.AbstractServerFactory;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.validation.Validators;
-import io.dropwizard.server.AbstractServerFactory;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
 import java.time.ZonedDateTime;
 import java.util.function.Consumer;
 import org.sdase.commons.server.jackson.errors.*;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * request for resources annotated by {@link EnableFieldFilter}.
  *
  * <p>The module registers itself when created in the {@link
- * io.dropwizard.Application#run(Configuration, Environment) run method} of the application:
+ * io.dropwizard.core.Application#run(Configuration, Environment) run method} of the application:
  *
  * <pre>{@code
  * public void run(SolutionServiceConfiguration configuration, Environment environment) {

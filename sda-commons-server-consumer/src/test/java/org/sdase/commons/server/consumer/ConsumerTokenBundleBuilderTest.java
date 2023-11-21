@@ -2,8 +2,8 @@ package org.sdase.commons.server.consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.Configuration;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Environment;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

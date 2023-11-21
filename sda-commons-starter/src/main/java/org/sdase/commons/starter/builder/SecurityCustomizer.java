@@ -1,6 +1,6 @@
 package org.sdase.commons.starter.builder;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 
 public interface SecurityCustomizer<C extends Configuration> {
 
