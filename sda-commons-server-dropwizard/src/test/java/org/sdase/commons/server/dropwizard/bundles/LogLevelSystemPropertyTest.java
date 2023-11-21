@@ -3,7 +3,7 @@ package org.sdase.commons.server.dropwizard.bundles;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;

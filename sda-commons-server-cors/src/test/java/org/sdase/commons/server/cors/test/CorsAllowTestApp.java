@@ -1,6 +1,6 @@
 package org.sdase.commons.server.cors.test;
 
-import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.core.setup.Bootstrap;
 import org.sdase.commons.server.cors.CorsBundle;
 
 public class CorsAllowTestApp extends CorsTestApp {
