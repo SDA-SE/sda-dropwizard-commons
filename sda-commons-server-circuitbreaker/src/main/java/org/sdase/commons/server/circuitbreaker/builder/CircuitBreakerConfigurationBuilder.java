@@ -1,6 +1,6 @@
 package org.sdase.commons.server.circuitbreaker.builder;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.circuitbreaker.CircuitBreakerConfiguration;
 import org.sdase.commons.server.circuitbreaker.CircuitBreakerConfigurationProvider;
 

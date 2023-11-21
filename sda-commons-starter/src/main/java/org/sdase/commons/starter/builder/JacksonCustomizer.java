@@ -1,7 +1,7 @@
 package org.sdase.commons.starter.builder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import java.time.ZonedDateTime;
 import java.util.function.Consumer;
 import org.sdase.commons.server.jackson.EnableFieldFilter;
