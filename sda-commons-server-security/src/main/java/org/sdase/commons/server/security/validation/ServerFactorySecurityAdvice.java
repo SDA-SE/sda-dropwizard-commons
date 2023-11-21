@@ -2,8 +2,8 @@ package org.sdase.commons.server.security.validation;
 
 import static java.lang.Boolean.TRUE;
 
-import io.dropwizard.server.AbstractServerFactory;
-import io.dropwizard.server.ServerFactory;
+import io.dropwizard.core.server.AbstractServerFactory;
+import io.dropwizard.core.server.ServerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;

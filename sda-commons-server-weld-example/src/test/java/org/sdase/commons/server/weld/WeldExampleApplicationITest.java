@@ -3,9 +3,10 @@ package org.sdase.commons.server.weld;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
+import org.assertj.core.api.Assertions;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.weld.beans.UsageBean;

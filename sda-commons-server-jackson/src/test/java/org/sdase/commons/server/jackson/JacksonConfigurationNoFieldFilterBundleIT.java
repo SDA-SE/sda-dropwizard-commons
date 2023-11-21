@@ -2,7 +2,7 @@ package org.sdase.commons.server.jackson;
 
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.Map;
 import javax.ws.rs.core.GenericType;

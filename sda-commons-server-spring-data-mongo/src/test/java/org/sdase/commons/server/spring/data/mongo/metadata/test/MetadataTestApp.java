@@ -1,8 +1,8 @@
 package org.sdase.commons.server.spring.data.mongo.metadata.test;
 
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import org.sdase.commons.server.spring.data.mongo.SpringDataMongoBundle;
 import org.springframework.data.mongodb.core.MongoOperations;
 
