@@ -1,10 +1,10 @@
 package org.sdase.commons.client.jersey.test;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
 import org.sdase.commons.client.jersey.oidc.filter.OidcRequestFilter;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;

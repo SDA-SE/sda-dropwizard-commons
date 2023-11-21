@@ -2,7 +2,7 @@ package org.sdase.commons.server.weld;
 
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;

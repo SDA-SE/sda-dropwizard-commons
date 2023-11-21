@@ -1,6 +1,6 @@
 package org.sdase.commons.server.opa.testing.test;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.opa.config.OpaConfig;
 

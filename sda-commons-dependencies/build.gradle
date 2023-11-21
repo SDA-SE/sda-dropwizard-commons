@@ -7,11 +7,11 @@ javaPlatform {
 }
 
 ext {
-  dropwizardVersion = '2.1.10'
+  dropwizardVersion = '4.0.4'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.12.1'
   swaggerCoreV3Version = '2.2.20'
-  weldVersion = '3.1.9.Final'
+  weldVersion = '5.1.2.Final'
   jacksonVersion = '2.16.0'
   jsonUnitVersion = '2.38.0'
   scalaVersion = '2.13.12' // align transitive dependency from various modules, keep up to date
@@ -40,16 +40,11 @@ dependencies {
     exclude group: 'org.jetbrains', module: 'annotations'
     because("this version is outdated, but the main dependency does not have yet an updated version")
   }
-  api enforcedPlatform("org.eclipse.jetty:jetty-bom:9.4.53.v20231009"), {
-    because "CVE-2023-40167 in 9.4.51.v20230217, " +
-        "CVE-2023-36478 in 9.4.52.v20230823"
-  }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'org.awaitility', module: 'awaitility'
     exclude group: 'org.assertj', module: 'assertj-core'
     exclude group: 'jakarta.xml.bind', module: 'jakarta.xml.bind-api'
-    exclude group: 'org.junit', module: 'junit'
     exclude group: 'com.fasterxml.jackson'
     exclude group: 'com.fasterxml.jackson.core'
     exclude group: 'com.fasterxml.jackson.dataformat'
@@ -58,7 +53,6 @@ dependencies {
     exclude group: 'com.fasterxml.jackson.module'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
-    exclude group: 'org.eclipse.jetty'
   }
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.606")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
@@ -86,16 +80,13 @@ dependencies {
       because "conflict between com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
       because "vulnerability CVE-2022-1471 in 1.33 and below"
     }
-    api "net.javacrumbs.json-unit:json-unit-core:$jsonUnitVersion", {
-      because "conflict between com.github.tomakehurst:wiremock-jre8 and net.javacrumbs.json-unit:json-unit-assertj"
-    }
 
     // overall testing dependencies
     api "org.awaitility:awaitility:4.2.0"
     api 'org.assertj:assertj-core:3.24.2'
 
     // sda-commons-client-jersey-wiremock-testing
-    api "com.github.tomakehurst:wiremock-jre8:2.35.1"
+    api "org.wiremock:wiremock:3.3.1"
     api "org.ow2.asm:asm:9.6", {
       because "version conflict within Wiremock"
     }
@@ -149,6 +140,7 @@ dependencies {
     api "io.swagger.parser.v3:swagger-parser-v3:2.1.19"
 
     // sda-commons-server-prometheus
+    api 'io.prometheus:prometheus-metrics-simpleclient-bridge:1.1.0'
     api "io.prometheus:simpleclient:$prometheusVersion"
     api "io.prometheus:simpleclient_common:$prometheusVersion"
     api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"

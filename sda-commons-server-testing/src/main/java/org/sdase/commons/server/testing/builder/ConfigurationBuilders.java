@@ -1,6 +1,6 @@
 package org.sdase.commons.server.testing.builder;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import java.util.function.Consumer;
 
 public interface ConfigurationBuilders {
@@ -17,8 +17,8 @@ public interface ConfigurationBuilders {
     CustomizationBuilder<C> withConfigurationModifier(Consumer<C> configurationCustomizer);
 
     /**
-     * Sets the {@link io.dropwizard.server.DefaultServerFactory#setJerseyRootPath(String) jersey
-     * root path}, referenced in the {@code config.yaml} as
+     * Sets the {@link io.dropwizard.core.server.DefaultServerFactory#setJerseyRootPath(String)
+     * jersey root path}, referenced in the {@code config.yaml} as
      *
      * <pre>
      *   server:

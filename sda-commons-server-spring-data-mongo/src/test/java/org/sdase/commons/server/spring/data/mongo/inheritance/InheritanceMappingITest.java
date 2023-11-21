@@ -4,9 +4,9 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
 import java.util.Map;

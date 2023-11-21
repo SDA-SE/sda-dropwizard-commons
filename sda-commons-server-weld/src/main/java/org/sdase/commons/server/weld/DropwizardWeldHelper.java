@@ -1,6 +1,6 @@
 package org.sdase.commons.server.weld;
 
-import io.dropwizard.Application;
+import io.dropwizard.core.Application;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.sdase.commons.server.weld.internal.WeldSupport;
 
@@ -32,7 +32,7 @@ public class DropwizardWeldHelper {
     // the application is
     // still running.
     WeldContainer weldContainer = WeldSupport.createWeldContainer(); // NOSONAR
-    weldContainer.select(applicationClass).get().run(arguments);
+    weldContainer.select(applicationClass).getHandler().get().run(arguments);
   }
 
   private DropwizardWeldHelper() {

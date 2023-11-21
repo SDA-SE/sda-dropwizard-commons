@@ -1,13 +1,13 @@
 package org.sdase.commons.server.hibernate;
 
-import io.dropwizard.Configuration;
-import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.ConfiguredBundle;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.hibernate.ScanningHibernateBundle;
 import io.dropwizard.hibernate.SessionFactoryFactory;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
