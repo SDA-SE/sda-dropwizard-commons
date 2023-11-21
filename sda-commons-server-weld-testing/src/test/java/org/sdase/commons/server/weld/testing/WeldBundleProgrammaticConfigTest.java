@@ -5,8 +5,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sdase.commons.server.testing.DropwizardConfigurationHelper.configFrom;
 
-import io.dropwizard.cli.Cli;
-import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.core.cli.Cli;
+import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.util.JarLocation;
 import java.io.ByteArrayOutputStream;
 import java.util.Optional;

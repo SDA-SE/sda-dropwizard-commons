@@ -4,10 +4,10 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import io.dropwizard.Configuration;
-import io.dropwizard.logging.AppenderFactory;
-import io.dropwizard.logging.ConsoleAppenderFactory;
-import io.dropwizard.logging.DefaultLoggingFactory;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.logging.common.AppenderFactory;
+import io.dropwizard.logging.common.ConsoleAppenderFactory;
+import io.dropwizard.logging.common.DefaultLoggingFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
 import java.util.stream.Collectors;

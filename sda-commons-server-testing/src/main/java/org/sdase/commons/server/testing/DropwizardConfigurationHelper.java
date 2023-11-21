@@ -1,8 +1,8 @@
 package org.sdase.commons.server.testing;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.server.DefaultServerFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.server.DefaultServerFactory;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.sdase.commons.server.testing.builder.ConfigurationBuilders.CustomizationBuilder;

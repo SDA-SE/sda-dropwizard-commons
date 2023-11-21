@@ -7,14 +7,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.jackson.AnnotationSensitivePropertyNamingStrategy;
 import io.dropwizard.jackson.CaffeineModule;
 import io.dropwizard.jackson.GuavaExtrasModule;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.setup.Bootstrap;
 import io.openapitools.jackson.dataformat.hal.JacksonHALModule;
 import java.text.DateFormat;
 import java.time.ZoneOffset;
@@ -113,8 +112,8 @@ public class ObjectMapperConfigurationUtil {
           Jackson.newMinimalObjectMapper()
               // .registerModule(new GuavaModule()) in newMinimalObjectMapper
               .registerModule(new GuavaExtrasModule())
-              .registerModule(new CaffeineModule())
-              .registerModule(new JodaModule());
+              .registerModule(new CaffeineModule());
+      // TODO verify a replacement for this .registerModule(new JodaModule());
       // Decided against Afterburner/Blackbird in favour of less complexity
       // .registerModule(new BlackbirdModule());
       // .registerModule(new FuzzyEnumModule()) breaks READ_UNKNOWN_ENUM_VALUES_AS_NULL
