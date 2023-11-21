@@ -3,7 +3,7 @@ package org.sdase.commons.client.jersey.builder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
 import java.net.ProxySelector;

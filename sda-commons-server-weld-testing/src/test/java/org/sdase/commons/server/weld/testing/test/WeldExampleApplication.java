@@ -3,14 +3,14 @@ package org.sdase.commons.server.weld.testing.test;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 
 import com.codahale.metrics.health.HealthCheck;
-import de.spinscale.dropwizard.jobs.JobsBundle;
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jobs.JobsBundle;
 import org.sdase.commons.server.jackson.EmbedHelper;
 import org.sdase.commons.server.weld.DropwizardWeldHelper;
 import org.sdase.commons.server.weld.WeldBundle;

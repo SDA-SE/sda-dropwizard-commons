@@ -33,7 +33,7 @@ API should be documented with Swagger annotations:
 ```java
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import SdaPlatformBundle;
 import SdaPlatformConfiguration;

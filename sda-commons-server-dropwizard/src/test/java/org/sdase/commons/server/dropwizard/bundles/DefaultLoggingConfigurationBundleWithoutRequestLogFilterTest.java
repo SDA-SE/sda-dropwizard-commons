@@ -5,10 +5,10 @@ import static javax.ws.rs.core.Response.Status.OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import io.dropwizard.Configuration;
-import io.dropwizard.logging.ConsoleAppenderFactory;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.server.DefaultServerFactory;
+import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
-import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.ArrayList;
 import java.util.Arrays;

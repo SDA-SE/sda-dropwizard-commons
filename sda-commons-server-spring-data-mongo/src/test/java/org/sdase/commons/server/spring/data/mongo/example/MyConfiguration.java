@@ -1,8 +1,8 @@
 package org.sdase.commons.server.spring.data.mongo.example;
 
-import io.dropwizard.Configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.spring.data.mongo.MongoConfiguration;
 import org.sdase.commons.shared.certificates.ca.CaCertificateConfiguration;
 
