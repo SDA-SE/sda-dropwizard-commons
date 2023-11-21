@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.DropwizardTestSupport;
 import io.dropwizard.testing.ResourceHelpers;
 import java.util.Map;
