@@ -1,6 +1,6 @@
 package org.sdase.commons.starter.builder;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
 import org.sdase.commons.server.cors.CorsConfigProvider;
 import org.sdase.commons.server.opa.config.OpaConfigProvider;

@@ -1,7 +1,7 @@
 package org.sdase.commons.starter.builder;
 
-import io.dropwizard.Configuration;
-import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Bootstrap;
 import org.sdase.commons.starter.SdaPlatformBundle;
 
 /**

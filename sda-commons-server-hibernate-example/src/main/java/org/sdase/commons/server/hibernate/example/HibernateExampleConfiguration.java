@@ -1,6 +1,6 @@
 package org.sdase.commons.server.hibernate.example;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
 public class HibernateExampleConfiguration extends Configuration {

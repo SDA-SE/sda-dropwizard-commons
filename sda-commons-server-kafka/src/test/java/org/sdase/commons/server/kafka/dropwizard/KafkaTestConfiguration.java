@@ -2,7 +2,7 @@ package org.sdase.commons.server.kafka.dropwizard;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.salesforce.kafka.test.KafkaBrokers;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import java.util.List;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 

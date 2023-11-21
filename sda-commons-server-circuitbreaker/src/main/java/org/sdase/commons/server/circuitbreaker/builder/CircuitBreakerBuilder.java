@@ -1,6 +1,6 @@
 package org.sdase.commons.server.circuitbreaker.builder;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
