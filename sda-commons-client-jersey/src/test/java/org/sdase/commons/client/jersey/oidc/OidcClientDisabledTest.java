@@ -12,8 +12,8 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.apache.hc.core5.http.HttpHeaders.ACCEPT;
-import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
+import static org.apache.http.HttpHeaders.ACCEPT;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.MetricFilter;
