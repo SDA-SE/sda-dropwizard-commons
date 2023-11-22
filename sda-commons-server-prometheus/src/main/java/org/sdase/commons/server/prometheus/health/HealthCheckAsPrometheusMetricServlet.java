@@ -1,33 +1,32 @@
 package org.sdase.commons.server.prometheus.health;
 
-import static io.dropwizard.metrics.servlets.HealthCheckServlet.HEALTH_CHECK_REGISTRY;
-
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Set;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Serves all {@link HealthCheck}s in a Prometheus metric format.
  *
  * <p>Uses the {@link HealthCheckRegistry} provided in the servlet context as {@link
- * com.codahale.metrics.servlets.HealthCheckServlet#HEALTH_CHECK_REGISTRY HEALTH_CHECK_REGISTRY}.
+ * io.dropwizard.metrics.servlets.HealthCheckServlet#HEALTH_CHECK_REGISTRY HEALTH_CHECK_REGISTRY}.
  * This is the same registry that is used to provide {@link HealthCheck}s at the default health
- * check endpoint using {@link com.codahale.metrics.servlets.HealthCheckServlet HealthCheckServlet}.
+ * check endpoint using {@link io.dropwizard.metrics.servlets.HealthCheckServlet
+ * HealthCheckServlet}.
  *
  * <p>Currently all {@link HealthCheck.Result}s are collected synchronously and sequentially unless
  * a {@link HealthCheck} is annotated as {@link com.codahale.metrics.health.annotation.Async Async}
  * when the endpoint is called. To change this behaviour and collect {@link HealthCheck.Result}s in
- * parallel in the default {@link com.codahale.metrics.servlets.HealthCheckServlet
+ * parallel in the default {@link io.dropwizard.metrics.servlets.HealthCheckServlet
  * HealthCheckServlet}, an {@link java.util.concurrent.ExecutorService ExecutorService} has to be
  * registered in the servlet context as {@link
- * com.codahale.metrics.servlets.HealthCheckServlet#HEALTH_CHECK_EXECUTOR HEALTH_CHECK_EXECUTOR}.
+ * io.dropwizard.metrics.servlets.HealthCheckServlet#HEALTH_CHECK_EXECUTOR HEALTH_CHECK_EXECUTOR}.
  * <strong>To use the same executor here as well, additional implementation is needed in this
  * class.</strong>
  *

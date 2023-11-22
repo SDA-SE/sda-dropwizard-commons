@@ -8,11 +8,11 @@ import org.sdase.commons.server.opa.OpaBundle;
 import org.sdase.commons.server.opa.OpaJwtPrincipal;
 
 /**
- * Principal for @{@link javax.ws.rs.core.SecurityContext} that optionally contains a JWT and a set
- * of constraints as JSON object string.
+ * Principal for @{@link jakarta.ws.rs.core.SecurityContext} that optionally contains a JWT and a
+ * set of constraints as JSON object string.
  *
  * <p>The {@code OpaJwtPrincipal} can be injected as field in endpoint implementations using {@link
- * javax.ws.rs.core.Context} when the {@link OpaBundle} is used to setup the open policy agent
+ * jakarta.ws.rs.core.Context} when the {@link OpaBundle} is used to setup the open policy agent
  * configuration.
  */
 public class OpaJwtPrincipalImpl implements OpaJwtPrincipal {

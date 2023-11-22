@@ -1,7 +1,7 @@
 package org.sdase.commons.server.opentelemetry.jaxrs;
 
-import javax.annotation.Nullable;
-import javax.ws.rs.core.Request;
+import jakarta.annotation.Nullable;
+import jakarta.ws.rs.core.Request;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ExtendedUriInfo;
 

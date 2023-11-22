@@ -4,15 +4,15 @@ import io.swagger.v3.core.filter.AbstractSpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
+import jakarta.inject.Singleton;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Feature;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.inject.Singleton;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.UriInfo;
 
 /**
  * An {@link io.swagger.v3.core.filter.OpenAPISpecFilter} that adds the base URL to {@link

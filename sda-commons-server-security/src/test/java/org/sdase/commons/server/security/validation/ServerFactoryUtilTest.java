@@ -7,11 +7,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sdase.commons.server.security.validation.ServerFactoryUtil.verifyAbstractServerFactory;
 
+import io.dropwizard.core.server.AbstractServerFactory;
+import io.dropwizard.core.server.DefaultServerFactory;
+import io.dropwizard.core.server.ServerFactory;
+import io.dropwizard.core.server.SimpleServerFactory;
 import io.dropwizard.jetty.ConnectorFactory;
-import io.dropwizard.server.AbstractServerFactory;
-import io.dropwizard.server.DefaultServerFactory;
-import io.dropwizard.server.ServerFactory;
-import io.dropwizard.server.SimpleServerFactory;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

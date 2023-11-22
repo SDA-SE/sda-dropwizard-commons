@@ -1,7 +1,7 @@
 package org.sdase.commons.keymgmt.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class KeysValidator extends AbstractKeysValidator
     implements ConstraintValidator<PlatformKeys, String> {

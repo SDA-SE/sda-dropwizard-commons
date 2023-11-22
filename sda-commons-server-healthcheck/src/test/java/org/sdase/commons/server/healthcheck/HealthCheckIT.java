@@ -1,7 +1,7 @@
 package org.sdase.commons.server.healthcheck;
 
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.health.HealthCheck;

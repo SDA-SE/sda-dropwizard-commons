@@ -1,16 +1,16 @@
 package org.sdase.commons.server.prometheus.test;
 
 import com.codahale.metrics.health.HealthCheck;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Response;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.Response;
 import org.sdase.commons.client.jersey.ClientFactory;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;

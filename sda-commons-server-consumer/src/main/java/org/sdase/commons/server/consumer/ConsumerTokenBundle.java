@@ -4,11 +4,11 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-import javax.validation.constraints.NotNull;
 import org.sdase.commons.server.consumer.filter.ConsumerTokenServerFilter;
 
 public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredBundle<C> {

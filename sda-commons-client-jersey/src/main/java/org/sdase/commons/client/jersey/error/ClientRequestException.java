@@ -1,22 +1,22 @@
 package org.sdase.commons.client.jersey.error;
 
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import java.io.Closeable;
 import java.net.SocketTimeoutException;
 import java.util.Optional;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import org.apache.http.conn.ConnectTimeoutException;
 
 /**
- * Exception that wraps any {@link javax.ws.rs.WebApplicationException} that occurred in a Http
+ * Exception that wraps any {@link jakarta.ws.rs.WebApplicationException} that occurred in a Http
  * request to avoid that it is used to delegate the same response to the own caller by default
  * exception mappers.
  */
 public class ClientRequestException extends RuntimeException implements Closeable {
 
   /**
-   * @param cause the caught {@link javax.ws.rs.WebApplicationException} that occurred in a Http
+   * @param cause the caught {@link jakarta.ws.rs.WebApplicationException} that occurred in a Http
    *     request
    */
   public ClientRequestException(Throwable cause) {

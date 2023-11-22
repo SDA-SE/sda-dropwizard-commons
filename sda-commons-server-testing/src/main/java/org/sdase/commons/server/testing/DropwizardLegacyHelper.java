@@ -2,7 +2,7 @@ package org.sdase.commons.server.testing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jersey.jackson.JacksonFeature;
-import javax.ws.rs.client.Client;
+import jakarta.ws.rs.client.Client;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 

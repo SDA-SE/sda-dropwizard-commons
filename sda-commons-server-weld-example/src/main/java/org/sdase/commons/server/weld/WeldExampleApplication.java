@@ -1,11 +1,11 @@
 package org.sdase.commons.server.weld;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.sdase.commons.server.weld.beans.UsageBean;
 
 @ApplicationScoped

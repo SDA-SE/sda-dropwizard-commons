@@ -1,8 +1,8 @@
 package org.sdase.commons.server.errorhandling.rest.validation;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Locale;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 public class UpperCaseValidator implements ConstraintValidator<UpperCase, String> {
 

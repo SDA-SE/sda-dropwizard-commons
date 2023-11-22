@@ -1,6 +1,6 @@
 package org.sdase.commons.server.kafka.builder;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.apache.kafka.common.serialization.Serializer;
 import org.sdase.commons.server.kafka.config.ProducerConfig;
 import org.sdase.commons.server.kafka.config.TopicConfig;

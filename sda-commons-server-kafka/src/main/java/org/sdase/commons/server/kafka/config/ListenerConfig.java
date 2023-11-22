@@ -1,6 +1,6 @@
 package org.sdase.commons.server.kafka.config;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public class ListenerConfig {
 

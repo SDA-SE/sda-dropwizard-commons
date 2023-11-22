@@ -1,17 +1,15 @@
 package org.sdase.commons.client.jersey.builder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.core.Feature;
 import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.Feature;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
@@ -48,13 +46,6 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
       OpenTelemetry openTelemetry) {
     this.httpClientConfiguration = httpClientConfiguration;
     this.jerseyClientBuilder = new JerseyClientBuilder(environment);
-    this.jerseyClientBuilder.setApacheHttpClientBuilder(
-        new HttpClientBuilder(environment) {
-          @Override
-          protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
-            return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
-          }
-        });
     this.objectMapper = environment.getObjectMapper();
     this.filters = new ArrayList<>();
     this.features = new ArrayList<>();

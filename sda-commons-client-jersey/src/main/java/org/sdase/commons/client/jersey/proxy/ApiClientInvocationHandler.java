@@ -1,5 +1,8 @@
 package org.sdase.commons.client.jersey.proxy;
 
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,9 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import org.codefetti.proxy.handler.InterfaceProxyBuilder;
 import org.sdase.commons.client.jersey.error.ClientRequestException;
 import org.sdase.commons.client.jersey.proxy.annotation.SuppressConnectTimeoutErrorsToNull;
