@@ -10,10 +10,10 @@ import static org.sdase.commons.client.jersey.test.SubtypesClient.AbstractResour
 import static org.sdase.commons.client.jersey.test.SubtypesClient.AbstractResource.ResourceType.TWO;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import java.util.UUID;
-import javax.validation.ConstraintViolationException;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;

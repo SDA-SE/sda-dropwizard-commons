@@ -1,7 +1,7 @@
 package org.sdase.commons.server.opa.health;
 
 import com.codahale.metrics.health.HealthCheck;
-import javax.ws.rs.client.WebTarget;
+import jakarta.ws.rs.client.WebTarget;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

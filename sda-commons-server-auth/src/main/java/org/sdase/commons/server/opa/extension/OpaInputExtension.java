@@ -1,7 +1,7 @@
 package org.sdase.commons.server.opa.extension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 
 /**
  * An extension to provide additional data to the {@link

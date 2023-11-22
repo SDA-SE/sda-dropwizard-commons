@@ -1,8 +1,8 @@
 package org.sdase.commons.keymgmt.model;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.*;
-import javax.validation.constraints.NotEmpty;
 
 @SuppressWarnings("unused")
 public class KeyDefinition {

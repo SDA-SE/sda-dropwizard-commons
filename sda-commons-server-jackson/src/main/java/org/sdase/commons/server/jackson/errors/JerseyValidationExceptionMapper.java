@@ -5,20 +5,20 @@ import static org.glassfish.jersey.model.Parameter.Source.QUERY;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.UpperSnakeCaseStrategy;
 import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.JerseyViolationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ElementKind;
+import jakarta.validation.Path;
+import jakarta.validation.Path.Node;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import javax.validation.ConstraintViolation;
-import javax.validation.ElementKind;
-import javax.validation.Path;
-import javax.validation.Path.Node;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
 import org.glassfish.jersey.server.model.Invocable;
 import org.glassfish.jersey.server.model.Parameter;
 import org.sdase.commons.shared.api.error.ApiError;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Maps {@link JerseyViolationException}s to the error structure defined within the rest guidelines.
- * For each {@link javax.validation.ConstraintViolation}, one {@link ApiInvalidParam} entry is
+ * For each {@link jakarta.validation.ConstraintViolation}, one {@link ApiInvalidParam} entry is
  * generated. As error code, the validation name is used as error code
  */
 @Provider

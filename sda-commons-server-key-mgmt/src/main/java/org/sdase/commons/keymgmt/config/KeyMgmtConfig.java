@@ -1,6 +1,6 @@
 package org.sdase.commons.keymgmt.config;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @SuppressWarnings("unused")
 public class KeyMgmtConfig {

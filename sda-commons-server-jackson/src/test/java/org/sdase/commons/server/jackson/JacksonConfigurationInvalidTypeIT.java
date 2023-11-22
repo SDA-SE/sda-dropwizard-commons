@@ -4,9 +4,9 @@ import static io.dropwizard.testing.ConfigOverride.randomPorts;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.groups.Tuple;
 import org.eclipse.jetty.http.HttpStatus;

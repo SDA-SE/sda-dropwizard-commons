@@ -4,11 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.MultivaluedMap;
 import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

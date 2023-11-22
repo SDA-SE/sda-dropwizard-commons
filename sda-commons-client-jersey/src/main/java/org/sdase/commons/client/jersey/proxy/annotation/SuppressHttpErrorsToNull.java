@@ -9,11 +9,12 @@ import org.sdase.commons.client.jersey.error.ClientRequestException;
 
 /**
  * Annotation used to suppress {@link ClientRequestException} with a {@link
- * javax.ws.rs.WebApplicationException} cause in API clients. Instead of throwing an exception,
+ * jakarta.ws.rs.WebApplicationException} cause in API clients. Instead of throwing an exception,
  * {@code null} will be returned.
  *
  * <p>This annotation is only suitable for methods that do not return a {@link
- * javax.ws.rs.core.Response}. This annotation is NOT suitable for declared default implementations.
+ * jakarta.ws.rs.core.Response}. This annotation is NOT suitable for declared default
+ * implementations.
  *
  * <p>Suppressing expected errors (e.g. 404) and not catching any exception can simplify consumer
  * code, as the exception of a not listed code is automatically converted to a 500 Internal Server

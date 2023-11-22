@@ -27,8 +27,10 @@ public class TracedHttpClientInitialBuilder extends io.dropwizard.client.HttpCli
     return this;
   }
 
+  /* TODO verify if this is still necessary and how to implement it in the new version
+
   @Override
   protected HttpClientBuilder createBuilder() {
     return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
-  }
+  }*/
 }
