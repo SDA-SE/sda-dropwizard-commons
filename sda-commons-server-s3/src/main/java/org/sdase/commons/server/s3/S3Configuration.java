@@ -1,6 +1,6 @@
 package org.sdase.commons.server.s3;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 /** Defines the configuration ot the {@link S3Bundle}. */
 public class S3Configuration {

@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.opa.testing.OpaClassExtension.onRequest;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.RetryingTest;

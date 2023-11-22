@@ -1,7 +1,7 @@
 package org.sdase.commons.server.weld.testing.test.job;
 
-import javax.inject.Inject;
 import io.dropwizard.jobs.Job;
+import jakarta.inject.Inject;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.sdase.commons.server.weld.testing.test.util.BarSupplier;

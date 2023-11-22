@@ -3,13 +3,13 @@ package org.sdase.commons.server.auth.testing;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * The {@code AuthBuilder} is used to build JWT authentication in test cases that is accepted by the
@@ -160,7 +160,7 @@ public class AuthBuilder {
 
   /**
    * @return a map with a trusted {@code Authorization} header to be used with {@link
-   *     javax.ws.rs.client.Invocation.Builder#headers(MultivaluedMap)}
+   *     jakarta.ws.rs.client.Invocation.Builder#headers(MultivaluedMap)}
    */
   public MultivaluedMap<String, Object> buildAuthHeader() {
     MultivaluedHashMap<String, Object> headers = new MultivaluedHashMap<>();

@@ -1,6 +1,6 @@
 package org.sdase.commons.keymgmt.model;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 @SuppressWarnings("unused")
 public class KeyDefinitionValue {
