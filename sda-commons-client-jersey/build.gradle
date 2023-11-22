@@ -8,8 +8,8 @@ dependencies {
   api 'org.glassfish.jersey.core:jersey-client'
   api 'org.glassfish.jersey.ext:jersey-proxy-client'
   api 'org.codefetti.proxy:proxy-handler:1.0.3'
-  api 'javax.xml.bind:jaxb-api', {
-    exclude group: 'javax.activation', module: 'javax.activation-api'
+  api 'jakarta.xml.bind:jakarta.xml.bind-api', {
+    exclude group: 'jakarta.activation', module: 'jakarta.activation-api'
   }
   api 'io.opentelemetry:opentelemetry-api'
 

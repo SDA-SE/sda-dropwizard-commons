@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.sdase.commons.client.jersey.proxy.ApiClientInvocationHandler.createProxy;
 
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.WebApplicationException;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.client.jersey.error.ClientRequestException;
@@ -31,7 +31,8 @@ class SuppressReadTimeoutErrorsToNullTest {
         createProxy(
             ProcessingErrorsSuppressed.class,
             () -> {
-              throw new ProcessingException(new ConnectTimeoutException());
+              throw new ProcessingException(
+                  new ConnectTimeoutException(ConnectTimeoutException.class.descriptorString()));
             });
     assertThatExceptionOfType(ClientRequestException.class).isThrownBy(given::suppressed);
   }

@@ -1,8 +1,8 @@
 package org.sdase.commons.server.weld.testing.test.util;
 
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 import java.io.Serializable;
-import javax.enterprise.inject.Produces;
-import javax.inject.Named;
 
 public class FooProducer implements Serializable {
 

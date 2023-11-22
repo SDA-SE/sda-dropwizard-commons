@@ -1,10 +1,10 @@
 package org.sdase.commons.server.dropwizard;
 
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.core.Feature;
+import jakarta.ws.rs.core.FeatureContext;
 
 /**
- * Implement this interface in classes that should receive {@link javax.ws.rs.core.Context}
+ * Implement this interface in classes that should receive {@link jakarta.ws.rs.core.Context}
  * injections and are registered as instance. This interface is a convenience that restores the
  * behavior of Dropwizard 1.3.x.
  *

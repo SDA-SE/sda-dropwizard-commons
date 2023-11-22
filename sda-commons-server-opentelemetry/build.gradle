@@ -16,11 +16,7 @@ dependencies {
   // Provides support for jaeger baggage
   api 'io.opentelemetry:opentelemetry-extension-trace-propagators'
   api "jakarta.xml.bind:jakarta.xml.bind-api"
-  api 'javax.xml.bind:jaxb-api', {
-    exclude group: 'javax.activation', module: 'javax.activation-api'
-  }
-
-
+  api 'jakarta.annotation:jakarta.annotation-api'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation 'org.assertj:assertj-core'
