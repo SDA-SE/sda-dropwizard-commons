@@ -1,8 +1,8 @@
 package org.sdase.commons.server.jackson.test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 
 public class NestedResource {
 

@@ -2,7 +2,7 @@ package org.sdase.commons.server.weld.testing.test.util;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-import javax.enterprise.event.Observes;
+import jakarta.enterprise.event.Observes;
 import org.slf4j.Logger;
 
 public class FooLogger {

@@ -1,13 +1,13 @@
 package org.sdase.commons.server.jackson.test;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 

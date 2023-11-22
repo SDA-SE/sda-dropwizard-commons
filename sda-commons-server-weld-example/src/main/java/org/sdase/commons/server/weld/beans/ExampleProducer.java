@@ -1,6 +1,6 @@
 package org.sdase.commons.server.weld.beans;
 
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Produces;
 
 public class ExampleProducer {
 

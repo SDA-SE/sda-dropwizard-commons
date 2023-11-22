@@ -1,16 +1,16 @@
 package org.sdase.commons.server.auth.testing;
 
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static java.util.Collections.singletonMap;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;

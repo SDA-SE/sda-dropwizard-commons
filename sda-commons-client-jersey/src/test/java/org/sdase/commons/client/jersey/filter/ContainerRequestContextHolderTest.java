@@ -1,6 +1,6 @@
 package org.sdase.commons.client.jersey.filter;
 
-import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder.transferRequestContext;
 

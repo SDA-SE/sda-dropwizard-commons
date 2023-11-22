@@ -6,12 +6,12 @@ import static org.sdase.commons.server.jackson.hal.HalLinkProvider.linkTo;
 import static org.sdase.commons.server.jackson.hal.HalLinkProvider.methodOn;
 
 import io.openapitools.jackson.dataformat.hal.HALLink;
+import jakarta.ws.rs.CookieParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import java.net.URI;
-import javax.ws.rs.CookieParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import org.junit.jupiter.api.Test;
 
 class HalLinkProviderTest {

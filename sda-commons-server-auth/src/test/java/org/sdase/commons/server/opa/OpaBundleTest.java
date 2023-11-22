@@ -3,8 +3,8 @@ package org.sdase.commons.server.opa;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import javax.ws.rs.container.ContainerRequestContext;
 import io.dropwizard.core.Configuration;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.opa.OpaBundle.DuplicatePropertyException;
 import org.sdase.commons.server.opa.OpaBundle.HiddenOriginalPropertyException;
