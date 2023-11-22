@@ -1,23 +1,39 @@
 package org.sdase.commons.server.dropwizard.bundles.scanner;
 
+import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH;
+import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY;
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH;
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 
 /**
  * Represents a field in a configuration class that can be set from a property in the context. The
  * context is a runtime configuration of key value pairs like {@link System#getenv()} or {@link
  * System#getProperties()}.
+ *
+ * <p>Note: This class has a natural ordering that is technically inconsistent with equals. While
+ * {@link #equals(Object)} considers all fields, {@link #compareTo(MappableField)} only considers
+ * the {@linkplain #getJsonPathToProperty() Json path to property}. {@code MappableFiel}s that are
+ * discovered by {@linkplain JacksonTypeScanner} should not be affected by this inconsistency.
  */
-public class MappableField {
+public class MappableField implements Comparable<MappableField> {
+  private static final Set<String> DIRECT_REPLACEMENT_PATH_PROPERTY_PLACEHOLDERS =
+      Set.of(
+          MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH, ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH);
+  private static final Set<String> CONTEXT_KEY_PLACEHOLDERS =
+      Set.of(MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY, ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY);
+
   private final List<String> jsonPathToProperty;
   private final Type propertyType;
   private final String contextKey;
@@ -91,7 +107,7 @@ public class MappableField {
     if (availableKeysInContext.contains(getContextKey())) {
       return List.of(new MappableField(this.jsonPathToProperty, this.propertyType));
     }
-    if (getContextKey().contains(MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY)) {
+    if (CONTEXT_KEY_PLACEHOLDERS.stream().anyMatch(p -> getContextKey().contains(p))) {
       Pattern expandPattern = createExpandPattern(getContextKey());
       return availableKeysInContext.stream()
           .map(expandPattern::matcher)
@@ -100,6 +116,11 @@ public class MappableField {
           .collect(Collectors.toList());
     }
     return List.of();
+  }
+
+  @Override
+  public String toString() {
+    return "MappableField{" + getContextKey() + ' ' + getPropertyTypeDescription() + '}';
   }
 
   /**
@@ -116,7 +137,7 @@ public class MappableField {
     for (int i = 0; i < contextKeyMatch.groupCount(); i++) {
       var realKeyPart = contextKeyMatch.group(i + 1);
       for (int j = 0; j < newPath.size(); j++) {
-        if (MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH.equals(newPath.get(j))) {
+        if (DIRECT_REPLACEMENT_PATH_PROPERTY_PLACEHOLDERS.contains(newPath.get(j))) {
           newPath.set(j, realKeyPart);
           break;
         }
@@ -134,13 +155,61 @@ public class MappableField {
       if (Map.class.isAssignableFrom(clazz)) {
         return "Map";
       }
+      if (clazz.isArray() || Collection.class.isAssignableFrom(clazz)) {
+        return "Array";
+      }
       return clazz.getSimpleName();
     }
     return type.getTypeName();
   }
 
   private Pattern createExpandPattern(String environmentVariableName) {
-    return Pattern.compile(
-        "^" + environmentVariableName.replace(MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY, "(.*)") + "$");
+    var envWithMapKeyPattern =
+        environmentVariableName.replace(MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY, "(.*)");
+    var envWithMapKeyAndArrayIndexPattern =
+        envWithMapKeyPattern.replace(ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY, "(\\d*)");
+    return Pattern.compile("^" + envWithMapKeyAndArrayIndexPattern + "$");
+  }
+
+  @Override
+  public int compareTo(@NotNull MappableField o) {
+    var minDepth = Math.min(this.getJsonPathToProperty().size(), o.getJsonPathToProperty().size());
+    for (int i = 0; i < minDepth; i++) {
+      var part = this.getJsonPathToProperty().get(i);
+      var oPart = o.getJsonPathToProperty().get(i);
+      int compare;
+      if (part.matches("^\\d+$") && oPart.matches("^\\d+$")) {
+        compare = Integer.compare(Integer.parseInt(part), Integer.parseInt(oPart));
+      } else {
+        compare = part.compareTo(oPart);
+      }
+      if (compare != 0) {
+        return compare;
+      }
+    }
+    return Integer.compare(this.getJsonPathToProperty().size(), o.getJsonPathToProperty().size());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    MappableField that = (MappableField) o;
+
+    if (!Objects.equals(jsonPathToProperty, that.jsonPathToProperty)) return false;
+    if (!Objects.equals(propertyType, that.propertyType)) return false;
+    if (!Objects.equals(contextKey, that.contextKey)) return false;
+    return Objects.equals(propertyTypeDescription, that.propertyTypeDescription);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = jsonPathToProperty != null ? jsonPathToProperty.hashCode() : 0;
+    result = 31 * result + (propertyType != null ? propertyType.hashCode() : 0);
+    result = 31 * result + (contextKey != null ? contextKey.hashCode() : 0);
+    result =
+        31 * result + (propertyTypeDescription != null ? propertyTypeDescription.hashCode() : 0);
+    return result;
   }
 }

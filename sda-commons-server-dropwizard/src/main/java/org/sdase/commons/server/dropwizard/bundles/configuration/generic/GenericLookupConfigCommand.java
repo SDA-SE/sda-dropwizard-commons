@@ -47,7 +47,12 @@ public class GenericLookupConfigCommand<T extends Configuration> extends Configu
           "<KEY> must be changed to the desired key of the Map using the character case as needed.",
           "<KEY> may occur in other types to fill a Map of well defined objects.",
           "",
-          "All supported environment variable keys:",
+          "The type Array supports String values and uses <INDEX> in the environment variable.",
+          "<INDEX> must be changed to the desired zero-based index of the array or collection.",
+          "<INDEX> may occur in other types to fill an array of well defined objects.",
+          "",
+          "The following dynamically discovered environment variables may interfere with pre-defined",
+          "variables in the configuration yaml file:",
           "",
           "%s",
           "");

@@ -8,6 +8,8 @@ import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
 import java.io.File;
 import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +33,7 @@ public class JacksonTypeScanner {
 
   /** Types that can be mapped from {@code String} in Dropwizard configuration. */
   public static final Set<Class<?>> DROPWIZARD_PLAIN_TYPES =
-      Set.of(String.class, File.class, Duration.class, DataSize.class);
+      Set.of(String.class, File.class, Duration.class, DataSize.class, URI.class, URL.class);
 
   /**
    * The maximum nested depth of properties. This limits recursion when scanning for properties to
@@ -45,6 +47,13 @@ public class JacksonTypeScanner {
   /** The placeholder used in context keys for keys of a {@code Map}. */
   static final String MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY =
       MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH.toUpperCase();
+
+  /** The placeholder used in property paths for item indexes of an array. */
+  static final String ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH = "<index>";
+
+  /** The placeholder used in context keys for item indexes of an array. */
+  static final String ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY =
+      ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH.toUpperCase();
 
   private final ObjectMapper mapper;
   private final Set<Class<?>> plainTypes;
@@ -116,7 +125,8 @@ public class JacksonTypeScanner {
             || propertyType.isEnumImplType()
             || isPlainType(propertyType)) {
           fields.add(new MappableField(newRootPath, propertyType.getRawClass()));
-          // TODO not supported yet: propertyType.isArrayType()
+        } else if (propertyType.isArrayType() || propertyType.isCollectionLikeType()) {
+          fields.addAll(createArrayFields(propertyType, newRootPath));
         } else if (Map.class.isAssignableFrom(propertyType.getRawClass())) {
           fields.addAll(createMapFields(propertyType, newRootPath));
         } else {
@@ -128,6 +138,42 @@ public class JacksonTypeScanner {
       LOG.info("Could not parse config class {} for dynamic environment properties.", type, e);
       return List.of();
     }
+  }
+
+  private Collection<MappableField> createArrayFields(
+      JavaType propertyType, ArrayList<String> arrayRootPath) {
+    var newRootPath = new ArrayList<>(arrayRootPath);
+    newRootPath.add(ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH);
+
+    JavaType itemType = identifyItemTypeOfArrayType(propertyType);
+
+    if (itemType == null) {
+      LOG.debug(
+          "Failed to identify item type of {} in {}", propertyType.getRawClass(), arrayRootPath);
+      return List.of();
+    }
+
+    if (isPlainType(itemType)) {
+      return List.of(new MappableField(newRootPath, propertyType.getRawClass()));
+    }
+    if (itemType.isArrayType() || itemType.isCollectionLikeType()) {
+      return createArrayFields(itemType, newRootPath);
+    }
+    if (Map.class.isAssignableFrom(itemType.getRawClass())) {
+      return createMapFields(itemType, newRootPath);
+    }
+
+    return scan(newRootPath, itemType);
+  }
+
+  private JavaType identifyItemTypeOfArrayType(JavaType propertyType) {
+    var rawClass = propertyType.getRawClass();
+    if (rawClass.isArray()) {
+      return mapper.constructType(rawClass.getComponentType());
+    } else if (Collection.class.isAssignableFrom(propertyType.getRawClass())) {
+      return propertyType.findTypeParameters(Collection.class)[0];
+    }
+    return null;
   }
 
   private Collection<MappableField> createMapFields(
