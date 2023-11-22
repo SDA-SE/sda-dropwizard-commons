@@ -5,7 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.security.*;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;

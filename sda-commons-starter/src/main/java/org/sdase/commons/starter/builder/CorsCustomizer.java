@@ -1,7 +1,7 @@
 package org.sdase.commons.starter.builder;
 
-import javax.ws.rs.HttpMethod;
 import io.dropwizard.core.Configuration;
+import jakarta.ws.rs.HttpMethod;
 import org.sdase.commons.server.cors.CorsBundle;
 
 public interface CorsCustomizer<T extends Configuration> {

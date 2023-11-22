@@ -1,6 +1,6 @@
 package org.sdase.commons.server.consumer.test;
 
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.consumer.ConsumerTokenConfig;
 
 public class ConsumerTokenTestConfig extends Configuration {

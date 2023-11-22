@@ -2,12 +2,12 @@ package org.sdase.commons.starter.example;
 
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static javax.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;

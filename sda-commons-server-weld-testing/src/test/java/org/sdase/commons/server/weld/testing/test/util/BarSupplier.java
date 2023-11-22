@@ -1,8 +1,8 @@
 package org.sdase.commons.server.weld.testing.test.util;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.function.Supplier;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 public class BarSupplier implements Supplier<String> {
 

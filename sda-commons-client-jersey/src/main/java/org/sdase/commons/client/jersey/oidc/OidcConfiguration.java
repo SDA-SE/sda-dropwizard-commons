@@ -1,7 +1,7 @@
 package org.sdase.commons.client.jersey.oidc;
 
-import javax.validation.Valid;
-import javax.validation.constraints.AssertTrue;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import org.apache.commons.lang3.StringUtils;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
 import org.sdase.commons.client.jersey.oidc.cache.CacheConfiguration;

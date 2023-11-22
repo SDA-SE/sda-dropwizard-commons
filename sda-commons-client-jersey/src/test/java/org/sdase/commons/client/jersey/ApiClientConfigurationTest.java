@@ -18,8 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.MetricFilter;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
-import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

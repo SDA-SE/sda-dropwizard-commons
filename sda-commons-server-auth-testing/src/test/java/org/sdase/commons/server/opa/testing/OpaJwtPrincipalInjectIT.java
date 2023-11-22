@@ -7,11 +7,11 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.sdase.commons.server.opa.testing.AbstractOpa.onAnyRequest;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import java.util.Collections;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

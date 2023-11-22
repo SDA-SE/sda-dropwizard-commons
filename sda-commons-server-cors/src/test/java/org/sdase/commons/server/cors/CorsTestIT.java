@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

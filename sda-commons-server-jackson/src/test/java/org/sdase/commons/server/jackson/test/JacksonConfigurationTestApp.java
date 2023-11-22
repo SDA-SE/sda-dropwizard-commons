@@ -1,26 +1,26 @@
 package org.sdase.commons.server.jackson.test;
 
+import static jakarta.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static java.util.Collections.singletonList;
-import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.openapitools.jackson.dataformat.hal.HALLink;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import org.assertj.core.util.Lists;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
