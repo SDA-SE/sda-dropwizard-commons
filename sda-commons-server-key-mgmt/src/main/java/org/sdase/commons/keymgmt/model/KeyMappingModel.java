@@ -1,7 +1,7 @@
 package org.sdase.commons.keymgmt.model;
 
+import jakarta.validation.constraints.NotEmpty;
 import java.util.Locale;
-import javax.validation.constraints.NotEmpty;
 
 @SuppressWarnings("unused")
 public class KeyMappingModel {

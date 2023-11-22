@@ -2,9 +2,9 @@ package org.sdase.commons.client.jersey.oidc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

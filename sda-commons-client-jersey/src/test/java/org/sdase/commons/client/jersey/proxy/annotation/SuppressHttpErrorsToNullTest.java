@@ -9,8 +9,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sdase.commons.client.jersey.proxy.ApiClientInvocationHandler.createProxy;
 
+import jakarta.ws.rs.WebApplicationException;
 import java.util.stream.Stream;
-import javax.ws.rs.WebApplicationException;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

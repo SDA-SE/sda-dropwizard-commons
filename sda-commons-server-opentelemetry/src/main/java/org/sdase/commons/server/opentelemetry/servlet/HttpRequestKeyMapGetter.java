@@ -1,9 +1,9 @@
 package org.sdase.commons.server.opentelemetry.servlet;
 
 import io.opentelemetry.context.propagation.TextMapGetter;
+import jakarta.annotation.Nullable;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collections;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 
 public class HttpRequestKeyMapGetter implements TextMapGetter<HttpServletRequest> {
   @Override

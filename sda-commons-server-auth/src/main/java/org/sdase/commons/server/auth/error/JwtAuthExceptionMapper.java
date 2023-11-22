@@ -1,9 +1,9 @@
 package org.sdase.commons.server.auth.error;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
 import org.sdase.commons.shared.api.error.ApiError;
 
 public class JwtAuthExceptionMapper implements ExceptionMapper<JwtAuthException> {

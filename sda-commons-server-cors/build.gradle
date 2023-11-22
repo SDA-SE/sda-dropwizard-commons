@@ -1,9 +1,7 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-tracing')
-  api 'javax.xml.bind:jaxb-api', {
-    exclude group: 'javax.activation', module: 'javax.activation-api'
-  }
+  api 'jakarta.xml.bind:jakarta.xml.bind-api'
 
   testImplementation project(':sda-commons-server-testing')
 }

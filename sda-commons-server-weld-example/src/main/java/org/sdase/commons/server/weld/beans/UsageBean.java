@@ -1,6 +1,6 @@
 package org.sdase.commons.server.weld.beans;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class UsageBean {
 
