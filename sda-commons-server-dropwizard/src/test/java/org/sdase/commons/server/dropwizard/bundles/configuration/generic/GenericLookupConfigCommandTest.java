@@ -26,7 +26,7 @@ class GenericLookupConfigCommandTest {
           .untilAsserted(
               () ->
                   assertThat(String.join("\n", out.capturedLines()))
-                      .contains("All supported environment variable keys:")
+                      .contains("dynamically discovered environment variables")
                       .contains("SERVER_GZIP_MINIMUMENTITYSIZE (DataSize)")
                       .contains("CHANGEDNAME (String)")
                       .contains("MAPSTRINGSTRING_<KEY> (Map)"));
