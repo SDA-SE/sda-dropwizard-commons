@@ -12,10 +12,9 @@ import static org.sdase.commons.server.opa.testing.AbstractOpa.onAnyRequest;
 import static org.sdase.commons.server.opa.testing.AbstractOpa.onRequest;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.http.HttpStatus;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

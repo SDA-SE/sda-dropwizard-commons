@@ -8,6 +8,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.hibernate.ScanningHibernateBundle;
 import io.dropwizard.hibernate.SessionFactoryFactory;
+import jakarta.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -15,7 +16,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.SessionFactory;
 

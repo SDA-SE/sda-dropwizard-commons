@@ -19,6 +19,7 @@ import io.micrometer.core.instrument.binder.mongodb.MongoMetricsConnectionPoolLi
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,7 +28,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import javax.validation.constraints.NotNull;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeReadConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.ZonedDateTimeWriteConverter;
 import org.sdase.commons.server.spring.data.mongo.converter.morphia.compatibility.BigDecimalReadConverter;

@@ -5,9 +5,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.auth0.jwt.interfaces.Claim;
+import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
 import java.util.Map;
-import javax.ws.rs.core.SecurityContext;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.opa.OpaJwtPrincipal;
 

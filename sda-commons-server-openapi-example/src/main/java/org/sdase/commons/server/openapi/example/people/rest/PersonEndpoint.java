@@ -1,17 +1,17 @@
 package org.sdase.commons.server.openapi.example.people.rest;
 
 import io.openapitools.jackson.dataformat.hal.HALLink;
+import jakarta.annotation.security.PermitAll;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.security.PermitAll;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 
 /** Example endpoint for getting information about people. */

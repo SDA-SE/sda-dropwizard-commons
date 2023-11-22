@@ -1,10 +1,10 @@
 package org.sdase.commons.server.dropwizard.metadata;
 
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientRequestFilter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
 import org.apache.commons.lang3.StringUtils;
 
 /**

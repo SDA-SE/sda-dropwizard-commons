@@ -2,13 +2,13 @@ package org.sdase.commons.starter;
 
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import jakarta.ws.rs.core.GenericType;
 import java.util.Map;
-import javax.ws.rs.core.GenericType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.starter.test.StarterApp;

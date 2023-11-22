@@ -9,15 +9,15 @@ import static com.github.tomakehurst.wiremock.http.RequestMethod.GET;
 import static com.github.tomakehurst.wiremock.matching.RequestPatternBuilder.newRequestPattern;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static javax.ws.rs.core.HttpHeaders.LOCATION;
+import static jakarta.ws.rs.core.HttpHeaders.LOCATION;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
+import jakarta.ws.rs.client.Client;
 import java.util.List;
-import javax.ws.rs.client.Client;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

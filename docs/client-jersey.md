@@ -98,15 +98,15 @@ Error handling is different based on the return type:
 If a specific return type is defined (e.g. `List<MyResource> getMyResources();`), it is only returned for successful 
 requests. In any error or redirect case, an exception is thrown. The thrown exception is a 
 [`ClientRequestException`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestException.java)
-wrapping `javax.ws.rs.ProcessingException` or subclasses of `javax.ws.rs.WebApplicationException`: 
-- `javax.ws.rs.RedirectionException` to indicate redirects 
-- `javax.ws.rs.ClientErrorException` for client errors
-- `javax.ws.rs.ServerErrorException` for server errors
+wrapping `jakarta.ws.rs.ProcessingException` or subclasses of `jakarta.ws.rs.WebApplicationException`:
+- `jakarta.ws.rs.RedirectionException` to indicate redirects
+- `jakarta.ws.rs.ClientErrorException` for client errors
+- `jakarta.ws.rs.ServerErrorException` for server errors
 
 If the `ClientRequestException` exception is handled in the application code **the application must `close()` the 
 exception**.
 
-If a `javax.ws.rs.core.Response` is defined as return type, HTTP errors and redirects can be read from the `Response`
+If a `jakarta.ws.rs.core.Response` is defined as return type, HTTP errors and redirects can be read from the `Response`
 object. **Remember to always close the `Response` object. It references open socket streams.**
 
 In both variants a `java.net.ConnectException` may be thrown if the client can't connect to the server.
@@ -115,7 +115,7 @@ In both variants a `java.net.ConnectException` may be thrown if the client can't
 
 Jersey Clients can be built using the client factory for cases where the API variant with an interface is not suitable.
 
-Jersey clients can not automatically convert `javax.ws.rs.WebApplicationException` into our 
+Jersey clients can not automatically convert `jakarta.ws.rs.WebApplicationException` into our 
 `ClientRequestException`. To avoid passing through the error the application received to the caller of the application,
 the exceptions must be handled for all usages that expect a specific type as return value.
 
@@ -320,12 +320,12 @@ jerseyClientBundle
     .atTarget(apiABaseUrl);
 ```
 
-### 3rd Party `javax.ws.rs-api` Client Implementations in Classpath
+### 3rd Party `jakarta.ws.rs-api` Client Implementations in Classpath
 
 The clients used in sda-commons require the Jersey Client implementation. 
-If you are facing problems with other `javax.ws.rs-api` implementations in the classpath (e.g. RestEasy which comes
+If you are facing problems with other `jakarta.ws.rs-api` implementations in the classpath (e.g. RestEasy which comes
 with the Keycloak SDK) the Jersey Client Builder must be propagated in your project as service.
-Therefore, the service definition `src/main/resources/META-INF/services/javax.ws.rs.client.ClientBuilder` must be added
+Therefore, the service definition `src/main/resources/META-INF/services/jakarta.ws.rs.client.ClientBuilder` must be added
 to your project containing:
 
 ```
