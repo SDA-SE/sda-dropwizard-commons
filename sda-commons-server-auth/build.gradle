@@ -8,9 +8,7 @@ dependencies {
 
   api 'com.auth0:java-jwt'
   api 'org.bouncycastle:bcpkix-jdk18on'
-  api 'javax.xml.bind:jaxb-api', {
-    exclude group: 'javax.activation', module: 'javax.activation-api'
-  }
+  api 'jakarta.xml.bind:jakarta.xml.bind-api'
   api 'io.opentelemetry:opentelemetry-api'
 
   implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3'

@@ -1,8 +1,8 @@
 package org.sdase.commons.server.kafka.config;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
 
 public class ConsumerConfig {
 

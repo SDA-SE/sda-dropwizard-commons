@@ -1,8 +1,8 @@
 package org.sdase.commons.client.jersey.filter;
 
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientRequestFilter;
 import java.util.Optional;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
 
 /**
  * A {@link ClientRequestFilter} that adds a Http header if that header is not set yet and the

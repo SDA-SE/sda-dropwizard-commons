@@ -20,17 +20,15 @@ import io.prometheus.client.dropwizard.DropwizardExports;
 import io.prometheus.client.dropwizard.samplebuilder.CustomMappingSampleBuilder;
 import io.prometheus.client.dropwizard.samplebuilder.MapperConfig;
 import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
-import io.prometheus.client.exporter.MetricsServlet;
+import jakarta.ws.rs.container.DynamicFeature;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.FeatureContext;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.servlet.ServletRegistration;
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
 import org.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
 import org.sdase.commons.server.prometheus.health.HealthCheckMetricsCollector;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
@@ -43,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * Prometheus scrapes the gathered metrics.
  *
  * <p>To activate the bundle, there is a {@link #builder()} to be used in the {@link
- * io.dropwizard.Application#initialize(Bootstrap) initialize} method:
+ * io.dropwizard.core.Application#initialize(Bootstrap) initialize} method:
  *
  * <pre>{@code
  * public void initialize(final Bootstrap<AppConfig> bootstrap) {
@@ -336,9 +334,10 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
 
   private void registerMetricsServlet(AdminEnvironment environment) {
     // Prometheus Servlet registration
-    ServletRegistration.Dynamic dynamic = environment.addServlet("metrics", MetricsServlet.class);
+    // TODO fix prometheus metrics servlet
+    /*ServletRegistration.Dynamic dynamic = environment.addServlet("metrics", MetricsServlet.class);
     dynamic.addMapping(METRICS_SERVLET_URL);
-    LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);
+    LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);*/
   }
 
   private void registerHealthCheckServlet(AdminEnvironment environment) {

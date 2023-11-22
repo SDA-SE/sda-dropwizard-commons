@@ -1,12 +1,12 @@
 package org.sdase.commons.server.openapi;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import javax.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.Invocation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
