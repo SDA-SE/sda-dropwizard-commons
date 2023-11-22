@@ -4,12 +4,12 @@ import static java.lang.Boolean.TRUE;
 
 import io.dropwizard.core.server.AbstractServerFactory;
 import io.dropwizard.core.server.ServerFactory;
+import jakarta.ws.rs.HttpMethod;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.ws.rs.HttpMethod;
 import org.sdase.commons.server.security.exception.InsecureConfigurationException;
 
 /**

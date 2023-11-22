@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaDescription;
 import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaExamples;
 import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaTitle;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
-import javax.validation.constraints.NotNull;
 
 @JsonSchemaTitle("Car manufactured")
 @JsonSchemaDescription("A new car was manufactured")

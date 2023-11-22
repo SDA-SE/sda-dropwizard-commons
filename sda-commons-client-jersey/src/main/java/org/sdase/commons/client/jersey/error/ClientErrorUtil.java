@@ -1,12 +1,12 @@
 package org.sdase.commons.client.jersey.error;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import java.util.function.Supplier;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 import org.sdase.commons.shared.api.error.ApiError;
 
 /** A utility class to support handling of errors that are received from an outgoing request. */
@@ -197,7 +197,7 @@ public class ClientErrorUtil {
    * org.sdase.commons.client.jersey.builder.ExternalClientBuilder#buildGenericClient(String)
    * external generic client} to catch any {@link WebApplicationException} that is thrown during the
    * request and convert it into {@link ClientRequestException} that is properly handled by {@link
-   * javax.ws.rs.ext.ExceptionMapper}s for the incoming request.
+   * jakarta.ws.rs.ext.ExceptionMapper}s for the incoming request.
    *
    * <p>This conversion is not required for {@link
    * org.sdase.commons.client.jersey.builder.PlatformClientBuilder#api(Class) platform api clients}
@@ -241,12 +241,12 @@ public class ClientErrorUtil {
     /**
      * @return the value that is read from the response body, see
      *     <ul>
-     *       <li>{@link javax.ws.rs.client.Invocation.Builder#get(Class)}
-     *       <li>{@link javax.ws.rs.client.Invocation.Builder#get(GenericType)}
-     *       <li>{@link javax.ws.rs.client.Invocation.Builder#post(Entity, Class)}
-     *       <li>{@link javax.ws.rs.client.Invocation.Builder#post(Entity, GenericType)}
-     *       <li>{@link javax.ws.rs.client.Invocation.Builder#delete(Class)}
-     *       <li>{@link javax.ws.rs.client.Invocation.Builder#delete(GenericType)}
+     *       <li>{@link jakarta.ws.rs.client.Invocation.Builder#get(Class)}
+     *       <li>{@link jakarta.ws.rs.client.Invocation.Builder#get(GenericType)}
+     *       <li>{@link jakarta.ws.rs.client.Invocation.Builder#post(Entity, Class)}
+     *       <li>{@link jakarta.ws.rs.client.Invocation.Builder#post(Entity, GenericType)}
+     *       <li>{@link jakarta.ws.rs.client.Invocation.Builder#delete(Class)}
+     *       <li>{@link jakarta.ws.rs.client.Invocation.Builder#delete(GenericType)}
      *     </ul>
      *
      * @throws WebApplicationException if the request failed

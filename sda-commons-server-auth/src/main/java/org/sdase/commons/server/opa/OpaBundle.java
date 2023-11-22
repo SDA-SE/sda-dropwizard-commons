@@ -13,14 +13,13 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jackson.Jackson;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.process.internal.RequestScoped;
 import org.sdase.commons.server.opa.config.OpaClientConfiguration;
@@ -63,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * }</pre>
  *
  * <p>The filter evaluates the overall allow decision and adds the constraints to the {@link
- * javax.ws.rs.core.SecurityContext} as {@link OpaJwtPrincipal}.
+ * jakarta.ws.rs.core.SecurityContext} as {@link OpaJwtPrincipal}.
  *
  * <p>The endpoints for swagger are excluded from the OPA filter.
  */
@@ -174,13 +173,14 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
         config.getOpaClient() == null ? new OpaClientConfiguration() : config.getOpaClient();
 
     JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
-    jerseyClientBuilder.setApacheHttpClientBuilder(
-        new HttpClientBuilder(environment) {
-          @Override
-          protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
-            return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
-          }
-        });
+    /* TODO verify if this is necessary and how to implement ir  (OpenTelemetry)
+      jerseyClientBuilder.setApacheHttpClientBuilder(
+    new HttpClientBuilder(environment) {
+      @Override
+      protected org.apache.hc.core5.http.impl.client.HttpClientBuilder createBuilder() {
+        return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
+      }
+    });*/
 
     return jerseyClientBuilder.using(clientConfig).using(objectMapper).build("opaClient");
   }

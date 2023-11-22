@@ -1,7 +1,7 @@
 package org.sdase.commons.server.opa.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /** Configuration for requesting OPA PDP. */
 @SuppressWarnings("UnusedReturnValue")

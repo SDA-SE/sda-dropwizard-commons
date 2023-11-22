@@ -2,17 +2,17 @@ package org.sdase.commons.server.consumer.filter;
 
 import static java.util.stream.Collectors.toList;
 
+import jakarta.annotation.Priority;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import javax.annotation.Priority;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
 import org.sdase.commons.shared.api.error.ApiException;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.slf4j.MDC;

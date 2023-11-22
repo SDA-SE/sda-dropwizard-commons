@@ -9,8 +9,6 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.MediaType;
 import java.net.URI;
 import java.util.List;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.sdase.commons.client.jersey.clients.apia.ApiA;
 import org.sdase.commons.client.jersey.clients.apia.Car;
