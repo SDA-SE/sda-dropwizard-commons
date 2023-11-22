@@ -67,9 +67,8 @@ dependencies {
     api "commons-fileupload:commons-fileupload:1.5", {
       because "CVE-2023-24998 in 1.4"
     }
-    api "commons-codec:commons-codec:1.16.0", {
-      because "conflict between org.apache.httpcomponents:httpclient:4.5.12 and org.dbunit:dbunit:2.7.0"
-    }
+    api 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+    api 'org.apache.httpcomponents.client5:httpclient5-fluent:5.2.1'
     api "io.github.classgraph:classgraph:4.8.165", {
       because "conflict between io.swagger.core.v3:swagger-jaxrs2, io.swagger.core.v3:swagger-integration, dev.morphia.morphia:core and com.kjetland:mbknor-jackson-jsonschema_2.13 upgrade"
     }
@@ -137,8 +136,6 @@ dependencies {
     api "io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations-jakarta:$swaggerCoreV3Version"
-    api "io.swagger.core.v3:swagger-core-jakarta:$swaggerCoreV3Version"
-    api "io.swagger.core.v3:swagger-models-jakarta:$swaggerCoreV3Version"
     api "io.swagger.parser.v3:swagger-parser-v3:2.1.18"
 
     // sda-commons-server-prometheus
