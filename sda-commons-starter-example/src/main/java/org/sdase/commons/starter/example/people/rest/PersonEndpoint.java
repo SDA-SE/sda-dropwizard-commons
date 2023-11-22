@@ -1,20 +1,20 @@
 package org.sdase.commons.starter.example.people.rest;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import io.openapitools.jackson.dataformat.hal.HALLink;
+import jakarta.annotation.security.PermitAll;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.security.PermitAll;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 import org.sdase.commons.starter.example.people.db.PersonEntity;
 import org.sdase.commons.starter.example.people.db.PersonManager;

@@ -1,17 +1,17 @@
 package org.sdase.commons.server.opentelemetry.decorators;
 
-import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
-import static javax.ws.rs.core.HttpHeaders.COOKIE;
-import static javax.ws.rs.core.HttpHeaders.SET_COOKIE;
+import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.HttpHeaders.COOKIE;
+import static jakarta.ws.rs.core.HttpHeaders.SET_COOKIE;
 import static org.apache.commons.lang3.StringUtils.join;
 
 import io.opentelemetry.api.common.AttributeKey;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
 
 public class HeadersUtils {
 

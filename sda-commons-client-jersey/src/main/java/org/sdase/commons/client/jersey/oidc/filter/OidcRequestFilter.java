@@ -5,10 +5,10 @@
  */
 package org.sdase.commons.client.jersey.oidc.filter;
 
-import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientRequestFilter;
 import org.sdase.commons.client.jersey.ClientFactory;
 import org.sdase.commons.client.jersey.filter.AuthHeaderClientFilter;
 import org.sdase.commons.client.jersey.oidc.OidcClient;

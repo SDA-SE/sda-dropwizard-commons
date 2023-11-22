@@ -1,8 +1,8 @@
 package org.sdase.commons.server.opa.internal;
 
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
-import javax.inject.Inject;
-import javax.ws.rs.core.SecurityContext;
 import org.glassfish.hk2.api.Factory;
 import org.sdase.commons.server.opa.OpaJwtPrincipal;
 

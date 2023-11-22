@@ -8,7 +8,7 @@ import static org.sdase.commons.server.opa.testing.AbstractOpa.onAnyRequest;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

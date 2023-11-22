@@ -63,7 +63,7 @@ public class MyCdiApplication extends Application<MyConfiguration> {
 
    // ...
    
-   @javax.enterprise.inject.Produces
+   @jakarta.enterprise.inject.Produces
    public SessionFactory sessionFactory() {
       return hibernateBundle.sessionFactory();
    }

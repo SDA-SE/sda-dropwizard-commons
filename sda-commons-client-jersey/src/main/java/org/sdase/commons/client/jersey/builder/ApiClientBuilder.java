@@ -2,7 +2,7 @@ package org.sdase.commons.client.jersey.builder;
 
 import static org.sdase.commons.client.jersey.proxy.ApiClientInvocationHandler.createProxy;
 
-import javax.ws.rs.client.Client;
+import jakarta.ws.rs.client.Client;
 import org.glassfish.jersey.client.proxy.WebResourceFactory;
 
 /**

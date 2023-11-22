@@ -2,7 +2,7 @@ package org.sdase.commons.server.spring.data.mongo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mongodb.ConnectionString;
-import javax.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.AssertTrue;
 import org.apache.commons.lang3.StringUtils;
 
 public class MongoConfiguration {

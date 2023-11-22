@@ -8,12 +8,11 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
+import jakarta.ws.rs.client.Client;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.ScheduledExecutorService;
-import javax.ws.rs.client.Client;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.sdase.commons.server.auth.config.AuthConfig;
@@ -120,13 +119,14 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
       Environment environment, AuthConfig config, OpenTelemetry openTelemetry) {
     JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
     // should be set as soon as creating the builder
+    /* TODO verify if it need a replacement and how to do it (OpenTelemetry)
     jerseyClientBuilder.setApacheHttpClientBuilder(
-        new HttpClientBuilder(environment) {
-          @Override
-          protected org.apache.http.impl.client.HttpClientBuilder createBuilder() {
-            return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
-          }
-        });
+    new HttpClientBuilder(environment) {
+      @Override
+      protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder createBuilder() {
+        return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
+      }
+    });*/
 
     // a specific proxy configuration always overrides the system proxy
     if (config.getKeyLoaderClient() == null

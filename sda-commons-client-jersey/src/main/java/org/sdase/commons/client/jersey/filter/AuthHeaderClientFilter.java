@@ -2,9 +2,9 @@ package org.sdase.commons.client.jersey.filter;
 
 import static org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder.currentRequestContext;
 
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.HttpHeaders;
 import java.util.Optional;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.HttpHeaders;
 
 /**
  * A client filter that adds the {@code Authorization} header from the incoming request context to

@@ -2,12 +2,12 @@ package org.sdase.commons.server.security.filter;
 
 import static java.util.Arrays.asList;
 
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerResponseContext;
+import jakarta.ws.rs.container.ContainerResponseFilter;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
 
 /**
  * This filter adds headers to the response that enhance the security of web applications. Usually

@@ -2,8 +2,8 @@ package org.sdase.commons.server.jackson.filter;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.core.Feature;
+import jakarta.ws.rs.core.FeatureContext;
 import org.glassfish.jersey.InjectionManagerProvider;
 import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;

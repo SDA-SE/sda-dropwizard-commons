@@ -8,11 +8,11 @@ import static org.sdase.commons.server.testing.DropwizardConfigurationHelper.con
 import io.dropwizard.core.cli.Cli;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.util.JarLocation;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.Optional;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.weld.testing.test.AppConfiguration;

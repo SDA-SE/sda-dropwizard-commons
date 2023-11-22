@@ -1,6 +1,6 @@
 package org.sdase.commons.server.hibernate.test.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "person")

@@ -1,10 +1,10 @@
 package org.sdase.commons.server.spring.data.mongo.example.model;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;

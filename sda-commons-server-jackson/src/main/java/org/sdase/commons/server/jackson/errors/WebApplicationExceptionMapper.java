@@ -1,17 +1,17 @@
 package org.sdase.commons.server.jackson.errors;
 
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
 import java.util.Locale;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
 import org.sdase.commons.shared.api.error.ApiError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Mapper for {@link WebApplicationException}, that comprises {@link
- * javax.ws.rs.ClientErrorException} and {@link javax.ws.rs.ServerErrorException}.
+ * jakarta.ws.rs.ClientErrorException} and {@link jakarta.ws.rs.ServerErrorException}.
  *
  * <p>The mapper copies all header and creates a {@link ApiError} as message body with the exception
  * message as title.
