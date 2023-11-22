@@ -3,8 +3,8 @@ package org.sdase.commons.server.opentelemetry.servlet;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
-import javax.servlet.AsyncEvent;
-import javax.servlet.AsyncListener;
+import jakarta.servlet.AsyncEvent;
+import jakarta.servlet.AsyncListener;
 
 public class TracingAsyncListener implements AsyncListener {
   public static final AttributeKey<Long> REQUEST_TIMEOUT_ATTRIBUTE_KEY =

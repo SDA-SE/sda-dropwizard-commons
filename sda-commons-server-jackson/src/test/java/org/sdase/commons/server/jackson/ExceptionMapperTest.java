@@ -3,7 +3,7 @@ package org.sdase.commons.server.jackson;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.assertj.core.api.Assertions;
 import org.eclipse.jetty.io.EofException;
 import org.junit.jupiter.api.Test;

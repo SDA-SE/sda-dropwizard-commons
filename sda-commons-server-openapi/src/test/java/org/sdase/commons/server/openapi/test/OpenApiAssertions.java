@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.fail;
 
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 public final class OpenApiAssertions {
 

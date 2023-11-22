@@ -1,12 +1,12 @@
 package org.sdase.commons.server.jackson.hal;
 
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
