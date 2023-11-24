@@ -46,21 +46,21 @@ public class JacksonTypeScanner {
   static final String MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH = "<key>";
 
   /** The placeholder used in context keys for keys of a {@code Map}. */
-  static final String MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY =
+  static final String MAP_KEY_PLACEHOLDER_IN_CONTEXT_KEY =
       MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH.toUpperCase();
 
   /** The placeholder used in property paths for item indexes of an array. */
   static final String ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH = "<index>";
 
   /** The placeholder used in context keys for item indexes of an array. */
-  static final String ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY =
+  static final String ARRAY_INDEX_PLACEHOLDER_IN_CONTEXT_KEY =
       ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH.toUpperCase();
 
   /** The placeholder used in property paths for item indexes of an array. */
   static final String JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH = "<any>";
 
   /** The placeholder used in context keys for item indexes of an array. */
-  static final String JSON_NODE_PLACE_HOLDER_IN_CONTEXT_KEY =
+  static final String JSON_NODE_PLACEHOLDER_IN_CONTEXT_KEY =
       JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH.toUpperCase();
 
   private final ObjectMapper mapper;
