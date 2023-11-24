@@ -3,6 +3,7 @@ package org.sdase.commons.server.dropwizard.bundles.scanner;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.util.DataSize;
 import io.dropwizard.util.Duration;
@@ -54,6 +55,13 @@ public class JacksonTypeScanner {
   /** The placeholder used in context keys for item indexes of an array. */
   static final String ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY =
       ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH.toUpperCase();
+
+  /** The placeholder used in property paths for item indexes of an array. */
+  static final String JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH = "<any>";
+
+  /** The placeholder used in context keys for item indexes of an array. */
+  static final String JSON_NODE_PLACE_HOLDER_IN_CONTEXT_KEY =
+      JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH.toUpperCase();
 
   private final ObjectMapper mapper;
   private final Set<Class<?>> plainTypes;
@@ -125,6 +133,9 @@ public class JacksonTypeScanner {
             || propertyType.isEnumImplType()
             || isPlainType(propertyType)) {
           fields.add(new MappableField(newRootPath, propertyType.getRawClass()));
+        } else if (JsonNode.class.equals(propertyType.getRawClass())) {
+          newRootPath.add(JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH);
+          fields.add(new MappableField(newRootPath, propertyType.getRawClass()));
         } else if (propertyType.isArrayType() || propertyType.isCollectionLikeType()) {
           fields.addAll(createArrayFields(propertyType, newRootPath));
         } else if (Map.class.isAssignableFrom(propertyType.getRawClass())) {
@@ -156,6 +167,10 @@ public class JacksonTypeScanner {
     if (isPlainType(itemType)) {
       return List.of(new MappableField(newRootPath, propertyType.getRawClass()));
     }
+    if (JsonNode.class.equals(itemType.getRawClass())) {
+      newRootPath.add(JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH);
+      return List.of(new MappableField(newRootPath, propertyType.getRawClass()));
+    }
     if (itemType.isArrayType() || itemType.isCollectionLikeType()) {
       return createArrayFields(itemType, newRootPath);
     }
@@ -184,10 +199,13 @@ public class JacksonTypeScanner {
       if (isTypedMap(propertyType, String.class, String.class)) {
         return List.of(new MappableField(newRootPath, propertyType.getRawClass()));
       }
+      if (isTypedMap(propertyType, String.class, JsonNode.class)) {
+        newRootPath.add(JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH);
+        return List.of(new MappableField(newRootPath, JsonNode.class));
+      }
       if (isTypedMap(propertyType, String.class, Object.class)) {
         return scan(newRootPath, propertyType.findTypeParameters(Map.class)[1]);
       }
-      // TODO loggers.config = Map<String, JsonNode> -> ???
     } catch (Exception e) {
       LOG.debug("Failed to identify types of {} in {}", propertyType.getRawClass(), mapRootPath);
     }

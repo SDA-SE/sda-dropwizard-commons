@@ -3,6 +3,7 @@ package org.sdase.commons.server.dropwizard.bundles.scanner;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.DROPWIZARD_PLAIN_TYPES;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -97,6 +98,7 @@ class JacksonTypeScannerTest {
         .contains("HEALTH_RESPONDER_CACHECONTROLENABLED (boolean)")
         .contains("HEALTH_RESPONDER_CACHECONTROLVALUE (String)")
         .contains("HEALTH_SHUTDOWNWAITPERIOD (Duration)")
+        .contains("JSONNODE_<ANY> (JsonNode)")
         .contains("KAFKA_ADMINCONFIG_ADMINCLIENTREQUESTTIMEOUTMS (int)")
         .contains("KAFKA_ADMINCONFIG_ADMINENDPOINT_<INDEX> (Array)")
         .contains("KAFKA_ADMINCONFIG_ADMINSECURITY_PASSWORD (String)")
@@ -126,6 +128,7 @@ class JacksonTypeScannerTest {
         .contains("LISTOFLISTS_<INDEX>_<INDEX> (Array)")
         .contains("LISTOFMAPS_<INDEX>_<KEY> (Map)")
         .contains("LOGGING_LEVEL (String)")
+        .contains("LOGGING_LOGGERS_<KEY>_<ANY> (JsonNode)")
         .contains("METRICS_FREQUENCY (Duration)")
         .contains("METRICS_REPORTERS_<INDEX>_FREQUENCY (Duration)")
         .contains("METRICS_REPORTONSTOP (boolean)")
@@ -223,6 +226,8 @@ class JacksonTypeScannerTest {
 
     private List<Map<String, String>> listOfMaps;
 
+    private JsonNode jsonNode;
+
     public KafkaConfiguration getKafka() {
       return kafka;
     }
@@ -247,6 +252,15 @@ class JacksonTypeScannerTest {
 
     public CustomConfig setListOfMaps(List<Map<String, String>> listOfMaps) {
       this.listOfMaps = listOfMaps;
+      return this;
+    }
+
+    public JsonNode getJsonNode() {
+      return jsonNode;
+    }
+
+    public CustomConfig setJsonNode(JsonNode jsonNode) {
+      this.jsonNode = jsonNode;
       return this;
     }
   }

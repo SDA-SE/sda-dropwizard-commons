@@ -3,6 +3,7 @@ package org.sdase.commons.server.dropwizard.bundles.configuration.generic;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.params.provider.Arguments.of;
 import static org.sdase.commons.server.auth.config.KeyUriType.JWKS;
 import static org.sdase.commons.server.auth.config.KeyUriType.OPEN_ID_DISCOVERY;
@@ -10,6 +11,10 @@ import static org.sdase.commons.server.auth.config.KeyUriType.PEM;
 
 import com.codahale.metrics.annotation.ResponseMeteredLevel;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.TextNode;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
@@ -34,8 +39,11 @@ import org.junitpioneer.jupiter.SetSystemProperty;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
+import org.slf4j.LoggerFactory;
 
 class ConfigurationSubstitutionBundleGenericConfigTest {
+
+  static final JsonNodeFactory JSON_NODE_FACTORY = new ObjectMapper().getNodeFactory();
 
   @MethodSource
   @ParameterizedTest
@@ -119,6 +127,22 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
                         "https://idp.com")));
   }
 
+  @Test
+  @SetSystemProperty(key = "LOGGING_LOGGERS_com.sdase.cars.CarsApp", value = "TRACE")
+  @SetSystemProperty(key = "LOGGING_LOGGERS_com.sdase.drivers.DriversApp_level", value = "DEBUG")
+  void shouldSetLogLevels() throws Throwable {
+    startAppToTestConfiguration(
+        c ->
+            assertSoftly(
+                softly -> {
+                  var carsLogger = LoggerFactory.getLogger("com.sdase.cars.CarsApp");
+                  softly.assertThat(carsLogger.isTraceEnabled()).isTrue();
+                  var driversLogger = LoggerFactory.getLogger("com.sdase.drivers.DriversApp");
+                  softly.assertThat(driversLogger.isTraceEnabled()).isFalse();
+                  softly.assertThat(driversLogger.isDebugEnabled()).isTrue();
+                }));
+  }
+
   void assertValueInJavaObjectPath(
       Object actualConfiguration, List<String> expectedPath, Object expectedValue) {
     AbstractObjectAssert<?, ?> configAssert = assertThat(actualConfiguration);
@@ -131,6 +155,29 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
   static Stream<Arguments> shouldSetCommonValues() {
     return Stream.of(
         of("CHANGEDNAME", "Hello World!", List.of("originalName"), "Hello World!"),
+        of("UNCOMMON_JAVA_NAME", "Hello World!", List.of("uncommon_java_name"), "Hello World!"),
+        of("JSONNODE", "Hello!", List.of("jsonNode"), new TextNode("Hello!")),
+        of(
+            "JSONNODE_0",
+            "Hello",
+            List.of("jsonNode"),
+            JSON_NODE_FACTORY.arrayNode().add(new TextNode("Hello"))),
+        of(
+            "JSONNODE_foo",
+            "bar",
+            List.of("jsonNode"),
+            JSON_NODE_FACTORY.objectNode().put("foo", "bar")),
+        of(
+            "JSONNODE_foo_0_bar",
+            "Hello",
+            List.of("jsonNode"),
+            JSON_NODE_FACTORY
+                .objectNode()
+                .set(
+                    "foo",
+                    JSON_NODE_FACTORY
+                        .arrayNode()
+                        .add(JSON_NODE_FACTORY.objectNode().put("bar", "Hello")))),
         of("SERVER_GZIP_ENABLED", "true", List.of("server", "gzip", "enabled"), true),
         of("SERVER_GZIP_ENABLED", "false", List.of("server", "gzip", "enabled"), false),
         of(
@@ -246,6 +293,10 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
 
     private List<Map<String, String>> listOfMaps;
 
+    private String uncommon_java_name;
+
+    private JsonNode jsonNode;
+
     public String getOriginalName() {
       return originalName;
     }
@@ -325,6 +376,24 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
 
     public TestConfiguration setListOfMaps(List<Map<String, String>> listOfMaps) {
       this.listOfMaps = listOfMaps;
+      return this;
+    }
+
+    public String getUncommon_java_name() {
+      return uncommon_java_name;
+    }
+
+    public TestConfiguration setUncommon_java_name(String uncommon_java_name) {
+      this.uncommon_java_name = uncommon_java_name;
+      return this;
+    }
+
+    public JsonNode getJsonNode() {
+      return jsonNode;
+    }
+
+    public TestConfiguration setJsonNode(JsonNode jsonNode) {
+      this.jsonNode = jsonNode;
       return this;
     }
   }
