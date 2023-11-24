@@ -13,6 +13,7 @@ import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.validation.Validator;
 import org.apache.commons.text.lookup.StringLookup;
@@ -78,7 +79,11 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
   private void configure(JsonNode baseNode, MappableField mappableField) {
     String value = configurationRuntimeContext.getValue(mappableField.getContextKey());
     try {
-      String jsonPathOfField = String.join(".", mappableField.getJsonPathToProperty());
+      String jsonPathOfField =
+          mappableField.getJsonPathToProperty().stream()
+              // Dropwizard override convention: field names with . must be escaped
+              .map(p -> p.replace(".", "\\."))
+              .collect(Collectors.joining("."));
       addOverride(baseNode, jsonPathOfField, value);
     } catch (IllegalArgumentException e) {
       LOG.info(
