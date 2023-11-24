@@ -1,11 +1,11 @@
 package org.sdase.commons.server.dropwizard.bundles.scanner;
 
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH;
-import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY;
+import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.ARRAY_INDEX_PLACEHOLDER_IN_CONTEXT_KEY;
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH;
-import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.JSON_NODE_PLACE_HOLDER_IN_CONTEXT_KEY;
+import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.JSON_NODE_PLACEHOLDER_IN_CONTEXT_KEY;
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH;
-import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY;
+import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.MAP_KEY_PLACEHOLDER_IN_CONTEXT_KEY;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -39,9 +39,9 @@ public class MappableField implements Comparable<MappableField> {
           JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH);
   private static final Set<String> CONTEXT_KEY_PLACEHOLDERS =
       Set.of(
-          MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY,
-          ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY,
-          JSON_NODE_PLACE_HOLDER_IN_CONTEXT_KEY);
+          MAP_KEY_PLACEHOLDER_IN_CONTEXT_KEY,
+          ARRAY_INDEX_PLACEHOLDER_IN_CONTEXT_KEY,
+          JSON_NODE_PLACEHOLDER_IN_CONTEXT_KEY);
 
   private final List<String> jsonPathToProperty;
   private final Type propertyType;
@@ -180,12 +180,12 @@ public class MappableField implements Comparable<MappableField> {
 
   private Pattern createExpandPattern(String environmentVariableName) {
     var envWithMapKeyPattern =
-        environmentVariableName.replace(MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY, "(.*)");
+        environmentVariableName.replace(MAP_KEY_PLACEHOLDER_IN_CONTEXT_KEY, "(.*)");
     var envWithMapKeyAndArrayIndexPattern =
-        envWithMapKeyPattern.replace(ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY, "(\\d*)");
+        envWithMapKeyPattern.replace(ARRAY_INDEX_PLACEHOLDER_IN_CONTEXT_KEY, "(\\d*)");
     var envWithMapKeyAndArrayIndexAndAnyPattern =
         envWithMapKeyAndArrayIndexPattern.replace(
-            "_" + JSON_NODE_PLACE_HOLDER_IN_CONTEXT_KEY, "(_.+|$)");
+            "_" + JSON_NODE_PLACEHOLDER_IN_CONTEXT_KEY, "(_.+|$)");
     return Pattern.compile("^" + envWithMapKeyAndArrayIndexAndAnyPattern + "$");
   }
 
