@@ -2,6 +2,8 @@ package org.sdase.commons.server.dropwizard.bundles.scanner;
 
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH;
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY;
+import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH;
+import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.JSON_NODE_PLACE_HOLDER_IN_CONTEXT_KEY;
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH;
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY;
 
@@ -15,7 +17,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Represents a field in a configuration class that can be set from a property in the context. The
@@ -30,9 +34,14 @@ import javax.validation.constraints.NotNull;
 public class MappableField implements Comparable<MappableField> {
   private static final Set<String> DIRECT_REPLACEMENT_PATH_PROPERTY_PLACEHOLDERS =
       Set.of(
-          MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH, ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH);
+          MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH,
+          ARRAY_INDEX_PLACEHOLDER_IN_CONFIGURATION_PATH,
+          JSON_NODE_PLACEHOLDER_IN_CONFIGURATION_PATH);
   private static final Set<String> CONTEXT_KEY_PLACEHOLDERS =
-      Set.of(MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY, ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY);
+      Set.of(
+          MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY,
+          ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY,
+          JSON_NODE_PLACE_HOLDER_IN_CONTEXT_KEY);
 
   private final List<String> jsonPathToProperty;
   private final Type propertyType;
@@ -143,7 +152,13 @@ public class MappableField implements Comparable<MappableField> {
         }
       }
     }
-    return new MappableField(newPath, newEnvironmentVariableName, propertyType);
+    var expandedNewPath =
+        newPath.stream()
+            .map(p -> p.split("_"))
+            .flatMap(Stream::of)
+            .filter(StringUtils::isNotBlank)
+            .collect(Collectors.toList());
+    return new MappableField(expandedNewPath, newEnvironmentVariableName, propertyType);
   }
 
   private String createPropertyTypeDescription(Type type) {
@@ -168,7 +183,10 @@ public class MappableField implements Comparable<MappableField> {
         environmentVariableName.replace(MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY, "(.*)");
     var envWithMapKeyAndArrayIndexPattern =
         envWithMapKeyPattern.replace(ARRAY_INDEX_PLACE_HOLDER_IN_CONTEXT_KEY, "(\\d*)");
-    return Pattern.compile("^" + envWithMapKeyAndArrayIndexPattern + "$");
+    var envWithMapKeyAndArrayIndexAndAnyPattern =
+        envWithMapKeyAndArrayIndexPattern.replace(
+            "_" + JSON_NODE_PLACE_HOLDER_IN_CONTEXT_KEY, "(_.+|$)");
+    return Pattern.compile("^" + envWithMapKeyAndArrayIndexAndAnyPattern + "$");
   }
 
   @Override
