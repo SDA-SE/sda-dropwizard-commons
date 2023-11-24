@@ -161,6 +161,21 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
         of("LISTOFMAPS_0_foo", "bar", List.of("listOfMaps"), List.of(Map.of("foo", "bar"))),
         of("MAPSTRINGSTRING_foo", "bar", List.of("mapStringString", "foo"), "bar"),
         of(
+            "MAPSTRINGSTRING_kafka.config.trust.path",
+            "/bundle.pem",
+            List.of("mapStringString"),
+            Map.of("kafka.config.trust.path", "/bundle.pem")),
+        of(
+            "MAPSTRINGSTRINGINITIALIZED_kafka.config.trust.path",
+            "/bundle.pem",
+            List.of("mapStringStringInitialized"),
+            Map.of("kafka.config.trust.path", "/bundle.pem")),
+        of(
+            "MAPSTRINGSTRING_kafka-topic-foo",
+            "events-everywhere",
+            List.of("mapStringString", "kafka-topic-foo"),
+            "events-everywhere"),
+        of(
             "KAFKA_PRODUCERS_fooSender_CONFIG_auth",
             "admin",
             List.of("kafka", "producers", "fooSender", "config", "auth"),
@@ -217,11 +232,13 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
 
     private AuthConfig auth = new AuthConfig();
 
-    private KafkaConfiguration kafka = new KafkaConfiguration(); // must be initialized
+    private KafkaConfiguration kafka;
 
     @NotNull private String forTestingCommandOnly = "foo";
 
-    private Map<String, String> mapStringString = new LinkedHashMap<>(); // maps must be initialized
+    private Map<String, String> mapStringString;
+
+    private Map<String, String> mapStringStringInitialized = new LinkedHashMap<>();
 
     private RecursiveDesaster recursive = new RecursiveDesaster();
 
@@ -271,6 +288,16 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
 
     public TestConfiguration setMapStringString(Map<String, String> mapStringString) {
       this.mapStringString = mapStringString;
+      return this;
+    }
+
+    public Map<String, String> getMapStringStringInitialized() {
+      return mapStringStringInitialized;
+    }
+
+    public TestConfiguration setMapStringStringInitialized(
+        Map<String, String> mapStringStringInitialized) {
+      this.mapStringStringInitialized = mapStringStringInitialized;
       return this;
     }
 
