@@ -1,9 +1,7 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
 
-  api 'io.dropwizard:dropwizard-testing', {
-    exclude group: 'junit', module: 'junit'
-  }
+  api 'io.dropwizard:dropwizard-testing'
   api 'jakarta.servlet:jakarta.servlet-api'
   api 'jakarta.xml.bind:jakarta.xml.bind-api'
 
@@ -19,5 +17,4 @@ dependencies {
   api 'org.mockito:mockito-junit-jupiter'
 
   runtimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-  runtimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
