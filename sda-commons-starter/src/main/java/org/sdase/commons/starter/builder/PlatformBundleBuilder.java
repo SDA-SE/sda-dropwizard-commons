@@ -14,7 +14,7 @@ public interface PlatformBundleBuilder<C extends Configuration>
 
   /**
    * Builds the configured {@link SdaPlatformBundle} which must be added to the {@link Bootstrap} in
-   * {@link io.dropwizard.Application#initialize(Bootstrap)}.
+   * {@link io.dropwizard.core.Application#initialize(Bootstrap)}.
    *
    * @return the configured {@link SdaPlatformBundle}
    */
