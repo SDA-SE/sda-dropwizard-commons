@@ -3,15 +3,15 @@ package org.sdase.commons.server.dropwizard.bundles.configuration.generic;
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.DROPWIZARD_PLAIN_TYPES;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Configuration;
-import io.dropwizard.cli.ConfiguredCommand;
-import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.cli.ConfiguredCommand;
+import io.dropwizard.core.setup.Bootstrap;
 import java.util.stream.Collectors;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner;
 
 /**
- * A {@link io.dropwizard.cli.Command} that documents the configuration keys as {@linkplain
+ * A {@link io.dropwizard.core.cli.Command} that documents the configuration keys as {@linkplain
  * System#out standard output} that are discovered dynamically by the {@link JacksonTypeScanner}.
  *
  * @param <T> the type of the configuration class of this service

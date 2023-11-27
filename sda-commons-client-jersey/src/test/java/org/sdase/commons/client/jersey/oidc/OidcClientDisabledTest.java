@@ -12,15 +12,17 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.apache.http.HttpHeaders.ACCEPT;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.apache.hc.core5.http.HttpHeaders.ACCEPT;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.MetricFilter;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import com.github.tomakehurst.wiremock.jetty.JettyHttpServerFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.io.IOException;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -82,9 +84,11 @@ class OidcClientDisabledTest {
                     .withHeader(CONTENT_TYPE, APPLICATION_JSON)
                     .withBody(
                         DW.getObjectMapper()
-                            .readValue(
-                                getClass().getResource("fixtures/tokenResponse.json"),
-                                String.class))));
+                            .writeValueAsBytes(
+                                DW.getObjectMapper()
+                                    .readValue(
+                                        getClass().getResource("/fixtures/tokenResponse.json"),
+                                        new TypeReference<Map<String, Object>>() {})))));
   }
 
   @Test

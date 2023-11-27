@@ -40,11 +40,11 @@ public class ClientRequestExceptionMapper implements ExceptionMapper<ClientReque
   }
 
   private String createTitle(ClientRequestException clientRequestException) {
-    if (clientRequestException.isReadTimeout()) {
-      return createTitle(READ_TIMEOUT_SUBTITLE);
-    }
     if (clientRequestException.isConnectTimeout()) {
       return createTitle(CONNECT_TIMEOUT_SUBTITLE);
+    }
+    if (clientRequestException.isReadTimeout()) {
+      return createTitle(READ_TIMEOUT_SUBTITLE);
     }
     if (clientRequestException.isProcessingError()) {
       return createTitle(PROCESSING_SUBTITLE);

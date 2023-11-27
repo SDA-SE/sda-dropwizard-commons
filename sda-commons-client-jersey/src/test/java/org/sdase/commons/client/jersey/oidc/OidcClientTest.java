@@ -20,10 +20,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.given;
 
 import com.codahale.metrics.MetricFilter;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import com.github.tomakehurst.wiremock.jetty.JettyHttpServerFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import java.io.IOException;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -57,7 +59,7 @@ class OidcClientTest {
   private ClientTestApp app;
 
   @BeforeEach
-  void before() throws JsonProcessingException {
+  void before() throws IOException {
     WIRE.resetAll();
     app = DW.getApplication();
     app.getOidcClient().clearCache();
@@ -87,7 +89,11 @@ class OidcClientTest {
                     .withHeader(CONTENT_TYPE, APPLICATION_JSON)
                     .withBody(
                         DW.getObjectMapper()
-                            .readValue("fixtures/tokenResponse.json", String.class))));
+                            .writeValueAsBytes(
+                                DW.getObjectMapper()
+                                    .readValue(
+                                        getClass().getResource("/fixtures/tokenResponse.json"),
+                                        new TypeReference<Map<String, Object>>() {})))));
   }
 
   @Test
