@@ -31,8 +31,8 @@ To bootstrap a Dropwizard application for the SDA Platform only the
 API should be documented with Swagger annotations: 
 
 ```java
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import SdaPlatformBundle;

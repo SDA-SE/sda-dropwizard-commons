@@ -8,7 +8,7 @@ import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.hc.client5.http.ConnectTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.client.jersey.error.ClientRequestException;
 

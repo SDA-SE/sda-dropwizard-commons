@@ -10,8 +10,9 @@ import io.dropwizard.lifecycle.Managed;
 public interface ManagedShutdownListener extends Managed {
 
   /**
-   * To be used with {@linkplain io.dropwizard.setup.Environment#lifecycle() lifecycle} {@linkplain
-   * io.dropwizard.lifecycle.setup.LifecycleEnvironment#manage(Managed) manage} to avoid casting.
+   * To be used with {@linkplain io.dropwizard.core.setup.Environment#lifecycle() lifecycle}
+   * {@linkplain io.dropwizard.lifecycle.setup.LifecycleEnvironment#manage(Managed) manage} to avoid
+   * casting.
    *
    * <ul>
    *   <li>{@code environment.lifecycle().manage(onShutdown(myResource::close));}
