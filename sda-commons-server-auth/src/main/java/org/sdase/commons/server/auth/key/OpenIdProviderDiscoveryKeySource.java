@@ -37,7 +37,7 @@ public class OpenIdProviderDiscoveryKeySource implements KeySource {
    * @param issuerUrl the url of the issuer without the {@link #DISCOVERY_PATH}, e.g. {@code
    *     http://keycloak.example.com/auth/realms/my-realm}
    * @param client the client used to execute the discovery request, may be created from the
-   *     application {@link io.dropwizard.setup.Environment} using {@link
+   *     application {@link io.dropwizard.core.setup.Environment} using {@link
    *     io.dropwizard.client.JerseyClientBuilder}
    * @param requiredIssuer the required value of the issuer claim of the token in conjunction to the
    *     current key
