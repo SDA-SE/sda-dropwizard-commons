@@ -6,8 +6,10 @@ dependencies {
     exclude group: 'net.minidev', module:'json-smart'
     // prefer managed version from dropwizard
     exclude group: 'org.eclipse.jetty', module: 'jetty-bom'
+    exclude group: 'commons-io', module: 'commons-io'
   }
   api 'net.minidev:json-smart'
+  api 'commons-io:commons-io'
 
   // Note about 'httpclient': We added the dependency for backwards compatibility
   // It was pulled in by wiremock-jre8 <= 2.31.0
