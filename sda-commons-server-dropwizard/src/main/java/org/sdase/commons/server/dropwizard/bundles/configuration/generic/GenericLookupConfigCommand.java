@@ -65,12 +65,12 @@ public class GenericLookupConfigCommand<T extends Configuration> extends Configu
           "`<ANY>` is also placeholder to build a hierarchy with keys or indexes separated by",
           "underscores.",
           "Therefore, keys of such Maps can't contain underscores.",
-          "%s",
+          "%s", // logging example if available
           "",
           "The following dynamically discovered environment variables may interfere with pre-defined",
           "variables in the configuration yaml file:",
           "",
-          "%s",
+          "%s", // discovered properties
           "");
 
   /**
