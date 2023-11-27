@@ -18,6 +18,10 @@ import org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner;
  */
 public class GenericLookupConfigCommand<T extends Configuration> extends ConfiguredCommand<T> {
 
+  private static final String KNOWN_LOGGING_KEY = "LOGGING_LOGGERS_<KEY>_<ANY>";
+  private static final String LOGGING_EXAMPLE =
+      "Example: `LOGGING_LOGGERS_com.example.ExampleService=WARN`";
+
   private static final String HELP_TEMPLATE =
       // next major: make it a multiline String when Java 11 is not supported anymore
       String.join(
@@ -61,6 +65,7 @@ public class GenericLookupConfigCommand<T extends Configuration> extends Configu
           "`<ANY>` is also placeholder to build a hierarchy with keys or indexes separated by",
           "underscores.",
           "Therefore, keys of such Maps can't contain underscores.",
+          "%s",
           "",
           "The following dynamically discovered environment variables may interfere with pre-defined",
           "variables in the configuration yaml file:",
@@ -84,12 +89,13 @@ public class GenericLookupConfigCommand<T extends Configuration> extends Configu
     String configurationHints =
         new JacksonTypeScanner(objectMapper, DROPWIZARD_PLAIN_TYPES)
             .createConfigurationHints(configurationClass);
+    String loggerExample = configurationHints.contains(KNOWN_LOGGING_KEY) ? LOGGING_EXAMPLE : "";
     String propertiesAsList =
         configurationHints
             .lines()
             .map(l -> String.format("- `%s`", l))
             .collect(Collectors.joining("\n"));
-    return String.format(HELP_TEMPLATE, propertiesAsList);
+    return String.format(HELP_TEMPLATE, loggerExample, propertiesAsList);
   }
 
   public GenericLookupConfigCommand() {
