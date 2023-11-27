@@ -53,7 +53,7 @@ public class JwksKeySource implements KeySource {
    *     Set</a> as Json, e.g. {@code
    *     http://keycloak.example.com/auth/realms/sda-reference-solution/protocol/openid-connect/certs}
    * @param client the client used to execute the discovery request, may be created from the
-   *     application {@link io.dropwizard.setup.Environment} using {@link
+   *     application {@link io.dropwizard.core.setup.Environment} using {@link
    *     io.dropwizard.client.JerseyClientBuilder}
    * @param requiredIssuer the required value of the issuer claim of the token in conjunction to the
    *     current key.

@@ -5,6 +5,7 @@ import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeSca
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.MAP_KEY_PLACEHOLDER_IN_CONFIGURATION_PATH;
 import static org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner.MAP_KEY_PLACE_HOLDER_IN_CONTEXT_KEY;
 
+import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +16,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.validation.constraints.NotNull;
 
 /**
  * Represents a field in a configuration class that can be set from a property in the context. The

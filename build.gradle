@@ -239,6 +239,7 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     all*.exclude group: 'commons-logging', module: 'commons-logging' // prefer jcl-over-slf4j
     all*. exclude group: 'org.eclipse.jetty.toolchain', module: 'jetty-jakarta-servlet-api' // prefer jakarta.servlet:jakarta-servlet-api
     all*. exclude group: 'com.sun.activation', module: 'jakarta.activation' // prefer jakarta.servlet:jakarta-activation
+    all*. exclude group : 'org.apache.httpcomponents', module: 'httpclient' // prefer org.apache.httpcomponents.client5
   }
 
   test {
