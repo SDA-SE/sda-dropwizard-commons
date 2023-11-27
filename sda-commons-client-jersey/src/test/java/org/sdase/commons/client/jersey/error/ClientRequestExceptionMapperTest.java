@@ -1,6 +1,6 @@
 package org.sdase.commons.client.jersey.error;
 
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -13,6 +13,7 @@ import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.net.SocketTimeoutException;
+import org.apache.hc.client5.http.ConnectTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.shared.api.error.ApiError;
 
@@ -95,7 +96,9 @@ class ClientRequestExceptionMapperTest {
   @Test
   void mapConnectionTimeout() {
     ClientRequestException exception =
-        new ClientRequestException(new ProcessingException(new ConnectTimeoutException()));
+        new ClientRequestException(
+            new ProcessingException(
+                new ConnectTimeoutException(ConnectTimeoutException.class.descriptorString())));
 
     Response response = clientRequestExceptionMapper.toResponse(exception);
 
@@ -107,7 +110,7 @@ class ClientRequestExceptionMapperTest {
         .extracting(ApiError::getTitle)
         .asString()
         .isNotBlank()
-        .containsIgnoringCase("connect")
+        .containsIgnoringCase("Connect")
         .containsIgnoringCase("timeout");
   }
 

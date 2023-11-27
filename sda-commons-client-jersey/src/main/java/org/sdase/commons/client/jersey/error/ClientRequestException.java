@@ -6,7 +6,7 @@ import jakarta.ws.rs.core.Response;
 import java.io.Closeable;
 import java.net.SocketTimeoutException;
 import java.util.Optional;
-import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.hc.client5.http.ConnectTimeoutException;
 
 /**
  * Exception that wraps any {@link jakarta.ws.rs.WebApplicationException} that occurred in a Http
