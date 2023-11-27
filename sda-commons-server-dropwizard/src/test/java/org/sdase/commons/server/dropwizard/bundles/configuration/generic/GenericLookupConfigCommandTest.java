@@ -29,7 +29,8 @@ class GenericLookupConfigCommandTest {
                       .contains("dynamically discovered environment variables")
                       .contains("SERVER_GZIP_MINIMUMENTITYSIZE (DataSize)")
                       .contains("CHANGEDNAME (String)")
-                      .contains("MAPSTRINGSTRING_<KEY> (Map)"));
+                      .contains("MAPSTRINGSTRING_<KEY> (Map)")
+                      .contains("Example: `LOGGING_LOGGERS_com.example.ExampleService=WARN`"));
     } finally {
       testSupport.after();
     }
