@@ -308,7 +308,7 @@ the application:
 
 ```java
 import PrometheusBundle;
-import io.dropwizard.Application;
+import io.dropwizard.core.Application;
 
 public class MyApplication extends Application<MyConfiguration> {
    
