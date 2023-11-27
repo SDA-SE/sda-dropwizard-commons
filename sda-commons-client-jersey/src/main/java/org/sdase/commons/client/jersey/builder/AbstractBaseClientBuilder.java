@@ -10,7 +10,7 @@ import jakarta.ws.rs.core.Feature;
 import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
 import org.slf4j.Logger;

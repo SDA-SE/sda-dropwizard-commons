@@ -13,10 +13,13 @@ import java.util.Optional;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.shared.certificates.ca.ssl.CertificateReader;
 import org.sdase.commons.shared.certificates.ca.ssl.SslUtil;
@@ -51,14 +54,23 @@ class CaCertificatesBundleHttpsIT {
     SSLContext sslContext =
         SslUtil.createSslContext(SslUtil.createTruststoreFromPemKey(pemContent.get()));
 
-    assertThat(callSecureEndpointWithSSLContext(sslContext).getStatusLine().getStatusCode())
-        .isEqualTo(200);
+    assertThat(callSecureEndpointWithSSLContext(sslContext).getCode()).isEqualTo(200);
   }
 
   static CloseableHttpResponse callSecureEndpointWithSSLContext(SSLContext sslContext)
       throws IOException {
-    CloseableHttpClient httpclient = HttpClients.custom().setSSLContext(sslContext).build();
-    return httpclient.execute(new HttpGet(securedHost));
+
+    final SSLConnectionSocketFactory sslSocketFactory =
+        SSLConnectionSocketFactoryBuilder.create().setSslContext(sslContext).build();
+    final HttpClientConnectionManager cm =
+        PoolingHttpClientConnectionManagerBuilder.create()
+            .setSSLSocketFactory(sslSocketFactory)
+            .build();
+    return HttpClients.custom()
+        .setConnectionManager(cm)
+        .evictExpiredConnections()
+        .build()
+        .execute(new HttpGet(securedHost));
   }
 
   private static SSLContext createSSlContextWithoutDefaultMerging(String pemContent)
