@@ -3,8 +3,7 @@ package org.sdase.commons.server.opentelemetry.client;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.apachehttpclient.v4_3.ApacheHttpClientTelemetry;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 
 /**
  * A {@link HttpClientBuilder} that is enhanced with tracing capabilities. This can be used with
