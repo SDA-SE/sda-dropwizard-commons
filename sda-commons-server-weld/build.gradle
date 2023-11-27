@@ -13,24 +13,7 @@ dependencies {
     /**
      * Dropwizard manages jakarta.el from Glassfish
      */
-    exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
     exclude group: 'jakarta.el', module: 'jakarta.el-api'
-
-    /**
-     * Weld itself has concurrent transitive dependencies:
-     * jakarta.interceptor:jakarta.interceptor-api:1.2.5 and
-     * org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.2_spec:2.0.0.Final with identical
-     * classes. This causes duplicate classes in the application. We keep the official dependency.
-     * When Weld is upgraded we need to check if jakarta.interceptor:jakarta.interceptor-api is
-     * still in place.
-     */
-    exclude group: 'org.jboss.spec.javax.interceptor', module: 'jboss-interceptors-api_1.2_spec'
-    /**
-     * Dropwizard manages jakarta.annotation:jakarta.annotation-api while Weld brings
-     * org.jboss.spec.jakarta.annotation:jboss-annotations-api_1.3_spec. Both have identical contents.
-     * We keep the version managed by Dropwizard.
-     */
-    exclude group: 'org.jboss.spec.javax.annotation', module: 'jboss-annotations-api_1.3_spec'
 
     /**
      * The probe bundle is responsible for most vulnerabilities in the weld bundle.
@@ -42,7 +25,6 @@ dependencies {
     /**
      * Dropwizard manages jakarta.el from Glassfish
      */
-    exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
     exclude group: 'jakarta.el', module: 'jakarta.el-api'
 
     exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
@@ -52,21 +34,6 @@ dependencies {
      * Both contain the same classes.
      */
     exclude group: 'jakarta.inject', module: 'jakarta.inject-api'
-    /**
-     * Weld itself has concurrent transitive dependencies:
-     * jakarta.interceptor:jakarta.interceptor-api:1.2.5 and
-     * org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.2_spec:2.0.0.Final with identical
-     * classes. This causes duplicate classes in the application. We keep the official dependency.
-     * When Weld is upgraded we need to check if jakarta.interceptor:jakarta.interceptor-api is
-     * still in place.
-     */
-    exclude group: 'org.jboss.spec.javax.interceptor', module: 'jboss-interceptors-api_1.2_spec'
-    /**
-     * Dropwizard manages jakarta.annotation:jakarta.annotation-api while Weld brings
-     * org.jboss.spec.jakarta.annotation:jboss-annotations-api_1.3_spec. Both have identical contents.
-     * We keep the version managed by Dropwizard.
-     */
-    exclude group: 'org.jboss.spec.javax.annotation', module: 'jboss-annotations-api_1.3_spec'
 
     /**
      * The probe bundle is responsible for most vulnerabilities in the weld bundle.

@@ -40,7 +40,7 @@ In the application class, the bundle is added in the `initialize` method:
 
 ```java
 import JacksonConfigurationBundle;
-import io.dropwizard.Application;
+import io.dropwizard.core.Application;
 
 public class MyApplication extends Application<MyConfiguration> {
     
