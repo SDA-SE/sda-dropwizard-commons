@@ -11,7 +11,7 @@ dependencies {
   api 'jakarta.xml.bind:jakarta.xml.bind-api'
   api 'io.opentelemetry:opentelemetry-api'
 
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3'
+  implementation 'io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')

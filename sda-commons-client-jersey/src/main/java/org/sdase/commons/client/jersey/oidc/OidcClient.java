@@ -42,6 +42,8 @@ public class OidcClient {
 
   /**
    * Retrieves a new access token from the token endpoint using the given {@link OidcConfiguration}.
+   *
+   * @return OidcResult with the state and the token (if authorized)
    */
   public synchronized OidcResult createAccessToken() {
     if (config.isDisabled()) {

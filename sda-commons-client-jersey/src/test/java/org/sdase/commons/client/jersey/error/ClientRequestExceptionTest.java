@@ -25,7 +25,7 @@ import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import java.net.SocketTimeoutException;
-import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.hc.client5.http.ConnectTimeoutException;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,7 +90,9 @@ class ClientRequestExceptionTest {
         .isThrownBy(
             () -> {
               throw new ClientRequestException(
-                  new ProcessingException(new ConnectTimeoutException()));
+                  new ProcessingException(
+                      new ConnectTimeoutException(
+                          ConnectTimeoutException.class.descriptorString())));
             })
         .is(timeoutError())
         .is(connectTimeoutError())

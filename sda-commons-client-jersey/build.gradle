@@ -13,7 +13,9 @@ dependencies {
   }
   api 'io.opentelemetry:opentelemetry-api'
 
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-4.3'
+  implementation 'io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0'
+
+  api 'io.opentelemetry:opentelemetry-semconv'
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey-wiremock-testing')
