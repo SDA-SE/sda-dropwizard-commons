@@ -7,7 +7,7 @@ The module also creating server traces to insure proper context propagation.
 An extensive documentation can be found in [OpenTelemetry Java documentation](https://opentelemetry.io/docs/instrumentation/java/).
 
 ## Migrating from OpenTracing
-Here you can find a [migration guide](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/MIGRATION_GUIDE.md), if you use OpenTracing on your project.
+Here you can find a [migration guide](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/docs/migration-guides/MIGRATION_GUIDE_v2_to_v3.md), if you use OpenTracing on your project.
 
 ## Usage
 
