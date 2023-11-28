@@ -21,21 +21,34 @@ import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.ImmutableNet;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
+import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
 import de.flapdoodle.embed.mongo.transitions.ImmutableMongod;
 import de.flapdoodle.embed.mongo.transitions.Mongod;
+import de.flapdoodle.embed.process.config.store.ImmutablePackage;
+import de.flapdoodle.embed.process.config.store.Package;
+import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.embed.process.distribution.Version;
+import de.flapdoodle.os.CommonOS;
+import de.flapdoodle.os.Platform;
+import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.transitions.ImmutableStart;
 import de.flapdoodle.reverse.transitions.Start;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
-import org.sdase.commons.server.mongo.testing.internal.DownloadConfigFactoryUtil;
+import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 
 public class StartLocalMongoDb {
+
+  private static final String EMBEDDED_MONGO_DOWNLOAD_PATH_ENV_NAME =
+      "EMBEDDED_MONGO_DOWNLOAD_PATH";
 
   private final boolean enableScripting;
   protected final IFeatureAwareVersion version;
@@ -92,10 +105,8 @@ public class StartLocalMongoDb {
       ImmutableMongod.Builder mongodBuilder =
           Mongod.builder()
               .net(createNet(host, serverPort))
-              .mongodArguments(createMongodArguments())
-              .downloadPackage(DownloadConfigFactoryUtil.createDownloadPackage());
-      DownloadConfigFactoryUtil.createPackageOfDistribution(version)
-          .ifPresent(mongodBuilder::packageOfDistribution);
+              .mongodArguments(createMongodArguments());
+      createPackageOfDistribution(version).ifPresent(mongodBuilder::packageOfDistribution);
 
       Mongod mongod = mongodBuilder.build();
 
@@ -161,6 +172,30 @@ public class StartLocalMongoDb {
 
     return Start.to(MongodArguments.class)
         .initializedWith(MongodArguments.defaults().withArgs(extraArgs));
+  }
+
+  private Optional<Transition<Package>> createPackageOfDistribution(Version version) {
+    // Normally the mongod executable is downloaded directly from the
+    // mongodb web page, however sometimes this behavior is undesired. Some
+    // cases are proxy servers, missing internet access, or not wanting to
+    // download executables from untrusted sources.
+    //
+    // Optional it is possible to download it from a source configured in
+    // the environment variable:
+    String embeddedMongoDownloadPath =
+        new SystemPropertyAndEnvironmentLookup().lookup(EMBEDDED_MONGO_DOWNLOAD_PATH_ENV_NAME);
+    if (embeddedMongoDownloadPath == null) {
+      return Optional.empty();
+    } else {
+      ImmutablePackage.Builder downloadPackage =
+          Package.builder()
+              .from(
+                  new PlatformPackageResolver(Command.MongoD)
+                      .packageFor(Distribution.of(version, Platform.detect(CommonOS.list()))));
+      return Optional.of(
+          Start.to(Package.class)
+              .initializedWith(downloadPackage.url(embeddedMongoDownloadPath).build()));
+    }
   }
 
   protected void stopMongo() {
