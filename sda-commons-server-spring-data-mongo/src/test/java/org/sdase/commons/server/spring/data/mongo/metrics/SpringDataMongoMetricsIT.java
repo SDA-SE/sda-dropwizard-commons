@@ -106,6 +106,7 @@ abstract class SpringDataMongoMetricsIT {
     var tagsWithoutClusterId =
         commandsCompositeTime.get().getId().getTags().stream()
             .filter(t -> !"cluster.id".equals(t.getKey()))
+            .filter(t -> !"server.address".equals(t.getKey()))
             .collect(Collectors.toList());
     assertThat(tagsWithoutClusterId.toString())
         .doesNotContain(List.of(telephoneNumber, Integer.toString(age), name));
