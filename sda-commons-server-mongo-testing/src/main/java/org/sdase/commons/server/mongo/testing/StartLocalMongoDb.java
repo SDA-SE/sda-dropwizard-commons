@@ -1,11 +1,13 @@
 package org.sdase.commons.server.mongo.testing;
 
+import static de.flapdoodle.net.Net.freeServerPort;
+import static de.flapdoodle.net.Net.getLocalHost;
 import static java.lang.Runtime.getRuntime;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.sdase.commons.server.mongo.testing.internal.DownloadConfigFactoryUtil.createDownloadConfig;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.ConnectionString;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
@@ -15,40 +17,30 @@ import com.mongodb.event.ServerDescriptionChangedEvent;
 import com.mongodb.event.ServerListener;
 import com.mongodb.event.ServerOpeningEvent;
 import com.mongodb.internal.connection.ServerAddressHelper;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.Defaults;
-import de.flapdoodle.embed.mongo.config.ImmutableMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
+import de.flapdoodle.embed.mongo.commands.MongodArguments;
+import de.flapdoodle.embed.mongo.config.ImmutableNet;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
-import de.flapdoodle.embed.mongo.packageresolver.Command;
-import de.flapdoodle.embed.process.extract.DirectoryAndExecutableNaming;
-import de.flapdoodle.embed.process.extract.UUIDTempNaming;
-import de.flapdoodle.embed.process.io.directories.*;
-import de.flapdoodle.embed.process.runtime.Network;
-import de.flapdoodle.embed.process.store.ExtractedArtifactStore;
-import de.flapdoodle.embed.process.store.IArtifactStore;
-import de.flapdoodle.embed.process.store.ImmutableExtractedArtifactStore;
+import de.flapdoodle.embed.mongo.transitions.ImmutableMongod;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
+import de.flapdoodle.reverse.transitions.ImmutableStart;
+import de.flapdoodle.reverse.transitions.Start;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
+import org.sdase.commons.server.mongo.testing.internal.DownloadConfigFactoryUtil;
 
 public class StartLocalMongoDb {
-
-  private static MongodStarter ensureMongodStarter() {
-    return LazyHolder.INSTANCE;
-  }
 
   private final boolean enableScripting;
   protected final IFeatureAwareVersion version;
 
-  private MongodConfig mongodConfig;
-  private MongodExecutable mongodExecutable;
+  private AutoCloseable mongodStopper;
 
   private volatile boolean started;
 
@@ -80,15 +72,15 @@ public class StartLocalMongoDb {
     }
 
     try {
-      String hostName = Network.getLocalHost().getHostName();
-      int serverPort = Network.getFreeServerPort();
+      InetAddress host = getLocalHost();
+      int serverPort = freeServerPort(host);
       this.connectionString =
           "mongodb://"
               + username
               + ":"
               + password
               + "@"
-              + hostName
+              + host.getHostName()
               + ":"
               + serverPort
               + "/"
@@ -96,17 +88,18 @@ public class StartLocalMongoDb {
       if (StringUtils.isNotBlank(getOptions())) {
         this.connectionString += "?" + getOptions();
       }
-      ImmutableMongodConfig.Builder mongodConfigBuilder =
-          MongodConfig.builder().version(version).net(new Net(hostName, serverPort, false));
 
-      if (!enableScripting) {
-        mongodConfigBuilder.putArgs("--noscripting", "");
-      }
+      ImmutableMongod.Builder mongodBuilder =
+          Mongod.builder()
+              .net(createNet(host, serverPort))
+              .mongodArguments(createMongodArguments())
+              .downloadPackage(DownloadConfigFactoryUtil.createDownloadPackage());
+      DownloadConfigFactoryUtil.createPackageOfDistribution(version)
+          .ifPresent(mongodBuilder::packageOfDistribution);
 
-      mongodConfig = mongodConfigBuilder.build();
+      Mongod mongod = mongodBuilder.build();
 
-      mongodExecutable = ensureMongodStarter().prepare(mongodConfig);
-      mongodExecutable.start();
+      this.mongodStopper = mongod.start(version);
 
       final CountDownLatch countDownLatch = new CountDownLatch(1);
 
@@ -153,15 +146,36 @@ public class StartLocalMongoDb {
     getRuntime().addShutdownHook(new Thread(this::stopMongo, "shutdown mongo"));
   }
 
+  private static ImmutableStart<Net> createNet(InetAddress host, int serverPort) {
+    return Start.to(Net.class)
+        .initializedWith(
+            ImmutableNet.builder()
+                .bindIp(host.getHostAddress())
+                .port(serverPort)
+                .isIpv6(false)
+                .build());
+  }
+
+  private ImmutableStart<MongodArguments> createMongodArguments() {
+    Map<String, String> extraArgs = enableScripting ? Map.of() : Map.of("--noscripting", "");
+
+    return Start.to(MongodArguments.class)
+        .initializedWith(MongodArguments.defaults().withArgs(extraArgs));
+  }
+
   protected void stopMongo() {
-    if (started && mongodExecutable != null) {
-      mongodExecutable.stop();
-      started = false;
+    try {
+      if (started && mongodStopper != null) {
+        mongodStopper.close();
+        started = false;
+      }
+    } catch (Exception e) {
+      throw new IllegalStateException("Failed to stop MongoDB", e);
     }
   }
 
   public String getHosts() {
-    return mongodConfig.net().getBindIp() + ":" + mongodConfig.net().getPort();
+    return new ConnectionString(this.connectionString).getHosts().get(0);
   }
 
   public String getDatabase() {
@@ -215,43 +229,5 @@ public class StartLocalMongoDb {
                 Collections.singletonList(
                     new BasicDBObject("role", "readWrite").append("db", database)));
     db.runCommand(createUserCommand);
-  }
-
-  // Initialization-on-demand holder idiom
-  static class LazyHolder {
-    static final MongodStarter INSTANCE = getMongoStarter();
-
-    private LazyHolder() {}
-
-    private static MongodStarter getMongoStarter() {
-      IArtifactStore artifactStore = createArtifactStore(SystemUtils.IS_OS_MAC_OSX);
-      return MongodStarter.getInstance(
-          Defaults.runtimeConfigFor(Command.MongoD).artifactStore(artifactStore).build());
-    }
-
-    static IArtifactStore createArtifactStore(boolean forMacOs) {
-      ImmutableExtractedArtifactStore.Builder artifactStoreBuilder =
-          ExtractedArtifactStore.builder()
-              .from(Defaults.extractedArtifactStoreFor(Command.MongoD))
-              .downloadConfig(createDownloadConfig());
-
-      // avoid recurring firewall requests on mac,
-      if (forMacOs) {
-        artifactStoreBuilder
-            .extraction(
-                DirectoryAndExecutableNaming.of(
-                    new PropertyOrPlatformTempDir(), (prefix, postfix) -> "mongod"))
-            .temp(
-                DirectoryAndExecutableNaming.of(
-                    new PropertyOrPlatformTempDir(), (prefix, postfix) -> "mongod"));
-      } else {
-        artifactStoreBuilder.extraction(
-            DirectoryAndExecutableNaming.builder()
-                .directory(new PropertyOrPlatformTempDir())
-                .executableNaming(new UUIDTempNaming())
-                .build());
-      }
-      return artifactStoreBuilder.build();
-    }
   }
 }
