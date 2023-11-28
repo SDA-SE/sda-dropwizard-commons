@@ -25,6 +25,14 @@ class SystemPropertyAndEnvironmentLookupTest {
   }
 
   @ParameterizedTest
+  @ValueSource(strings = {"FOO", "FOO | toJsonString"})
+  void shouldTrackLookupKeys(String given) {
+    SystemPropertyAndEnvironmentLookup lookup = new SystemPropertyAndEnvironmentLookup();
+    lookup.lookup(given);
+    assertThat(lookup.lookedUpKeys()).containsExactly("FOO");
+  }
+
+  @ParameterizedTest
   @SetSystemProperty(key = "FOO", value = "a\"string that\nneeds\\escaping")
   @ValueSource(
       strings = {

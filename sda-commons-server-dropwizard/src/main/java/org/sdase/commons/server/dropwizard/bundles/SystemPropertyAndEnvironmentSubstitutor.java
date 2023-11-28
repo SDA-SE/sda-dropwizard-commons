@@ -3,6 +3,7 @@ package org.sdase.commons.server.dropwizard.bundles;
 import io.dropwizard.configuration.UndefinedEnvironmentVariableException;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.TextStringBuilder;
+import org.apache.commons.text.lookup.StringLookup;
 
 /**
  * A {@link StringSubstitutor} that picks properties from {@link System#getProperty(String)}
@@ -28,7 +29,19 @@ public class SystemPropertyAndEnvironmentSubstitutor extends StringSubstitutor {
    * @see org.apache.commons.text.StringSubstitutor#setEnableSubstitutionInVariables(boolean)
    */
   public SystemPropertyAndEnvironmentSubstitutor(boolean strict, boolean substitutionInVariables) {
-    super(new SystemPropertyAndEnvironmentLookup());
+    this(strict, substitutionInVariables, new SystemPropertyAndEnvironmentLookup());
+  }
+
+  /**
+   * @param strict {@code true} if looking up undefined environment variables should throw a {@link
+   *     UndefinedEnvironmentVariableException}, {@code false} otherwise.
+   * @param substitutionInVariables a flag whether substitution is done in variable names.
+   * @param stringLookup the lookup that turns keys into values
+   * @see org.apache.commons.text.StringSubstitutor#setEnableSubstitutionInVariables(boolean)
+   */
+  public SystemPropertyAndEnvironmentSubstitutor(
+      boolean strict, boolean substitutionInVariables, StringLookup stringLookup) {
+    super(stringLookup);
     this.setEnableUndefinedVariableException(strict);
     this.setEnableSubstitutionInVariables(substitutionInVariables);
   }

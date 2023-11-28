@@ -13,10 +13,12 @@ import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.validation.Validator;
 import org.apache.commons.text.lookup.StringLookup;
+import org.sdase.commons.server.dropwizard.bundles.LookupTracker;
 import org.sdase.commons.server.dropwizard.bundles.configuration.ConfigurationRuntimeContext;
 import org.sdase.commons.server.dropwizard.bundles.scanner.JacksonTypeScanner;
 import org.sdase.commons.server.dropwizard.bundles.scanner.MappableField;
@@ -40,6 +42,7 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
   private final Class<T> configurationClass;
   private final JacksonTypeScanner jacksonTypeScanner;
   private final ConfigurationRuntimeContext configurationRuntimeContext;
+  private final LookupTracker lookupTracker;
 
   /**
    * Creates a new configuration factory for the given class.
@@ -51,6 +54,8 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
    * @param jacksonTypeScanner the scanner to derive available properties
    * @param configurationRuntimeContext the {@link StringLookup} to lookup values for {@link
    *     MappableField#getContextKey()}
+   * @param lookupTracker a source for the keys that have been looked up for substitution in the
+   *     configuration file or have been applied to the config in other means
    */
   public GenericLookupYamlConfigurationFactory(
       Class<T> configurationClass,
@@ -58,20 +63,24 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
       ObjectMapper objectMapper,
       String propertyPrefix,
       JacksonTypeScanner jacksonTypeScanner,
-      ConfigurationRuntimeContext configurationRuntimeContext) {
+      ConfigurationRuntimeContext configurationRuntimeContext,
+      LookupTracker lookupTracker) {
     super(configurationClass, validator, objectMapper, propertyPrefix);
     this.configurationClass = configurationClass;
     this.jacksonTypeScanner = jacksonTypeScanner;
     this.configurationRuntimeContext = configurationRuntimeContext;
+    this.lookupTracker = lookupTracker;
   }
 
   @Override
   protected T build(JsonNode node, String path) throws IOException, ConfigurationException {
     List<MappableField> mappableFields = jacksonTypeScanner.scan(configurationClass);
+    Set<String> alreadyLookedUpKeys = lookupTracker.lookedUpKeys(); // from config file substitution
     mappableFields.stream()
         .map(m -> m.expand(configurationRuntimeContext.getDefinedKeys()))
         .flatMap(List::stream)
         .sorted()
+        .filter(m -> !alreadyLookedUpKeys.contains(m.getContextKey()))
         .forEach(mappableField -> configure(node, mappableField));
     return super.build(node, path);
   }
@@ -173,6 +182,13 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
 
   public static class GenericLookupYamlConfigurationFactoryFactory<T>
       extends DefaultConfigurationFactoryFactory<T> {
+
+    private final LookupTracker lookupTracker;
+
+    public GenericLookupYamlConfigurationFactoryFactory(LookupTracker lookupTracker) {
+      this.lookupTracker = lookupTracker;
+    }
+
     @Override
     public ConfigurationFactory<T> create(
         Class<T> klass, Validator validator, ObjectMapper objectMapper, String propertyPrefix) {
@@ -182,7 +198,8 @@ public class GenericLookupYamlConfigurationFactory<T> extends YamlConfigurationF
           objectMapper,
           propertyPrefix,
           new JacksonTypeScanner(objectMapper, DROPWIZARD_PLAIN_TYPES),
-          ConfigurationRuntimeContext.FROM_SYSTEM_PROPERTIES_AND_ENVIRONMENT);
+          ConfigurationRuntimeContext.FROM_SYSTEM_PROPERTIES_AND_ENVIRONMENT,
+          lookupTracker);
     }
   }
 }

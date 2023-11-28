@@ -36,12 +36,16 @@ public class ConfigurationSubstitutionBundle implements ConfiguredBundle<Configu
 
   @Override
   public void initialize(Bootstrap<?> bootstrap) {
+    SystemPropertyAndEnvironmentLookup systemPropertyAndEnvironmentLookup =
+        new SystemPropertyAndEnvironmentLookup();
     bootstrap.addCommand(new GenericLookupConfigCommand<>());
     bootstrap.setConfigurationSourceProvider(
         new SubstitutingSourceProvider(
             bootstrap.getConfigurationSourceProvider(),
-            new SystemPropertyAndEnvironmentSubstitutor(false, true)));
-    bootstrap.setConfigurationFactoryFactory(new GenericLookupYamlConfigurationFactoryFactory<>());
+            new SystemPropertyAndEnvironmentSubstitutor(
+                false, true, systemPropertyAndEnvironmentLookup)));
+    bootstrap.setConfigurationFactoryFactory(
+        new GenericLookupYamlConfigurationFactoryFactory<>(systemPropertyAndEnvironmentLookup));
   }
 
   public static class Builder {
