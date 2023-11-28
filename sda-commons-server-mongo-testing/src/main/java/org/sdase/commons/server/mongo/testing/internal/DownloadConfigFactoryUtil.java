@@ -1,12 +1,19 @@
 package org.sdase.commons.server.mongo.testing.internal;
 
-import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.packageresolver.Command;
-import de.flapdoodle.embed.process.config.store.DownloadConfig;
-import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
-import de.flapdoodle.embed.process.config.store.ImmutableDownloadConfig;
-import de.flapdoodle.embed.process.config.store.ProxyFactory;
-import de.flapdoodle.embed.process.config.store.SameDownloadPathForEveryDistribution;
+import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
+import de.flapdoodle.embed.process.config.DownloadConfig;
+import de.flapdoodle.embed.process.config.store.ImmutablePackage;
+import de.flapdoodle.embed.process.config.store.Package;
+import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.embed.process.distribution.Version;
+import de.flapdoodle.embed.process.net.HttpProxyFactory;
+import de.flapdoodle.embed.process.net.ProxyFactory;
+import de.flapdoodle.embed.process.transitions.DownloadPackage;
+import de.flapdoodle.os.CommonOS;
+import de.flapdoodle.os.Platform;
+import de.flapdoodle.reverse.Transition;
+import de.flapdoodle.reverse.transitions.Start;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
@@ -35,13 +42,7 @@ public class DownloadConfigFactoryUtil {
     // utility
   }
 
-  /**
-   * @return a download config that
-   */
-  public static DownloadConfig createDownloadConfig() {
-    ImmutableDownloadConfig.Builder downloadConfigBuilder =
-        Defaults.downloadConfigFor(Command.MongoD).proxyFactory(createProxyFactory());
-
+  public static Optional<Transition<Package>> createPackageOfDistribution(Version version) {
     // Normally the mongod executable is downloaded directly from the
     // mongodb web page, however sometimes this behavior is undesired. Some
     // cases are proxy servers, missing internet access, or not wanting to
@@ -51,13 +52,26 @@ public class DownloadConfigFactoryUtil {
     // the environment variable:
     String embeddedMongoDownloadPath =
         new SystemPropertyAndEnvironmentLookup().lookup(EMBEDDED_MONGO_DOWNLOAD_PATH_ENV_NAME);
-
-    if (embeddedMongoDownloadPath != null) {
-      downloadConfigBuilder.downloadPath(
-          new SameDownloadPathForEveryDistribution(embeddedMongoDownloadPath));
+    if (embeddedMongoDownloadPath == null) {
+      return Optional.empty();
+    } else {
+      ImmutablePackage.Builder downloadPackage =
+          Package.builder()
+              .from(
+                  new PlatformPackageResolver(Command.MongoD)
+                      .packageFor(Distribution.of(version, Platform.detect(CommonOS.list()))));
+      return Optional.of(
+          Start.to(Package.class)
+              .initializedWith(downloadPackage.url(embeddedMongoDownloadPath).build()));
     }
+  }
 
-    return downloadConfigBuilder.build();
+  /**
+   * @return a download config that
+   */
+  public static DownloadPackage createDownloadPackage() {
+    return DownloadPackage.withDefaults()
+        .withDownloadConfig(DownloadConfig.builder().proxyFactory(createProxyFactory()).build());
   }
 
   private static Optional<ProxyFactory> createProxyFactory() {
@@ -89,8 +103,7 @@ public class DownloadConfigFactoryUtil {
           new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-              // Only provide the credentials to the specified
-              // origin
+              // Only provide the credentials to the specified origin
               if (getRequestorType() == RequestorType.PROXY
                   && getRequestingHost().equalsIgnoreCase(url.getHost())
                   && url.getPort() == getRequestingPort()) {
