@@ -1,7 +1,9 @@
 package org.sdase.commons.server.dropwizard.bundles.configuration.generic;
 
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.params.provider.Arguments.of;
@@ -141,6 +143,23 @@ class ConfigurationSubstitutionBundleGenericConfigTest {
                   softly.assertThat(driversLogger.isTraceEnabled()).isFalse();
                   softly.assertThat(driversLogger.isDebugEnabled()).isTrue();
                 }));
+  }
+
+  @Test
+  @SetSystemProperty(key = "KAFKA_CONFIG_SOME_CONFIG", value = "foo")
+  void shouldIgnoreEnvsDefinedInConfigYaml() throws Exception {
+    var testSupport =
+        new DropwizardTestSupport<>(
+            TestApp.class, resourceFilePath("config-with-properties.yaml"), randomPorts());
+    try {
+      testSupport.before();
+      TestApp application = testSupport.getApplication();
+      TestConfiguration testConfiguration = (TestConfiguration) application.getConfiguration();
+      assertThat(testConfiguration.getKafka().getConfig())
+          .containsExactly(entry("some.config", "foo"));
+    } finally {
+      testSupport.after();
+    }
   }
 
   void assertValueInJavaObjectPath(

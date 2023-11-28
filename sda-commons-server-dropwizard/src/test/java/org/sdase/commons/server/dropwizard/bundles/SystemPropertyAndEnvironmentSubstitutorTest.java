@@ -59,7 +59,7 @@ class SystemPropertyAndEnvironmentSubstitutorTest {
   void shouldThrowExceptionIfStrict(String givenInput) {
     final TextStringBuilder builder = new TextStringBuilder(givenInput);
     final SystemPropertyAndEnvironmentSubstitutor substitutor =
-        new SystemPropertyAndEnvironmentSubstitutor(true);
+        new SystemPropertyAndEnvironmentSubstitutor();
     final int length = givenInput.length();
     assertThatCode(() -> substitutor.substitute(builder, 0, length))
         .isInstanceOf(UndefinedEnvironmentVariableException.class);

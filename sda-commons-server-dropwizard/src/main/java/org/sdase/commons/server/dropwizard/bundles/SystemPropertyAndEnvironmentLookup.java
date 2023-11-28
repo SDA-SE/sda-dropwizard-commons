@@ -1,6 +1,9 @@
 package org.sdase.commons.server.dropwizard.bundles;
 
 import com.fasterxml.jackson.core.io.CharTypes;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.commons.text.lookup.StringLookup;
 import org.sdase.commons.server.dropwizard.bundles.configuration.ConfigurationRuntimeContext;
 import org.slf4j.Logger;
@@ -32,11 +35,13 @@ import org.slf4j.LoggerFactory;
  *     </pre>
  * </ul>
  */
-public class SystemPropertyAndEnvironmentLookup implements StringLookup {
+public class SystemPropertyAndEnvironmentLookup implements StringLookup, LookupTracker {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(SystemPropertyAndEnvironmentLookup.class);
 
   private static final String TO_JSON_STRING_OPERATOR_NORMALIZED = "toJsonString".toLowerCase();
+
+  private final Set<String> lookedUpKeys = new HashSet<>();
 
   @Override
   public String lookup(String key) {
@@ -46,6 +51,11 @@ public class SystemPropertyAndEnvironmentLookup implements StringLookup {
       return null;
     }
     return modifyValue(keyAndOperators, result);
+  }
+
+  @Override
+  public Set<String> lookedUpKeys() {
+    return Collections.unmodifiableSet(lookedUpKeys);
   }
 
   private String modifyValue(LookupKeyAndOperators lookupKeyAndOperators, String originalValue) {
@@ -66,6 +76,7 @@ public class SystemPropertyAndEnvironmentLookup implements StringLookup {
 
   private String lookupValue(LookupKeyAndOperators lookupKeyAndOperators) {
     String keyToLookup = lookupKeyAndOperators.getKey();
+    lookedUpKeys.add(keyToLookup);
     return ConfigurationRuntimeContext.FROM_SYSTEM_PROPERTIES_AND_ENVIRONMENT.getValue(keyToLookup);
   }
 
