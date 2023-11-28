@@ -35,7 +35,7 @@ class UnwantedDependenciesTest {
   };
 
   private static final String[] IMPORT_ORG_APCHE_HTTPCOMPONENTS = {
-    "import org.apache.httpcomponents.", "import static org.apache.httpcomponents."
+    "import org.apache.http.", "import static org.apache.http."
   };
 
   final Set<String> ALLOWED_FILE_PARTS =
@@ -55,7 +55,7 @@ class UnwantedDependenciesTest {
     ClassInfoList allClasses = new ClassGraph().enableClassInfo().scan().getAllClasses();
     ClassInfoList classFilesInClasspath =
         allClasses
-            .filter(c -> c.getPackageName().startsWith("org.apache.httpcomponents"))
+            .filter(c -> c.getPackageName().startsWith("org.sdase."))
             .filter(c -> !c.getName().equals(this.getClass().getName()))
             .filter(c -> !c.getName().contains("$"));
     for (ClassInfo classInfo : classFilesInClasspath) {
@@ -110,7 +110,7 @@ class UnwantedDependenciesTest {
     ClassInfoList allClasses = new ClassGraph().enableClassInfo().scan().getAllClasses();
     ClassInfoList classFilesInClasspath =
         allClasses
-            .filter(c -> c.getPackageName().startsWith("org.apache.httpcomponents"))
+            .filter(c -> c.getPackageName().startsWith("org.apache.http"))
             .filter(c -> !c.getName().equals(this.getClass().getName()))
             .filter(c -> !c.getName().contains("$"));
     for (ClassInfo classInfo : classFilesInClasspath) {
