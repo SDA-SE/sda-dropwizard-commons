@@ -44,7 +44,7 @@ We wanted to get rid of all references to old JUnit 4 rules.
 Migrate from OpenTracing to OpenTelemetry.
 
 ### Starter Bundle
-If you do not use sda-commons-starter with [SdaPlatformBundle](./sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java),
+If you do not use sda-commons-starter with [SdaPlatformBundle](../../sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java),
 you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTelemetry bundle.
 
 ```diff
@@ -408,7 +408,7 @@ SpringDataMongoBundle.builder()
 ```
 
 Implementing the converter changes from Morphia interface to using the Spring interface can be done
-like here [ZonedDateTimeReadConverter.java](sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/converter/ZonedDateTimeReadConverter.java).
+like here [ZonedDateTimeReadConverter.java](../../sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/converter/ZonedDateTimeReadConverter.java).
 
 ### Annotations
 
@@ -430,8 +430,8 @@ services.
 
 We also removed the topicana classes in package `org.sdase.commons.server.kafka.topicana`.
 For this reason the following methods were removed or changed
-on [MessageListenerRegistration](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/builder/MessageListenerRegistration.java)
-and [ProducerRegistration](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/builder/ProducerRegistration.java):
+on [MessageListenerRegistration](../../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/builder/MessageListenerRegistration.java)
+and [ProducerRegistration](../../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/builder/ProducerRegistration.java):
 
 - `checkTopicConfiguration`
   
@@ -445,7 +445,7 @@ and [ProducerRegistration](./sda-commons-server-kafka/src/main/java/org/sdase/co
   This method accepted a list
   of `org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration` to compare against the
   current topic configuration.
-  Now it accepts a list of [TopicConfig](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java),
+  Now it accepts a list of [TopicConfig](../../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java),
   with only the name of the topic, but it does not perform any check in the configuration.
 
 - `forTopic(ExpectedTopicConfiguration topic)`
@@ -453,7 +453,7 @@ and [ProducerRegistration](./sda-commons-server-kafka/src/main/java/org/sdase/co
   This method accepted an instance
   of `org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration` to compare against the
   current topic configuration.
-  Now it accepts a [TopicConfig](./sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java)
+  Now it accepts a [TopicConfig](../../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java)
   instance, with only the name of the topic, but it does not perform any check in the configuration.
 
 ### Kafka Configuration
