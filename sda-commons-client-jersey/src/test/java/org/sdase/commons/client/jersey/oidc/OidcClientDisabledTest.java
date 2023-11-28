@@ -17,12 +17,9 @@ import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.MetricFilter;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import com.github.tomakehurst.wiremock.jetty.JettyHttpServerFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import java.io.IOException;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -56,7 +53,7 @@ class OidcClientDisabledTest {
   private ClientTestApp app;
 
   @BeforeEach
-  void before() throws IOException {
+  void before() {
     WIRE.resetAll();
     app = DW.getApplication();
 
@@ -82,13 +79,7 @@ class OidcClientDisabledTest {
                 aResponse()
                     .withStatus(200)
                     .withHeader(CONTENT_TYPE, APPLICATION_JSON)
-                    .withBody(
-                        DW.getObjectMapper()
-                            .writeValueAsBytes(
-                                DW.getObjectMapper()
-                                    .readValue(
-                                        getClass().getResource("/fixtures/tokenResponse.json"),
-                                        new TypeReference<Map<String, Object>>() {})))));
+                    .withBodyFile("fixtures/tokenResponse.json")));
   }
 
   @Test
