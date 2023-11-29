@@ -78,23 +78,16 @@ public class AuthService implements TokenAuthorizer {
   }
 
   private static Algorithm resolveAlgorithm(LoadedPublicKey loadedPublicKey) {
-    switch (loadedPublicKey.getSigAlgorithm()) {
-      case "RS256":
-        return Algorithm.RSA256((RSAPublicKey) loadedPublicKey.getPublicKey(), null);
-      case "RS384":
-        return Algorithm.RSA384((RSAPublicKey) loadedPublicKey.getPublicKey(), null);
-      case "RS512":
-        return Algorithm.RSA512((RSAPublicKey) loadedPublicKey.getPublicKey(), null);
-      case "ES256":
-        return Algorithm.ECDSA256((ECPublicKey) loadedPublicKey.getPublicKey(), null);
-      case "ES384":
-        return Algorithm.ECDSA384((ECPublicKey) loadedPublicKey.getPublicKey(), null);
-      case "ES512":
-        return Algorithm.ECDSA512((ECPublicKey) loadedPublicKey.getPublicKey(), null);
-      default:
-        throw new JwtAuthException(
-            "Unsupported algorithm :'" + loadedPublicKey.getSigAlgorithm() + "'");
-    }
+    return switch (loadedPublicKey.getSigAlgorithm()) {
+      case "RS256" -> Algorithm.RSA256((RSAPublicKey) loadedPublicKey.getPublicKey(), null);
+      case "RS384" -> Algorithm.RSA384((RSAPublicKey) loadedPublicKey.getPublicKey(), null);
+      case "RS512" -> Algorithm.RSA512((RSAPublicKey) loadedPublicKey.getPublicKey(), null);
+      case "ES256" -> Algorithm.ECDSA256((ECPublicKey) loadedPublicKey.getPublicKey(), null);
+      case "ES384" -> Algorithm.ECDSA384((ECPublicKey) loadedPublicKey.getPublicKey(), null);
+      case "ES512" -> Algorithm.ECDSA512((ECPublicKey) loadedPublicKey.getPublicKey(), null);
+      default -> throw new JwtAuthException(
+          "Unsupported algorithm :'" + loadedPublicKey.getSigAlgorithm() + "'");
+    };
   }
 
   private Optional<DecodedJWT> verifyJwtSignature(

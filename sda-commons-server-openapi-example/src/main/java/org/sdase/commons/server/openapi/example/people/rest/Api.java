@@ -19,8 +19,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
             // Set the description of the API, like an introduction. Like in most of the fields you
             // may use markdown here to apply custom formatting.
             description =
-                "This is the API documentation for the **People API**.\n\n"
-                    + "The API provides operations for managing and searching people.",
+                """
+                      This is the API documentation for the **People API**.
+
+                      The API provides operations for managing and searching people.""",
             // Set the version of the API, which is a string. By default version 1 is used.
             version = "3",
             // Set the contact information of the API author.

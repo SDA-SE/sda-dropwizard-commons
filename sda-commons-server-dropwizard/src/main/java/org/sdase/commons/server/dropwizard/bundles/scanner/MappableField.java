@@ -162,8 +162,7 @@ public class MappableField implements Comparable<MappableField> {
   }
 
   private String createPropertyTypeDescription(Type type) {
-    if (type instanceof Class) {
-      var clazz = (Class<?>) type;
+    if (type instanceof Class<?> clazz) {
       if (clazz.isEnum()) {
         return "enum " + clazz.getSimpleName();
       }

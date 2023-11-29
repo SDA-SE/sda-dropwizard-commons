@@ -51,8 +51,7 @@ public class BufferLimitsAdvice {
   }
 
   private void applySecureConfiguration(ConnectorFactory connectorFactory) {
-    if (connectorFactory instanceof HttpConnectorFactory) {
-      HttpConnectorFactory httpConnectorFactory = (HttpConnectorFactory) connectorFactory;
+    if (connectorFactory instanceof HttpConnectorFactory httpConnectorFactory) {
       check("headerCacheSize", httpConnectorFactory.getHeaderCacheSize(), Max.HEADER_CACHE_SIZE);
       check("outputBufferSize", httpConnectorFactory.getOutputBufferSize(), Max.OUTPUT_BUFFER_SIZE);
       check(
