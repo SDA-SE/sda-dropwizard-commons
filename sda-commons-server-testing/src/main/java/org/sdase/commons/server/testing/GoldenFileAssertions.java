@@ -111,7 +111,7 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
       if (ciUtil.isRunningInCiPipeline()) {
         LOG.info("Not updating file {} when running in CI pipeline", actual);
       } else {
-        Files.write(actual, expected.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(actual, expected);
       }
     }
 
@@ -168,7 +168,7 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
       if (ciUtil.isRunningInCiPipeline()) {
         LOG.info("Not updating file {} when running in CI pipeline", actual);
       } else {
-        Files.write(actual, expected.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(actual, expected);
       }
     }
 

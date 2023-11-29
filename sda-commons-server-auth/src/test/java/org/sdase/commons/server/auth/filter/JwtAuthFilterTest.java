@@ -39,11 +39,7 @@ class JwtAuthFilterTest {
         new Builder<JwtPrincipal>().setAuthenticator(authenticator).buildAuthFilter();
 
     // when
-    Assertions.assertThrows(
-        JwtAuthException.class,
-        () -> {
-          authFilter.filter(requestContext);
-        });
+    Assertions.assertThrows(JwtAuthException.class, () -> authFilter.filter(requestContext));
   }
 
   @Test
@@ -56,8 +52,7 @@ class JwtAuthFilterTest {
     when(authenticator.authenticate(credentialsCaptor.capture()))
         .thenReturn(Optional.of(JwtPrincipal.emptyPrincipal()));
 
-    JwtAuthFilter authFilter =
-        new Builder<JwtPrincipal>().setAuthenticator(authenticator).buildAuthFilter();
+    var authFilter = new Builder<JwtPrincipal>().setAuthenticator(authenticator).buildAuthFilter();
 
     // when
     authFilter.filter(requestContext);
@@ -74,7 +69,7 @@ class JwtAuthFilterTest {
     when(requestContext.getHeaders()).thenReturn(headers);
     when(authenticator.authenticate(credentialsCaptor.capture())).thenReturn(Optional.empty());
 
-    JwtAuthFilter authFilter =
+    var authFilter =
         new Builder<JwtPrincipal>()
             .setAcceptAnonymous(true)
             .setAuthenticator(authenticator)
@@ -97,7 +92,7 @@ class JwtAuthFilterTest {
     when(authenticator.authenticate(credentialsCaptor.capture()))
         .thenReturn(Optional.of(JwtPrincipal.emptyPrincipal()));
 
-    JwtAuthFilter authFilter =
+    var authFilter =
         new Builder<JwtPrincipal>()
             .setAcceptAnonymous(true)
             .setAuthenticator(authenticator)

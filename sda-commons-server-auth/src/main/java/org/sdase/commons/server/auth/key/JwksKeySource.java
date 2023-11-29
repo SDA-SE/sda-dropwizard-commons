@@ -120,32 +120,25 @@ public class JwksKeySource implements KeySource {
   }
 
   private static String mapCrvToStdName(String crv) {
-    switch (crv) {
-      case "P-256":
-        return "secp256r1";
-      case "P-384":
-        return "secp384r1";
-      case "P-521":
-        return "secp521r1";
-      default:
-        throw new KeyLoadFailedException(
-            "EC keys are supported but loaded an unsupported EC curve: '" + crv + "'");
-    }
+    return switch (crv) {
+      case "P-256" -> "secp256r1";
+      case "P-384" -> "secp384r1";
+      case "P-521" -> "secp521r1";
+      default -> throw new KeyLoadFailedException(
+          "EC keys are supported but loaded an unsupported EC curve: '" + crv + "'");
+    };
   }
 
   private LoadedPublicKey toPublicKey(Key key) throws KeyLoadFailedException { // NOSONAR
     try {
       String keyType = key.getKty();
       KeyFactory keyFactory = KeyFactory.getInstance(keyType);
-      switch (keyType) {
-        case RSA_KTY:
-          return toRsaPublicKey(key, keyFactory);
-        case EC_KTY:
-          return toEcPublicKey(key, keyFactory);
-        default:
-          throw new KeyLoadFailedException(
-              "Unsupported key: " + key.getClass() + " from " + jwksUri);
-      }
+      return switch (keyType) {
+        case RSA_KTY -> toRsaPublicKey(key, keyFactory);
+        case EC_KTY -> toEcPublicKey(key, keyFactory);
+        default -> throw new KeyLoadFailedException(
+            "Unsupported key: " + key.getClass() + " from " + jwksUri);
+      };
     } catch (NullPointerException
         | InvalidKeySpecException
         | NoSuchAlgorithmException

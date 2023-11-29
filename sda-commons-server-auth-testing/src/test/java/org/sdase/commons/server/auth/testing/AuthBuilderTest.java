@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 class AuthBuilderTest {
 
-  private AuthBuilder authBuilder = AuthClassExtension.builder().build().auth();
+  private final AuthBuilder authBuilder = AuthClassExtension.builder().build().auth();
 
   @Test
   void shouldAddIntegerClaim() {

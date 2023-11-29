@@ -37,7 +37,7 @@ public class ModelReader {
           file -> {
             try (FileInputStream fileInputStream = new FileInputStream(file.toFile())) {
               List<KeyMappingModel> keyMappingModels =
-                  YamlUtil.loadList(fileInputStream, new TypeReference<KeyMappingModel>() {});
+                  YamlUtil.loadList(fileInputStream, new TypeReference<>() {});
               keyMappingModels.forEach(mm -> mappings.put(mm.getName(), mm));
             } catch (IOException e) {
               LOG.warn("cannot load key definition for file '{}'", file);

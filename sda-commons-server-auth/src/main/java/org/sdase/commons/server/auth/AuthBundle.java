@@ -143,25 +143,25 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
   }
 
   private KeySource createKeySources(KeyLocation keyLocation, Client client) {
-    switch (keyLocation.getType()) {
-      case PEM:
-        return new PemKeySource(
-            keyLocation.getPemKeyId(),
-            keyLocation.getPemSignAlg(),
-            keyLocation.getLocation(),
-            keyLocation.getRequiredIssuer());
-      case OPEN_ID_DISCOVERY:
+    return switch (keyLocation.getType()) {
+      case PEM -> new PemKeySource(
+          keyLocation.getPemKeyId(),
+          keyLocation.getPemSignAlg(),
+          keyLocation.getLocation(),
+          keyLocation.getRequiredIssuer());
+      case OPEN_ID_DISCOVERY -> {
         validateKeyLocation(keyLocation.getLocation(), keyLocation.getRequiredIssuer());
-        return new OpenIdProviderDiscoveryKeySource(
+        yield new OpenIdProviderDiscoveryKeySource(
             keyLocation.getLocation().toASCIIString(), client, keyLocation.getRequiredIssuer());
-      case JWKS:
+      }
+      case JWKS -> {
         validateKeyLocation(keyLocation.getLocation(), keyLocation.getRequiredIssuer());
-        return new JwksKeySource(
+        yield new JwksKeySource(
             keyLocation.getLocation().toASCIIString(), client, keyLocation.getRequiredIssuer());
-      default:
-        throw new IllegalArgumentException(
-            "KeyLocation has no valid type: " + keyLocation.getType());
-    }
+      }
+      default -> throw new IllegalArgumentException(
+          "KeyLocation has no valid type: " + keyLocation.getType());
+    };
   }
 
   /**
