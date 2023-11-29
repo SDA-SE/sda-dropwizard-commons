@@ -24,7 +24,7 @@ class HalLinkProviderTest {
 
   @Test
   void shouldFailWhenNoInterfaceIsProvided() {
-    assertThatThrownBy(() -> methodWithNoInterfaceProvided())
+    assertThatThrownBy(HalLinkProviderTest::methodWithNoInterfaceProvided)
         .isInstanceOf(HalLinkMethodInvocationException.class);
   }
 
@@ -56,7 +56,7 @@ class HalLinkProviderTest {
 
   @Test
   void shouldFailWithoutAnnotation() {
-    assertThatThrownBy(() -> methodWithoutPathParamAnnotation())
+    assertThatThrownBy(HalLinkProviderTest::methodWithoutPathParamAnnotation)
         .isInstanceOf(HalLinkMethodInvocationException.class);
   }
 

@@ -2,7 +2,6 @@ package org.sdase.commons.shared.certificates.ca.ssl;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,7 +71,7 @@ public class CertificateReader {
 
   private String readContent(Path pemFile) {
     try {
-      return new String(Files.readAllBytes(pemFile), StandardCharsets.UTF_8);
+      return Files.readString(pemFile);
     } catch (IOException e) {
       throw new UncheckedIOException(String.format("Failed to read %s", pemFile), e);
     }

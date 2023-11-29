@@ -42,23 +42,26 @@ class OpaResponsesIT {
           config("opa.policyPackage", "my.policy"));
 
   @BeforeEach
-  void before() {
+  void beforeEach() {
     WIRE.resetAll();
   }
 
   private void mock(int status, String body) {
+    // NOSONAR
     WIRE.stubFor(
         post("/v1/data/my/policy")
             .withRequestBody(
                 equalToJson(
-                    "{\n"
-                        + "  \"input\": {\n"
-                        + "    \"trace\": null,\n"
-                        + "    \"jwt\":null,\n"
-                        + "    \"path\": [\"resources\"],\n"
-                        + "    \"httpMethod\":\"GET\"\n"
-                        + "  }\n" // NOSONAR
-                        + "}",
+                    """
+                                {
+                                  "input": {
+                                    "trace": null,
+                                    "jwt":null,
+                                    "path": ["resources"],
+                                    "httpMethod":"GET"
+                                  }
+                                }
+                              """,
                     true,
                     true))
             .willReturn(
@@ -72,66 +75,85 @@ class OpaResponsesIT {
   @RetryingTest(5)
   void shouldAllowAccess() {
     // given
+    // NOSONAR
     mock(
         200,
-        "{\n"
-            + "  \"result\": {\n" // NOSONAR
-            + "    \"allow\": true\n"
-            + "  }\n"
-            + "}");
+        """
+                      {
+                        "result": {
+                          "allow": true
+                        }
+                      }
+                    """);
 
     // when
-    Response response = doGetRequest();
+    try (Response response = doGetRequest()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
-    assertThat(principalInfo.getConstraints().getConstraint()).isNull();
-    assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
-    assertThat(principalInfo.getJwt()).isNull();
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      assertThat(principalInfo.getConstraints().getConstraint()).isNull();
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
+      assertThat(principalInfo.getJwt()).isNull();
+    }
   }
 
   @Test
   @RetryingTest(5)
   void shouldAllowAccessWithConstraints() {
     // given
+    // NOSONAR
     mock(
         200,
-        "{\n"
-            + "  \"result\": {\n"
-            + "    \"allow\": true,\n"
-            + "    \"fullAccess\": true,\n"
-            + "    \"constraint\": {\n"
-            + "      \"customer_ids\": [\"1\", \"2\"],"
-            + "      \"agent_ids\": [\"A1\"]\n"
-            + "    }\n" // NOSONAR
-            + "  }\n"
-            + "}");
+        """
+                      {
+                        "result": {
+                          "allow": true,
+                          "fullAccess": true,
+                          "constraint": {
+                            "customer_ids": ["1", "2"],
+                            "agent_ids": ["A1"]
+                          }
+                        }
+                      }
+                    """);
 
     // when
-    Response response = doGetRequest();
+    try (Response response = doGetRequest()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
 
-    assertThat(principalInfo.getConstraints().getConstraint())
-        .contains(entry("customer_ids", asList("1", "2")), entry("agent_ids", singletonList("A1")));
-    assertThat(principalInfo.getConstraints().isFullAccess()).isTrue();
-    assertThat(principalInfo.getJwt()).isNull();
+      assertThat(principalInfo.getConstraints().getConstraint())
+          .contains(
+              entry("customer_ids", asList("1", "2")), entry("agent_ids", singletonList("A1")));
+      assertThat(principalInfo.getConstraints().isFullAccess()).isTrue();
+      assertThat(principalInfo.getJwt()).isNull();
+    }
   }
 
   @Test
   @RetryingTest(5)
   void shouldDenyAccess() {
     // given
-    mock(200, "{\n" + "  \"result\": {\n" + "    \"allow\": false\n" + "    }\n" + "  }\n" + "}");
+    mock(
+        200,
+        """
+                {
+                  "result": {
+                    "allow": false
+                    }
+                  }
+                }
+              """);
 
     // when
-    Response response = doGetRequest();
+    try (Response response = doGetRequest()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    }
   }
 
   @Test
@@ -140,19 +162,22 @@ class OpaResponsesIT {
     // given
     mock(
         200,
-        "{\n"
-            + "  \"result\": {\n"
-            + "    \"allow\": false,\n"
-            + "    \"abc\": {\n"
-            + "    }\n"
-            + "  }\n"
-            + "}");
+        """
+                {
+                  "result": {
+                    "allow": false,
+                    "abc": {
+                    }
+                  }
+                }
+              """);
 
     // when
-    Response response = doGetRequest();
+    try (Response response = doGetRequest()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    }
   }
 
   @Test
@@ -161,23 +186,26 @@ class OpaResponsesIT {
     // given
     mock(
         200,
-        "{\n"
-            + "  \"result\": {\n"
-            + "    \"allow\": true,\n"
-            + "    \"abc\": {\n"
-            + "    }\n"
-            + "  }\n"
-            + "}");
+        """
+                {
+                  "result": {
+                    "allow": true,
+                    "abc": {
+                    }
+                  }
+                }
+              """);
 
     // when
-    Response response = doGetRequest();
+    try (Response response = doGetRequest()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
-    assertThat(principalInfo.getConstraints().getConstraint()).isNull();
-    assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
-    assertThat(principalInfo.getJwt()).isNull();
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      assertThat(principalInfo.getConstraints().getConstraint()).isNull();
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
+      assertThat(principalInfo.getJwt()).isNull();
+    }
   }
 
   @Test
@@ -187,10 +215,11 @@ class OpaResponsesIT {
     mock(500, "");
 
     // when
-    Response response = doGetRequest();
+    try (Response response = doGetRequest()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    }
   }
 
   @Test
@@ -200,10 +229,11 @@ class OpaResponsesIT {
     mock(200, "");
 
     // when
-    Response response = doGetRequest();
+    try (Response response = doGetRequest()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    }
   }
 
   private Response doGetRequest() {

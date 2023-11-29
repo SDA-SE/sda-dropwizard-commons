@@ -173,10 +173,10 @@ abstract class AbstractSecurityTest<C extends Configuration> {
 
   @Test
   @Disabled(
-      "Setting a custom error handler does not affect the deep internals of Jetty.\n"
-          + "There has been an issue https://github.com/dropwizard/dropwizard/issues/647 but the resolution only affects"
-          + "regular error responses from the application.\n"
-          + "In AbstractServerFactory#568 a default ErrorHandler is registered.")
+      """
+        Setting a custom error handler does not affect the deep internals of Jetty.
+        There has been an issue https://github.com/dropwizard/dropwizard/issues/647 but the resolution only affectsregular error responses from the application.
+        In AbstractServerFactory#568 a default ErrorHandler is registered.""")
   void rejectInputHeadersOverEightKibNotReturningDefaultErrorPage() {
     String chars = "0987654321abcdefghijklmnopqrstuvwxyz";
     StringBuilder valueMoreThanOneKib = new StringBuilder();
@@ -209,16 +209,14 @@ abstract class AbstractSecurityTest<C extends Configuration> {
     ServerFactory serverFactory = getAppExtension().getConfiguration().getServerFactory();
     assertThat(serverFactory)
         .isInstanceOfAny(DefaultServerFactory.class, SimpleServerFactory.class);
-    if (serverFactory instanceof DefaultServerFactory) {
-      DefaultServerFactory defaultServerFactory = (DefaultServerFactory) serverFactory;
+    if (serverFactory instanceof DefaultServerFactory defaultServerFactory) {
       List<ConnectorFactory> applicationConnectors =
           defaultServerFactory.getApplicationConnectors();
       assertThat(applicationConnectors).hasSize(1);
       ConnectorFactory connectorFactory = applicationConnectors.get(0);
       assertThat(connectorFactory).isInstanceOf(HttpConnectorFactory.class);
       return (HttpConnectorFactory) connectorFactory;
-    } else if (serverFactory instanceof SimpleServerFactory) {
-      SimpleServerFactory simpleServerFactory = (SimpleServerFactory) serverFactory;
+    } else if (serverFactory instanceof SimpleServerFactory simpleServerFactory) {
       ConnectorFactory connectorFactory = simpleServerFactory.getConnector();
       assertThat(connectorFactory).isInstanceOf(HttpConnectorFactory.class);
       return (HttpConnectorFactory) connectorFactory;
@@ -236,8 +234,7 @@ abstract class AbstractSecurityTest<C extends Configuration> {
   protected HttpConnectorFactory getAdminConnector() {
     ServerFactory serverFactory = getAppExtension().getConfiguration().getServerFactory();
     assertThat(serverFactory).isInstanceOf(DefaultServerFactory.class);
-    if (serverFactory instanceof DefaultServerFactory) {
-      DefaultServerFactory defaultServerFactory = (DefaultServerFactory) serverFactory;
+    if (serverFactory instanceof DefaultServerFactory defaultServerFactory) {
       List<ConnectorFactory> applicationConnectors = defaultServerFactory.getAdminConnectors();
       assertThat(applicationConnectors).hasSize(1);
       ConnectorFactory connectorFactory = applicationConnectors.get(0);

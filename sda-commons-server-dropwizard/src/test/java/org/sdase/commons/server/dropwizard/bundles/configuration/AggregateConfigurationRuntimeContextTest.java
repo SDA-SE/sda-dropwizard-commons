@@ -64,12 +64,7 @@ class AggregateConfigurationRuntimeContextTest {
     assertThat(givenContext.getDefinedKeys()).containsExactlyInAnyOrder("KEY_A", "KEY_B");
   }
 
-  static class MapTestContext implements ConfigurationRuntimeContext {
-    final Map<String, String> delegate;
-
-    MapTestContext(Map<String, String> delegate) {
-      this.delegate = delegate;
-    }
+  record MapTestContext(Map<String, String> delegate) implements ConfigurationRuntimeContext {
 
     @Override
     public Set<String> getDefinedKeys() {

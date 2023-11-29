@@ -53,12 +53,15 @@ public interface PersonService {
   @Operation(
       summary = "Creates a new person.",
       description =
-          "The following default values are created on service start-up:\n\n"
-              + "| Firstname | Lastname   |\n"
-              + "|-----------|------------|\n"
-              + "| Max       | Mustermann |\n"
-              + "| John      | Doe        |\n\n"
-              + "You have **full** markdown support here!")
+          """
+            The following default values are created on service start-up:
+
+            | Firstname | Lastname   |
+            |-----------|------------|
+            | Max       | Mustermann |
+            | John      | Doe        |
+
+            You have **full** markdown support here!""")
   @ApiResponses(
       value = {
         @ApiResponse(

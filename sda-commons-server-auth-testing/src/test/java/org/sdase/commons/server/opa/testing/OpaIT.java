@@ -55,13 +55,14 @@ class OpaIT {
     // given
     OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).allow());
     // when
-    Response response = doGetRequest();
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
-    assertThat(principalInfo.getConstraints().getConstraint()).isNull();
-    assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
-    assertThat(principalInfo.getJwt()).isNull();
+    try (Response response = doGetRequest()) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      assertThat(principalInfo.getConstraints().getConstraint()).isNull();
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
+      assertThat(principalInfo.getJwt()).isNull();
+    }
   }
 
   @Test
@@ -79,15 +80,17 @@ class OpaIT {
                     .addConstraint("agent_ids", "A1")));
 
     // when
-    Response response = doGetRequest();
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+    try (Response response = doGetRequest()) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
 
-    assertThat(principalInfo.getConstraints().getConstraint())
-        .contains(entry("customer_ids", asList("1", "2")), entry("agent_ids", singletonList("A1")));
-    assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
-    assertThat(principalInfo.getJwt()).isNull();
+      assertThat(principalInfo.getConstraints().getConstraint())
+          .contains(
+              entry("customer_ids", asList("1", "2")), entry("agent_ids", singletonList("A1")));
+      assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
+      assertThat(principalInfo.getJwt()).isNull();
+    }
   }
 
   @Test
@@ -96,9 +99,10 @@ class OpaIT {
     // given
     OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).deny());
     // when
-    Response response = doGetRequest();
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    try (Response response = doGetRequest()) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    }
   }
 
   @Test
@@ -112,9 +116,10 @@ class OpaIT {
             .deny()
             .withConstraint(new ConstraintModel().addConstraint("customer_is", "1")));
     // when
-    Response response = doGetRequest();
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    try (Response response = doGetRequest()) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    }
   }
 
   @Test
@@ -123,9 +128,10 @@ class OpaIT {
     // given
     OPA_EXTENSION.mock(onAnyRequest().serverError());
     // when
-    Response response = doGetRequest();
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    try (Response response = doGetRequest()) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    }
   }
 
   @Test
@@ -134,9 +140,10 @@ class OpaIT {
     // given
     OPA_EXTENSION.mock(onAnyRequest().emptyResponse());
     // when
-    Response response = doGetRequest();
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    try (Response response = doGetRequest()) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    }
   }
 
   @Test
@@ -146,10 +153,11 @@ class OpaIT {
     String longerPath = "resources/actions";
     OPA_EXTENSION.mock(onRequest().withHttpMethod("POST").withPath(longerPath).allow());
     // when
-    Response response = doPostRequest(longerPath);
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    OPA_EXTENSION.verify(1, "POST", longerPath);
+    try (Response response = doPostRequest(longerPath)) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      OPA_EXTENSION.verify(1, "POST", longerPath);
+    }
   }
 
   @Test
@@ -159,24 +167,26 @@ class OpaIT {
     String excludedPath = "openapi.json";
     OPA_EXTENSION.mock(onRequest().withHttpMethod("GET").withPath(excludedPath).allow());
     // when
-    Response response = doGetRequest(excludedPath);
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    OPA_EXTENSION.verify(0, "GET", excludedPath);
+    try (Response response = doGetRequest(excludedPath)) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      OPA_EXTENSION.verify(0, "GET", excludedPath);
+    }
   }
 
   @Test
   @RetryingTest(5)
   void shouldIncludeHealthCheck() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getAdminPort()) // NOSONAR
             .path("healthcheck")
             .request(MediaType.APPLICATION_JSON_TYPE)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
-    assertThat(response.readEntity(String.class)).contains(PolicyExistsHealthCheck.DEFAULT_NAME);
+      assertThat(response.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+      assertThat(response.readEntity(String.class)).contains(PolicyExistsHealthCheck.DEFAULT_NAME);
+    }
   }
 
   private Response doGetRequest() {

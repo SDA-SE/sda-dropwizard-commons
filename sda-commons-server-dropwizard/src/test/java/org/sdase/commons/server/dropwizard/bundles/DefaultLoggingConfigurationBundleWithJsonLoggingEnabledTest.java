@@ -3,6 +3,7 @@ package org.sdase.commons.server.dropwizard.bundles;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.server.DefaultServerFactory;
@@ -65,8 +66,8 @@ class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
         (DefaultServerFactory) app.getConfiguration().getServerFactory();
     LogbackAccessRequestLogFactory requestLogFactory =
         (LogbackAccessRequestLogFactory) serverFactory.getRequestLogFactory();
-    ConsoleAppenderFactory consoleAppenderFactory =
-        (ConsoleAppenderFactory) requestLogFactory.getAppenders().get(0);
+    var consoleAppenderFactory =
+        (ConsoleAppenderFactory<IAccessEvent>) requestLogFactory.getAppenders().get(0);
 
     assertThat(consoleAppenderFactory.getLayout()).isInstanceOf(AccessJsonLayoutBaseFactory.class);
     AccessJsonLayoutBaseFactory accessJsonLayoutBaseFactory =
