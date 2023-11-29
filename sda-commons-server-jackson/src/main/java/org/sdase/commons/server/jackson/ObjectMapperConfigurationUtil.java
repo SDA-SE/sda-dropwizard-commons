@@ -172,8 +172,7 @@ public class ObjectMapperConfigurationUtil {
     private void configureRenderingOfColonInTimeZone(ObjectMapper objectMapper) {
       // render colon in time zone
       DateFormat original = objectMapper.getDateFormat();
-      if (original instanceof StdDateFormat) {
-        StdDateFormat stdDateFormat = (StdDateFormat) original;
+      if (original instanceof StdDateFormat stdDateFormat) {
         StdDateFormat withColonInTimeZone = stdDateFormat.withColonInTimeZone(true);
         objectMapper.setDateFormat(withColonInTimeZone);
       } else {

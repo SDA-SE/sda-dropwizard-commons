@@ -31,7 +31,7 @@ class MongoDbClassExtensionWithScriptingTest {
               .getDatabase("my_db")
               .getCollection("test")
               .find(new Document("$where", "this.name == 5"))
-              .into(new ArrayList<Document>());
+              .into(new ArrayList<>());
       assertThat(results).isEmpty();
     }
   }

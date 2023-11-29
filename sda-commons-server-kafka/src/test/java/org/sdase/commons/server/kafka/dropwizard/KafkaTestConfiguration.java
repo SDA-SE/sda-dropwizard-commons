@@ -13,10 +13,7 @@ public class KafkaTestConfiguration extends Configuration {
   public KafkaTestConfiguration() {}
 
   public KafkaTestConfiguration withBrokers(KafkaBrokers kafkaBrokers) {
-    kafkaBrokers.forEach(
-        b -> {
-          kafka.getBrokers().add(b.getConnectString());
-        });
+    kafkaBrokers.forEach(b -> kafka.getBrokers().add(b.getConnectString()));
     return this;
   }
 
