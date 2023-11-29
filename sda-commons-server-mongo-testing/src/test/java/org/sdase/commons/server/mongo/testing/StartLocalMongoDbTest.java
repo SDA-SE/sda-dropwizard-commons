@@ -7,9 +7,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static de.flapdoodle.embed.mongo.distribution.Version.V5_0_14;
+import static de.flapdoodle.embed.mongo.distribution.Version.V6_0_8;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import de.flapdoodle.embed.mongo.distribution.Version;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -66,7 +68,7 @@ class StartLocalMongoDbTest {
     WIRE.stubFor(
         get(urlMatching(".*")).willReturn(aResponse().proxiedFrom("https://fastdl.mongodb.org")));
 
-    runWithMongo(WIRE.baseUrl() + "/osx/mongodb-macos-x86_64-5.0.14.tgz");
+    runWithMongo(WIRE.baseUrl() + "/osx/mongodb-macos-x86_64-5.0.14.tgz", V5_0_14);
 
     WIRE.verify(getRequestedFor(urlPathEqualTo("/osx/mongodb-macos-x86_64-5.0.14.tgz")));
   }
@@ -77,18 +79,19 @@ class StartLocalMongoDbTest {
     WIRE.stubFor(
         get(urlMatching(".*")).willReturn(aResponse().proxiedFrom("https://fastdl.mongodb.org")));
 
-    runWithMongo(WIRE.baseUrl() + "/linux/mongodb-linux-x86_64-ubuntu2004-5.0.14.tgz");
+    // match GH runner ubuntu-latest (currently 22.04), MongoDB 5 not available.
+    // see https://github.com/actions/runner-images#available-images
+    runWithMongo(WIRE.baseUrl() + "/linux/mongodb-linux-x86_64-ubuntu2204-6.0.8.tgz", V6_0_8);
 
-    WIRE.verify(
-        getRequestedFor(urlPathEqualTo("/linux/mongodb-linux-x86_64-ubuntu2004-5.0.14.tgz")));
+    WIRE.verify(getRequestedFor(urlPathEqualTo("mongodb-linux-x86_64-ubuntu2204-6.0.8.tgz")));
   }
 
-  void runWithMongo(String downloadPath) {
+  void runWithMongo(String downloadPath, Version version) {
     if (downloadPath != null) {
       System.setProperty("EMBEDDED_MONGO_DOWNLOAD_PATH", downloadPath);
     }
     StartLocalMongoDb startLocalMongoDb =
-        new StartLocalMongoDb("test", "test", "test", false, V5_0_14, 1_000);
+        new StartLocalMongoDb("test", "test", "test", false, version, 1_000);
     try {
       startLocalMongoDb.startMongo();
     } finally {
