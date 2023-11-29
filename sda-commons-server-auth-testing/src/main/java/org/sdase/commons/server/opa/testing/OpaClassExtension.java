@@ -16,10 +16,14 @@ public class OpaClassExtension extends AbstractOpa implements BeforeAllCallback,
 
   private String opaClientTimeoutBackup = null;
 
+  /**
+   * @return the base url of the mock server
+   */
   public String getUrl() {
     return wireMockExtension.baseUrl();
   }
 
+  /** Resets all stubs and requests that were made to the mock server. */
   public void reset() {
     wireMockExtension.resetAll();
   }

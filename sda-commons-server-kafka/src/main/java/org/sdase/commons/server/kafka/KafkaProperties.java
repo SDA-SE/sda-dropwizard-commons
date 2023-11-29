@@ -131,15 +131,11 @@ public class KafkaProperties extends Properties {
   }
 
   private static Class<?> getLoginModule(String saslMechanism) {
-    switch (saslMechanism.toUpperCase()) {
-      case "PLAIN":
-        return PlainLoginModule.class;
-      case "SCRAM-SHA-256":
-      case "SCRAM-SHA-512":
-        return ScramLoginModule.class;
-      default:
-        throw new IllegalArgumentException("Unsupported SASL mechanism " + saslMechanism);
-    }
+    return switch (saslMechanism.toUpperCase()) {
+      case "PLAIN" -> PlainLoginModule.class;
+      case "SCRAM-SHA-256", "SCRAM-SHA-512" -> ScramLoginModule.class;
+      default -> throw new IllegalArgumentException("Unsupported SASL mechanism " + saslMechanism);
+    };
   }
 
   private static Map<String, String> noBlankValues(Map<String, String> original) {

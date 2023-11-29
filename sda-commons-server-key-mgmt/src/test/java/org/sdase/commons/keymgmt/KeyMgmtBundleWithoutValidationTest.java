@@ -45,24 +45,26 @@ class KeyMgmtBundleWithoutValidationTest {
 
   @Test
   void shouldValidatePlatformKeySuccess() {
-    Response response =
+    try (Response response =
         client
             .path("api")
             .path("validate")
             .request()
-            .post(Entity.entity(new ObjectWithKey().setGenderKey("MALE"), APPLICATION_JSON));
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+            .post(Entity.entity(new ObjectWithKey().setGenderKey("MALE"), APPLICATION_JSON))) {
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+    }
   }
 
   @Test
   void shouldAllowNoExistingValue() {
-    Response response =
+    try (Response response =
         client
             .path("api")
             .path("validate")
             .request()
-            .post(Entity.entity(new ObjectWithKey().setGenderKey("BLA"), APPLICATION_JSON));
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+            .post(Entity.entity(new ObjectWithKey().setGenderKey("BLA"), APPLICATION_JSON))) {
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+    }
   }
 
   public static class KeyMgmtBundleTestApp extends Application<KeyMgmtBundleTestConfig> {

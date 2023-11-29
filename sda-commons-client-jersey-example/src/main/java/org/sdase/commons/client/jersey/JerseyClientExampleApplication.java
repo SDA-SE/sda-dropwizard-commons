@@ -17,7 +17,7 @@ import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBund
 public class JerseyClientExampleApplication extends Application<JerseyClientExampleConfiguration> {
 
   public static final String CARS_PATH = URI.create("cars").toString();
-  private JerseyClientBundle<Configuration> jerseyClientBundle =
+  private final JerseyClientBundle<Configuration> jerseyClientBundle =
       JerseyClientBundle.builder().withConsumerTokenProvider(c -> "MyConsumerToken").build();
 
   private Client externalClient;
