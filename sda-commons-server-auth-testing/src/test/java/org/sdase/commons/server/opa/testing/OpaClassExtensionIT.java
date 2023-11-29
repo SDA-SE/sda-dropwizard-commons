@@ -74,11 +74,7 @@ class OpaClassExtensionIT {
         onRequest().withHttpMethod(method).withPath(path).withJwt(jwt);
     // then
 
-    assertThrows(
-        VerificationException.class,
-        () -> {
-          OPA_EXTENSION.verify(1, requestExtraBuilder);
-        });
+    assertThrows(VerificationException.class, () -> OPA_EXTENSION.verify(1, requestExtraBuilder));
   }
 
   @RetryingTest(5)

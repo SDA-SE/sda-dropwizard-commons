@@ -572,17 +572,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     }
   }
 
-  private static class ThreadedMessageListener<K, V> {
-    private final MessageListener<K, V> messageListener;
-    private final Thread thread;
-
-    private final String clientId;
-
-    private ThreadedMessageListener(
-        MessageListener<K, V> messageListener, Thread thread, String clientId) {
-      this.messageListener = messageListener;
-      this.thread = thread;
-      this.clientId = clientId;
-    }
-  }
+  private record ThreadedMessageListener<K, V>(
+      MessageListener<K, V> messageListener, Thread thread, String clientId) {}
 }

@@ -209,14 +209,16 @@ public class CircuitBreakerBundle<T extends Configuration> implements Configured
       return new Builder<>(c -> new CircuitBreakerConfiguration());
     }
 
+    @SafeVarargs
     @Override
-    public ExceptionBuilder<C> recordExceptions(Class<? extends Throwable>... errorClasses) {
+    public final ExceptionBuilder<C> recordExceptions(Class<? extends Throwable>... errorClasses) {
       recordedErrorClasses = errorClasses;
       return this;
     }
 
+    @SafeVarargs
     @Override
-    public ExceptionBuilder<C> ignoreExceptions(Class<? extends Throwable>... errorClasses) {
+    public final ExceptionBuilder<C> ignoreExceptions(Class<? extends Throwable>... errorClasses) {
       ignoredErrorClasses = errorClasses;
       return this;
     }

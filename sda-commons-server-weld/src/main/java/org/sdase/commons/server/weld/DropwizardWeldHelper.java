@@ -20,7 +20,7 @@ import org.sdase.commons.server.weld.internal.WeldSupport;
  */
 public class DropwizardWeldHelper {
   // We are rethrowing a generic exception that we have no control over, ignore the warning
-  public static <C extends Application> void run(Class<C> applicationClass, String... arguments)
+  public static <C extends Application<?>> void run(Class<C> applicationClass, String... arguments)
       throws Exception { // NOSONAR
     WeldSupport.initializeCDIProviderIfRequired();
 
