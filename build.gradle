@@ -208,7 +208,7 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   java {
     // preferring `sourceCompatibility` over `toolchains` to be able to do builds with different
     // Java versions
-    sourceCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
   }
 
   tasks.withType(JavaCompile) {
