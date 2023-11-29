@@ -44,7 +44,7 @@ class GoldenFileAssertionsTest {
   @Test
   void textShouldNotThrowOnCorrectFileContentWithSpecialCharacters() throws IOException {
     // create file with expected-content
-    Files.write(tempFile, "expected-content-\u00f6".getBytes(UTF_8));
+    Files.writeString(tempFile, "expected-content-\u00f6");
 
     // should be accepted
     assertThatCode(
@@ -127,7 +127,7 @@ class GoldenFileAssertionsTest {
   void yamlShouldNotThrowOnCorrectFileContentWithSpecialCharacters() throws IOException {
     // create file with expected-content
     String oldContent = "key0: v\nkey1: w\nkey2:\n  nested1: a\n  nested2: \u00f6";
-    Files.write(tempFile, oldContent.getBytes(UTF_8));
+    Files.writeString(tempFile, oldContent);
 
     // should be accepted
     String newContent = "key0: v\nkey2:\n  nested2: ö\n  nested1: a\nkey1: w";

@@ -21,7 +21,7 @@ public class AuthBuilder {
 
   private final RSAPrivateKey privateKey;
 
-  private String keyId;
+  private final String keyId;
 
   private String issuer;
 

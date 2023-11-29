@@ -35,8 +35,7 @@ public class HttpConnectorSecurityAdvice {
   }
 
   private void applySecureConfiguration(ConnectorFactory connectorFactory) {
-    if (connectorFactory instanceof HttpConnectorFactory) {
-      HttpConnectorFactory httpConnectorFactory = (HttpConnectorFactory) connectorFactory;
+    if (connectorFactory instanceof HttpConnectorFactory httpConnectorFactory) {
       forceUseForwardedHeaders(httpConnectorFactory);
       forceNoServerHeader(httpConnectorFactory);
       forceNoDateHeader(httpConnectorFactory);

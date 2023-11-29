@@ -27,12 +27,10 @@ class ServerFactoryUtil {
    */
   static List<ConnectorFactory> extractConnectorFactories(ServerFactory serverFactory) {
     List<ConnectorFactory> connectorFactories = new ArrayList<>();
-    if (serverFactory instanceof DefaultServerFactory) {
-      DefaultServerFactory defaultServerFactory = (DefaultServerFactory) serverFactory;
+    if (serverFactory instanceof DefaultServerFactory defaultServerFactory) {
       connectorFactories.addAll(defaultServerFactory.getApplicationConnectors());
       connectorFactories.addAll(defaultServerFactory.getAdminConnectors());
-    } else if (serverFactory instanceof SimpleServerFactory) {
-      SimpleServerFactory simpleServerFactory = (SimpleServerFactory) serverFactory;
+    } else if (serverFactory instanceof SimpleServerFactory simpleServerFactory) {
       connectorFactories.add(simpleServerFactory.getConnector());
     } else if (serverFactory == null) {
       LOG.error(

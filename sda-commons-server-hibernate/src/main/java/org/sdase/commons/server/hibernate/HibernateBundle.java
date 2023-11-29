@@ -39,7 +39,7 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
       DatabaseConfigurationProvider<C> configurationProvider) {
     String[] packagesToScan = packagesToScanForEntities.toArray(new String[] {});
     delegate =
-        new ScanningHibernateBundle<C>(packagesToScan, new SessionFactoryFactory()) {
+        new ScanningHibernateBundle<>(packagesToScan, new SessionFactoryFactory()) {
 
           @Override
           public PooledDataSourceFactory getDataSourceFactory(C configuration) {
@@ -53,7 +53,7 @@ public class HibernateBundle<C extends Configuration> implements ConfiguredBundl
   private HibernateBundle(
       List<Class<?>> entityClasses, DatabaseConfigurationProvider<C> configurationProvider) {
     delegate =
-        new NonScanningHibernateBundle<C>(entityClasses, new SessionFactoryFactory()) {
+        new NonScanningHibernateBundle<>(entityClasses, new SessionFactoryFactory()) {
 
           @Override
           public PooledDataSourceFactory getDataSourceFactory(C configuration) {

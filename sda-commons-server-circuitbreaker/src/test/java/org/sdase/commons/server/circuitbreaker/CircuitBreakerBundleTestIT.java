@@ -38,7 +38,7 @@ class CircuitBreakerBundleTestIT {
   @Test
   void shouldCreateCircuitBreaker() {
     TestApp app = DW.getApplication();
-    CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
+    var circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
         circuitBreakerBundle.createCircuitBreaker("create").withDefaultConfig().build();
 
@@ -48,7 +48,7 @@ class CircuitBreakerBundleTestIT {
   @Test
   void shouldHaveDefaultConfiguration() {
     TestApp app = DW.getApplication();
-    CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
+    var circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
         circuitBreakerBundle.createCircuitBreaker("default").withDefaultConfig().build();
 
@@ -69,7 +69,7 @@ class CircuitBreakerBundleTestIT {
   @Test
   void shouldHaveCustomConfiguration() {
     TestApp app = DW.getApplication();
-    CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
+    var circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
         circuitBreakerBundle
             .createCircuitBreaker("custom")
@@ -98,7 +98,7 @@ class CircuitBreakerBundleTestIT {
   @Test
   void shouldApplyIgnoredExceptions() {
     TestApp app = DW.getApplication();
-    CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
+    var circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
         circuitBreakerBundle
             .createCircuitBreaker("default")
@@ -123,7 +123,7 @@ class CircuitBreakerBundleTestIT {
   @Test
   void shouldWrapTarget() {
     TestApp app = DW.getApplication();
-    CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
+    var circuitBreakerBundle = app.getCircuitBreakerBundle();
     Simple target =
         circuitBreakerBundle
             .createCircuitBreaker("default")
@@ -136,7 +136,7 @@ class CircuitBreakerBundleTestIT {
   @Test
   void shouldProvideMetrics() {
     TestApp app = DW.getApplication();
-    CircuitBreakerBundle circuitBreakerBundle = app.getCircuitBreakerBundle();
+    var circuitBreakerBundle = app.getCircuitBreakerBundle();
     CircuitBreaker circuitBreaker =
         circuitBreakerBundle.createCircuitBreaker("metrics").withDefaultConfig().build();
     circuitBreaker.executeSupplier(() -> true);
@@ -183,7 +183,7 @@ class CircuitBreakerBundleTestIT {
       // nothing to run
     }
 
-    public CircuitBreakerBundle getCircuitBreakerBundle() {
+    public CircuitBreakerBundle<AppConfiguration> getCircuitBreakerBundle() {
       return circuitBreakerBundle;
     }
   }

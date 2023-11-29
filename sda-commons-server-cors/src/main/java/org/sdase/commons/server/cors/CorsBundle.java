@@ -58,13 +58,13 @@ public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> 
               HttpMethod.DELETE,
               "PATCH"));
 
-  private CorsConfigProvider<C> configProvider;
+  private final CorsConfigProvider<C> configProvider;
 
-  private Set<String> allowedHttpMethods;
+  private final Set<String> allowedHttpMethods;
 
-  private Set<String> allowedHeaders;
+  private final Set<String> allowedHeaders;
 
-  private Set<String> exposedHeaders;
+  private final Set<String> exposedHeaders;
 
   private CorsBundle(
       CorsConfigProvider<C> configProvider,
@@ -163,8 +163,8 @@ public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> 
   public static class Builder<C extends Configuration> implements InitialBuilder, FinalBuilder<C> {
 
     private Set<String> allowedHttpMethods = new LinkedHashSet<>(DEFAULT_HTTP_METHODS);
-    private Set<String> allowedHeaders = new LinkedHashSet<>(ALWAYS_ALLOWED_HEADERS);
-    private Set<String> exposedHeaders = new LinkedHashSet<>(ALWAYS_EXPOSED_HEADERS);
+    private final Set<String> allowedHeaders = new LinkedHashSet<>(ALWAYS_ALLOWED_HEADERS);
+    private final Set<String> exposedHeaders = new LinkedHashSet<>(ALWAYS_EXPOSED_HEADERS);
 
     private CorsConfigProvider<C> configProvider = (c -> new CorsConfiguration());
 
