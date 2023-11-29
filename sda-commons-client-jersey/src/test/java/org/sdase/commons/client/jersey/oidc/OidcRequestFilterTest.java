@@ -147,9 +147,13 @@ class OidcRequestFilterTest {
 
     if (withBody) {
       response.withBody(
-          "{\"access_token\": \"xxxx.yyyy.zzzz\",\n"
-              + "  \"expires_in\": 60,\n"
-              + "  \"token_type\": \"Bearer\"}");
+          """
+            {
+              "access_token": "xxxx.yyyy.zzzz",
+              "expires_in": 60,
+              "token_type": "Bearer"
+            }
+          """);
     }
 
     WIRE.stubFor(

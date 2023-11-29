@@ -94,7 +94,7 @@ class JacksonConfigurationBundleTest {
     AtomicReference<ObjectMapper> omRef = new AtomicReference<>();
 
     // ensure that the ObjectMapper to test is created as it would in a real App
-    Bootstrap bootstrapMock = mock(Bootstrap.class, RETURNS_DEEP_STUBS);
+    var bootstrapMock = mock(Bootstrap.class, RETURNS_DEEP_STUBS);
     doAnswer(
             invocation -> {
               omRef.set(invocation.getArgument(0));

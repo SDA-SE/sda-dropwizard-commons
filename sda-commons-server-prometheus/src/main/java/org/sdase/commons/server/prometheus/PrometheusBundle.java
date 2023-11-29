@@ -314,8 +314,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     for (int i = 0; i < labelNames.length; ++i) {
       Object labelName = labelNames[i];
 
-      if (labelName instanceof Entry) {
-        var pair = (Entry) labelName;
+      if (labelName instanceof Entry pair) {
         labels.put(pair.getKey().toString(), pair.getValue().toString());
       } else {
         labels.put(labelName.toString(), "${" + i + "}");
