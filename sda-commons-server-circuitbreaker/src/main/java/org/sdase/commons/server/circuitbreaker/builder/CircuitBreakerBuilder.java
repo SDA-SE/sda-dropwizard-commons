@@ -45,15 +45,17 @@ public class CircuitBreakerBuilder<T extends Configuration>
     return this;
   }
 
+  @SafeVarargs
   @Override
-  public CircuitBreakerExceptionBuilder<T> recordExceptions(
+  public final CircuitBreakerExceptionBuilder<T> recordExceptions(
       Class<? extends Throwable>... errorClasses) {
     this.recordedErrorClasses = errorClasses;
     return this;
   }
 
+  @SafeVarargs
   @Override
-  public CircuitBreakerExceptionBuilder<T> ignoreExceptions(
+  public final CircuitBreakerExceptionBuilder<T> ignoreExceptions(
       Class<? extends Throwable>... errorClasses) {
     this.ignoredErrorClasses = errorClasses;
     return this;

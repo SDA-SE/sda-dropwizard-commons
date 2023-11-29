@@ -4,10 +4,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javassist.util.proxy.Proxy;
@@ -18,9 +15,7 @@ import org.objenesis.ObjenesisStd;
 public class CircuitBreakerWrapperHelper {
 
   private static final Set<String> IGNORED_METHODS =
-      Collections.unmodifiableSet(
-          new HashSet<>(
-              Arrays.asList("finalize", "equals", "hashCode", "toString", "$jacocoInit")));
+      Set.of("finalize", "equals", "hashCode", "toString", "$jacocoInit");
 
   private static final ObjenesisStd OBJENESIS = new ObjenesisStd();
 
