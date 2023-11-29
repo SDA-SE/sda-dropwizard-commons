@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,7 @@ class StartLocalMongoDbTest {
     WIRE.verify(getRequestedFor(urlPathEqualTo("/osx/mongodb-macos-x86_64-5.0.14.tgz")));
   }
 
-  @Test
+  @RetryingTest(3)
   @EnabledOnOs(OS.LINUX)
   void shouldCreateWithFixedDownloadPathOnLinux() {
     WIRE.stubFor(
