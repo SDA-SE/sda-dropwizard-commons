@@ -77,6 +77,11 @@ Removed Support for JUnit 4.x
 You must use all JUnit 5 extensions, classes, annotations, and libraries and migrate all your JUnit
 4 tests to JUnit 5.
 
+### 2 sda-commons-server-mongo-testing
+
+Removed custom proxy configuration for MongoDB executable download.
+OS proxy settings should be configured instead.
+
 #### FixtureHelpers
 
 The class `io.drowizard.helpers.fixtures.FixtureHelpers` is not available in Dropwizard v4. So
