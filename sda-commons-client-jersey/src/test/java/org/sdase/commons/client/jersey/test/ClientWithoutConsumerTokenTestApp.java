@@ -12,7 +12,7 @@ import org.sdase.commons.server.trace.TraceTokenBundle;
 
 public class ClientWithoutConsumerTokenTestApp extends Application<ClientTestConfig> {
 
-  private JerseyClientBundle<Configuration> jerseyClientBundle =
+  private final JerseyClientBundle<Configuration> jerseyClientBundle =
       JerseyClientBundle.builder().build();
 
   private ClientTestEndPoint clientTestEndPoint;
@@ -42,7 +42,7 @@ public class ClientWithoutConsumerTokenTestApp extends Application<ClientTestCon
     environment.jersey().register(clientTestEndPoint);
   }
 
-  public JerseyClientBundle getJerseyClientBundle() {
+  public JerseyClientBundle<Configuration> getJerseyClientBundle() {
     return jerseyClientBundle;
   }
 

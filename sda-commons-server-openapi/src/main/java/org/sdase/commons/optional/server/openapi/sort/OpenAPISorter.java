@@ -102,14 +102,12 @@ public class OpenAPISorter {
     }
 
     TreeMap<String, Schema> sorted = new TreeMap<>();
-    schemas
-        .entrySet()
-        .forEach(
-            entry -> {
-              Schema<?> schema = entry.getValue();
-              schema.setProperties(sortSchemas(schema.getProperties()));
-              sorted.put(entry.getKey(), schema);
-            });
+    schemas.forEach(
+        (key, value) -> {
+          Schema<?> schema = value;
+          schema.setProperties(sortSchemas(schema.getProperties()));
+          sorted.put(key, schema);
+        });
 
     return sorted;
   }

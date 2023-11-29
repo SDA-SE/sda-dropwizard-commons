@@ -6,13 +6,13 @@ import java.util.List;
 /** Example persistent entity holding information about a person. */
 public class PersonEntity {
 
-  private String id;
+  private final String id;
 
-  private String firstName;
-  private String lastName;
+  private final String firstName;
+  private final String lastName;
 
-  private List<PersonEntity> children = new ArrayList<>();
-  private List<PersonEntity> parents = new ArrayList<>();
+  private final List<PersonEntity> children = new ArrayList<>();
+  private final List<PersonEntity> parents = new ArrayList<>();
 
   PersonEntity(String id, String firstName, String lastName) {
     this.id = id;
