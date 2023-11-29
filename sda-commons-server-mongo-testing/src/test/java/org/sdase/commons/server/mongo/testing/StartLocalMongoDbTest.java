@@ -7,11 +7,15 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static de.flapdoodle.embed.mongo.distribution.Version.V5_0_14;
-import static de.flapdoodle.embed.mongo.distribution.Version.V6_0_8;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
+import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
+import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.os.CommonOS;
+import de.flapdoodle.os.Platform;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -19,9 +23,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
@@ -31,8 +32,10 @@ class StartLocalMongoDbTest {
 
   @RegisterExtension static WireMockClassExtension WIRE = new WireMockClassExtension();
 
+  static final Version TEST_VERSION = V5_0_14;
+
   // These loggers produce extensive debug logs about the full download (including content).
-  // That makes the download so slow that it times out.
+  // That makes the download so slow that it times out and produces very large build artifacts.
   static final Map<ch.qos.logback.classic.Logger, Level> reconfiguredLoggersAndOriginalLevel =
       Stream.of(
               "org.eclipse.jetty",
@@ -62,36 +65,26 @@ class StartLocalMongoDbTest {
     WIRE.resetAll();
   }
 
-  @Test
-  @EnabledOnOs(OS.MAC)
-  void shouldCreateWithFixedDownloadPathOnMac() {
+  @RetryingTest(5)
+  void shouldCreateWithFixedDownloadPath() {
+    String path =
+        new PlatformPackageResolver(Command.MongoD)
+            .packageFor(Distribution.of(TEST_VERSION, Platform.detect(CommonOS.list())))
+            .url();
     WIRE.stubFor(
         get(urlMatching(".*")).willReturn(aResponse().proxiedFrom("https://fastdl.mongodb.org")));
 
-    runWithMongo(WIRE.baseUrl() + "/osx/mongodb-macos-x86_64-5.0.14.tgz", V5_0_14);
+    runWithMongo(WIRE.baseUrl() + path);
 
-    WIRE.verify(getRequestedFor(urlPathEqualTo("/osx/mongodb-macos-x86_64-5.0.14.tgz")));
+    WIRE.verify(getRequestedFor(urlPathEqualTo(path)));
   }
 
-  @RetryingTest(3)
-  @EnabledOnOs(OS.LINUX)
-  void shouldCreateWithFixedDownloadPathOnLinux() {
-    WIRE.stubFor(
-        get(urlMatching(".*")).willReturn(aResponse().proxiedFrom("https://fastdl.mongodb.org")));
-
-    // match GH runner ubuntu-latest (currently 22.04), MongoDB 5 not available.
-    // see https://github.com/actions/runner-images#available-images
-    runWithMongo(WIRE.baseUrl() + "/linux/mongodb-linux-x86_64-ubuntu2204-6.0.8.tgz", V6_0_8);
-
-    WIRE.verify(getRequestedFor(urlPathEqualTo("mongodb-linux-x86_64-ubuntu2204-6.0.8.tgz")));
-  }
-
-  void runWithMongo(String downloadPath, Version version) {
+  void runWithMongo(String downloadPath) {
     if (downloadPath != null) {
       System.setProperty("EMBEDDED_MONGO_DOWNLOAD_PATH", downloadPath);
     }
     StartLocalMongoDb startLocalMongoDb =
-        new StartLocalMongoDb("test", "test", "test", false, version, 1_000);
+        new StartLocalMongoDb("test", "test", "test", false, TEST_VERSION, 1_000);
     try {
       startLocalMongoDb.startMongo();
     } finally {
