@@ -41,10 +41,8 @@ class JerseyClientExampleIT {
 
   private JerseyClientExampleApplication app;
   private static final ObjectMapper OM = new ObjectMapper();
-  private static final Car BRIGHT_BLUE_CAR =
-      new Car().setSign("HH XX 1234").setColor("bright blue"); // NOSONAR
-  private static final Car LIGHT_BLUE_CAR =
-      new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
+  private static final Car BRIGHT_BLUE_CAR = new Car("HH XX 1234", "bright blue");
+  private static final Car LIGHT_BLUE_CAR = new Car("HH XY 4321", "light blue");
 
   @BeforeEach
   void beforeEach() throws JsonProcessingException {
