@@ -35,7 +35,7 @@ public class PersonEndpoint implements ContextAwareEndpoint {
    */
   @Context private UriInfo uriInfo;
 
-  private PersonManager personManager;
+  private final PersonManager personManager;
 
   public PersonEndpoint(PersonManager personManager) {
     this.personManager = personManager;

@@ -27,7 +27,7 @@ class S3WithHealthCheckIT {
   @RegisterExtension
   @Order(1)
   static final DropwizardAppExtension<Config> DW =
-      new DropwizardAppExtension<Config>(
+      new DropwizardAppExtension<>(
           S3WithHealthCheckTestApp.class,
           resourceFilePath("test-config.yml"),
           config("s3Config.endpoint", S3::getEndpoint),

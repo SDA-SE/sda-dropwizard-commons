@@ -50,17 +50,25 @@ class OpaTimeoutIT {
                 aResponse()
                     .withHeader("Content-Type", "application/json")
                     .withStatus(200)
-                    .withBody("{\n" + "  \"result\": {\n" + "    \"allow\": true\n" + "  }\n" + "}")
+                    .withBody(
+                        """
+                          {
+                            "result": {
+                              "allow": true
+                            }
+                          }
+                        """)
                     .withFixedDelay(400)));
 
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("resources")
             .request()
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+    }
   }
 
   @Test
@@ -72,16 +80,24 @@ class OpaTimeoutIT {
                 aResponse()
                     .withHeader("Content-Type", "application/json")
                     .withStatus(200)
-                    .withBody("{\n" + "  \"result\": {\n" + "    \"allow\": true\n" + "  }\n" + "}")
+                    .withBody(
+                        """
+                          {
+                            "result": {
+                              "allow": true
+                            }
+                          }
+                        """)
                     .withFixedDelay(1)));
 
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("resources")
             .request()
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
   }
 }
