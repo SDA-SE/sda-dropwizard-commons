@@ -51,12 +51,6 @@ method to remove all documents from the database between tests, without restarti
 To verify and modify the database during tests, `MONGO_DB_EXTENSION.createClient()` provides a way to access the
 database using the `MongoClient`.
 
-
-### HTTP Proxy
-
-If the `http_proxy` environment variable is present, the configured proxy is used to download the
-`mongod` executable.
-
 ### Scripting
 
 By default, scripting using JavaScript is disabled.
@@ -81,8 +75,6 @@ If `EMBEDDED_MONGO_DOWNLOAD_PATH` is set to `http://example.com/download/`, the 
 tries to download `http://example.com/download/osx/mongodb-osx-ssl-x86_64-3.6.5.tgz`.
 
 ### Use an Existing Database
-
-**Experimental Feature**
 
 To test specific scenarios, e.g. a real database set up like in production, the extension can be
 configured to not bootstrap a database with Flapdoodle.
