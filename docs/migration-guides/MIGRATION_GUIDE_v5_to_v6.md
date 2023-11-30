@@ -1,4 +1,4 @@
-# Migration Guide from v4 to v5
+# Migration Guide from v5 to v6
 
 ## General migration changes
 
