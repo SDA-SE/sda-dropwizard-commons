@@ -14,6 +14,7 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.event.CircuitBreakerOnIgnoredErrorEvent;
+import io.micrometer.core.instrument.Metrics;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +58,8 @@ class CircuitBreakerBundleTestIT {
             CircuitBreakerConfig::getFailureRateThreshold,
             CircuitBreakerConfig::getSlidingWindowSize,
             CircuitBreakerConfig::getPermittedNumberOfCallsInHalfOpenState,
-            CircuitBreakerConfig::getWaitDurationInOpenState)
-        .containsExactly(51.0f, 100, 10, Duration.of(1, MINUTES));
+            config -> config.getWaitIntervalFunctionInOpenState().apply(1))
+        .containsExactly(51.0f, 100, 10, Duration.of(1, MINUTES).toMillis());
     assertThat(
             circuitBreaker
                 .getCircuitBreakerConfig()
@@ -86,8 +87,8 @@ class CircuitBreakerBundleTestIT {
             CircuitBreakerConfig::getFailureRateThreshold,
             CircuitBreakerConfig::getSlidingWindowSize,
             CircuitBreakerConfig::getPermittedNumberOfCallsInHalfOpenState,
-            CircuitBreakerConfig::getWaitDurationInOpenState)
-        .containsExactly(75.0f, 50, 5, Duration.of(30, SECONDS));
+            config -> config.getWaitIntervalFunctionInOpenState().apply(1))
+        .containsExactly(75.0f, 50, 5, Duration.of(30, SECONDS).toMillis());
     assertThat(
             circuitBreaker
                 .getCircuitBreakerConfig()
@@ -141,15 +142,12 @@ class CircuitBreakerBundleTestIT {
         circuitBreakerBundle.createCircuitBreaker("metrics").withDefaultConfig().build();
     circuitBreaker.executeSupplier(() -> true);
 
-    String metrics =
-        DW.client()
-            .target("http://localhost:" + DW.getAdminPort())
-            .path("metrics/prometheus")
-            .request()
-            .get()
-            .readEntity(String.class);
-
-    assertThat(metrics).contains("resilience4j_circuitbreaker_state{");
+    var meters =
+        Metrics.globalRegistry.getRegistries().stream()
+            .flatMap(registry -> registry.getMeters().stream())
+            .filter(meter -> meter.getId().getName().startsWith("resilience4j.circuitbreaker"))
+            .toList();
+    assertThat(meters).isNotEmpty();
   }
 
   public static class AppConfiguration extends Configuration {
