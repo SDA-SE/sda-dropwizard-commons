@@ -1,5 +1,7 @@
 package org.sdase.commons.server.spring.data.mongo.inheritance;
 
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V4_4;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V5_0;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -29,7 +31,8 @@ abstract class InheritanceMappingITest {
   static class MongoDb44Test extends InheritanceMappingITest {
     @RegisterExtension
     @Order(0)
-    static final MongoDbClassExtension MONGO = MongoDbClassExtension.builder().build();
+    static final MongoDbClassExtension MONGO =
+        MongoDbClassExtension.builder().withVersion(V4_4).build();
 
     @RegisterExtension
     @Order(1)
@@ -53,7 +56,8 @@ abstract class InheritanceMappingITest {
   static class MongoDb50Test extends InheritanceMappingITest {
     @RegisterExtension
     @Order(0)
-    static final MongoDbClassExtension MONGO = MongoDbClassExtension.builder().build();
+    static final MongoDbClassExtension MONGO =
+        MongoDbClassExtension.builder().withVersion(V5_0).build();
 
     @RegisterExtension
     @Order(1)

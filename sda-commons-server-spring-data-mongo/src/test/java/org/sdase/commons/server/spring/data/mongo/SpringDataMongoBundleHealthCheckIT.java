@@ -1,5 +1,7 @@
 package org.sdase.commons.server.spring.data.mongo;
 
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V4_4;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V5_0;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -20,7 +22,8 @@ abstract class SpringDataMongoBundleHealthCheckIT {
   static class MongoDb44Test extends SpringDataMongoBundleHealthCheckIT {
     @RegisterExtension
     @Order(0)
-    static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(V4_4).build();
 
     @RegisterExtension
     @Order(1)
@@ -40,7 +43,8 @@ abstract class SpringDataMongoBundleHealthCheckIT {
   static class MongoDb50Test extends SpringDataMongoBundleHealthCheckIT {
     @RegisterExtension
     @Order(0)
-    static final MongoDbClassExtension mongo = MongoDbClassExtension.builder().build();
+    static final MongoDbClassExtension mongo =
+        MongoDbClassExtension.builder().withVersion(V5_0).build();
 
     @RegisterExtension
     @Order(1)
