@@ -6,11 +6,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static de.flapdoodle.embed.mongo.distribution.Version.V5_0_14;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V5_0;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
 import de.flapdoodle.embed.process.distribution.Distribution;
@@ -32,7 +32,7 @@ class StartLocalMongoDbTest {
 
   @RegisterExtension static WireMockClassExtension WIRE = new WireMockClassExtension();
 
-  static final Version TEST_VERSION = V5_0_14;
+  static final IFeatureAwareVersion TEST_VERSION = V5_0;
 
   // These loggers produce extensive debug logs about the full download (including content).
   // That makes the download so slow that it times out and produces very large build artifacts.
