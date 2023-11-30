@@ -84,6 +84,15 @@ you must read the file using other approaches, e.g.
 using [Wiremock response body](https://wiremock.org/docs/stubbing/#specifying-the-response-body) or
 using an [ObjectMapper](https://www.baeldung.com/jackson-object-mapper-tutorial).
 
+#### Wiremock 3.0
+
+Dropwizard v4 uses wiremock v3.x version. Were introduced some breaking changes, like dropping
+support for Java 8,
+upgrading from Jetty 9 to Jetty 11 and changing the repository groupID to org.wiremock for all
+artifacts : wiremock, wiremock-standalone, wiremock-webhooks-extension.
+You can see all the release notes and breaking changes in
+the [official repository](https://github.com/wiremock/wiremock/releases/3.0.0). 
+
 ### 2 sda-commons-server-circuitbreaker
 
 Resilience4j-Circuitbreaker was updated from 1.7.x to 2.1.
