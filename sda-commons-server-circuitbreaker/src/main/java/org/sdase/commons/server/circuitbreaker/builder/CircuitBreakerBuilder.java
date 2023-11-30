@@ -77,14 +77,19 @@ public class CircuitBreakerBuilder<T extends Configuration>
     if (configurationProvider != null) {
       CircuitBreakerConfiguration circuitBreakerConfiguration =
           configurationProvider.apply(configuration);
+      int ringBufferSizeInClosedState =
+          circuitBreakerConfiguration.getRingBufferSizeInClosedState();
+      int ringBufferSizeInHalfOpenState =
+          circuitBreakerConfiguration.getRingBufferSizeInHalfOpenState();
       builder =
           CircuitBreakerConfig.custom()
               .enableAutomaticTransitionFromOpenToHalfOpen()
               .failureRateThreshold(circuitBreakerConfiguration.getFailureRateThreshold())
-              .ringBufferSizeInClosedState(
-                  circuitBreakerConfiguration.getRingBufferSizeInClosedState())
-              .ringBufferSizeInHalfOpenState(
-                  circuitBreakerConfiguration.getRingBufferSizeInHalfOpenState())
+              .slidingWindow(
+                  ringBufferSizeInClosedState,
+                  ringBufferSizeInClosedState,
+                  CircuitBreakerConfig.SlidingWindowType.COUNT_BASED)
+              .permittedNumberOfCallsInHalfOpenState(ringBufferSizeInHalfOpenState)
               .waitDurationInOpenState(circuitBreakerConfiguration.getWaitDurationInOpenState());
     }
     return builder
