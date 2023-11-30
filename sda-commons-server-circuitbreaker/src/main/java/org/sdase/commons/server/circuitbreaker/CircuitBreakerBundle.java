@@ -1,7 +1,5 @@
 package org.sdase.commons.server.circuitbreaker;
 
-import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
-
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
@@ -10,10 +8,8 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.micrometer.tagged.TaggedCircuitBreakerMetrics;
 import io.micrometer.core.instrument.Metrics;
-import io.prometheus.client.CollectorRegistry;
 import org.sdase.commons.server.circuitbreaker.builder.CircuitBreakerBuilder;
 import org.sdase.commons.server.circuitbreaker.builder.CircuitBreakerConfigurationBuilder;
-import org.sdase.commons.server.circuitbreaker.metrics.SdaCircuitBreakerMetricsCollector;
 
 /**
  * Bundle that provides access to an implementation of the circuit breaker pattern to handle
@@ -50,13 +46,16 @@ public class CircuitBreakerBundle<T extends Configuration> implements Configured
     this.configuration = configuration;
     CircuitBreakerConfiguration circuitBreakerConfiguration =
         configurationProvider.apply(configuration);
+    int ringBufferSizeInClosedState = circuitBreakerConfiguration.getRingBufferSizeInClosedState();
     CircuitBreakerConfig config =
         CircuitBreakerConfig.custom()
             .enableAutomaticTransitionFromOpenToHalfOpen()
             .failureRateThreshold(circuitBreakerConfiguration.getFailureRateThreshold())
-            .ringBufferSizeInClosedState(
-                circuitBreakerConfiguration.getRingBufferSizeInClosedState())
-            .ringBufferSizeInHalfOpenState(
+            .slidingWindow(
+                ringBufferSizeInClosedState,
+                ringBufferSizeInClosedState,
+                CircuitBreakerConfig.SlidingWindowType.COUNT_BASED)
+            .permittedNumberOfCallsInHalfOpenState(
                 circuitBreakerConfiguration.getRingBufferSizeInHalfOpenState())
             .waitDurationInOpenState(circuitBreakerConfiguration.getWaitDurationInOpenState())
             .recordExceptions(recordedErrorClasses)
@@ -64,19 +63,8 @@ public class CircuitBreakerBundle<T extends Configuration> implements Configured
             .build();
     registry = CircuitBreakerRegistry.of(config);
 
-    CollectorRegistry collectorRegistry = CollectorRegistry.defaultRegistry;
-    //    adds resilience4j_circuitbreaker_calls_bucket metric to not introduce a breaking changes.
-    //    should be removed with the next major release
-    SdaCircuitBreakerMetricsCollector sdaCircuitBreakerMetricsCollector =
-        SdaCircuitBreakerMetricsCollector.ofCircuitBreakerRegistry(registry);
-    collectorRegistry.register(sdaCircuitBreakerMetricsCollector);
-
     //    adds metrics using resilience4j micrometer library
     TaggedCircuitBreakerMetrics.ofCircuitBreakerRegistry(registry).bindTo(Metrics.globalRegistry);
-
-    environment
-        .lifecycle()
-        .manage(onShutdown(() -> collectorRegistry.unregister(sdaCircuitBreakerMetricsCollector)));
   }
 
   /**

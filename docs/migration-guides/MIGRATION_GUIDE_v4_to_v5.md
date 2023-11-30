@@ -69,6 +69,7 @@ to [v6.1](https://github.com/hibernate/hibernate-orm/blob/6.1/migration-guide.ad
 The following modules contain changes:
 
 1. [sda-commons-server-testing](#1-sda-commons-server-testing)
+1. [sda-commons-server-circuitbreaker](#2-sda-commons-server-circuitbreaker)
 
 ### 1 sda-commons-server-testing
 
@@ -82,3 +83,14 @@ The class `io.drowizard.helpers.fixtures.FixtureHelpers` is not available in Dro
 you must read the file using other approaches, e.g.
 using [Wiremock response body](https://wiremock.org/docs/stubbing/#specifying-the-response-body) or
 using an [ObjectMapper](https://www.baeldung.com/jackson-object-mapper-tutorial).
+
+### 2 sda-commons-server-circuitbreaker
+
+Resilience4j-Circuitbreaker was updated from 1.7.x to 2.1.
+Please check [their release notes](https://github.com/resilience4j/resilience4j/blob/master/RELEASENOTES.adoc#version-200) for details.
+
+The class `org.sdase.commons.server.circuitbreaker.metrics.SdaCircuitBreakerMetricsCollector` was removed. 
+We now collect metrics using [Micrometer](https://micrometer.io/).
+
+The metric named `resilience4j_circuitbreaker_calls_bucket` is not exposed anymore.
+Please use Micrometer's metric `resilience4j_circuitbreaker_calls_count` instead.
