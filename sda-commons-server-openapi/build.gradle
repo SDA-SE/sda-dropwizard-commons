@@ -2,13 +2,8 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-yaml')
 
-  api 'io.swagger.core.v3:swagger-jaxrs2-jakarta', {
-    exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
-  }
-  api 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider', {
-    exclude group: 'jakarta.activation'
-    exclude group: "jakarta.xml.bind"
-  }
+  api 'io.swagger.core.v3:swagger-jaxrs2-jakarta'
+  api 'com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider'
   api 'io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta'
   api 'io.swagger.parser.v3:swagger-parser-v3', {
     // we use a different version of Jackson
@@ -40,7 +35,6 @@ dependencies {
   api 'io.openapitools.jackson.dataformat:jackson-dataformat-hal', {
     exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
   }
-  api 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider'
   api 'jakarta.xml.bind:jakarta.xml.bind-api'
 
   testImplementation project(':sda-commons-server-testing')
