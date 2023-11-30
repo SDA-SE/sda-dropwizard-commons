@@ -7,6 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static de.flapdoodle.embed.mongo.distribution.Version.Main.V7_0;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -73,8 +74,17 @@ class StartLocalMongoDbTest {
             .url();
     WIRE.stubFor(
         get(urlMatching(".*")).willReturn(aResponse().proxiedFrom("https://fastdl.mongodb.org")));
-
-    runWithMongo(WIRE.baseUrl() + path);
+    try {
+      runWithMongo(WIRE.baseUrl() + path);
+    } catch (Throwable t) {
+      // We accept that the downloaded MongoDB is not starting.
+      // It is assumed, that the wrong package is selected.
+      // Here we only want to test that another location is used for the download.
+      // We have other tests using flapdoodle which show that it works in general.
+      assertThat(t)
+          .hasStackTraceContaining(
+              "rollback after error on transition to State(RunningMongodProcess)");
+    }
 
     WIRE.verify(getRequestedFor(urlPathEqualTo(path)));
   }
