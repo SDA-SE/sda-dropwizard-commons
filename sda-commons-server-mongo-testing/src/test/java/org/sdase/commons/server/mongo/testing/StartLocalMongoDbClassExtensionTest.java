@@ -33,7 +33,7 @@ class StartLocalMongoDbClassExtensionTest {
           .withUsername(DATABASE_USERNAME)
           .withPassword(DATABASE_PASSWORD)
           .withTimeoutInMillis(30_000)
-          .withVersion(Version.V3_2_20)
+          .withVersion(Version.V5_0_14)
           .build();
 
   @Test
@@ -141,12 +141,12 @@ class StartLocalMongoDbClassExtensionTest {
 
   @Test
   void shouldTakeSpecificMongoDbVersion() {
-    assertThat(MONGO_DB_EXTENSION.getServerVersion()).isEqualTo("3.2.20");
+    assertThat(MONGO_DB_EXTENSION.getServerVersion()).isEqualTo("5.0.14");
   }
 
   @Test
   void shouldStartSpecificMongoDbVersion() {
-    assertThat(MONGO_DB_EXTENSION.getServerVersion()).isEqualTo("3.2.20");
+    assertThat(MONGO_DB_EXTENSION.getServerVersion()).isEqualTo("5.0.14");
   }
 
   @Test
