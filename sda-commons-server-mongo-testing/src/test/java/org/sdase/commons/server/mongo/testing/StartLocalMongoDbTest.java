@@ -11,6 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
@@ -24,14 +26,13 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.RetryingTest;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.slf4j.LoggerFactory;
 
 class StartLocalMongoDbTest {
 
-  @RegisterExtension static WireMockClassExtension WIRE = new WireMockClassExtension();
+  // class level can fail the retried test because downloaded files are cached
+  WireMockServer wireMockServer;
 
   static final IFeatureAwareVersion TEST_VERSION = V7_0;
 
@@ -61,9 +62,14 @@ class StartLocalMongoDbTest {
   }
 
   @BeforeEach
+  void start() {
+    wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
+    wireMockServer.start();
+  }
+
   @AfterEach
-  void resetStubs() {
-    WIRE.resetAll();
+  void stop() {
+    wireMockServer.stop();
   }
 
   @RetryingTest(5)
@@ -72,10 +78,10 @@ class StartLocalMongoDbTest {
         new PlatformPackageResolver(Command.MongoD)
             .packageFor(Distribution.of(TEST_VERSION, Platform.detect(CommonOS.list())))
             .url();
-    WIRE.stubFor(
+    wireMockServer.stubFor(
         get(urlMatching(".*")).willReturn(aResponse().proxiedFrom("https://fastdl.mongodb.org")));
     try {
-      runWithMongo(WIRE.baseUrl() + path);
+      runWithMongo(wireMockServer.baseUrl() + path);
     } catch (Throwable t) {
       // We accept that the downloaded MongoDB is not starting.
       // It is assumed, that the wrong package is selected.
@@ -86,7 +92,7 @@ class StartLocalMongoDbTest {
               "rollback after error on transition to State(RunningMongodProcess)");
     }
 
-    WIRE.verify(getRequestedFor(urlPathEqualTo(path)));
+    wireMockServer.verify(getRequestedFor(urlPathEqualTo(path)));
   }
 
   void runWithMongo(String downloadPath) {
