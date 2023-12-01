@@ -12,8 +12,6 @@ import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.request.logging.filter.UriFilterFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -61,21 +59,19 @@ class DefaultLoggingConfigurationBundleWithRequestLogFilterTest {
     List<String> pathsExpectingNoLogEntry =
         Arrays.asList(
             "ping", "healthcheck", "healthcheck/internal", "metrics", "metrics/prometheus");
-    List<Response> responses = new ArrayList<>();
-    try {
-      pathsExpectingNoLogEntry.forEach(p -> createAdminTarget().path(p).request().get());
-      responses.add(createWebTarget().path("test").request().get());
-
-      assertThat(responses)
-          .extracting(Response::getStatus)
-          .allMatch(sc -> sc == OK.getStatusCode());
+    pathsExpectingNoLogEntry.forEach(
+        p -> {
+          try (var response = createAdminTarget().path(p).request().get()) {
+            assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
+          }
+        });
+    try (var response = createWebTarget().path("test").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
 
       await()
           .untilAsserted(() -> assertThat(out.capturedLines()).anyMatch(l -> l.contains("/test")));
 
       assertThat(String.join("\n", out.capturedLines())).doesNotContain(pathsExpectingNoLogEntry);
-    } finally {
-      responses.forEach(Response::close);
     }
   }
 
@@ -83,24 +79,22 @@ class DefaultLoggingConfigurationBundleWithRequestLogFilterTest {
   @Test
   void verifyDeprecatedEndpointIsLogged(StdOut out) {
     List<String> deprecatedPaths = Collections.singletonList("healthcheck/prometheus");
-    List<Response> responses = new ArrayList<>();
-    try {
-      // invoke deprecated paths
-      deprecatedPaths.forEach(p -> createAdminTarget().path(p).request().get());
+    // invoke deprecated paths
+    deprecatedPaths.forEach(
+        p -> {
+          try (var ignored = createAdminTarget().path(p).request().get()) {
+            // ignore
+          }
+        });
 
-      // invoke "test" to definitely get some output
-      responses.add(createWebTarget().path("test").request().get());
-
-      assertThat(responses)
-          .extracting(Response::getStatus)
-          .allMatch(sc -> sc == OK.getStatusCode());
+    // invoke "test" to definitely get some output
+    try (var response = createWebTarget().path("test").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
 
       await()
           .untilAsserted(() -> assertThat(out.capturedLines()).anyMatch(l -> l.contains("/test")));
 
       assertThat(String.join("\n", out.capturedLines())).contains(deprecatedPaths);
-    } finally {
-      responses.forEach(Response::close);
     }
   }
 
