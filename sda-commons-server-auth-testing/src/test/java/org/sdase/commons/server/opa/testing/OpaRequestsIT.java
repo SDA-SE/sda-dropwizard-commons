@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.auth.testing.AuthClassExtension;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
@@ -66,7 +65,6 @@ class OpaRequestsIT {
   }
 
   @Test
-  @RetryingTest(5)
   void shouldSerializePathAndMethodCorrectly() throws IOException {
     // when
     doGetRequest(null);
@@ -81,7 +79,6 @@ class OpaRequestsIT {
   }
 
   @Test
-  @RetryingTest(5)
   void shouldSerializeJwtCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
@@ -100,7 +97,6 @@ class OpaRequestsIT {
   }
 
   @Test
-  @RetryingTest(5)
   void shouldSerializeTraceTokenCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
@@ -116,7 +112,6 @@ class OpaRequestsIT {
   }
 
   @Test
-  @RetryingTest(5)
   void shouldSerializeAdditionalHeaderCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
