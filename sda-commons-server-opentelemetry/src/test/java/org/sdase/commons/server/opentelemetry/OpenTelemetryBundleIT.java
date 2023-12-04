@@ -44,11 +44,13 @@ class OpenTelemetryBundleIT {
 
   @Test
   void shouldInstrumentServlets() {
-    Response r = createClient().path("base/respond/test").request().get();
+    List<SpanData> spans;
+    try (Response r = createClient().path("base/respond/test").request().get()) {
 
-    List<SpanData> spans = OTEL.getSpans();
+      spans = OTEL.getSpans();
 
-    assertThat(r.getStatus()).isEqualTo(SC_OK);
+      assertThat(r.getStatus()).isEqualTo(SC_OK);
+    }
     assertThat(spans).isNotEmpty();
   }
 
@@ -58,14 +60,15 @@ class OpenTelemetryBundleIT {
     String traceId = "d38e6f00af20d2ac682ee1fca4fbea01";
     // given very basic W3 format, https://www.w3.org/TR/trace-context/#version-format
     String traceParent = String.format("00-%s-%s-01", traceId, parentId);
-    Response r =
+    try (Response r =
         createClient()
             .path("base/respond/traced")
             .request()
             .header("traceparent", traceParent)
-            .get();
+            .get()) {
 
-    assertThat(r.getStatus()).isEqualTo(SC_OK);
+      assertThat(r.getStatus()).isEqualTo(SC_OK);
+    }
 
     await()
         .untilAsserted(
@@ -97,9 +100,10 @@ class OpenTelemetryBundleIT {
 
   @Test
   void shouldTraceAndLogExceptions() {
-    Response r = createClient().path("base/error").request().get();
+    try (Response r = createClient().path("base/error").request().get()) {
 
-    assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+      assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+    }
 
     await()
         .untilAsserted(
@@ -133,15 +137,16 @@ class OpenTelemetryBundleIT {
 
   @Test
   void shouldDecorateJaxRsSpanWithHeaders() {
-    Response r =
+    try (Response r =
         createClient()
             .path("base/respond/test")
             .request()
             .header("Accept", "text/html")
             .header("Authorization", "Bearer eyXXX.yyy.zzz")
-            .get();
+            .get()) {
 
-    assertThat(r.getStatus()).isEqualTo(SC_OK);
+      assertThat(r.getStatus()).isEqualTo(SC_OK);
+    }
 
     await()
         .untilAsserted(
@@ -166,17 +171,19 @@ class OpenTelemetryBundleIT {
 
   @Test
   void shouldSkipConfiguredUrls() {
-    Response r = createClient().path("base/respond/skip").request().get();
+    try (Response r = createClient().path("base/respond/skip").request().get()) {
 
-    assertThat(r.getStatus()).isEqualTo(SC_OK);
+      assertThat(r.getStatus()).isEqualTo(SC_OK);
+    }
     assertThat(OTEL.getSpans()).isEmpty();
   }
 
   @Test
   void shouldDecorateJaxRsSpansWithResponseHeaders() {
-    Response r = createClient().path("base/respond").request().post(null);
+    try (Response r = createClient().path("base/respond").request().post(null)) {
 
-    assertThat(r.getStatus()).isEqualTo(SC_CREATED);
+      assertThat(r.getStatus()).isEqualTo(SC_CREATED);
+    }
 
     await()
         .untilAsserted(
@@ -197,27 +204,29 @@ class OpenTelemetryBundleIT {
 
   @Test
   void shouldSkipAdminConfiguredPatterns() {
-    Response r = createAdminClient().path("/tasks/skip").request().post(null);
-    assertThat(r.getStatus()).isEqualTo(SC_OK);
+    try (Response r = createAdminClient().path("/tasks/skip").request().post(null)) {
+      assertThat(r.getStatus()).isEqualTo(SC_OK);
+    }
     assertThat(OTEL.getSpans()).isEmpty();
   }
 
   @Test
   void shouldTraceAdminTasks() {
-    Response someResponse = createAdminClient().path("/tasks/doSomething").request().post(null);
-    // no trace for this task
-    Response skippedResponse = createAdminClient().path("/tasks/skip").request().post(null);
+    try (var someResponse = createAdminClient().path("/tasks/doSomething").request().post(null);
+        // no trace for this task
+        var skippedResponse = createAdminClient().path("/tasks/skip").request().post(null)) {
 
-    assertThat(someResponse.getStatus()).isEqualTo(SC_OK);
-    assertThat(skippedResponse.getStatus()).isEqualTo(SC_OK);
-    await()
-        .untilAsserted(
-            () ->
-                assertThat(OTEL.getSpans())
-                    .hasSize(1)
-                    .extracting(SpanData::getName)
-                    .contains("POST /tasks/doSomething")
-                    .doesNotContain("POST /tasks/skip"));
+      assertThat(someResponse.getStatus()).isEqualTo(SC_OK);
+      assertThat(skippedResponse.getStatus()).isEqualTo(SC_OK);
+      await()
+          .untilAsserted(
+              () ->
+                  assertThat(OTEL.getSpans())
+                      .hasSize(1)
+                      .extracting(SpanData::getName)
+                      .contains("POST /tasks/doSomething")
+                      .doesNotContain("POST /tasks/skip"));
+    }
   }
 
   private WebTarget createClient() {

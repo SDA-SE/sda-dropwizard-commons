@@ -43,11 +43,12 @@ class AutoConfigurationTest {
   void shouldUseEnvironmentVariablesForConfiguration(StdOut out) {
     assertThat(System.getenv("OTEL_TRACES_EXPORTER")).isEqualTo("logging");
 
-    Response r = createClient().path("base/respond/test").request().get();
+    try (Response r = createClient().path("base/respond/test").request().get()) {
 
-    r.readEntity(String.class);
+      r.readEntity(String.class);
 
-    assertThat(r.getStatus()).isEqualTo(SC_OK);
+      assertThat(r.getStatus()).isEqualTo(SC_OK);
+    }
 
     // assert the logging exporter is used
     await()

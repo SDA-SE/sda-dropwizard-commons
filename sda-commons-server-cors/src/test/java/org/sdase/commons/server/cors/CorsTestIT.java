@@ -60,271 +60,291 @@ class CorsTestIT {
 
   @Test
   void shouldNotSetHeaderWhenDeny() {
-    Response response =
+    try (Response response =
         DW_DENY
             .client()
             .target(denyEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", "server-a.com")
-            .get();
+            .get()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isNullOrEmpty();
+    }
   }
 
   @Test
   void shouldSetHeaderWhenAllow() {
     String origin = "some.com";
-    Response response =
+    try (Response response =
         DW_ALLOW
             .client()
             .target(allowAllEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
-            .get();
+            .get()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isEqualTo(origin);
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isEqualTo("Location,exposed");
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
-        .isEqualTo(Boolean.TRUE.toString());
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isEqualTo(origin);
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isEqualTo("Location,exposed");
+      assertThat(
+              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+          .isEqualTo(Boolean.TRUE.toString());
+    }
   }
 
   @Test
   void shouldSetHeaderWhenOriginAllowed() {
     String origin = "server-a.com";
-    Response response =
+    try (Response response =
         DW_RESTRICTED
             .client()
             .target(restrictedEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
-            .get();
+            .get()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isEqualTo(origin);
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isEqualTo("Location,exposed");
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
-        .isEqualTo(Boolean.TRUE.toString());
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isEqualTo(origin);
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isEqualTo("Location,exposed");
+      assertThat(
+              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+          .isEqualTo(Boolean.TRUE.toString());
+    }
   }
 
   @Test
   void shouldNotSetHeaderWhenOriginNotAllowed() {
     String origin = "server-b.com";
-    Response response =
+    try (Response response =
         DW_RESTRICTED
             .client()
             .target(restrictedEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
-            .get();
+            .get()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
-        .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+          .isNullOrEmpty();
+    }
   }
 
   @Test
   void shouldNotSetHeaderWhenDenyedPreflight() {
     String origin = "server-a.com";
-    Response response =
+    try (Response response =
         DW_DENY
             .client()
             .target(denyEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
             .header(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER, "POST")
-            .options();
+            .options()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
-        .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+          .isNullOrEmpty();
+    }
   }
 
   @Test
   void shouldSetHeaderWhenAllowPreflight() {
     String origin = "some.com";
-    Response response =
+    try (Response response =
         DW_ALLOW
             .client()
             .target(allowAllEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
             .header(CrossOriginFilter.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "POST")
-            .options();
+            .options()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isEqualTo(origin);
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
-        .isEqualTo("HEAD,GET,POST,PUT,DELETE,PATCH");
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
-        .isEqualTo(Boolean.TRUE.toString());
-    assertThat(
-            response
-                .getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER)
-                .split(","))
-        .containsExactlyInAnyOrder(getAllowedHeaderList("some"));
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isEqualTo(origin);
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+          .isEqualTo("HEAD,GET,POST,PUT,DELETE,PATCH");
+      assertThat(
+              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+          .isEqualTo(Boolean.TRUE.toString());
+      assertThat(
+              response
+                  .getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER)
+                  .split(","))
+          .containsExactlyInAnyOrder(getAllowedHeaderList("some"));
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isNullOrEmpty();
+    }
   }
 
   @Test
   void shouldRespondWithStandardAllowHeaderForNonPreflightOptionsRequest() {
-    Response response =
+    try (Response response =
         DW_ALLOW
             .client()
             .target(allowAllEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", "some-origin.com")
-            .options();
-    assertThat(response.getHeaderString(HttpHeaders.ALLOW)).isEqualTo("HEAD,GET,OPTIONS");
+            .options()) {
+      assertThat(response.getHeaderString(HttpHeaders.ALLOW)).isEqualTo("HEAD,GET,OPTIONS");
+    }
   }
 
   @Test
   void shouldSetHeaderWhenOriginAllowedPreflight() {
     String origin = "server-a.com";
-    Response response =
+    try (Response response =
         DW_RESTRICTED
             .client()
             .target(restrictedEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
             .header(CrossOriginFilter.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "POST")
-            .options();
+            .options()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isEqualTo(origin);
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
-        .isEqualTo("GET,POST");
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
-        .isEqualTo(Boolean.TRUE.toString());
-    assertThat(
-            response
-                .getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER)
-                .split(","))
-        .containsExactlyInAnyOrder(getAllowedHeaderList("some"));
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isEqualTo(origin);
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+          .isEqualTo("GET,POST");
+      assertThat(
+              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+          .isEqualTo(Boolean.TRUE.toString());
+      assertThat(
+              response
+                  .getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER)
+                  .split(","))
+          .containsExactlyInAnyOrder(getAllowedHeaderList("some"));
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isNullOrEmpty();
+    }
   }
 
   @Test
   void shouldNotSetHeaderWhenOriginNotAllowedPreflight() {
     String origin = "server-b.com";
-    Response response =
+    try (Response response =
         DW_RESTRICTED
             .client()
             .target(restrictedEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
             .header(CrossOriginFilter.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "POST")
-            .options();
+            .options()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
-        .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+          .isNullOrEmpty();
+    }
   }
 
   @Test
   void shouldNotSetHeaderWhenMethodNotAllowedPreflight() {
     String origin = "server-a.com";
-    Response response =
+    try (Response response =
         DW_RESTRICTED
             .client()
             .target(restrictedEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
             .header(CrossOriginFilter.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "PUT")
-            .options();
+            .options()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
-        .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+          .isNullOrEmpty();
+    }
   }
 
   @Test
   void shouldNotSetHeaderWhenDenyedUnmatchedHostname() {
     String origin = "unknown-server-a.com";
-    Response response =
+    try (Response response =
         DW_PATTERN
             .client()
             .target(patternEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
-            .get();
+            .get()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isNullOrEmpty();
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
-        .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isNullOrEmpty();
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isNullOrEmpty();
+      assertThat(
+              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+          .isNullOrEmpty();
+    }
   }
 
   @Test
   void shouldSetHeaderWhenAllowForMatchedSubdomain() {
     String origin = "unknown.server-a.com";
-    Response response =
+    try (Response response =
         DW_PATTERN
             .client()
             .target(patternEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
-            .get();
+            .get()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isEqualTo(origin);
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isEqualTo("Location,exposed");
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
-        .isEqualTo(Boolean.TRUE.toString());
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isEqualTo(origin);
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isEqualTo("Location,exposed");
+      assertThat(
+              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+          .isEqualTo(Boolean.TRUE.toString());
+    }
   }
 
   @Test
   void shouldSetHeaderWhenAllowForMatchedDomain() {
     String origin = "unknownserver-c.com";
-    Response response =
+    try (Response response =
         DW_PATTERN
             .client()
             .target(patternEndpoint)
             .request(MediaType.APPLICATION_JSON)
             .header("Origin", origin)
             .header(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER, "POST")
-            .get();
+            .get()) {
 
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-        .isEqualTo(origin);
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-        .isEqualTo("Location,exposed");
-    assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
-        .isEqualTo(Boolean.TRUE.toString());
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isEqualTo(origin);
+      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+          .isEqualTo("Location,exposed");
+      assertThat(
+              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+          .isEqualTo(Boolean.TRUE.toString());
+    }
   }
 
   private String[] getAllowedHeaderList(String... configured) {

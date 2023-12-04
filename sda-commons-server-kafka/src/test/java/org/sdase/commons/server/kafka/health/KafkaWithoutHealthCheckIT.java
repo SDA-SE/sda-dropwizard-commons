@@ -54,8 +54,9 @@ class KafkaWithoutHealthCheckIT {
 
   @Test
   void externalHealthCheckShouldContainKafka() {
-    Response response = adminTarget.path("healthcheck").request().get();
-    String healthChecks = response.readEntity(String.class);
-    assertThat(healthChecks).contains(KafkaBundle.EXTERNAL_HEALTHCHECK_NAME);
+    try (Response response = adminTarget.path("healthcheck").request().get()) {
+      var healthChecks = response.readEntity(String.class);
+      assertThat(healthChecks).contains(KafkaBundle.EXTERNAL_HEALTHCHECK_NAME);
+    }
   }
 }
