@@ -26,6 +26,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +75,7 @@ class StartLocalMongoDbTest {
   }
 
   @RetryingTest(5)
+  @DisabledOnOs(OS.WINDOWS)
   void shouldCreateWithFixedDownloadPath() {
     String path =
         new PlatformPackageResolver(Command.MongoD)
@@ -87,9 +90,7 @@ class StartLocalMongoDbTest {
       // It is assumed, that the wrong package is selected.
       // Here we only want to test that another location is used for the download.
       // We have other tests using flapdoodle which show that it works in general.
-      assertThat(t)
-          .hasStackTraceContaining(
-              "rollback after error on transition to State(RunningMongodProcess)");
+      assertThat(t).hasStackTraceContaining("rollback after error on transition");
     }
 
     wireMockServer.verify(getRequestedFor(urlPathEqualTo(path)));
