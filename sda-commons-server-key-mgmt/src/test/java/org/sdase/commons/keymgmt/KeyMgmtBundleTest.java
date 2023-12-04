@@ -287,26 +287,28 @@ class KeyMgmtBundleTest {
 
   @Test
   void shouldValidateAsParameter() {
-    Response response =
+    try (Response response =
         client
             .path("api")
             .path("validateParameter")
             .queryParam("param", "MALE")
             .request(APPLICATION_JSON)
-            .get();
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+    }
   }
 
   @Test
   void shouldValidateAsParameterFail() {
-    Response responseNotValid =
+    try (Response responseNotValid =
         client
             .path("api")
             .path("validateParameter")
             .queryParam("param", "NOVALID")
             .request(APPLICATION_JSON)
-            .get();
-    assertThat(responseNotValid.getStatus()).isEqualTo(422);
+            .get()) {
+      assertThat(responseNotValid.getStatus()).isEqualTo(422);
+    }
   }
 
   public static class KeyMgmtBundleTestApp extends Application<KeyMgmtBundleTestConfig> {
