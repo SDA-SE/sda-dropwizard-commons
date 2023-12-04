@@ -27,14 +27,15 @@ class OpaDisabledIT {
   @Test
   @RetryingTest(5)
   void shouldAllowAccess() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
             .path("resources")
             .request()
-            .get(); // NOSONAR
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    } // NOSONAR
   }
 
   @Test

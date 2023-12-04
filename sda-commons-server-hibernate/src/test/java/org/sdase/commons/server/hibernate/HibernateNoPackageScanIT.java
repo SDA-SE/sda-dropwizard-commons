@@ -63,10 +63,11 @@ class HibernateNoPackageScanIT {
     Person entity = new Person();
     entity.setName("John Doe");
     entity.setEmail("j.doe@example.com");
-    Response response = client().path("/api/persons").request().post(Entity.json(entity));
+    try (Response response = client().path("/api/persons").request().post(Entity.json(entity))) {
 
-    assertThat(response.getStatus()).isEqualTo(201);
-    assertThat(response.getLocation().toString()).matches("http.*/api/persons/\\d+");
+      assertThat(response.getStatus()).isEqualTo(201);
+      assertThat(response.getLocation().toString()).matches("http.*/api/persons/\\d+");
+    }
   }
 
   @Test

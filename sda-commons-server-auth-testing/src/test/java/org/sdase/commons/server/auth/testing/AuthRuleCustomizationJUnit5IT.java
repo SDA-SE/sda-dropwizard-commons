@@ -41,47 +41,50 @@ class AuthRuleCustomizationJUnit5IT {
 
   @Test
   void shouldAccessOpenEndPointWithoutToken() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
             .path("/open")
             .request(APPLICATION_JSON)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-    assertThat(response.readEntity(String.class)).isEqualTo("We are open.");
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+      assertThat(response.readEntity(String.class)).isEqualTo("We are open.");
+    }
   }
 
   @Test
   void shouldNotAccessSecureEndPointWithoutToken() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/secure") // NOSONAR
             .request(APPLICATION_JSON)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+    }
   }
 
   @Test
   void shouldAccessSecureEndPointWithToken() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/secure")
             .request(APPLICATION_JSON)
             .headers(AUTH.auth().buildAuthHeader())
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-    assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
-        .contains(entry("iss", "customIssuer"), entry("sub", "customSubject"));
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+      assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
+          .contains(entry("iss", "customIssuer"), entry("sub", "customSubject"));
+    }
   }
 
   @Test
   void shouldDenyAccessWhenTokenExpires() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/secure")
@@ -90,15 +93,16 @@ class AuthRuleCustomizationJUnit5IT {
                 AUTH.auth()
                     .addClaim("exp", new GregorianCalendar(1956, Calendar.MARCH, 17).getTime())
                     .buildAuthHeader())
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
-    assertThat(response.getHeaderString("WWW-Authenticate")).contains("Bearer");
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getHeaderString("WWW-Authenticate")).contains("Bearer");
+    }
   }
 
   @Test
   void shouldGetClaimsFromSecureEndPointWithToken() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/secure")
@@ -108,14 +112,15 @@ class AuthRuleCustomizationJUnit5IT {
                     .addClaim("test", "testClaim")
                     .addClaims(singletonMap("mapKey", "testClaimFromMap"))
                     .buildAuthHeader())
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-    assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
-        .contains(
-            entry("iss", "customIssuer"),
-            entry("sub", "customSubject"),
-            entry("test", "testClaim"),
-            entry("mapKey", "testClaimFromMap"));
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+      assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
+          .contains(
+              entry("iss", "customIssuer"),
+              entry("sub", "customSubject"),
+              entry("test", "testClaim"),
+              entry("mapKey", "testClaimFromMap"));
+    }
   }
 }
