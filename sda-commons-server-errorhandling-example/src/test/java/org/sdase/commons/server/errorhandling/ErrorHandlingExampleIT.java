@@ -23,40 +23,48 @@ class ErrorHandlingExampleIT {
 
   @Test
   void shouldGetNotFoundException() {
-    Response response = getClient().path("exception").request(MediaType.APPLICATION_JSON).get();
+    try (Response response =
+        getClient().path("exception").request(MediaType.APPLICATION_JSON).get()) {
 
-    assertThat(response.getStatus()).isEqualTo(404);
-    assertThat(response.readEntity(ApiError.class).getTitle())
-        .isEqualTo("Not Found: HTTP 404 Not Found");
+      assertThat(response.getStatus()).isEqualTo(404);
+      assertThat(response.readEntity(ApiError.class).getTitle())
+          .isEqualTo("Not Found: HTTP 404 Not Found");
+    }
   }
 
   @Test
   void shouldGetErrorResponse() {
-    Response response = getClient().path("errorResponse").request(MediaType.APPLICATION_JSON).get();
+    try (Response response =
+        getClient().path("errorResponse").request(MediaType.APPLICATION_JSON).get()) {
 
-    assertThat(response.getStatus()).isEqualTo(500);
-    assertThat(response.readEntity(ApiError.class).getTitle())
-        .isEqualTo("ApiError thrown in code to be used in response");
+      assertThat(response.getStatus()).isEqualTo(500);
+      assertThat(response.readEntity(ApiError.class).getTitle())
+          .isEqualTo("ApiError thrown in code to be used in response");
+    }
   }
 
   @Test
   void shouldGetErrorResponseFromApiException() {
-    Response response = getClient().path("apiException").request(MediaType.APPLICATION_JSON).get();
+    try (Response response =
+        getClient().path("apiException").request(MediaType.APPLICATION_JSON).get()) {
 
-    assertThat(response.getStatus()).isEqualTo(422);
-    assertThat(response.readEntity(ApiError.class).getTitle()).isEqualTo("Semantic exception");
+      assertThat(response.getStatus()).isEqualTo(422);
+      assertThat(response.readEntity(ApiError.class).getTitle()).isEqualTo("Semantic exception");
+    }
   }
 
   @Test
   void shouldGetValidationException() {
-    Response response =
+    ApiError apiError;
+    try (Response response =
         getClient()
             .path("validation")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json("{ \"param1\": \"\" }"));
+            .post(Entity.json("{ \"param1\": \"\" }"))) {
 
-    assertThat(response.getStatus()).isEqualTo(422);
-    ApiError apiError = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+      apiError = response.readEntity(ApiError.class);
+    }
     assertThat(apiError.getTitle()).isEqualTo("Request parameters are not valid.");
     assertThat(apiError.getInvalidParams())
         .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
@@ -65,14 +73,16 @@ class ErrorHandlingExampleIT {
 
   @Test
   void shouldGetCustomValidationException() {
-    Response response =
+    ApiError apiError;
+    try (Response response =
         getClient()
             .path("validation")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json("{ \"param1\": \"lowercase\" }"));
+            .post(Entity.json("{ \"param1\": \"lowercase\" }"))) {
 
-    assertThat(response.getStatus()).isEqualTo(422);
-    ApiError apiError = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+      apiError = response.readEntity(ApiError.class);
+    }
     assertThat(apiError.getTitle()).isEqualTo("Request parameters are not valid.");
     assertThat(apiError.getInvalidParams())
         .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)

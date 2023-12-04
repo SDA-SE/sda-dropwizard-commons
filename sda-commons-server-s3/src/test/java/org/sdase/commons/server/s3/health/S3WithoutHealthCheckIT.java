@@ -48,11 +48,12 @@ class S3WithoutHealthCheckIT {
 
   @Test
   void shouldReturnHealthCheckOk() {
-    Response response = adminTarget.path("healthcheck").request().get();
-    assertThat(response.getStatus()).isEqualTo(HTTP_OK);
-    assertThat(response.readEntity(String.class))
-        .doesNotContain(
-            "\"" + S3Bundle.S3_HEALTH_CHECK_NAME + "\"",
-            "\"" + S3Bundle.S3_EXTERNAL_HEALTH_CHECK_NAME + "\"");
+    try (Response response = adminTarget.path("healthcheck").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(HTTP_OK);
+      assertThat(response.readEntity(String.class))
+          .doesNotContain(
+              "\"" + S3Bundle.S3_HEALTH_CHECK_NAME + "\"",
+              "\"" + S3Bundle.S3_EXTERNAL_HEALTH_CHECK_NAME + "\"");
+    }
   }
 }

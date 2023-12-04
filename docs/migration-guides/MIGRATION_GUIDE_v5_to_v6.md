@@ -47,6 +47,23 @@ You can check the full migration guide in the
 official
 documentation: [Migration from Apache HttpClient 4.x APIs](https://hc.apache.org/httpcomponents-client-5.2.x/migration-guide/preparation.html)
 
+**Closing Responses**
+
+The Apache 5 connector seems to be more sensitive and might get stuck if you don't
+close your `Response` objects. Make sure to use *try-with-resources* or
+`finally` when you use Jersey clients (either in tests or in production!). 
+
+Example:
+
+```java
+try (Response response = DW.client()
+    .target("http://localhost:" + DW.getLocalPort())
+    .path("/example")
+    .request(APPLICATION_JSON)
+    .get()) {
+  assertThat(response.getStatus()).isEqualTo(200);
+}
+```
 
 ### Jetty 11
 
@@ -63,7 +80,6 @@ You can check the migration guide
 to [v6.0](https://github.com/hibernate/hibernate-orm/blob/6.0/migration-guide.adoc#60-migration-guide)
 and
 to [v6.1](https://github.com/hibernate/hibernate-orm/blob/6.1/migration-guide.adoc#61-migration-guide).
-
 
 ## Modules
 The following modules contain changes:
