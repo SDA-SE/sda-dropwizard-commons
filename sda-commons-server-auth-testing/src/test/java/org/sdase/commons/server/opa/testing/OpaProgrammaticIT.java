@@ -38,16 +38,18 @@ class OpaProgrammaticIT {
     OPA_EXTENSION.mock(onRequest().withHttpMethod("GET").withPath("resources").allow());
 
     // when
-    Response response =
+    PrincipalInfo principalInfo;
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
             .path("resources")
             .request()
-            .get(); // NOSONAR
+            .get()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      principalInfo = response.readEntity(PrincipalInfo.class);
+    } // NOSONAR
     assertThat(principalInfo.getConstraints().getConstraint()).isNull();
     assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
     assertThat(principalInfo.getJwt()).isNull();

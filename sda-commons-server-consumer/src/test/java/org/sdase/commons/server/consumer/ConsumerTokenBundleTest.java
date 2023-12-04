@@ -54,44 +54,48 @@ class ConsumerTokenBundleTest {
 
   @Test
   void shouldRejectRequestWithoutConsumerToken() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/api/name")
             .request(APPLICATION_JSON)
-            .get();
-    assertThat(response.getStatus()).isEqualTo(401);
-    assertThat(response.readEntity(ApiError.class).getTitle())
-        .isEqualTo("Consumer token is required to access this resource.");
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(401);
+      assertThat(response.readEntity(ApiError.class).getTitle())
+          .isEqualTo("Consumer token is required to access this resource.");
+    }
   }
 
   @Test
   void shouldNotRejectRequestWithoutConsumerTokenExcludedSwagger() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/api/swagger.json")
             .request(APPLICATION_JSON)
-            .get();
-    assertThat(response.getStatus()).isEqualTo(200);
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   @Test
   void shouldNotRejectRequestWithoutConsumerTokenExcludedOpenApi() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/api/openapi.json")
             .request(APPLICATION_JSON)
-            .get();
-    assertThat(response.getStatus()).isEqualTo(200);
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   @Test
   void shouldNotRejectOptionsRequest() {
-    Response response =
-        DW.client().target("http://localhost:" + DW.getLocalPort()).request().options();
-    assertThat(response.getStatus()).isEqualTo(200);
+    try (Response response =
+        DW.client().target("http://localhost:" + DW.getLocalPort()).request().options()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   @Test
@@ -122,50 +126,54 @@ class ConsumerTokenBundleTest {
 
   @Test
   void shouldRejectRequestWithoutConsumerTokenFixedConfig() {
-    Response response =
+    try (Response response =
         DW_REQUIRED
             .client()
             .target("http://localhost:" + DW_REQUIRED.getLocalPort())
             .path("/api/name")
             .request(APPLICATION_JSON)
-            .get();
-    assertThat(response.getStatus()).isEqualTo(401);
-    assertThat(response.readEntity(ApiError.class).getTitle())
-        .isEqualTo("Consumer token is required to access this resource.");
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(401);
+      assertThat(response.readEntity(ApiError.class).getTitle())
+          .isEqualTo("Consumer token is required to access this resource.");
+    }
   }
 
   @Test
   void shouldNotRejectRequestWithoutConsumerTokenExcludedFixedConfigSwagger() {
-    Response response =
+    try (Response response =
         DW_REQUIRED
             .client()
             .target("http://localhost:" + DW_REQUIRED.getLocalPort())
             .path("/api/swagger.json")
             .request(APPLICATION_JSON)
-            .get();
-    assertThat(response.getStatus()).isEqualTo(200);
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   @Test
   void shouldNotRejectRequestWithoutConsumerTokenExcludedFixedConfigOpenApi() {
-    Response response =
+    try (Response response =
         DW_REQUIRED
             .client()
             .target("http://localhost:" + DW_REQUIRED.getLocalPort())
             .path("/api/openapi.json")
             .request(APPLICATION_JSON)
-            .get();
-    assertThat(response.getStatus()).isEqualTo(200);
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   @Test
   void shouldNotRejectOptionsRequestFixedConfig() {
-    Response response =
+    try (Response response =
         DW_REQUIRED
             .client()
             .target("http://localhost:" + DW_REQUIRED.getLocalPort())
             .request()
-            .options();
-    assertThat(response.getStatus()).isEqualTo(200);
+            .options()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 }
