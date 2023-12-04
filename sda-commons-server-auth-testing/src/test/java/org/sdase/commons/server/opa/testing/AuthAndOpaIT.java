@@ -62,15 +62,16 @@ class AuthAndOpaIT {
   @Test
   @RetryingTest(5)
   void shouldNotAccessSimpleWithInvalidToken() {
-    Response response =
+    try (Response response =
         getResources(
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
-    assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer");
-    assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
-    assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
-        .containsKeys("title", "invalidParams");
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getHeaderString(WWW_AUTHENTICATE)).contains("Bearer");
+      assertThat(response.getHeaderString(CONTENT_TYPE)).isEqualTo(APPLICATION_JSON);
+      assertThat(response.readEntity(new GenericType<Map<String, Object>>() {}))
+          .containsKeys("title", "invalidParams");
+    }
     OPA_EXTENSION.verify(0, onAnyRequest());
   }
 
@@ -79,10 +80,12 @@ class AuthAndOpaIT {
   void shouldAllowAccessSimple() {
     OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
 
-    Response response = getResources(true);
+    PrincipalInfo principalInfo;
+    try (Response response = getResources(true)) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      principalInfo = response.readEntity(PrincipalInfo.class);
+    }
     assertThat(principalInfo.getJwt()).isEqualTo(jwt);
     assertThat(principalInfo.getConstraints().getConstraint()).isNull();
     assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
@@ -100,10 +103,12 @@ class AuthAndOpaIT {
             .withConstraint(
                 new ConstraintModel().setFullAccess(true).addConstraint("customer_ids", "1")));
 
-    Response response = getResources(true);
+    PrincipalInfo principalInfo;
+    try (Response response = getResources(true)) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      principalInfo = response.readEntity(PrincipalInfo.class);
+    }
     assertThat(principalInfo.getName()).isEqualTo("OpaJwtPrincipal");
     assertThat(principalInfo.getJwt()).isNotNull();
     assertThat(principalInfo.getConstraints().isFullAccess()).isTrue();
@@ -118,10 +123,12 @@ class AuthAndOpaIT {
   void shouldAllowAccessWithoutTokenSimple() {
     OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(null).allow());
 
-    Response response = getResources(false);
+    PrincipalInfo principalInfo;
+    try (Response response = getResources(false)) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      principalInfo = response.readEntity(PrincipalInfo.class);
+    }
     assertThat(principalInfo.getJwt()).isNull();
     assertThat(principalInfo.getConstraints().getConstraint()).isNull();
     assertThat(principalInfo.getConstraints().isFullAccess()).isFalse();
@@ -139,10 +146,12 @@ class AuthAndOpaIT {
             .withConstraint(
                 new ConstraintModel().setFullAccess(true).addConstraint("customer_ids", "1")));
 
-    Response response = getResources(false);
+    PrincipalInfo principalInfo;
+    try (Response response = getResources(false)) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-    PrincipalInfo principalInfo = response.readEntity(PrincipalInfo.class);
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      principalInfo = response.readEntity(PrincipalInfo.class);
+    }
     assertThat(principalInfo.getJwt()).isNull();
     assertThat(principalInfo.getConstraints().isFullAccess()).isTrue();
     assertThat(principalInfo.getConstraints().getConstraint())

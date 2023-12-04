@@ -69,8 +69,9 @@ class OpenTelemetryTracingAppIT {
 
   @Test
   void shouldDoException() {
-    Response response = webTarget("/exception").request().get();
-    assertThat(response.getStatus()).isEqualTo(200);
+    try (Response response = webTarget("/exception").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
 
     await()
         .untilAsserted(
@@ -100,8 +101,9 @@ class OpenTelemetryTracingAppIT {
 
   @Test
   void shouldDoRecursive() {
-    Response response = webTarget("/recursive").request().get();
-    assertThat(response.getStatus()).isEqualTo(200);
+    try (Response response = webTarget("/recursive").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
 
     await().untilAsserted(() -> assertThat(OTEL.getSpans()).isNotEmpty().hasSizeGreaterThan(2));
   }

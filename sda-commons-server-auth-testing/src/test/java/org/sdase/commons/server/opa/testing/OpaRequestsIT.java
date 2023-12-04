@@ -133,15 +133,16 @@ class OpaRequestsIT {
   }
 
   private void doGetRequest(MultivaluedMap<String, Object> headers) {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("resources")
             .request()
             .headers(headers)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(200);
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   private void basicAssertions(Map<String, Object> opaInput) {

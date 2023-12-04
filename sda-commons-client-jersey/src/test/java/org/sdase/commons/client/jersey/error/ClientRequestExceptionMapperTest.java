@@ -26,17 +26,18 @@ class ClientRequestExceptionMapperTest {
   void mapNotFound() {
     ClientRequestException exception = new ClientRequestException(new NotFoundException());
 
-    Response response = clientRequestExceptionMapper.toResponse(exception);
+    try (Response response = clientRequestExceptionMapper.toResponse(exception)) {
 
-    assertThat(response.getStatus()).isEqualTo(500);
-    assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
-        .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
-    assertThat(response.getEntity()).isInstanceOf(ApiError.class);
-    assertThat((ApiError) response.getEntity())
-        .extracting(ApiError::getTitle)
-        .asString()
-        .isNotBlank()
-        .contains("404");
+      assertThat(response.getStatus()).isEqualTo(500);
+      assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
+          .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+      assertThat(response.getEntity()).isInstanceOf(ApiError.class);
+      assertThat((ApiError) response.getEntity())
+          .extracting(ApiError::getTitle)
+          .asString()
+          .isNotBlank()
+          .contains("404");
+    }
   }
 
   @Test
@@ -44,34 +45,36 @@ class ClientRequestExceptionMapperTest {
     ClientRequestException exception =
         new ClientRequestException(new InternalServerErrorException());
 
-    Response response = clientRequestExceptionMapper.toResponse(exception);
+    try (Response response = clientRequestExceptionMapper.toResponse(exception)) {
 
-    assertThat(response.getStatus()).isEqualTo(500);
-    assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
-        .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
-    assertThat(response.getEntity()).isInstanceOf(ApiError.class);
-    assertThat((ApiError) response.getEntity())
-        .extracting(ApiError::getTitle)
-        .asString()
-        .isNotBlank()
-        .contains("500");
+      assertThat(response.getStatus()).isEqualTo(500);
+      assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
+          .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+      assertThat(response.getEntity()).isInstanceOf(ApiError.class);
+      assertThat((ApiError) response.getEntity())
+          .extracting(ApiError::getTitle)
+          .asString()
+          .isNotBlank()
+          .contains("500");
+    }
   }
 
   @Test
   void mapUnknownClientError() {
     ClientRequestException exception = new ClientRequestException(new ClientErrorException(418));
 
-    Response response = clientRequestExceptionMapper.toResponse(exception);
+    try (Response response = clientRequestExceptionMapper.toResponse(exception)) {
 
-    assertThat(response.getStatus()).isEqualTo(500);
-    assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
-        .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
-    assertThat(response.getEntity()).isInstanceOf(ApiError.class);
-    assertThat((ApiError) response.getEntity())
-        .extracting(ApiError::getTitle)
-        .asString()
-        .isNotBlank()
-        .contains("418");
+      assertThat(response.getStatus()).isEqualTo(500);
+      assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
+          .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+      assertThat(response.getEntity()).isInstanceOf(ApiError.class);
+      assertThat((ApiError) response.getEntity())
+          .extracting(ApiError::getTitle)
+          .asString()
+          .isNotBlank()
+          .contains("418");
+    }
   }
 
   @Test
@@ -80,17 +83,18 @@ class ClientRequestExceptionMapperTest {
         new ClientRequestException(
             new ProcessingException(new JsonParseException(mock(JsonParser.class), "No message")));
 
-    Response response = clientRequestExceptionMapper.toResponse(exception);
+    try (Response response = clientRequestExceptionMapper.toResponse(exception)) {
 
-    assertThat(response.getStatus()).isEqualTo(500);
-    assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
-        .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
-    assertThat(response.getEntity()).isInstanceOf(ApiError.class);
-    assertThat((ApiError) response.getEntity())
-        .extracting(ApiError::getTitle)
-        .asString()
-        .isNotBlank()
-        .containsIgnoringCase("processing");
+      assertThat(response.getStatus()).isEqualTo(500);
+      assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
+          .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+      assertThat(response.getEntity()).isInstanceOf(ApiError.class);
+      assertThat((ApiError) response.getEntity())
+          .extracting(ApiError::getTitle)
+          .asString()
+          .isNotBlank()
+          .containsIgnoringCase("processing");
+    }
   }
 
   @Test
@@ -100,18 +104,19 @@ class ClientRequestExceptionMapperTest {
             new ProcessingException(
                 new ConnectTimeoutException(ConnectTimeoutException.class.descriptorString())));
 
-    Response response = clientRequestExceptionMapper.toResponse(exception);
+    try (Response response = clientRequestExceptionMapper.toResponse(exception)) {
 
-    assertThat(response.getStatus()).isEqualTo(500);
-    assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
-        .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
-    assertThat(response.getEntity()).isInstanceOf(ApiError.class);
-    assertThat((ApiError) response.getEntity())
-        .extracting(ApiError::getTitle)
-        .asString()
-        .isNotBlank()
-        .containsIgnoringCase("Connect")
-        .containsIgnoringCase("timeout");
+      assertThat(response.getStatus()).isEqualTo(500);
+      assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
+          .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+      assertThat(response.getEntity()).isInstanceOf(ApiError.class);
+      assertThat((ApiError) response.getEntity())
+          .extracting(ApiError::getTitle)
+          .asString()
+          .isNotBlank()
+          .containsIgnoringCase("Connect")
+          .containsIgnoringCase("timeout");
+    }
   }
 
   @Test
@@ -119,17 +124,18 @@ class ClientRequestExceptionMapperTest {
     ClientRequestException exception =
         new ClientRequestException(new ProcessingException(new SocketTimeoutException()));
 
-    Response response = clientRequestExceptionMapper.toResponse(exception);
+    try (Response response = clientRequestExceptionMapper.toResponse(exception)) {
 
-    assertThat(response.getStatus()).isEqualTo(500);
-    assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
-        .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
-    assertThat(response.getEntity()).isInstanceOf(ApiError.class);
-    assertThat((ApiError) response.getEntity())
-        .extracting(ApiError::getTitle)
-        .asString()
-        .isNotBlank()
-        .containsIgnoringCase("read")
-        .containsIgnoringCase("timeout");
+      assertThat(response.getStatus()).isEqualTo(500);
+      assertThat(response.getHeaders().getFirst(CONTENT_TYPE))
+          .isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+      assertThat(response.getEntity()).isInstanceOf(ApiError.class);
+      assertThat((ApiError) response.getEntity())
+          .extracting(ApiError::getTitle)
+          .asString()
+          .isNotBlank()
+          .containsIgnoringCase("read")
+          .containsIgnoringCase("timeout");
+    }
   }
 }
