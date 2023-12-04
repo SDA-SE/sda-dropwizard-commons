@@ -63,8 +63,10 @@ class HibernateExampleJUnit5IT {
 
     WebTarget persons = DW.client().target("http://localhost:" + DW.getLocalPort()).path("persons");
 
-    Response postResponse = persons.request(APPLICATION_JSON).post(Entity.json(person));
-    String personLocation = postResponse.getHeaderString("Location");
+    String personLocation;
+    try (Response postResponse = persons.request(APPLICATION_JSON).post(Entity.json(person))) {
+      personLocation = postResponse.getHeaderString("Location");
+    }
     assertThat(personLocation).isNotEmpty();
 
     PersonEntity storedPerson =

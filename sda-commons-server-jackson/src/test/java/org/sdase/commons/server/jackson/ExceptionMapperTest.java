@@ -1,10 +1,10 @@
 package org.sdase.commons.server.jackson;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import jakarta.ws.rs.core.Response;
-import org.assertj.core.api.Assertions;
 import org.eclipse.jetty.io.EofException;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
@@ -19,12 +19,13 @@ class ExceptionMapperTest {
   @Test
   void shouldReturnApiExceptionResponse() {
     EarlyEofExceptionMapper earlyEofExceptionMapper = new EarlyEofExceptionMapper();
-    Response resp = earlyEofExceptionMapper.toResponse(new EofException("Eof"));
+    try (Response resp = earlyEofExceptionMapper.toResponse(new EofException("Eof"))) {
 
-    Assertions.assertThat(resp.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
-    Assertions.assertThat(resp.getEntity()).isInstanceOf(ApiError.class);
-    Assertions.assertThat(((ApiError) resp.getEntity()).getTitle())
-        .isEqualTo("EOF Exception encountered - client disconnected during stream processing.");
+      assertThat(resp.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
+      assertThat(resp.getEntity()).isInstanceOf(ApiError.class);
+      assertThat(((ApiError) resp.getEntity()).getTitle())
+          .isEqualTo("EOF Exception encountered - client disconnected during stream processing.");
+    }
   }
 
   @Test

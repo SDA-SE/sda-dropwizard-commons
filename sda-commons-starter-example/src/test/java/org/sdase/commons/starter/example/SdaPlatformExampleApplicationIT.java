@@ -62,21 +62,24 @@ class SdaPlatformExampleApplicationIT {
 
   @Test
   void accessSwaggerWithoutAuthentication() {
-    Response response = baseUrlWebTarget().path("openapi.json").request(APPLICATION_JSON).get();
+    try (Response response =
+        baseUrlWebTarget().path("openapi.json").request(APPLICATION_JSON).get()) {
 
-    assertThat(response).extracting(Response::getStatus).isEqualTo(200);
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   @Test
   void rejectApiRequestWithoutAuthentication() {
-    Response response =
+    try (Response response =
         baseUrlWebTarget()
             .path("people")
             .request(APPLICATION_JSON) // NOSONAR
             .header(ConsumerTracing.TOKEN_HEADER, TEST_CONSUMER_TOKEN)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(403);
+      assertThat(response.getStatus()).isEqualTo(403);
+    }
   }
 
   @Test
@@ -89,42 +92,45 @@ class SdaPlatformExampleApplicationIT {
             .withJwtFromHeaderValue(authHeader)
             .allow());
 
-    Response response =
+    try (Response response =
         baseUrlWebTarget()
             .path("people")
             .request(APPLICATION_JSON)
             .header(HttpHeaders.AUTHORIZATION, authHeader)
             .header(ConsumerTracing.TOKEN_HEADER, TEST_CONSUMER_TOKEN)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(200);
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   @Test
   void respond401DueToInvalidJWT() {
-    Response response =
+    try (Response response =
         baseUrlWebTarget()
             .path("people")
             .request(APPLICATION_JSON)
             .header(HttpHeaders.AUTHORIZATION, "Bearer: invalidToken")
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(401);
+      assertThat(response.getStatus()).isEqualTo(401);
+    }
   }
 
   @Test
   void respond404ForUnknownPerson() {
     OPA.mock(onAnyRequest().allow());
-    Response response =
+    try (Response response =
         baseUrlWebTarget()
             .path("people")
             .path("jamie-doe")
             .request(APPLICATION_JSON)
             .header(HttpHeaders.AUTHORIZATION, AUTH.auth().buildHeaderValue())
             .header(ConsumerTracing.TOKEN_HEADER, TEST_CONSUMER_TOKEN)
-            .get();
+            .get()) {
 
-    assertThat(response).extracting(Response::getStatus).isEqualTo(404);
+      assertThat(response.getStatus()).isEqualTo(404);
+    }
   }
 
   @Test

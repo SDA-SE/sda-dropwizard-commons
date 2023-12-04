@@ -30,45 +30,48 @@ class FilterPriorityTest {
 
   @Test
   void corsFromSwaggerHasHigherPriority() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/api/openapi.yaml")
             .request("application/yaml")
             .header("Origin", "example.com")
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(OK_200);
-    assertThat(response.getMetadata().getFirst("Access-Control-Allow-Origin"))
-        .isEqualTo("example.com");
+      assertThat(response.getStatus()).isEqualTo(OK_200);
+      assertThat(response.getMetadata().getFirst("Access-Control-Allow-Origin"))
+          .isEqualTo("example.com");
+    }
   }
 
   @Test
   void traceTokenFilterHasHighestPriority() {
     // Make sure that trace token filter is even executed when authentication fails
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("api")
             .path("ping")
             .request(APPLICATION_JSON)
             .header("Trace-Token", "MyTraceToken")
-            .get();
+            .get()) {
 
-    assertThat(response.getMetadata().getFirst("Trace-Token")).isEqualTo("MyTraceToken");
+      assertThat(response.getMetadata().getFirst("Trace-Token")).isEqualTo("MyTraceToken");
+    }
   }
 
   @Test
   void errorsInConsumerTokenFilterTrackedByPrometheus() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("api")
             .path("ping")
             .request(APPLICATION_JSON)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(403);
+      assertThat(response.getStatus()).isEqualTo(403);
+    }
 
     String metrics =
         DW.client()
@@ -83,16 +86,17 @@ class FilterPriorityTest {
 
   @Test
   void errorsInAuthenticationFilterAreTrackedByPrometheus() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("api")
             .path("ping")
             .request(APPLICATION_JSON)
             .header("Consumer-Token", "MyConsumer")
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(403);
+      assertThat(response.getStatus()).isEqualTo(403);
+    }
 
     String metrics =
         DW.client()

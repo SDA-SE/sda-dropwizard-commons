@@ -38,15 +38,17 @@ class PlatformRequirementsIT {
   @ParameterizedTest
   @ValueSource(strings = {"openapi.json", "openapi.yaml"})
   void shouldHavePublicAppEndpoint(String path) {
-    Response r = createTarget().path(path).request().get();
-    assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+    try (Response r = createTarget().path(path).request().get()) {
+      assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+    }
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"ping", "metrics/prometheus", "healthcheck/internal"})
   void shouldHaveAdminEndpoints(String path) {
-    Response response = createAdminTarget().path(path).request().buildGet().invoke();
-    assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
+    try (Response response = createAdminTarget().path(path).request().buildGet().invoke()) {
+      assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
+    }
   }
 
   private WebTarget createTarget() {

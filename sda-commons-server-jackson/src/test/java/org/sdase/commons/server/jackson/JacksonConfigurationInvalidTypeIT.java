@@ -26,29 +26,32 @@ class JacksonConfigurationInvalidTypeIT {
   void shouldPostResourceWithInheritance() {
     String resource = "{\"type\": \"SubType\"}";
 
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("resourceWithInheritance")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json(resource));
+            .post(Entity.json(resource))) {
 
-    Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+      Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
   }
 
   @Test
   void shouldThrowApiErrorForUnknownSubType() {
     String resource = "{\"type\": \"UnknownSubType\"}";
 
-    Response response =
+    ApiError apiError;
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("resourceWithInheritance")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.json(resource));
+            .post(Entity.json(resource))) {
 
-    Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY_422);
-    ApiError apiError = response.readEntity(ApiError.class);
+      Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY_422);
+      apiError = response.readEntity(ApiError.class);
+    }
     Assertions.assertThat(apiError).isNotNull();
     Assertions.assertThat(apiError.getTitle()).isEqualTo("Invalid sub type");
     Assertions.assertThat(apiError.getInvalidParams())
