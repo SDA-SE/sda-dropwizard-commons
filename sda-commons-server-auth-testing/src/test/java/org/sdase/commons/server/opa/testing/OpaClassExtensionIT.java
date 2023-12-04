@@ -40,10 +40,11 @@ class OpaClassExtensionIT {
     // given
     OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).allow());
     // when
-    Response response = requestMock(request(method, path));
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
+    try (Response response = requestMock(request(method, path))) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
+    }
     OPA_EXTENSION.verify(1, method, path);
   }
 
@@ -52,10 +53,11 @@ class OpaClassExtensionIT {
     // given
     OPA_EXTENSION.mock(onRequest().withHttpMethod(method).withPath(path).withJwt(jwt).allow());
     // when
-    Response response = requestMock(requestWithJwt(jwt, method, path));
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
+    try (Response response = requestMock(requestWithJwt(jwt, method, path))) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
+    }
     OPA_EXTENSION.verify(1, onRequest().withHttpMethod(method).withPath(path).withJwt(jwt));
   }
 
@@ -82,9 +84,10 @@ class OpaClassExtensionIT {
     // given
     OPA_EXTENSION.mock(onAnyRequest().serverError());
     // when
-    Response response = requestMock(request(method, path));
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+    try (Response response = requestMock(request(method, path))) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+    }
   }
 
   @RetryingTest(5)
@@ -92,10 +95,11 @@ class OpaClassExtensionIT {
     // given
     OPA_EXTENSION.mock(onAnyRequest().emptyResponse());
     // when
-    Response response = requestMock(request(method, path));
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    assertThat(response.readEntity(String.class)).isNullOrEmpty();
+    try (Response response = requestMock(request(method, path))) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      assertThat(response.readEntity(String.class)).isNullOrEmpty();
+    }
   }
 
   @RetryingTest(5)
@@ -104,10 +108,11 @@ class OpaClassExtensionIT {
     OPA_EXTENSION.mock(onRequest().withHttpMethod("GET").withPath("/p1/p2").allow());
 
     // when
-    Response response = requestMock(request("GET", "p1", "p2"));
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
+    try (Response response = requestMock(request("GET", "p1", "p2"))) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
+    }
   }
 
   @RetryingTest(5)
@@ -116,10 +121,11 @@ class OpaClassExtensionIT {
     OPA_EXTENSION.mock(onRequest().withHttpMethod("GET").withPath("/p1/p2//").allow());
 
     // when
-    Response response = requestMock(request("GET", "p1", "p2"));
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
+    try (Response response = requestMock(request("GET", "p1", "p2"))) {
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      assertThat(response.readEntity(OpaResponse.class).isAllow()).isTrue();
+    }
   }
 
   @RetryingTest(5)
@@ -142,23 +148,26 @@ class OpaClassExtensionIT {
             .withConstraint(constraintModel));
     OPA_EXTENSION.mock(onRequest().withHttpMethod("POST").withPath("pathD").withJwt(null).deny());
     // when
-    Response response = requestMock(request("GET", "pathA"));
-    Response response2 = requestMock(request("POST", "pathB"));
-    Response response3 = requestMock(requestWithJwt(jwt, "POST", "pathC"));
-    Response response4 = requestMock(request("POST", "pathD"));
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
-    assertThat(response2.getStatus()).isEqualTo(SC_OK);
-    OpaResponse opaResponse = response.readEntity(OpaResponse.class);
-    assertThat(opaResponse.isAllow()).isTrue();
-    OpaResponse opaResponse2 = response2.readEntity(OpaResponse.class);
-    assertThat(opaResponse2.isAllow()).isFalse();
-    OpaResponse opaResponse3 = response3.readEntity(OpaResponse.class);
-    assertThat(opaResponse3.isAllow()).isTrue();
-    OpaResponse opaResponse4 = response4.readEntity(OpaResponse.class);
-    assertThat(opaResponse4.isAllow()).isFalse();
-    OPA_EXTENSION.verify(1, onRequest().withHttpMethod("POST").withPath("pathC").withJwt(jwt));
-    OPA_EXTENSION.verify(1, onRequest().withHttpMethod("POST").withPath("pathD").withJwt(null));
+    OpaResponse opaResponse;
+    try (var response = requestMock(request("GET", "pathA"));
+        var response2 = requestMock(request("POST", "pathB"));
+        var response3 = requestMock(requestWithJwt(jwt, "POST", "pathC"));
+        var response4 = requestMock(request("POST", "pathD"))) {
+
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+      assertThat(response2.getStatus()).isEqualTo(SC_OK);
+      opaResponse = response.readEntity(OpaResponse.class);
+      assertThat(opaResponse.isAllow()).isTrue();
+      OpaResponse opaResponse2 = response2.readEntity(OpaResponse.class);
+      assertThat(opaResponse2.isAllow()).isFalse();
+      OpaResponse opaResponse3 = response3.readEntity(OpaResponse.class);
+      assertThat(opaResponse3.isAllow()).isTrue();
+      OpaResponse opaResponse4 = response4.readEntity(OpaResponse.class);
+      assertThat(opaResponse4.isAllow()).isFalse();
+      OPA_EXTENSION.verify(1, onRequest().withHttpMethod("POST").withPath("pathC").withJwt(jwt));
+      OPA_EXTENSION.verify(1, onRequest().withHttpMethod("POST").withPath("pathD").withJwt(null));
+    }
   }
 
   @Test

@@ -171,17 +171,18 @@ class PrometheusBundleTest {
 
   @Test
   void shouldNotHttpCacheHealthCheck() {
-    Response response =
+    try (Response response =
         DW.client()
             .target(
                 String.format("http://localhost:%d", DW.getAdminPort()) + "/healthcheck/prometheus")
             .request()
-            .get();
-    assertThat(response.getHeaders()).containsKey("Cache-Control");
-    assertThat(response.getHeaders().getFirst("Cache-Control").toString())
-        .contains("must-revalidate")
-        .contains("no-cache")
-        .contains("no-store");
+            .get()) {
+      assertThat(response.getHeaders()).containsKey("Cache-Control");
+      assertThat(response.getHeaders().getFirst("Cache-Control").toString())
+          .contains("must-revalidate")
+          .contains("no-cache")
+          .contains("no-store");
+    }
   }
 
   @Test
@@ -288,25 +289,27 @@ class PrometheusBundleTest {
   }
 
   private String readMetrics() {
-    Response response =
+    try (Response response =
         DW.client()
             .target(String.format("http://localhost:%d", DW.getAdminPort()) + "/metrics/prometheus")
             .request()
-            .get();
-    String metrics = response.readEntity(String.class);
-    LOGGER.info("Prometheus metrics: {}", metrics);
-    return metrics;
+            .get()) {
+      var metrics = response.readEntity(String.class);
+      LOGGER.info("Prometheus metrics: {}", metrics);
+      return metrics;
+    }
   }
 
   private String readHealthChecks() {
-    Response response =
+    try (Response response =
         DW.client()
             .target(
                 String.format("http://localhost:%d", DW.getAdminPort()) + "/healthcheck/prometheus")
             .request()
-            .get();
-    String healthChecks = response.readEntity(String.class);
-    LOGGER.info("Prometheus health checks: {}", healthChecks);
-    return healthChecks;
+            .get()) {
+      var healthChecks = response.readEntity(String.class);
+      LOGGER.info("Prometheus health checks: {}", healthChecks);
+      return healthChecks;
+    }
   }
 }
