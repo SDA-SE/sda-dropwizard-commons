@@ -31,47 +31,50 @@ class AuthClassExtensionProgrammaticIT {
 
   @Test
   void shouldAccessOpenEndPointWithoutToken() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/open")
             .request(APPLICATION_JSON)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-    assertThat(response.readEntity(String.class)).isEqualTo("We are open.");
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+      assertThat(response.readEntity(String.class)).isEqualTo("We are open.");
+    }
   }
 
   @Test
   void shouldNotAccessSecureEndPointWithoutToken() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/secure")
             .request(APPLICATION_JSON)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+    }
   }
 
   @Test
   void shouldAccessSecureEndPointWithToken() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/secure")
             .request(APPLICATION_JSON)
             .headers(AUTH.auth().buildAuthHeader())
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-    assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
-        .contains(entry("iss", "AuthExtension"), entry("sub", "test"));
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+      assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
+          .contains(entry("iss", "AuthExtension"), entry("sub", "test"));
+    }
   }
 
   @Test
   void shouldGetClaimsFromSecureEndPointWithToken() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/secure")
@@ -81,14 +84,15 @@ class AuthClassExtensionProgrammaticIT {
                     .addClaim("test", "testClaim")
                     .addClaims(singletonMap("mapKey", "testClaimFromMap"))
                     .buildAuthHeader())
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-    assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
-        .contains(
-            entry("iss", "AuthExtension"),
-            entry("sub", "test"),
-            entry("test", "testClaim"),
-            entry("mapKey", "testClaimFromMap"));
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+      assertThat(response.readEntity(new GenericType<Map<String, String>>() {}))
+          .contains(
+              entry("iss", "AuthExtension"),
+              entry("sub", "test"),
+              entry("test", "testClaim"),
+              entry("mapKey", "testClaimFromMap"));
+    }
   }
 }

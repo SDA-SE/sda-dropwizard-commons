@@ -89,57 +89,57 @@ abstract class AbstractSecurityTest<C extends Configuration> {
   @Test
   void doNotUseServerHeaderInApp() {
     assertThat(getAppConnector().isUseServerHeader()).isFalse();
-    Response response =
-        getAppClient()
-            .path("path")
-            .path("does")
-            .path("not")
-            .path("exist")
-            .request()
-            .get(); // NOSONAR
-    assertThat(response.getStatus()).isEqualTo(404);
-    assertThat(response.getHeaderString("Server")).isBlank();
+    try (Response response =
+        getAppClient().path("path").path("does").path("not").path("exist").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(404);
+      assertThat(response.getHeaderString("Server")).isBlank(); // NOSONAR
+    }
   }
 
   @Test
   void doNotUseServerHeaderInAdmin() {
     assertThat(getAdminConnector().isUseServerHeader()).isFalse();
-    Response response =
-        getAdminClient().path("path").path("does").path("not").path("exist").request().get();
-    assertThat(response.getStatus()).isEqualTo(404);
-    assertThat(response.getHeaderString("Server")).isBlank();
+    try (Response response =
+        getAdminClient().path("path").path("does").path("not").path("exist").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(404);
+      assertThat(response.getHeaderString("Server")).isBlank();
+    }
   }
 
   @Test
   void doNotUseDateHeaderInApp() {
     assertThat(getAppConnector().isUseDateHeader()).isFalse();
-    Response response =
-        getAppClient().path("path").path("does").path("not").path("exist").request().get();
-    assertThat(response.getStatus()).isEqualTo(404);
-    assertThat(response.getHeaderString("Date")).isBlank();
+    try (Response response =
+        getAppClient().path("path").path("does").path("not").path("exist").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(404);
+      assertThat(response.getHeaderString("Date")).isBlank();
+    }
   }
 
   @Test
   void doNotUseDateHeaderInAdmin() {
     assertThat(getAdminConnector().isUseDateHeader()).isFalse();
-    Response response =
-        getAppClient().path("path").path("does").path("not").path("exist").request().get();
-    assertThat(response.getStatus()).isEqualTo(404);
-    assertThat(response.getHeaderString("Date")).isBlank();
+    try (Response response =
+        getAppClient().path("path").path("does").path("not").path("exist").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(404);
+      assertThat(response.getHeaderString("Date")).isBlank();
+    }
   }
 
   @Test
   void doNotShowDefaultErrorPageInApp() {
-    Response response =
+    String content;
+    try (Response response =
         getAppClient()
             .path("path")
             .path("does")
             .path("not")
             .path("exist")
             .request(MediaType.APPLICATION_JSON)
-            .get();
-    assertThat(response.getStatus()).isEqualTo(404);
-    String content = response.readEntity(String.class);
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(404);
+      content = response.readEntity(String.class);
+    }
     // should not render the default error object of jetty which writes a json with a property code
     // that contains only
     // the http status
@@ -155,7 +155,7 @@ abstract class AbstractSecurityTest<C extends Configuration> {
     while (valueMoreThanOneKib.length() < 1024) {
       valueMoreThanOneKib.append(chars);
     }
-    Response response =
+    try (Response response =
         getAppClient()
             .request(MediaType.APPLICATION_JSON)
             .header("X-Header-One", valueMoreThanOneKib.toString())
@@ -166,9 +166,10 @@ abstract class AbstractSecurityTest<C extends Configuration> {
             .header("X-Header-Six", valueMoreThanOneKib.toString())
             .header("X-Header-Seven", valueMoreThanOneKib.toString())
             .header("X-Header-Eight", valueMoreThanOneKib.toString())
-            .get();
-    assertThat(response.getStatus()).isEqualTo(431); // Request Header Fields Too Large
-    response.close();
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(431); // Request Header Fields Too Large
+      response.close();
+    }
   }
 
   @Test
@@ -183,7 +184,8 @@ abstract class AbstractSecurityTest<C extends Configuration> {
     while (valueMoreThanOneKib.length() < 1024) {
       valueMoreThanOneKib.append(chars);
     }
-    Response response =
+    String responseBodyRaw;
+    try (Response response =
         getAppClient()
             .request(MediaType.APPLICATION_JSON)
             .header("X-Header-One", valueMoreThanOneKib.toString())
@@ -194,8 +196,9 @@ abstract class AbstractSecurityTest<C extends Configuration> {
             .header("X-Header-Six", valueMoreThanOneKib.toString())
             .header("X-Header-Seven", valueMoreThanOneKib.toString())
             .header("X-Header-Eight", valueMoreThanOneKib.toString())
-            .get();
-    String responseBodyRaw = response.readEntity(String.class);
+            .get()) {
+      responseBodyRaw = response.readEntity(String.class);
+    }
     assertThat(responseBodyRaw).doesNotMatch(".*<[^>]+>.*"); // no HTML
   }
 

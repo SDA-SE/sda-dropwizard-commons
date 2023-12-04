@@ -13,7 +13,6 @@ import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.io.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -600,15 +599,17 @@ class JacksonConfigurationBundleIT {
 
   @Test
   void shouldGetErrorForMissingQueryParameter() {
-    Response response =
+    ApiError error;
+    try (Response response =
         DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("requiredQuery")
             .request(MediaType.APPLICATION_JSON)
-            .get();
+            .get()) {
 
-    ApiError error = response.readEntity(ApiError.class);
-    assertThat(response.getStatus()).isEqualTo(422);
+      error = response.readEntity(ApiError.class);
+      assertThat(response.getStatus()).isEqualTo(422);
+    }
     assertThat(error.getTitle()).isEqualTo(VALIDATION_ERROR_MESSAGE);
 
     assertThat(error.getInvalidParams())

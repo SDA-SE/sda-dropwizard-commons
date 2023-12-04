@@ -55,20 +55,22 @@ class ConsumerTokenBundleOptionalTokenTest {
 
   @Test
   void shouldNotRejectRequestWithoutConsumerToken() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort())
             .path("/api/name")
             .request(APPLICATION_JSON)
-            .get();
-    assertThat(response.getStatus()).isEqualTo(200);
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   @Test
   void shouldNotRejectOptionsRequest() {
-    Response response =
-        DW.client().target("http://localhost:" + DW.getLocalPort()).request().options();
-    assertThat(response.getStatus()).isEqualTo(200);
+    try (Response response =
+        DW.client().target("http://localhost:" + DW.getLocalPort()).request().options()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   @Test
@@ -99,24 +101,26 @@ class ConsumerTokenBundleOptionalTokenTest {
 
   @Test
   void shouldNotRejectRequestWithoutConsumerTokenFixedConfig() {
-    Response response =
+    try (Response response =
         DW_OPTIONAL
             .client()
             .target("http://localhost:" + DW_OPTIONAL.getLocalPort())
             .path("/api/name")
             .request(APPLICATION_JSON)
-            .get();
-    assertThat(response.getStatus()).isEqualTo(200);
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 
   @Test
   void shouldNotRejectOptionsRequestFixedConfig() {
-    Response response =
+    try (Response response =
         DW_OPTIONAL
             .client()
             .target("http://localhost:" + DW_OPTIONAL.getLocalPort())
             .request()
-            .options();
-    assertThat(response.getStatus()).isEqualTo(200);
+            .options()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
   }
 }

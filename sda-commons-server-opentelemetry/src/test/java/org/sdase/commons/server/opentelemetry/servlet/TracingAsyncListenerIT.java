@@ -36,9 +36,10 @@ class TracingAsyncListenerIT {
 
   @RetryingTest(maxAttempts = 3, name = "[{index}] check PLP-932 on error")
   void shouldTraceAsyncServlets() {
-    Response response = createAdminClient().path("/async/trace").request().get();
+    try (Response response = createAdminClient().path("/async/trace").request().get()) {
 
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+    }
 
     // setting the pollDelay and maximum timeout, because it is an async call
     await()
@@ -75,8 +76,9 @@ class TracingAsyncListenerIT {
 
   @Test
   void shouldCatchErrors() {
-    Response response = createAdminClient().path("/async/error").request().get();
-    assertThat(response.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+    try (Response response = createAdminClient().path("/async/error").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+    }
 
     await()
         .untilAsserted(
@@ -107,8 +109,9 @@ class TracingAsyncListenerIT {
 
   @Test
   void shouldCatchTimeout() {
-    Response response = createAdminClient().path("/async/timeout").request().get();
-    assertThat(response.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+    try (Response response = createAdminClient().path("/async/timeout").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+    }
 
     await()
         .untilAsserted(
