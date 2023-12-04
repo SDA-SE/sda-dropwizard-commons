@@ -68,9 +68,10 @@ class OpaBundleClientConfigurationIT {
   @Test
   @RetryingTest(5)
   void shouldSendCustomUserAgentInTheOpaRequest() {
-    Response response = createWebTarget().request(APPLICATION_JSON).get();
+    try (Response response = createWebTarget().request(APPLICATION_JSON).get()) {
 
-    assertThat(response.getStatus()).isEqualTo(SC_OK);
+      assertThat(response.getStatus()).isEqualTo(SC_OK);
+    }
 
     WIRE.verify(
         postRequestedFor(urlEqualTo("/v1/data/test"))

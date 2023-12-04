@@ -20,13 +20,14 @@ class OpaConnectionMisconfiguredIT {
 
   @Test
   void shouldDenyAccess() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
             .path("resources")
             .request()
-            .get(); // NOSONAR
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_FORBIDDEN); // NOSONAR
+    }
   }
 }

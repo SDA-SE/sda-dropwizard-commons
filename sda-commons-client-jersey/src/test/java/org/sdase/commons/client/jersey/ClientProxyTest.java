@@ -65,10 +65,11 @@ class ClientProxyTest {
     PROXY_WIRE.stubFor(get("/").withHeader(HttpHeaders.HOST, equalTo("sda.se")).willReturn(ok()));
 
     // when
-    Response response = getClient("shouldUseProxy").target("http://sda.se").request().get();
+    try (Response response = getClient("shouldUseProxy").target("http://sda.se").request().get()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
     CONTENT_WIRE.verify(0, RequestPatternBuilder.allRequests());
     PROXY_WIRE.verify(
         1,
@@ -87,11 +88,12 @@ class ClientProxyTest {
             .willReturn(aResponse().withStatus(409)));
 
     // when
-    Response response =
-        getClient("shouldNotUseProxy").target(CONTENT_WIRE.baseUrl()).request().get();
+    try (Response response =
+        getClient("shouldNotUseProxy").target(CONTENT_WIRE.baseUrl()).request().get()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_CONFLICT);
+      // then
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_CONFLICT);
+    }
     PROXY_WIRE.verify(0, RequestPatternBuilder.allRequests());
     CONTENT_WIRE.verify(
         1,

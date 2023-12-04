@@ -104,9 +104,9 @@ class ApiClientConfigurationTest {
             .withHeader("Content-Encoding", matching("gzip"))
             .willReturn(created()));
 
-    assertThat(client.createCar(new Car().setSign("HH UV 42")))
-        .extracting(Response::getStatus)
-        .isEqualTo(SC_CREATED);
+    try (Response response = client.createCar(new Car().setSign("HH UV 42"))) {
+      assertThat(response.getStatus()).isEqualTo(SC_CREATED);
+    }
   }
 
   @Test
@@ -126,9 +126,9 @@ class ApiClientConfigurationTest {
             .withHeader("Transfer-Encoding", equalTo("chunked"))
             .willReturn(created()));
 
-    assertThat(client.createCar(new Car().setSign("HH UV 42")))
-        .extracting(Response::getStatus)
-        .isEqualTo(SC_CREATED);
+    try (Response response = client.createCar(new Car().setSign("HH UV 42"))) {
+      assertThat(response.getStatus()).isEqualTo(SC_CREATED);
+    }
   }
 
   @Test

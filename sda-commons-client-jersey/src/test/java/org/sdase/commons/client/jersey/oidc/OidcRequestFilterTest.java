@@ -90,10 +90,11 @@ class OidcRequestFilterTest {
     setupTokenEndpoint(true);
 
     // when
-    Response r = app.getClientTestEndPoint().delegate();
+    try (Response r = app.getClientTestEndPoint().delegate()) {
 
-    // then
-    assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+      // then
+      assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+    }
 
     verify(
         1,
@@ -108,10 +109,11 @@ class OidcRequestFilterTest {
     setupTokenEndpoint(true);
 
     // when
-    Response r = app.getClientTestEndPoint().delegate();
+    try (Response r = app.getClientTestEndPoint().delegate()) {
 
-    // then
-    assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+      // then
+      assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+    }
 
     verify(
         1,
@@ -127,10 +129,11 @@ class OidcRequestFilterTest {
     setupTokenEndpoint(false);
 
     // when
-    Response r = app.getClientTestEndPoint().delegate();
+    try (Response r = app.getClientTestEndPoint().delegate()) {
 
-    // then
-    assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+      // then
+      assertThat(r.getStatus()).isEqualTo(OK.getStatusCode());
+    }
 
     verify(1, getRequestedFor(urlEqualTo("/api/cars")).withoutHeader(AUTHORIZATION));
     verify(1, postRequestedFor(urlEqualTo("/token")));

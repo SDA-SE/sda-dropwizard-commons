@@ -97,17 +97,18 @@ class OpaBundleBodyInputExtensionTest {
     WIRE.resetRequests();
 
     // when
-    Response response =
+    try (Response response =
         DW_WITH_EXTENSION
             .client()
             .target("http://localhost:" + DW_WITH_EXTENSION.getLocalPort())
             .request()
-            .post(Entity.json(Collections.singletonMap("key", "value")));
+            .post(Entity.json(Collections.singletonMap("key", "value")))) {
 
-    // then
-    assertThat(WIRE.getAllServeEvents()).hasSize(1);
-    assertThat(response.getStatus()).isEqualTo(400);
-    assertThat(response.readEntity(String.class)).contains("Received null input.");
+      // then
+      assertThat(WIRE.getAllServeEvents()).hasSize(1);
+      assertThat(response.getStatus()).isEqualTo(400);
+      assertThat(response.readEntity(String.class)).contains("Received null input.");
+    }
   }
 
   @Test
@@ -117,17 +118,18 @@ class OpaBundleBodyInputExtensionTest {
     WIRE.resetRequests();
 
     // when
-    Response response =
+    try (Response response =
         DW_WITHOUT_EXTENSION
             .client()
             .target("http://localhost:" + DW_WITHOUT_EXTENSION.getLocalPort())
             .request()
-            .post(Entity.json(Collections.singletonMap("key", "value")));
+            .post(Entity.json(Collections.singletonMap("key", "value")))) {
 
-    // then
-    assertThat(WIRE.getAllServeEvents()).hasSize(1);
-    assertThat(response.getStatus()).isEqualTo(200);
-    assertThat(response.readEntity(String.class)).isEqualTo("value");
+      // then
+      assertThat(WIRE.getAllServeEvents()).hasSize(1);
+      assertThat(response.getStatus()).isEqualTo(200);
+      assertThat(response.readEntity(String.class)).isEqualTo("value");
+    }
   }
 
   /**

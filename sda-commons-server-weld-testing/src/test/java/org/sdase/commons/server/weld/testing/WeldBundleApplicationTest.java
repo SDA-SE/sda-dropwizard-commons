@@ -38,10 +38,11 @@ class WeldBundleApplicationTest {
 
   @Test
   void testServlet() {
-    Response response =
-        APP.client().target(LOCALHOST + APP.getLocalPort() + "/foo").request().get();
-    assertThat(response).isNotNull();
-    assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+    try (Response response =
+        APP.client().target(LOCALHOST + APP.getLocalPort() + "/foo").request().get()) {
+      assertThat(response).isNotNull();
+      assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+    }
   }
 
   @Test

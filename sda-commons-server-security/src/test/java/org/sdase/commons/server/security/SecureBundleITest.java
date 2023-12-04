@@ -62,22 +62,24 @@ class SecureBundleITest extends AbstractSecurityTest<Configuration> {
 
   @Test
   void useCustomErrorHandlersForRuntimeException() {
-    Response response = getAppClient().path("throw").request().get();
-    assertThat(response.getStatus()).isEqualTo(500);
-    String content = response.readEntity(String.class);
+    String content;
+    try (Response response = getAppClient().path("throw").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(500);
+      content = response.readEntity(String.class);
+    }
     assertThat(content).doesNotMatch(".*\"code\"\\s*:\\s*500.*");
   }
 
   @Test
   void useCustomErrorPageHandlerForErrorPages() {
-    Response response = getAppClient().path("404").request().get();
-    assertThat(response.getStatus()).isEqualTo(404);
-    String content = response.readEntity(String.class);
-    assertThat(content)
-        .doesNotMatch(".*\"code\"\\s*:\\s*500.*") // no default exception mapper
-        .doesNotContain("<html") // no html page
-        .doesNotContain("<h1>") // no html page
-        .doesNotContain("<h2>") // no html page
-    ;
+    try (Response response = getAppClient().path("404").request().get()) {
+      assertThat(response.getStatus()).isEqualTo(404);
+      var content = response.readEntity(String.class);
+      assertThat(content)
+          .doesNotMatch(".*\"code\"\\s*:\\s*500.*") // no default exception mapper
+          .doesNotContain("<html") // no html page
+          .doesNotContain("<h1>") // no html page
+          .doesNotContain("<h2>"); // no html page
+    }
   }
 }

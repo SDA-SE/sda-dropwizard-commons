@@ -147,7 +147,7 @@ public class ApiClientTest {
         new FormDataMultiPart()
             .field("test", "test-value", MediaType.TEXT_PLAIN_TYPE)
             .field("anotherTest", "another-test-value", MediaType.TEXT_PLAIN_TYPE)) {
-      Response response =
+      try (Response response =
           app.getJerseyClientBundle()
               .getClientFactory()
               .platformClient()
@@ -157,9 +157,10 @@ public class ApiClientTest {
               .path("multi-part")
               .register(MultiPartFeature.class)
               .request(MediaType.APPLICATION_JSON)
-              .post(Entity.entity(multiPart, multiPart.getMediaType()));
-      assertThat(response.getStatus()).isEqualTo(200);
-      assertThat(response.getHeaderString("Content-type")).isEqualTo("application/json");
+              .post(Entity.entity(multiPart, multiPart.getMediaType()))) {
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getHeaderString("Content-type")).isEqualTo("application/json");
+      }
 
       String contentType =
           WIRE.getAllServeEvents().get(0).getRequest().contentTypeHeader().firstValue();
@@ -196,9 +197,10 @@ public class ApiClientTest {
         new FormDataMultiPart()
             .field("test", "test-value", MediaType.TEXT_PLAIN_TYPE)
             .field("anotherTest", "another-test-value", MediaType.TEXT_PLAIN_TYPE)) {
-      Response response = createMockApiClient().sendMultiPart(multiPart);
-      assertThat(response.getStatus()).isEqualTo(200);
-      assertThat(response.getHeaderString("Content-type")).isEqualTo("application/json");
+      try (Response response = createMockApiClient().sendMultiPart(multiPart)) {
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getHeaderString("Content-type")).isEqualTo("application/json");
+      }
 
       String contentType =
           WIRE.getAllServeEvents().get(0).getRequest().contentTypeHeader().firstValue();
@@ -239,35 +241,38 @@ public class ApiClientTest {
 
   @Test
   void loadCarsWithResponseDetails() {
-    Response response = createMockApiClient().requestCars();
+    try (Response response = createMockApiClient().requestCars()) {
 
-    assertThat(response.getStatus()).isEqualTo(200);
-    WIRE.verify(
-        RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
-            .withHeader("Trace-Token", matchingUuid()) // NOSONAR
-            .withoutHeader(HttpHeaders.AUTHORIZATION));
+      assertThat(response.getStatus()).isEqualTo(200);
+      WIRE.verify(
+          RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
+              .withHeader("Trace-Token", matchingUuid()) // NOSONAR
+              .withoutHeader(HttpHeaders.AUTHORIZATION));
+    }
   }
 
   @Test
   void loadCarsWithBasicAuthAndResponseDetails() {
-    Response response = createMockApiClientWithBasicAuth().requestCars();
+    try (Response response = createMockApiClientWithBasicAuth().requestCars()) {
 
-    assertThat(response.getStatus()).isEqualTo(200);
-    WIRE.verify(
-        RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
-            .withHeader("Trace-Token", matchingUuid()) // NOSONAR
-            .withHeader(HttpHeaders.AUTHORIZATION, matching("Basic Zm9vOmJhcg==")));
+      assertThat(response.getStatus()).isEqualTo(200);
+      WIRE.verify(
+          RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
+              .withHeader("Trace-Token", matchingUuid()) // NOSONAR
+              .withHeader(HttpHeaders.AUTHORIZATION, matching("Basic Zm9vOmJhcg==")));
+    }
   }
 
   @Test
   void addConsumerToken() {
-    Response response = createMockApiClient().requestCars();
+    try (Response response = createMockApiClient().requestCars()) {
 
-    assertThat(response.getStatus()).isEqualTo(200);
-    WIRE.verify(
-        RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
-            .withHeader("Consumer-Token", equalTo("test-consumer")) // NOSONAR
-            .withoutHeader(HttpHeaders.AUTHORIZATION));
+      assertThat(response.getStatus()).isEqualTo(200);
+      WIRE.verify(
+          RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
+              .withHeader("Consumer-Token", equalTo("test-consumer")) // NOSONAR
+              .withoutHeader(HttpHeaders.AUTHORIZATION));
+    }
   }
 
   @Test
@@ -300,73 +305,77 @@ public class ApiClientTest {
 
   @Test
   void addReceivedTraceTokenToHeadersToPlatformCall() {
-    int status =
+    try (Response response =
         dwClient()
             .path("api")
             .path("cars")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .header("Trace-Token", "test-trace-token-1")
-            .get()
-            .getStatus();
+            .get()) {
+      int status = response.getStatus();
 
-    assertThat(status).isEqualTo(200);
-    WIRE.verify(
-        RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
-            .withHeader("Trace-Token", equalTo("test-trace-token-1"))
-            .withoutHeader(HttpHeaders.AUTHORIZATION));
+      assertThat(status).isEqualTo(200);
+      WIRE.verify(
+          RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
+              .withHeader("Trace-Token", equalTo("test-trace-token-1"))
+              .withoutHeader(HttpHeaders.AUTHORIZATION));
+    }
   }
 
   @Test
   void addReceivedAuthHeaderToPlatformCall() {
-    int status =
+    try (Response response =
         dwClient()
             .path("api")
             .path("carsAuth")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .header("Authorization", "custom-dummy-token")
             .header("Trace-Token", "test-trace-token-3")
-            .get()
-            .getStatus();
+            .get()) {
+      int status = response.getStatus();
 
-    assertThat(status).isEqualTo(200);
-    WIRE.verify(
-        RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
-            .withHeader("Trace-Token", equalTo("test-trace-token-3"))
-            .withHeader(HttpHeaders.AUTHORIZATION, equalTo("custom-dummy-token")));
+      assertThat(status).isEqualTo(200);
+      WIRE.verify(
+          RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
+              .withHeader("Trace-Token", equalTo("test-trace-token-3"))
+              .withHeader(HttpHeaders.AUTHORIZATION, equalTo("custom-dummy-token")));
+    }
   }
 
   @Test
   void notAddingReceivedTraceTokenToHeadersOfExternalCall() {
-    int status =
+    try (Response response =
         dwClient()
             .path("api")
             .path("carsExternal")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .header("Trace-Token", "test-trace-token-2")
-            .get()
-            .getStatus();
+            .get()) {
+      int status = response.getStatus();
 
-    assertThat(status).isEqualTo(200);
-    WIRE.verify(
-        RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
-            .withoutHeader("Trace-Token"));
+      assertThat(status).isEqualTo(200);
+      WIRE.verify(
+          RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
+              .withoutHeader("Trace-Token"));
+    }
   }
 
   @Test
   void notAddingReceivedAuthorizationToHeadersOfExternalCall() {
-    int status =
+    try (Response response =
         dwClient()
             .path("api")
             .path("carsExternal")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .header(HttpHeaders.AUTHORIZATION, "BEARER dummy")
-            .get()
-            .getStatus();
+            .get()) {
+      int status = response.getStatus();
 
-    assertThat(status).isEqualTo(200);
-    WIRE.verify(
-        RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
-            .withoutHeader(HttpHeaders.AUTHORIZATION));
+      assertThat(status).isEqualTo(200);
+      WIRE.verify(
+          RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
+              .withoutHeader(HttpHeaders.AUTHORIZATION));
+    }
   }
 
   @Test
