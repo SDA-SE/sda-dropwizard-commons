@@ -41,10 +41,11 @@ class InvalidTypeIdExceptionMapperTest {
             () -> this.om.readValue(given, ResourceWithInheritance.class));
 
     // when
-    Response response = this.invalidTypeIdExceptionMapper.toResponse(invalidTypeIdException);
+    try (Response response = this.invalidTypeIdExceptionMapper.toResponse(invalidTypeIdException)) {
 
-    // then
-    checkResponse(response, "");
+      // then
+      checkResponse(response, "");
+    }
   }
 
   @Test
@@ -59,10 +60,11 @@ class InvalidTypeIdExceptionMapperTest {
             () -> this.om.readValue(given, ResourceWithNestedNestedInheritance.class));
 
     // when
-    Response response = this.invalidTypeIdExceptionMapper.toResponse(invalidTypeIdException);
+    try (Response response = this.invalidTypeIdExceptionMapper.toResponse(invalidTypeIdException)) {
 
-    // then
-    checkResponse(response, "fieldWithNestedInheritance.fieldWithInheritance");
+      // then
+      checkResponse(response, "fieldWithNestedInheritance.fieldWithInheritance");
+    }
   }
 
   private void checkResponse(Response response, String field) {

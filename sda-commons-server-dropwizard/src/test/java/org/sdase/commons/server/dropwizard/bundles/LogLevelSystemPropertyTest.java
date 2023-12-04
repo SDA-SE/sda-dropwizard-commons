@@ -26,7 +26,7 @@ class LogLevelSystemPropertyTest {
   @Test
   void shouldProduceDebugOutput(StdOut out) {
 
-    try (Response testResponse = createWebTarget().path("test").request().get()) {
+    try (Response ignored = createWebTarget().path("test").request().get()) {
 
       assertThat(out.capturedLines()).anyMatch(l -> l.contains("[DEBUG]"));
     }

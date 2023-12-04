@@ -32,27 +32,29 @@ class OpaDisabledJUnit5IT {
 
   @RetryingTest(5)
   void shouldAllowAccess() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getLocalPort()) // NOSONAR
             .path("resources")
             .request()
-            .get(); // NOSONAR
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    } // NOSONAR
   }
 
   @RetryingTest(5)
   void shouldNotIncludeHealthCheck() {
-    Response response =
+    try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getAdminPort()) // NOSONAR
             .path("healthcheck")
             .request(MediaType.APPLICATION_JSON_TYPE)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-    assertThat(response.readEntity(String.class))
-        .doesNotContain(PolicyExistsHealthCheck.DEFAULT_NAME);
+      assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+      assertThat(response.readEntity(String.class))
+          .doesNotContain(PolicyExistsHealthCheck.DEFAULT_NAME);
+    }
   }
 }

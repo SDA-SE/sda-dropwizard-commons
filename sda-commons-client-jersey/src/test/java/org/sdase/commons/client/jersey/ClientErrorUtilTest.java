@@ -231,8 +231,10 @@ class ClientErrorUtilTest {
                         APPLICATION_JSON) // https://github.com/dropwizard/dropwizard/issues/231
                     .withBody(OM.writeValueAsBytes(givenError))));
 
-    Response response = webTarget.request(APPLICATION_JSON).get();
-    ApiError errors = ClientErrorUtil.readErrorBody(response);
+    ApiError errors;
+    try (Response response = webTarget.request(APPLICATION_JSON).get()) {
+      errors = ClientErrorUtil.readErrorBody(response);
+    }
     assertThat(errors).isNotNull();
     assertThat(errors.getTitle()).isEqualTo("An error for testing"); // NOSONAR
     assertThat(errors.getInvalidParams())
@@ -255,10 +257,11 @@ class ClientErrorUtilTest {
                     .withBody(
                         OM.writeValueAsBytes(singletonMap("message", "This has been found")))));
 
-    Response response = webTarget.request(APPLICATION_JSON).get();
-    Map<String, Object> errorBody =
-        ClientErrorUtil.readErrorBody(response, new TypeReference<Map<String, Object>>() {});
-    assertThat(errorBody).isNull();
+    try (Response response = webTarget.request(APPLICATION_JSON).get()) {
+      Map<String, Object> errorBody =
+          ClientErrorUtil.readErrorBody(response, new TypeReference<Map<String, Object>>() {});
+      assertThat(errorBody).isNull();
+    }
   }
 
   @Test
@@ -273,10 +276,11 @@ class ClientErrorUtilTest {
                     .withBody(
                         OM.writeValueAsBytes(singletonMap("message", "This has been found")))));
 
-    Response response = webTarget.request(APPLICATION_JSON).get();
-    Map<String, Object> errorBody =
-        ClientErrorUtil.readErrorBody(response, new GenericType<Map<String, Object>>() {});
-    assertThat(errorBody).isNull();
+    try (Response response = webTarget.request(APPLICATION_JSON).get()) {
+      Map<String, Object> errorBody =
+          ClientErrorUtil.readErrorBody(response, new GenericType<Map<String, Object>>() {});
+      assertThat(errorBody).isNull();
+    }
   }
 
   @Test
@@ -292,8 +296,9 @@ class ClientErrorUtilTest {
                         TEXT_PLAIN) // https://github.com/dropwizard/dropwizard/issues/231
                     .withBody("This has been found")));
 
-    Response response = webTarget.request(TEXT_PLAIN).get();
-    String errorBody = ClientErrorUtil.readErrorBody(response, String.class);
-    assertThat(errorBody).isNull();
+    try (Response response = webTarget.request(TEXT_PLAIN).get()) {
+      var errorBody = ClientErrorUtil.readErrorBody(response, String.class);
+      assertThat(errorBody).isNull();
+    }
   }
 }

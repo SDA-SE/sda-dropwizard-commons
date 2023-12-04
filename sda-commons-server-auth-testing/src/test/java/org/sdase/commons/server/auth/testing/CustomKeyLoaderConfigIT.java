@@ -56,14 +56,15 @@ class CustomKeyLoaderConfigIT {
   void shouldSendCustomUserAgentInTheJwksRequest() {
     final String token =
         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.e30.sJ38ARdiqW5NDXRzkwPGD_XVVBL_q50ytQr3CezUaWCUlDgOwa49G_GuiriVbAAhllyETulropgTvCxbsDdXOHW4YrQWrJ1rn-HLqceoNxSX_Z2HaR5CeNtUmGL2pX-kv_9rYmyjRVwcOMRsQx_a7DPl-Bo5RrKXHka1nnaQ1a55W4PPOSiCCq4oEYH6RerxODh7uvfB9cYruUMH60f-kZeMVVzKuFpwBdI8xCYEZxXcBPtERsOVBTnGpr8S2_2xpaP6vfLsY4M63GwRNsTL9e8Ghm5n7VMuMrJESCHSrCTMMAK90S_iA3VwbVSUMyrJNdeccAc4lBqizUb7JuBygA";
-    Response response =
+    try (Response response =
         createWebTarget()
             .path("/secure") // NOSONAR
             .request(APPLICATION_JSON)
             .header(AUTHORIZATION, "Bearer " + token)
-            .get();
+            .get()) {
 
-    assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
+      assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
+    }
 
     WIRE.verify(
         getRequestedFor(urlEqualTo("/jwks")).withHeader(USER_AGENT, equalTo("my-user-agent")));

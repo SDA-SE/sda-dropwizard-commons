@@ -69,13 +69,14 @@ class PrometheusMetricsIT {
   }
 
   private String readMetrics() {
-    Response response =
+    try (Response response =
         DW.client()
             .target(String.format("http://localhost:%d", DW.getAdminPort()) + "/metrics/prometheus")
             .request()
-            .get();
-    String metrics = response.readEntity(String.class);
-    LOG.info("Prometheus metrics:\n{}", metrics);
-    return metrics;
+            .get()) {
+      var metrics = response.readEntity(String.class);
+      LOG.info("Prometheus metrics:\n{}", metrics);
+      return metrics;
+    }
   }
 }

@@ -72,15 +72,16 @@ class KeyLoaderProxyIT {
         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImNHV1RlQUJwWnYyN3RfWDFnTW92NEVlRWhEOXRBMWVhcUgzVzFmMXE4Y28ifQ.eyJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0In0.nHN-k_uvKNl8Nh5lXctQkL8KrWKggGiBQ-jaR0xIq_TAWBbhz5zkGXQTiNZwjPFOIcjyuL1xMCqzLPAKiI0Jy0hwOa4xcqukrWr4UwhKC50dnJiFqUgpGM0xLyT1D8JKdSNiVtYL0k-E5XCcpDEqOjHOG3Gw03VoZ0iRNeU2X49Rko8646l5j2g4QbuuOSn1a5G4ICMCAY7C6Vb55dgJtG_WAvkhFdBd_ShQEp_XfWJh6uq0E95_8yfzBx4UuK1Q-TLuWrXKxOlYNCuCH90NYG-3oF9w0gFtdXtYOFzPIEVIkU0Ra6sk_s0IInrEMD_3Q4fgE2PqOzqpuVaD_lHdAA";
 
     // when
-    Response response =
+    try (Response response =
         createWebTarget()
             .path("/secure") // NOSONAR
             .request(APPLICATION_JSON)
             .header(AUTHORIZATION, "Bearer " + tokenWithUnknownKid)
-            .get();
+            .get()) {
 
-    // then
-    assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
+      // then
+      assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
+    }
 
     PROXY_WIRE.verify(
         2,
