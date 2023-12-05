@@ -18,7 +18,7 @@ import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.EventData;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.data.StatusData;
-import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
+import io.opentelemetry.semconv.SemanticAttributes;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 import java.io.PrintWriter;
@@ -27,10 +27,13 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.groups.Tuple;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.opentelemetry.decorators.HeadersUtils;
 
+@TestMethodOrder(MethodOrderer.DisplayName.class)
 class OpenTelemetryBundleIT {
 
   @RegisterExtension
@@ -78,9 +81,10 @@ class OpenTelemetryBundleIT {
   @Test
   void shouldChainFiltersInCorrectOrderSoAllSpansAreFinished() {
     for (int i = 0; i < 10; ++i) {
-      Response r = createClient().path("base/error").request().get();
+      try (Response r = createClient().path("base/error").request().get()) {
 
-      assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+        assertThat(r.getStatus()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
+      }
     }
 
     await()
