@@ -96,7 +96,7 @@ you must read the file using other approaches, e.g.
 using [Wiremock response body](https://wiremock.org/docs/stubbing/#specifying-the-response-body) or
 using an [ObjectMapper](https://www.baeldung.com/jackson-object-mapper-tutorial).
 
-#### Wiremock 3.0
+#### 3 Wiremock 3.0
 
 Dropwizard v4 uses wiremock v3.x version. Were introduced some breaking changes, like dropping
 support for Java 8,
