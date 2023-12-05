@@ -50,9 +50,8 @@ public class MyApp extends Application<MyConfiguration> {
 
 ## Configuration
 
-The database connection is configured in the `config.yaml` of the application. We recommend to use 
-the [`connectionString`](https://www.mongodb.com/docs/manual/reference/connection-string/) to 
-configure your database connection.
+The database connection is configured in the `config.yaml` of the application, specifically the
+[`connectionString`](https://www.mongodb.com/docs/manual/reference/connection-string/).
 
 ```yaml
 mongo:
@@ -67,22 +66,6 @@ mongo:
 
 In tests the config is derived from the `MongoDbClassExtension`. See
 [`sda-commons-server-mongo-testing`](./server-mongo-testing.md) for details.
-
-### Legacy support
-
-Application migration from sda-dropwizard-commons 2 that still used the Morphia bundle can also
-use the following configuration properties:
-
-```yaml
-mongo:
-  connectionString: "${MONGODB_CONNECTION_STRING:-}"
-  hosts: "${MONGODB_HOSTS:-}"
-  database: "${MONGODB_DATABASE:-}"
-  options: "${MONGODB_OPTIONS:-}"
-  username: "${MONGODB_USERNAME:-}"
-  password: "${MONGODB_PASSWORD:-}"
-  useSsl: ${MONGODB_USE_SSL:-true}
-```
 
 ## Inheritance in Entities
 
