@@ -31,6 +31,7 @@ import org.sdase.commons.server.opa.filter.OpaAuthFilter;
 import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
 import org.sdase.commons.server.opa.internal.OpaJwtPrincipalFactory;
+import org.sdase.commons.server.opentelemetry.http5.client.ApacheHttpClient5Telemetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,14 +174,13 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
         config.getOpaClient() == null ? new OpaClientConfiguration() : config.getOpaClient();
 
     JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
-    /* TODO verify if this is necessary and how to implement ir  (OpenTelemetry)
-      jerseyClientBuilder.setApacheHttpClientBuilder(
-    new HttpClientBuilder(environment) {
-      @Override
-      protected org.apache.hc.core5.http.impl.client.HttpClientBuilder createBuilder() {
-        return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
-      }
-    });*/
+    jerseyClientBuilder.setApacheHttpClientBuilder(
+        new io.dropwizard.client.HttpClientBuilder(environment) {
+          @Override
+          protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder createBuilder() {
+            return ApacheHttpClient5Telemetry.builder(openTelemetry).build().newHttpClientBuilder();
+          }
+        });
 
     return jerseyClientBuilder.using(clientConfig).using(objectMapper).build("opaClient");
   }
