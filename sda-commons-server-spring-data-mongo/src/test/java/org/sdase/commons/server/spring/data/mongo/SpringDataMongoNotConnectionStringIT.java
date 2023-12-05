@@ -33,11 +33,7 @@ abstract class SpringDataMongoNotConnectionStringIT {
         new DropwizardAppExtension<>(
             MyApp.class,
             null,
-            config("springDataMongo.hosts", mongo::getHosts),
-            config("springDataMongo.username", mongo::getUsername),
-            config("springDataMongo.password", mongo::getPassword),
-            config("springDataMongo.options", mongo::getOptions),
-            config("springDataMongo.database", mongo::getDatabase));
+            config("springDataMongo.connectionString", mongo::getConnectionString));
 
     @Override
     DropwizardAppExtension<MyConfiguration> getDW() {
@@ -57,11 +53,7 @@ abstract class SpringDataMongoNotConnectionStringIT {
         new DropwizardAppExtension<>(
             MyApp.class,
             null,
-            config("springDataMongo.hosts", mongo::getHosts),
-            config("springDataMongo.username", mongo::getUsername),
-            config("springDataMongo.password", mongo::getPassword),
-            config("springDataMongo.options", mongo::getOptions),
-            config("springDataMongo.database", mongo::getDatabase));
+            config("springDataMongo.connectionString", mongo::getConnectionString));
 
     @Override
     DropwizardAppExtension<MyConfiguration> getDW() {
