@@ -1,7 +1,9 @@
-# sda-commons-async-api
+# SDA Commons Shared AsyncAPI
 
-!!! warning "Experimental"
-Please be aware that SDA SE is likely to change or remove this artifact in the future
+[![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-shared-asyncapi/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-shared-asyncapi)
+
+> #### ⚠️ Experimental ⚠️
+Please be aware that SDA SE is likely to change or remove this artifact in the future.
 
 This module contains the [`AsyncApiGenerator`](https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-shared-asyncapi/src/main/java/org/sdase/commons/shared/asyncapi/AsyncApiGenerator.java)
 to generate [AsyncAPI](https://www.asyncapi.com/) specs from a template and model classes in a
