@@ -1,6 +1,7 @@
 package org.sdase.commons.client.jersey.builder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.OpenTelemetry;
@@ -13,6 +14,7 @@ import java.util.List;
 import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
+import org.sdase.commons.server.opentelemetry.http5.client.ApacheHttpClient5Telemetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,13 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
       OpenTelemetry openTelemetry) {
     this.httpClientConfiguration = httpClientConfiguration;
     this.jerseyClientBuilder = new JerseyClientBuilder(environment);
+    this.jerseyClientBuilder.setApacheHttpClientBuilder(
+        new HttpClientBuilder(environment) {
+          @Override
+          protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder createBuilder() {
+            return ApacheHttpClient5Telemetry.builder(openTelemetry).build().newHttpClientBuilder();
+          }
+        });
     this.objectMapper = environment.getObjectMapper();
     this.filters = new ArrayList<>();
     this.features = new ArrayList<>();

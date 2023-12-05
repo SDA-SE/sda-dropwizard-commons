@@ -30,6 +30,7 @@ import org.sdase.commons.server.auth.key.PublicKeyLoader;
 import org.sdase.commons.server.auth.service.AuthService;
 import org.sdase.commons.server.auth.service.JwtAuthenticator;
 import org.sdase.commons.server.auth.service.TokenAuthorizer;
+import org.sdase.commons.server.opentelemetry.http5.client.ApacheHttpClient5Telemetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,14 +120,13 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
       Environment environment, AuthConfig config, OpenTelemetry openTelemetry) {
     JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
     // should be set as soon as creating the builder
-    /* TODO verify if it need a replacement and how to do it (OpenTelemetry)
     jerseyClientBuilder.setApacheHttpClientBuilder(
-    new HttpClientBuilder(environment) {
-      @Override
-      protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder createBuilder() {
-        return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
-      }
-    });*/
+        new io.dropwizard.client.HttpClientBuilder(environment) {
+          @Override
+          protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder createBuilder() {
+            return ApacheHttpClient5Telemetry.builder(openTelemetry).build().newHttpClientBuilder();
+          }
+        });
 
     // a specific proxy configuration always overrides the system proxy
     if (config.getKeyLoaderClient() == null
@@ -159,8 +159,6 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
         yield new JwksKeySource(
             keyLocation.getLocation().toASCIIString(), client, keyLocation.getRequiredIssuer());
       }
-      default -> throw new IllegalArgumentException(
-          "KeyLocation has no valid type: " + keyLocation.getType());
     };
   }
 
