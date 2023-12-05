@@ -2,6 +2,9 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-error')
   api project(':sda-commons-shared-tracing')
+  // had to add this dependency because we are not using the library.
+  // Once we send the PR to the library and it is merged, this can be removed
+  api project(':sda-commons-server-opentelemetry')
 
   api 'io.dropwizard:dropwizard-auth'
   api 'io.dropwizard:dropwizard-client'
