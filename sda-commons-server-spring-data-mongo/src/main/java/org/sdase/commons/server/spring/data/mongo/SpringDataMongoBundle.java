@@ -90,8 +90,6 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private CaCertificatesBundle<C> caCertificatesBundle;
 
-  private MongoConfiguration config;
-
   private MongoClient mongoClient;
 
   private MongoOperations mongoOperations;
@@ -106,10 +104,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private boolean morphiaCompatibilityEnabled = false;
 
-  /**
-   * Database as defined by the {@link MongoConfiguration#getConnectionString()} or {@link
-   * MongoConfiguration#getDatabase()}
-   */
+  /** Database as defined by the {@link MongoConfiguration#getConnectionString()} */
   private String database;
 
   public SpringDataMongoBundle(MongoConfigurationProvider<C> configurationProvider) {
@@ -129,10 +124,9 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   @Override
   public void run(C configuration, Environment environment) {
-    this.config = configurationProvider.apply(configuration);
+    MongoConfiguration config = configurationProvider.apply(configuration);
 
-    var connectionString = MongoConfigurationUtil.buildConnectionString(config);
-    var cs = new ConnectionString(connectionString);
+    var cs = new ConnectionString(config.getConnectionString());
     this.database = cs.getDatabase();
 
     mongoClient = createMongoClient(cs);
@@ -144,7 +138,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   private MongoClient createMongoClient(ConnectionString cs) {
     MongoClientSettings.Builder clientSettingsBuilder =
         MongoClientSettings.builder().applyConnectionString(cs);
-    if (config.isUseSsl() && caCertificatesBundle.getSslContext() != null) {
+    if (caCertificatesBundle.getSslContext() != null) {
       clientSettingsBuilder.applyToSslSettings(
           builder -> {
             builder.context(this.caCertificatesBundle.getSslContext());
