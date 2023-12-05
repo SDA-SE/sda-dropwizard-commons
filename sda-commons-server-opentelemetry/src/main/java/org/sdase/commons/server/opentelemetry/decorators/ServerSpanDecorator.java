@@ -1,7 +1,7 @@
 package org.sdase.commons.server.opentelemetry.decorators;
 
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
+import io.opentelemetry.semconv.SemanticAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -26,13 +26,12 @@ public class ServerSpanDecorator {
   }
 
   public static void decorateRequest(HttpServletRequest request, Span span) {
-    span.setAttribute(SemanticAttributes.HTTP_METHOD, request.getMethod());
-    span.setAttribute(SemanticAttributes.HTTP_SCHEME, request.getScheme());
+    span.setAttribute(SemanticAttributes.HTTP_REQUEST_METHOD, request.getMethod());
+    span.setAttribute(SemanticAttributes.URL_SCHEME, request.getScheme());
     span.setAttribute(
-        SemanticAttributes.HTTP_HOST,
+        SemanticAttributes.SERVER_ADDRESS,
         String.format("%s:%s", request.getRemoteHost(), request.getServerPort()));
-    span.setAttribute(SemanticAttributes.HTTP_URL, request.getRequestURI());
-    span.setAttribute(SemanticAttributes.HTTP_FLAVOR, request.getProtocol());
+    span.setAttribute(SemanticAttributes.URL_FULL, request.getRequestURI());
   }
 
   public static void decorateResponse(ContainerResponseContext responseContext, Span span) {
@@ -42,7 +41,7 @@ public class ServerSpanDecorator {
   }
 
   public static void decorateResponse(HttpServletResponse response, Span span) {
-    span.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatus());
+    span.setAttribute(SemanticAttributes.HTTP_RESPONSE_STATUS_CODE, response.getStatus());
   }
 
   private static void updateSpanName(String method, String route, Span span) {

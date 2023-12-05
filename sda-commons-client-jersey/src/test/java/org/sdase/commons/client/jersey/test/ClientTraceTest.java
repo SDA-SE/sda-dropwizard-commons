@@ -17,7 +17,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.SpanData;
-import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
+import io.opentelemetry.semconv.SemanticAttributes;
 import jakarta.ws.rs.client.Client;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
@@ -73,7 +73,7 @@ class ClientTraceTest {
         .extracting(
             att -> att.get(SemanticAttributes.HTTP_URL),
             att -> att.get(SemanticAttributes.HTTP_METHOD))
-        .contains(WIRE.baseUrl(), "GET");
+        .contains(WIRE.baseUrl().concat("/"), "GET");
   }
 
   @Test
