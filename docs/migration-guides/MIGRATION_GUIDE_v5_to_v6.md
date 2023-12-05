@@ -77,7 +77,12 @@ Removed Support for JUnit 4.x
 You must use all JUnit 5 extensions, classes, annotations, and libraries and migrate all your JUnit
 4 tests to JUnit 5.
 
-### 2 sda-commons-server-mongo-testing
+### 2 sda-commons-server-spring-data-mongo
+
+The deprecated legacy configuration support for individual properties like `hosts` or `database` was
+removed. The database connection must be configured with [`connectionString`](https://www.mongodb.com/docs/manual/reference/connection-string/).
+
+### 3 sda-commons-server-mongo-testing
 
 Removed custom proxy configuration for MongoDB executable download.
 OS proxy settings should be configured instead.
@@ -89,7 +94,7 @@ you must read the file using other approaches, e.g.
 using [Wiremock response body](https://wiremock.org/docs/stubbing/#specifying-the-response-body) or
 using an [ObjectMapper](https://www.baeldung.com/jackson-object-mapper-tutorial).
 
-#### Wiremock 3.0
+#### 3 Wiremock 3.0
 
 Dropwizard v4 uses wiremock v3.x version. Were introduced some breaking changes, like dropping
 support for Java 8,
@@ -98,7 +103,7 @@ artifacts : wiremock, wiremock-standalone, wiremock-webhooks-extension.
 You can see all the release notes and breaking changes in
 the [official repository](https://github.com/wiremock/wiremock/releases/3.0.0). 
 
-### 2 sda-commons-server-circuitbreaker
+### 4 sda-commons-server-circuitbreaker
 
 Resilience4j-Circuitbreaker was updated from 1.7.x to 2.1.
 Please check [their release notes](https://github.com/resilience4j/resilience4j/blob/master/RELEASENOTES.adoc#version-200) for details.
