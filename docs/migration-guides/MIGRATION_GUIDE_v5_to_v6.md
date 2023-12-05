@@ -69,7 +69,10 @@ to [v6.1](https://github.com/hibernate/hibernate-orm/blob/6.1/migration-guide.ad
 The following modules contain changes:
 
 1. [sda-commons-server-testing](#1-sda-commons-server-testing)
-1. [sda-commons-server-circuitbreaker](#2-sda-commons-server-circuitbreaker)
+2. [sda-commons-server-spring-data-mongo](#2-sda-commons-server-spring-data-mongo)
+3. [sda-commons-server-mongo-testing](#3-sda-commons-server-mongo-testing)
+4. [sda-commons-server-circuitbreaker](#4-sda-commons-server-circuitbreaker)
+5. [sda-commons-shared-asyncapi](#5-sda-commons-shared-asyncapi)
 
 ### 1 sda-commons-server-testing
 
@@ -104,3 +107,30 @@ We now collect metrics using [Micrometer](https://micrometer.io/).
 
 The metric named `resilience4j_circuitbreaker_calls_bucket` is not exposed anymore.
 Please use Micrometer's metric `resilience4j_circuitbreaker_calls_count` instead.
+
+### 5 sda-commons-shared-asyncapi
+
+Json Schemas for AsyncAPI are generated with
+[Victools' Json Schema Generator](https://github.com/victools/jsonschema-generator) now.
+The [previously used library](https://github.com/mbknor/mbknor-jackson-jsonSchema) is barely
+maintained in the past years.
+
+The old library provided their own annotations.
+Now, annotations of Jackson (e.g. `@JsonSchemaDescription`), Swagger (e.g. `@Schema`) and Jakarta
+Validation (e.g. `NotNull`) can be used.
+Note that not all attributes of all annotations are covered and multiple examples are not possible
+anymore.
+Only one example can be defined with `@Schema(example = "value")`.
+
+How the Java classes for schema definitions in the AsyncAPI are defined has changed.
+Previously, classes to integrate were defined in the code
+(`.withSchema("./schema.json", BaseEvent.class)`) and referenced in the AsyncAPI template
+(`$ref: './schema.json#/definitions/CarManufactured'`).
+Now the classes are referenced directly in the template (`$ref: 'class://com.example.BaseEvent`).
+The builder method `withSchema` does not exist anymore.
+
+Please review the differences in the generated AsyncAPI file.
+Both libraries work different and have a different feature set.
+The new generator may have some limitations but a great API for extensions.
+Please [file an issue](https://github.com/SDA-SE/sda-dropwizard-commons/issues) if something
+important can't be expressed.
