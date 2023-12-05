@@ -35,7 +35,6 @@ abstract class SpringDataMongoBundleSSLConfigurationIT {
             null,
             randomPorts(),
             config("springDataMongo.connectionString", mongo::getConnectionString),
-            config("springDataMongo.useSsl", "true"),
             config(
                 "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
 
@@ -47,9 +46,8 @@ abstract class SpringDataMongoBundleSSLConfigurationIT {
             null,
             randomPorts(),
             config("springDataMongo.connectionString", mongo::getConnectionString),
-            config("springDataMongo.useSsl", "false"),
-            config(
-                "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
+            // make sure certificates dir is unset
+            config("config.customCaCertificateDir", ""));
 
     @Override
     DropwizardAppExtension<MyConfiguration> getDW() {
@@ -76,7 +74,6 @@ abstract class SpringDataMongoBundleSSLConfigurationIT {
             null,
             randomPorts(),
             config("springDataMongo.connectionString", mongo::getConnectionString),
-            config("springDataMongo.useSsl", "true"),
             config(
                 "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
 
@@ -88,9 +85,8 @@ abstract class SpringDataMongoBundleSSLConfigurationIT {
             null,
             randomPorts(),
             config("springDataMongo.connectionString", mongo::getConnectionString),
-            config("springDataMongo.useSsl", "false"),
-            config(
-                "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
+            // make sure certificates dir is unset
+            config("config.customCaCertificateDir", ""));
 
     @Override
     DropwizardAppExtension<MyConfiguration> getDW() {
