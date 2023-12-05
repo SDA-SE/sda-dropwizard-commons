@@ -1,26 +1,57 @@
+/*
+ * Copyright 2022- SDA SE Open Industry Solutions (https://www.sda.se)
+ *
+ * Use of this source code is governed by an MIT-style
+ * license that can be found in the LICENSE file or at
+ * https://opensource.org/licenses/MIT.
+ */
 package org.sdase.commons.shared.asyncapi;
 
-import static org.sdase.commons.shared.asyncapi.internal.JsonNodeUtil.sortJsonNodeInPlace;
-
-import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import org.sdase.commons.shared.asyncapi.internal.JsonSchemaEmbedder;
-import org.sdase.commons.shared.yaml.YamlUtil;
+import java.nio.charset.StandardCharsets;
+import org.sdase.commons.shared.asyncapi.jsonschema.JsonSchemaBuilder;
 
 /**
  * Generator used to build AsyncAPI specs from a template base file and schemas generated from code.
- * The schemas are referenced via absolute $refs like
+ * The schemas are referenced via custom class {@code $ref}erences in an AsyncAPI yaml template like
+ * at the very end of the following example AsyncAPI:
  *
  * <pre>
- *     payload:
- *       $ref: './partner-streaming-event.json#/definitions/CreateNaturalPersonEvent'
+ *   asyncapi: '2.5.0'
+ *   id: urn:com:example:entity
+ *   defaultContentType: application/json
+ *   info:
+ *     title: Example App
+ *     description: This example is about events of an example.
+ *     version: '1.0.0'
+ *
+ *   channels:
+ *     'partner-created':
+ *       publish:
+ *         operationId: publishPartnerCreatedEvents
+ *         summary: Partner Created Events
+ *         description: A new partner was created
+ *         message:
+ *           oneOf:
+ *             - $ref: '#/components/messages/SomeEvent'
+ *
+ *   components:
+ *     messages:
+ *       SomeEvent:
+ *         title: Some Event
+ *         description: Something happened.
+ *         payload:
+ *           # Reference to a class in the classpath.
+ *           # The reference will by replaced by the local path of the generated schema, e.g.
+ *           # $ref: '#/components/schemas/SomeEvent'
+ *           $ref: class://com.example.entity.model.SomeEvent
  * </pre>
  *
- * These referenced files are automatically created from Java classes annotated with Jackson and
- * mbknor-jackson-jsonSchema annotations. Afterwards everything is embedded into a single
- * self-contained file
+ * These referenced files are automatically created from Java classes annotated with Jackson,
+ * Swagger and Jakarta Validation annotations. Afterwards everything is embedded into a single
+ * self-contained AsyncAPI yaml file.
  */
 public class AsyncApiGenerator {
 
@@ -34,7 +65,7 @@ public class AsyncApiGenerator {
    * @return builder
    */
   public static AsyncApiBaseBuilder builder() {
-    return new Builder();
+    return new AsyncBuilder();
   }
 
   public interface AsyncApiBaseBuilder {
@@ -44,96 +75,33 @@ public class AsyncApiGenerator {
      *
      * @param url The resource url to the template file
      * @return builder
+     * @throws UncheckedIOException when reading the url as yaml failed
      */
-    SchemaBuilder withAsyncApiBase(URL url);
+    default SchemaBuilder withAsyncApiBase(URL url) {
+      try (var is = url.openStream()) {
+        return withAsyncApiBase(new String(is.readAllBytes(), StandardCharsets.UTF_8));
+      } catch (IOException e) {
+        throw new UncheckedIOException("Error reading content from %s".formatted(url), e);
+      }
+    }
+
+    /**
+     * Supply base AsyncAPI yaml content to be used as a template.
+     *
+     * @param yamlAsyncApiContent The content of an AsyncAPI yaml schema.
+     * @return builder
+     * @throws UncheckedIOException when parsing as yaml failed
+     */
+    SchemaBuilder withAsyncApiBase(String yamlAsyncApiContent);
   }
 
   public interface SchemaBuilder extends FinalBuilder {
 
     /**
-     * Supply a JSON schema generate from clazz to the AsyncAPI.
-     *
-     * @param name The name of the JSON file under which the schema is referenced in the template
-     *     file
-     * @param clazz The class to generate a schema for
-     * @param <T> The type of clazz
-     * @return builder
+     * @param jsonSchemaBuilder the {@link JsonSchemaBuilder} that creates Json Schema Draft 07 for
+     *     classes referenced as {@code $ref: class://fully.qualified.classname.of.the.Model}.
+     * @return The {@code FinalBuilder} to create the AsyncAPI
      */
-    <T> SchemaBuilder withSchema(String name, Class<T> clazz);
-
-    /**
-     * Supply a JSON schema from an existing JSON node
-     *
-     * @param name The name of the JSON file under which the schema is referenced in the template *
-     *     file
-     * @param node The node to embed
-     * @return builder
-     */
-    SchemaBuilder withSchema(String name, JsonNode node);
-  }
-
-  public interface FinalBuilder {
-
-    /**
-     * Generates a new AsyncAPI spec based on the supplied builder parameters.
-     *
-     * @return A JSON object for the AsyncAPI spec.
-     */
-    JsonNode generate();
-
-    /**
-     * Generates a new AsyncAPI spec based on the supplied builder parameters.
-     *
-     * @return A YAML encoded AsyncAPI spec.
-     */
-    String generateYaml();
-  }
-
-  private static class Builder implements AsyncApiBaseBuilder, SchemaBuilder {
-    private JsonNode asyncApiBaseTemplate;
-    private final Map<String, JsonNode> schemas = new HashMap<>();
-    private final JsonSchemaEmbedder jsonSchemaEmbedder =
-        new JsonSchemaEmbedder(
-            "/components/schemas",
-            key -> {
-              if (!schemas.containsKey(key)) {
-                throw new UnknownSchemaException("Can't find schema for URL '" + key + "'");
-              }
-              return schemas.get(key);
-            });
-
-    @Override
-    public SchemaBuilder withAsyncApiBase(URL url) {
-      asyncApiBaseTemplate = YamlUtil.load(url, JsonNode.class);
-      return this;
-    }
-
-    @Override
-    public <T> SchemaBuilder withSchema(String name, Class<T> clazz) {
-      schemas.put(
-          name,
-          JsonSchemaGenerator.builder().forClass(clazz).allowAdditionalProperties(true).generate());
-
-      return this;
-    }
-
-    @Override
-    public SchemaBuilder withSchema(String name, JsonNode node) {
-      schemas.put(name, node);
-
-      return this;
-    }
-
-    @Override
-    public JsonNode generate() {
-      JsonNode jsonNode = jsonSchemaEmbedder.resolve(asyncApiBaseTemplate);
-      sortJsonNodeInPlace(jsonNode.at("/components/schemas"));
-      return jsonNode;
-    }
-
-    @Override
-    public String generateYaml() {
-      return YamlUtil.writeValueAsString(generate());
-    }
+    FinalBuilder withJsonSchemaBuilder(JsonSchemaBuilder jsonSchemaBuilder);
   }
 }
