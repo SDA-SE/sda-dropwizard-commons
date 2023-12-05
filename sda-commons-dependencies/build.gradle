@@ -21,7 +21,7 @@ ext {
   kotlinVersion = '1.9.22'
   kotlinxCoroutinesVersion = '1.7.3'
   resilience4jVersion = '2.1.0'
-  openTelemetryVersion= '1.29.0'
+  openTelemetryVersion= '1.32.0'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '4.6.1'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
@@ -188,6 +188,8 @@ dependencies {
     api "io.opentelemetry:opentelemetry-extension-trace-propagators:$openTelemetryVersion"
     api "io.opentelemetry:opentelemetry-sdk-testing:$openTelemetryVersion"
     api "io.opentelemetry:opentelemetry-exporter-logging:$openTelemetryVersion"
+    //api "io.opentelemetry:opentelemetry-semconv:${openTelemetryVersion}"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:${openTelemetryVersion}-alpha"
     api "com.squareup.okhttp3:okhttp:4.12.0" // bump from 4.9.3 used in opentelemetry-exporter-otlp-common
     api 'com.squareup.okio:okio:3.7.0', {
       because 'CVE-2023-3635 in 3.2.0'
