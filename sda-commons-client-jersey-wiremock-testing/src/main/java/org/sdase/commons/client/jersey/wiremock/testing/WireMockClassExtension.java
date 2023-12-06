@@ -11,7 +11,15 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Junit 5 replacement for {@link com.github.tomakehurst.wiremock.junit.WireMockClassRule} */
+/**
+ * Junit 5 replacement for {@link com.github.tomakehurst.wiremock.junit.WireMockClassRule}
+ *
+ * @deprecated This extension will be removed in the next major release. Existing tests using this
+ *     extension should be migrated to {@link
+ *     com.github.tomakehurst.wiremock.junit5.WireMockExtension} which comes with Wiremock. The next
+ *     major of Dropwizard commons will also upgrade Wiremock from 2.x.x to 3.x.x.
+ */
+@Deprecated(since = "5", forRemoval = true)
 public class WireMockClassExtension extends WireMockServer
     implements BeforeAllCallback, AfterAllCallback {
 

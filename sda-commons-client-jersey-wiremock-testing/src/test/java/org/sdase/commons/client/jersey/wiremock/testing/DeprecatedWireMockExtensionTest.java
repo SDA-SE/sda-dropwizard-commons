@@ -1,51 +1,34 @@
 package org.sdase.commons.client.jersey.wiremock.testing;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.findUnmatchedRequests;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.notMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.client.VerificationException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-/**
- * @deprecated This test is still here to show migration from {@link
- *     org.sdase.commons.client.jersey.wiremock.testing.WireMockExtension} in its commit history.
- */
 @Deprecated(forRemoval = true)
-class WireMockExtensionTest {
+class DeprecatedWireMockExtensionTest {
 
-  @RegisterExtension
-  @SuppressWarnings("JUnitMalformedDeclaration") // intended to be a class extension
-  WireMockExtension wire = new WireMockExtension();
+  @RegisterExtension WireMockExtension wire = new WireMockExtension();
 
-  static Set<String> wireBaseUrls = new HashSet<>();
-
-  @BeforeEach // Wiremock is reset for each test
+  @BeforeEach
   void before() {
-    wireBaseUrls.add(wire.baseUrl());
-    stubFor(
+    wire.stubFor(
         get("/api/cars") // NOSONAR
             .withHeader("Accept", notMatching("gzip"))
             .willReturn(ok().withHeader("Content-type", "application/json").withBody("[]")));
-  }
-
-  @AfterAll
-  static void afterAll() {
-    assertThat(wireBaseUrls).hasSize(2);
   }
 
   @Test
@@ -53,7 +36,7 @@ class WireMockExtensionTest {
     URLConnection connection = new URL(wire.baseUrl() + "/api/cars").openConnection();
     try (InputStream inputStream = connection.getInputStream()) {
       assertThat(IOUtils.toString(inputStream, StandardCharsets.UTF_8)).isEqualTo("[]");
-      assertThat(findUnmatchedRequests()).isEmpty();
+      wire.assertAllRequestsMatched();
     }
   }
 
@@ -62,6 +45,31 @@ class WireMockExtensionTest {
     HttpURLConnection connection =
         (HttpURLConnection) new URL(wire.baseUrl() + "/foo").openConnection();
     assertThat(connection.getResponseCode()).isEqualTo(404);
-    assertThat(findUnmatchedRequests()).isNotEmpty();
+    assertThrows(
+        VerificationException.class,
+        wire::assertAllRequestsMatched,
+        "Expected assertAllRequestsMatched to throw VerificationException, but it didn't");
+  }
+
+  @Nested
+  class ConstructorTests {
+    @Test
+    void shouldSetupMockForPortAndHttpsPort() {
+      WireMockExtension wireMockClassExtension = new WireMockExtension(8090, 8091);
+      assertThat(wireMockClassExtension.getOptions().portNumber()).isEqualTo(8090);
+      assertThat(wireMockClassExtension.getOptions().httpsSettings().port()).isEqualTo(8091);
+    }
+
+    @Test
+    void shouldSetupMockForPort() {
+      WireMockExtension wireMockClassExtension = new WireMockExtension(8090);
+      assertThat(wireMockClassExtension.getOptions().portNumber()).isEqualTo(8090);
+    }
+
+    @Test
+    void shouldSetupMockForNoParameters() {
+      WireMockExtension wireMockClassExtension = new WireMockExtension();
+      assertThat(wireMockClassExtension.getOptions().portNumber()).isBetween(0, 9999);
+    }
   }
 }
