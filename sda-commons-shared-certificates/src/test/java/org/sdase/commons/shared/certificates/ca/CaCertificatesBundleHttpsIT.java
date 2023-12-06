@@ -1,5 +1,6 @@
 package org.sdase.commons.shared.certificates.ca;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -11,15 +12,17 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
+import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.routing.RoutingSupport;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.core5.http.HttpException;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.shared.certificates.ca.ssl.CertificateReader;
 import org.sdase.commons.shared.certificates.ca.ssl.SslUtil;
@@ -35,12 +38,15 @@ class CaCertificatesBundleHttpsIT {
     CertificateReader certificateReader =
         new CertificateReader(Paths.get("src", "test", "resources").toString());
     Optional<String> pemContent = certificateReader.readCertificates();
+    assertThat(pemContent).isPresent();
 
     // create custom sslContext that has no trusted certificate
     SSLContext sslContext = createSSlContextWithoutDefaultMerging(pemContent.get());
 
-    assertThatExceptionOfType(SSLHandshakeException.class)
-        .isThrownBy(() -> callSecureEndpointWithSSLContext(sslContext));
+    assertThatExceptionOfType(HttpHostConnectException.class)
+        .isThrownBy(() -> callSecureEndpointWithSSLContextForStatus(sslContext))
+        // TODO can we identify if the error is related to SSL?
+        .withMessageContaining("something with SSL");
   }
 
   @Test
@@ -49,28 +55,34 @@ class CaCertificatesBundleHttpsIT {
     CertificateReader certificateReader =
         new CertificateReader(Paths.get("src", "test", "resources").toString());
     Optional<String> pemContent = certificateReader.readCertificates();
+    assertThat(pemContent).isPresent();
 
     // create custom sslContext that has no trusted certificate but falls back to JVM default
     SSLContext sslContext =
         SslUtil.createSslContext(SslUtil.createTruststoreFromPemKey(pemContent.get()));
 
-    assertThat(callSecureEndpointWithSSLContext(sslContext).getCode()).isEqualTo(200);
+    assertThat(callSecureEndpointWithSSLContextForStatus(sslContext)).isEqualTo(200);
   }
 
-  static CloseableHttpResponse callSecureEndpointWithSSLContext(SSLContext sslContext)
-      throws IOException {
+  static int callSecureEndpointWithSSLContextForStatus(SSLContext sslContext) throws IOException {
 
     final SSLConnectionSocketFactory sslSocketFactory =
         SSLConnectionSocketFactoryBuilder.create().setSslContext(sslContext).build();
     final HttpClientConnectionManager cm =
         PoolingHttpClientConnectionManagerBuilder.create()
             .setSSLSocketFactory(sslSocketFactory)
+            .setDefaultConnectionConfig(
+                ConnectionConfig.custom().setConnectTimeout(10, SECONDS).build())
             .build();
-    return HttpClients.custom()
-        .setConnectionManager(cm)
-        .evictExpiredConnections()
-        .build()
-        .execute(new HttpGet(securedHost));
+
+    HttpGet request = new HttpGet(securedHost);
+    try (var client =
+            HttpClients.custom().setConnectionManager(cm).evictExpiredConnections().build();
+        var response = client.executeOpen(RoutingSupport.determineHost(request), request, null)) {
+      return response.getCode();
+    } catch (HttpException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private static SSLContext createSSlContextWithoutDefaultMerging(String pemContent)
