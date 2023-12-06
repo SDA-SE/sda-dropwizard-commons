@@ -8,7 +8,6 @@ dependencies {
     // solve conflict, micrometer-observation is pulled in by micrometer-core anyway
     exclude group: 'io.micrometer', module: 'micrometer-observation'
   }
-  api 'io.prometheus:simpleclient_common'
   api 'org.objenesis:objenesis'
 
   testImplementation project(':sda-commons-server-prometheus')
