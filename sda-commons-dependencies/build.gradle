@@ -26,7 +26,6 @@ ext {
   mongoDbDriverVersion = '4.6.1'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.77'
-  swaggerCoreVersion = '2.2.19'
   victoolsVersion = '4.33.0'
 }
 
@@ -102,8 +101,7 @@ dependencies {
 
     // sda-commons-shared-asyncapi
     api "com.kjetland:mbknor-jackson-jsonschema_2.13:1.0.39"
-    api "io.swagger.core.v3:swagger-models-jakarta:${swaggerCoreVersion}"
-    api "io.swagger.core.v3:swagger-annotations-jakarta:${swaggerCoreVersion}"
+    api "io.swagger.core.v3:swagger-models-jakarta:${swaggerCoreV3Version}"
 
     // sda-commons-server-auth
     api "com.auth0:java-jwt:4.4.0"
