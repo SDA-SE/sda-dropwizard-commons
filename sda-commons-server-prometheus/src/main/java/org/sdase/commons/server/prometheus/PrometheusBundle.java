@@ -20,6 +20,8 @@ import io.prometheus.client.dropwizard.DropwizardExports;
 import io.prometheus.client.dropwizard.samplebuilder.CustomMappingSampleBuilder;
 import io.prometheus.client.dropwizard.samplebuilder.MapperConfig;
 import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
+import io.prometheus.client.servlet.jakarta.exporter.MetricsServlet;
+import jakarta.servlet.ServletRegistration;
 import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.FeatureContext;
@@ -108,7 +110,6 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
                 }));
   }
 
-  @SuppressWarnings("java:S2095")
   private static void bindJvmAndSystemMetricsToGlobalRegistry(Environment environment) {
     // JVM and System Metrics
     new JvmMemoryMetrics().bindTo(Metrics.globalRegistry);
@@ -117,6 +118,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     new ClassLoaderMetrics().bindTo(Metrics.globalRegistry);
     // ignore Sonar and not using "try-with-resources" pattern to prevent closing of JVMMetrics
     // otherwise jvm.gc.pause will not be available
+    //noinspection resource
     JvmGcMetrics jvmGcMetrics = new JvmGcMetrics();
     jvmGcMetrics.bindTo(Metrics.globalRegistry);
     environment.lifecycle().manage(onShutdown(jvmGcMetrics::close));
@@ -201,56 +203,56 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
             new AbstractMap.SimpleImmutableEntry<>("state", "pending")));
     mappers.add(
         createMapperConfig(
-            "org.apache.http.client.*.*.get-requests",
+            "org.apache.hc.client5.http.classic.*.*.get-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "get"))); // NOSONAR
     mappers.add(
         createMapperConfig(
-            "org.apache.http.client.*.*.post-requests",
+            "org.apache.hc.client5.http.classic.*.*.post-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "post")));
     mappers.add(
         createMapperConfig(
-            "org.apache.http.client.*.*.put-requests",
+            "org.apache.hc.client5.http.classic.*.*.put-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "put")));
     mappers.add(
         createMapperConfig(
-            "org.apache.http.client.*.*.delete-requests",
+            "org.apache.hc.client5.http.classic.*.*.delete-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "delete")));
     mappers.add(
         createMapperConfig(
-            "org.apache.http.client.*.*.head-requests",
+            "org.apache.hc.client5.http.classic.*.*.head-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "head")));
     mappers.add(
         createMapperConfig(
-            "org.apache.http.client.*.*.connect-requests",
+            "org.apache.hc.client5.http.classic.*.*.connect-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "connect")));
     mappers.add(
         createMapperConfig(
-            "org.apache.http.client.*.*.options-requests",
+            "org.apache.hc.client5.http.classic.*.*.options-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "options")));
     mappers.add(
         createMapperConfig(
-            "org.apache.http.client.*.*.trace-requests",
+            "org.apache.hc.client5.http.classic.*.*.trace-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
@@ -314,7 +316,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     for (int i = 0; i < labelNames.length; ++i) {
       Object labelName = labelNames[i];
 
-      if (labelName instanceof Entry pair) {
+      if (labelName instanceof Entry<?, ?> pair) {
         labels.put(pair.getKey().toString(), pair.getValue().toString());
       } else {
         labels.put(labelName.toString(), "${" + i + "}");
@@ -333,10 +335,9 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
 
   private void registerMetricsServlet(AdminEnvironment environment) {
     // Prometheus Servlet registration
-    // TODO fix prometheus metrics servlet
-    /*ServletRegistration.Dynamic dynamic = environment.addServlet("metrics", MetricsServlet.class);
+    ServletRegistration.Dynamic dynamic = environment.addServlet("metrics", MetricsServlet.class);
     dynamic.addMapping(METRICS_SERVLET_URL);
-    LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);*/
+    LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);
   }
 
   private void registerHealthCheckServlet(AdminEnvironment environment) {
