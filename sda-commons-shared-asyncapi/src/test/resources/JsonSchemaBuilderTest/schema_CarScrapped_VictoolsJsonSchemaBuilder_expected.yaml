@@ -1,0 +1,46 @@
+---
+CarScrapped:
+  allOf:
+  - type: "object"
+    properties:
+      id:
+        type: "string"
+        minLength: 1
+        pattern: "^.*\\S+.*$"
+        description: "The id of the message"
+        examples:
+        - "626A0F21-D940-4B44-BD36-23F0F567B0D0"
+      type:
+        allOf:
+        - $ref: "#/components/schemas/Type"
+        - description: "The type of message"
+      vehicleRegistration:
+        type: "string"
+        minLength: 1
+        pattern: "^.*\\S+.*$"
+        description: "The registration of the vehicle"
+        examples:
+        - "BB324A81"
+      date:
+        type: "string"
+        format: "date-time"
+        description: "The time of scrapping"
+      location:
+        type: "string"
+        description: "The location where the car was scrapped"
+    required:
+    - "id"
+    - "vehicleRegistration"
+    - "date"
+    description: "A car was scrapped"
+  - type: "object"
+    properties:
+      type:
+        const: "CAR_SCRAPPED"
+    required:
+    - "type"
+Type:
+  type: "string"
+  enum:
+  - "CAR_MANUFACTURED"
+  - "CAR_SCRAPPED"
