@@ -37,26 +37,26 @@ The [`GoldenFileAssertions`](https://github.com/SDA-SE/sda-dropwizard-commons/bl
 from the test module help here.
 
 !!! example "Example: Build AsyncAPI for Cars"
-=== "asyncapi_template.yaml"
-```yaml
---8<-- "sda-commons-asyncapi/src/test/resources/demo/asyncapi_template.yaml"
-```
-=== "CarManufactured"
-```java
---8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/test/data/models/CarManufactured.java"
-```
-=== "…"
-```java
---8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/test/data/models/CarScrapped.java"
-```
-=== "AsyncApiTest"
-```java
---8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/AsyncApiTest.java"
-```
-=== "Generated asyncapi.yaml"
-```yaml
---8<-- "sda-commons-shared-asyncapi/asyncapi.yaml"
-```
+    === "asyncapi_template.yaml"
+        ```yaml
+        --8<-- "sda-commons-asyncapi/src/test/resources/demo/asyncapi_template.yaml"
+        ```
+    === "CarManufactured"
+        ```java
+        --8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/test/data/models/CarManufactured.java"
+        ```
+    === "…"
+        ```java
+        --8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/test/data/models/CarScrapped.java"
+        ```
+    === "AsyncApiTest"
+        ```java
+        --8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/AsyncApiTest.java"
+        ```
+    === "Generated asyncapi.yaml"
+        ```yaml
+        --8<-- "sda-commons-shared-asyncapi/asyncapi.yaml"
+        ```
 
 
 ### Usage with Existing Schemas
@@ -69,22 +69,22 @@ This should be used as fallback only, because the schema is not connected to the
 diverge over time.
 
 !!! example "Example: Build AsyncAPI with handcrafted schema"
-=== "template_with_schema.yaml"
-```yaml
---8<-- "sda-commons-shared-asyncapi/src/test/resources/demo/template_with_schema.yaml"
-```
-=== "Created"
-```java
---8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/test/data/models/Created.java"
-```
-=== "ApiWithSchemaTest"
-```java
---8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/ApiWithSchemaTest.java"
-```
-=== "Generated asyncapi-schema.yaml"
-```yaml
---8<-- "sda-commons-shared-asyncapi/asyncapi-with-schema.yaml"
-```
+    === "template_with_schema.yaml"
+        ```yaml
+        --8<-- "sda-commons-shared-asyncapi/src/test/resources/demo/template_with_schema.yaml"
+        ```
+    === "Created"
+        ```java
+        --8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/test/data/models/Created.java"
+        ```
+    === "ApiWithSchemaTest"
+        ```java
+        --8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/ApiWithSchemaTest.java"
+        ```
+    === "Generated asyncapi-schema.yaml"
+        ```yaml
+        --8<-- "sda-commons-shared-asyncapi/asyncapi-with-schema.yaml"
+        ```
 
 
 ### Generating Schema Files
