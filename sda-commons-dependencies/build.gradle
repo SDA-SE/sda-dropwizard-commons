@@ -147,7 +147,7 @@ dependencies {
     api "io.prometheus:simpleclient:$prometheusVersion"
     api "io.prometheus:simpleclient_common:$prometheusVersion"
     api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
-    api "io.prometheus:simpleclient_servlet:$prometheusVersion"
+    api "io.prometheus:simpleclient_servlet_jakarta:$prometheusVersion"
 
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
