@@ -143,7 +143,6 @@ dependencies {
     api "io.swagger.parser.v3:swagger-parser-v3:2.1.19"
 
     // sda-commons-server-prometheus
-    api 'io.prometheus:prometheus-metrics-simpleclient-bridge:1.1.0'
     api "io.prometheus:simpleclient:$prometheusVersion"
     api "io.prometheus:simpleclient_common:$prometheusVersion"
     api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
