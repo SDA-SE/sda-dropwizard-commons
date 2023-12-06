@@ -1,59 +1,72 @@
 package org.sdase.commons.shared.asyncapi;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.sdase.commons.server.testing.GoldenFileAssertions;
 import org.sdase.commons.shared.asyncapi.AsyncApiGenerator.SchemaBuilder;
-import org.sdase.commons.shared.asyncapi.models.BaseEvent;
-import org.sdase.commons.shared.yaml.YamlUtil;
 
 class AsyncApiGeneratorTest {
 
+  public static final String GIVEN_ASYNC_API_TEMPLATE =
+      "/AsyncApiGeneratorTest/asyncapi_template.yaml";
+
   @Test
-  void shouldGenerateAsyncApi() throws IOException, URISyntaxException {
+  void shouldGenerateAsyncApi() throws IOException {
     String actual =
         AsyncApiGenerator.builder()
-            .withAsyncApiBase(getClass().getResource("/asyncapi_template.yaml"))
-            .withSchema("./schema.json", BaseEvent.class)
+            .withAsyncApiBase(getClass().getResource(GIVEN_ASYNC_API_TEMPLATE))
             .generateYaml();
-    String expected = TestUtil.readResource("/asyncapi_expected.yaml");
 
-    Map<String, Object> expectedJson =
-        YamlUtil.load(expected, new TypeReference<Map<String, Object>>() {});
-    Map<String, Object> actualJson =
-        YamlUtil.load(actual, new TypeReference<Map<String, Object>>() {});
-
-    assertThat(actualJson).usingRecursiveComparison().isEqualTo(expectedJson);
-  }
-
-  @Test
-  void shouldNotGenerateAsyncApi() {
-    final SchemaBuilder schemaBuilder =
-        AsyncApiGenerator.builder()
-            .withAsyncApiBase(getClass().getResource("/asyncapi_template.yaml"))
-            .withSchema("BAD_PLACEHOLDER", BaseEvent.class);
-    assertThatCode(schemaBuilder::generateYaml).isInstanceOf(UnknownSchemaException.class);
+    GoldenFileAssertions.assertThat(
+            Path.of("src/test/resources/AsyncApiGeneratorTest/asyncapi_expected.yaml"))
+        .hasYamlContentAndUpdateGolden(actual);
   }
 
   @Test
   void shouldSortSchemas() {
     JsonNode actual =
         AsyncApiGenerator.builder()
-            .withAsyncApiBase(getClass().getResource("/asyncapi_template.yaml"))
-            .withSchema("./schema.json", BaseEvent.class)
+            .withAsyncApiBase(getClass().getResource(GIVEN_ASYNC_API_TEMPLATE))
             .generate();
     JsonNode schemas = actual.at("/components/schemas");
     List<String> keys = new ArrayList<>();
     schemas.fieldNames().forEachRemaining(keys::add);
     // usingRecursiveComparison() is unable to compare the order, so we have to do it manually.
     assertThat(keys).isSorted();
+  }
+
+  @Test
+  void shouldUseCustomSchemaGenerator() {
+    ObjectMapper om = new ObjectMapper();
+    JsonNode actual =
+        AsyncApiGenerator.builder()
+            .withAsyncApiBase(getClass().getResource(GIVEN_ASYNC_API_TEMPLATE))
+            .withJsonSchemaBuilder(
+                c -> Map.of(((Class<?>) c).getSimpleName() + "Custom", om.createObjectNode()))
+            .generate();
+    assertThat(actual.get("components").get("schemas").fieldNames())
+        .toIterable()
+        .containsExactlyInAnyOrder("CarManufacturedCustom", "CarScrappedCustom");
+  }
+
+  @Test
+  void shouldFailIfRefIsNotFound() {
+    URL asyncApiWithBadReferences =
+        getClass().getResource("/AsyncApiGeneratorTest/asyncapi_reference_failure_template.yaml");
+    SchemaBuilder builderForSchemaWithBadReferences =
+        AsyncApiGenerator.builder().withAsyncApiBase(asyncApiWithBadReferences);
+    assertThatExceptionOfType(ReferencedClassNotFoundException.class)
+        .isThrownBy(builderForSchemaWithBadReferences::generate)
+        .withMessageContaining("com.example.CarManufactured");
   }
 }

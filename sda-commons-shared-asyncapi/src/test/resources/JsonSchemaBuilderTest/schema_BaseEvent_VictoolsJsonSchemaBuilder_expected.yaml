@@ -1,0 +1,151 @@
+---
+BaseEvent:
+  anyOf:
+  - $ref: "#/components/schemas/CarManufactured"
+  - $ref: "#/components/schemas/CarScrapped"
+CarManufactured:
+  allOf:
+  - type: "object"
+    properties:
+      id:
+        type: "string"
+        minLength: 1
+        pattern: "^.*\\S+.*$"
+        description: "The id of the message"
+        examples:
+        - "626A0F21-D940-4B44-BD36-23F0F567B0D0"
+      type:
+        allOf:
+        - $ref: "#/components/schemas/Type"
+        - description: "The type of message"
+      vehicleRegistration:
+        type: "string"
+        minLength: 1
+        pattern: "^.*\\S+.*$"
+        description: "The registration of the vehicle"
+        examples:
+        - "BB324A81"
+      date:
+        type: "string"
+        format: "date-time"
+        description: "The time of manufacturing"
+      model:
+        allOf:
+        - $ref: "#/components/schemas/CarModel"
+        - description: "The model of the car"
+    required:
+    - "id"
+    - "vehicleRegistration"
+    - "date"
+    - "model"
+    title: "Car manufactured"
+    description: "A new car was manufactured"
+  - type: "object"
+    properties:
+      type:
+        const: "CAR_MANUFACTURED"
+    required:
+    - "type"
+CarModel:
+  anyOf:
+  - $ref: "#/components/schemas/Electrical"
+  - $ref: "#/components/schemas/Combustion"
+CarScrapped:
+  allOf:
+  - type: "object"
+    properties:
+      id:
+        type: "string"
+        minLength: 1
+        pattern: "^.*\\S+.*$"
+        description: "The id of the message"
+        examples:
+        - "626A0F21-D940-4B44-BD36-23F0F567B0D0"
+      type:
+        allOf:
+        - $ref: "#/components/schemas/Type"
+        - description: "The type of message"
+      vehicleRegistration:
+        type: "string"
+        minLength: 1
+        pattern: "^.*\\S+.*$"
+        description: "The registration of the vehicle"
+        examples:
+        - "BB324A81"
+      date:
+        type: "string"
+        format: "date-time"
+        description: "The time of scrapping"
+      location:
+        type: "string"
+        description: "The location where the car was scrapped"
+    required:
+    - "id"
+    - "vehicleRegistration"
+    - "date"
+    description: "A car was scrapped"
+  - type: "object"
+    properties:
+      type:
+        const: "CAR_SCRAPPED"
+    required:
+    - "type"
+Combustion:
+  allOf:
+  - type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "The name of the car model"
+        examples:
+        - "Tesla Roadster"
+      engineType:
+        type: "string"
+        description: "The type of engine"
+      tankVolume:
+        type: "integer"
+        description: "The capacity of the tank in liter"
+        examples:
+        - 95
+    required:
+    - "tankVolume"
+    title: "Combustion engine"
+    description: "An car model with a combustion engine"
+  - type: "object"
+    properties:
+      engineType:
+        const: "COMBUSTION"
+    required:
+    - "engineType"
+Electrical:
+  allOf:
+  - type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "The name of the car model"
+        examples:
+        - "Tesla Roadster"
+      engineType:
+        type: "string"
+        description: "The type of engine"
+      batteryCapacity:
+        type: "integer"
+        description: "The capacity of the battery in kwH"
+        examples:
+        - 200
+    required:
+    - "batteryCapacity"
+    title: "Electrical engine"
+    description: "An car model with an electrical engine"
+  - type: "object"
+    properties:
+      engineType:
+        const: "ELECTRICAL"
+    required:
+    - "engineType"
+Type:
+  type: "string"
+  enum:
+  - "CAR_MANUFACTURED"
+  - "CAR_SCRAPPED"
