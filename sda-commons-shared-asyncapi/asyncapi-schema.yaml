@@ -1,0 +1,54 @@
+---
+asyncapi: "2.5.0"
+id: "urn:org:sdase:example"
+defaultContentType: "application/json"
+info:
+  title: "Example"
+  description: "This example demonstrates how to define messages with hand crafted\
+    \ schemas."
+  version: "1.0.0"
+channels:
+  car-events:
+    publish:
+      summary: "An entity stream"
+      description: "What happens to an entity"
+      message:
+        oneOf:
+        - $ref: "#/components/messages/Created"
+        - $ref: "#/components/messages/Deleted"
+components:
+  messages:
+    Created:
+      title: "Entity created"
+      payload:
+        $ref: "#/components/schemas/Created"
+    Deleted:
+      title: "Entity deleted"
+      description: "Deletion of the entity is represented by an external tombstone\
+        \ message."
+      payload:
+        $ref: "#/components/schemas/Tombstone"
+  schemas:
+    Created:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          pattern: "[a-zA-Z0-9-_]{10,}"
+        name:
+          type: "string"
+          minLength: 1
+          pattern: "^.*\\S+.*$"
+      required:
+      - "id"
+      - "name"
+    Tombstone:
+      type: "object"
+      description: "The tombstone event is published to indicate that the entity has\
+        \ been deleted.\nAll copies of data related to the entity must be deleted.\n"
+      properties:
+        id:
+          type: "string"
+        tombstone:
+          type: "boolean"
+          const: true

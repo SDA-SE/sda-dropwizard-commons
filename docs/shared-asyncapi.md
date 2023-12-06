@@ -2,109 +2,89 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-shared-asyncapi/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-shared-asyncapi)
 
-> #### ⚠️ Experimental ⚠
->
-> Please be aware that this API is in an early stage and might change in the future.
-> The JSON schema generator might lack features and could be replaced in the future.
->
+> #### ⚠️ Experimental ⚠️
+Please be aware that SDA SE is likely to change or remove this artifact in the future.
 
-
-This module contains the [`AsyncApiGenerator`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-asyncapi/src/main/java/org/sdase/commons/shared/asyncapi/AsyncApiGenerator.java)
-to generate [AsyncAPI](https://www.asyncapi.com/) specs from a template and model classes.
+This module contains the [`AsyncApiGenerator`](https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-shared-asyncapi/src/main/java/org/sdase/commons/shared/asyncapi/AsyncApiGenerator.java)
+to generate [AsyncAPI](https://www.asyncapi.com/) specs from a template and model classes in a
+code first approach.
 The AsyncAPI specification is the industry standard for defining asynchronous APIs.
 
 ## Usage
 
 If the code first approach is used to create an AsyncAPI spec this module provides assistance.
-One way to use this module is:
+The suggested way to use this module is:
 
-* A template file defining the channels using the AsyncAPI spec is part of the API.
-* Definitions for Models classes are generated from code and annotations.
-* This module is used to combine the models and template to a self-contained spec file.
-* The generated AsyncAPI spec is committed into source control.
+- A template file defining the general `info`rmation, `channels` and `components.messages` using
+  the AsyncAPI spec.
+  `components.schemas` should be omitted.
+- The schema is defined and documented as Java classes in the code as they are used in message
+  handlers and consumers.
+  Jackson, Jakarta Validation and Swagger 2 annotations can be used for documentation.
+- The root classes of messages are referenced in `components.messages.YourMessage.payload.$ref` as
+  `class://your.package.MessageModel`.
+- The [`AsyncApiGenerator`](https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-shared-asyncapi/src/main/java/org/sdase/commons/shared/asyncapi/AsyncApiGenerator.java)
+  is used to combine the template and the generated Json Schema of the models to a self-contained
+  spec file.
+- The generated AsyncAPI spec is committed into source control.
+  This way, the commit history will show intended and unintended changes to the API and the API spec
+  is accessible any time without executing any code.
+- The API can be view in [AsyncAPI Studio](https://studio.asyncapi.com/).
 
-A manual written AsyncAPI spec template might look like this and can be stored as a resource:
+It is suggested to use it as a test dependency, build the AsyncAPI in a unit test and verify that it
+is up-to-date.
+The [`GoldenFileAssertions`](https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/GoldenFileAssertions.java)
+from the test module help here.
 
-```yaml
-asyncapi: '2.3.0'
-id: 'urn:org:sdase:example:cars'
-defaultContentType: application/json
+!!! example "Example: Build AsyncAPI for Cars"
+    === "asyncapi_template.yaml"
+        ```yaml
+        --8<-- "sda-commons-asyncapi/src/test/resources/demo/asyncapi_template.yaml"
+        ```
+    === "CarManufactured"
+        ```java
+        --8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/test/data/models/CarManufactured.java"
+        ```
+    === "…"
+        ```java
+        --8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/test/data/models/CarScrapped.java"
+        ```
+    === "AsyncApiTest"
+        ```java
+        --8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/AsyncApiTest.java"
+        ```
+    === "Generated asyncapi.yaml"
+        ```yaml
+        --8<-- "sda-commons-shared-asyncapi/asyncapi.yaml"
+        ```
 
-info:
-  title: Cars Example
-  description: This example demonstrates how to define events around *cars*.
-  version: '1.0.0'
-
-channels:
-  'car-events':
-    publish:
-      operationId: publishCarEvents
-      summary: Car related events
-      description: These are all events that are related to a car
-      message:
-        oneOf:
-          - $ref: '#/components/messages/CarManufactured'
-          - $ref: '#/components/messages/CarScrapped'
-
-components:
-  messages:
-    CarManufactured:
-      title: Car Manufactured
-      description: An event that represents when a new car is manufactured
-      payload:
-        $ref: './schema.json#/definitions/CarManufactured'
-    CarScrapped:
-      title: Car Scrapped
-      description: An event that represents when a car is scrapped
-      payload:
-        $ref: './schema.json#/definitions/CarScrapped'
-```
-
-To automatically generate the AsyncAPI spec and ensure that it is committed to version control, 
-one can use a test like this: 
-
-```java
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import org.junit.Test;
-import org.sdase.commons.server.testing.GoldenFileAssertions;
-import org.sdase.commons.shared.asyncapi.AsyncApiGenerator;
-import org.sdase.commons.shared.asyncapi.JsonSchemaGenerator;
-
-public class AsyncApiDocumentationTest {
-  @Test
-  public void generateAndVerifySpec() throws IOException {
-    String expected = AsyncApiGenerator
-            .builder()
-            .withAsyncApiBase(BaseEvent.class.getResource("/asyncapi.yaml"))
-            .withSchema("./schema.json", BaseEvent.class)
-            .generateYaml();
-
-    // specify where you want your file to be stored
-    Path filePath = Paths.get("asyncapi.yaml");
-
-    // check and update the file
-    GoldenFileAssertions.assertThat(filePath).hasContentAndUpdateGolden(expected);
-  }
-}
-```
-
-This test uses the [`GoldenFileAssertions` from sda-commons-server-testing](./server-testing.md).
 
 ### Usage with Existing Schemas
 
-If you want to generate a JSON schema with another library or if you have a handwritten schema file,
-provide a `JsonNode` to `withSchema`:
+In some cases it is not possible to generate a schema with appropriate documentation, e.g. when a
+framework requires to use classes from dependencies that do not contain the expected annotations.
 
-```java
-JsonNode existingSchema = ...
-String expected = AsyncApiGenerator
-    .builder()
-    .withAsyncApiBase(BaseEvent.class.getResource("/asyncapi.yaml"))
-    .withSchema("./schema.json", existingSchema)
-    .generateYaml();
-```
+In this case the schema may be added to the template.
+This should be used as fallback only, because the schema is not connected to the actual code, it may
+diverge over time.
+
+!!! example "Example: Build AsyncAPI with handcrafted schema"
+    === "template_with_schema.yaml"
+        ```yaml
+        --8<-- "sda-commons-shared-asyncapi/src/test/resources/demo/template_with_schema.yaml"
+        ```
+    === "Created"
+        ```java
+        --8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/test/data/models/Created.java"
+        ```
+    === "ApiWithSchemaTest"
+        ```java
+        --8<-- "sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/ApiWithSchemaTest.java"
+        ```
+    === "Generated asyncapi-schema.yaml"
+        ```yaml
+        --8<-- "sda-commons-shared-asyncapi/asyncapi-with-schema.yaml"
+        ```
 
 
 ### Generating Schema Files
