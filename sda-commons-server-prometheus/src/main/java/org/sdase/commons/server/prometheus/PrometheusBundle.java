@@ -33,8 +33,8 @@ import javax.servlet.ServletRegistration;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
+import org.sdase.commons.server.prometheus.health.DropwizardHealthCheckMeters;
 import org.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
-import org.sdase.commons.server.prometheus.health.HealthCheckMetricsCollector;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
 import org.slf4j.Logger;
@@ -353,6 +353,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);
   }
 
+  @Deprecated(forRemoval = true)
   private void registerHealthCheckServlet(AdminEnvironment environment) {
     environment
         .addServlet(
@@ -361,16 +362,9 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
   }
 
   private void registerHealthCheckMetrics(Environment environment) {
-    HealthCheckMetricsCollector healthCheckMetricsCollector =
-        new HealthCheckMetricsCollector(environment.healthChecks());
-
-    healthCheckMetricsCollector.register();
-
-    environment
-        .lifecycle()
-        .manage(
-            onShutdown(
-                () -> CollectorRegistry.defaultRegistry.unregister(healthCheckMetricsCollector)));
+    DropwizardHealthCheckMeters dropwizardHealthCheckMeters = new DropwizardHealthCheckMeters();
+    environment.healthChecks().addListener(dropwizardHealthCheckMeters);
+    environment.lifecycle().manage(dropwizardHealthCheckMeters);
   }
 
   @Override

@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 class HealthCheckMetricsCollectorTest {
 
   @Test
-  @Deprecated
   void shouldExposeMetricsForHealthChecks() {
     HealthCheckRegistry registry = mock(HealthCheckRegistry.class);
     HealthCheckMetricsCollector collector = new HealthCheckMetricsCollector(registry);
