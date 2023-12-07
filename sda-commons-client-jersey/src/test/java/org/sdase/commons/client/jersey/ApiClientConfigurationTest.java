@@ -17,9 +17,12 @@ import static org.apache.hc.core5.http.HttpStatus.SC_CREATED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.MetricFilter;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -29,7 +32,6 @@ import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.dropwizard.metadata.DetachedMetadataContext;
 import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
 
@@ -39,8 +41,7 @@ class ApiClientConfigurationTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
@@ -51,6 +52,11 @@ class ApiClientConfigurationTest {
           config("mockBaseUrl", WIRE::baseUrl));
 
   private ClientTestApp app;
+
+  @BeforeAll
+  static void beforeAll() {
+    WireMock.configureFor("http", "localhost", WIRE.getPort());
+  }
 
   @BeforeEach
   void setUp() {

@@ -11,6 +11,7 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.tomakehurst.wiremock.http.RequestMethod;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.client.Client;
@@ -25,7 +26,6 @@ import org.junitpioneer.jupiter.SetSystemProperty;
 import org.junitpioneer.jupiter.SetSystemProperty.SetSystemProperties;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 
 /** A test that checks if the proxy can be configured via system properties */
@@ -36,19 +36,17 @@ import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 class ClientProxyTest {
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension CONTENT_WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension CONTENT_WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
-  static final WireMockClassExtension PROXY_WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension PROXY_WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(2)
   static final SystemPropertyClassExtension PROP =
       new SystemPropertyClassExtension()
-          .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port());
+          .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.getPort());
 
   @RegisterExtension
   @Order(3)
@@ -80,7 +78,7 @@ class ClientProxyTest {
 
   @Test
   void shouldNotUseProxy() {
-    String url = format("localhost:%d", CONTENT_WIRE.port());
+    String url = format("localhost:%d", CONTENT_WIRE.getPort());
 
     // given: expect that the proxy is skipped
     CONTENT_WIRE.stubFor(

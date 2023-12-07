@@ -12,10 +12,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.List;
@@ -161,7 +161,7 @@ public abstract class AbstractOpa {
   }
 
   public interface BuildBuilder {
-    void build(WireMockServer wire);
+    void build(WireMockExtension wire);
   }
 
   public static class StubBuilder
@@ -178,7 +178,7 @@ public abstract class AbstractOpa {
     private String jwt;
 
     @Override
-    public void build(WireMockServer wire) {
+    public void build(WireMockExtension wire) {
 
       MappingBuilder mappingBuilder;
       if (isOnAnyRequest()) {

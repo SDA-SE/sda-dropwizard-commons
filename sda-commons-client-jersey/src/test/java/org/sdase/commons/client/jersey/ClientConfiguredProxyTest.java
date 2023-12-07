@@ -11,6 +11,7 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.tomakehurst.wiremock.http.RequestMethod;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.client.Client;
@@ -25,7 +26,6 @@ import org.junitpioneer.jupiter.SetSystemProperty;
 import org.junitpioneer.jupiter.SetSystemProperty.SetSystemProperties;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 /**
  * A test that checks if the proxy can be configured via the configuration class. They should have a
@@ -39,13 +39,11 @@ import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 class ClientConfiguredProxyTest {
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension CONTENT_WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension CONTENT_WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
-  static final WireMockClassExtension PROXY_WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension PROXY_WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   static final DropwizardAppExtension<ClientTestConfig> DW =
@@ -53,7 +51,7 @@ class ClientConfiguredProxyTest {
           ClientTestApp.class,
           resourceFilePath("test-config.yaml"),
           config("client.proxy.host", "localhost"),
-          config("client.proxy.port", () -> "" + PROXY_WIRE.port()),
+          config("client.proxy.port", () -> "" + PROXY_WIRE.getPort()),
           config("client.proxy.nonProxyHosts", "localhost"));
 
   @BeforeEach
@@ -81,7 +79,7 @@ class ClientConfiguredProxyTest {
 
   @Test
   void shouldNotUseProxy() {
-    String url = String.format("localhost:%d", CONTENT_WIRE.port());
+    String url = String.format("localhost:%d", CONTENT_WIRE.getPort());
 
     // given: expect that the proxy is skipped
     CONTENT_WIRE.stubFor(

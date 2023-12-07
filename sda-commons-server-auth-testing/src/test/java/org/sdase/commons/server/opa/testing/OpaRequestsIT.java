@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.core.MultivaluedMap;
@@ -18,8 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junitpioneer.jupiter.RetryingTest;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.auth.testing.AuthClassExtension;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
@@ -32,8 +31,7 @@ class OpaRequestsIT {
 
   @RegisterExtension
   @Order(1)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(2)
@@ -66,7 +64,7 @@ class OpaRequestsIT {
   }
 
   @Test
-  @RetryingTest(5)
+//  @RetryingTest(5)
   void shouldSerializePathAndMethodCorrectly() throws IOException {
     // when
     doGetRequest(null);
@@ -81,7 +79,7 @@ class OpaRequestsIT {
   }
 
   @Test
-  @RetryingTest(5)
+//  @RetryingTest(5)
   void shouldSerializeJwtCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
@@ -100,7 +98,7 @@ class OpaRequestsIT {
   }
 
   @Test
-  @RetryingTest(5)
+//  @RetryingTest(5)
   void shouldSerializeTraceTokenCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
@@ -116,7 +114,7 @@ class OpaRequestsIT {
   }
 
   @Test
-  @RetryingTest(5)
+//  @RetryingTest(5)
   void shouldSerializeAdditionalHeaderCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
