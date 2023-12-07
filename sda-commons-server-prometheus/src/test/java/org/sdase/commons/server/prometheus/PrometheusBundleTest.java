@@ -76,6 +76,30 @@ class PrometheusBundleTest {
   }
 
   @Test
+  void shouldDocumentDeprecation() {
+    // when
+    prepareResourceRequest().get(String.class);
+
+    // then
+    String metrics = readMetrics();
+    Stream<String> deprecatedMetrics =
+        Stream.of(
+            extractSpecificMetric(
+                metrics,
+                "http_request_duration_seconds_count",
+                "deprecated=\"http_server_requests\""),
+            extractSpecificMetric(
+                metrics,
+                "http_request_duration_seconds_sum",
+                "deprecated=\"http_server_requests\""),
+            extractSpecificMetric(
+                metrics,
+                "http_request_duration_seconds_bucket",
+                "deprecated=\"http_server_requests\""));
+    assertThat(deprecatedMetrics).doesNotContainNull();
+  }
+
+  @Test
   void shouldTrackRequestsWithMicrometer() {
     // check for
     // http_server_requests_seconds_count{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 1.0

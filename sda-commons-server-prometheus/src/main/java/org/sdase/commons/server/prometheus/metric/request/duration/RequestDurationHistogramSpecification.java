@@ -16,7 +16,12 @@ import org.slf4j.LoggerFactory;
  * The central definition of the response duration histogram. This is the definition of the response
  * duration histogram as it should be provided by all SDA services to measure request durations with
  * Prometheus.
+ *
+ * @deprecated This custom request metric should be migrated to the Micrometer standard timer {@code
+ *     http_server_requests} as added in {@link
+ *     org.sdase.commons.server.prometheus.PrometheusBundle}
  */
+@Deprecated(since = "5", forRemoval = true)
 public class RequestDurationHistogramSpecification {
 
   private static final Logger LOG =
@@ -44,7 +49,9 @@ public class RequestDurationHistogramSpecification {
     "status_code",
     // the name of the consumer derived from the request attribute defined in
     // ConsumerTracing#NAME_ATTRIBUTE
-    "consumer_name"
+    "consumer_name",
+    // this metric is deprecated
+    "deprecated"
   };
 
   private Histogram requestDurationHistogram;
@@ -101,7 +108,8 @@ public class RequestDurationHistogramSpecification {
       getHttpMethod(requestContext),
       getResourcePath(requestContext),
       getStatusCode(responseContext),
-      getConsumerName(requestContext)
+      getConsumerName(requestContext),
+      "http_server_requests"
     };
   }
 
