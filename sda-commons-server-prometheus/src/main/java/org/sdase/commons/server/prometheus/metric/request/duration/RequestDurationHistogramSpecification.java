@@ -54,7 +54,7 @@ public class RequestDurationHistogramSpecification {
     "deprecated"
   };
 
-  private Histogram requestDurationHistogram;
+  private final Histogram requestDurationHistogram;
 
   /**
    * Creates and registers a new {@link Histogram} matching the specification of this {@code
