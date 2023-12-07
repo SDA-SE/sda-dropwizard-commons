@@ -12,8 +12,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
-import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -30,7 +30,7 @@ import org.sdase.commons.shared.certificates.ca.ssl.SslUtil;
 class CaCertificatesBundleHttpsIT {
   private static final String DEFAULT_SSL_PROTOCOL = "TLSv1.2";
 
-  private static final String securedHost = "https://google.com";
+  private static final String securedHost = "https://stackoverflow.com";
 
   @Test
   void shouldFailWithCustomTrustStore() throws Exception {
@@ -43,10 +43,8 @@ class CaCertificatesBundleHttpsIT {
     // create custom sslContext that has no trusted certificate
     SSLContext sslContext = createSSlContextWithoutDefaultMerging(pemContent.get());
 
-    assertThatExceptionOfType(HttpHostConnectException.class)
-        .isThrownBy(() -> callSecureEndpointWithSSLContextForStatus(sslContext))
-        // TODO can we identify if the error is related to SSL?
-        .withMessageContaining("something with SSL");
+    assertThatExceptionOfType(SSLHandshakeException.class)
+        .isThrownBy(() -> callSecureEndpointWithSSLContextForStatus(sslContext));
   }
 
   @Test
