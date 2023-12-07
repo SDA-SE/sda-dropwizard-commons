@@ -9,6 +9,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.binder.jersey.server.DefaultJerseyTagsProvider;
+import io.micrometer.core.instrument.binder.jersey.server.MetricsApplicationEventListener;
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
@@ -122,6 +124,16 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     JvmGcMetrics jvmGcMetrics = new JvmGcMetrics();
     jvmGcMetrics.bindTo(Metrics.globalRegistry);
     environment.lifecycle().manage(onShutdown(jvmGcMetrics::close));
+    // request metrics
+    environment
+        .jersey()
+        .getResourceConfig()
+        .register(
+            new MetricsApplicationEventListener(
+                Metrics.globalRegistry,
+                new DefaultJerseyTagsProvider(),
+                "http.server.requests",
+                true));
   }
 
   private void initializeDropwizardMetricsBridge(Environment environment) {

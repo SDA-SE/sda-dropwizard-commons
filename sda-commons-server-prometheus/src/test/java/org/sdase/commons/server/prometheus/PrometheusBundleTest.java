@@ -52,7 +52,9 @@ class PrometheusBundleTest {
   @Test
   void shouldTrackFiveRequests() {
     String metrics = readMetrics();
-    String count = extractSpecificMetric(metrics, "http_request_duration_seconds_count");
+    String count =
+        extractSpecificMetric(
+            metrics, "http_request_duration_seconds_count", "resource_path=\"ping\"");
     double oldCountValue = extractValue(count);
 
     // when
@@ -62,7 +64,9 @@ class PrometheusBundleTest {
 
     // then
     metrics = readMetrics();
-    count = extractSpecificMetric(metrics, "http_request_duration_seconds_count");
+    count =
+        extractSpecificMetric(
+            metrics, "http_request_duration_seconds_count", "resource_path=\"ping\"");
 
     double countValue = extractValue(count);
     assertThat(countValue).isEqualTo(oldCountValue + 5);
@@ -71,9 +75,37 @@ class PrometheusBundleTest {
     assertThat(metrics).contains("http_request_duration_seconds_sum");
   }
 
-  private String extractSpecificMetric(String metrics, String metricName) {
+  @Test
+  void shouldTrackRequestsWithMicrometer() {
+    // check for
+    // http_server_requests_seconds_count{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 1.0
+    // http_server_requests_seconds_sum{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 8.42042E-4
+    // http_server_requests_seconds_max{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 8.42042E-4
+
+    DW.client().target(resourceUri).path("path").path("some-value").request().get(String.class);
+
+    // then
+    var metrics = readMetrics();
+    String counter =
+        extractSpecificMetric(
+            metrics, "http_server_requests_seconds_count", "uri=\"/path/{param}\"");
+    assertThat(counter).isNotNull();
+    double countValue = extractValue(counter);
+    assertThat(countValue).isEqualTo(1.0d);
+    String sum =
+        extractSpecificMetric(metrics, "http_server_requests_seconds_sum", "uri=\"/path/{param}\"");
+    double sumValue = extractValue(sum);
+    assertThat(sumValue).isPositive();
+    String max =
+        extractSpecificMetric(metrics, "http_server_requests_seconds_max", "uri=\"/path/{param}\"");
+    double maxValue = extractValue(max);
+    assertThat(maxValue).isPositive().isEqualTo(sumValue);
+  }
+
+  private String extractSpecificMetric(String metrics, String metricName, String tagMatch) {
     return Stream.of(metrics.split("(\r\n|\r|\n)"))
         .filter(l -> l.contains(metricName))
+        .filter(l -> tagMatch == null || l.contains(tagMatch))
         .findFirst()
         .orElse(null);
   }
