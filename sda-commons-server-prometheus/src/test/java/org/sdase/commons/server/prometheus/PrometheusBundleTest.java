@@ -217,6 +217,7 @@ class PrometheusBundleTest {
   }
 
   @Test
+  @Deprecated // will not be supported in the next major of DW commons
   void shouldProvideHealthChecksAsPrometheusMetricsOnCustomEndpoint() {
     String healthChecks = readHealthChecks();
 
