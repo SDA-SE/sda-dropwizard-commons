@@ -1,8 +1,10 @@
 package org.sdase.commons.server.s3.testing.builder;
 
-import com.amazonaws.services.s3.AmazonS3;
+import software.amazon.awssdk.services.s3.S3Client;
 
 public interface MockObject {
 
-  void putObject(AmazonS3 s3Client);
+  String getKey();
+
+  void putObject(S3Client s3Client);
 }
