@@ -10,16 +10,18 @@ import io.github.classgraph.ScanResult;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -38,11 +40,25 @@ class UnwantedDependenciesTest {
     "import org.apache.http.", "import static org.apache.http."
   };
 
-  final Set<String> ALLOWED_FILE_PARTS =
-      Stream.of(
-              // We have no influence on the Gradle internals. They do not influence our code.
-              "/wrapper/dists/gradle-")
-          .collect(Collectors.toSet());
+  static final Set<String> ALLOWED_FILE_PARTS =
+      Set.of(
+          // We have no influence on the Gradle internals. They do not influence our code.
+          "/wrapper/dists/gradle-");
+
+  private static ClassInfoList allClasses;
+  private static List<URI> classpathURIs;
+
+  @BeforeAll
+  static void beforeAll() {
+    try (ScanResult scanResult =
+        new ClassGraph()
+            .enableClassInfo()
+            .filterClasspathElements(path -> ALLOWED_FILE_PARTS.stream().noneMatch(path::contains))
+            .scan()) {
+      allClasses = scanResult.getAllClasses();
+      classpathURIs = scanResult.getClasspathURIs();
+    }
+  }
 
   /**
    * This test finds usages of `com.google` in our code. We don't want to use it, because dependency
@@ -52,7 +68,6 @@ class UnwantedDependenciesTest {
   @Test
   @DisabledOnOs(WINDOWS)
   void discourageUseOfGoogleCode() {
-    ClassInfoList allClasses = new ClassGraph().enableClassInfo().scan().getAllClasses();
     ClassInfoList classFilesInClasspath =
         allClasses
             .filter(c -> c.getPackageName().startsWith("org.sdase."))
@@ -82,8 +97,7 @@ class UnwantedDependenciesTest {
   void checkForJavax() {
     Set<String> libsWithJavax = new HashSet<>();
     int notAllowedJavaxClassesCount = 0;
-    try (ScanResult scanResult = new ClassGraph().enableClassInfo().scan()) {
-      var allClasses = scanResult.getAllClasses();
+    try {
       for (var clazz : allClasses) {
         if (clazz.getPackageName().startsWith("javax.")) {
           var location = clazz.getClasspathElementFile().toString();
@@ -107,7 +121,6 @@ class UnwantedDependenciesTest {
   @Test
   @DisabledOnOs(OS.WINDOWS)
   void checkForApacheHttpClientV4() {
-    ClassInfoList allClasses = new ClassGraph().enableClassInfo().scan().getAllClasses();
     ClassInfoList classFilesInClasspath =
         allClasses
             .filter(c -> c.getPackageName().startsWith("org.apache.http"))
@@ -133,22 +146,19 @@ class UnwantedDependenciesTest {
   @Test
   @DisabledOnOs(OS.WINDOWS)
   void checkForTomakehurstWiremock() {
-    try (ScanResult scanResult = new ClassGraph().scan()) {
-      assertThat(scanResult.getClasspathURIs())
-          .noneMatch(u -> u.getPath().contains("com.github.tomakehurst.wiremock."));
-
-      assertThat(scanResult.getClasspathURIs()).anyMatch(u -> u.getPath().contains("org.wiremock"));
-    }
+    assertThat(classpathURIs)
+        .noneMatch(u -> u.getPath().contains("com.github.tomakehurst.wiremock."))
+        .anyMatch(u -> u.getPath().contains("org.wiremock"));
   }
 
   private String findSource(String path) throws IOException {
-    Optional<Path> sourceFile =
-        Files.find(
-                new File("..").toPath(), 20, (p, x) -> p.toString().endsWith("" + path + ".java"))
-            .findFirst();
-    if (sourceFile.isPresent()) {
-      try (InputStream is = sourceFile.get().toUri().toURL().openStream()) {
-        return IOUtils.toString(is, StandardCharsets.UTF_8);
+    try (Stream<Path> pathStream =
+        Files.find(new File("..").toPath(), 20, (p, x) -> p.toString().endsWith(path + ".java"))) {
+      Optional<Path> sourceFile = pathStream.findFirst();
+      if (sourceFile.isPresent()) {
+        try (InputStream is = sourceFile.get().toUri().toURL().openStream()) {
+          return IOUtils.toString(is, StandardCharsets.UTF_8);
+        }
       }
     }
     return null;

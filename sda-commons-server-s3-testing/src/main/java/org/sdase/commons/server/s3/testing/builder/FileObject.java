@@ -1,7 +1,9 @@
 package org.sdase.commons.server.s3.testing.builder;
 
-import com.amazonaws.services.s3.AmazonS3;
 import java.io.File;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 public class FileObject implements MockObject {
   String bucketName;
@@ -14,7 +16,12 @@ public class FileObject implements MockObject {
     this.file = file;
   }
 
-  public void putObject(AmazonS3 s3Client) {
-    s3Client.putObject(bucketName, key, file);
+  public void putObject(S3Client s3Client) {
+    s3Client.putObject(
+        PutObjectRequest.builder().bucket(bucketName).key(key).build(), RequestBody.fromFile(file));
+  }
+
+  public String getKey() {
+    return key;
   }
 }
