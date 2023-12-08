@@ -9,7 +9,7 @@ import org.sdase.commons.server.s3.S3Bundle;
 
 public class S3WithHealthCheckTestApp extends Application<Config> {
 
-  private S3Bundle<Config> s3Bundle =
+  private final S3Bundle<Config> s3Bundle =
       S3Bundle.builder()
           .withConfigurationProvider(Config::getS3Config)
           .withHealthCheck(Collections.singleton(Config::getS3Bucket))
@@ -23,7 +23,7 @@ public class S3WithHealthCheckTestApp extends Application<Config> {
   }
 
   @Override
-  public void run(Config configuration, Environment environment) throws Exception {
+  public void run(Config configuration, Environment environment) {
     healthCheckRegistry = environment.healthChecks();
   }
 

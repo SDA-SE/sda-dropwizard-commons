@@ -1,26 +1,22 @@
 package org.sdase.commons.server.s3;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 import static org.sdase.commons.server.s3.health.S3HealthCheckType.EXTERNAL;
 import static org.sdase.commons.server.s3.health.S3HealthCheckType.INTERNAL;
 import static org.sdase.commons.server.s3.health.S3HealthCheckType.NONE;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.awssdk.v2_2.AwsSdkTelemetry;
 import jakarta.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -29,6 +25,17 @@ import java.util.stream.StreamSupport;
 import org.sdase.commons.server.s3.health.ExternalS3HealthCheck;
 import org.sdase.commons.server.s3.health.S3HealthCheck;
 import org.sdase.commons.server.s3.health.S3HealthCheckType;
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.signer.AwsS3V4Signer;
+import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
+import software.amazon.awssdk.core.client.config.SdkAdvancedClientOption;
+import software.amazon.awssdk.core.signer.Signer;
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
 public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
 
@@ -39,7 +46,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
   private final OpenTelemetry openTelemetry;
   private final S3HealthCheckType s3HealthCheckType;
   private final Iterable<BucketNameProvider<C>> bucketNameProviders;
-  private AmazonS3 s3Client;
+  private S3Client s3Client;
 
   private S3Bundle(
       S3ConfigurationProvider<C> configurationProvider,
@@ -58,33 +65,43 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
   }
 
   @Override
-  public void run(C configuration, Environment environment) throws Exception {
+  public void run(C configuration, Environment environment) {
     S3Configuration s3Configuration = configurationProvider.apply(configuration);
     String region = s3Configuration.getRegion();
-
-    if (region == null || "".equals(region)) {
-      region = Regions.DEFAULT_REGION.getName();
+    Region regionEnum;
+    if (region != null && !region.isBlank()) {
+      regionEnum = Region.of(region);
+    } else {
+      regionEnum = Region.EU_CENTRAL_1;
     }
-
-    AWSCredentials credentials =
-        new BasicAWSCredentials(s3Configuration.getAccessKey(), s3Configuration.getSecretKey());
-    ClientConfiguration clientConfiguration = new ClientConfiguration();
-    clientConfiguration.setSignerOverride(s3Configuration.getSignerOverride());
 
     // Initialize a telemetry instance if not set.
     OpenTelemetry currentTelemetryInstance =
         this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
+    var tracingExecutionInterceptor =
+        AwsSdkTelemetry.builder(currentTelemetryInstance)
+            .setCaptureExperimentalSpanAttributes(true)
+            .build()
+            .newExecutionInterceptor();
     s3Client =
-        AmazonS3ClientBuilder.standard()
-            .withRequestHandlers(new TracingRequestHandler(currentTelemetryInstance))
-            .withEndpointConfiguration(
-                new AwsClientBuilder.EndpointConfiguration(s3Configuration.getEndpoint(), region))
-            .withPathStyleAccessEnabled(true)
-            .withClientConfiguration(clientConfiguration)
-            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+        S3Client.builder()
+            .region(regionEnum)
+            .credentialsProvider(createCredentialsProvider(s3Configuration))
+            .endpointOverride(URI.create(s3Configuration.getEndpoint()))
+            .httpClient(UrlConnectionHttpClient.builder().build())
+            .serviceConfiguration(
+                software.amazon.awssdk.services.s3.S3Configuration.builder()
+                    .pathStyleAccessEnabled(true)
+                    .build())
+            .overrideConfiguration(
+                ClientOverrideConfiguration.builder()
+                    .executionInterceptors(List.of(tracingExecutionInterceptor))
+                    .putAdvancedOption(
+                        SdkAdvancedClientOption.SIGNER, createSigner(s3Configuration))
+                    .build())
             .build();
 
-    environment.lifecycle().manage(onShutdown(s3Client::shutdown));
+    environment.lifecycle().manage(onShutdown(s3Client::close));
 
     if (isHealthCheckEnabled()) {
       Set<String> bucketNames =
@@ -111,11 +128,27 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     }
   }
 
+  private Signer createSigner(S3Configuration s3Configuration) {
+    if (s3Configuration.getSignerOverride().equals("AWSS3V4SignerType")) {
+      return AwsS3V4Signer.create();
+    }
+    throw new IllegalArgumentException(
+        "Unsupported signer override: " + s3Configuration.getSignerOverride());
+  }
+
+  private static AwsCredentialsProvider createCredentialsProvider(S3Configuration s3Configuration) {
+    return isBlank(s3Configuration.getAccessKey()) && isBlank(s3Configuration.getSecretKey())
+        ? AnonymousCredentialsProvider.create()
+        : StaticCredentialsProvider.create(
+            AwsBasicCredentials.create(
+                s3Configuration.getAccessKey(), s3Configuration.getSecretKey()));
+  }
+
   private boolean isHealthCheckEnabled() {
     return !NONE.equals(this.s3HealthCheckType);
   }
 
-  public AmazonS3 getClient() {
+  public S3Client getClient() {
     if (s3Client == null) {
       throw new IllegalStateException("S3 client accessed to early, can't be accessed before run.");
     }
@@ -147,7 +180,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     /**
      * Adds an internal health check for an S3 connection against one or more buckets.
      *
-     * @param bucketNameProviders
+     * @param bucketNameProviders bucket name providers
      * @return the builder instance
      */
     FinalBuilder<C> withHealthCheck(Iterable<BucketNameProvider<C>> bucketNameProviders);
@@ -155,7 +188,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     /**
      * Adds an external health check for an S3 connection against one or more buckets.
      *
-     * @param bucketNameProviders
+     * @param bucketNameProviders bucket name providers
      * @return the builder instance
      */
     FinalBuilder<C> withExternalHealthCheck(Iterable<BucketNameProvider<C>> bucketNameProviders);

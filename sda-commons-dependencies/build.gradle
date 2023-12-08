@@ -151,9 +151,12 @@ dependencies {
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
 
+    // sda-commons-server-s3
+    api "org.reactivestreams:reactive-streams:1.0.4"
+    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2:${openTelemetryVersion}-alpha"
+
     // sda-commons-server-s3-testing
     api "io.findify:s3mock_2.13:0.2.6"
-    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11:${openTelemetryVersion}-alpha"
 
     // sda-commons-server-swagger
     api "com.github.java-json-tools:json-schema-validator:2.2.14"

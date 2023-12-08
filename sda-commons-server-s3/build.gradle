@@ -1,11 +1,17 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-server-healthcheck')
-  api 'com.amazonaws:aws-java-sdk-s3'
+  api 'software.amazon.awssdk:auth:2.21.41'
+  api 'software.amazon.awssdk:s3:2.21.41', {
+    exclude group: 'org.reactivestreams', module: 'reactive-streams'
+  }
+  api 'org.reactivestreams:reactive-streams'
+  api 'software.amazon.awssdk:url-connection-client:2.21.41'
+
   api 'org.slf4j:jcl-over-slf4j'
   api 'io.opentelemetry:opentelemetry-api'
 
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11'
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2'
 
   testImplementation project(':sda-commons-server-s3-testing')
   testImplementation 'org.assertj:assertj-core'

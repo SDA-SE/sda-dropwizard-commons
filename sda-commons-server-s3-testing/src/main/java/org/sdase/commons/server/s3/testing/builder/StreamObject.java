@@ -1,11 +1,11 @@
 package org.sdase.commons.server.s3.testing.builder;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.util.IOUtils;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 public class StreamObject implements MockObject {
 
@@ -20,13 +20,12 @@ public class StreamObject implements MockObject {
   }
 
   @Override
-  public void putObject(AmazonS3 s3Client) {
+  public void putObject(S3Client s3Client) {
     try {
       byte[] bytes = IOUtils.toByteArray(stream);
-
-      try (ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes)) {
-        s3Client.putObject(bucketName, key, byteStream, new ObjectMetadata());
-      }
+      s3Client.putObject(
+          PutObjectRequest.builder().bucket(bucketName).key(key).build(),
+          RequestBody.fromBytes(bytes));
     } catch (IOException exception) {
       throw new IllegalStateException(exception);
     }

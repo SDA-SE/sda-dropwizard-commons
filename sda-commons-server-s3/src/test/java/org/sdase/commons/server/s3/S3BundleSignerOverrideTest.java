@@ -4,15 +4,21 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.amazonaws.services.s3.AmazonS3;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import java.util.Date;
+import java.io.IOException;
+import java.net.URL;
+import java.time.Duration;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.s3.test.Config;
 import org.sdase.commons.server.s3.test.TestApp;
 import org.sdase.commons.server.s3.testing.S3ClassExtension;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 class S3BundleSignerOverrideTest {
 
@@ -34,21 +40,33 @@ class S3BundleSignerOverrideTest {
           config("s3Config.signerOverride", "S3SignerType"));
 
   @Test
-  void shouldProvideClient() {
-    AmazonS3 client = getClient();
+  void shouldProvideClient() throws IOException {
+    S3Client client = getClient();
 
-    assertThat(client.getObject("bucket", "key").getObjectContent()).hasContent("data");
+    assertThat(
+            client
+                .getObject(GetObjectRequest.builder().bucket("bucket").key("key").build())
+                .readAllBytes())
+        .hasToString("data");
   }
 
   @Test
   void shouldGeneratePresignedUrl() {
-    AmazonS3 client = getClient();
+    S3Client client = getClient();
+    try (S3Presigner presigner = S3Presigner.builder().s3Client(client).build()) {
 
-    assertThat(client.generatePresignedUrl("bucket", "key", new Date()).toString())
-        .contains("Signature=");
+      PutObjectPresignRequest presignRequest =
+          PutObjectPresignRequest.builder()
+              .signatureDuration(Duration.ofMinutes(10)) // The URL will expire in 10 minutes.
+              .build();
+
+      PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
+      URL presignedUrl = presignedRequest.url();
+      assertThat(presignedUrl.toString()).contains("Signature=");
+    }
   }
 
-  private AmazonS3 getClient() {
+  private S3Client getClient() {
     TestApp app = DW.getApplication();
     return app.getS3Bundle().getClient();
   }
