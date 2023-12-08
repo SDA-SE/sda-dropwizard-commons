@@ -65,7 +65,7 @@ class OpaRequestsIT {
   }
 
   @Test
-//  @RetryingTest(5)
+  //  @RetryingTest(5)
   void shouldSerializePathAndMethodCorrectly() throws IOException {
     // when
     doGetRequest(null);
@@ -80,7 +80,7 @@ class OpaRequestsIT {
   }
 
   @Test
-//  @RetryingTest(5)
+  //  @RetryingTest(5)
   void shouldSerializeJwtCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
@@ -99,7 +99,7 @@ class OpaRequestsIT {
   }
 
   @Test
-//  @RetryingTest(5)
+  //  @RetryingTest(5)
   void shouldSerializeTraceTokenCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
@@ -115,7 +115,7 @@ class OpaRequestsIT {
   }
 
   @Test
-//  @RetryingTest(5)
+  //  @RetryingTest(5)
   void shouldSerializeAdditionalHeaderCorrectly() throws IOException {
     // when
     MultivaluedMap<String, Object> headers = AUTH.auth().buildAuthHeader();
