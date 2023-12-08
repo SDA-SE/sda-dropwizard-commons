@@ -116,7 +116,7 @@ you must read the file using other approaches, e.g.
 using [Wiremock response body](https://wiremock.org/docs/stubbing/#specifying-the-response-body) or
 using an [ObjectMapper](https://www.baeldung.com/jackson-object-mapper-tutorial).
 
-### 4 Wiremock 3.0
+### 4 sda-commons-client-jersey-wiremock-testing
 
 Dropwizard v4 uses wiremock v3.x version. Were introduced some breaking changes, like dropping
 support for Java 8,
@@ -168,7 +168,7 @@ Please [file an issue](https://github.com/SDA-SE/sda-dropwizard-commons/issues) 
 important can't be expressed.
 
 
-### 7 Kafka
+### 7 sda-commons-server-kafka
 
 The public init method
 
@@ -185,6 +185,31 @@ The custom JUnit extensions have been removed. Please make use of the
 official [JUnit5 extension](https://github.com/weld/weld-testing/tree/master/junit5), which this
 module is now providing. An example how
 to use it can be found in [sda-commons-server-weld-example](../../sda-commons-server-weld-example).
+
+### 9 sda-commons-server-s3
+
+The AWS SDK was upgraded from 1.12.x to https://github.com/aws/aws-sdk-java-v2.
+The new version is not compatible with the old one.
+You can find the official documentation for the migration https://github.com/aws/aws-sdk-java-v2/blob/master/docs/LaunchChangelog.md.
+
+This can also be explained by the Jakarta update because the old AWS SDK still used the Apache
+HTTP Client v4, which is not compatible with Jakarta.
+The old AWS SDK did not have the option to pick a different HTTP client.
+
+Most noticeably, the base package of the classes moved from `com.amazonaws` to `software.amazon.awssdk`.
+The `S3Bundle` will not return an instance of `software.amazon.awssdk.services.s3.S3Client`
+instead of `com.amazonaws.services.s3.AmazonS3`
+
+### 10 sda-commons-server-s3-testing
+
+Our previous S3 mock library [s3mock](https://github.com/Robothy/local-s3) was also based on the old 
+AWS SDK v1.12.x and is no longer maintained. 
+We switched to [Robothy local-s3](https://github.com/Robothy/local-s3) as alternative.
+You can still use our `S3ClassExtension` to start the S3 mock server in your tests.
+But it will now give you an instance of `software.amazon.awssdk.services.s3.S3Client` for the
+S3 client.
+Additionally, you need to annotate your S3 tests with `@LocalS3` due to an implementation detail
+of the underlying test library.
 
 ## Automation
 
