@@ -1,3 +1,10 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 0
+  adminConnectors:
+    - type: http
+      port: 0
 s3Config:
   endpoint: http://localhost:9001
   region:
