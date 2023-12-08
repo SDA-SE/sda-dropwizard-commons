@@ -55,7 +55,7 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.606")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.21.41")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
   api enforcedPlatform("io.netty:netty-bom:4.1.101.Final"), {
@@ -151,9 +151,12 @@ dependencies {
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
 
+    // sda-commons-server-s3
+    api "org.reactivestreams:reactive-streams:1.0.4"
+    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2:${openTelemetryVersion}-alpha"
+
     // sda-commons-server-s3-testing
     api "io.findify:s3mock_2.13:0.2.6"
-    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-1.11:${openTelemetryVersion}-alpha"
 
     // sda-commons-server-swagger
     api "com.github.java-json-tools:json-schema-validator:2.2.14"

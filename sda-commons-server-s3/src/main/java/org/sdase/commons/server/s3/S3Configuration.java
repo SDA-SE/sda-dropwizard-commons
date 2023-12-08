@@ -14,8 +14,8 @@ public class S3Configuration {
    */
   @NotEmpty private String endpoint;
 
-  /** Region where the S3 storage is located, can be left empty. */
-  private String region = "";
+  /** Region where the S3 storage is located, can be left empty. Default is 'eu-central-1'. */
+  private String region = "eu-central-1";
 
   /** The access key to identify the accessor. */
   @NotEmpty private String accessKey;
@@ -25,8 +25,24 @@ public class S3Configuration {
 
   /**
    * The signer type to use, overrides the default behavior, default is {@code AWSS3V4SignerType}.
-   * See documentation of {@code com.amazonaws.ClientConfiguration.setSignerOverride} for more
-   * details
+   * This type is used to create a {@code software.amazon.awssdk.core.signer.Signer} instance. The
+   * value should correspond to the simple class name of the signer.
+   *
+   * <p>Supported values are:
+   *
+   * <ul>
+   *   <li>AWSS3V4SignerType (for backwards compatibility)
+   *   <li>AwsS3V4SignerType
+   *   <li>AwsS3V4Signer
+   *   <li>--
+   *   <li>Aws4SignerType
+   *   <li>Aws4Signer
+   *   <li>--
+   *   <li>AwsCrtV4aSignerType
+   *   <li>AwsCrtV4aSigner
+   *   <li>--
+   *   <li>AwsCrtS3V4aSignerType
+   *   <li>AwsCrtS3V4aSigner </ul
    */
   private String signerOverride = "AWSS3V4SignerType";
 
