@@ -1,34 +1,43 @@
 package org.sdase.commons.server.s3.testing.builder;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.util.IOUtils;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Supplier;
+import org.apache.commons.io.IOUtils;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+/** MockObject that deals with an InputStream. */
 public class StreamObject implements MockObject {
 
   private final String bucketName;
   private final String key;
-  private final InputStream stream;
+  private final Supplier<InputStream> streamProvider;
 
-  public StreamObject(String bucketName, String key, InputStream stream) {
+  public StreamObject(String bucketName, String key, Supplier<InputStream> streamProvider) {
     this.bucketName = bucketName;
     this.key = key;
-    this.stream = stream;
+    this.streamProvider = streamProvider;
   }
 
   @Override
-  public void putObject(AmazonS3 s3Client) {
-    try {
+  public void putObject(S3Client s3Client) {
+    try (var stream = streamProvider.get()) {
       byte[] bytes = IOUtils.toByteArray(stream);
-
-      try (ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes)) {
-        s3Client.putObject(bucketName, key, byteStream, new ObjectMetadata());
-      }
+      s3Client.putObject(
+          PutObjectRequest.builder()
+              .bucket(bucketName)
+              .key(key)
+              .contentLength((long) bytes.length)
+              .build(),
+          RequestBody.fromBytes(bytes));
     } catch (IOException exception) {
       throw new IllegalStateException(exception);
     }
+  }
+
+  public String getKey() {
+    return key;
   }
 }

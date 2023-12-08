@@ -5,7 +5,7 @@
 This module provides the [`S3Bundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/main/java/org/sdase/commons/server/s3/S3Bundle.java), 
 a Dropwizard bundle that is used to perform operations on an object storage.
 
-The bundle provides an S3 client based on the [Amazon AWS SDK](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/examples-s3.html).
+The bundle provides an S3 client based on the [Amazon AWS SDK v2](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/home.html).
 
 ## Usage
 
@@ -19,7 +19,7 @@ The Dropwizard applications configuration class needs to provide a
 The bundle builder requires to define the getter of the `S3Configuration` as method reference to access the 
 configuration.
 
-Afterward, `getClient()` is used to access an instance of `AmazonS3` that is used to operate on the 
+Afterward, `getClient()` is used to access an instance of `S3Client` that is used to operate on the 
 object storage. 
 See [`S3BundleTest`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/test/java/org/sdase/commons/server/s3/S3BundleTest.java) for a detailed usage example.   
 

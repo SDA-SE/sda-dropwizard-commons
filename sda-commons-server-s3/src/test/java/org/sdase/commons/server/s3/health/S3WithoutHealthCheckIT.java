@@ -1,10 +1,12 @@
 package org.sdase.commons.server.s3.health;
 
 import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.robothy.s3.jupiter.LocalS3;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
@@ -18,6 +20,7 @@ import org.sdase.commons.server.s3.test.Config;
 import org.sdase.commons.server.s3.test.S3WithoutHealthCheckTestApp;
 import org.sdase.commons.server.s3.testing.S3ClassExtension;
 
+@LocalS3
 class S3WithoutHealthCheckIT {
   @RegisterExtension
   @Order(0)
@@ -29,7 +32,8 @@ class S3WithoutHealthCheckIT {
       new DropwizardAppExtension<>(
           S3WithoutHealthCheckTestApp.class,
           resourceFilePath("test-config.yml"),
-          config("s3Config.endpoint", S3::getEndpoint));
+          config("s3Config.endpoint", S3::getEndpoint),
+          randomPorts());
 
   private S3WithoutHealthCheckTestApp app;
   private WebTarget adminTarget;
