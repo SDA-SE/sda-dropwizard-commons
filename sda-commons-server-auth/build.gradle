@@ -17,7 +17,7 @@ dependencies {
   implementation 'io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0'
 
   testImplementation project(':sda-commons-server-testing')
-  testImplementation project(':sda-commons-client-jersey-wiremock-testing')
+  testImplementation project(':sda-commons-shared-wiremock-testing')
   testImplementation 'org.awaitility:awaitility'
   testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
 }

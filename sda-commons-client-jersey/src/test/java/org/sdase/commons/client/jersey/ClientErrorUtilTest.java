@@ -37,7 +37,8 @@ import org.sdase.commons.shared.api.error.ApiInvalidParam;
 class ClientErrorUtilTest {
 
   @RegisterExtension
-  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+  static final WireMockExtension WIRE =
+      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   private static final ObjectMapper OM = new ObjectMapper();
 
