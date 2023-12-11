@@ -19,6 +19,7 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,8 @@ import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 class KeyLoaderProxyIT {
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension PROXY_WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+  static final WireMockExtension PROXY_WIRE =
+      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
@@ -46,17 +48,10 @@ class KeyLoaderProxyIT {
       new SystemPropertyClassExtension()
           .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.getPort());
 
-  @RegisterExtension
-  @Order(2)
-  static final DropwizardAppExtension<AuthTestConfig> DW =
-      new DropwizardAppExtension<>(
-          AuthTestApp.class,
-          ResourceHelpers.resourceFilePath("test-config.yaml"),
-          config("auth.keys[0].type", "JWKS"),
-          config("auth.keys[0].location", "http://sda.se/jwks"));
+  static DropwizardAppExtension<AuthTestConfig> DW;
 
   @BeforeAll
-  static void beforeAll() {
+  static void beforeAll() throws Exception {
     // expect that the proxy receives the request
     PROXY_WIRE.stubFor(
         get("/jwks")
@@ -64,8 +59,30 @@ class KeyLoaderProxyIT {
             .willReturn(okJson("{\"keys\": []}")));
   }
 
+  @AfterAll
+  static void afterAll() {
+    DW.after();
+  }
+
   @Test
-  void shouldUseProxy() {
+  void shouldUseProxy() throws Exception {
+
+    //    instantiate DropwizardAppExtension here to avoid a race condition with the
+    // WireMockExtension
+
+    //    WireMockExtension#beforeEach(ExtensionContext context) resets the logged calls.
+    //    during initialization of DropwizardAppExtension the JwksKeySource#loadKeysFromSource()
+    // method calls wiremock stub
+
+    DW =
+        new DropwizardAppExtension<>(
+            AuthTestApp.class,
+            ResourceHelpers.resourceFilePath("test-config.yaml"),
+            config("auth.keys[0].type", "JWKS"),
+            config("auth.keys[0].location", "http://sda.se/jwks"));
+
+    DW.before();
+
     // given
     final String tokenWithUnknownKid =
         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImNHV1RlQUJwWnYyN3RfWDFnTW92NEVlRWhEOXRBMWVhcUgzVzFmMXE4Y28ifQ.eyJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0In0.nHN-k_uvKNl8Nh5lXctQkL8KrWKggGiBQ-jaR0xIq_TAWBbhz5zkGXQTiNZwjPFOIcjyuL1xMCqzLPAKiI0Jy0hwOa4xcqukrWr4UwhKC50dnJiFqUgpGM0xLyT1D8JKdSNiVtYL0k-E5XCcpDEqOjHOG3Gw03VoZ0iRNeU2X49Rko8646l5j2g4QbuuOSn1a5G4ICMCAY7C6Vb55dgJtG_WAvkhFdBd_ShQEp_XfWJh6uq0E95_8yfzBx4UuK1Q-TLuWrXKxOlYNCuCH90NYG-3oF9w0gFtdXtYOFzPIEVIkU0Ra6sk_s0IInrEMD_3Q4fgE2PqOzqpuVaD_lHdAA";
