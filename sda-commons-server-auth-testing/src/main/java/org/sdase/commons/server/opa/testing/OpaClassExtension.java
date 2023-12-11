@@ -1,7 +1,5 @@
 package org.sdase.commons.server.opa.testing;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import org.junit.jupiter.api.extension.AfterAllCallback;
@@ -11,8 +9,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 @SuppressWarnings("WeakerAccess")
 public class OpaClassExtension extends AbstractOpa implements BeforeAllCallback, AfterAllCallback {
 
-  private final WireMockExtension wireMockExtension =
-      new WireMockExtension.Builder().build();
+  private final WireMockExtension wireMockExtension = new WireMockExtension.Builder().build();
 
   private String opaClientTimeoutBackup = null;
 
