@@ -126,6 +126,21 @@ class UnwantedDependenciesTest {
     }
   }
 
+  /**
+   * This test finds the library `com.github.tomakehurst.wiremock` in our classpath. We don't want
+   * to use it, because we want to use the official org.wiremock from Dropwizard dependencies.
+   */
+  @Test
+  @DisabledOnOs(OS.WINDOWS)
+  void checkForTomakehurstWiremock() {
+    try (ScanResult scanResult = new ClassGraph().scan()) {
+      assertThat(scanResult.getClasspathURIs())
+          .noneMatch(u -> u.getPath().contains("com.github.tomakehurst.wiremock."));
+
+      assertThat(scanResult.getClasspathURIs()).anyMatch(u -> u.getPath().contains("org.wiremock"));
+    }
+  }
+
   private String findSource(String path) throws IOException {
     Optional<Path> sourceFile =
         Files.find(
