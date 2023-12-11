@@ -11,7 +11,6 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static jakarta.ws.rs.core.HttpHeaders.LOCATION;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
@@ -19,7 +18,6 @@ import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.semconv.SemanticAttributes;
 import jakarta.ws.rs.client.Client;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -45,15 +43,8 @@ class ClientTraceTest {
 
   private ClientTestApp app;
 
-  @BeforeAll
-  static void beforeAll() {
-    //    Explicitly set the wiremock host and port, to keep configuration after reset in setUp()
-    WireMock.configureFor("http", "localhost", WIRE.getPort());
-  }
-
   @BeforeEach
   void setUp() {
-    WIRE.resetAll();
     WIRE.stubFor(get("/").willReturn(noContent()));
     app = DW.getApplication();
     // removing client metrics to allow creation of new clients with same id
