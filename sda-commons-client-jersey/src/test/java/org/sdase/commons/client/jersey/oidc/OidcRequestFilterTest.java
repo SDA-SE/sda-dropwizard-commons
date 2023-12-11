@@ -14,12 +14,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.codahale.metrics.MetricFilter;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.Response;
 import java.util.Collections;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -28,7 +31,6 @@ import org.mockito.Mockito;
 import org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.ClientWithoutConsumerTokenTestApp;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 class OidcRequestFilterTest {
 
@@ -40,8 +42,7 @@ class OidcRequestFilterTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
@@ -54,6 +55,11 @@ class OidcRequestFilterTest {
 
   private ClientWithoutConsumerTokenTestApp app;
   private static ContainerRequestContext container;
+
+  @BeforeAll
+  static void beforeAll() {
+    WireMock.configureFor("http", "localhost", WIRE.getPort());
+  }
 
   @BeforeEach
   void before() {
