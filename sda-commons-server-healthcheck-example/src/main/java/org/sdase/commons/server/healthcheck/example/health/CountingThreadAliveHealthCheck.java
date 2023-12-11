@@ -20,8 +20,6 @@ public class CountingThreadAliveHealthCheck extends HealthCheck {
     }
   }
 
-
-
   public void setCountingThread(CountingThread thread) {
     this.thread = thread;
   }
