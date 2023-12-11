@@ -22,6 +22,7 @@ import static org.awaitility.Awaitility.given;
 import com.codahale.metrics.MetricFilter;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import com.github.tomakehurst.wiremock.jetty.JettyHttpServerFactory;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
@@ -31,7 +32,6 @@ import org.sdase.commons.client.jersey.oidc.model.OidcResult;
 import org.sdase.commons.client.jersey.oidc.model.OidcState;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 class OidcClientTest {
 
@@ -41,9 +41,7 @@ class OidcClientTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(
-          wireMockConfig().dynamicPort().httpServerFactory(new JettyHttpServerFactory()));
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort().httpServerFactory(new JettyHttpServerFactory())).build();
 
   @RegisterExtension
   @Order(1)

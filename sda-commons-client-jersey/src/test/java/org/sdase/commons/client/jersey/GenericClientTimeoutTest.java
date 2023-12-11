@@ -13,6 +13,7 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.readTimeoutError;
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.timeoutError;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Response;
@@ -25,15 +26,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 /** Tests that timeouts are correctly mapped. */
 class GenericClientTimeoutTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
