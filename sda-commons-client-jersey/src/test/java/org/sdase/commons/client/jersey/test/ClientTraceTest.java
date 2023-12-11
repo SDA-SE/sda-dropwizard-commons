@@ -12,17 +12,19 @@ import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static jakarta.ws.rs.core.HttpHeaders.LOCATION;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.semconv.SemanticAttributes;
 import jakarta.ws.rs.client.Client;
 import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 class ClientTraceTest {
 
@@ -32,8 +34,7 @@ class ClientTraceTest {
 
   @RegisterExtension
   @Order(1)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(2)
@@ -44,6 +45,11 @@ class ClientTraceTest {
           config("mockBaseUrl", WIRE::baseUrl));
 
   private ClientTestApp app;
+
+  @BeforeAll
+  static void beforeAll() {
+    WireMock.configureFor("http", "localhost", WIRE.getPort());
+  }
 
   @BeforeEach
   void setUp() {
