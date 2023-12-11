@@ -42,7 +42,8 @@ import org.sdase.commons.server.opa.config.OpaConfig;
 class OpaBundleClientConfigurationIT {
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+  static final WireMockExtension WIRE =
+      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 

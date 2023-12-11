@@ -4,6 +4,6 @@ dependencies {
   api 'org.bouncycastle:bcpkix-jdk18on'
 
   testImplementation project(':sda-commons-server-testing')
-  testImplementation project(':sda-commons-client-jersey-wiremock-testing')
+  testImplementation project(':sda-commons-shared-wiremock-testing')
   testImplementation 'org.assertj:assertj-core'
 }

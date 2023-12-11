@@ -70,8 +70,9 @@ The following modules contain changes:
 1. [sda-commons-server-testing](#1-sda-commons-server-testing)
 2. [sda-commons-server-spring-data-mongo](#2-sda-commons-server-spring-data-mongo)
 3. [sda-commons-server-mongo-testing](#3-sda-commons-server-mongo-testing)
-4. [sda-commons-server-circuitbreaker](#4-sda-commons-server-circuitbreaker)
-5. [sda-commons-shared-asyncapi](#5-sda-commons-shared-asyncapi)
+4. [sda-commons-client-jersey-wiremock-testing](#4-wiremock-3.0)
+5. [sda-commons-server-circuitbreaker](#5-sda-commons-server-circuitbreaker)
+6. [sda-commons-shared-asyncapi](#6-sda-commons-shared-asyncapi)
 
 ### 1 sda-commons-server-testing
 
@@ -102,10 +103,14 @@ Dropwizard v4 uses wiremock v3.x version. Were introduced some breaking changes,
 support for Java 8,
 upgrading from Jetty 9 to Jetty 11 and changing the repository groupID to org.wiremock for all
 artifacts : wiremock, wiremock-standalone, wiremock-webhooks-extension.
+Module `sda-commons-client-jersey-wiremock-testing` was renamed to `sda-commons-shared-wiremock-testing`.
+SDA specific Wiremock test extensions were removed and replaced with Wiremock internal extensions.
+You will find example tests in [WireMockExampleTest](../../sda-commons-shared-wiremock-testing/src/test/java/org/sdase/commons/shared/wiremock/testing/WireMockExampleTest.java).
+
 You can see all the release notes and breaking changes in
 the [official repository](https://github.com/wiremock/wiremock/releases/3.0.0). 
 
-### 4 sda-commons-server-circuitbreaker
+### 5 sda-commons-server-circuitbreaker
 
 Resilience4j-Circuitbreaker was updated from 1.7.x to 2.1.
 Please check [their release notes](https://github.com/resilience4j/resilience4j/blob/master/RELEASENOTES.adoc#version-200) for details.
@@ -116,7 +121,7 @@ We now collect metrics using [Micrometer](https://micrometer.io/).
 The metric named `resilience4j_circuitbreaker_calls_bucket` is not exposed anymore.
 Please use Micrometer's metric `resilience4j_circuitbreaker_calls_count` instead.
 
-### 5 sda-commons-shared-asyncapi
+### 6 sda-commons-shared-asyncapi
 
 Json Schemas for AsyncAPI are generated with
 [Victools' Json Schema Generator](https://github.com/victools/jsonschema-generator) now.
