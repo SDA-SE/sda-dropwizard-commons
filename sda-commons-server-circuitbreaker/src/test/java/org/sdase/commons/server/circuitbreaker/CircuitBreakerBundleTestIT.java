@@ -28,7 +28,7 @@ class CircuitBreakerBundleTestIT {
   @RegisterExtension
   @Order(0)
   static final WireMockExtension WIRE =
-      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+      new WireMockExtension.Builder().build();
 
   @RegisterExtension
   @Order(1)
