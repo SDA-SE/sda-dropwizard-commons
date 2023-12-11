@@ -70,7 +70,7 @@ public class ApiClientTest {
   @RegisterExtension
   @Order(0)
   static final WireMockExtension WIRE =
-      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+      new WireMockExtension.Builder().build();
 
   public static final Car LIGHT_BLUE_CAR =
       new Car().setSign("HH XY 4321").setColor("light blue"); // NOSONAR
