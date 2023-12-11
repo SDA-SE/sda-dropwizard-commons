@@ -47,23 +47,6 @@ You can check the full migration guide in the
 official
 documentation: [Migration from Apache HttpClient 4.x APIs](https://hc.apache.org/httpcomponents-client-5.2.x/migration-guide/preparation.html)
 
-**Closing Responses**
-
-The Apache 5 connector seems to be more sensitive and might get stuck if you don't
-close your `Response` objects. Make sure to use *try-with-resources* or
-`finally` when you use Jersey clients (either in tests or in production!). 
-
-Example:
-
-```java
-try (Response response = DW.client()
-    .target("http://localhost:" + DW.getLocalPort())
-    .path("/example")
-    .request(APPLICATION_JSON)
-    .get()) {
-  assertThat(response.getStatus()).isEqualTo(200);
-}
-```
 
 ### Jetty 11
 
@@ -112,6 +95,15 @@ The class `io.drowizard.helpers.fixtures.FixtureHelpers` is not available in Dro
 you must read the file using other approaches, e.g.
 using [Wiremock response body](https://wiremock.org/docs/stubbing/#specifying-the-response-body) or
 using an [ObjectMapper](https://www.baeldung.com/jackson-object-mapper-tutorial).
+
+#### Wiremock 3.0
+
+Dropwizard v4 uses wiremock v3.x version. Were introduced some breaking changes, like dropping
+support for Java 8,
+upgrading from Jetty 9 to Jetty 11 and changing the repository groupID to org.wiremock for all
+artifacts : wiremock, wiremock-standalone, wiremock-webhooks-extension.
+You can see all the release notes and breaking changes in
+the [official repository](https://github.com/wiremock/wiremock/releases/3.0.0). 
 
 ### 4 sda-commons-server-circuitbreaker
 
