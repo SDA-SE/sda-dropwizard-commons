@@ -39,11 +39,13 @@ import org.sdase.commons.client.jersey.test.ClientTestConfig;
 class ClientConfiguredProxyTest {
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension CONTENT_WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+  static final WireMockExtension CONTENT_WIRE =
+      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
-  static final WireMockExtension PROXY_WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+  static final WireMockExtension PROXY_WIRE =
+      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   static final DropwizardAppExtension<ClientTestConfig> DW =

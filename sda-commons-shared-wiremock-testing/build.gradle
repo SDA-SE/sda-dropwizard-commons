@@ -1,0 +1,10 @@
+dependencies {
+
+  api "org.wiremock:wiremock", {
+    exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
+  }
+
+  api 'net.minidev:json-smart'
+
+  testImplementation project(':sda-commons-server-testing')
+}
