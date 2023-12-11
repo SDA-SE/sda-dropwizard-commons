@@ -2,13 +2,15 @@ package org.sdase.commons.server.prometheus;
 
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
-import io.dropwizard.core.Configuration;
-import io.dropwizard.core.ConfiguredBundle;
-import io.dropwizard.core.setup.AdminEnvironment;
-import io.dropwizard.core.setup.Bootstrap;
-import io.dropwizard.core.setup.Environment;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.setup.AdminEnvironment;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.binder.jersey.server.DefaultJerseyTagsProvider;
+import io.micrometer.core.instrument.binder.jersey.server.MetricsApplicationEventListener;
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
@@ -20,19 +22,19 @@ import io.prometheus.client.dropwizard.DropwizardExports;
 import io.prometheus.client.dropwizard.samplebuilder.CustomMappingSampleBuilder;
 import io.prometheus.client.dropwizard.samplebuilder.MapperConfig;
 import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
-import io.prometheus.client.servlet.jakarta.exporter.MetricsServlet;
-import jakarta.servlet.ServletRegistration;
-import jakarta.ws.rs.container.DynamicFeature;
-import jakarta.ws.rs.container.ResourceInfo;
-import jakarta.ws.rs.core.FeatureContext;
+import io.prometheus.client.exporter.MetricsServlet;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.servlet.ServletRegistration;
+import javax.ws.rs.container.DynamicFeature;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.FeatureContext;
+import org.sdase.commons.server.prometheus.health.DropwizardHealthCheckMeters;
 import org.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
-import org.sdase.commons.server.prometheus.health.HealthCheckMetricsCollector;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
 import org.slf4j.Logger;
@@ -43,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * Prometheus scrapes the gathered metrics.
  *
  * <p>To activate the bundle, there is a {@link #builder()} to be used in the {@link
- * io.dropwizard.core.Application#initialize(Bootstrap) initialize} method:
+ * io.dropwizard.Application#initialize(Bootstrap) initialize} method:
  *
  * <pre>{@code
  * public void initialize(final Bootstrap<AppConfig> bootstrap) {
@@ -110,6 +112,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
                 }));
   }
 
+  @SuppressWarnings("java:S2095")
   private static void bindJvmAndSystemMetricsToGlobalRegistry(Environment environment) {
     // JVM and System Metrics
     new JvmMemoryMetrics().bindTo(Metrics.globalRegistry);
@@ -118,10 +121,19 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     new ClassLoaderMetrics().bindTo(Metrics.globalRegistry);
     // ignore Sonar and not using "try-with-resources" pattern to prevent closing of JVMMetrics
     // otherwise jvm.gc.pause will not be available
-    //noinspection resource
     JvmGcMetrics jvmGcMetrics = new JvmGcMetrics();
     jvmGcMetrics.bindTo(Metrics.globalRegistry);
     environment.lifecycle().manage(onShutdown(jvmGcMetrics::close));
+    // request metrics
+    environment
+        .jersey()
+        .getResourceConfig()
+        .register(
+            new MetricsApplicationEventListener(
+                Metrics.globalRegistry,
+                new DefaultJerseyTagsProvider(),
+                "http.server.requests",
+                true));
   }
 
   private void initializeDropwizardMetricsBridge(Environment environment) {
@@ -203,56 +215,56 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
             new AbstractMap.SimpleImmutableEntry<>("state", "pending")));
     mappers.add(
         createMapperConfig(
-            "org.apache.hc.client5.http.classic.*.*.get-requests",
+            "org.apache.http.client.*.*.get-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "get"))); // NOSONAR
     mappers.add(
         createMapperConfig(
-            "org.apache.hc.client5.http.classic.*.*.post-requests",
+            "org.apache.http.client.*.*.post-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "post")));
     mappers.add(
         createMapperConfig(
-            "org.apache.hc.client5.http.classic.*.*.put-requests",
+            "org.apache.http.client.*.*.put-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "put")));
     mappers.add(
         createMapperConfig(
-            "org.apache.hc.client5.http.classic.*.*.delete-requests",
+            "org.apache.http.client.*.*.delete-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "delete")));
     mappers.add(
         createMapperConfig(
-            "org.apache.hc.client5.http.classic.*.*.head-requests",
+            "org.apache.http.client.*.*.head-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "head")));
     mappers.add(
         createMapperConfig(
-            "org.apache.hc.client5.http.classic.*.*.connect-requests",
+            "org.apache.http.client.*.*.connect-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "connect")));
     mappers.add(
         createMapperConfig(
-            "org.apache.hc.client5.http.classic.*.*.options-requests",
+            "org.apache.http.client.*.*.options-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "options")));
     mappers.add(
         createMapperConfig(
-            "org.apache.hc.client5.http.classic.*.*.trace-requests",
+            "org.apache.http.client.*.*.trace-requests",
             APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
@@ -316,7 +328,8 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     for (int i = 0; i < labelNames.length; ++i) {
       Object labelName = labelNames[i];
 
-      if (labelName instanceof Entry<?, ?> pair) {
+      if (labelName instanceof Entry) {
+        var pair = (Entry) labelName;
         labels.put(pair.getKey().toString(), pair.getValue().toString());
       } else {
         labels.put(labelName.toString(), "${" + i + "}");
@@ -340,6 +353,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);
   }
 
+  @Deprecated(forRemoval = true)
   private void registerHealthCheckServlet(AdminEnvironment environment) {
     environment
         .addServlet(
@@ -348,16 +362,9 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
   }
 
   private void registerHealthCheckMetrics(Environment environment) {
-    HealthCheckMetricsCollector healthCheckMetricsCollector =
-        new HealthCheckMetricsCollector(environment.healthChecks());
-
-    healthCheckMetricsCollector.register();
-
-    environment
-        .lifecycle()
-        .manage(
-            onShutdown(
-                () -> CollectorRegistry.defaultRegistry.unregister(healthCheckMetricsCollector)));
+    DropwizardHealthCheckMeters dropwizardHealthCheckMeters = new DropwizardHealthCheckMeters();
+    environment.healthChecks().addListener(dropwizardHealthCheckMeters);
+    environment.lifecycle().manage(dropwizardHealthCheckMeters);
   }
 
   @Override

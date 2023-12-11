@@ -3,7 +3,7 @@ package org.sdase.commons.server.prometheus;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.core.Configuration;
+import io.dropwizard.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Meter;
@@ -18,7 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.AfterEach;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,15 +45,12 @@ class PrometheusBundleTest {
     resourceUri = String.format(REST_URI, DW.getLocalPort());
   }
 
-  @AfterEach
-  void tearDown() {
-    Metrics.globalRegistry.clear();
-  }
-
   @Test
   void shouldTrackFiveRequests() {
     String metrics = readMetrics();
-    String count = extractSpecificMetric(metrics, "http_request_duration_seconds_count");
+    String count =
+        extractSpecificMetric(
+            metrics, "http_request_duration_seconds_count", "resource_path=\"ping\"");
     double oldCountValue = extractValue(count);
 
     // when
@@ -62,7 +60,9 @@ class PrometheusBundleTest {
 
     // then
     metrics = readMetrics();
-    count = extractSpecificMetric(metrics, "http_request_duration_seconds_count");
+    count =
+        extractSpecificMetric(
+            metrics, "http_request_duration_seconds_count", "resource_path=\"ping\"");
 
     double countValue = extractValue(count);
     assertThat(countValue).isEqualTo(oldCountValue + 5);
@@ -71,9 +71,61 @@ class PrometheusBundleTest {
     assertThat(metrics).contains("http_request_duration_seconds_sum");
   }
 
-  private String extractSpecificMetric(String metrics, String metricName) {
+  @Test
+  void shouldDocumentDeprecation() {
+    // when
+    prepareResourceRequest().get(String.class);
+
+    // then
+    String metrics = readMetrics();
+    Stream<String> deprecatedMetrics =
+        Stream.of(
+            extractSpecificMetric(
+                metrics,
+                "http_request_duration_seconds_count",
+                "deprecated=\"http_server_requests\""),
+            extractSpecificMetric(
+                metrics,
+                "http_request_duration_seconds_sum",
+                "deprecated=\"http_server_requests\""),
+            extractSpecificMetric(
+                metrics,
+                "http_request_duration_seconds_bucket",
+                "deprecated=\"http_server_requests\""));
+    assertThat(deprecatedMetrics).doesNotContainNull();
+  }
+
+  @Test
+  void shouldTrackRequestsWithMicrometer() {
+    // check for
+    // http_server_requests_seconds_count{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 1.0
+    // http_server_requests_seconds_sum{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 8.42042E-4
+    // http_server_requests_seconds_max{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 8.42042E-4
+
+    DW.client().target(resourceUri).path("path").path("some-value").request().get(String.class);
+
+    // then
+    var metrics = readMetrics();
+    String counter =
+        extractSpecificMetric(
+            metrics, "http_server_requests_seconds_count", "uri=\"/path/{param}\"");
+    assertThat(counter).isNotNull();
+    double countValue = extractValue(counter);
+    assertThat(countValue).isEqualTo(1.0d);
+    String sum =
+        extractSpecificMetric(metrics, "http_server_requests_seconds_sum", "uri=\"/path/{param}\"");
+    double sumValue = extractValue(sum);
+    assertThat(sumValue).isPositive();
+    String max =
+        extractSpecificMetric(metrics, "http_server_requests_seconds_max", "uri=\"/path/{param}\"");
+    double maxValue = extractValue(max);
+    assertThat(maxValue).isPositive().isEqualTo(sumValue);
+  }
+
+  private String extractSpecificMetric(String metrics, String metricName, String tagMatch) {
     return Stream.of(metrics.split("(\r\n|\r|\n)"))
         .filter(l -> l.contains(metricName))
+        .filter(l -> tagMatch == null || l.contains(tagMatch))
         .findFirst()
         .orElse(null);
   }
@@ -161,6 +213,7 @@ class PrometheusBundleTest {
   }
 
   @Test
+  @Deprecated // will not be supported in the next major of DW commons
   void shouldProvideHealthChecksAsPrometheusMetricsOnCustomEndpoint() {
     String healthChecks = readHealthChecks();
 
@@ -186,61 +239,46 @@ class PrometheusBundleTest {
   }
 
   @Test
-  void micrometerMetricsAvailableInPrometheus() {
-
-    MeterRegistry globalRegistry = Metrics.globalRegistry;
-    Counter counter = globalRegistry.counter("micrometerTestCounter", "testTagKey", "testTagValue");
-
-    counter.increment();
-    counter.increment();
-
-    ArrayList<Collector.MetricFamilySamples> testCounterTotal =
-        Collections.list(
-            CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(
-                s -> s.equals("micrometerTestCounter_total")));
-
-    assertThat(testCounterTotal).hasSize(1);
-
-    Collector.MetricFamilySamples testCounterSamples = testCounterTotal.get(0);
-    assertThat(testCounterSamples.name).isEqualTo("micrometerTestCounter");
-
-    List<Collector.MetricFamilySamples.Sample> sampleList = testCounterSamples.samples;
-    assertThat(sampleList).hasSize(1);
-
-    assertThat(sampleList.get(0).labelNames).contains("testTagKey");
-    assertThat(sampleList.get(0).labelValues).contains("testTagValue");
-
-    assertThat(sampleList.get(0).value).isEqualTo(2);
+  void micrometerMetricsAvailableInPrometheus1() {
+    assertMicrometerMetricsInPrometheus();
   }
 
   //  Testing the same metric twice as an example of how to clear metrics.
-  //  Please note the usage of Metrics.globalRegistry.clear(); in the tearDown method.
+  //  Please note the removal in finally.
   @Test
   void micrometerMetricsAvailableInPrometheus2() {
+    assertMicrometerMetricsInPrometheus();
+  }
 
+  private void assertMicrometerMetricsInPrometheus() {
     MeterRegistry globalRegistry = Metrics.globalRegistry;
     Counter counter = globalRegistry.counter("micrometerTestCounter", "testTagKey", "testTagValue");
 
-    counter.increment();
-    counter.increment();
+    try {
 
-    ArrayList<Collector.MetricFamilySamples> testCounterTotal =
-        Collections.list(
-            CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(
-                s -> s.equals("micrometerTestCounter_total")));
+      counter.increment();
+      counter.increment();
 
-    assertThat(testCounterTotal).hasSize(1);
+      ArrayList<Collector.MetricFamilySamples> testCounterTotal =
+          Collections.list(
+              CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(
+                  s -> s.equals("micrometerTestCounter_total")));
 
-    Collector.MetricFamilySamples testCounterSamples = testCounterTotal.get(0);
-    assertThat(testCounterSamples.name).isEqualTo("micrometerTestCounter");
+      assertThat(testCounterTotal).hasSize(1);
 
-    List<Collector.MetricFamilySamples.Sample> sampleList = testCounterSamples.samples;
-    assertThat(sampleList).hasSize(1);
+      Collector.MetricFamilySamples testCounterSamples = testCounterTotal.get(0);
+      assertThat(testCounterSamples.name).isEqualTo("micrometerTestCounter");
 
-    assertThat(sampleList.get(0).labelNames).contains("testTagKey");
-    assertThat(sampleList.get(0).labelValues).contains("testTagValue");
+      List<Collector.MetricFamilySamples.Sample> sampleList = testCounterSamples.samples;
+      assertThat(sampleList).hasSize(1);
 
-    assertThat(sampleList.get(0).value).isEqualTo(2);
+      assertThat(sampleList.get(0).labelNames).contains("testTagKey");
+      assertThat(sampleList.get(0).labelValues).contains("testTagValue");
+
+      assertThat(sampleList.get(0).value).isEqualTo(2);
+    } finally {
+      Metrics.globalRegistry.remove(counter);
+    }
   }
 
   @Test

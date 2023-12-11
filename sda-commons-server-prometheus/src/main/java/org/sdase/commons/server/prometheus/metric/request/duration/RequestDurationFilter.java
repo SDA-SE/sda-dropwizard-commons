@@ -11,6 +11,12 @@ import jakarta.ws.rs.container.ResourceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated This custom request metric should be migrated to the Micrometer standard timer {@code
+ *     http_server_requests} as added in {@link
+ *     org.sdase.commons.server.prometheus.PrometheusBundle}
+ */
+@Deprecated(since = "5", forRemoval = true)
 @Priority(Priorities.AUTHENTICATION - 50) // Before authentication to track unauthenticated request
 // and before consumer-token filter to track requests without consumer tokens. We can still log the
 // consumer because we access it while responding.

@@ -1,7 +1,6 @@
 package org.sdase.commons.server.prometheus.health;
 
 import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
@@ -18,11 +17,13 @@ import java.util.stream.Collectors;
  * <p>Currently all {@link HealthCheck.Result}s are collected synchronously and sequentially unless
  * a {@link HealthCheck} is annotated as {@link com.codahale.metrics.health.annotation.Async Async}
  * when the endpoint is called.
+ *
+ * @deprecated migrated to micrometer, see {@link DropwizardHealthCheckMeters}
  */
+@Deprecated(since = "5", forRemoval = true)
 public class HealthCheckMetricsCollector extends Collector {
   private static final String HEALTH_CHECK_STATUS_METRIC = "healthcheck_status";
-  private static final List<String> HEALTH_CHECK_METRIC_LABELS =
-      unmodifiableList(singletonList("name"));
+  private static final List<String> HEALTH_CHECK_METRIC_LABELS = singletonList("name");
 
   private final HealthCheckRegistry healthCheckRegistry;
 
