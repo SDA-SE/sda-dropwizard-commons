@@ -5,7 +5,7 @@ dependencies {
   api 'io.dropwizard:dropwizard-client'
   api 'jakarta.servlet:jakarta.servlet-api'
 
-  api 'io.prometheus:simpleclient'
+
   api 'io.prometheus:simpleclient_dropwizard'
   api 'io.prometheus:simpleclient_servlet_jakarta'
 

@@ -12,9 +12,9 @@ import static org.assertj.core.groups.Tuple.tuple;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -23,14 +23,12 @@ import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.ClientWithoutConsumerTokenTestApp;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 class ApiClientWithoutConsumerTokenTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   private static final ObjectMapper OM = new ObjectMapper();
   private static final Car BRIGHT_BLUE_CAR =
@@ -48,8 +46,8 @@ class ApiClientWithoutConsumerTokenTest {
 
   private ClientWithoutConsumerTokenTestApp app;
 
-  @BeforeAll
-  public static void initWires() throws JsonProcessingException {
+  @BeforeEach
+  void resetRequests() throws JsonProcessingException {
     WIRE.stubFor(
         get("/api/cars") // NOSONAR
             .withHeader("Accept", equalTo("application/json")) // NOSONAR
@@ -58,17 +56,16 @@ class ApiClientWithoutConsumerTokenTest {
                     .withStatus(200)
                     .withHeader("Content-type", "application/json") // NOSONAR
                     .withBody(OM.writeValueAsBytes(asList(BRIGHT_BLUE_CAR, LIGHT_BLUE_CAR)))));
-  }
 
-  @BeforeEach
-  void resetRequests() {
-    WIRE.resetRequests();
     app = DW.getApplication();
   }
 
   @Test
   void loadCars() {
-    List<Car> cars = createMockApiClient().getCars();
+
+    MockApiClient mockApiClient = createMockApiClient();
+
+    List<Car> cars = mockApiClient.getCars();
 
     assertThat(cars)
         .extracting(Car::getSign, Car::getColor)
