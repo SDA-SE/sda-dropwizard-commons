@@ -16,6 +16,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
@@ -31,19 +32,17 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.RetryingTest;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.opa.config.OpaConfig;
 
 class OpaBundleClientConfigurationIT {
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 
@@ -60,8 +59,8 @@ class OpaBundleClientConfigurationIT {
           // relax the timeout to make tests more stable
           config("opa.opaClient.timeout", "1s"));
 
-  @BeforeAll
-  public static void beforeAll() {
+  @BeforeEach
+  void setUp() {
     WIRE.resetAll();
     WIRE.stubFor(post(anyUrl()).willReturn(okJson("{\"result\": {\"allow\": true}}")));
   }

@@ -14,10 +14,13 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.timeoutError;
 
 import com.codahale.metrics.MetricFilter;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -27,15 +30,13 @@ import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.MockApiClient;
 import org.sdase.commons.client.jersey.test.MockApiClient.Car;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 /** Test that timeouts are correctly mapped. */
 class ApiClientTimeoutTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
@@ -46,6 +47,11 @@ class ApiClientTimeoutTest {
           config("mockBaseUrl", WIRE::baseUrl));
 
   private ClientTestApp app;
+
+  @BeforeAll
+  static void beforeAll() {
+    WireMock.configureFor("http", "localhost", WIRE.getPort());
+  }
 
   @BeforeEach
   void resetRequests() {
