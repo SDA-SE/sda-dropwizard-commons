@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.sdase.commons.client.jersey.test.SubtypesClient.AbstractResource.ResourceType.ONE;
 import static org.sdase.commons.client.jersey.test.SubtypesClient.AbstractResource.ResourceType.TWO;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -23,13 +24,12 @@ import org.sdase.commons.client.jersey.test.SubtypesClient;
 import org.sdase.commons.client.jersey.test.SubtypesClient.AbstractResource;
 import org.sdase.commons.client.jersey.test.SubtypesClient.ResourceOne;
 import org.sdase.commons.client.jersey.test.SubtypesClient.ResourceTwo;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockExtension;
 
 class SubtypeMappingAndValidationTest {
 
   @RegisterExtension
   @Order(0)
-  final WireMockExtension wire = new WireMockExtension();
+  final WireMockExtension wire = new WireMockExtension.Builder().build();
 
   @RegisterExtension
   @Order(1)
