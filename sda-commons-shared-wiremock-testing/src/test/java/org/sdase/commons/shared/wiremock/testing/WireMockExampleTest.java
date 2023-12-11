@@ -5,7 +5,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -26,8 +25,7 @@ class WireMockExampleTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension WIRE =
-      new WireMockExtension.Builder().build();
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().build();
 
   @Order(1)
   @RegisterExtension

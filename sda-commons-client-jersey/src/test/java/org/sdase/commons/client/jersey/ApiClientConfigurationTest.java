@@ -10,7 +10,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.apache.hc.core5.http.HttpStatus.SC_CREATED;
@@ -41,8 +40,7 @@ class ApiClientConfigurationTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension WIRE =
-      new WireMockExtension.Builder().build();
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().build();
 
   @RegisterExtension
   @Order(1)

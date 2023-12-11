@@ -6,7 +6,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static io.opentelemetry.api.common.AttributeKey.booleanKey;
@@ -42,8 +41,7 @@ import org.sdase.commons.server.opa.config.OpaConfig;
 class OpaBundleClientConfigurationIT {
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension WIRE =
-      new WireMockExtension.Builder().build();
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().build();
 
   @RegisterExtension static OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();
 

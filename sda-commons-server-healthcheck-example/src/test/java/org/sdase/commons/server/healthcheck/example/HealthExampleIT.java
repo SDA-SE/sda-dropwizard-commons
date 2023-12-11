@@ -2,7 +2,6 @@ package org.sdase.commons.server.healthcheck.example;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,8 +24,7 @@ class HealthExampleIT {
   // Wiremock to mock external service
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension WIRE =
-      new WireMockExtension.Builder().build();
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().build();
 
   // create example application
   @RegisterExtension
