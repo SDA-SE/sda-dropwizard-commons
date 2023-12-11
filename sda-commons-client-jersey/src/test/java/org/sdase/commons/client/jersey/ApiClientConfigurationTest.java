@@ -54,6 +54,7 @@ class ApiClientConfigurationTest {
 
   @BeforeAll
   static void beforeAll() {
+    //    Explicitly set the wiremock host and port, to keep configuration after reset in setUp()
     WireMock.configureFor("http", "localhost", WIRE.getPort());
   }
 
