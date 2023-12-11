@@ -2,6 +2,7 @@ dependencies {
 
   api "org.wiremock:wiremock", {
     exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
+    exclude group: 'net.minidev', module: 'json-smart'
   }
 
   api 'net.minidev:json-smart'
