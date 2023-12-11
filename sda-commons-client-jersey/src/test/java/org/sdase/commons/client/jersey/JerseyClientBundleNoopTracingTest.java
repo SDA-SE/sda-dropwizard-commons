@@ -3,7 +3,6 @@ package org.sdase.commons.client.jersey;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,8 +24,7 @@ class JerseyClientBundleNoopTracingTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension WIRE =
-      new WireMockExtension.Builder().build();
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().build();
 
   @RegisterExtension
   @Order(1)
