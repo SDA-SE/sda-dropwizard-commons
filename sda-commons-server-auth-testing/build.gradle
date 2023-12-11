@@ -3,7 +3,7 @@ dependencies {
   api project(':sda-commons-server-testing')
   api project(':sda-commons-server-auth')
   api 'com.auth0:java-jwt'
-  api project(':sda-commons-client-jersey-wiremock-testing')
+  api project(':sda-commons-shared-wiremock-testing')
 
   api('org.apache.commons:commons-lang3')
 
