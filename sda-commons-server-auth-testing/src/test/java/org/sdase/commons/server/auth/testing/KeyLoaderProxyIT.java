@@ -12,6 +12,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.tomakehurst.wiremock.http.RequestMethod;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.junitpioneer.jupiter.SetSystemProperty.SetSystemProperties;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.auth.testing.test.AuthTestApp;
 import org.sdase.commons.server.auth.testing.test.AuthTestConfig;
 import org.sdase.commons.server.testing.SystemPropertyClassExtension;
@@ -38,14 +38,13 @@ import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 class KeyLoaderProxyIT {
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension PROXY_WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension PROXY_WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
   static final SystemPropertyClassExtension PROP =
       new SystemPropertyClassExtension()
-          .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.port());
+          .setProperty("http.proxyPort", () -> "" + PROXY_WIRE.getPort());
 
   @RegisterExtension
   @Order(2)
