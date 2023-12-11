@@ -97,7 +97,7 @@ you must read the file using other approaches, e.g.
 using [Wiremock response body](https://wiremock.org/docs/stubbing/#specifying-the-response-body) or
 using an [ObjectMapper](https://www.baeldung.com/jackson-object-mapper-tutorial).
 
-#### Wiremock 3.0
+### 4 Wiremock 3.0
 
 Dropwizard v4 uses wiremock v3.x version. Were introduced some breaking changes, like dropping
 support for Java 8,
@@ -105,7 +105,7 @@ upgrading from Jetty 9 to Jetty 11 and changing the repository groupID to org.wi
 artifacts : wiremock, wiremock-standalone, wiremock-webhooks-extension.
 Module `sda-commons-client-jersey-wiremock-testing` was renamed to `sda-commons-shared-wiremock-testing`.
 SDA specific Wiremock test extensions were removed and replaced with Wiremock internal extensions.
-You will find example tests in [WireMockExampleTest](../../sda-commons-shared-wiremock-testing/src/test/java/org/sdase/commons/shared/wiremock/testing/WireMockExampleTest.java).
+You will find example tests in [WireMockExampleTest](https://github.com/SDA-SE/sda-dropwizard-commons/blob/69f1b0a7158d3ee6c1e0a55d63f77bd3282a6839/sda-commons-shared-wiremock-testing/src/test/java/org/sdase/commons/shared/wiremock/testing/WireMockExampleTest.java).
 
 You can see all the release notes and breaking changes in
 the [official repository](https://github.com/wiremock/wiremock/releases/3.0.0). 
