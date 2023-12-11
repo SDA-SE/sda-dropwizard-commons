@@ -6,6 +6,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.core.Response;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.RetryingTest;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 import org.sdase.commons.server.opa.testing.test.OpaBundeTestAppConfiguration;
 import org.sdase.commons.server.opa.testing.test.OpaBundleTestApp;
 
@@ -23,8 +23,7 @@ class OpaTimeoutIT {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
