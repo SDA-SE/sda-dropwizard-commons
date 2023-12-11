@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class OpaClassExtension extends AbstractOpa implements BeforeAllCallback, AfterAllCallback {
 
   private final WireMockExtension wireMockExtension =
-      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+      new WireMockExtension.Builder().build();
 
   private String opaClientTimeoutBackup = null;
 
