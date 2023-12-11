@@ -12,5 +12,5 @@ dependencies {
 
   testImplementation project(':sda-commons-server-prometheus')
   testImplementation project(':sda-commons-server-testing')
-  testImplementation project(':sda-commons-client-jersey-wiremock-testing')
+  testImplementation project(':sda-commons-shared-wiremock-testing')
 }

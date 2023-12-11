@@ -5,7 +5,7 @@ dependencies {
 
   // Add all new modules here to verify that there are no dependency clashes.
   api project(':sda-commons-client-jersey')
-  api project(':sda-commons-client-jersey-wiremock-testing')
+  api project(':sda-commons-shared-wiremock-testing')
   api project(':sda-commons-server-auth')
   api project(':sda-commons-server-auth-testing')
   api project(':sda-commons-server-circuitbreaker')
