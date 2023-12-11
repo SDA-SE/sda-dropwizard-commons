@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.MetricFilter;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
@@ -28,7 +29,6 @@ import org.sdase.commons.client.jersey.oidc.model.OidcResult;
 import org.sdase.commons.client.jersey.oidc.model.OidcState;
 import org.sdase.commons.client.jersey.test.ClientTestApp;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
-import org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension;
 
 class OidcClientCacheDisabledTest {
   private static final String CLIENT_ID = "id";
@@ -37,8 +37,7 @@ class OidcClientCacheDisabledTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockClassExtension WIRE =
-      new WireMockClassExtension(wireMockConfig().dynamicPort());
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @RegisterExtension
   @Order(1)
