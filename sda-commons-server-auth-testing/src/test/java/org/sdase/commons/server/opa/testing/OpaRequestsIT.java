@@ -32,7 +32,7 @@ class OpaRequestsIT {
   @RegisterExtension
   @Order(1)
   static final WireMockExtension WIRE =
-      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+      new WireMockExtension.Builder().build();
 
   @RegisterExtension
   @Order(2)

@@ -40,12 +40,12 @@ class ClientConfiguredProxyTest {
   @RegisterExtension
   @Order(0)
   static final WireMockExtension CONTENT_WIRE =
-      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+      new WireMockExtension.Builder().build();
 
   @RegisterExtension
   @Order(1)
   static final WireMockExtension PROXY_WIRE =
-      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+      new WireMockExtension.Builder().build();
 
   @RegisterExtension
   static final DropwizardAppExtension<ClientTestConfig> DW =
