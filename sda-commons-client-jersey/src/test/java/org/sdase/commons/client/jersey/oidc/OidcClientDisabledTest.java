@@ -39,7 +39,7 @@ class OidcClientDisabledTest {
   @Order(0)
   static final WireMockExtension WIRE =
       new WireMockExtension.Builder()
-          .options(wireMockConfig().dynamicPort().httpServerFactory(new JettyHttpServerFactory()))
+          .options(wireMockConfig().httpServerFactory(new JettyHttpServerFactory()))
           .build();
 
   @RegisterExtension
