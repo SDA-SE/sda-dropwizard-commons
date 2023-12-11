@@ -3,7 +3,6 @@ package org.sdase.commons.client.jersey;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static jakarta.ws.rs.core.HttpHeaders.ACCEPT;
 import static jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -36,9 +35,7 @@ import org.sdase.commons.shared.api.error.ApiInvalidParam;
 
 class ClientErrorUtilTest {
 
-  @RegisterExtension
-  static final WireMockExtension WIRE =
-      new WireMockExtension.Builder().build();
+  @RegisterExtension static final WireMockExtension WIRE = new WireMockExtension.Builder().build();
 
   private static final ObjectMapper OM = new ObjectMapper();
 
