@@ -19,7 +19,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 class AddRequestHeaderFilterTest {
 
   @RegisterExtension
-  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+  static final WireMockExtension WIRE =
+      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   @BeforeEach
   void resetRequests() {
