@@ -5,7 +5,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,13 +35,11 @@ import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 class ClientProxyTest {
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension CONTENT_WIRE =
-      new WireMockExtension.Builder().build();
+  static final WireMockExtension CONTENT_WIRE = new WireMockExtension.Builder().build();
 
   @RegisterExtension
   @Order(1)
-  static final WireMockExtension PROXY_WIRE =
-      new WireMockExtension.Builder().build();
+  static final WireMockExtension PROXY_WIRE = new WireMockExtension.Builder().build();
 
   @RegisterExtension
   @Order(2)
