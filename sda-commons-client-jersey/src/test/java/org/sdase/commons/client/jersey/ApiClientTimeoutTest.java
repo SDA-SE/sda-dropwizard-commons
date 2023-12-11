@@ -13,13 +13,11 @@ import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionCo
 import static org.sdase.commons.client.jersey.test.util.ClientRequestExceptionConditions.timeoutError;
 
 import com.codahale.metrics.MetricFilter;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -47,15 +45,8 @@ class ApiClientTimeoutTest {
 
   private ClientTestApp app;
 
-  @BeforeAll
-  static void beforeAll() {
-    //    Explicitly set the wiremock host and port, to keep configuration after reset in setUp()
-    WireMock.configureFor("http", "localhost", WIRE.getPort());
-  }
-
   @BeforeEach
   void resetRequests() {
-    WIRE.resetRequests();
     app = DW.getApplication();
 
     // reset the metrics since we don't use it in this test
