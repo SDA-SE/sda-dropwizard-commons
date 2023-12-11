@@ -28,7 +28,8 @@ class ApiClientWithoutConsumerTokenTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension WIRE = new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
+  static final WireMockExtension WIRE =
+      new WireMockExtension.Builder().options(wireMockConfig().dynamicPort()).build();
 
   private static final ObjectMapper OM = new ObjectMapper();
   private static final Car BRIGHT_BLUE_CAR =
