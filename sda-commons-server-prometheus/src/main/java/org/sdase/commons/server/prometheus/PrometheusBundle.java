@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.sdase.commons.server.prometheus.health.DropwizardHealthCheckMeters;
 import org.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
