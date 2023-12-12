@@ -16,7 +16,12 @@ import javax.annotation.Nullable;
  *   static final WeldAppExtension&lt;AppConfiguration%gt APP =
  *       new WeldAppExtension&lt;&gt;(WeldExampleApplication.class, resourceFilePath("test-config.yaml"));
  * </pre>
+ *
+ * @deprecated This extension is going to be removed in the next major release. Please switch to the
+ *     official <a href="https://github.com/weld/weld-testing">Weld Testing Extension</a>, which is
+ *     also provided in this module.
  */
+@Deprecated(forRemoval = true)
 public class WeldAppExtension<C extends Configuration> extends DropwizardAppExtension<C> {
 
   public WeldAppExtension(

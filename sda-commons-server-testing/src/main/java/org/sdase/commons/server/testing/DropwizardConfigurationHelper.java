@@ -12,7 +12,10 @@ import org.sdase.commons.server.testing.builder.ConfigurationBuilders.PortBuilde
  * A helper that creates a {@link Configuration} programmatically.
  *
  * @param <C> the type of the {@link Configuration} used by an {@link io.dropwizard.Application}
+ * @deprecated Since this class was only used in conjunction with the {@code WeldAppExtension}, it
+ *     is no longer of use and will be removed in the next major release.
  */
+@Deprecated(forRemoval = true)
 public class DropwizardConfigurationHelper<C extends Configuration>
     implements PortBuilder<C>, CustomizationBuilder<C> {
 
