@@ -1,21 +1,15 @@
 package org.sdase.commons.server.prometheus.health;
 
-import static io.dropwizard.metrics.servlets.HealthCheckServlet.HEALTH_CHECK_REGISTRY;
-
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Serves all {@link HealthCheck}s in a Prometheus metric format.
