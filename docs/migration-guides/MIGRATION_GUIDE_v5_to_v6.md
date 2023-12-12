@@ -170,6 +170,8 @@ important can't be expressed.
 
 ### 7 sda-commons-server-kafka
 
+### 7 Kafka
+
 The public init method
 
 `MessageListenerStrategy#init(ConsumerTopicMessageHistogram consumerTopicMessageHistogram, Set<String> metadataFields)`
