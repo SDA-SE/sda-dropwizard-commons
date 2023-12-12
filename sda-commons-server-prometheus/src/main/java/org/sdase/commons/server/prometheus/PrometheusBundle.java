@@ -9,6 +9,8 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.binder.jersey.server.DefaultJerseyTagsProvider;
+import io.micrometer.core.instrument.binder.jersey.server.MetricsApplicationEventListener;
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
@@ -32,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
-import org.sdase.commons.server.prometheus.health.HealthCheckMetricsCollector;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
 import org.slf4j.Logger;
@@ -122,6 +123,16 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     JvmGcMetrics jvmGcMetrics = new JvmGcMetrics();
     jvmGcMetrics.bindTo(Metrics.globalRegistry);
     environment.lifecycle().manage(onShutdown(jvmGcMetrics::close));
+    // request metrics
+    environment
+        .jersey()
+        .getResourceConfig()
+        .register(
+            new MetricsApplicationEventListener(
+                Metrics.globalRegistry,
+                new DefaultJerseyTagsProvider(),
+                "http.server.requests",
+                true));
   }
 
   private void initializeDropwizardMetricsBridge(Environment environment) {
@@ -340,6 +351,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);
   }
 
+  @Deprecated(forRemoval = true)
   private void registerHealthCheckServlet(AdminEnvironment environment) {
     environment
         .addServlet(
@@ -348,16 +360,9 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
   }
 
   private void registerHealthCheckMetrics(Environment environment) {
-    HealthCheckMetricsCollector healthCheckMetricsCollector =
-        new HealthCheckMetricsCollector(environment.healthChecks());
-
-    healthCheckMetricsCollector.register();
-
-    environment
-        .lifecycle()
-        .manage(
-            onShutdown(
-                () -> CollectorRegistry.defaultRegistry.unregister(healthCheckMetricsCollector)));
+    DropwizardHealthCheckMeters dropwizardHealthCheckMeters = new DropwizardHealthCheckMeters();
+    environment.healthChecks().addListener(dropwizardHealthCheckMeters);
+    environment.lifecycle().manage(dropwizardHealthCheckMeters);
   }
 
   @Override
