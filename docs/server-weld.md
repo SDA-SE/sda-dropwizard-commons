@@ -38,4 +38,4 @@ public void initialize(final Bootstrap<AppConfiguration> bootstrap) {
 
 ### Testing
 
-See [`sda-commons-server-weld-testing`](./server-weld-testing.md).
+See [Weld JUnit 5 (Jupiter) Extensions](https://github.com/weld/weld-testing/blob/master/junit5/README.md).

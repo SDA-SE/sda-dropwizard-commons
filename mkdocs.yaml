@@ -50,7 +50,6 @@ nav:
     - Server Trace: server-trace.md
     - Server Weld: server-weld.md
     - Server Weld Example: server-weld-example.md
-    - Server Weld Testing: server-weld-testing.md
     - Shared Async API: shared-asyncapi.md
     - Shared Certificates: shared-certificates.md
     - Shared Error: shared-error.md
