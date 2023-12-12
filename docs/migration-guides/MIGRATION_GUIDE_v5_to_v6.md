@@ -91,6 +91,7 @@ The following modules contain changes:
 5. [sda-commons-server-circuitbreaker](#5-sda-commons-server-circuitbreaker)
 6. [sda-commons-shared-asyncapi](#6-sda-commons-shared-asyncapi)
 7. [sda-commons-server-kafka](#7-kafka)
+8. [sda-commons-server-weld-testing](#8-sda-commons-server-weld-testing)
 
 ### 1 sda-commons-server-testing
 
@@ -166,6 +167,7 @@ The new generator may have some limitations but a great API for extensions.
 Please [file an issue](https://github.com/SDA-SE/sda-dropwizard-commons/issues) if something
 important can't be expressed.
 
+
 ### 7 Kafka
 
 The public init method
@@ -176,3 +178,10 @@ was removed. Internal metrics are collected automatically. Please use
 
 `MessageListenerStrategy#init(Set<String> metadataFields)`
 
+
+### 8 sda-commons-server-weld-testing
+
+The custom JUnit extensions have been removed. Please make use of the
+official [JUnit5 extension](https://github.com/weld/weld-testing/tree/master/junit5), which this
+module is now providing. An example how
+to use it can be found in [sda-commons-server-weld-example](../../sda-commons-server-weld-example).
