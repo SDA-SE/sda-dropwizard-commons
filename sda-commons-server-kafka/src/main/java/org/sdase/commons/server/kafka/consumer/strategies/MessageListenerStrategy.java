@@ -27,7 +27,6 @@ import org.sdase.commons.server.dropwizard.metadata.MetadataContextCloseable;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
-import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,40 +44,21 @@ public abstract class MessageListenerStrategy<K, V> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MessageListenerStrategy.class);
 
-  protected ConsumerTopicMessageHistogram consumerProcessedMsgHistogram;
-
   private Map<TopicPartition, OffsetAndMetadata> offsetsToCommitOnClose = new HashMap<>();
   private Set<String> metadataFields = Set.of();
 
   /**
-   * @param consumerTopicMessageHistogram the histogram that tracks time for consuming single
-   *     records
-   * @deprecated in favour of {@link #init(ConsumerTopicMessageHistogram, Set)}
-   */
-  @Deprecated
-  @SuppressWarnings({"DeprecatedIsStillUsed", "java:S6355", "java:S1133"})
-  public void init(ConsumerTopicMessageHistogram consumerTopicMessageHistogram) {
-    init(consumerTopicMessageHistogram, MetadataContext.metadataFields());
-  }
-
-  /**
-   * @param consumerTopicMessageHistogram the histogram that tracks time for consuming single
-   *     records
    * @param metadataFields the configured {@link MetadataContext#metadataFields()}
    */
-  public void init(
-      ConsumerTopicMessageHistogram consumerTopicMessageHistogram, Set<String> metadataFields) {
-    this.consumerProcessedMsgHistogram = consumerTopicMessageHistogram;
+  public void init(Set<String> metadataFields) {
     this.metadataFields = Optional.ofNullable(metadataFields).orElse(Set.of());
   }
 
   /**
    * Implementation of processing and commit logic during poll loop of {@link MessageListener}.
    *
-   * <p>The strategy should collect the processing duration metric for each entry of records within
-   * the {@link #consumerProcessedMsgHistogram}. Furthermore, each record that was processed
-   * successfully should be marked by calling {@link #addOffsetToCommitOnClose} to commit the
-   * current offset in case the application shuts down.
+   * <p>The strategy should mark each record that was successfully processed by calling {@link
+   * #addOffsetToCommitOnClose} to commit the current offset in case the application shuts down.
    *
    * <pre>
    * SimpleTimer timer = new SimpleTimer();

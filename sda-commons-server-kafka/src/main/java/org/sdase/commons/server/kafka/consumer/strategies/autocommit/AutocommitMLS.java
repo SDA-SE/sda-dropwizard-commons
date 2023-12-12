@@ -1,6 +1,7 @@
 package org.sdase.commons.server.kafka.consumer.strategies.autocommit;
 
-import io.prometheus.client.SimpleTimer;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -39,19 +40,15 @@ public class AutocommitMLS<K, V> extends MessageListenerStrategy<K, V> {
       LOGGER.debug("Handling message for {}", consumerRecord.key());
       try (var ignored = messageHandlerContextFor(consumerRecord)) {
         try {
-          SimpleTimer timer = new SimpleTimer();
+          Instant timerStart = Instant.now();
           handler.handle(consumerRecord);
           addOffsetToCommitOnClose(consumerRecord);
 
-          // Prometheus
-          double elapsedSeconds = timer.elapsedSeconds();
-          consumerProcessedMsgHistogram.observe(
-              elapsedSeconds, consumerName, consumerRecord.topic());
-
+          Instant timerEnd = Instant.now();
           if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
                 "calculated duration {} for message consumed by {} from {}",
-                elapsedSeconds,
+                Duration.between(timerStart, timerEnd).toSeconds(),
                 consumerName,
                 consumerRecord.topic());
           }
