@@ -15,5 +15,6 @@ dependencies {
   api project(':sda-commons-server-weld')
 
   testImplementation project(':sda-commons-server-weld-testing')
+  testImplementation 'org.assertj:assertj-core'
 }
 
