@@ -32,7 +32,6 @@ import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.RetryProcessingErrorMLS;
 import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
-import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
 class MessageListenerStrategyMetadataContextIntegrationTest {
 
@@ -92,7 +91,7 @@ class MessageListenerStrategyMetadataContextIntegrationTest {
       String testName,
       boolean stopsInTopic,
       MessageListenerStrategy<String, String> messageListenerStrategy) {
-    messageListenerStrategy.init(mock(ConsumerTopicMessageHistogram.class), Set.of("tenant-id"));
+    messageListenerStrategy.init(Set.of("tenant-id"));
     var recordsMap = new LinkedHashMap<TopicPartition, List<ConsumerRecord<String, String>>>();
     recordsMap.put(
         new TopicPartition(TOPIC, 1),
