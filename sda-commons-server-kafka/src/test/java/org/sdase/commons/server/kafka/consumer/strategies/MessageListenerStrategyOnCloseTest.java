@@ -28,7 +28,6 @@ import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
 import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.RetryProcessingErrorMLS;
 import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
-import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +67,7 @@ class MessageListenerStrategyOnCloseTest {
   private void shouldCommitLastOffsetOnClose(
       MessageListenerStrategy<String, String> strategy, MyMessageHandler messageHandler) {
     // given
-    strategy.init(mock(ConsumerTopicMessageHistogram.class), Set.of());
+    strategy.init(Set.of());
 
     Map<TopicPartition, List<ConsumerRecord<String, String>>> recordsByPartition = new HashMap<>();
     recordsByPartition.put(

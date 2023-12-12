@@ -12,7 +12,6 @@ import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.Collector;
-import io.prometheus.client.Collector.MetricFamilySamples;
 import io.prometheus.client.CollectorRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,67 +74,6 @@ class KafkaPrometheusMonitoringIT {
 
     resultsLong.clear();
     resultsLong2.clear();
-  }
-
-  @Test
-  void shouldWriteHelpAndTypeToMetrics() {
-    String topic = "shouldWriteHelpAndTypeToMetrics_Topic";
-    KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
-
-    AutocommitMLS<Long, Long> longLongAutocommitMLS =
-        new AutocommitMLS<>(
-            record -> resultsLong.add(record.value()), new IgnoreAndProceedErrorHandler<>());
-    createMessageListener(topic, CONSUMER_1, longLongAutocommitMLS);
-
-    MessageProducer<Long, Long> producer = registerProducer(topic, PRODUCER_1);
-
-    // pass in messages
-    producer.send(1L, 1L);
-    producer.send(2L, 2L);
-
-    await()
-        .atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS)
-        .until(() -> resultsLong.size() == 2);
-
-    List<MetricFamilySamples> list =
-        Collections.list(CollectorRegistry.defaultRegistry.metricFamilySamples());
-
-    String[] metrics = {
-      "kafka_producer_topic_message",
-      "kafka_consumer_topic_message_duration",
-      "kafka_consumer_records_lag"
-    };
-
-    assertThat(list).extracting(m -> m.name).contains(metrics);
-
-    list.forEach(
-        mfs -> {
-          assertThat(mfs.samples.size()).isPositive();
-          for (Collector.MetricFamilySamples.Sample sample : mfs.samples) {
-            LOGGER.info(
-                "Sample: name={}, value={}, labelNames={}, labelValues={}",
-                sample.name,
-                sample.value,
-                sample.labelNames,
-                sample.labelValues);
-          }
-        });
-
-    assertThat(
-            CollectorRegistry.defaultRegistry.getSampleValue(
-                "kafka_producer_topic_message_total",
-                new String[] {"producer_name", "topic_name"},
-                new String[] {PRODUCER_1, topic}))
-        .as("sample value for metric 'kafka_producer_topic_message_total'")
-        .isEqualTo(2);
-
-    assertThat(
-            CollectorRegistry.defaultRegistry.getSampleValue(
-                "kafka_consumer_topic_message_duration_count",
-                new String[] {"consumer_name", "topic_name"},
-                new String[] {CONSUMER_1 + "-0", topic}))
-        .as("sample value for metric 'kafka_consumer_topic_message_duration_count'")
-        .isEqualTo(2);
   }
 
   @Test

@@ -90,6 +90,7 @@ The following modules contain changes:
 4. [sda-commons-client-jersey-wiremock-testing](#4-wiremock-3.0)
 5. [sda-commons-server-circuitbreaker](#5-sda-commons-server-circuitbreaker)
 6. [sda-commons-shared-asyncapi](#6-sda-commons-shared-asyncapi)
+7. [sda-commons-server-kafka](#7-kafka)
 
 ### 1 sda-commons-server-testing
 
@@ -164,3 +165,14 @@ Both libraries work different and have a different feature set.
 The new generator may have some limitations but a great API for extensions.
 Please [file an issue](https://github.com/SDA-SE/sda-dropwizard-commons/issues) if something
 important can't be expressed.
+
+### 7 Kafka
+
+The public init method
+
+`MessageListenerStrategy#init(ConsumerTopicMessageHistogram consumerTopicMessageHistogram, Set<String> metadataFields)`
+
+was removed. Internal metrics are collected automatically. Please use
+
+`MessageListenerStrategy#init(Set<String> metadataFields)`
+
