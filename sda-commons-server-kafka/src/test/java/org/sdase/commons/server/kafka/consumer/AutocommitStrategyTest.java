@@ -27,7 +27,6 @@ import org.mockito.stubbing.Answer;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
 import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitMLS;
-import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
 class AutocommitStrategyTest {
 
@@ -41,8 +40,6 @@ class AutocommitStrategyTest {
 
   private KafkaConsumer<String, String> consumer;
 
-  private ConsumerTopicMessageHistogram histogram;
-
   private static final int WAIT_TIME_MS = 5000;
   private static final int BLOCKING_TIME_MS = 10000;
   private static final int N_MESSAGES = 5;
@@ -55,7 +52,6 @@ class AutocommitStrategyTest {
     consumer = Mockito.mock(KafkaConsumer.class);
     handler = Mockito.mock(MessageHandler.class);
     errorHandler = Mockito.mock(ErrorHandler.class);
-    histogram = Mockito.mock(ConsumerTopicMessageHistogram.class);
   }
 
   @AfterEach
@@ -83,7 +79,7 @@ class AutocommitStrategyTest {
     ListenerConfig lc = ListenerConfig.builder().withTopicMissingRetryMs(topicWaitTime).build(1);
 
     final AutocommitMLS<String, String> strategy = new AutocommitMLS<>(handler, errorHandler);
-    strategy.init(histogram);
+    strategy.init(null);
 
     MessageListenerRegistration<String, String> registration =
         MessageListenerRegistration.builder()
