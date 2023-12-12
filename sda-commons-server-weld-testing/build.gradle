@@ -1,19 +1,12 @@
-// we need the 'beans.xml' in the classes directory
-task copyMetaInf(type: Copy) {
-  from "${projectDir}/src/test/resources/META-INF"
-  into "${buildDir}/classes/java/test/META-INF"
-}
-
-processTestResources.dependsOn copyMetaInf
-
 dependencies {
   api project(':sda-commons-server-testing')
   api project(':sda-commons-server-weld')
 
-  testImplementation project(':sda-commons-server-jackson')
-  testImplementation 'io.github.dropwizard-jobs:dropwizard-jobs-core:5.1.4', {
-    exclude group: 'org.quartz-scheduler', module: 'quartz'
+  api 'org.jboss.weld:weld-junit5', {
+    // Dropwizard is using org.glassfish:jakarta.el:4.0.2
+    exclude group: 'jakarta.el', module: 'jakarta.el-api'
+    exclude group: 'org.junit', module: 'junit-bom'
+    // javax imports
+    exclude group: 'com.google.code.findbugs', module: 'jsr305'
   }
-  testImplementation 'org.quartz-scheduler:quartz:2.3.2'
-  testImplementation 'jakarta.servlet:jakarta.servlet-api'
 }
