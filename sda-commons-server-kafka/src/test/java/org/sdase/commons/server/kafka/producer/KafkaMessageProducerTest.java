@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
 
 @ExtendWith(MockitoExtension.class)
 class KafkaMessageProducerTest {
@@ -20,8 +19,7 @@ class KafkaMessageProducerTest {
   void shouldDelegateFlushCallToProducer() {
     // given
     KafkaMessageProducer<String, String> kafkaMessageProducer =
-        new KafkaMessageProducer<>(
-            "topicName", mockProducer, mock(ProducerTopicMessageCounter.class), "producerName");
+        new KafkaMessageProducer<>("topicName", mockProducer);
     // when
     kafkaMessageProducer.flush();
     // then
@@ -38,8 +36,7 @@ class KafkaMessageProducerTest {
   void shouldInvokeCallback() {
     // given
     KafkaMessageProducer<String, String> kafkaMessageProducer =
-        new KafkaMessageProducer<>(
-            "topicName", mockProducer, mock(ProducerTopicMessageCounter.class), "producerName");
+        new KafkaMessageProducer<>("topicName", mockProducer);
 
     Callback callback = (metadata, exception) -> {};
 

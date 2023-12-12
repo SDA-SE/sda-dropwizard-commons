@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.dropwizard.metadata.DetachedMetadataContext;
 import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
-import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
 
 class MessageListenerStrategyMetadataContextTest {
 
@@ -53,7 +52,7 @@ class MessageListenerStrategyMetadataContextTest {
 
   @Test
   void shouldHandleContexts() {
-    messageListenerStrategy.init(mock(ConsumerTopicMessageHistogram.class), Set.of("tenant-id"));
+    messageListenerStrategy.init(Set.of("tenant-id"));
     var recordsMap = new LinkedHashMap<TopicPartition, List<ConsumerRecord<String, String>>>();
     recordsMap.put(
         new TopicPartition(TOPIC, 1),
@@ -79,7 +78,7 @@ class MessageListenerStrategyMetadataContextTest {
 
   @Test
   void shouldNotHandleContextsWhenNotConfigured() {
-    messageListenerStrategy.init(mock(ConsumerTopicMessageHistogram.class), null);
+    messageListenerStrategy.init(null);
     var givenRecords =
         new ConsumerRecords<>(
             Map.of(
@@ -95,7 +94,7 @@ class MessageListenerStrategyMetadataContextTest {
 
   @Test
   void shouldNormalizeValues() {
-    messageListenerStrategy.init(mock(ConsumerTopicMessageHistogram.class), Set.of("tenant-id"));
+    messageListenerStrategy.init(Set.of("tenant-id"));
     var givenRecords =
         new ConsumerRecords<>(
             Map.of(
@@ -120,7 +119,7 @@ class MessageListenerStrategyMetadataContextTest {
 
   @Test
   void shouldNotAddUnknownFields() {
-    messageListenerStrategy.init(mock(ConsumerTopicMessageHistogram.class), Set.of("tenant-id"));
+    messageListenerStrategy.init(Set.of("tenant-id"));
     var givenRecords =
         new ConsumerRecords<>(
             Map.of(
@@ -139,8 +138,7 @@ class MessageListenerStrategyMetadataContextTest {
 
   @Test
   void shouldAddMultipleFields() {
-    messageListenerStrategy.init(
-        mock(ConsumerTopicMessageHistogram.class), Set.of("tenant-id", "customer-id"));
+    messageListenerStrategy.init(Set.of("tenant-id", "customer-id"));
     var givenRecords =
         new ConsumerRecords<>(
             Map.of(

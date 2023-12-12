@@ -39,9 +39,6 @@ import org.sdase.commons.server.kafka.health.KafkaHealthCheck;
 import org.sdase.commons.server.kafka.producer.KafkaMessageProducer;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.producer.MetadataContextAwareKafkaProducer;
-import org.sdase.commons.server.kafka.prometheus.ConsumerTopicMessageHistogram;
-import org.sdase.commons.server.kafka.prometheus.KafkaConsumerMetrics;
-import org.sdase.commons.server.kafka.prometheus.ProducerTopicMessageCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +53,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   private final Function<C, KafkaConfiguration> configurationProvider;
   private KafkaConfiguration kafkaConfiguration;
   private final boolean healthCheckDisabled;
-
-  private ProducerTopicMessageCounter topicProducerCounterSpec;
-  private ConsumerTopicMessageHistogram topicConsumerHistogram;
 
   private final List<MessageListener<?, ?>> messageListeners = new ArrayList<>();
   private final List<ThreadedMessageListener<?, ?>> threadedMessageListeners = new ArrayList<>();
@@ -98,9 +92,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
         environment.healthChecks().register(HEALTHCHECK_NAME, kafkaHealthCheck);
       }
     }
-    topicProducerCounterSpec = new ProducerTopicMessageCounter();
-    topicConsumerHistogram = new ConsumerTopicMessageHistogram();
-    new KafkaConsumerMetrics(messageListeners);
 
     micrometerProducerListener = new MicrometerProducerListener(Metrics.globalRegistry);
     micrometerConsumerListener = new MicrometerConsumerListener(Metrics.globalRegistry);
@@ -164,7 +155,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
     List<MessageListener<K, V>> listener = new ArrayList<>(listenerConfig.getInstances());
     for (int i = 0; i < listenerConfig.getInstances(); i++) {
-      registration.getStrategy().init(topicConsumerHistogram, MetadataContext.metadataFields());
+      registration.getStrategy().init(MetadataContext.metadataFields());
       MessageListener<K, V> instance =
           new MessageListener<>(
               registration.getTopicsNames(),
@@ -219,8 +210,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     String clientId = entry != null ? entry.getKey().tags().get("client-id") : "";
 
     KafkaMessageProducer<K, V> messageProducer =
-        new KafkaMessageProducer<>(
-            registration.getTopic().getName(), producer, topicProducerCounterSpec, clientId);
+        new KafkaMessageProducer<>(registration.getTopic().getName(), producer);
 
     if (micrometerProducerListener == null) {
       LOGGER.warn("MicrometerProducerListener is not initialized! Metrics will not be recorded.");
@@ -488,7 +478,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             micrometerProducerListener.producerRemoved(k);
           }
         });
-    topicProducerCounterSpec.unregister();
   }
 
   //
@@ -507,8 +496,6 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
             Thread.currentThread().interrupt();
           }
         });
-
-    topicConsumerHistogram.unregister();
   }
 
   private void shutdownKafkaHealthCheck() {

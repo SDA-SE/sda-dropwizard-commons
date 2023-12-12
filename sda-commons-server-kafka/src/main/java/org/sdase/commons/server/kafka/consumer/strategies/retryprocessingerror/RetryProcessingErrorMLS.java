@@ -1,6 +1,7 @@
 package org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror;
 
-import io.prometheus.client.SimpleTimer;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -54,21 +55,17 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
 
       try (var ignored = messageHandlerContextFor(consumerRecord)) {
         try {
-          SimpleTimer timer = new SimpleTimer();
+          Instant timerStart = Instant.now();
           handler.handle(consumerRecord);
           // mark last successful processed record for commit
           lastCommitOffset = new OffsetAndMetadata(consumerRecord.offset() + 1);
           addOffsetToCommitOnClose(consumerRecord);
 
-          // Prometheus
-          double elapsedSeconds = timer.elapsedSeconds();
-          consumerProcessedMsgHistogram.observe(
-              elapsedSeconds, consumerName, consumerRecord.topic());
-
+          Instant timerEnd = Instant.now();
           if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
                 "calculated duration {} for message consumed by {} from {}",
-                elapsedSeconds,
+                Duration.between(timerStart, timerEnd).toSeconds(),
                 consumerName,
                 consumerRecord.topic());
           }
