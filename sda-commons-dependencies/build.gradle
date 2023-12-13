@@ -63,7 +63,7 @@ dependencies {
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.606")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
-  api enforcedPlatform("io.netty:netty-bom:4.1.101.Final"), {
+  api enforcedPlatform("io.netty:netty-bom:4.1.103.Final"), {
     because "various CVEs in earlier versions"
   }
 
