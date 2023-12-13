@@ -226,7 +226,7 @@ of the underlying test library.
 
 The endpoint `/healthcheck/prometheus` was removed. Health checks metrics are available using endpoint `/metrics/prometheus`.
 
-SDA specific Prometheus metrics were removed.
+SDA specific metric `http_request_duration_seconds` was removed.
 
 ## Automation
 
