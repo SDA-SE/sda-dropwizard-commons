@@ -53,8 +53,6 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
 
   // sonar: this path is used as a convention in our world!
   private static final String METRICS_SERVLET_URL = "/metrics/prometheus"; // NOSONAR
-  // sonar: this path is used as a convention in our world!
-  private static final String HEALTH_SERVLET_URL = "/healthcheck/prometheus"; // NOSONAR
 
   private static final Logger LOG = LoggerFactory.getLogger(PrometheusBundle.class);
   public static final String APACHE_HTTP_CLIENT_CONNECTIONS = "apache_http_client_connections";
