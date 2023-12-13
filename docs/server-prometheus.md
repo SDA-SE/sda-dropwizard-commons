@@ -278,8 +278,6 @@ More details about resilience4j circuit breaker metrics can be found [here](http
 ## Health Checks
 
 All health checks are provided as a Gauge metric `healthcheck_status` and are included in the metrics endpoint.
-They are also available at the applications admin port at `/healthcheck/prometheus`.
-This endpoint is only available for backward compatibility and will be removed in the future.
 The name of the Health Check is used as label `name`.
 The metric value is `1.0` for healthy and `0.0` for unhealthy. Example:
 
