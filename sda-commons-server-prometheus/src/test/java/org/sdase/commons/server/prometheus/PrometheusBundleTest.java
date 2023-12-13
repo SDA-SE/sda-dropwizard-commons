@@ -47,8 +47,7 @@ class PrometheusBundleTest {
   void shouldTrackFiveRequests() {
     String metrics = readMetrics();
     String count =
-        extractSpecificMetric(
-            metrics, "http_request_duration_seconds_count", "resource_path=\"ping\"");
+        extractSpecificMetric(metrics, "http_server_requests_seconds_count", "uri=\"/ping\"");
     double oldCountValue = extractValue(count);
 
     // when
@@ -58,39 +57,13 @@ class PrometheusBundleTest {
 
     // then
     metrics = readMetrics();
-    count =
-        extractSpecificMetric(
-            metrics, "http_request_duration_seconds_count", "resource_path=\"ping\"");
+    count = extractSpecificMetric(metrics, "http_server_requests_seconds_count", "uri=\"/ping\"");
 
     double countValue = extractValue(count);
     assertThat(countValue).isEqualTo(oldCountValue + 5);
 
     // five requests summary
-    assertThat(metrics).contains("http_request_duration_seconds_sum");
-  }
-
-  @Test
-  void shouldDocumentDeprecation() {
-    // when
-    prepareResourceRequest().get(String.class);
-
-    // then
-    String metrics = readMetrics();
-    Stream<String> deprecatedMetrics =
-        Stream.of(
-            extractSpecificMetric(
-                metrics,
-                "http_request_duration_seconds_count",
-                "deprecated=\"http_server_requests\""),
-            extractSpecificMetric(
-                metrics,
-                "http_request_duration_seconds_sum",
-                "deprecated=\"http_server_requests\""),
-            extractSpecificMetric(
-                metrics,
-                "http_request_duration_seconds_bucket",
-                "deprecated=\"http_server_requests\""));
-    assertThat(deprecatedMetrics).doesNotContainNull();
+    assertThat(metrics).contains("http_server_requests_seconds_count");
   }
 
   @Test
@@ -136,39 +109,19 @@ class PrometheusBundleTest {
   }
 
   @Test
-  void shouldReadConsumerNameFromRequestAttribute() {
-    prepareResourceRequest().header("Consumer-Name", "test-consumer-from-name").get(String.class);
-
-    String metrics = readMetrics();
-
-    assertThat(metrics).contains("consumer_name=\"test-consumer-from-name\"");
-  }
-
-  @Test
-  void shouldWriteHelpAndTypeToMetrics() {
+  void shouldContainAllTags() {
     prepareResourceRequest().get(String.class);
 
     String metrics = readMetrics();
-
-    assertThat(metrics)
-        .contains("# HELP http_request_duration_seconds")
-        .contains("# TYPE http_request_duration_seconds histogram");
-  }
-
-  @Test
-  void shouldContainAllMetrics() {
-    prepareResourceRequest().get(String.class);
-
-    String metrics = readMetrics();
-
+    // check all tags available
+    // http_server_requests_seconds_count{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/ping",} 1.0
     assertThat(metrics)
         .contains(
-            "consumer_name=\"\"",
+            "exception=\"None\"",
             "method=\"GET\"",
-            "implementing_method=\"pingResource\"",
-            "resource_path=\"ping\"",
-            "status_code=\"200\"",
-            "io_dropwizard_");
+            "outcome=\"SUCCESS\"",
+            "status=\"200\"",
+            "uri=\"/ping\"");
   }
 
   @Test
@@ -182,7 +135,9 @@ class PrometheusBundleTest {
 
     String metrics = readMetrics();
 
-    assertThat(metrics).contains("resource_path=\"path/{param}\"");
+    //
+    // http_server_requests_seconds_count{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 1.0
+    assertThat(metrics).contains("uri=\"/path/{param}\"");
   }
 
   @Test
