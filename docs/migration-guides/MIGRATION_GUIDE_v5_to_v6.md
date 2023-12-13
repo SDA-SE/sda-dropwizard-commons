@@ -90,8 +90,11 @@ The following modules contain changes:
 4. [sda-commons-client-jersey-wiremock-testing](#4-wiremock-3.0)
 5. [sda-commons-server-circuitbreaker](#5-sda-commons-server-circuitbreaker)
 6. [sda-commons-shared-asyncapi](#6-sda-commons-shared-asyncapi)
-7. [sda-commons-server-kafka](#7-kafka)
+7. [sda-commons-server-kafka](#7-sda-commons-server-kafka)
 8. [sda-commons-server-weld-testing](#8-sda-commons-server-weld-testing)
+9. [sda-commons-server-s3](#9-sda-commons-server-s3)
+10. [sda-commons-server-s3-testing](#10-sda-commons-server-s3-testing)
+11. [sda-commons-server-prometheus](#11-sda-commons-server-prometheus)
 
 ### 1 sda-commons-server-testing
 
@@ -208,7 +211,6 @@ You can now also pass credentials
 via environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
 or via system properties `aws.accessKeyId` and `aws.secretAccessKey`.
 
-
 ### 10 sda-commons-server-s3-testing
 
 Our previous S3 mock library [s3mock](https://github.com/Robothy/local-s3) was also based on the old 
@@ -219,6 +221,12 @@ But it will now give you an instance of `software.amazon.awssdk.services.s3.S3Cl
 S3 client.
 Additionally, you need to annotate your S3 tests with `@LocalS3` due to an implementation detail
 of the underlying test library.
+
+### 11 sda-commons-server-prometheus
+
+The endpoint `/healthcheck/prometheus` was removed. Health checks metrics are available using endpoint `/metrics/prometheus`.
+
+SDA specific Prometheus metrics were removed.
 
 ## Automation
 
