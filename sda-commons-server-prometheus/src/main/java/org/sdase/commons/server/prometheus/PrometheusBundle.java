@@ -24,9 +24,6 @@ import io.prometheus.client.dropwizard.samplebuilder.MapperConfig;
 import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
 import io.prometheus.client.servlet.jakarta.exporter.MetricsServlet;
 import jakarta.servlet.ServletRegistration;
-import jakarta.ws.rs.container.DynamicFeature;
-import jakarta.ws.rs.container.ResourceInfo;
-import jakarta.ws.rs.core.FeatureContext;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.sdase.commons.server.prometheus.health.DropwizardHealthCheckMeters;
-import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
-import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * }
  * }</pre>
  */
-public class PrometheusBundle implements ConfiguredBundle<Configuration>, DynamicFeature {
+public class PrometheusBundle implements ConfiguredBundle<Configuration> {
 
   // sonar: this path is used as a convention in our world!
   private static final String METRICS_SERVLET_URL = "/metrics/prometheus"; // NOSONAR
@@ -69,8 +64,6 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
 
   private static final String DEPRECATED = "deprecated";
 
-  private RequestDurationHistogramSpecification requestDurationHistogramSpecification;
-
   // use PrometheusBundle.builder()... to get an instance
   private PrometheusBundle() {}
 
@@ -81,8 +74,6 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     registerHealthCheckMetrics(environment);
     environment.jersey().register(this);
 
-    // init Histogram at startup
-    requestDurationHistogramSpecification = new RequestDurationHistogramSpecification();
     initializeDropwizardMetricsBridge(environment);
 
     createPrometheusRegistry(environment);
@@ -146,12 +137,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
 
     environment
         .lifecycle()
-        .manage(
-            onShutdown(
-                () -> {
-                  requestDurationHistogramSpecification.unregister();
-                  CollectorRegistry.defaultRegistry.unregister(dropwizardExports);
-                }));
+        .manage(onShutdown(() -> CollectorRegistry.defaultRegistry.unregister(dropwizardExports)));
   }
 
   private List<MapperConfig> createMetricsMapperConfigs() {
@@ -334,13 +320,6 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     }
     config.setLabels(labels);
     return config;
-  }
-
-  @Override
-  public void configure(ResourceInfo resourceInfo, FeatureContext context) {
-    context.register(
-        new RequestDurationFilter(resourceInfo, requestDurationHistogramSpecification));
-    LOG.debug("Registered RequestDurationFilter for method {}.", resourceInfo.getResourceMethod());
   }
 
   private void registerMetricsServlet(AdminEnvironment environment) {
