@@ -60,6 +60,10 @@ dependencies {
       because "CVE-2023-24998 in 1.4"
     }
 
+    api "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", {
+      because "conflicts between multiple versions in test dependencies"
+    }
+
     // overall testing dependencies
     api "org.awaitility:awaitility:4.2.0"
 
