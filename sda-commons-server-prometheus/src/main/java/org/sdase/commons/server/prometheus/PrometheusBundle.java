@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.sdase.commons.server.prometheus.health.DropwizardHealthCheckMeters;
-import org.sdase.commons.server.prometheus.health.HealthCheckAsPrometheusMetricServlet;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationFilter;
 import org.sdase.commons.server.prometheus.metric.request.duration.RequestDurationHistogramSpecification;
 import org.slf4j.Logger;
@@ -79,7 +78,6 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
   public void run(Configuration configuration, Environment environment) {
 
     registerMetricsServlet(environment.admin());
-    registerHealthCheckServlet(environment.admin());
     registerHealthCheckMetrics(environment);
     environment.jersey().register(this);
 
@@ -350,14 +348,6 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration>, Dynami
     ServletRegistration.Dynamic dynamic = environment.addServlet("metrics", MetricsServlet.class);
     dynamic.addMapping(METRICS_SERVLET_URL);
     LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);
-  }
-
-  @Deprecated(forRemoval = true)
-  private void registerHealthCheckServlet(AdminEnvironment environment) {
-    environment
-        .addServlet(
-            "Health Check as Prometheus Metrics", new HealthCheckAsPrometheusMetricServlet())
-        .addMapping(HEALTH_SERVLET_URL);
   }
 
   private void registerHealthCheckMetrics(Environment environment) {
