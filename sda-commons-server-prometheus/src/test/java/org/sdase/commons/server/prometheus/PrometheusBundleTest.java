@@ -211,16 +211,6 @@ class PrometheusBundleTest {
   }
 
   @Test
-  @Deprecated // will not be supported in the next major of DW commons
-  void shouldProvideHealthChecksAsPrometheusMetricsOnCustomEndpoint() {
-    String healthChecks = readHealthChecks();
-
-    assertThat(healthChecks)
-        .contains("healthcheck_status{name=\"anUnhealthyCheck\",} 0.0")
-        .contains("healthcheck_status{name=\"aHealthyCheck\",} 1.0");
-  }
-
-  @Test
   void shouldNotHttpCacheHealthCheck() {
     try (Response response =
         DW.client()
@@ -333,19 +323,6 @@ class PrometheusBundleTest {
       var metrics = response.readEntity(String.class);
       LOGGER.info("Prometheus metrics: {}", metrics);
       return metrics;
-    }
-  }
-
-  private String readHealthChecks() {
-    try (Response response =
-        DW.client()
-            .target(
-                String.format("http://localhost:%d", DW.getAdminPort()) + "/healthcheck/prometheus")
-            .request()
-            .get()) {
-      var healthChecks = response.readEntity(String.class);
-      LOGGER.info("Prometheus health checks: {}", healthChecks);
-      return healthChecks;
     }
   }
 }

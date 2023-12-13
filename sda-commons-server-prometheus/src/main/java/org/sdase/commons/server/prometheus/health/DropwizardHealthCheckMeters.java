@@ -36,6 +36,7 @@ public class DropwizardHealthCheckMeters
     Gauge gauge =
         Gauge.builder(HEALTH_CHECK_STATUS_METRIC, healthCheck, this::createValue)
             .tag("name", name)
+            .description("Status of a Health Check (1: healthy, 0: unhealthy)")
             .register(Metrics.globalRegistry);
     healthCheckMeters.put(name, gauge);
     gauge.measure();
