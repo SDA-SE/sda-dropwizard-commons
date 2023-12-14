@@ -33,14 +33,14 @@ components:
       title: Plain CloudEvent
       description: The basic CloudEvent
       payload:
-        $ref: '/PlainCloudEvent#'
+        $ref: 'class://org.sdase.commons.server.cloudevents.CloudEventV1'
     PartnerCreatedEvent:
       title: Partner Created
       description: An event that represents when a new partner was created
       payload:
-        $ref: '/PartnerCreatedEvent#'
+        $ref: 'class://org.sdase.commons.server.cloudevents.app.produce.PartnerCreatedEvent'
     ContractCreatedEvent:
       title: Contract Created
       description: An event that represents when a new contract was created
       payload:
-        $ref: '/ContractCreatedEvent#'
+        $ref: 'class://org.sdase.commons.server.cloudevents.app.consume.ContractCreatedEvent'
