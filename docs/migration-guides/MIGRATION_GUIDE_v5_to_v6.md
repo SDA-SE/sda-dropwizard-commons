@@ -185,3 +185,45 @@ The custom JUnit extensions have been removed. Please make use of the
 official [JUnit5 extension](https://github.com/weld/weld-testing/tree/master/junit5), which this
 module is now providing. An example how
 to use it can be found in [sda-commons-server-weld-example](../../sda-commons-server-weld-example).
+
+## Automation
+
+The following bash script can help you to quickly migrate your project to sda-dropwizard-commons 6.
+Copy the content to a file in the root of your project and execute it.
+
+```bash
+touch migrate.sh
+chmod u+x migrate.sh
+````
+
+```bash
+#!/bin/bash
+
+echo "Migrating Java files"
+for file in `find . -type f -name "*.java"`
+do
+  echo "Processing $file"
+  sed -i '' -e 's/javax.validation/jakarta.validation/g' $file
+  sed -i '' -e 's/javax.ws.rs/jakarta.ws.rs/g' $file
+  sed -i '' -e 's/io.dropwizard.Application/io.dropwizard.core.Application/g' $file
+  sed -i '' -e 's/io.dropwizard.Configuration/io.dropwizard.core.Configuration/g' $file
+  sed -i '' -e 's/io.dropwizard.setup.Bootstrap/io.dropwizard.core.setup.Bootstrap/g' $file
+  sed -i '' -e 's/io.dropwizard.setup.Environment/io.dropwizard.core.setup.Environment/g' $file
+  sed -i '' -e 's/com.amazonaws.services.s3.AmazonS3/software.amazon.awssdk.services.s3.S3Client/g' $file
+  sed -i '' -e 's/AmazonS3/S3Client/g' $file
+
+  # test files only
+  if [[ $file =~ .*src\/test.* ]]; then
+      sed -i '' -e 's/org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension/com.github.tomakehurst.wiremock.junit5.WireMockExtension/g' $file
+      sed -i '' -e 's/new WireMockClassExtension(wireMockConfig().dynamicPort());/new WireMockExtension().builder().build()/g' $file
+      sed -i '' -e 's/WireMockClassExtension;/WireMockExtension/g' $file
+  fi
+done
+
+echo "Migrating Gradle files"
+for file in `find . -type f -name "build.gradle"`
+do
+  echo "Processing $file"
+  sed -i '' -e 's/org.sdase.commons:sda-commons-client-jersey-wiremock-testing/org.sdase.commons:sda-commons-shared-wiremock-testing/g' $file
+done
+```
