@@ -200,6 +200,13 @@ Most noticeably, the base package of the classes moved from `com.amazonaws` to `
 The `S3Bundle` will not return an instance of `software.amazon.awssdk.services.s3.S3Client`
 instead of `com.amazonaws.services.s3.AmazonS3`
 
+Moreover, the bundle now supports using the AWS [default credentials provider](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html) 
+chain to retrieve credentials if you don't provide them in the `S3Configuration`.
+You can now also pass credentials
+via environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+or via system properties `aws.accessKeyId` and `aws.secretAccessKey`.
+
+
 ### 10 sda-commons-server-s3-testing
 
 Our previous S3 mock library [s3mock](https://github.com/Robothy/local-s3) was also based on the old 
