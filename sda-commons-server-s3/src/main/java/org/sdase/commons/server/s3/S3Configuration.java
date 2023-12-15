@@ -17,11 +17,20 @@ public class S3Configuration {
   /** Region where the S3 storage is located, can be left empty. Default is 'eu-central-1'. */
   private String region = "eu-central-1";
 
-  /** The access key to identify the accessor. */
-  @NotEmpty private String accessKey;
+  /**
+   * The access key to identify the accessor. If accessKey and secretKey are empty we will use the
+   * <a
+   * href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html">default
+   * credentials provider chain</a>.
+   */
+  private String accessKey;
 
-  /** The secret key of the accessor. */
-  @NotEmpty private String secretKey;
+  /**
+   * The secret key of the accessor. If accessKey and secretKey are empty we will use the <a
+   * href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html">default
+   * credentials provider chain</a>.
+   */
+  private String secretKey;
 
   /**
    * The signer type to use, overrides the default behavior, default is {@code AWSS3V4SignerType}.
