@@ -205,6 +205,7 @@ do
   echo "Processing $file"
   sed -i '' -e 's/javax.validation/jakarta.validation/g' $file
   sed -i '' -e 's/javax.ws.rs/jakarta.ws.rs/g' $file
+  sed -i '' -e 's/javax.annotation/jakarta.annotation/g' $file
   sed -i '' -e 's/io.dropwizard.Application/io.dropwizard.core.Application/g' $file
   sed -i '' -e 's/io.dropwizard.Configuration/io.dropwizard.core.Configuration/g' $file
   sed -i '' -e 's/io.dropwizard.setup.Bootstrap/io.dropwizard.core.setup.Bootstrap/g' $file
