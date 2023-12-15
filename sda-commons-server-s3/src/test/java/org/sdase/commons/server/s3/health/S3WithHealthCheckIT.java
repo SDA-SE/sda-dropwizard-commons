@@ -68,10 +68,3 @@ class S3WithHealthCheckIT {
     }
   }
 }
-
-// {
-// "OpenPolicyAgent":{"healthy":false,"message":"org.apache.http.conn.HttpHostConnectException:
-// Connect to localhost:8181 [localhost/127.0.0.1] failed: Connection
-// refused","duration":11,"timestamp":"2023-12-13T14:41:12.950Z"},
-// "deadlocks":{"healthy":true,"duration":0,"timestamp":"2023-12-13T14:41:12.938Z"}
-// }
