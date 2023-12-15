@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.sdase.commons.server.s3.test.Config;
 import org.sdase.commons.server.s3.testing.S3ClassExtension;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -80,6 +81,17 @@ class S3BundleTest {
           .isNotEmpty()
           .contains("bucket");
     }
+  }
+
+  @SetSystemProperty(key = "aws.accessKeyId", value = "foo")
+  @SetSystemProperty(key = "aws.secretAccessKey", value = "bar")
+  @Test
+  void shouldSupportCredentialsFromSystemProperties() {
+    var s3Bundle = ((TestApp) DW.getApplication()).getS3Bundle();
+    var credentialsProvider = s3Bundle.createCredentialsProvider(null, null);
+    var awsCredentials = credentialsProvider.resolveCredentials();
+    assertThat(awsCredentials.accessKeyId()).isEqualTo("foo");
+    assertThat(awsCredentials.secretAccessKey()).isEqualTo("bar");
   }
 
   public static class TestApp extends Application<Config> {
