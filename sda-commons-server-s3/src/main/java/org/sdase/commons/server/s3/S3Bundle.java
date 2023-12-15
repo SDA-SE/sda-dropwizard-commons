@@ -25,9 +25,9 @@ import java.util.stream.StreamSupport;
 import org.sdase.commons.server.s3.health.ExternalS3HealthCheck;
 import org.sdase.commons.server.s3.health.S3HealthCheck;
 import org.sdase.commons.server.s3.health.S3HealthCheckType;
-import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.signer.Aws4Signer;
 import software.amazon.awssdk.auth.signer.AwsS3V4Signer;
@@ -175,10 +175,10 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
    *
    * @return credentials provider
    */
-  private AwsCredentialsProvider createCredentialsProvider(String acccessKey, String secretKey) {
-    return isBlank(acccessKey) && isBlank(secretKey)
-        ? AnonymousCredentialsProvider.create()
-        : StaticCredentialsProvider.create(AwsBasicCredentials.create(acccessKey, secretKey));
+  AwsCredentialsProvider createCredentialsProvider(String accessKey, String secretKey) {
+    return isBlank(accessKey) && isBlank(secretKey)
+        ? DefaultCredentialsProvider.create()
+        : StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey));
   }
 
   private boolean isHealthCheckEnabled() {
