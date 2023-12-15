@@ -23,6 +23,14 @@ Afterward, `getClient()` is used to access an instance of `S3Client` that is use
 object storage. 
 See [`S3BundleTest`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/test/java/org/sdase/commons/server/s3/S3BundleTest.java) for a detailed usage example.   
 
+### Credentials
+
+Usually you can specify AWS credentials in the `S3Configuration`.
+But the bundle also supports AWS [default credentials provider](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html) chain to retrieve credentials.
+Most prominently you can pass credentials 
+via environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` 
+or via system properties `aws.accessKeyId` and `aws.secretAccessKey`.
+
 ### Tracing
 
 The bundle comes with [OpenTelemetry](https://opentelemetry.io/) instrumentation.
