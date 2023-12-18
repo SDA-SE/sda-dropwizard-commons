@@ -81,7 +81,9 @@ class FilterPriorityTest {
             .request(APPLICATION_JSON)
             .get(String.class);
 
-    assertThat(metrics).contains("consumer_name=\"\"");
+    assertThat(metrics)
+        .contains(
+            "http_server_requests_seconds_count{exception=\"ForbiddenException\",method=\"GET\",outcome=\"CLIENT_ERROR\",status=\"403\",uri=\"/api/ping\",}");
   }
 
   @Test
@@ -106,6 +108,8 @@ class FilterPriorityTest {
             .request(APPLICATION_JSON)
             .get(String.class);
 
-    assertThat(metrics).contains("consumer_name=\"MyConsumer\"");
+    assertThat(metrics)
+        .contains(
+            "http_server_requests_seconds_count{exception=\"ForbiddenException\",method=\"GET\",outcome=\"CLIENT_ERROR\",status=\"403\",uri=\"/api/ping\",}");
   }
 }
