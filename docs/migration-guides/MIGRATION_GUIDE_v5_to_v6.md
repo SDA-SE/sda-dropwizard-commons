@@ -173,8 +173,6 @@ important can't be expressed.
 
 ### 7 sda-commons-server-kafka
 
-### 7 Kafka
-
 The public init method
 
 `MessageListenerStrategy#init(ConsumerTopicMessageHistogram consumerTopicMessageHistogram, Set<String> metadataFields)`
@@ -226,7 +224,7 @@ of the underlying test library.
 
 The endpoint `/healthcheck/prometheus` was removed. Health checks metrics are available using endpoint `/metrics/prometheus`.
 
-SDA specific metric `http_request_duration_seconds` was removed.
+SDA specific metric `http_request_duration_seconds` was removed, please use `http_server_requests_seconds` instead.
 
 ## Automation
 
