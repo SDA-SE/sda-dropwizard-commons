@@ -197,11 +197,11 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   configurations.matching { configuration ->
     var match = !ignoredConfigurationPatternsForDependencyLocking.any { configuration.name.matches(it) }
     if (!match) {
-      println "Ignoring dependency locking for '${it.name}:${configuration.name}'"
+      // println "Ignoring dependency locking for '${it.name}:${configuration.name}'"
     }
     return match
   }.each {configuration ->
-    println "Activating dependency locking for '${it.name}:${configuration.name}'"
+    // println "Activating dependency locking for '${it.name}:${configuration.name}'"
     configuration.resolutionStrategy.activateDependencyLocking()
   }
 
