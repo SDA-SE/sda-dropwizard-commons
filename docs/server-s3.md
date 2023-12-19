@@ -31,6 +31,8 @@ Most prominently you can pass credentials
 via environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` 
 or via system properties `aws.accessKeyId` and `aws.secretAccessKey`.
 
+If you want to use anonymous credentials, you can set `useAnonymousCredentials` to `true` in the `S3Configuration`.
+
 ### Tracing
 
 The bundle comes with [OpenTelemetry](https://opentelemetry.io/) instrumentation.
