@@ -33,6 +33,13 @@ public class S3Configuration {
   private String secretKey;
 
   /**
+   * If true, the default credentials provider chain will be replaced with an anonymous credentials
+   * provider. This is useful for testing against a local S3 server that does not require
+   * authentication. Default is false.
+   */
+  private boolean useAnonymousLogin;
+
+  /**
    * The signer type to use, overrides the default behavior, default is {@code AWSS3V4SignerType}.
    * This type is used to create a {@code software.amazon.awssdk.core.signer.Signer} instance. The
    * value should correspond to the simple class name of the signer.
@@ -88,6 +95,15 @@ public class S3Configuration {
 
   public S3Configuration setSecretKey(String secretKey) {
     this.secretKey = secretKey;
+    return this;
+  }
+
+  public boolean isUseAnonymousLogin() {
+    return useAnonymousLogin;
+  }
+
+  public S3Configuration setUseAnonymousLogin(boolean useAnonymousLogin) {
+    this.useAnonymousLogin = useAnonymousLogin;
     return this;
   }
 

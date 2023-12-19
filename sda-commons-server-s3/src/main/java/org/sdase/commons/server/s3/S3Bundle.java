@@ -25,6 +25,7 @@ import java.util.stream.StreamSupport;
 import org.sdase.commons.server.s3.health.ExternalS3HealthCheck;
 import org.sdase.commons.server.s3.health.S3HealthCheck;
 import org.sdase.commons.server.s3.health.S3HealthCheckType;
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -116,9 +117,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
                 .putAdvancedOption(SdkAdvancedClientOption.SIGNER, createSigner(s3Configuration))
                 .build())
         .httpClient(UrlConnectionHttpClient.builder().build())
-        .credentialsProvider(
-            createCredentialsProvider(
-                s3Configuration.getAccessKey(), s3Configuration.getSecretKey()))
+        .credentialsProvider(createCredentialsProvider(s3Configuration))
         .build();
   }
 
@@ -126,9 +125,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     return S3Presigner.builder()
         .s3Client(getClient())
         .region(getRegion())
-        .credentialsProvider(
-            createCredentialsProvider(
-                s3Configuration.getAccessKey(), s3Configuration.getSecretKey()))
+        .credentialsProvider(createCredentialsProvider(s3Configuration))
         .build();
   }
 
@@ -175,10 +172,16 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
    *
    * @return credentials provider
    */
-  AwsCredentialsProvider createCredentialsProvider(String accessKey, String secretKey) {
-    return isBlank(accessKey) && isBlank(secretKey)
-        ? DefaultCredentialsProvider.create()
-        : StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey));
+  AwsCredentialsProvider createCredentialsProvider(S3Configuration config) {
+    if (config.isUseAnonymousLogin()) {
+      return AnonymousCredentialsProvider.create();
+    }
+    var accessKey = config.getAccessKey();
+    var secretKey = config.getSecretKey();
+    if (!isBlank(accessKey) && !isBlank(secretKey)) {
+      return StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey));
+    }
+    return DefaultCredentialsProvider.create();
   }
 
   private boolean isHealthCheckEnabled() {
