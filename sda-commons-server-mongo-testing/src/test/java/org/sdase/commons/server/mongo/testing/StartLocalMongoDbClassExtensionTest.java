@@ -38,9 +38,10 @@ class StartLocalMongoDbClassExtensionTest {
 
   @Test
   void shouldStartMongoDbWithSpecifiedSettings() {
+    var hosts = MONGO_DB_EXTENSION.getMongoConnectionString().getHosts();
     try (MongoClient mongoClient =
         new MongoClient(
-            ServerAddressHelper.createServerAddress(MONGO_DB_EXTENSION.getHosts()),
+            ServerAddressHelper.createServerAddress(hosts.get(0)),
             MongoCredential.createCredential(
                 DATABASE_USERNAME, DATABASE_NAME, DATABASE_PASSWORD.toCharArray()),
             MongoClientOptions.builder().build())) {
@@ -53,9 +54,10 @@ class StartLocalMongoDbClassExtensionTest {
 
   @Test
   void shouldRejectAccessForBadCredentials() {
+    var hosts = MONGO_DB_EXTENSION.getMongoConnectionString().getHosts();
     try (MongoClient mongoClient =
         new MongoClient(
-            ServerAddressHelper.createServerAddress(MONGO_DB_EXTENSION.getHosts()),
+            ServerAddressHelper.createServerAddress(hosts.get(0)),
             MongoCredential.createCredential(
                 DATABASE_USERNAME, DATABASE_NAME, (DATABASE_PASSWORD + "_bad").toCharArray()),
             MongoClientOptions.builder().build())) {
@@ -68,9 +70,10 @@ class StartLocalMongoDbClassExtensionTest {
   @Test
   // Flapdoodle can not require auth and create a user
   void shouldAllowAccessWithoutCredentials() {
+    var hosts = MONGO_DB_EXTENSION.getMongoConnectionString().getHosts();
     try (MongoClient mongoClient =
         new MongoClient(
-            ServerAddressHelper.createServerAddress(MONGO_DB_EXTENSION.getHosts()),
+            ServerAddressHelper.createServerAddress(hosts.get(0)),
             MongoClientOptions.builder().build())) {
       long documentCount = mongoClient.getDatabase("my_db").getCollection("test").countDocuments();
       assertThat(documentCount).isZero();
@@ -103,9 +106,10 @@ class StartLocalMongoDbClassExtensionTest {
 
   @Test
   void shouldClearCollections() {
+    var hosts = MONGO_DB_EXTENSION.getMongoConnectionString().getHosts();
     try (MongoClient mongoClient =
         new MongoClient(
-            ServerAddressHelper.createServerAddress(MONGO_DB_EXTENSION.getHosts()),
+            ServerAddressHelper.createServerAddress(hosts.get(0)),
             MongoCredential.createCredential(
                 DATABASE_USERNAME, DATABASE_NAME, DATABASE_PASSWORD.toCharArray()),
             MongoClientOptions.builder().build())) {
@@ -124,9 +128,10 @@ class StartLocalMongoDbClassExtensionTest {
 
   @Test
   void shouldClearDatabase() {
+    var hosts = MONGO_DB_EXTENSION.getMongoConnectionString().getHosts();
     try (MongoClient mongoClient =
         new MongoClient(
-            ServerAddressHelper.createServerAddress(MONGO_DB_EXTENSION.getHosts()),
+            ServerAddressHelper.createServerAddress(hosts.get(0)),
             MongoCredential.createCredential(
                 DATABASE_USERNAME, DATABASE_NAME, DATABASE_PASSWORD.toCharArray()),
             MongoClientOptions.builder().build())) {
@@ -185,9 +190,11 @@ class StartLocalMongoDbClassExtensionTest {
 
   @Test
   void shouldReturnConnectionString() {
+    var hosts = MONGO_DB_EXTENSION.getMongoConnectionString().getHosts();
+    var database = MONGO_DB_EXTENSION.getMongoConnectionString().getDatabase();
     assertThat(MONGO_DB_EXTENSION.getConnectionString())
         .isNotEmpty()
-        .contains(MONGO_DB_EXTENSION.getHosts())
-        .contains(MONGO_DB_EXTENSION.getDatabase());
+        .contains(hosts.get(0))
+        .contains(database);
   }
 }

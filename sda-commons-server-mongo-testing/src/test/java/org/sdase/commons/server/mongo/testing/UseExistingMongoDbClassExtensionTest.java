@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.mongo.testing.MongoDbClassExtension.OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME;
 
 import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
@@ -16,7 +15,7 @@ import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentL
 class UseExistingMongoDbClassExtensionTest {
 
   @RegisterExtension
-  static final MongoDb EXTERNAL_DB =
+  static final MongoDbClassExtension EXTERNAL_DB =
       MongoDbClassExtension.builder()
           .withDatabase("testDb")
           .withUsername("testuser")
@@ -45,11 +44,12 @@ class UseExistingMongoDbClassExtensionTest {
     assertThat(useExistingMongoDbClassExtension)
         .isExactlyInstanceOf(UseExistingMongoDbClassExtension.class);
 
-    MongoClient clientInTest = useExistingMongoDbClassExtension.createClient();
-    clientInTest
-        .getDatabase(useExistingMongoDbClassExtension.getDatabase())
-        .getCollection("test")
-        .insertOne(new Document("property", "example"));
+    try (MongoClient clientInTest = useExistingMongoDbClassExtension.createClient()) {
+      clientInTest
+          .getDatabase(useExistingMongoDbClassExtension.getMongoConnectionString().getDatabase())
+          .getCollection("test")
+          .insertOne(new Document("property", "example"));
+    }
   }
 
   @AfterEach
@@ -64,18 +64,22 @@ class UseExistingMongoDbClassExtensionTest {
 
   @Test
   void shouldWriteToExternalDb() {
-    MongoClient externalDbClient = EXTERNAL_DB.createClient();
-    FindIterable<Document> actualResult =
-        externalDbClient.getDatabase(EXTERNAL_DB.getDatabase()).getCollection("test").find();
-    assertThat(actualResult).hasSize(1);
-    assertThat(actualResult.first()).extracting("property").isEqualTo("example");
+    try (MongoClient externalDbClient = EXTERNAL_DB.createClient()) {
+      var actualResult =
+          externalDbClient
+              .getDatabase(EXTERNAL_DB.getMongoConnectionString().getDatabase())
+              .getCollection("test")
+              .find();
+      assertThat(actualResult).hasSize(1);
+      assertThat(actualResult.first()).extracting("property").isEqualTo("example");
+    }
   }
 
   @Test
   void shouldReturnConnectionString() {
     assertThat(useExistingMongoDbClassExtension.getConnectionString())
         .isNotEmpty()
-        .contains(EXTERNAL_DB.getHosts())
-        .contains(EXTERNAL_DB.getDatabase());
+        .contains(EXTERNAL_DB.getMongoConnectionString().getHosts())
+        .contains(EXTERNAL_DB.getMongoConnectionString().getDatabase());
   }
 }
