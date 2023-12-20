@@ -6,7 +6,9 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-certificates')
 
-  api 'org.springframework.data:spring-data-mongodb', {
+  // See compatibility matrix:
+  // https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#compatibility.matrix
+  api 'org.springframework.data:spring-data-mongodb:3.4.18', {
     // solve conflict, micrometer-observation is pulled in by micrometer-core anyway
     exclude group: 'io.micrometer', module: 'micrometer-observation'
   }
