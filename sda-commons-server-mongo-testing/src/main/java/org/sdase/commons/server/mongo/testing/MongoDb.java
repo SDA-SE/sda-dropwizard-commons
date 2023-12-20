@@ -3,6 +3,7 @@ package org.sdase.commons.server.mongo.testing;
 import static de.flapdoodle.embed.mongo.distribution.Version.Main.V4_4;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
+import com.mongodb.ConnectionString;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
@@ -17,8 +18,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * JUnit Test extension for running a MongoDB instance alongside the (integration) tests. Can be
- * configured with custom user credentials and database name. Use {@link #getHosts()} to retrieve
- * the hosts to connect to.
+ * configured with custom user credentials and database name. Use {@link #getConnectionString()} to
+ * retrieve the connection string.
  *
  * <p>Example usage:
  *
@@ -43,43 +44,14 @@ public interface MongoDb {
   String OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME = "TEST_MONGODB_CONNECTION_STRING";
 
   /**
-   * @return the hostname and port that can be used to connect to the database. The result may
-   *     contain a comma separated list of hosts as in the MongoDB Connection String
-   * @deprecated Please use 'getConnectionString() instead'.
-   */
-  @Deprecated(forRemoval = true)
-  String getHosts();
-
-  /**
-   * @return the username that must be used to connect to the database.
-   * @deprecated Please use 'getConnectionString()' instead.
-   */
-  @Deprecated(forRemoval = true)
-  String getUsername();
-
-  /**
-   * @return the password that must be used to connect to the database.
-   * @deprecated Please use 'getConnectionString()' instead.
-   */
-  @Deprecated(forRemoval = true)
-  String getPassword();
-
-  /**
-   * @return the initialized database
-   */
-  String getDatabase();
-
-  /**
-   * @return the MongoDB options String without leading question mark
-   * @deprecated Please use 'getConnectionString()' instead.
-   */
-  @Deprecated(forRemoval = true)
-  String getOptions();
-
-  /**
    * @return the MongoDB connection String
    */
   String getConnectionString();
+
+  /**
+   * @return the MongoDB connection String as object
+   */
+  ConnectionString getMongoConnectionString();
 
   /**
    * Creates a MongoClient that is connected to the database. The caller is responsible for closing
@@ -87,7 +59,9 @@ public interface MongoDb {
    *
    * @return A MongoClient
    */
-  MongoClient createClient();
+  default MongoClient createClient() {
+    return new MongoClient(getMongoConnectionString());
+  }
 
   /**
    * @return the version of the MongoDB instance which is associated with this MongoDbClassExtension
@@ -95,7 +69,7 @@ public interface MongoDb {
   default String getServerVersion() {
     try (MongoClient client = createClient()) {
       return client
-          .getDatabase(getDatabase())
+          .getDatabase(getMongoConnectionString().getDatabase())
           .runCommand(new BsonDocument("buildinfo", new BsonString("")))
           .get("version")
           .toString();
@@ -108,7 +82,7 @@ public interface MongoDb {
    */
   default void clearCollections() {
     try (MongoClient client = createClient()) {
-      MongoDatabase db = client.getDatabase(getDatabase());
+      MongoDatabase db = client.getDatabase(getMongoConnectionString().getDatabase());
 
       Iterable<String> collectionNames = db.listCollectionNames();
       collectionNames.forEach(n -> db.getCollection(n).deleteMany(new Document()));
@@ -121,7 +95,7 @@ public interface MongoDb {
    */
   default void clearDatabase() {
     try (MongoClient client = createClient()) {
-      client.dropDatabase(getDatabase());
+      client.dropDatabase(getMongoConnectionString().getDatabase());
     }
   }
 
