@@ -28,7 +28,17 @@ class UseExistingMongoDbClassExtensionTest {
   @BeforeEach
   void initUseExistingMongoDbExtension() {
 
-    String MONGODB_CONNECTION_STRING = EXTERNAL_DB.getConnectionString();
+    String MONGODB_CONNECTION_STRING =
+        "mongodb://"
+            + EXTERNAL_DB.getUsername()
+            + ":"
+            + EXTERNAL_DB.getPassword()
+            + "@"
+            + EXTERNAL_DB.getHosts()
+            + "/"
+            + EXTERNAL_DB.getDatabase()
+            + "?"
+            + EXTERNAL_DB.getOptions();
     originalMongoDbConnectionString =
         new SystemPropertyAndEnvironmentLookup()
             .lookup(OVERRIDE_MONGODB_CONNECTION_STRING_SYSTEM_PROPERTY_NAME);
