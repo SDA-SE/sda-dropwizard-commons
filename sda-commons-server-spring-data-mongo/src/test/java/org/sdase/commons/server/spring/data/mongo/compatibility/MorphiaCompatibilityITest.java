@@ -243,7 +243,7 @@ abstract class MorphiaCompatibilityITest {
     try (var mongoClient = getMongo().createClient()) {
       var actual =
           mongoClient
-              .getDatabase(getMongo().getDatabase())
+              .getDatabase(getMongo().getMongoConnectionString().getDatabase())
               .getCollection("MyEntity")
               .find(new BsonDocument("_id", new BsonString("ID_1234")))
               .first();
