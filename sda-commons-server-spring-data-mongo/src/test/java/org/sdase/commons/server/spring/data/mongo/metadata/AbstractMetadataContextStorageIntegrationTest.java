@@ -286,6 +286,8 @@ abstract class AbstractMetadataContextStorageIntegrationTest {
   }
 
   private MongoCollection<Document> businessEntityCollection(MongoClient client) {
-    return client.getDatabase(getMongo().getDatabase()).getCollection("businessEntity");
+    return client
+        .getDatabase(getMongo().getMongoConnectionString().getDatabase())
+        .getCollection("businessEntity");
   }
 }
