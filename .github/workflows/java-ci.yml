@@ -73,6 +73,43 @@ jobs:
         with:
           junit_files: artifacts/**/build/test-results/**/*.xml
 
+  sonar-cloud:
+    ## TODO remove this before merging, this is just a palliative solution for running Sonar for the update PR
+    name: "Sonarcloud"
+    timeout-minutes: 60
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        with:
+          fetch-depth: 0 # fetch commit log so that Sonar is able to assign committers to issues
+
+      # fetch master so that Sonar can identify new issues in PR builds
+      - name: Get master
+        run: git rev-parse HEAD && git fetch origin master:master && git status && git rev-parse HEAD
+
+      # Download from previous workflow: https://github.com/dawidd6/action-download-artifact
+      - name: Download Artifacts
+        uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v3
+        with:
+          path: artifacts
+          name: ubuntu-latest-17-test-results
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@387ac29b308b003ca37ba93a6cab5eb57c8f5f93 # v4.0.0
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'gradle'
+
+      - name: Sonarcloud
+        run: ./gradlew -i -x test sonar -Dsonar.verbose=true
+        env:
+          SONAR_LOGIN_TOKEN: ${{ secrets.SONAR_LOGIN_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PR: ${{ github.event.pull_request.number }}
+          SONAR_SCM_REVISION: ${{ github.event.pull_request.head.sha }}
+
   # create release and publish the artifacts
   semantic-release:
     runs-on: ubuntu-latest
