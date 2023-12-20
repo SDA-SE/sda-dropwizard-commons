@@ -108,7 +108,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
     // ignore Sonar and not using "try-with-resources" pattern to prevent closing of JVMMetrics
     // otherwise jvm.gc.pause will not be available
     //noinspection resource
-    JvmGcMetrics jvmGcMetrics = new JvmGcMetrics();
+    JvmGcMetrics jvmGcMetrics = new JvmGcMetrics(); // NOSONAR
     jvmGcMetrics.bindTo(Metrics.globalRegistry);
     environment.lifecycle().manage(onShutdown(jvmGcMetrics::close));
     // request metrics
