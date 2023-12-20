@@ -10,13 +10,11 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.event.ServerClosedEvent;
 import com.mongodb.event.ServerDescriptionChangedEvent;
 import com.mongodb.event.ServerListener;
 import com.mongodb.event.ServerOpeningEvent;
-import com.mongodb.internal.connection.ServerAddressHelper;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.ImmutableNet;
 import de.flapdoodle.embed.mongo.config.Net;
@@ -40,12 +38,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
-import org.apache.commons.lang3.StringUtils;
-import org.bson.BsonDocument;
-import org.bson.BsonString;
 import org.sdase.commons.server.dropwizard.bundles.SystemPropertyAndEnvironmentLookup;
 
-public class StartLocalMongoDb {
+public class StartLocalMongoDb implements MongoDb {
 
   private static final String EMBEDDED_MONGO_DOWNLOAD_PATH_ENV_NAME =
       "EMBEDDED_MONGO_DOWNLOAD_PATH";
@@ -61,7 +56,7 @@ public class StartLocalMongoDb {
   protected final String username;
   protected final String password;
   protected final String database;
-  protected String connectionString;
+  protected ConnectionString mongoConnectionString;
 
   protected StartLocalMongoDb(
       String username,
@@ -87,7 +82,7 @@ public class StartLocalMongoDb {
     try {
       InetAddress host = getLocalHost();
       int serverPort = freeServerPort(host);
-      this.connectionString =
+      var connectionString =
           "mongodb://"
               + username
               + ":"
@@ -97,10 +92,10 @@ public class StartLocalMongoDb {
               + ":"
               + serverPort
               + "/"
+              + database
+              + "?authSource="
               + database;
-      if (StringUtils.isNotBlank(getOptions())) {
-        this.connectionString += "?" + getOptions();
-      }
+      this.mongoConnectionString = new ConnectionString(connectionString);
 
       ImmutableMongod.Builder mongodBuilder =
           Mongod.builder()
@@ -136,7 +131,8 @@ public class StartLocalMongoDb {
                   })
               .build();
 
-      try (MongoClient mongoClient = new MongoClient(getHosts(), options)) {
+      try (MongoClient mongoClient =
+          new MongoClient(getMongoConnectionString().getHosts().get(0), options)) {
         // ensure MongoDB is available before proceeding
         if (!countDownLatch.await(timeoutMs, MILLISECONDS)) {
           throw new IllegalStateException("Timeout, MongoDB not started.");
@@ -209,48 +205,12 @@ public class StartLocalMongoDb {
     }
   }
 
-  public String getHosts() {
-    return new ConnectionString(this.connectionString).getHosts().get(0);
-  }
-
-  public String getDatabase() {
-    return database;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public String getOptions() {
-    return "authSource=" + getDatabase();
-  }
-
   public String getConnectionString() {
-    return connectionString;
+    return mongoConnectionString.getConnectionString();
   }
 
-  /**
-   * @return the version of the MongoDB instance which is associated with this MongoDbClassExtension
-   */
-  public String getServerVersion() {
-    try (MongoClient client = createClient()) {
-      return client
-          .getDatabase(getDatabase())
-          .runCommand(new BsonDocument("buildinfo", new BsonString("")))
-          .get("version")
-          .toString();
-    }
-  }
-
-  public MongoClient createClient() {
-    return new MongoClient(
-        ServerAddressHelper.createServerAddress(getHosts()),
-        MongoCredential.createCredential(username, database, password.toCharArray()),
-        MongoClientOptions.builder().build());
+  public ConnectionString getMongoConnectionString() {
+    return mongoConnectionString;
   }
 
   private void createDatabaseUser(MongoClient mongoClient) {
