@@ -36,7 +36,7 @@ jobs:
         with:
           workflow: ${{ github.event.workflow_run.workflow_id }}
           run_id: ${{ github.event.workflow_run.id }}
-          name: ubuntu-latest-11-test-results
+          name: ubuntu-latest-17-test-results
 
       - name: Set up JDK 17
         uses: actions/setup-java@387ac29b308b003ca37ba93a6cab5eb57c8f5f93 # v4.0.0
