@@ -88,8 +88,8 @@ public class ClientRequestException extends RuntimeException implements Closeabl
    *     {@link Optional}
    */
   public Optional<WebApplicationException> getWebApplicationExceptionCause() {
-    if (getCause() instanceof WebApplicationException) {
-      return Optional.of((WebApplicationException) getCause());
+    if (getCause() instanceof WebApplicationException cause) {
+      return Optional.of(cause);
     }
     return Optional.empty();
   }
