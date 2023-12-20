@@ -6,8 +6,8 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 
 /**
  * JUnit 5 Extension for running a MongoDB instance alongside the (integration) tests. Can be
- * configured with custom user credentials and database name. Use {@link #getHosts()} to retrieve
- * the host to connect to.
+ * configured with custom user credentials and database name. Use {@link #getConnectionString()} *
+ * to retrieve the connection string.
  *
  * <p>Example usage:
  *

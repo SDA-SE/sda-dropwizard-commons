@@ -114,7 +114,11 @@ abstract class SpringDataMongoBundleLocalDateConvertersIT {
 
     try (MongoClient client = getMongo().createClient()) {
       Document foundPerson =
-          client.getDatabase(getMongo().getDatabase()).getCollection("people").find().first();
+          client
+              .getDatabase(getMongo().getMongoConnectionString().getDatabase())
+              .getCollection("people")
+              .find()
+              .first();
 
       assertThat(foundPerson).isNotNull();
       assertThat(foundPerson.get("birthday")).isInstanceOf(String.class).isEqualTo("1979-02-08");
