@@ -96,7 +96,11 @@ abstract class InheritanceMappingITest {
 
     try (var mongoClient = getMongo().createClient()) {
       Document privateZoo =
-          mongoClient.getDatabase(getMongo().getDatabase()).getCollection("zoo").find().first();
+          mongoClient
+              .getDatabase(getMongo().getMongoConnectionString().getDatabase())
+              .getCollection("zoo")
+              .find()
+              .first();
 
       assertThat(privateZoo)
           .isNotNull()
@@ -148,7 +152,10 @@ abstract class InheritanceMappingITest {
                     Map.of("_class", "cat", "name", "Miez"))));
 
     try (var mongoClient = getMongo().createClient()) {
-      mongoClient.getDatabase(getMongo().getDatabase()).getCollection("zoo").insertOne(given);
+      mongoClient
+          .getDatabase(getMongo().getMongoConnectionString().getDatabase())
+          .getCollection("zoo")
+          .insertOne(given);
 
       List<PrivateZoo> all = mongoOperations.findAll(PrivateZoo.class);
       assertThat(all).hasSize(1);

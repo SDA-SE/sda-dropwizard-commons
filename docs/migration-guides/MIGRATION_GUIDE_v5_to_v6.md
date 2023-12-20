@@ -112,6 +112,10 @@ removed. The database connection must be configured with [`connectionString`](ht
 Removed custom proxy configuration for MongoDB executable download.
 OS proxy settings should be configured instead.
 
+Removed getters from the `MongoDb` interface which affects the `MongoDbClassExtension`.
+You can retrieve information about the database, username or password from the 
+`ConnectionString` that is provided by `MongoDbClassExtension#getMongoConnectionString()`.
+
 #### FixtureHelpers
 
 The class `io.drowizard.helpers.fixtures.FixtureHelpers` is not available in Dropwizard v4. So
