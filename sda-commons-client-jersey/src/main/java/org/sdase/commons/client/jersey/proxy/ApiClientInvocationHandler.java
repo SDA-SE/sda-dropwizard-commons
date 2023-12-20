@@ -25,11 +25,11 @@ public class ApiClientInvocationHandler implements InvocationHandler {
   private static final Logger LOG = LoggerFactory.getLogger(ApiClientInvocationHandler.class);
 
   private static final List<Integer> ALL_REDIRECT_ERRORS =
-      IntStream.rangeClosed(300, 399).boxed().collect(Collectors.toList());
+      IntStream.rangeClosed(300, 399).boxed().toList();
   private static final List<Integer> ALL_CLIENT_ERRORS =
-      IntStream.rangeClosed(400, 499).boxed().collect(Collectors.toList());
+      IntStream.rangeClosed(400, 499).boxed().toList();
   private static final List<Integer> ALL_SERVER_ERRORS =
-      IntStream.rangeClosed(500, 599).boxed().collect(Collectors.toList());
+      IntStream.rangeClosed(500, 599).boxed().toList();
 
   private final Object delegate;
 

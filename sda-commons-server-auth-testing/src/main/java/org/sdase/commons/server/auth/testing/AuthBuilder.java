@@ -127,24 +127,24 @@ public class AuthBuilder {
         .forEach(
             key -> {
               Object value = claims.get(key);
-              if (value instanceof String) {
-                builder.withClaim(key, (String) value);
-              } else if (value instanceof Long) {
-                builder.withClaim(key, (Long) value);
-              } else if (value instanceof Integer) {
-                builder.withClaim(key, (Integer) value);
-              } else if (value instanceof Double) {
-                builder.withClaim(key, (Double) value);
-              } else if (value instanceof Date) {
-                builder.withClaim(key, (Date) value);
-              } else if (value instanceof Boolean) {
-                builder.withClaim(key, (Boolean) value);
-              } else if (value instanceof String[]) {
-                builder.withArrayClaim(key, (String[]) value);
-              } else if (value instanceof Long[]) {
-                builder.withArrayClaim(key, (Long[]) value);
-              } else if (value instanceof Integer[]) {
-                builder.withArrayClaim(key, (Integer[]) value);
+              if (value instanceof String valueAsString) {
+                builder.withClaim(key, valueAsString);
+              } else if (value instanceof Long valueAsLong) {
+                builder.withClaim(key, valueAsLong);
+              } else if (value instanceof Integer valueAsInteger) {
+                builder.withClaim(key, valueAsInteger);
+              } else if (value instanceof Double valueAsDouble) {
+                builder.withClaim(key, valueAsDouble);
+              } else if (value instanceof Date valueAsDate) {
+                builder.withClaim(key, valueAsDate);
+              } else if (value instanceof Boolean valueAsBoolean) {
+                builder.withClaim(key, valueAsBoolean);
+              } else if (value instanceof String[] valueAsStringArray) {
+                builder.withArrayClaim(key, valueAsStringArray);
+              } else if (value instanceof Long[] valueAsLongArray) {
+                builder.withArrayClaim(key, valueAsLongArray);
+              } else if (value instanceof Integer[] valueAsIntegerArray) {
+                builder.withArrayClaim(key, valueAsIntegerArray);
               }
             });
     return builder.sign(algorithm);
