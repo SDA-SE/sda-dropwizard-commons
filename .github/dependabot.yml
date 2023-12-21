@@ -44,36 +44,4 @@ updates:
     prefix: "chore"
     prefix-development: "chore"
     include: scope
-# maintaining v2
-- package-ecosystem: gradle
-  target-branch: "release/2.x.x"
-  directory: "/"
-  schedule:
-    interval: "weekly"
-  labels:
-    - "dependencies"
-    - "release-2.x.x"
-  ignore:
-    - dependency-name: "org.eclipse.jetty:jetty-bom"
-      # ignore all Dependabot updates for version 10, 11, 12
-      # Major version should be in-sync with the version used by Dropwizard
-      update-types: [ "version-update:semver-major" ]
-    - dependency-name: "org.flywaydb:flyway-core"
-      # version 10+ needs Java 17
-      update-types: [ "version-update:semver-major" ]
-  commit-message:
-    prefix: "fix"
-    prefix-development: "chore"
-    include: scope
-- package-ecosystem: github-actions
-  target-branch: "release/2.x.x"
-  directory: "/"
-  schedule:
-    interval: "weekly"
-  labels:
-    - "dependencies"
-    - "release-2.x.x"
-  commit-message:
-    prefix: "chore"
-    prefix-development: "chore"
-    include: scope
+
