@@ -2,8 +2,15 @@
 
 ## General migration changes
 
-You can find the full release notes in the
+Version 6 of sda-dropwizard-commons now builds with Java 17 + 21. Support for Java 11 was dropped.
+
+## Dropwizard 4
+
+One of the major changes was the update from Dropwizard 2 to 4.
+Dropwizard 4 is no longer based on the Java EE (and the `javax.*` packages) but on Jakarta EE
+and the `jakarta.*` packages. Please read the full release notes in the
 official [Dropwizard repository](https://github.com/dropwizard/dropwizard/releases/tag/v4.0.0).
+
 Below we list the most important changes:
 
 ### Dropwizard Package Structure and JPMS
