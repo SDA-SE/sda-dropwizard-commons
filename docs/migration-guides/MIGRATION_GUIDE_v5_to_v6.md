@@ -256,6 +256,7 @@ do
   sed -i '' -e 's/io.dropwizard.setup.Environment/io.dropwizard.core.setup.Environment/g' $file
   sed -i '' -e 's/com.amazonaws.services.s3.AmazonS3/software.amazon.awssdk.services.s3.S3Client/g' $file
   sed -i '' -e 's/AmazonS3/S3Client/g' $file
+  sed -i '' -e 's/org.apache.http.HttpStatus/org.apache.hc.core5.http.HttpStatus/g' $file
 
   # test files only
   if [[ $file =~ .*src\/test.* ]]; then
