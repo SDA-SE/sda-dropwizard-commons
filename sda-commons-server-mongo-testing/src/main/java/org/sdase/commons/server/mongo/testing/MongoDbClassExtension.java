@@ -1,8 +1,5 @@
 package org.sdase.commons.server.mongo.testing;
 
-import static org.sdase.commons.server.mongo.testing.MongoDb.Builder.DEFAULT_PASSWORD;
-import static org.sdase.commons.server.mongo.testing.MongoDb.Builder.DEFAULT_USER;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -32,14 +29,6 @@ public interface MongoDbClassExtension extends MongoDb, BeforeAllCallback, After
 
   static Builder builder() {
     return new Builder();
-  }
-
-  default String getUsername() {
-    return DEFAULT_USER;
-  }
-
-  default String getPassword() {
-    return DEFAULT_PASSWORD;
   }
 
   final class Builder extends MongoDb.Builder<MongoDbClassExtension> {
