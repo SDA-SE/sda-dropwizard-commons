@@ -12,11 +12,7 @@ ignore_cves := {
   # Flapdoodle is only used in test.
   "CVE-2023-42503",
   # Netty is used by Zookeeper which is only used in test.
-  "CVE-2023-4586",
-  # Logback is not affected since Dropwizard does not ship logback-receiver
-  # see https://github.com/dropwizard/dropwizard/issues/7969
-  "CVE-2023-6378",
-  "CVE-2023-6481"
+  "CVE-2023-4586"
 }
 
 ignore {
