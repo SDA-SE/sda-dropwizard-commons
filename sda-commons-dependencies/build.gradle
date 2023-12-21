@@ -23,7 +23,7 @@ ext {
   resilience4jVersion = '2.1.0'
   openTelemetryVersion= '1.32.0'
   // should be aligned with transitive dependency of Spring Data MongoDB
-  mongoDbDriverVersion = '4.6.1'
+  mongoDbDriverVersion = '4.8.2'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.77'
   victoolsVersion = '4.33.0'
@@ -126,6 +126,7 @@ dependencies {
     api "it.unibo.tuprolog:parser-theory-jvm:$tuprologVersion"
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
+    api 'org.springframework.data:spring-data-mongodb:4.1.7' // Keep that version for now, since 4.2.0 introduces a bug
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryVersion}-alpha"
     api "org.mongodb:mongodb-driver-core:${mongoDbDriverVersion}"
