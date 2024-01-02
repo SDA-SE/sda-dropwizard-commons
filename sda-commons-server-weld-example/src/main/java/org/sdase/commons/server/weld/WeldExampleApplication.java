@@ -6,12 +6,19 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import org.sdase.commons.server.weld.beans.UsageBean;
 
+@Path("someString")
+@Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
 public class WeldExampleApplication extends Application<Configuration> {
 
   @Inject private UsageBean usageBean;
+  @Inject private String someString;
 
   public static void main(String[] args) throws Exception {
     // activate weld for this application.
@@ -37,14 +44,22 @@ public class WeldExampleApplication extends Application<Configuration> {
     // INFO  [xxxx-xx-xx xx:xx:xx,xxx] org.sdase.commons.server.weld.beans.SimpleBean: injected
     // string 'some string'
     usageBean.useSimpleBean();
+
+    // beans that serve requests must be registered
+    environment.jersey().register(this);
+  }
+
+  @GET
+  public String getSomeString() {
+    return someString;
   }
 
   /**
-   * Method oly for testing. It provides the bean to the test, where it can be verified
+   * Method only for testing. It provides the bean to the test, where it can be verified
    *
    * @return the usage bean
    */
-  public UsageBean getUsageBean() {
+  UsageBean getUsageBean() {
     return usageBean;
   }
 }
