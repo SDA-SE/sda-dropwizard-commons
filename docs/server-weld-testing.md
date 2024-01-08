@@ -31,17 +31,3 @@ public class WeldAppITest {
  
 The `WeldAppExtension` is a shortcut for creating a `DropwizardAppExtension` in combination with the
 [`WeldTestSupport`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-weld-testing/src/main/java/org/sdase/commons/server/weld/testing/WeldTestSupport.java).
-
-It may also be used with programmatic configuration omitting a `config.yaml`:
-
-```java
-public class WeldAppITest {
-
-  @RegisterExtension
-  static final DropwizardAppExtension<AppConfiguration> APP = new WeldAppExtension<>(
-      MyApplication.class,
-      configFrom(AppConfiguration::new).withPorts(4567, 0).withRootPath("/api/*").build());
-
-  // ...
-}
-```
