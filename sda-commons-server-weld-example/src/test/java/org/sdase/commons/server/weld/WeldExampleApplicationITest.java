@@ -4,7 +4,6 @@ import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dropwizard.core.Configuration;
-import org.assertj.core.api.Assertions;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
