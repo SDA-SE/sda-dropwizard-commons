@@ -98,10 +98,9 @@ The following modules contain changes:
 5. [sda-commons-server-circuitbreaker](#5-sda-commons-server-circuitbreaker)
 6. [sda-commons-shared-asyncapi](#6-sda-commons-shared-asyncapi)
 7. [sda-commons-server-kafka](#7-sda-commons-server-kafka)
-8. [sda-commons-server-weld-testing](#8-sda-commons-server-weld-testing)
-9. [sda-commons-server-s3](#9-sda-commons-server-s3)
-10. [sda-commons-server-s3-testing](#10-sda-commons-server-s3-testing)
-11. [sda-commons-server-prometheus](#11-sda-commons-server-prometheus)
+8. [sda-commons-server-s3](#8-sda-commons-server-s3)
+9. [sda-commons-server-s3-testing](#9-sda-commons-server-s3-testing)
+10. [sda-commons-server-prometheus](#10-sda-commons-server-prometheus)
 
 ### 1 sda-commons-server-testing
 
@@ -193,14 +192,7 @@ was removed. Internal metrics are collected automatically. Please use
 `MessageListenerStrategy#init(Set<String> metadataFields)`
 
 
-### 8 sda-commons-server-weld-testing
-
-The custom JUnit extensions have been removed. Please make use of the
-official [JUnit5 extension](https://github.com/weld/weld-testing/tree/master/junit5), which this
-module is now providing. An example how
-to use it can be found in [sda-commons-server-weld-example](../../sda-commons-server-weld-example).
-
-### 9 sda-commons-server-s3
+### 8 sda-commons-server-s3
 
 The AWS SDK was upgraded from 1.12.x to https://github.com/aws/aws-sdk-java-v2.
 The new version is not compatible with the old one.
@@ -220,7 +212,7 @@ You can now also pass credentials
 via environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
 or via system properties `aws.accessKeyId` and `aws.secretAccessKey`.
 
-### 10 sda-commons-server-s3-testing
+### 9 sda-commons-server-s3-testing
 
 Our previous S3 mock library [s3mock](https://github.com/Robothy/local-s3) was also based on the old 
 AWS SDK v1.12.x and is no longer maintained. 
@@ -231,7 +223,7 @@ S3 client.
 Additionally, you need to annotate your S3 tests with `@LocalS3` due to an implementation detail
 of the underlying test library.
 
-### 11 sda-commons-server-prometheus
+### 10 sda-commons-server-prometheus
 
 The endpoint `/healthcheck/prometheus` was removed. Health checks metrics are available using endpoint `/metrics/prometheus`.
 
