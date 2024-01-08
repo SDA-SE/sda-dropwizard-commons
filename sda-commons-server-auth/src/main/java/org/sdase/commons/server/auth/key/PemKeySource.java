@@ -93,8 +93,8 @@ public class PemKeySource implements KeySource {
     try (InputStream is = location.toURL().openStream()) {
       CertificateFactory fact = CertificateFactory.getInstance("X.509");
       Certificate certificate = fact.generateCertificate(is);
-      if (certificate instanceof X509Certificate) {
-        return (X509Certificate) certificate;
+      if (certificate instanceof X509Certificate x509Certificate) {
+        return x509Certificate;
       }
       throw new KeyLoadFailedException(
           "Only X509Certificate certificates are supported but loaded a "
@@ -166,6 +166,6 @@ public class PemKeySource implements KeySource {
     while ((bytesRead = content.read(data, 0, data.length)) != -1) {
       buffer.write(data, 0, bytesRead);
     }
-    return new String(buffer.toByteArray(), StandardCharsets.UTF_8);
+    return buffer.toString(StandardCharsets.UTF_8);
   }
 }

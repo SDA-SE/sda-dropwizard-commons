@@ -11,7 +11,6 @@ import io.micrometer.core.instrument.Metrics;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -91,8 +90,7 @@ abstract class SpringDataMongoMetricsIT {
 
     //    Test that metrics are available in global registry
     List<Meter> meters = Metrics.globalRegistry.getMeters();
-    List<String> metricIdNames =
-        meters.stream().map(meter -> meter.getId().getName()).collect(Collectors.toList());
+    List<String> metricIdNames = meters.stream().map(meter -> meter.getId().getName()).toList();
     assertThat(metricIdNames)
         .containsAll(
             List.of(
@@ -111,7 +109,7 @@ abstract class SpringDataMongoMetricsIT {
         commandsCompositeTime.get().getId().getTags().stream()
             .filter(t -> !"cluster.id".equals(t.getKey()))
             .filter(t -> !"server.address".equals(t.getKey()))
-            .collect(Collectors.toList());
+            .toList();
     assertThat(tagsWithoutClusterId.toString())
         .doesNotContain(List.of(telephoneNumber, Integer.toString(age), name));
   }

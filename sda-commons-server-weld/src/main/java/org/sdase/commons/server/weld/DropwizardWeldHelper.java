@@ -32,7 +32,7 @@ public class DropwizardWeldHelper {
     // the application is
     // still running.
     WeldContainer weldContainer = WeldSupport.createWeldContainer(); // NOSONAR
-    weldContainer.select(applicationClass).getHandler().get().run(arguments);
+    weldContainer.select(applicationClass).getHandle().get().run(arguments);
   }
 
   private DropwizardWeldHelper() {

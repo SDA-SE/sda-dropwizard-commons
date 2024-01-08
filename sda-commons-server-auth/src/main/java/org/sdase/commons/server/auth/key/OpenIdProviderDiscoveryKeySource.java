@@ -8,7 +8,6 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +67,7 @@ public class OpenIdProviderDiscoveryKeySource implements KeySource {
                       this,
                       requiredIssuer,
                       k.getSigAlgorithm()))
-          .collect(Collectors.toList());
+          .toList();
     } catch (KeyLoadFailedException e) {
       throw e;
     } catch (WebApplicationException e) {

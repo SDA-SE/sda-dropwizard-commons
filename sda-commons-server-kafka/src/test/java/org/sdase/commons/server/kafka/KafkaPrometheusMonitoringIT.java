@@ -16,7 +16,6 @@ import io.prometheus.client.CollectorRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -128,8 +127,7 @@ class KafkaPrometheusMonitoringIT {
     List<Collector.MetricFamilySamples.Sample> samples =
         collectorMetricSamplesErrorTotal.get(0).samples;
 
-    List<String> sampleLabelValueNames =
-        samples.stream().map(s -> s.labelValues.get(0)).collect(Collectors.toList());
+    List<String> sampleLabelValueNames = samples.stream().map(s -> s.labelValues.get(0)).toList();
     assertThat(sampleLabelValueNames).contains("producer1", "producer3");
   }
 
