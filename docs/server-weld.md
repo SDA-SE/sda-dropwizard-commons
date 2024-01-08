@@ -38,8 +38,4 @@ public void initialize(final Bootstrap<AppConfiguration> bootstrap) {
 
 ### Testing
 
-See [Weld JUnit 5 (Jupiter) Extensions](https://github.com/weld/weld-testing/blob/master/junit5/README.md).
-The managed dependency comes bundled
-in [sda-commons-server-weld-testing](../sda-commons-server-weld-testing).
-For a use case example, have a look into
-our [Weld Example](../sda-commons-server-weld-example/src/test/java/org/sdase/commons/server/weld/).
+See [`sda-commons-server-weld-testing`](./server-weld-testing.md).
