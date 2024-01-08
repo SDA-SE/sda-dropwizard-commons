@@ -21,7 +21,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +73,7 @@ public class JwksKeySource implements KeySource {
           .filter(this::isSupportedKeyType)
           .filter(this::isSupportedAlg)
           .map(this::toPublicKey)
-          .collect(Collectors.toList());
+          .toList();
     } catch (KeyLoadFailedException e) {
       throw e;
     } catch (WebApplicationException e) {

@@ -121,7 +121,7 @@ public abstract class MessageListenerStrategy<K, V> {
               .map(v -> new String(v, UTF_8))
               .filter(StringUtils::isNotBlank)
               .map(String::trim)
-              .collect(Collectors.toList());
+              .toList();
       newContext.put(field, values);
     }
     return MetadataContext.createCloseableContext(newContext);

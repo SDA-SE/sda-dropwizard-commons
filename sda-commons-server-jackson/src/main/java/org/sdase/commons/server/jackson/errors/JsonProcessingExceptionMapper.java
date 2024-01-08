@@ -33,15 +33,14 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
   }
 
   private String getErrorMessage(JsonProcessingException exception) {
-    if (exception instanceof JsonMappingException) {
+    if (exception instanceof JsonMappingException jsonMappingException) {
       return String.format(
           "Failed to process json: Location 'line: %s, column: %s'; FieldName '%s'",
           exception.getLocation().getLineNr(),
           exception.getLocation().getColumnNr(),
-          ((JsonMappingException) exception)
-              .getPath().stream()
-                  .map(JsonMappingException.Reference::getFieldName)
-                  .collect(Collectors.joining(".")));
+          jsonMappingException.getPath().stream()
+              .map(JsonMappingException.Reference::getFieldName)
+              .collect(Collectors.joining(".")));
     } else {
       return String.format(
           "Failed to process json: Location 'line: %s, column: %s'",

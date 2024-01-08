@@ -16,7 +16,6 @@ import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -232,29 +231,17 @@ class PrometheusBundleTest {
     List<Meter> meters = globalRegistry.getMeters();
 
     List<Meter> jvmBufferList =
-        meters.stream()
-            .filter(m -> m.getId().getName().startsWith("jvm.buffer"))
-            .collect(Collectors.toList());
+        meters.stream().filter(m -> m.getId().getName().startsWith("jvm.buffer")).toList();
     List<Meter> jvmMemoryList =
-        meters.stream()
-            .filter(m -> m.getId().getName().startsWith("jvm.memory"))
-            .collect(Collectors.toList());
+        meters.stream().filter(m -> m.getId().getName().startsWith("jvm.memory")).toList();
     List<Meter> jvmProcessorList =
-        meters.stream()
-            .filter(m -> m.getId().getName().contains("cpu"))
-            .collect(Collectors.toList());
+        meters.stream().filter(m -> m.getId().getName().contains("cpu")).toList();
     List<Meter> jvmThreadsList =
-        meters.stream()
-            .filter(m -> m.getId().getName().startsWith("jvm.threads"))
-            .collect(Collectors.toList());
+        meters.stream().filter(m -> m.getId().getName().startsWith("jvm.threads")).toList();
     List<Meter> jvmClassesList =
-        meters.stream()
-            .filter(m -> m.getId().getName().startsWith("jvm.classes"))
-            .collect(Collectors.toList());
+        meters.stream().filter(m -> m.getId().getName().startsWith("jvm.classes")).toList();
     List<Meter> jvmGcList =
-        meters.stream()
-            .filter(m -> m.getId().getName().startsWith("jvm.gc"))
-            .collect(Collectors.toList());
+        meters.stream().filter(m -> m.getId().getName().startsWith("jvm.gc")).toList();
 
     // assertions are not strict since metrics depend on Java version
     assertThat(jvmBufferList).hasSizeGreaterThanOrEqualTo(6);
