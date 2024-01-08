@@ -6,6 +6,7 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -18,7 +19,10 @@ import org.sdase.commons.server.weld.beans.UsageBean;
 public class WeldExampleApplication extends Application<Configuration> {
 
   @Inject private UsageBean usageBean;
-  @Inject private String someString;
+
+  @Inject
+  @Named("some-string")
+  private String someString;
 
   public static void main(String[] args) throws Exception {
     // activate weld for this application.

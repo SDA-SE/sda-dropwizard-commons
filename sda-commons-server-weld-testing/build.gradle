@@ -13,3 +13,10 @@ dependencies {
   testImplementation project(':sda-commons-server-jackson')
   testImplementation 'io.github.dropwizard-jobs:dropwizard-jobs-core:5.1.4'
 }
+
+task copyTestResources(type: Copy) {
+  from "${projectDir}/src/test/resources"
+  into "${buildDir}/classes/java/test"
+}
+
+processTestResources.dependsOn copyTestResources
