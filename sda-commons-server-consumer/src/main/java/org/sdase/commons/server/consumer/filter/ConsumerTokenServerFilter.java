@@ -1,7 +1,5 @@
 package org.sdase.commons.server.consumer.filter;
 
-import static java.util.stream.Collectors.toList;
-
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.Priorities;
@@ -34,7 +32,7 @@ public class ConsumerTokenServerFilter implements ContainerRequestFilter {
     this.requireIdentifiedConsumer = requireIdentifiedConsumer;
     this.excludeRegex =
         excludeRegex == null ? Collections.emptyList() : new ArrayList<>(excludeRegex);
-    this.excludePatterns = this.excludeRegex.stream().map(Pattern::compile).collect(toList());
+    this.excludePatterns = this.excludeRegex.stream().map(Pattern::compile).toList();
   }
 
   @Override
@@ -52,7 +50,7 @@ public class ConsumerTokenServerFilter implements ContainerRequestFilter {
     consumerName.ifPresent(this::addConsumerNameToMdc);
     consumerName.ifPresent(name -> this.addConsumerNameToRequest(requestContext, name));
 
-    if (requireIdentifiedConsumer && !consumerName.isPresent()) {
+    if (requireIdentifiedConsumer && consumerName.isEmpty()) {
       String path = requestContext.getUriInfo().getPath();
       boolean pathExcluded = excludePatterns.stream().anyMatch(p -> p.matcher(path).matches());
       if (!pathExcluded) {

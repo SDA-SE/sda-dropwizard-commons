@@ -111,9 +111,8 @@ public class JacksonConfigurationBundle implements ConfiguredBundle<Configuratio
    * @param configuration the configuration that is modified
    */
   private void disableDefaultErrorMappers(Configuration configuration) {
-    if (configuration.getServerFactory() instanceof AbstractServerFactory) {
-      ((AbstractServerFactory) configuration.getServerFactory())
-          .setRegisterDefaultExceptionMappers(Boolean.FALSE);
+    if (configuration.getServerFactory() instanceof AbstractServerFactory abstractServerFactory) {
+      abstractServerFactory.setRegisterDefaultExceptionMappers(Boolean.FALSE);
     } else {
       throw new IllegalStateException(
           "Could not disable default exception mappers. "

@@ -1,7 +1,6 @@
 package org.sdase.commons.starter.builder;
 
 import io.dropwizard.core.Configuration;
-import jakarta.ws.rs.HttpMethod;
 import org.sdase.commons.server.cors.CorsBundle;
 
 public interface CorsCustomizer<T extends Configuration> {
@@ -12,12 +11,12 @@ public interface CorsCustomizer<T extends Configuration> {
    * CorsBundle.FinalBuilder#DEFAULT_HTTP_METHODS default methods}.
    *
    * <ul>
-   *   <li>{@value HttpMethod#OPTIONS}
-   *   <li>{@value HttpMethod#HEAD}
-   *   <li>{@value HttpMethod#GET}
-   *   <li>{@value HttpMethod#DELETE}
-   *   <li>{@value HttpMethod#POST}
-   *   <li>{@value HttpMethod#PUT}
+   *   <li>{@value jakarta.ws.rs.HttpMethod#OPTIONS}
+   *   <li>{@value jakarta.ws.rs.HttpMethod#HEAD}
+   *   <li>{@value jakarta.ws.rs.HttpMethod#GET}
+   *   <li>{@value jakarta.ws.rs.HttpMethod#DELETE}
+   *   <li>{@value jakarta.ws.rs.HttpMethod#POST}
+   *   <li>{@value jakarta.ws.rs.HttpMethod#PUT}
    *   <li>{@code "PATCH"}
    * </ul>
    *

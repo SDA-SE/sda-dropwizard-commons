@@ -86,7 +86,7 @@ class SpringDataMongoBundleTracingIT {
         spans.stream()
             .map(SpanData::getAttributes)
             .map(attributes -> attributes.get(SemanticAttributes.DB_STATEMENT))
-            .collect(Collectors.toList());
+            .toList();
     assertThat(dbStatements)
         .isNotEmpty()
         .anyMatch(v -> v.contains("\"name\": \"?\""))
