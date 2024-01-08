@@ -243,11 +243,13 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     useJUnitPlatform()
   }
 
-  configurations.all {
-    resolutionStrategy {
-      // fail eagerly on version conflict (includes transitive dependencies)
-      // e.g. multiple different versions of the same dependency (group and name are equal)
-      failOnVersionConflict()
+  configurations.configureEach {
+    if (it.name.startsWith("spotless")) {
+      // Workaround for https://github.com/diffplug/spotless/issues/1965.
+    } else {
+      it.resolutionStrategy {
+        failOnVersionConflict()
+      }
     }
   }
 }
