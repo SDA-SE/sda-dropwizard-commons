@@ -9,4 +9,7 @@ dependencies {
     // javax imports
     exclude group: 'com.google.code.findbugs', module: 'jsr305'
   }
+
+  testImplementation project(':sda-commons-server-jackson')
+  testImplementation 'io.github.dropwizard-jobs:dropwizard-jobs-core:5.1.4'
 }
