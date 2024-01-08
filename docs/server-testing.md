@@ -72,6 +72,28 @@ public SystemPropertyClassExtension PROP =
     .unsetProperty(PROP_TO_UNSET);
 ```
 
+## Provided helpers
+
+### DropwizardConfigurationHelper
+
+The `DropwizardConfigurationHelper` allows to create a Dropwizard configuration programmatically in tests without the
+need for `test-config.yaml`. This can be useful when not using the default DropwizardAppRule, e.g. in combination with
+[`sda-commons-server-weld-testing`](./server-weld-testing.md):
+
+```java
+public class CustomIT {
+
+  @RegisterExtension
+  static final WeldAppExtension<AppConfiguration> APP =
+      new WeldAppExtension<>(
+          WeldExampleApplication.class,
+          configFrom(AppConfiguration::new).withPorts(4567, 0).withRootPath("/api/*").build());
+
+    // ...
+}
+```
+
+
 ## Provided JUnit 5 Extensions
 
 ### SystemPropertyClassExtension
