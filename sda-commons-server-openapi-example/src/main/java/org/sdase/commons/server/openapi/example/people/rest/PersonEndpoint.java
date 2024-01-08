@@ -52,7 +52,7 @@ public class PersonEndpoint implements PersonService, ContextAwareEndpoint {
     synchronized (people) {
       return people.entrySet().stream()
           .map(e -> toResourceWithSelfLink(e.getKey(), e.getValue()))
-          .collect(Collectors.toList());
+          .toList();
     }
   }
 

@@ -1,7 +1,5 @@
 package org.sdase.commons.server.opa.filter;
 
-import static java.util.stream.Collectors.toList;
-
 import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -88,7 +86,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
     this.excludePatterns =
         excludePatterns == null
             ? Collections.emptyList()
-            : excludePatterns.stream().map(Pattern::compile).collect(toList());
+            : excludePatterns.stream().map(Pattern::compile).toList();
     this.om = om;
     this.inputExtensions = inputExtensions;
     this.tracer = tracer;
@@ -233,6 +231,6 @@ public class OpaAuthFilter implements ContainerRequestFilter {
 
   private JwtPrincipal getJwtPrincipal(SecurityContext securityContext) {
     final Principal principal = securityContext.getUserPrincipal();
-    return principal instanceof JwtPrincipal ? (JwtPrincipal) principal : null;
+    return principal instanceof JwtPrincipal jwtPrincipal ? jwtPrincipal : null;
   }
 }

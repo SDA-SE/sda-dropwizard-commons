@@ -52,8 +52,8 @@ class ServerFactoryUtil {
    *     AbstractServerFactory}
    */
   static Optional<AbstractServerFactory> verifyAbstractServerFactory(ServerFactory serverFactory) {
-    if (serverFactory instanceof AbstractServerFactory) {
-      return Optional.of((AbstractServerFactory) serverFactory);
+    if (serverFactory instanceof AbstractServerFactory abstractServerFactory) {
+      return Optional.of(abstractServerFactory);
     } else if (serverFactory == null) {
       LOG.error(
           "Unable to apply secure server config. Expecting an AbstractServerFactory but found null");
