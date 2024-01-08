@@ -15,7 +15,6 @@ import io.dropwizard.logging.json.EventJsonLayoutBaseFactory;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.SetSystemProperty;
@@ -40,7 +39,7 @@ class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
     List<AppenderFactory<ILoggingEvent>> consoleAppenderFactories =
         defaultLoggingFactory.getAppenders().stream()
             .filter(a -> a instanceof ConsoleAppenderFactory)
-            .collect(Collectors.toList());
+            .toList();
 
     assertThat(consoleAppenderFactories.size()).isEqualTo(1);
 

@@ -66,10 +66,7 @@ class MetadataContextUtil {
     for (String key : keys) {
       var normalizedValues1 = normalizeValues(context1.get(key));
       var normalizedValues2 = normalizeValues(context2.get(key));
-      var newValues =
-          Stream.concat(normalizedValues1, normalizedValues2)
-              .distinct()
-              .collect(Collectors.toList());
+      var newValues = Stream.concat(normalizedValues1, normalizedValues2).distinct().toList();
       result.put(key, newValues);
     }
     return result;
@@ -83,13 +80,11 @@ class MetadataContextUtil {
             .collect(Collectors.toSet());
     var result = new DetachedMetadataContext();
     for (String key : keys) {
-      var preferredValues =
-          normalizeValues(preferredContextData.get(key)).collect(Collectors.toList());
+      var preferredValues = normalizeValues(preferredContextData.get(key)).toList();
       if (!preferredValues.isEmpty()) {
         result.put(key, preferredValues);
       } else {
-        var secondaryValues =
-            normalizeValues(secondaryContextData.get(key)).collect(Collectors.toList());
+        var secondaryValues = normalizeValues(secondaryContextData.get(key)).toList();
         result.put(key, secondaryValues);
       }
     }

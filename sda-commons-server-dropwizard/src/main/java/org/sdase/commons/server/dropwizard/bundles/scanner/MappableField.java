@@ -122,7 +122,7 @@ public class MappableField implements Comparable<MappableField> {
           .map(expandPattern::matcher)
           .filter(Matcher::matches)
           .map(this::createMappableFieldFromContextMatch)
-          .collect(Collectors.toList());
+          .toList();
     }
     return List.of();
   }
@@ -157,7 +157,7 @@ public class MappableField implements Comparable<MappableField> {
             .map(p -> p.split("_"))
             .flatMap(Stream::of)
             .filter(StringUtils::isNotBlank)
-            .collect(Collectors.toList());
+            .toList();
     return new MappableField(expandedNewPath, newEnvironmentVariableName, propertyType);
   }
 

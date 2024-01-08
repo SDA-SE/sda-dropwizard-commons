@@ -136,11 +136,9 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
   private String determineBasePath(Configuration configuration) {
     ServerFactory serverFactory = configuration.getServerFactory();
 
-    if (serverFactory instanceof AbstractServerFactory) {
+    if (serverFactory instanceof AbstractServerFactory abstractServerFactory) {
       String basePath =
-          ((AbstractServerFactory) serverFactory)
-              .getJerseyRootPath()
-              .orElse(DROPWIZARD_DEFAULT_ROOT_PATH);
+          abstractServerFactory.getJerseyRootPath().orElse(DROPWIZARD_DEFAULT_ROOT_PATH);
 
       // fix base path by removing '/*' at the end so swagger-ui can resolve it
       return "/*".equals(basePath) ? "/" : basePath.replaceAll("^(.*)/\\*$", "$1");

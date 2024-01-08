@@ -2,7 +2,6 @@ package org.sdase.commons.server.kafka.builder;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.config.ListenerConfig;
@@ -38,7 +37,7 @@ public class MessageListenerRegistration<K, V> {
   }
 
   public Collection<String> getTopicsNames() {
-    return topics.stream().map(TopicConfig::getName).collect(Collectors.toList());
+    return topics.stream().map(TopicConfig::getName).toList();
   }
 
   public MessageListenerStrategy<K, V> getStrategy() {
@@ -214,8 +213,7 @@ public class MessageListenerRegistration<K, V> {
 
     @Override
     public ConsumerBuilder forTopics(Collection<String> topics) {
-      this.topics =
-          topics.stream().map(InitialBuilder::buildTopicConfig).collect(Collectors.toList());
+      this.topics = topics.stream().map(InitialBuilder::buildTopicConfig).toList();
       return this;
     }
 

@@ -73,7 +73,7 @@ public class CustomErrorHandlerSecurityAdvice {
       List<Field> bundleFields =
           Stream.of(classOrSuperClass.getDeclaredFields())
               .filter(f -> "bundles".equals(f.getName()) || "configuredBundles".equals(f.getName()))
-              .collect(Collectors.toList());
+              .toList();
       for (Field bundleField : bundleFields) {
         bundleField.setAccessible(true);
         //noinspection unchecked
