@@ -14,7 +14,6 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-server-weld')
 
-  testImplementation project(':sda-commons-server-testing')
-  testImplementation 'org.jboss.weld:weld-junit5:2.0.2.Final'
+  testImplementation project(':sda-commons-server-weld-testing')
 }
 
