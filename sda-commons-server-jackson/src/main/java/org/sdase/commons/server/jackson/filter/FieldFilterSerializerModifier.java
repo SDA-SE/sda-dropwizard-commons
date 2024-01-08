@@ -40,9 +40,9 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
   @Override
   public JsonSerializer<?> modifySerializer(
       SerializationConfig config, BeanDescription beanDesc, JsonSerializer<?> serializer) {
-    if (serializer instanceof BeanSerializer
+    if (serializer instanceof BeanSerializer beanSerializer
         && beanDesc.getBeanClass().isAnnotationPresent(EnableFieldFilter.class)) {
-      return new FieldFilterSerializer((BeanSerializer) serializer, uriInfo);
+      return new FieldFilterSerializer(beanSerializer, uriInfo);
     } else {
       return serializer;
     }

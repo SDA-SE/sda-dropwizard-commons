@@ -53,8 +53,8 @@ public class OnlyInternalHealthCheckServlet extends HttpServlet {
     final ServletContext context = config.getServletContext();
     final Object executorAttr = context.getAttribute(HEALTH_CHECK_EXECUTOR);
 
-    if (executorAttr instanceof ExecutorService) {
-      executorService = (ExecutorService) executorAttr;
+    if (executorAttr instanceof ExecutorService executorService1) {
+      executorService = executorService1;
     }
 
     healthCheckFilter = new OnlyInternalHealthCheckFilter();

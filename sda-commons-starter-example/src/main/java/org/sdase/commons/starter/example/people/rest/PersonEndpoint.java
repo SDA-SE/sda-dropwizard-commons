@@ -43,7 +43,7 @@ public class PersonEndpoint implements ContextAwareEndpoint {
 
   @GET // maps to "GET /people"
   public List<PersonResource> findAllPeople() {
-    return personManager.findAll().stream().map(this::toResource).collect(Collectors.toList());
+    return personManager.findAll().stream().map(this::toResource).toList();
   }
 
   @GET

@@ -2,7 +2,6 @@ package org.sdase.commons.server.dropwizard.bundles;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -71,7 +70,7 @@ public class LookupKeyAndOperators {
         Arrays.asList(keyAndOperatorsArray).subList(1, keyAndOperatorsArray.length).stream()
             .map(String::trim)
             .filter(StringUtils::isNotBlank)
-            .collect(Collectors.toList());
+            .toList();
   }
 
   public String getKey() {

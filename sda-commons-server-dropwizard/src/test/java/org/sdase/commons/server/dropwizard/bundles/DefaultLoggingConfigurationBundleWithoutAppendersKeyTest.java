@@ -10,7 +10,6 @@ import io.dropwizard.logging.common.ConsoleAppenderFactory;
 import io.dropwizard.logging.common.DefaultLoggingFactory;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.dropwizard.bundles.test.LoggingTestApp;
@@ -33,7 +32,7 @@ class DefaultLoggingConfigurationBundleWithoutAppendersKeyTest {
     List<AppenderFactory<ILoggingEvent>> consoleAppenderFactories =
         defaultLoggingFactory.getAppenders().stream()
             .filter(a -> a instanceof ConsoleAppenderFactory)
-            .collect(Collectors.toList());
+            .toList();
 
     assertThat(consoleAppenderFactories.size()).isEqualTo(1);
 

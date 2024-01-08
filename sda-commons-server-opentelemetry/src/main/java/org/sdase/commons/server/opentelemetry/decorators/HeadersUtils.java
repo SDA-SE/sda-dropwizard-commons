@@ -45,9 +45,7 @@ public class HeadersUtils {
     if (headers != null) {
       MultivaluedMap<String, ?> sanitizedHeaders = sanitizeHeaders(headers);
 
-      return sanitizedHeaders.entrySet().stream()
-          .map(HeadersUtils::convertToString)
-          .collect(Collectors.toList());
+      return sanitizedHeaders.entrySet().stream().map(HeadersUtils::convertToString).toList();
     }
     return Collections.emptyList();
   }

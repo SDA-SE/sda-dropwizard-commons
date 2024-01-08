@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /** Adds the embeddable resources as query parameter, so they can be selected in the swagger ui. */
 @OpenAPIDefinition
@@ -116,7 +115,7 @@ public class EmbedParameterModifier implements ReaderListener {
             // get the model reference name
             .map(this::getOriginalRef)
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .toList();
 
     // normally a search result model contains besides other meta information a list with the
     // initially passed filters and a list with the search results therefore the correct list must
@@ -142,9 +141,9 @@ public class EmbedParameterModifier implements ReaderListener {
     HashMap<String, Schema> allProperties = new HashMap<>();
 
     // check if it is a composed schema
-    if (definition instanceof ComposedSchema) {
+    if (definition instanceof ComposedSchema composedSchema) {
       // use the properties of every element in allOf. we ignore anyOf.
-      List<Schema> allOf = ((ComposedSchema) definition).getAllOf();
+      List<Schema> allOf = composedSchema.getAllOf();
       if (allOf != null) {
         allOf.forEach(s -> allProperties.putAll(getEmbeddedObjectProperty(s)));
       }
@@ -163,8 +162,7 @@ public class EmbedParameterModifier implements ReaderListener {
 
   private Parameter getEmbedQueryParameter(Map<String, Schema> properties) {
     if (properties != null && !properties.isEmpty()) {
-      List<String> embeddableObjects =
-          properties.keySet().stream().sorted().collect(Collectors.toList());
+      List<String> embeddableObjects = properties.keySet().stream().sorted().toList();
 
       return new QueryParameter()
           .schema(new ArraySchema().items(new StringSchema()._enum(embeddableObjects)))
