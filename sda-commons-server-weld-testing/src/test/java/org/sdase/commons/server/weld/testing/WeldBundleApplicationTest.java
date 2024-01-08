@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import io.dropwizard.core.cli.Cli;
 import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.util.JarLocation;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
@@ -23,7 +24,7 @@ class WeldBundleApplicationTest {
   private static final String LOCALHOST = "http://localhost:";
 
   @RegisterExtension
-  public static final WeldAppExtension<AppConfiguration> APP =
+  public static final DropwizardAppExtension<AppConfiguration> APP =
       new WeldAppExtension<>(WeldExampleApplication.class, resourceFilePath("test-config.yaml"));
 
   @Test
