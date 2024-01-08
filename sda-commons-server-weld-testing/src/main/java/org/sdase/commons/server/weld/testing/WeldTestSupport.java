@@ -18,12 +18,7 @@ import org.sdase.commons.server.weld.internal.WeldSupport;
  *   static final DropwizardAppExtension&lt;AppConfiguration&gt; EXTENSION = new DropwizardAppExtension&lt;&gt;(
  *       new WeldTestSupport&lt;&gt;(Application.class, ResourceHelpers.resourceFilePath("config.yml")));
  * </pre>
- *
- * @deprecated Since we are switching to the official <a
- *     href="https://github.com/weld/weld-testing">Weld JUnit extension</a>, this class is not
- *     needed any longer and will be removed with the next major release.
  */
-@Deprecated(forRemoval = true)
 public class WeldTestSupport<C extends Configuration> extends DropwizardTestSupport<C> {
 
   private WeldContainer container;
