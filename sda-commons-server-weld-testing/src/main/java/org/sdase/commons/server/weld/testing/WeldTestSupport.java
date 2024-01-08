@@ -41,7 +41,7 @@ public class WeldTestSupport<C extends Configuration> extends DropwizardTestSupp
 
     WeldSupport.initializeCDIProviderIfRequired();
 
-    return container.select(applicationClass).getHandler().get();
+    return container.select(applicationClass).getHandle().get();
   }
 
   @Override
