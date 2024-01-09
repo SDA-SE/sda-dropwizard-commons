@@ -42,6 +42,10 @@ public class MyApp extends Application<MyConfiguration> {
     return springDataMongoBundle.getMongoOperations();
   }
 
+  public GridFsOperations getGridFsOperations() {
+    return springDataMongoBundle.getGridFsOperations();
+  }
+
   public PersonRepository getPersonRepository() {
     return personRepository;
   }

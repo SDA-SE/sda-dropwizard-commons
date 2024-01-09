@@ -53,6 +53,8 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.gridfs.GridFsOperations;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactoryBean;
 import org.springframework.data.repository.Repository;
 
@@ -94,6 +96,10 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   private MongoOperations mongoOperations;
 
+  private GridFsOperations gridFsOperations;
+
+  private MongoDatabaseFactory mongoDatabaseFactory;
+
   private OpenTelemetry openTelemetry;
 
   private final Set<Converter<?, ?>> customConverters = new LinkedHashSet<>();
@@ -130,6 +136,8 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
     this.database = cs.getDatabase();
 
     mongoClient = createMongoClient(cs);
+
+    mongoDatabaseFactory = new SimpleMongoClientDatabaseFactory(mongoClient, this.database);
 
     registerHealthCheck(environment.healthChecks(), mongoClient, this.database);
     registerOnShutdown(environment);
@@ -193,6 +201,19 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   }
 
   /**
+   * Provides the {@link GridFsOperations} that can be used to store and retrieve binary files
+   * inside MongoDBs filesystem GridFS.
+   *
+   * @return the {@link GridFsTemplate} implementing {@link GridFsOperations}.
+   */
+  public GridFsOperations getGridFsOperations() {
+    if (gridFsOperations == null) {
+      gridFsOperations = createGridFsOperations();
+    }
+    return gridFsOperations;
+  }
+
+  /**
    * @return a new Spring Data Mongo repository
    * @param repositoryType the type of the repository that is created
    * @param <T> the repository class or interface
@@ -211,11 +232,15 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
 
   /** creates a mongoTemplate to be used for operations in database. */
   private MongoOperations createMongoOperations() {
-    SimpleMongoClientDatabaseFactory mongoDbFactory =
-        new SimpleMongoClientDatabaseFactory(mongoClient, this.database);
-    MongoConverter mongoConverter = getDefaultMongoConverter(mongoDbFactory, getConverters());
+    MongoConverter mongoConverter = getDefaultMongoConverter(mongoDatabaseFactory, getConverters());
 
-    return new MongoTemplate(mongoDbFactory, mongoConverter);
+    return new MongoTemplate(mongoDatabaseFactory, mongoConverter);
+  }
+
+  private GridFsTemplate createGridFsOperations() {
+    MongoConverter mongoConverter = getDefaultMongoConverter(mongoDatabaseFactory, getConverters());
+
+    return new GridFsTemplate(mongoDatabaseFactory, mongoConverter);
   }
 
   /**
