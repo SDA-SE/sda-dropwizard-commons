@@ -6,6 +6,7 @@ import io.dropwizard.core.setup.Environment;
 import org.sdase.commons.server.spring.data.mongo.SpringDataMongoBundle;
 import org.sdase.commons.server.spring.data.mongo.example.repository.PersonRepository;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.gridfs.GridFsOperations;
 
 public class MyApp extends Application<MyConfiguration> {
 
@@ -32,5 +33,9 @@ public class MyApp extends Application<MyConfiguration> {
 
   public PersonRepository getPersonRepository() {
     return personRepository;
+  }
+
+  public GridFsOperations getGridFsOperations() {
+    return springDataMongoBundle.getGridFsOperations();
   }
 }
