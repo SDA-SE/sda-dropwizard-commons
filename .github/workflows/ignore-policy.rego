@@ -12,7 +12,9 @@ ignore_cves := {
   # Flapdoodle is only used in test.
   "CVE-2023-42503",
   # Netty is used by Zookeeper which is only used in test.
-  "CVE-2023-4586"
+  "CVE-2023-4586",
+  # json-path is only used as transitive dependency by Wiremock, i.e. only for testing
+  "CVE-2023-51074"
 }
 
 ignore {
