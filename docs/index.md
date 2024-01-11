@@ -150,7 +150,7 @@ with MongoDB using [Spring Data Mongo](https://spring.io/projects/spring-data-mo
 The module [`sda-commons-server-mongo-testing`](./server-mongo-testing.md)
 provides a MongoDB instance for integration testing.
 
-The [`example`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-spring-data-mongo/src/test/java/org/sdase/commons/server/spring/data/mongo/example)
+The [`example`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-spring-data-mongo/src/test/java/org/sdase/commons/server/spring/data/mongo/example)
 package shows how to use the bundle within an application.
 
 ##### Open Telemetry

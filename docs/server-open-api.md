@@ -98,7 +98,7 @@ class OpenApiDocumentationTest {
 
 This test uses the [`GoldenFileAssertions` from sda-commons-server-testing](./server-testing.md)
 and removes all contents that vary between tests (the `servers` key that contains random port numbers) with
-[`OpenApiFileHelper#nomalizeOpenApiYaml(String yaml)`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-openapi/src/main/java/org/sdase/commons/server/openapi/OpenApiFileHelper.java).
+[`OpenApiFileHelper#nomalizeOpenApiYaml(String yaml)`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-openapi/src/main/java/org/sdase/commons/server/openapi/OpenApiFileHelper.java).
 
 ## Further Information
 
@@ -257,7 +257,7 @@ When working with the API first approach, it is possible to serve an existing Op
 of generating it using Annotations. It is also possible to combine pre-existing and generated results
 into one file.
 
-_[`custom-openapi.yaml`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-openapi/src/test/resources/custom-openapi.yaml)_
+_[`custom-openapi.yaml`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-openapi/src/test/resources/custom-openapi.yaml)_
 
 ```yaml
 openapi: 3.0.1

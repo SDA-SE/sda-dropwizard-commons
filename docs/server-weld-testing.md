@@ -16,7 +16,7 @@ Contributions of new features and bug fixes are welcome.
 
 ### Testing
 
-To start a Dropwizard application during testing the [`WeldAppExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-weld-testing/src/main/java/org/sdase/commons/server/weld/testing/WeldAppExtension.java) can be used:
+To start a Dropwizard application during testing the [`WeldAppExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-weld-testing/src/main/java/org/sdase/commons/server/weld/testing/WeldAppExtension.java) can be used:
 
 ```java
 public class WeldAppITest {
@@ -30,7 +30,7 @@ public class WeldAppITest {
 ```
  
 The `WeldAppExtension` is a shortcut for creating a `DropwizardAppExtension` in combination with the
-[`WeldTestSupport`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-weld-testing/src/main/java/org/sdase/commons/server/weld/testing/WeldTestSupport.java).
+[`WeldTestSupport`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-weld-testing/src/main/java/org/sdase/commons/server/weld/testing/WeldTestSupport.java).
 
 It may also be used with programmatic configuration omitting a `config.yaml`:
 

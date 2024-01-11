@@ -15,7 +15,7 @@ The Dropwizard module provides default Bundles that are useful for most Dropwiza
 
 ### ConfigurationSubstitutionBundle
 
-The [`ConfigurationSubstitutionBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
+The [`ConfigurationSubstitutionBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
 allows to use placeholders for environment variables or system properties in the `config.yaml` of
 the application to dynamically configure the application at startup. Default values can be added
 after the variable name separated by `:-`
@@ -35,7 +35,7 @@ database:
 
 ### ConfigurationValueSupplierBundle
 
-The [`ConfigurationValueSupplierBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationValueSupplierBundle.java)
+The [`ConfigurationValueSupplierBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationValueSupplierBundle.java)
 provides a `Supplier` for a configuration value. It may be used if the type of the configuration itself should not be 
 known by the class that is configured. This may be the case if another bundle or a service should be configured either
 by a configuration property or another service.
@@ -68,7 +68,7 @@ public class MyApplication extends Application<MyConfiguration> {
 ```
 
 ### DefaultLoggingConfigurationBundle
-The [`DefaultLoggingConfigurationBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/DefaultLoggingConfigurationBundle.java), 
+The [`DefaultLoggingConfigurationBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/DefaultLoggingConfigurationBundle.java), 
 is used to configure the console logger with the settings desired by the SDA.
 
 The bundle sets the log threshold for the console appender to `INFO` and uses the following log format:
@@ -87,7 +87,7 @@ public void initialize(Bootstrap<Configuration> bootstrap) {
 ```
 
 ### MetadataContextBundle
-The [`MetadataContextBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/MetadataContextBundle.java)
+The [`MetadataContextBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/MetadataContextBundle.java)
 enables the metadata context handling for an application.
 
 If you want to make use of the data in the metadata context, you should read the [dedicated documentation](./metadata-context.md).
@@ -95,7 +95,7 @@ If your service is required to support the metadata context but is not intereste
 continue here:
 
 Services that use the bundle
-- can access the current [`MetadataContext`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/metadata/MetadataContext.java)
+- can access the current [`MetadataContext`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/metadata/MetadataContext.java)
   in their implementation
 - will automatically load the context from incoming HTTP requests into the thread handling the
   request
@@ -129,7 +129,7 @@ Services that use the `MetadataContextBundle` and take care of interrupted proce
 execution, may add a link like this in their deployment documentation:
 
 ```md
-This service keeps track of the [metadata context](https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-server-dropwizard/README.md#metadatacontextbundle).
+This service keeps track of the [metadata context](https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-dropwizard/README.md#metadatacontextbundle).
 ```
 
 ### JSON Logging

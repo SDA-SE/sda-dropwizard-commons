@@ -45,7 +45,7 @@ Initialization of bundle:
             .build();
 ```
 
-The [configuration](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-key-mgmt/src/main/java/org/sdase/commons/keymgmt/config/KeyMgmtConfig.java) includes the paths to the mapping and keys yaml files as well as the option to disable value validation.
+The [configuration](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-key-mgmt/src/main/java/org/sdase/commons/keymgmt/config/KeyMgmtConfig.java) includes the paths to the mapping and keys yaml files as well as the option to disable value validation.
 The following listing shows a yaml snippet for the `keyMgmt` configuration. 
 ```yaml
 keyMgmt:
@@ -69,7 +69,7 @@ private String genderOrSalutationKey
 ```
 
 ### Key yaml file
-The yaml file or keys may contain one or more [KeyDefinition](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-key-mgmt/src/main/java/org/sdase/commons/keymgmt/model/KeyDefinition.java) documents.
+The yaml file or keys may contain one or more [KeyDefinition](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-key-mgmt/src/main/java/org/sdase/commons/keymgmt/model/KeyDefinition.java) documents.
 
 __Example:__
 ```yaml
@@ -85,7 +85,7 @@ values:
 ```
 
 ### Mapping yaml file
-The yaml file for mappings may contain one or more [KeyMappingModel](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-key-mgmt/src/main/java/org/sdase/commons/keymgmt/model/KeyMappingModel.java) documents.
+The yaml file for mappings may contain one or more [KeyMappingModel](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-key-mgmt/src/main/java/org/sdase/commons/keymgmt/model/KeyMappingModel.java) documents.
 
 __Example:__
 ```yaml

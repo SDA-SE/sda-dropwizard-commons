@@ -23,7 +23,7 @@ The [changelog](https://github.com/SDA-SE/sda-dropwizard-commons/releases/) prov
 
 # Security related configuration
 
-The _SecurityBundle_ (`sda-commons-server-security`) hardens the configuration of Dropwizard. The [README](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-security) provides information about addressed risks and how to use the `SecurityBundle`.
+The _SecurityBundle_ (`sda-commons-server-security`) hardens the configuration of Dropwizard. The [README](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-security) provides information about addressed risks and how to use the `SecurityBundle`.
 
 
 # Known security gaps and future enhancements

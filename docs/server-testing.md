@@ -25,7 +25,7 @@ In case you want to use JUnit 5 you also have to activate it in your build.gradl
 
 ## Provided Assertions
 
-### [GoldenFileAssertions](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-testing/https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/GoldenFileAssertions.java)
+### [GoldenFileAssertions](https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/GoldenFileAssertions.java)
 
 Special assertions for `Path` objects to check if a file matches the expected contents and updates
 them if needed. These assertions are helpful to check if certain files are stored in the repository
@@ -58,7 +58,7 @@ content should always be reproducible. Note that the [AsyncAPI](./shared-asyncap
 
 ### SystemPropertyClassExtension
 
-The [`SystemPropertyClassExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/SystemPropertyClassExtension.java)
+The [`SystemPropertyClassExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/SystemPropertyClassExtension.java)
 allows for overriding or unsetting system properties for (integration) tests and resets them to their original value when the tests have finished.
 
 To use the extension, register it to your test class via the JUnit5 `@RegisterExtension`:
@@ -98,7 +98,7 @@ public class CustomIT {
 
 ### SystemPropertyClassExtension
 
-This module provides the [`SystemPropertyClassExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/SystemPropertyClassExtension.java),
+This module provides the [`SystemPropertyClassExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/SystemPropertyClassExtension.java),
 a JUnit5 test extension to set and unset system properties before running an integration test.
 
 To use the extension register it to your test class via the JUnit5 `@RegisterExtension`:

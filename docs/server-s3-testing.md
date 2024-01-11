@@ -15,7 +15,7 @@ testCompile 'org.sdase.commons:sda-commons-server-s3-testing'
 
 ## JUnit 5
 
-This module provides the [`S3ClassExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-s3-testing/src/main/java/org/sdase/commons/server/s3/testing/S3ClassExtension.java),
+This module provides the [`S3ClassExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3-testing/src/main/java/org/sdase/commons/server/s3/testing/S3ClassExtension.java),
 a JUnit 5 extension that is used to automatically bootstrap an AWS S3-compatible object storage instance
 for integration tests.
 

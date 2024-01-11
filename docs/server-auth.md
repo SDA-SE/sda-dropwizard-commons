@@ -2,8 +2,8 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-auth/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-auth)
 
-This module provides an [`AuthBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/AuthBundle.java) to authenticate
-users based on JSON Web Tokens and an [`OpaBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaBundle.java) to
+This module provides an [`AuthBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/AuthBundle.java) to authenticate
+users based on JSON Web Tokens and an [`OpaBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaBundle.java) to
 authorize the request with help of the [`Open Policy Agent`](http://www.openpolicyagent.org).
 
 To use the bundle, a dependency to this module has to be added:
@@ -13,7 +13,7 @@ compile 'org.sdase.commons:sda-commons-server-auth:<current-version>'
 ```
 ## Auth Bundle
 
-The authentication creates a [`JwtPrincipal`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java) per 
+The authentication creates a [`JwtPrincipal`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java) per 
 request. This can be accessed from the `SecurityContext`:
 
 ```java
@@ -65,7 +65,7 @@ rejected in a later stage.
 ## Configuration
 
 The configuration relies on the `config.yaml` of the application and the custom property where the 
-[`AuthConfig`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/config/AuthConfig.java) is mapped. Usually this should be 
+[`AuthConfig`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/config/AuthConfig.java) is mapped. Usually this should be 
 `auth`.
 
 ```java
@@ -133,7 +133,7 @@ auth:
 ```
 
 The config may be filled from environment variables if the
-[`ConfigurationSubstitutionBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
+[`ConfigurationSubstitutionBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
 is used:
 
 ```yaml
@@ -145,7 +145,7 @@ auth:
 ```
 
 In this case, the `AUTH_KEYS` variable should contain a JSON array of 
-[`KeyLocation`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/config/KeyLocation.java) objects:
+[`KeyLocation`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/config/KeyLocation.java) objects:
 
 ```json
 [
@@ -205,20 +205,20 @@ In short, Open Policy Agent acts as policy decision point and is started as side
 The OPA Bundle acts as a client to the Open Policy Agent and is hooked in as request filter handling requests after they have 
 been validated by the `JwtAuthenticator` and before they reach the service implementation.
 
-The OPA Bundle requires the [`AuthBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/AuthBundle.java) in place, so that the JWT can be verified against public keys before it is handed over to OPA. 
+The OPA Bundle requires the [`AuthBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/AuthBundle.java) in place, so that the JWT can be verified against public keys before it is handed over to OPA. 
 In case the request does not contain a JWT token at all, the JWT verification in the `AuthBundle` will be skipped without error and further 
 checks should be part of the OPA policy.
 
 If it is still required to reject requests that do not contain a JWT token the `AuthBundle` needs to be configured to perform basic authorization. This is achieved 
 by setting `.withAnnotatedAuthorization()` on the `AuhtBundle` and annotate endpoints with `@PermitAll`.
 
-![Overview](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/docs/Overview.svg)
+![Overview](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/docs/Overview.svg)
 
 The OPA bundle requests the policy decision providing the following inputs
  * HTTP path as Array
  * HTTP method as String
  * validated JWT (if available) 
- * all request headers (can be disabled in the [`OpaBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaBundle.java) builder)
+ * all request headers (can be disabled in the [`OpaBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaBundle.java) builder)
 
 _Remark to HTTP request headers:_  
 The bundle normalizes  header names to lower case to simplify handling in OPA since HTTP specification defines header names as case-insensitive.
@@ -229,7 +229,7 @@ _Security note:_
 Please be aware while a service might only consider one value of a specific header, the OPA is able to authorize on an array of those.
 Consider this in your policy when you want to make sure you authorize on the same value that a service might use to evaluate the output.
 
-These [inputs](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/filter/model/OpaInput.java) can be accessed inside a policy `.rego`-file in this way:
+These [inputs](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/filter/model/OpaInput.java) can be accessed inside a policy `.rego`-file in this way:
 ```rego
 # each policy lies in a package that is referenced in the configuration of the OpaBundle
 package example
@@ -296,15 +296,15 @@ public class ConstraintModel {
 }
 ```
 
-The bundle creates a [`OpaJwtPrincipal`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) 
+The bundle creates a [`OpaJwtPrincipal`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) 
 for each request. You can retrieve the constraint model's data from the principal by invoking `OpaJwtPrincipal#getConstraintsAsEntity`.
-Data from an [`JwtPrincipal`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java) is 
+Data from an [`JwtPrincipal`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java) is 
 copied to the new principal if existing.
 Beside the JWT, the constraints are included in this principal. The `OpaJwtPrincipal` includes a 
 method to parse the constraints JSON string to a Java object.
-The [`OpaJwtPrincipal`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) can be 
+The [`OpaJwtPrincipal`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaJwtPrincipal.java) can be 
 injected as field using `@Context` in 
-[request scoped beans like endpoint implementations](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaJwtPrincipalEndpoint.java) or accessed from the `SecurityContext`.
+[request scoped beans like endpoint implementations](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaJwtPrincipalEndpoint.java) or accessed from the `SecurityContext`.
 
 ```java
 @Path("/secure")
@@ -348,7 +348,7 @@ public class MyApplication extends Application<MyConfiguration> {
 
 ## Configuration
 The configuration relies on the `config.yaml` of the application and the custom property where the 
-[`OpaConfig`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/config/OpaConfig.java) is mapped. Usually this should be 
+[`OpaConfig`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/config/OpaConfig.java) is mapped. Usually this should be 
 `opa`.
 
 ```java
@@ -378,7 +378,7 @@ opa:
 ```
 
 The config may be filled from environment variables if the
-[`ConfigurationSubstitutionBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
+[`ConfigurationSubstitutionBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
 is used:
 
 ```yaml
@@ -409,13 +409,13 @@ The OPA should be deployed as near to the service as possible, so we don't expec
 
 ## Testing
 
-[`sda-commons-server-auth-testing`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/README.md) provides support for testing
+[`sda-commons-server-auth-testing`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/README.md) provides support for testing
 applications with authentication.
 
 ## Input Extensions
 
 The Bundle offers the option to register extensions that send custom data to the Open Policy Agent to be accessed during policy execution.
-Such extensions implement the [`OpaInputExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/extension/OpaInputExtension.java) interface and are registered in a dedicated namespace.
+Such extensions implement the [`OpaInputExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/extension/OpaInputExtension.java) interface and are registered in a dedicated namespace.
 The extension is called in the `OpaAuthFilter` and is able to access the current `RequestContext` to for example extract additional data from the request.
 _Overriding existing input properties (`path`, `jwt`, `httpMethod`) is not possible._
 
@@ -425,7 +425,7 @@ In general, a custom extension should not be necessary for most use cases.
 _Remark on accessing the request body in an input extension:_
 The extension gets the `ContainerRequestContext` as input to access information about the request.
 Please be aware to not access the request entity since this might break your service.
-A test that shows the erroneous behavior can be found in [`OpaBundleBodyInputExtensionTest.java`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth/src/test/java/org/sdase/commons/server/opa/OpaBundleBodyInputExtensionTest.java)
+A test that shows the erroneous behavior can be found in [`OpaBundleBodyInputExtensionTest.java`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/test/java/org/sdase/commons/server/opa/OpaBundleBodyInputExtensionTest.java)
 
 _Security note:_
 When creating new extensions, be aware that you might access properties of a request that are not yet validated in the method interface.

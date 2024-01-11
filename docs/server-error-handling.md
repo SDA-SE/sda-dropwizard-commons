@@ -9,7 +9,7 @@ is added to the application.
 
 Using a response object (`javax.ws.rs.core.Response`) to inform clients about exceptions will not
 necessarily result in the agreed error structure. This is only the case if as entity, an 
-[`ApiError`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-error/src/main/java/org/sdase/commons/shared/api/error/ApiError.java)
+[`ApiError`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-error/src/main/java/org/sdase/commons/shared/api/error/ApiError.java)
 is used.
 
 This example project shows how the error structure will be generated correctly for the following situations:

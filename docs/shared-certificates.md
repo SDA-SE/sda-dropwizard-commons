@@ -6,7 +6,7 @@ These certificates are used to verify SSL connections to the database.
 
 ## Usage
 
-The [`CaCertificatesBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificatesBundle.java) 
+The [`CaCertificatesBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificatesBundle.java) 
 should be added as a field in the bundle class instead of being anonymously added in the 
 `initialize` method like other bundles of this library, so we can use it to get the SSLContext in the `run` method.
 
@@ -68,7 +68,7 @@ public class MyBundle<C extends Configuration> implements ConfiguredBundle<C> {
 ## Configuration
 
 The Dropwizard applications config class needs to provide a
-[`CaCertificateConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificateConfiguration.java).
+[`CaCertificateConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificateConfiguration.java).
 
 The directory that contains CA certificates in PEM format is configured in the `config.yaml` 
 of the final application config. 

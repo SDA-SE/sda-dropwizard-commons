@@ -6,7 +6,7 @@ The module `sda-commons-server-security` helps to configure a secure Dropwizard 
 recommendations "Härtungsmaßnahmen Dropwizard" available at the internal wiki entry
 by Timo Pagel.
 
-Currently the [`SecurityBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-security/src/main/java/org/sdase/commons/server/security/SecurityBundle.java) addresses
+Currently the [`SecurityBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-security/src/main/java/org/sdase/commons/server/security/SecurityBundle.java) addresses
 
 - Risk: Utilization of HTTP Methods
  -> HTTP offers several methods to perform actions on a web server. Some of the methods are designed to help developers deploy and test HTTP applications. If a Web server is incorrectly configured, attackers can take advantage of this. For example, cross-site tracing by attackers can be used to determine user data. Cross-site tracing involves cross-site scripting to capture advanced information via the HTTP TRACE method. For example, a cookie protected by HTTP-Only.
@@ -31,7 +31,7 @@ Currently the [`SecurityBundle`](https://github.com/SDA-SE/sda-dropwizard-common
 
 ## Usage
 
-Just add the [`SecurityBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-security/src/main/java/org/sdase/commons/server/security/SecurityBundle.java) to the 
+Just add the [`SecurityBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-security/src/main/java/org/sdase/commons/server/security/SecurityBundle.java) to the 
 application to avoid known risks:
 
 ```java

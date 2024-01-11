@@ -18,7 +18,7 @@ Contributions of new features and bug fixes are welcome.
 
 ### Application Bootstrap
 
-To bootstrap a Dropwizard application inside a Weld-SE container, use the [`DropwizardWeldHelper`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-weld/src/main/java/org/sdase/commons/server/weld/DropwizardWeldHelper.java):
+To bootstrap a Dropwizard application inside a Weld-SE container, use the [`DropwizardWeldHelper`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-weld/src/main/java/org/sdase/commons/server/weld/DropwizardWeldHelper.java):
 
 ```java
 public static void main(final String[]args) throws Exception {
@@ -28,7 +28,7 @@ public static void main(final String[]args) throws Exception {
 
 ### Provided Bundles
 
-To optionally use CDI support inside of servlets, use the additional [`WeldBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-weld/src/main/java/org/sdase/commons/server/weld/WeldBundle.java):
+To optionally use CDI support inside of servlets, use the additional [`WeldBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-weld/src/main/java/org/sdase/commons/server/weld/WeldBundle.java):
 
 ```java
 public void initialize(final Bootstrap<AppConfiguration> bootstrap) {

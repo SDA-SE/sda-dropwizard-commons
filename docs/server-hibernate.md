@@ -17,7 +17,7 @@ compile scope.
 
 ### Initialization
 
-The [`HibernateBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-hibernate/src/main/java/org/sdase/commons/server/hibernate/HibernateBundle.java) should be added as 
+The [`HibernateBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-hibernate/src/main/java/org/sdase/commons/server/hibernate/HibernateBundle.java) should be added as 
 field in the application class instead of being anonymously added in the initialize method like other bundles of this 
 library. Implementations need to refer to the instance to get access to the `SessionFactory`.
 
@@ -128,7 +128,7 @@ has an example. The required `SessionFactory` is provided by the `HibernateBundl
 ### Schema migration
 
 For database schema migration, [Flyway](https://flywaydb.org/) is used by the 
-[`DbMigrationService`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-hibernate/src/main/java/org/sdase/commons/server/hibernate/DbMigrationService.java) and works with the
+[`DbMigrationService`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-hibernate/src/main/java/org/sdase/commons/server/hibernate/DbMigrationService.java) and works with the
 same `DataSourceFactory` as the `HibernateBundle`. It may be used in a custom `ConfiguredCommand` in each application.
 Therefore, defaults for the command name and the documentation is provided:
 
@@ -187,7 +187,7 @@ Dependencies to be added:
 ```
 
 For creating tests without a Dropwizard application please refer to the 
-[`DbMigrationServiceTest`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-hibernate/src/test/java/org/sdase/commons/server/hibernate/DbMigrationServiceTest.java) as example.
+[`DbMigrationServiceTest`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-hibernate/src/test/java/org/sdase/commons/server/hibernate/DbMigrationServiceTest.java) as example.
 
 For creating full integration tests of a Dropwizard application please refer to
-[`HibernateIT`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-hibernate/src/test/java/org/sdase/commons/server/hibernate/HibernateIT.java) as example. 
+[`HibernateIT`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-hibernate/src/test/java/org/sdase/commons/server/hibernate/HibernateIT.java) as example. 

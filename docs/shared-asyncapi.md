@@ -9,7 +9,7 @@
 >
 
 
-This module contains the [`AsyncApiGenerator`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-asyncapi/src/main/java/org/sdase/commons/shared/asyncapi/AsyncApiGenerator.java)
+This module contains the [`AsyncApiGenerator`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-asyncapi/src/main/java/org/sdase/commons/shared/asyncapi/AsyncApiGenerator.java)
 to generate [AsyncAPI](https://www.asyncapi.com/) specs from a template and model classes.
 The AsyncAPI specification is the industry standard for defining asynchronous APIs.
 
@@ -110,7 +110,7 @@ String expected = AsyncApiGenerator
 ### Generating Schema Files
 
 If desired, the module also allows to generate the JSON schema files, for example to use them to validate test data.
-Use [JsonSchemaGenerator](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-asyncapi/src/main/java/org/sdase/commons/shared/asyncapi/JsonSchemaGenerator.java) to create standalone JSON schemas:
+Use [JsonSchemaGenerator](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-asyncapi/src/main/java/org/sdase/commons/shared/asyncapi/JsonSchemaGenerator.java) to create standalone JSON schemas:
 
 ```java
 String expected = JsonSchemaGenerator
@@ -125,5 +125,5 @@ String expected = JsonSchemaGenerator
 
 You can document the models using annotations like `JsonPropertyDescription` from Jackson or
 `JsonSchemaExamples` from [`mbknor-jackson-jsonSchema`](https://github.com/mbknor/mbknor-jackson-jsonSchema).
-See the tests of this module for [example model classes](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/models).
+See the tests of this module for [example model classes](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-asyncapi/src/test/java/org/sdase/commons/shared/asyncapi/models).
 Note that this requires to add the module as compile time dependency.

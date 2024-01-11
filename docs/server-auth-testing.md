@@ -13,7 +13,7 @@ testCompile 'org.sdase.commons:sda-commons-server-auth-testing:<current-version>
 ## Auth Extension
 The `AuthClassExtension` puts the `AuthConfig` in an environment variable named `AUTH_KEYS` (for backwards compatibility).
 The configuration in the test needs to use this property and the application is required to use the
-[`ConfigurationSubstitutionBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
+[`ConfigurationSubstitutionBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java)
 from [`sda-commons-server-dropwizard`](server-dropwizard.md):
 
 ```java
@@ -77,13 +77,13 @@ The `AuthClassExtension` provides functions to generate a valid token that match
 ```
 
 Examples can be found in
-the [test source branch](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test)
+the [test source branch](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test)
 of the module sda-commons-server-auth-testing. There is
 
-- [An example app](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/test/AuthTestApp.java)
-- [A test with authentication](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/AuthClassExtensionIT.java)
-- [A test with disabled authentication](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/AuthDisabledJUnit5IT.java)
-- [An appropriate test `config.yaml`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/resources/test-config.yaml)
+- [An example app](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/test/AuthTestApp.java)
+- [A test with authentication](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/AuthClassExtensionIT.java)
+- [A test with disabled authentication](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/AuthDisabledJUnit5IT.java)
+- [An appropriate test `config.yaml`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/resources/test-config.yaml)
 
 ## OPA Extension
 
@@ -134,13 +134,13 @@ To control the OPA mock behavior, the following API is provided
  OPA_EXTENSION.verify(1, onRequest().withHttpMethod(httpMethod).withPath(path).withJwt(jwt));
 ```
 
-Examples can be found in the [test source branch](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test) of the module sda-commons-server-auth-testing. There is
+Examples can be found in the [test source branch](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test) of the module sda-commons-server-auth-testing. There is
 
-- [An example app](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaBundleTestApp.java)
-- [A test with OPA](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/OpaClassExtensionIT.java)
-- [A test with disabled OPA support](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/OpaDisabledJUnit5IT.java). In this case, only empty constraints are within the principal
-- [An appropriate test `config.yaml`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/resources/test-opa-config.yaml)
+- [An example app](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaBundleTestApp.java)
+- [A test with OPA](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/OpaClassExtensionIT.java)
+- [A test with disabled OPA support](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/OpaDisabledJUnit5IT.java). In this case, only empty constraints are within the principal
+- [An appropriate test `config.yaml`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/resources/test-opa-config.yaml)
 
 Example with activated AUTH and OPA bundle can be found here:
-- [Example app](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/AuthAndOpaBundleTestApp.java)
-- [Test](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/AuthAndOpaClassExtensionIT.java)
+- [Example app](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/AuthAndOpaBundleTestApp.java)
+- [Test](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/AuthAndOpaClassExtensionIT.java)
