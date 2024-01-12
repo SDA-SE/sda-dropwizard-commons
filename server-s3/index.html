@@ -1303,20 +1303,20 @@
 
 <h1 id="sda-commons-server-s3">SDA Commons Server S3<a class="headerlink" href="#sda-commons-server-s3" title="Permanent link">&para;</a></h1>
 <p><a href="https://javadoc.io/doc/org.sdase.commons/sda-commons-server-s3"><img alt="javadoc" src="https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-s3/javadoc.svg" /></a></p>
-<p>This module provides the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-s3/src/main/java/org/sdase/commons/server/s3/S3Bundle.java"><code>S3Bundle</code></a>, 
+<p>This module provides the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/main/java/org/sdase/commons/server/s3/S3Bundle.java"><code>S3Bundle</code></a>, 
 a Dropwizard bundle that is used to perform operations on an object storage.</p>
 <p>The bundle provides an S3 client based on the <a href="https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/examples-s3.html">Amazon AWS SDK</a>.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-s3/src/main/java/org/sdase/commons/server/s3/S3Bundle.java"><code>S3Bundle</code></a> should be added as a
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/main/java/org/sdase/commons/server/s3/S3Bundle.java"><code>S3Bundle</code></a> should be added as a
 field in the application class instead of being anonymously added in the initialize method like other bundles of this 
 library. Implementations need to refer to the instance to access the client.</p>
 <p>The Dropwizard applications configuration class needs to provide a 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-s3/src/main/java/org/sdase/commons/server/s3/S3Configuration.java"><code>S3Configuration</code></a>.</p>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/main/java/org/sdase/commons/server/s3/S3Configuration.java"><code>S3Configuration</code></a>.</p>
 <p>The bundle builder requires to define the getter of the <code>S3Configuration</code> as method reference to access the 
 configuration.</p>
 <p>Afterward, <code>getClient()</code> is used to access an instance of <code>AmazonS3</code> that is used to operate on the 
 object storage. 
-See <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-s3/src/test/java/org/sdase/commons/server/s3/S3BundleTest.java"><code>S3BundleTest</code></a> for a detailed usage example.   </p>
+See <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/test/java/org/sdase/commons/server/s3/S3BundleTest.java"><code>S3BundleTest</code></a> for a detailed usage example.   </p>
 <h3 id="tracing">Tracing<a class="headerlink" href="#tracing" title="Permanent link">&para;</a></h3>
 <p>The bundle comes with <a href="https://opentelemetry.io/">OpenTelemetry</a> instrumentation.</p>
 <h3 id="health-check">Health Check<a class="headerlink" href="#health-check" title="Permanent link">&para;</a></h3>

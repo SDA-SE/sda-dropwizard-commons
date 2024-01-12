@@ -1376,11 +1376,11 @@
 <p>The module sda-commons-server-spring-data-mongo is used to work
 with MongoDB using <a href="https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/">Spring Data Mongo</a>.</p>
 <h2 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/SpringDataMongoBundle.java"><code>SpringDataMongoBundle</code></a>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/SpringDataMongoBundle.java"><code>SpringDataMongoBundle</code></a>
 should be added as a field in the application class instead of being anonymously added in the initialize
 method like other bundles of this library.</p>
 <p>The Dropwizard application's config class needs to provide a
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/MongoConfiguration.java"><code>MongoConfiguration</code></a>.</p>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/MongoConfiguration.java"><code>MongoConfiguration</code></a>.</p>
 <p>Please refer to the official documentation how to annotate your entity classes correctly, e.g. by
 adding <code>@Document</code>, <code>@MongoId</code> or <code>@Indexed</code>.</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -1520,7 +1520,7 @@ accepts the interface.</p>
 <p>Instead of providing <code>caCertificate</code> as an environment variable, mount the CA certificates in PEM format
 in the directory <code>/var/trust/certificates</code>. Certificates available in subdirectories will also be loaded.</p>
 <p>Note that this directory is also configurable through the Dropwizard config class. The config class should then provide a
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificateConfiguration.java"><code>CaCertificateConfiguration</code></a>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificateConfiguration.java"><code>CaCertificateConfiguration</code></a>
 to the bundle builder. See <a href="../shared-certificates/"><code>sda-commons-shared-certificates</code></a> for details.</p>
 
 

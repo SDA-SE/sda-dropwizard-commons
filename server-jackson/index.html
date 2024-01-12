@@ -1428,15 +1428,15 @@
 <p>The module <code>sda-commons-server-jackson</code> is used to configure the <code>ObjectMapper</code> with the recommended default settings 
 of SDA SE services. It also provides support for linking resources with HAL and adds the ability to filter fields on 
 client request.</p>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/JacksonConfigurationBundle.java"><code>JacksonConfigurationBundle</code></a> is
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/JacksonConfigurationBundle.java"><code>JacksonConfigurationBundle</code></a> is
 used to configure the JSON serializer. It adds various error mappers to support the SDA error message standard. These
 replace the default Dropwizard error mappers but also additional new mappers are added, e.g. mapping JaxRs Exceptions, 
 such as NotFound and NotAuthorized. All mappers do log the errors when mapping.
 The framework already provides a predefined exception mapper for <code>InvalidTypeException</code> if the framework default
 for feature <code>FAIL_ON_INVALID_SUBTYPE</code> is customized. See section <a href="#customize-the-objectmapper"><code>Customize the ObjectMapper</code></a> below for details
-about customizing the default object mapper settings. If the feature is enabled the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/errors/InvalidTypeIdExceptionMapper.java"><code>InvalidTypeIdExceptionMapper</code></a>
+about customizing the default object mapper settings. If the feature is enabled the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/errors/InvalidTypeIdExceptionMapper.java"><code>InvalidTypeIdExceptionMapper</code></a>
 produces a response in the common error format.</p>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/ObjectMapperConfigurationUtil.java"><code>ObjectMapperConfigurationUtil</code></a>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/ObjectMapperConfigurationUtil.java"><code>ObjectMapperConfigurationUtil</code></a>
 can be used to receive an <code>ObjectMapper</code> with the recommended settings for usage outside a Dropwizard application.  </p>
 <p>The default <code>ObjectMapper</code> is configured to be fault-tolerant to avoid failures in deserialization. JSR-303 validations
 should be used to validate input data. For serialization the bundle disables 
@@ -1542,9 +1542,9 @@ seconds are supported.</p>
 <p>Please do not use <code>@JsonFormat(pattern = "...")</code> for customizing serialization because it breaks tolerant reading of 
 formatting variants. If output should be customized, use <code>@JsonSerializer</code>.</p>
 <p>SDA-Commons provides two default serializers for <code>ZonedDateTime</code> to use a fixed resolution in the output.
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java">Iso8601Serializer</a> is used to omit 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java">Iso8601Serializer</a> is used to omit 
 milliseconds and 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java#L90">Iso8601Serializer.WithMillis</a> is used to
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java#L90">Iso8601Serializer.WithMillis</a> is used to
 render the time with 3 digits for milliseconds.</p>
 <p>Usage:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1596,7 +1596,7 @@ added to the dependencies. <code>io.openapitools.hal:swagger-hal</code> is shipp
 </code></pre></div></td></tr></table></div></p>
 <h4 id="embedhelper">EmbedHelper<a class="headerlink" href="#embedhelper" title="Permanent link">&para;</a></h4>
 <p>To decide whether a resource is just linked or embedded, the 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/EmbedHelper.java"><code>EmbedHelper</code></a> can be used. If query parameters for 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/EmbedHelper.java"><code>EmbedHelper</code></a> can be used. If query parameters for 
 embedding are passed, like <code>/api/cars?embed=drivers,owner</code>, <code>EmbedHelper.isEmbeddingOfRelationRequested(relationName)</code> 
 can be used to check whether a resource should be embedded:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>

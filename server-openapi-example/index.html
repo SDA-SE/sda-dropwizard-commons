@@ -1211,23 +1211,23 @@
 
 <h1 id="sda-commons-server-openapi-example">SDA Commons Server OpenAPI Example<a class="headerlink" href="#sda-commons-server-openapi-example" title="Permanent link">&para;</a></h1>
 <p>This example module shows an 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-openapi-example/src/main/java/org/sdase/commons/server/openapi/example/OpenApiExampleApplication.java">application</a> that uses the 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-openapi/src/main/java/org/sdase/commons/server/openapi/OpenApiBundle.java"><code>OpenApiBundle</code></a>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-openapi-example/src/main/java/org/sdase/commons/server/openapi/example/OpenApiExampleApplication.java">application</a> that uses the 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-openapi/src/main/java/org/sdase/commons/server/openapi/OpenApiBundle.java"><code>OpenApiBundle</code></a>
 to describe REST endpoints with a OpenApi 3 documentation.</p>
-<p>Beside the initialization of the bundle via the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java"><code>SdaPlatformBundle</code></a>,
-it includes a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-openapi-example/src/main/java/org/sdase/commons/server/openapi/example/people/rest/PersonService.java"><code>PersonService</code></a> 
-and a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-openapi-example/src/main/java/org/sdase/commons/server/openapi/example/people/rest/PersonResource.java"><code>PersonResource</code></a>
+<p>Beside the initialization of the bundle via the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java"><code>SdaPlatformBundle</code></a>,
+it includes a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-openapi-example/src/main/java/org/sdase/commons/server/openapi/example/people/rest/PersonService.java"><code>PersonService</code></a> 
+and a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-openapi-example/src/main/java/org/sdase/commons/server/openapi/example/people/rest/PersonResource.java"><code>PersonResource</code></a>
 to demonstrate some cases of API documentation.</p>
 <p>The 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-openapi-example/src/test/java/org/sdase/commons/server/openapi/example/people/rest/OpenApiIT.java">integration test</a> 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-openapi-example/src/test/java/org/sdase/commons/server/openapi/example/people/rest/OpenApiIT.java">integration test</a> 
 shows how the existence of a OpenAPI endpoint can be tested.</p>
-<p>The provided <a href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-server-openapi-example/src/test/resources/test-config.yaml"><code>local-config.yaml</code></a> allows to start the 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-openapi-example/src/main/java/org/sdase/commons/server/openapi/example/OpenApiExampleApplication.java">application</a> without the 
+<p>The provided <a href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-openapi-example/src/test/resources/test-config.yaml"><code>local-config.yaml</code></a> allows to start the 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-openapi-example/src/main/java/org/sdase/commons/server/openapi/example/OpenApiExampleApplication.java">application</a> without the 
 need for authentication locally using a run configuration of the favourite IDE that defines the program arguments 
 <code>server sda-commons-server-openapi-example/local-config.yaml</code>.
 Swagger documentation is available at <code>GET /openapi.json</code> or <code>GET /openapi.yaml</code>, 
 you may use the <a href="https://editor.swagger.io">Swagger Editor</a> or <a href="http://petstore.swagger.io/">Swagger UI</a> to view the documentation. </p>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-server-openapi-example/config.yaml"><code>config.yaml</code></a> is an example how the application can be started in production. Such file should be 
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-openapi-example/config.yaml"><code>config.yaml</code></a> is an example how the application can be started in production. Such file should be 
 copied in the Docker container so that the variables can be populated using the environment configured by the 
 orchestration tool (e.g. Kubernetes).</p>
 

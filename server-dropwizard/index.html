@@ -1367,7 +1367,7 @@ with <code>gradlew dependencies</code> on upgrades.</p>
 <h2 id="provided-bundles">Provided Bundles<a class="headerlink" href="#provided-bundles" title="Permanent link">&para;</a></h2>
 <p>The Dropwizard module provides default Bundles that are useful for most Dropwizard applications.</p>
 <h3 id="configurationsubstitutionbundle">ConfigurationSubstitutionBundle<a class="headerlink" href="#configurationsubstitutionbundle" title="Permanent link">&para;</a></h3>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java"><code>ConfigurationSubstitutionBundle</code></a>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java"><code>ConfigurationSubstitutionBundle</code></a>
 allows to use placeholders for environment variables or system properties in the <code>config.yaml</code> of
 the application to dynamically configure the application at startup. Default values can be added
 after the variable name separated by <code>:-</code></p>
@@ -1386,7 +1386,7 @@ The default value of a value modified by <code>toJsonString</code> must be valid
 <span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_URL:-localhost:12345}</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="configurationvaluesupplierbundle">ConfigurationValueSupplierBundle<a class="headerlink" href="#configurationvaluesupplierbundle" title="Permanent link">&para;</a></h3>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationValueSupplierBundle.java"><code>ConfigurationValueSupplierBundle</code></a>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationValueSupplierBundle.java"><code>ConfigurationValueSupplierBundle</code></a>
 provides a <code>Supplier</code> for a configuration value. It may be used if the type of the configuration itself should not be 
 known by the class that is configured. This may be the case if another bundle or a service should be configured either
 by a configuration property or another service.</p>
@@ -1436,7 +1436,7 @@ by a configuration property or another service.</p>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="defaultloggingconfigurationbundle">DefaultLoggingConfigurationBundle<a class="headerlink" href="#defaultloggingconfigurationbundle" title="Permanent link">&para;</a></h3>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/DefaultLoggingConfigurationBundle.java"><code>DefaultLoggingConfigurationBundle</code></a>, 
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/DefaultLoggingConfigurationBundle.java"><code>DefaultLoggingConfigurationBundle</code></a>, 
 is used to configure the console logger with the settings desired by the SDA.</p>
 <p>The bundle sets the log threshold for the console appender to <code>INFO</code> and uses the following log format:</p>
 <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>[%d] [%-5level] [%X{Trace-Token}] %logger{36} - %msg%n
@@ -1450,13 +1450,13 @@ Logging related configuration is not required by this bundle. </p>
 }
 </code></pre></div></td></tr></table></div>
 <h3 id="metadatacontextbundle">MetadataContextBundle<a class="headerlink" href="#metadatacontextbundle" title="Permanent link">&para;</a></h3>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/MetadataContextBundle.java"><code>MetadataContextBundle</code></a>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/MetadataContextBundle.java"><code>MetadataContextBundle</code></a>
 enables the metadata context handling for an application.</p>
 <p>If you want to make use of the data in the metadata context, you should read the <a href="../metadata-context/">dedicated documentation</a>.
 If your service is required to support the metadata context but is not interested in the data,
 continue here:</p>
 <p>Services that use the bundle
-- can access the current <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/metadata/MetadataContext.java"><code>MetadataContext</code></a>
+- can access the current <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/metadata/MetadataContext.java"><code>MetadataContext</code></a>
   in their implementation
 - will automatically load the context from incoming HTTP requests into the thread handling the
   request
@@ -1485,7 +1485,7 @@ In most cases, developers should prefer<code>ContainerRequestContextHolder.trans
 which also transfers the metadata context.</p>
 <p>Services that use the <code>MetadataContextBundle</code> and take care of interrupted processes and parallel
 execution, may add a link like this in their deployment documentation:</p>
-<div class="language-md highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>This service keeps track of the [<span class="nt">metadata context</span>](<span class="na">https://github.com/SDA-SE/sda-dropwizard-commons/blob/master/sda-commons-server-dropwizard/README.md#metadatacontextbundle</span>).
+<div class="language-md highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>This service keeps track of the [<span class="nt">metadata context</span>](<span class="na">https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-dropwizard/README.md#metadatacontextbundle</span>).
 </code></pre></div></td></tr></table></div>
 <h3 id="json-logging">JSON Logging<a class="headerlink" href="#json-logging" title="Permanent link">&para;</a></h3>
 <p>To enable <a href="https://www.dropwizard.io/en/latest/manual/core.html#logging">JSON logging</a>, set the environment variable <code>ENABLE_JSON_LOGGING</code> to <code>"true"</code>.

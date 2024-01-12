@@ -1369,7 +1369,7 @@ designed to use PostgreSQL in production and H2 in memory in tests. </p>
 compile scope.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <h3 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Permanent link">&para;</a></h3>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-hibernate/src/main/java/org/sdase/commons/server/hibernate/HibernateBundle.java"><code>HibernateBundle</code></a> should be added as 
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-hibernate/src/main/java/org/sdase/commons/server/hibernate/HibernateBundle.java"><code>HibernateBundle</code></a> should be added as 
 field in the application class instead of being anonymously added in the initialize method like other bundles of this 
 library. Implementations need to refer to the instance to get access to the <code>SessionFactory</code>.</p>
 <p>The Dropwizard applications config class needs to provide a <code>DataSourceFactory</code>.</p>
@@ -1509,7 +1509,7 @@ configuration class.</p>
 has an example. The required <code>SessionFactory</code> is provided by the <code>HibernateBundle</code> instance.</p>
 <h3 id="schema-migration">Schema migration<a class="headerlink" href="#schema-migration" title="Permanent link">&para;</a></h3>
 <p>For database schema migration, <a href="https://flywaydb.org/">Flyway</a> is used by the 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-hibernate/src/main/java/org/sdase/commons/server/hibernate/DbMigrationService.java"><code>DbMigrationService</code></a> and works with the
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-hibernate/src/main/java/org/sdase/commons/server/hibernate/DbMigrationService.java"><code>DbMigrationService</code></a> and works with the
 same <code>DataSourceFactory</code> as the <code>HibernateBundle</code>. It may be used in a custom <code>ConfiguredCommand</code> in each application.
 Therefore, defaults for the command name and the documentation is provided:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -1570,9 +1570,9 @@ Therefore, defaults for the command name and the documentation is provided:</p>
 <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>    testCompile &#39;org.sdase.commons:sda-commons-server-hibernate-testing:&lt;VERSION&gt;&#39;
 </code></pre></div></td></tr></table></div>
 <p>For creating tests without a Dropwizard application please refer to the 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-hibernate/src/test/java/org/sdase/commons/server/hibernate/DbMigrationServiceTest.java"><code>DbMigrationServiceTest</code></a> as example.</p>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-hibernate/src/test/java/org/sdase/commons/server/hibernate/DbMigrationServiceTest.java"><code>DbMigrationServiceTest</code></a> as example.</p>
 <p>For creating full integration tests of a Dropwizard application please refer to
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-hibernate/src/test/java/org/sdase/commons/server/hibernate/HibernateIT.java"><code>HibernateIT</code></a> as example. </p>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-hibernate/src/test/java/org/sdase/commons/server/hibernate/HibernateIT.java"><code>HibernateIT</code></a> as example. </p>
 
 
 

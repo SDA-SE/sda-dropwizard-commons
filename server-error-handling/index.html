@@ -1217,7 +1217,7 @@ common error structure using JAX-RS exception mapper (<code>javax.ws.rs.ext.Exce
 is added to the application.</p>
 <p>Using a response object (<code>javax.ws.rs.core.Response</code>) to inform clients about exceptions will not
 necessarily result in the agreed error structure. This is only the case if as entity, an 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-error/src/main/java/org/sdase/commons/shared/api/error/ApiError.java"><code>ApiError</code></a>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-error/src/main/java/org/sdase/commons/shared/api/error/ApiError.java"><code>ApiError</code></a>
 is used.</p>
 <p>This example project shows how the error structure will be generated correctly for the following situations:
 * throwing <code>NotFoundException</code> as one example for using standard JAX-RS web application exceptions. All of these exceptions are mapped automatically

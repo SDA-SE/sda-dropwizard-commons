@@ -1285,7 +1285,7 @@ dependency:</p>
 <h2 id="auth-extension">Auth Extension<a class="headerlink" href="#auth-extension" title="Permanent link">&para;</a></h2>
 <p>The <code>AuthClassExtension</code> puts the <code>AuthConfig</code> in an environment variable named <code>AUTH_KEYS</code> (for backwards compatibility).
 The configuration in the test needs to use this property and the application is required to use the
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java"><code>ConfigurationSubstitutionBundle</code></a>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java"><code>ConfigurationSubstitutionBundle</code></a>
 from <a href="../server-dropwizard/"><code>sda-commons-server-dropwizard</code></a>:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
@@ -1380,13 +1380,13 @@ from <a href="../server-dropwizard/"><code>sda-commons-server-dropwizard</code><
 <span class="w">            </span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
 </code></pre></div></td></tr></table></div></p>
 <p>Examples can be found in
-the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test">test source branch</a>
+the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test">test source branch</a>
 of the module sda-commons-server-auth-testing. There is</p>
 <ul>
-<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/test/AuthTestApp.java">An example app</a></li>
-<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/AuthClassExtensionIT.java">A test with authentication</a></li>
-<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/AuthDisabledJUnit5IT.java">A test with disabled authentication</a></li>
-<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/resources/test-config.yaml">An appropriate test <code>config.yaml</code></a></li>
+<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/test/AuthTestApp.java">An example app</a></li>
+<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/AuthClassExtensionIT.java">A test with authentication</a></li>
+<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/auth/testing/AuthDisabledJUnit5IT.java">A test with disabled authentication</a></li>
+<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/resources/test-config.yaml">An appropriate test <code>config.yaml</code></a></li>
 </ul>
 <h2 id="opa-extension">OPA Extension<a class="headerlink" href="#opa-extension" title="Permanent link">&para;</a></h2>
 <p>The Junit 5 OPA Extension is built around WireMock. The mock can be configured via the extension.</p>
@@ -1464,16 +1464,16 @@ of the module sda-commons-server-auth-testing. There is</p>
 <span class="w"> </span><span class="c1">// it is also possible to check against a builder instance</span>
 <span class="w"> </span><span class="n">OPA_EXTENSION</span><span class="p">.</span><span class="na">verify</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">onRequest</span><span class="p">().</span><span class="na">withHttpMethod</span><span class="p">(</span><span class="n">httpMethod</span><span class="p">).</span><span class="na">withPath</span><span class="p">(</span><span class="n">path</span><span class="p">).</span><span class="na">withJwt</span><span class="p">(</span><span class="n">jwt</span><span class="p">));</span>
 </code></pre></div></td></tr></table></div></p>
-<p>Examples can be found in the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test">test source branch</a> of the module sda-commons-server-auth-testing. There is</p>
+<p>Examples can be found in the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test">test source branch</a> of the module sda-commons-server-auth-testing. There is</p>
 <ul>
-<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaBundleTestApp.java">An example app</a></li>
-<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/OpaClassExtensionIT.java">A test with OPA</a></li>
-<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/OpaDisabledJUnit5IT.java">A test with disabled OPA support</a>. In this case, only empty constraints are within the principal</li>
-<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/resources/test-opa-config.yaml">An appropriate test <code>config.yaml</code></a></li>
+<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/OpaBundleTestApp.java">An example app</a></li>
+<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/OpaClassExtensionIT.java">A test with OPA</a></li>
+<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/OpaDisabledJUnit5IT.java">A test with disabled OPA support</a>. In this case, only empty constraints are within the principal</li>
+<li><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/resources/test-opa-config.yaml">An appropriate test <code>config.yaml</code></a></li>
 </ul>
 <p>Example with activated AUTH and OPA bundle can be found here:
-- <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/AuthAndOpaBundleTestApp.java">Example app</a>
-- <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/AuthAndOpaClassExtensionIT.java">Test</a></p>
+- <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/test/AuthAndOpaBundleTestApp.java">Example app</a>
+- <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth-testing/src/test/java/org/sdase/commons/server/opa/testing/AuthAndOpaClassExtensionIT.java">Test</a></p>
 
 
 

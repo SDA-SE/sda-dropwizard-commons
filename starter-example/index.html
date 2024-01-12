@@ -1209,22 +1209,22 @@
 
 <h1 id="sda-commons-starter-example">SDA Commons Starter Example<a class="headerlink" href="#sda-commons-starter-example" title="Permanent link">&para;</a></h1>
 <p>This example module shows an 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter-example/src/main/java/org/sdase/commons/starter/example/SdaPlatformExampleApplication.java">application</a> that uses the 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java"><code>SdaPlatformBundle</code></a>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter-example/src/main/java/org/sdase/commons/starter/example/SdaPlatformExampleApplication.java">application</a> that uses the 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java"><code>SdaPlatformBundle</code></a>
 to bootstrap a Dropwizard application for use in the SDA Platform.</p>
 <p>Beside the initialization of the bundle, it includes a 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter-example/src/main/java/org/sdase/commons/starter/example/people/rest/PersonEndpoint.java">REST endpoint</a> to demonstrate
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter-example/src/main/java/org/sdase/commons/starter/example/people/rest/PersonEndpoint.java">REST endpoint</a> to demonstrate
 registration of endpoints to map resources.</p>
 <p>The 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter-example/src/test/java/org/sdase/commons/serr/starter/example/SdaPlatformExampleApplicationIT.java">integration test</a> 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter-example/src/test/java/org/sdase/commons/serr/starter/example/SdaPlatformExampleApplicationIT.java">integration test</a> 
 shows how the application is bootstrapped in tests. The tests show the capabilities of a standard platform application.</p>
-<p>The provided <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter-example/local-config.yaml"><code>local-config.yaml</code></a> allows to start the 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter-example/src/main/java/org/sdase/commons/starter/example/SdaPlatformExampleApplication.java">application</a> without the 
+<p>The provided <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter-example/local-config.yaml"><code>local-config.yaml</code></a> allows to start the 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter-example/src/main/java/org/sdase/commons/starter/example/SdaPlatformExampleApplication.java">application</a> without the 
 need for authentication locally using a run configuration of the favourite IDE that defines the program arguments 
 <code>server sda-commons-starter-example/local-config.yaml</code>. Note that there will be no data available and the example
 application does not provide POST endpoints. All that is available is an empty array at <code>GET /people</code> and the simple
 Swagger documentation at <code>GET /swagger.json</code> or <code>GET /swagger.yaml</code></p>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter-example/config.yaml"><code>config.yaml</code></a> is an example how the application can be started in production. Such file should be 
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter-example/config.yaml"><code>config.yaml</code></a> is an example how the application can be started in production. Such file should be 
 copied in the Docker container so that the variables can be populated using the environment configured by the 
 orchestration tool (e.g. Kubernetes).   </p>
 

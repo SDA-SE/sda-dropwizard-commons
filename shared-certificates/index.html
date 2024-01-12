@@ -1280,7 +1280,7 @@
 default (but configurable) directory and putting the parsed certificates into the truststore.
 These certificates are used to verify SSL connections to the database.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificatesBundle.java"><code>CaCertificatesBundle</code></a> 
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificatesBundle.java"><code>CaCertificatesBundle</code></a> 
 should be added as a field in the bundle class instead of being anonymously added in the 
 <code>initialize</code> method like other bundles of this library, so we can use it to get the SSLContext in the <code>run</code> method.</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -1389,7 +1389,7 @@ should be added as a field in the bundle class instead of being anonymously adde
 </code></pre></div></td></tr></table></div>
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
 <p>The Dropwizard applications config class needs to provide a
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificateConfiguration.java"><code>CaCertificateConfiguration</code></a>.</p>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificateConfiguration.java"><code>CaCertificateConfiguration</code></a>.</p>
 <p>The directory that contains CA certificates in PEM format is configured in the <code>config.yaml</code> 
 of the final application config. </p>
 <p>Example config for <strong>production</strong> to be used with environment variables of the cluster configuration:</p>

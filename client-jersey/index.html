@@ -1471,8 +1471,8 @@
 <p><a href="https://javadoc.io/doc/org.sdase.commons/sda-commons-client-jersey"><img alt="javadoc" src="https://javadoc.io/badge2/org.sdase.commons/sda-commons-client-jersey/javadoc.svg" /></a></p>
 <p>The module <code>sda-commons-client-jersey</code> provides support for using Jersey clients within the Dropwizard application.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/JerseyClientBundle.java"><code>JerseyClientBundle</code></a> must be added to the 
-application. It provides a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java"><code>ClientFactory</code></a> to 
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/JerseyClientBundle.java"><code>JerseyClientBundle</code></a> must be added to the 
+application. It provides a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java"><code>ClientFactory</code></a> to 
 create clients. The <code>ClientFactory</code> needs to be initialized and be available in the <code>run(...)</code> phase. Therefore, the 
 bundle should be declared as field and not in the <code>initialize</code> method.</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -1569,12 +1569,12 @@ configured and published to the bundle. Currently, the token is only the name of
 </ul>
 <h2 id="writing-api-clients-as-interfaces">Writing API Clients as interfaces<a class="headerlink" href="#writing-api-clients-as-interfaces" title="Permanent link">&para;</a></h2>
 <p>Client interfaces use the same annotations as the service definitions for REST endpoints. An example is the 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/test/java/org/sdase/commons/client/jersey/test/MockApiClient.java"><code>MockApiClient</code></a> in the integration tests
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/test/java/org/sdase/commons/client/jersey/test/MockApiClient.java"><code>MockApiClient</code></a> in the integration tests
 of this module.</p>
 <p>Error handling is different based on the return type:</p>
 <p>If a specific return type is defined (e.g. <code>List&lt;MyResource&gt; getMyResources();</code>), it is only returned for successful 
 requests. In any error or redirect case, an exception is thrown. The thrown exception is a 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestException.java"><code>ClientRequestException</code></a>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestException.java"><code>ClientRequestException</code></a>
 wrapping <code>javax.ws.rs.ProcessingException</code> or subclasses of <code>javax.ws.rs.WebApplicationException</code>: 
 - <code>javax.ws.rs.RedirectionException</code> to indicate redirects 
 - <code>javax.ws.rs.ClientErrorException</code> for client errors
@@ -1589,7 +1589,7 @@ object. <strong>Remember to always close the <code>Response</code> object. It re
 <p>Jersey clients can not automatically convert <code>javax.ws.rs.WebApplicationException</code> into our 
 <code>ClientRequestException</code>. To avoid passing through the error the application received to the caller of the application,
 the exceptions must be handled for all usages that expect a specific type as return value.</p>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientErrorUtil.java"><code>ClientErrorUtil</code></a> can be used to 
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientErrorUtil.java"><code>ClientErrorUtil</code></a> can be used to 
 convert the exceptions. In the following example, a 4xx or 5xx response will result in a <code>ClientRequestException</code> that
 causes a 500 response for the incoming request:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1692,9 +1692,9 @@ This can be helpful when all clients in an Application should use the same proxy
 <p>This module also provides support for requesting OIDC access tokens from
 respective providers (e.g. Keycloak) for subsequent requests to other services.</p>
 <h3 id="usage_1">Usage<a class="headerlink" href="#usage_1" title="Permanent link">&para;</a></h3>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/OidcClient.java"><code>OidcClient</code></a> can be instantiated
-with a Jersey <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java"><code>ClientFactory</code></a>
-and the respectable <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/OidcConfiguration.java"><code>OidcConfiguration</code></a>.
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/OidcClient.java"><code>OidcClient</code></a> can be instantiated
+with a Jersey <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java"><code>ClientFactory</code></a>
+and the respectable <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/OidcConfiguration.java"><code>OidcConfiguration</code></a>.
 The client also implements caching that is configured according to the access tokens expiration time claim.</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
@@ -1702,7 +1702,7 @@ The client also implements caching that is configured according to the access to
 <span class="n">OidcResult</span><span class="w"> </span><span class="n">oidcResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oidcClient</span><span class="p">.</span><span class="na">createAccessToken</span><span class="p">();</span>
 <span class="n">String</span><span class="w"> </span><span class="n">accessToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oidcResult</span><span class="p">.</span><span class="na">getAccessToken</span><span class="p">();</span>
 </code></pre></div></td></tr></table></div>
-<p>An easy way to integrate the OidcClient into existing PlatformClients is by using the provided <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/filter/OidcRequestFilter.java"><code>OidcRequestFilter</code></a>
+<p>An easy way to integrate the OidcClient into existing PlatformClients is by using the provided <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/filter/OidcRequestFilter.java"><code>OidcRequestFilter</code></a>
 and passing it to the PlatformClientBuilder:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
@@ -1835,18 +1835,18 @@ to your project containing:</p>
 </code></pre></div></td></tr></table></div>
 <p>This works if the library that requires the other implementation does not rely on the Java ServiceLoader.</p>
 <h3 id="consume-api-clients-without-catching-exceptions">Consume API clients without catching exceptions<a class="headerlink" href="#consume-api-clients-without-catching-exceptions" title="Permanent link">&para;</a></h3>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation"><code>Suppress*</code></a> annotations can be used to suppress
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation"><code>Suppress*</code></a> annotations can be used to suppress
 specific <code>ClientRequestException</code> thrown in any defined API method where the return type is not a <code>Response</code>.
 There are configurable suppressors for 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressHttpErrorsToNull.java">HTTP errors</a>,
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressConnectTimeoutErrorsToNull.java">connection timeouts</a>,
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressReadTimeoutErrorsToNull.java">read timeouts</a>
-and all other <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressProcessingErrorsToNull.java">processing errors</a>.</p>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressHttpErrorsToNull.java">HTTP errors</a>,
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressConnectTimeoutErrorsToNull.java">connection timeouts</a>,
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressReadTimeoutErrorsToNull.java">read timeouts</a>
+and all other <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressProcessingErrorsToNull.java">processing errors</a>.</p>
 <p>Suppressed exceptions are logged at info level.</p>
 <p>The following client will convert a <em>404 Not Found</em> error to <code>null</code> so that the consumer can handle 
 an entity that is not found by checking if the return value is <code>null</code>.
 Any other error will lead to a <em>500 Internal Server Error</em> because the <code>ClientRequestException</code> is converted in the
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestExceptionMapper.java"><code>ClientRequestExceptionMapper</code></a>.</p>
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestExceptionMapper.java"><code>ClientRequestExceptionMapper</code></a>.</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>

@@ -1358,14 +1358,14 @@ classifies these health checks as <em>internal</em>.</p>
 another service of the platform in the own health checks would hide the cause of errors in the 
 monitoring and increases the time for fixing.</p>
 <p>To verify this, Dropwizard provides health checks, however has no distinction between <em>internal</em> and 
-<em>external</em> health checks. Therefor the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/InternalHealthCheckEndpointBundle.java"><code>InternalHealthCheckEndpointBundle</code></a> 
+<em>external</em> health checks. Therefor the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/InternalHealthCheckEndpointBundle.java"><code>InternalHealthCheckEndpointBundle</code></a> 
 publishes a new endpoint at the admin port:</p>
 <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>http://{serviceURL}:{adminPort}/healthcheck/internal
 </code></pre></div></td></tr></table></div>
 <p>This endpoint only considers <em>internal</em> health checks. The response status is <em>500</em> if at least one 
 <em>internal</em> health check reports unhealthy. All health checks that are not explicitly marked as 
 <em>external</em> are <em>internal</em> health checks.</p>
-<p><img alt="Internal &amp; External Health Checks" src="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-healthcheck/docs/healthcheck_internal_external.png" /></p>
+<p><img alt="Internal &amp; External Health Checks" src="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-healthcheck/docs/healthcheck_internal_external.png" /></p>
 <p>If the check fails the service instance should not receive new incoming requests. This can be 
 achieved using a Kubernetes readiness probe that can be added to a pod:</p>
 <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1386,7 +1386,7 @@ outside the platform are functional. If a service is not ready, it is also not f
 might require an external service that is not part of our SLA. In that case the fitness check allows to 
 monitor such downtimes. The SDA platform classifies such health checks as <em>external</em>.</p>
 <p>Dropwizard does not support <em>external</em> health checks by default, but the marker annotation 
-<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/ExternalHealthCheck.java"><code>ExternalHealthCheck</code></a> 
+<a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/ExternalHealthCheck.java"><code>ExternalHealthCheck</code></a> 
 makes it possible to mark a health check as <em>external</em>. This causes the health check to be excluded
 from the <em>internal</em> health check endpoint at:</p>
 <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>http://{serviceURL}:{adminPort}/healthcheck/internal
@@ -1394,7 +1394,7 @@ from the <em>internal</em> health check endpoint at:</p>
 <p>However, the result of the health check is still available at the default health check endpoint:</p>
 <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>http://{serviceURL}:{adminPort}/healthcheck
 </code></pre></div></td></tr></table></div>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/helper/ExternalServiceHealthCheck.java"><code>ExternalServiceHealthCheck</code></a> 
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/helper/ExternalServiceHealthCheck.java"><code>ExternalServiceHealthCheck</code></a> 
 is a configurable implementation to check if a dependent external REST API is healthy by sending a <strong>GET</strong> 
 request and validating the response status.   </p>
 <p>If a fitness check fails, an automatic action can not be taken. Instead, an admin could be notified 

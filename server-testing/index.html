@@ -1421,7 +1421,7 @@ In case you want to use JUnit 5 you also have to activate it in your build.gradl
 <span class="w">  </span><span class="o">}</span>
 </code></pre></div></td></tr></table></div></p>
 <h2 id="provided-assertions">Provided Assertions<a class="headerlink" href="#provided-assertions" title="Permanent link">&para;</a></h2>
-<h3 id="goldenfileassertions"><a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-testing/https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/GoldenFileAssertions.java">GoldenFileAssertions</a><a class="headerlink" href="#goldenfileassertions" title="Permanent link">&para;</a></h3>
+<h3 id="goldenfileassertions"><a href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/GoldenFileAssertions.java">GoldenFileAssertions</a><a class="headerlink" href="#goldenfileassertions" title="Permanent link">&para;</a></h3>
 <p>Special assertions for <code>Path</code> objects to check if a file matches the expected contents and updates
 them if needed. These assertions are helpful to check if certain files are stored in the repository
 (like <a href="../server-open-api/">OpenAPI</a> or <a href="../shared-asyncapi/">AsyncApi</a>).</p>
@@ -1462,7 +1462,7 @@ YAML or JSON and ignores the order of keys. If possible, prefer the other varian
 content should always be reproducible. Note that the <a href="../shared-asyncapi/">AsyncAPI</a> and
 <a href="../server-open-api/">OpenAPI</a> generations export reproducible content.</p>
 <h3 id="systempropertyclassextension">SystemPropertyClassExtension<a class="headerlink" href="#systempropertyclassextension" title="Permanent link">&para;</a></h3>
-<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/SystemPropertyClassExtension.java"><code>SystemPropertyClassExtension</code></a>
+<p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/SystemPropertyClassExtension.java"><code>SystemPropertyClassExtension</code></a>
 allows for overriding or unsetting system properties for (integration) tests and resets them to their original value when the tests have finished.</p>
 <p>To use the extension, register it to your test class via the JUnit5 <code>@RegisterExtension</code>:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1504,7 +1504,7 @@ need for <code>test-config.yaml</code>. This can be useful when not using the de
 </code></pre></div></td></tr></table></div>
 <h2 id="provided-junit-5-extensions">Provided JUnit 5 Extensions<a class="headerlink" href="#provided-junit-5-extensions" title="Permanent link">&para;</a></h2>
 <h3 id="systempropertyclassextension_1">SystemPropertyClassExtension<a class="headerlink" href="#systempropertyclassextension_1" title="Permanent link">&para;</a></h3>
-<p>This module provides the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/SystemPropertyClassExtension.java"><code>SystemPropertyClassExtension</code></a>,
+<p>This module provides the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/SystemPropertyClassExtension.java"><code>SystemPropertyClassExtension</code></a>,
 a JUnit5 test extension to set and unset system properties before running an integration test.</p>
 <p>To use the extension register it to your test class via the JUnit5 <code>@RegisterExtension</code>:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>

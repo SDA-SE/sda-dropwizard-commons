@@ -1328,7 +1328,7 @@ Automated security upgrades are enabled.
 Contributions of new features and bug fixes are welcome.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <h3 id="application-bootstrap">Application Bootstrap<a class="headerlink" href="#application-bootstrap" title="Permanent link">&para;</a></h3>
-<p>To bootstrap a Dropwizard application inside a Weld-SE container, use the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-weld/src/main/java/org/sdase/commons/server/weld/DropwizardWeldHelper.java"><code>DropwizardWeldHelper</code></a>:</p>
+<p>To bootstrap a Dropwizard application inside a Weld-SE container, use the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-weld/src/main/java/org/sdase/commons/server/weld/DropwizardWeldHelper.java"><code>DropwizardWeldHelper</code></a>:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
@@ -1336,7 +1336,7 @@ Contributions of new features and bug fixes are welcome.</p>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="provided-bundles">Provided Bundles<a class="headerlink" href="#provided-bundles" title="Permanent link">&para;</a></h3>
-<p>To optionally use CDI support inside of servlets, use the additional <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-weld/src/main/java/org/sdase/commons/server/weld/WeldBundle.java"><code>WeldBundle</code></a>:</p>
+<p>To optionally use CDI support inside of servlets, use the additional <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-weld/src/main/java/org/sdase/commons/server/weld/WeldBundle.java"><code>WeldBundle</code></a>:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">AppConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
