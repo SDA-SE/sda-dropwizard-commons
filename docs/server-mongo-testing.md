@@ -2,7 +2,7 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-mongo-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-mongo-testing)
 
-This module provides the [`MongoDbClassExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-mongo-testing/src/main/java/org/sdase/commons/server/mongo/testing/MongoDbClassExtension.java),
+This module provides the [`MongoDbClassExtension`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-mongo-testing/src/main/java/org/sdase/commons/server/mongo/testing/MongoDbClassExtension.java),
 a JUnit 5 test extension that is used to automatically bootstrap a MongoDB instance for integration tests.
 
 This is accomplished using [Flapdoodle embedded MongoDB](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo),

@@ -2,13 +2,13 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-shared-yaml/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-shared-yaml)
 
-This module contains a class [`YamlUtil`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-yaml/src/main/java/org/sdase/commons/shared/yaml/YamlUtil.java)
+This module contains a class [`YamlUtil`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-yaml/src/main/java/org/sdase/commons/shared/yaml/YamlUtil.java)
 providing static methods for YAML-file handling.
 
 
 ## Usage
 
-The [`YamlUtil`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-yaml/src/main/java/org/sdase/commons/shared/yaml/YamlUtil.java)
+The [`YamlUtil`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-yaml/src/main/java/org/sdase/commons/shared/yaml/YamlUtil.java)
 provides an overloaded method for loading YAML-files and one for serialization.
 
 ### A single object

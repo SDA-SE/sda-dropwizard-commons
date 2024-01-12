@@ -7,12 +7,12 @@ with MongoDB using [Spring Data Mongo](https://docs.spring.io/spring-data/mongod
 
 ## Initialization
 
-The [`SpringDataMongoBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/SpringDataMongoBundle.java)
+The [`SpringDataMongoBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/SpringDataMongoBundle.java)
 should be added as a field in the application class instead of being anonymously added in the initialize
 method like other bundles of this library.
 
 The Dropwizard application's config class needs to provide a
-[`MongoConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/MongoConfiguration.java).
+[`MongoConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/MongoConfiguration.java).
 
 Please refer to the official documentation how to annotate your entity classes correctly, e.g. by
 adding `@Document`, `@MongoId` or `@Indexed`.
@@ -140,5 +140,5 @@ Instead of providing `caCertificate` as an environment variable, mount the CA ce
 in the directory `/var/trust/certificates`. Certificates available in subdirectories will also be loaded.
 
 Note that this directory is also configurable through the Dropwizard config class. The config class should then provide a
-[`CaCertificateConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificateConfiguration.java)
+[`CaCertificateConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-certificates/src/main/java/org/sdase/commons/shared/certificates/ca/CaCertificateConfiguration.java)
 to the bundle builder. See [`sda-commons-shared-certificates`](./shared-certificates.md) for details.

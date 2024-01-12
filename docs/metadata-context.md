@@ -142,7 +142,7 @@ To keep the flexibility the metadata context offers, it defines the environment 
 `TEMPLATE_HINT_METADATA_FIELD`.
 The operations team configures it as `landing-page-source`.
 The service developer can use `TEMPLATE_HINT_METADATA_FIELD` in the
-[`MetadataContext`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/metadata/MetadataContext.java)
+[`MetadataContext`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/metadata/MetadataContext.java)
 API to get the values of current context, but must be aware that the result is empty or contains
 multiple values.
 

@@ -2,10 +2,10 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka)
 
-This module provides a [`KafkaBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/KafkaBundle.java) adds convenient
+This module provides a [`KafkaBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/KafkaBundle.java) adds convenient
 functionality to create Kafka consumers, producers, and topics via configuration or Java DSL.
 
-It additionally provides a default [`MessageListener`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java) that
+It additionally provides a default [`MessageListener`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java) that
 implements a polling loop for Kafka consumers. The user of this bundle must only implement the functional logic.
 
 
@@ -467,9 +467,9 @@ OR
 #### Custom Certificate Authority and Client Certificates
 
 `SSL` or `SASL_SSL` can also use Kafka brokers that have a self-signed or private-CA certificate. 
-Use the Java-default system properties `javax.net.ssl.trustStore` and `javax.net.ssl.trustStorePassword` to provide the certificates (see [`KafkaBundleWithSslTruststoreIT`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/test/java/org/sdase/commons/server/kafka/KafkaBundleWithSslTruststoreIT.java)).
+Use the Java-default system properties `javax.net.ssl.trustStore` and `javax.net.ssl.trustStorePassword` to provide the certificates (see [`KafkaBundleWithSslTruststoreIT`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/test/java/org/sdase/commons/server/kafka/KafkaBundleWithSslTruststoreIT.java)).
 
-For more control, configure the truststore only for the Kafka bundle and not for the complete JVM (see [`KafkaBundleWithSslIT`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/test/java/org/sdase/commons/server/kafka/KafkaBundleWithSslIT.java)): 
+For more control, configure the truststore only for the Kafka bundle and not for the complete JVM (see [`KafkaBundleWithSslIT`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/test/java/org/sdase/commons/server/kafka/KafkaBundleWithSslIT.java)): 
 
 ```yaml
   security :
@@ -546,20 +546,20 @@ No defaults
 | pollInterval        | 100   |
 
 ## MessageListener
-A MessageListener [`MessageListener`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java)
+A MessageListener [`MessageListener`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java)
 is a default poll loop implementation that correctly subscribes for some topics and
 includes additional features such as a graceful shutdown when the application stops.
 
 The message listener hands over the received consumer records to a
-[`MessageListenerStrategy`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/MessageListenerStrategy.java)
+[`MessageListenerStrategy`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/MessageListenerStrategy.java)
 that defines the message handling and the commit behavior. A strategy should use a
-[`MessageHandler`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageHandler.java) and
-a [`ErrorHandler`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/ErrorHandler.java)
-to separate business logic from commit logic as shown e.g. in [`AutocommitStrategy`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/autocommit/AutocommitMLS.java)
+[`MessageHandler`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageHandler.java) and
+a [`ErrorHandler`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/ErrorHandler.java)
+to separate business logic from commit logic as shown e.g. in [`AutocommitStrategy`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/autocommit/AutocommitMLS.java)
 to make the strategy reusable
 
 ### Included MessageListenerStrategies
-The bundle provides some [`MessageListenerStrategy`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/MessageListenerStrategy.java)
+The bundle provides some [`MessageListenerStrategy`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/strategies/MessageListenerStrategy.java)
 that can be reused in projects.
 
 A strategy is automatically inited with the Prometheus histogram class when using the builder methods.

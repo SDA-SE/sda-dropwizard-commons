@@ -6,8 +6,8 @@ The module `sda-commons-client-jersey` provides support for using Jersey clients
 
 ## Usage
 
-The [`JerseyClientBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/JerseyClientBundle.java) must be added to the 
-application. It provides a [`ClientFactory`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java) to 
+The [`JerseyClientBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/JerseyClientBundle.java) must be added to the 
+application. It provides a [`ClientFactory`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java) to 
 create clients. The `ClientFactory` needs to be initialized and be available in the `run(...)` phase. Therefore, the 
 bundle should be declared as field and not in the `initialize` method.
 
@@ -90,14 +90,14 @@ Clients for the SDA Platform have some magic added that clients for an external 
 ## Writing API Clients as interfaces
 
 Client interfaces use the same annotations as the service definitions for REST endpoints. An example is the 
-[`MockApiClient`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/test/java/org/sdase/commons/client/jersey/test/MockApiClient.java) in the integration tests
+[`MockApiClient`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/test/java/org/sdase/commons/client/jersey/test/MockApiClient.java) in the integration tests
 of this module.
 
 Error handling is different based on the return type:
 
 If a specific return type is defined (e.g. `List<MyResource> getMyResources();`), it is only returned for successful 
 requests. In any error or redirect case, an exception is thrown. The thrown exception is a 
-[`ClientRequestException`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestException.java)
+[`ClientRequestException`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestException.java)
 wrapping `javax.ws.rs.ProcessingException` or subclasses of `javax.ws.rs.WebApplicationException`: 
 - `javax.ws.rs.RedirectionException` to indicate redirects 
 - `javax.ws.rs.ClientErrorException` for client errors
@@ -119,7 +119,7 @@ Jersey clients can not automatically convert `javax.ws.rs.WebApplicationExceptio
 `ClientRequestException`. To avoid passing through the error the application received to the caller of the application,
 the exceptions must be handled for all usages that expect a specific type as return value.
 
-The [`ClientErrorUtil`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientErrorUtil.java) can be used to 
+The [`ClientErrorUtil`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientErrorUtil.java) can be used to 
 convert the exceptions. In the following example, a 4xx or 5xx response will result in a `ClientRequestException` that
 causes a 500 response for the incoming request:
 
@@ -219,9 +219,9 @@ respective providers (e.g. Keycloak) for subsequent requests to other services.
 
 ### Usage
 
-The [`OidcClient`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/OidcClient.java) can be instantiated
-with a Jersey [`ClientFactory`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java)
-and the respectable [`OidcConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/OidcConfiguration.java).
+The [`OidcClient`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/OidcClient.java) can be instantiated
+with a Jersey [`ClientFactory`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/ClientFactory.java)
+and the respectable [`OidcConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/OidcConfiguration.java).
 The client also implements caching that is configured according to the access tokens expiration time claim.
 
 ```java
@@ -230,7 +230,7 @@ OidcResult oidcResult = oidcClient.createAccessToken();
 String accessToken = oidcResult.getAccessToken();
 ```
 
-An easy way to integrate the OidcClient into existing PlatformClients is by using the provided [`OidcRequestFilter`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/filter/OidcRequestFilter.java)
+An easy way to integrate the OidcClient into existing PlatformClients is by using the provided [`OidcRequestFilter`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/oidc/filter/OidcRequestFilter.java)
 and passing it to the PlatformClientBuilder:
 
 
@@ -337,20 +337,20 @@ This works if the library that requires the other implementation does not rely o
 
 ### Consume API clients without catching exceptions
 
-The [`Suppress*`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation) annotations can be used to suppress
+The [`Suppress*`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation) annotations can be used to suppress
 specific `ClientRequestException` thrown in any defined API method where the return type is not a `Response`.
 There are configurable suppressors for 
-[HTTP errors](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressHttpErrorsToNull.java),
-[connection timeouts](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressConnectTimeoutErrorsToNull.java),
-[read timeouts](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressReadTimeoutErrorsToNull.java)
-and all other [processing errors](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressProcessingErrorsToNull.java).
+[HTTP errors](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressHttpErrorsToNull.java),
+[connection timeouts](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressConnectTimeoutErrorsToNull.java),
+[read timeouts](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressReadTimeoutErrorsToNull.java)
+and all other [processing errors](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/proxy/annotation/SuppressProcessingErrorsToNull.java).
 
 Suppressed exceptions are logged at info level.
 
 The following client will convert a _404 Not Found_ error to `null` so that the consumer can handle 
 an entity that is not found by checking if the return value is `null`.
 Any other error will lead to a _500 Internal Server Error_ because the `ClientRequestException` is converted in the
-[`ClientRequestExceptionMapper`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestExceptionMapper.java).
+[`ClientRequestExceptionMapper`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestExceptionMapper.java).
 
 ```java
 @Path("/examples")

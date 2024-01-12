@@ -121,7 +121,7 @@ subprojects {
             licenses {
               license {
                 name = 'MIT License'
-                url = 'https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/master/LICENSE'
+                url = 'https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/main/LICENSE'
               }
             }
 

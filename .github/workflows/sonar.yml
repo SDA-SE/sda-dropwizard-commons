@@ -10,7 +10,7 @@ on:
 
 jobs:
   Sonarcloud:
-    name: "Sonarcloud ${{ github.event.workflow_run.head_branch != 'master' && format('PR {0}', github.event.workflow_run.pull_requests[0].number) || 'master' }}"
+    name: "Sonarcloud ${{ github.event.workflow_run.head_branch != 'main' && format('PR {0}', github.event.workflow_run.pull_requests[0].number) || 'main' }}"
     # Do not execute for PRs that origin from forks since we are missing the secrets for the scan
     # According the official documentation 'workflow_run' has most of the properties of 'check_suite'.
     # According to the latter you can recognize pull requests from forks by 'null' values of 'head_branch'
@@ -25,10 +25,10 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }} # checkout commit that triggered this workflow
           fetch-depth: 0 # fetch commit log so that Sonar is able to assign committers to issues
 
-      # fetch master so that Sonar can identify new issues in PR builds
-      - name: Get master
-        if: "github.event.workflow_run.head_branch != 'master'"
-        run: git rev-parse HEAD && git fetch origin master:master && git status && git rev-parse HEAD
+      # fetch main so that Sonar can identify new issues in PR builds
+      - name: Get main
+        if: "github.event.workflow_run.head_branch != 'main'"
+        run: git rev-parse HEAD && git fetch origin main:main && git status && git rev-parse HEAD
 
       # Download from previous workflow: https://github.com/dawidd6/action-download-artifact
       - name: Download artifact

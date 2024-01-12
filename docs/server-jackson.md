@@ -6,16 +6,16 @@ The module `sda-commons-server-jackson` is used to configure the `ObjectMapper` 
 of SDA SE services. It also provides support for linking resources with HAL and adds the ability to filter fields on 
 client request.
 
-The [`JacksonConfigurationBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/JacksonConfigurationBundle.java) is
+The [`JacksonConfigurationBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/JacksonConfigurationBundle.java) is
 used to configure the JSON serializer. It adds various error mappers to support the SDA error message standard. These
 replace the default Dropwizard error mappers but also additional new mappers are added, e.g. mapping JaxRs Exceptions, 
 such as NotFound and NotAuthorized. All mappers do log the errors when mapping.
 The framework already provides a predefined exception mapper for `InvalidTypeException` if the framework default
 for feature `FAIL_ON_INVALID_SUBTYPE` is customized. See section [`Customize the ObjectMapper`](#customize-the-objectmapper) below for details
-about customizing the default object mapper settings. If the feature is enabled the [`InvalidTypeIdExceptionMapper`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/errors/InvalidTypeIdExceptionMapper.java)
+about customizing the default object mapper settings. If the feature is enabled the [`InvalidTypeIdExceptionMapper`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/errors/InvalidTypeIdExceptionMapper.java)
 produces a response in the common error format.
 
-The [`ObjectMapperConfigurationUtil`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/ObjectMapperConfigurationUtil.java)
+The [`ObjectMapperConfigurationUtil`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/ObjectMapperConfigurationUtil.java)
 can be used to receive an `ObjectMapper` with the recommended settings for usage outside a Dropwizard application.  
 
 The default `ObjectMapper` is configured to be fault-tolerant to avoid failures in deserialization. JSR-303 validations
@@ -89,9 +89,9 @@ Please do not use `@JsonFormat(pattern = "...")` for customizing serialization b
 formatting variants. If output should be customized, use `@JsonSerializer`.
 
 SDA-Commons provides two default serializers for `ZonedDateTime` to use a fixed resolution in the output.
-[Iso8601Serializer](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java) is used to omit 
+[Iso8601Serializer](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java) is used to omit 
 milliseconds and 
-[Iso8601Serializer.WithMillis](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java#L90) is used to
+[Iso8601Serializer.WithMillis](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/Iso8601Serializer.java#L90) is used to
 render the time with 3 digits for milliseconds.
 
 Usage:
@@ -140,7 +140,7 @@ GET /persons/123
 #### EmbedHelper
 
 To decide whether a resource is just linked or embedded, the 
-[`EmbedHelper`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/EmbedHelper.java) can be used. If query parameters for 
+[`EmbedHelper`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-jackson/src/main/java/org/sdase/commons/server/jackson/EmbedHelper.java) can be used. If query parameters for 
 embedding are passed, like `/api/cars?embed=drivers,owner`, `EmbedHelper.isEmbeddingOfRelationRequested(relationName)` 
 can be used to check whether a resource should be embedded:
 

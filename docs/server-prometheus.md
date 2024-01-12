@@ -303,7 +303,7 @@ to avoid blocking collection of the results.
 
 ## Usage
 
-The [`PrometheusBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-prometheus/src/main/java/org/sdase/commons/server/prometheus/PrometheusBundle.java) has to be added in
+The [`PrometheusBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-prometheus/src/main/java/org/sdase/commons/server/prometheus/PrometheusBundle.java) has to be added in
 the application:
 
 ```java

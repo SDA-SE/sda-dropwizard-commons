@@ -2,7 +2,7 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-circuitbreaker/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-circuitbreaker)
 
-This module provides the [`CircuitBreakerBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-circuitbreaker/src/main/java/org/sdase/commons/server/circuitbreaker/CircuitBreakerBundle.java), 
+This module provides the [`CircuitBreakerBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-circuitbreaker/src/main/java/org/sdase/commons/server/circuitbreaker/CircuitBreakerBundle.java), 
 a Dropwizard bundle that is used to inject circuit breakers into service calls.
 
 A [circuit breaker is a pattern](https://martinfowler.com/bliki/CircuitBreaker.html) to make synchronous calls in a distributed system more resilient.

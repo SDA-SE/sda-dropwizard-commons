@@ -7,7 +7,7 @@ updates:
     time: "08:00"
     timezone: Europe/Berlin
   open-pull-requests-limit: 15
-  target-branch: master
+  target-branch: main
   commit-message:
     prefix: fix
     prefix-development: chore

@@ -4,7 +4,7 @@ name: Javadoc
 on:
   push:
     branches:
-      - master
+      - main
       - release/2.x.x
   pull_request:
 

@@ -6,7 +6,7 @@
 # does not guarantee that services using this library will work in the given Java version.
 #
 # It was created by copying the 'official' java-ci.yml and applying the following changes:
-# - only runs on `master`
+# - only runs on `main`
 # - only one `os` + `java_version` in the build matrix
 # - not a complete checkout (with fetch-depth: 0)
 # - only 3 retries
@@ -17,7 +17,7 @@ name: Java CI Latest
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   # build library

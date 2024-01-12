@@ -5,7 +5,7 @@ This document describes the release process of SDA Dropwizard Commons.
 ## Happy Path
 
 The release process is automated.
-It generates new releases for all merges to `master` and uploads all releases to Maven Central.
+It generates new releases for all merges to `main` and uploads all releases to Maven Central.
 New releases are created based on Semantic Versioning (see also [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 As soon as a Pull Request was merged, the following actions happen in order:
@@ -22,15 +22,15 @@ As soon as a Pull Request was merged, the following actions happen in order:
 ## Unhappy Paths
 
 The release process can fail on different progress levels:
-1. During the `master` build due to flaky tests.
+1. During the `main` build due to flaky tests.
 2. During the upload due to network issues.
 3. During the close or release of the staging repository due to network issues or other exceptions in the release plugin.
 
 > Basic rule: Check https://oss.sonatype.org before restarting a release workflow.
 
-### The `master` build failed and didn't create a release.
+### The `main` build failed and didn't create a release.
 
-> Don't do concurrent builds for multiple commits on the same release branch (`master` and `release/1.x.x` are independent).
+> Don't do concurrent builds for multiple commits on the same release branches (`main` and `release/1.x.x` are independent).
 
 **Action:** It is safe to retry the build or to merge a new PR (all unreleased commits are included in the new release).
 

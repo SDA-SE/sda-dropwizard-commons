@@ -5,7 +5,7 @@
 The module `sda-commons-starter` provides all basics required to build a service for the SDA Platform with
 Dropwizard.
 
-Apps built with the [`SdaPlatformBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java)
+Apps built with the [`SdaPlatformBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java)
 automatically contain
 
 - [Support for environment variables in configuration files and default console appender configuration](./server-dropwizard.md)
@@ -23,11 +23,11 @@ They may be configured easily to
 - [allow cross-origin resource sharing](./server-cors.md)
 - [use the Open Policy Agent for authorization](./server-auth.md)
 
-Using the [`SdaPlatformBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java) is the easiest
+Using the [`SdaPlatformBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java) is the easiest
 and fastest way to create a service for the SDA Platform.
 
 To bootstrap a Dropwizard application for the SDA Platform only the 
-[`SdaPlatformBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java) has to be added. The 
+[`SdaPlatformBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java) has to be added. The 
 API should be documented with Swagger annotations: 
 
 ```java
@@ -74,11 +74,11 @@ public class MyFirstApp extends Application<SdaPlatformConfiguration> {
 }
 ```
 
-The [`SdaPlatformConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformConfiguration.java) may be
+The [`SdaPlatformConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformConfiguration.java) may be
 extended to add application specific configuration properties.
 
 The `config.yaml` of the 
-[`SdaPlatformConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformConfiguration.java) supports
+[`SdaPlatformConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformConfiguration.java) supports
 configuration of [authentication](./server-auth.md) and [CORS](./server-cors.md)
 additionally to the defaults of Dropwizard's `Configuration`:
 
@@ -114,7 +114,7 @@ the authorization including the open policy agent are automatically enabled as w
 
 Instead of `.usingSdaPlatformConfiguration()` and `.usingSdaPlatformConfiguration(MyCustomConfiguration.class)`, the configuration may be fully customized using 
 `.usingCustomConfig(MyCustomConfiguration.class)` to support configurations that do not extend 
-[`SdaPlatformConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformConfiguration.java). This may 
+[`SdaPlatformConfiguration`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformConfiguration.java). This may 
 also be needed to disable some features of the starter module or add special features such as
 Authorization.
 

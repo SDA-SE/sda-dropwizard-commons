@@ -1,7 +1,7 @@
 # SDA Commons Server Health Check Example
 
 This module presents an example 
-[application](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-healthcheck-example/src/main/java/org/sdase/commons/server/healthcheck/example/HealthExampleApplication.java) on how to 
+[application](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-healthcheck-example/src/main/java/org/sdase/commons/server/healthcheck/example/HealthExampleApplication.java) on how to 
 create and register health checks.
 
 The application introduces the `InternalHealthCheckEndpointBundle` to create the new endpoint with 

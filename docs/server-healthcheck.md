@@ -50,7 +50,7 @@ another service of the platform in the own health checks would hide the cause of
 monitoring and increases the time for fixing.
 
 To verify this, Dropwizard provides health checks, however has no distinction between _internal_ and 
-_external_ health checks. Therefor the [`InternalHealthCheckEndpointBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/InternalHealthCheckEndpointBundle.java) 
+_external_ health checks. Therefor the [`InternalHealthCheckEndpointBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/InternalHealthCheckEndpointBundle.java) 
 publishes a new endpoint at the admin port:
  
 ```
@@ -61,7 +61,7 @@ This endpoint only considers _internal_ health checks. The response status is _5
 _internal_ health check reports unhealthy. All health checks that are not explicitly marked as 
 _external_ are _internal_ health checks.
 
-![Internal & External Health Checks](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-healthcheck/docs/healthcheck_internal_external.png)
+![Internal & External Health Checks](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-healthcheck/docs/healthcheck_internal_external.png)
 
 If the check fails the service instance should not receive new incoming requests. This can be 
 achieved using a Kubernetes readiness probe that can be added to a pod:
@@ -83,7 +83,7 @@ might require an external service that is not part of our SLA. In that case the 
 monitor such downtimes. The SDA platform classifies such health checks as _external_.
 
 Dropwizard does not support _external_ health checks by default, but the marker annotation 
-[`ExternalHealthCheck`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/ExternalHealthCheck.java) 
+[`ExternalHealthCheck`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/ExternalHealthCheck.java) 
 makes it possible to mark a health check as _external_. This causes the health check to be excluded
 from the _internal_ health check endpoint at:
  
@@ -97,7 +97,7 @@ However, the result of the health check is still available at the default health
 http://{serviceURL}:{adminPort}/healthcheck
 ```
 
-The [`ExternalServiceHealthCheck`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/helper/ExternalServiceHealthCheck.java) 
+The [`ExternalServiceHealthCheck`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-healthcheck/src/main/java/org/sdase/commons/server/healthcheck/helper/ExternalServiceHealthCheck.java) 
 is a configurable implementation to check if a dependent external REST API is healthy by sending a **GET** 
 request and validating the response status.   
 

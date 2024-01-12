@@ -23,7 +23,7 @@ See the documentation about [concurrency](./client-jersey.md#concurrency) on how
 ## Usage
 
 The trace token is loaded within a filter that is created and registered by the 
-[`TraceTokenBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/master/sda-commons-server-trace/src/main/java/org/sdase/commons/server/trace/TraceTokenBundle.java) which must be added
+[`TraceTokenBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-trace/src/main/java/org/sdase/commons/server/trace/TraceTokenBundle.java) which must be added
 to the Dropwizard application:
 
 ```java
