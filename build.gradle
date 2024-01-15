@@ -244,12 +244,8 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   }
 
   configurations.configureEach {
-    if (it.name.startsWith("spotless")) {
-      // Workaround for https://github.com/diffplug/spotless/issues/1965.
-    } else {
-      it.resolutionStrategy {
-        failOnVersionConflict()
-      }
+    it.resolutionStrategy {
+      failOnVersionConflict()
     }
   }
 }
