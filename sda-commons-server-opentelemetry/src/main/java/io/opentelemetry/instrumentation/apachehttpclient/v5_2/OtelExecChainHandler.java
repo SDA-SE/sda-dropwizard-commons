@@ -1,4 +1,4 @@
-package org.sdase.commons.server.opentelemetry.http5.client;
+package io.opentelemetry.instrumentation.apachehttpclient.v5_2;
 
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.ContextPropagators;
@@ -21,7 +21,7 @@ import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.ProtocolException;
 
-public class OtelExecChainHandler implements ExecChainHandler {
+class OtelExecChainHandler implements ExecChainHandler {
 
   private static final String REQUEST_CONTEXT_ATTRIBUTE_ID =
       OtelExecChainHandler.class.getName() + ".context";
@@ -55,22 +55,7 @@ public class OtelExecChainHandler implements ExecChainHandler {
       return execute(request, instrumenterRequest, scope.clientContext, chain, scope, context);
     }
 
-    HttpHost host = null;
-    if (scope.route.getTargetHost() != null) {
-      host = scope.route.getTargetHost();
-    } else if (scope.clientContext.getHttpRoute().getTargetHost() != null) {
-      host = scope.clientContext.getHttpRoute().getTargetHost();
-    }
-    if (host != null
-        && ((host.getSchemeName().equals("https") && host.getPort() == 443)
-            || (host.getSchemeName().equals("http") && host.getPort() == 80))) {
-      // port seems to be added to the host by route planning for standard ports even if not
-      // specified in the URL. There doesn't seem to be a way to differentiate between explicit
-      // and implicit port, but ignore in both cases to match the more common case.
-      host = new HttpHost(host.getSchemeName(), host.getHostName(), -1);
-    }
-
-    ApacheHttpClient5Request instrumenterRequest = new ApacheHttpClient5Request(host, request);
+    ApacheHttpClient5Request instrumenterRequest = getApacheHttpClient5Request(request, scope);
 
     Context parentContext = Context.current();
     if (!instrumenter.shouldStart(parentContext, instrumenterRequest)) {
@@ -79,7 +64,7 @@ public class OtelExecChainHandler implements ExecChainHandler {
 
     context = instrumenter.start(parentContext, instrumenterRequest);
     scope.clientContext.setAttribute(REQUEST_CONTEXT_ATTRIBUTE_ID, context);
-    scope.clientContext.setAttribute(REQUEST_WRAPPER_ATTRIBUTE_ID, request);
+    scope.clientContext.setAttribute(REQUEST_WRAPPER_ATTRIBUTE_ID, instrumenterRequest);
     scope.clientContext.setAttribute(REDIRECT_COUNT_ATTRIBUTE_ID, 0);
 
     propagators.getTextMapPropagator().inject(context, request, HttpHeaderSetter.INSTANCE);
@@ -164,5 +149,25 @@ public class OtelExecChainHandler implements ExecChainHandler {
 
     httpContext.setAttribute(REDIRECT_COUNT_ATTRIBUTE_ID, redirectCount);
     return true;
+  }
+
+  private static ApacheHttpClient5Request getApacheHttpClient5Request(
+      ClassicHttpRequest request, Scope scope) {
+    HttpHost host = null;
+    if (scope.route.getTargetHost() != null) {
+      host = scope.route.getTargetHost();
+    } else if (scope.clientContext.getHttpRoute().getTargetHost() != null) {
+      host = scope.clientContext.getHttpRoute().getTargetHost();
+    }
+    if (host != null
+        && ((host.getSchemeName().equals("https") && host.getPort() == 443)
+            || (host.getSchemeName().equals("http") && host.getPort() == 80))) {
+      // port seems to be added to the host by route planning for standard ports even if not
+      // specified in the URL. There doesn't seem to be a way to differentiate between explicit
+      // and implicit port, but ignore in both cases to match the more common case.
+      host = new HttpHost(host.getSchemeName(), host.getHostName(), -1);
+    }
+
+    return new ApacheHttpClient5Request(host, request);
   }
 }

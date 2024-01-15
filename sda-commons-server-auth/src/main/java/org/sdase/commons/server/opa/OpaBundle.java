@@ -13,6 +13,7 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jackson.Jackson;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.apachehttpclient.v5_2.ApacheHttpClient5Telemetry;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.WebTarget;
 import java.util.ArrayList;
@@ -31,7 +32,6 @@ import org.sdase.commons.server.opa.filter.OpaAuthFilter;
 import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.health.PolicyExistsHealthCheck;
 import org.sdase.commons.server.opa.internal.OpaJwtPrincipalFactory;
-import org.sdase.commons.server.opentelemetry.http5.client.ApacheHttpClient5Telemetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

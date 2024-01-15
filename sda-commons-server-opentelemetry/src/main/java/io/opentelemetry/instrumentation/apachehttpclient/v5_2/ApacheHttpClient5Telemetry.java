@@ -1,8 +1,10 @@
-package org.sdase.commons.server.opentelemetry.http5.client;
+package io.opentelemetry.instrumentation.apachehttpclient.v5_2;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
+import org.apache.hc.client5.http.impl.ChainElement;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.HttpResponse;
 
@@ -35,10 +37,17 @@ public final class ApacheHttpClient5Telemetry {
     this.propagators = propagators;
   }
 
+  /** Returns a new {@link CloseableHttpClient} with tracing configured. */
+  public CloseableHttpClient newHttpClient() {
+    return newHttpClientBuilder().build();
+  }
+
   /** Returns a new {@link HttpClientBuilder} to create a client with tracing configured. */
   public HttpClientBuilder newHttpClientBuilder() {
-    return org.apache.hc.client5.http.impl.classic.HttpClientBuilder.create()
-        .addExecInterceptorFirst(
-            "OtelExecChainHandler", new OtelExecChainHandler(instrumenter, propagators));
+    return HttpClientBuilder.create()
+        .addExecInterceptorAfter(
+            ChainElement.PROTOCOL.name(),
+            "OtelExecChainHandler",
+            new OtelExecChainHandler(instrumenter, propagators));
   }
 }

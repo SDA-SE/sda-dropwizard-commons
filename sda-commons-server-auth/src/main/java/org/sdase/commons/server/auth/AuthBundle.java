@@ -8,6 +8,7 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.apachehttpclient.v5_2.ApacheHttpClient5Telemetry;
 import jakarta.ws.rs.client.Client;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -30,7 +31,6 @@ import org.sdase.commons.server.auth.key.PublicKeyLoader;
 import org.sdase.commons.server.auth.service.AuthService;
 import org.sdase.commons.server.auth.service.JwtAuthenticator;
 import org.sdase.commons.server.auth.service.TokenAuthorizer;
-import org.sdase.commons.server.opentelemetry.http5.client.ApacheHttpClient5Telemetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

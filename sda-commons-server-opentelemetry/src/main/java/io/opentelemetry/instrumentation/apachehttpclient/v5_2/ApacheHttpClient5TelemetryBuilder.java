@@ -1,4 +1,4 @@
-package org.sdase.commons.server.opentelemetry.http5.client;
+package io.opentelemetry.instrumentation.apachehttpclient.v5_2;
 
 import io.dropwizard.logback.shaded.errorprone.annotations.CanIgnoreReturnValue;
 import io.opentelemetry.api.OpenTelemetry;
@@ -21,7 +21,7 @@ import org.apache.hc.core5.http.HttpResponse;
 /** A builder for {@link ApacheHttpClient5Telemetry}. */
 public final class ApacheHttpClient5TelemetryBuilder {
 
-  private static final String INSTRUMENTATION_NAME = "io.opentelemetry.apache-httpclient-5.0";
+  private static final String INSTRUMENTATION_NAME = "io.opentelemetry.apache-httpclient-5.2";
 
   private final OpenTelemetry openTelemetry;
 
