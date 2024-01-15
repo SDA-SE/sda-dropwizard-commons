@@ -229,6 +229,18 @@ The endpoint `/healthcheck/prometheus` was removed. Health checks metrics are av
 
 SDA specific metric `http_request_duration_seconds` was removed, please use `http_server_requests_seconds` instead.
 
+### 11 sda-commons-server-opentelemetry
+
+**Important**: The Java classes in the `io.opentelemetry.instrumentation.apachehttpclient.v5_2`
+package are provided as a temporary solution to support Apache Http Client version 5.2. However,
+these classes will only be available until the official Open Telemetry instrumentation team releases
+a version fully compatible with Apache Http Client 5.2.
+
+**Future Updates**: Once the official Open Telemetry instrumentation team releases a version fully
+compatible with Apache Http Client 5.2, we will release a new version. This new release will
+seamlessly replace the temporary package with the official library, ensuring continued compatibility
+and access to the latest features.
+
 ## Automation
 
 The following bash script can help you to quickly migrate your project to sda-dropwizard-commons 6.
