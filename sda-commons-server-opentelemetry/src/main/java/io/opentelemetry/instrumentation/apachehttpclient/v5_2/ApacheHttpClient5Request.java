@@ -1,4 +1,4 @@
-package org.sdase.commons.server.opentelemetry.http5.client;
+package io.opentelemetry.instrumentation.apachehttpclient.v5_2;
 
 import static java.util.logging.Level.FINE;
 
@@ -16,7 +16,7 @@ import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.ProtocolVersion;
 
-public final class ApacheHttpClient5Request {
+final class ApacheHttpClient5Request {
 
   private static final Logger logger = Logger.getLogger(ApacheHttpClient5Request.class.getName());
 
@@ -36,6 +36,11 @@ public final class ApacheHttpClient5Request {
     target = httpHost;
   }
 
+  /** Returns the actual {@link HttpRequest} being executed by the client. */
+  public HttpRequest getDelegate() {
+    return delegate;
+  }
+
   List<String> getHeader(String name) {
     return headersToList(delegate.getHeaders(name));
   }
@@ -50,6 +55,10 @@ public final class ApacheHttpClient5Request {
       headersList.add(header.getValue());
     }
     return headersList;
+  }
+
+  void setHeader(String name, String value) {
+    delegate.setHeader(name, value);
   }
 
   String getMethod() {

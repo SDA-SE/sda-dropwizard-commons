@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.sdase.commons.server.opentelemetry.http5.client;
+package io.opentelemetry.instrumentation.apachehttpclient.v5_2;
 
 import io.opentelemetry.context.propagation.TextMapSetter;
 import jakarta.annotation.Nullable;
