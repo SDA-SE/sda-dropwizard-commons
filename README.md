@@ -13,17 +13,6 @@
 SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow the patterns and specifications promoted by
 the SDA SE.
 
->
-> ##### ⚠️ ATTENTION: Please use SDA Dropwizard Commons version 5 and newer:
->
-> New features can only be contributed in version 5.x.x.
-> 
-> Version 2.x.x only receives critical security updates until October 2023. 
-> We will only provide security updates for the libraries that are still compatible with Java 8.
-> 
-> Please make sure to upgrade to version 5 as soon as possible.
->
-
 ## Getting Started
 
 Please have a look in our [documentation](docs/index.md).
