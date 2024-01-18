@@ -1391,7 +1391,7 @@ The module also creating server traces to insure proper context propagation.</p>
 <h2 id="docs">Docs<a class="headerlink" href="#docs" title="Permanent link">&para;</a></h2>
 <p>An extensive documentation can be found in <a href="https://opentelemetry.io/docs/instrumentation/java/">OpenTelemetry Java documentation</a>.</p>
 <h2 id="migrating-from-opentracing">Migrating from OpenTracing<a class="headerlink" href="#migrating-from-opentracing" title="Permanent link">&para;</a></h2>
-<p>Here you can find a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/MIGRATION_GUIDE.md">migration guide</a>, if you use OpenTracing on your project.</p>
+<p>Here you can find a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/docs/migration-guides/MIGRATION_GUIDE_v2_to_v3.md">migration guide</a>, if you use OpenTracing on your project.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <p>The bundle must be initialized before other bundles in the dependent applications, as it is responsible for initializing the openTelemetry Sdk and registering the created instance as global, so that dependent bundles can use it.</p>
 <div class="language-groovy highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="n">api</span><span class="w"> </span><span class="n">project</span><span class="o">(</span><span class="s1">&#39;:sda-commons-server-opentelemetry&#39;</span><span class="o">)</span>

@@ -1,0 +1,1703 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.2.7">
+    
+    
+      
+        <title>Migration Guide from v5 to v6 - sda-dropwizard-commons</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.046329b4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#migration-guide-from-v5-to-v6" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="sda-dropwizard-commons" class="md-header__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sda-dropwizard-commons
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migration Guide from v5 to v6
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="sda-dropwizard-commons" class="md-nav__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    sda-dropwizard-commons
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metadata-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metadata Context
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Modules
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Modules
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bom/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Bom
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client-jersey/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Client Jersey
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client-jersey-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Client Jersey Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client-jersey-wiremock-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Client Jersey Wiremock Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dependencies/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dependencies
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metadata-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metadata Context
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-auth/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Auth
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-auth-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Auth Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-circuit-breaker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Circuit Breaker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-cloud-events/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Cloud Events
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-consumer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Consumer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-cors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Cors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-dropwizard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Dropwizard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-error-handling/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Error Handling
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-healthcheck/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Healthcheck
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-healthcheck-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Healthcheck Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-hibernate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Hibernate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-hibernate-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Hibernate Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-hibernate-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Hibernate Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-jackson/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Jackson
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-kafka/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-kafka-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Kafka Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-kafka-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Kafka Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-key-mgmt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Key Management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-mongo-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Mongo Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-open-api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server OpenApi
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-openapi-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server OpenApi Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-opentelemetry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Open Telemetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-opentelemetry-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Open Telemetry Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-prometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-s3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server S3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-s3-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server S3 Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Security
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-spring-data-mongo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Spring Data Mongo
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-trace/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Trace
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-weld/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Weld
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-weld-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Weld Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-weld-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Weld Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-asyncapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Async API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-certificates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Certificates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-error/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Error
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-forms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Forms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-tracing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Tracing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-yaml/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Yaml
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Starter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Starter Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#general-migration-changes" class="md-nav__link">
+    General migration changes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dropwizard-4" class="md-nav__link">
+    Dropwizard 4
+  </a>
+  
+    <nav class="md-nav" aria-label="Dropwizard 4">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dropwizard-package-structure-and-jpms" class="md-nav__link">
+    Dropwizard Package Structure and JPMS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jakarta-package-namespace" class="md-nav__link">
+    Jakarta package namespace
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apache-http-client" class="md-nav__link">
+    Apache Http Client
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jetty-11" class="md-nav__link">
+    Jetty 11
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hibernate-6" class="md-nav__link">
+    Hibernate 6
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modules" class="md-nav__link">
+    Modules
+  </a>
+  
+    <nav class="md-nav" aria-label="Modules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sda-commons-server-testing" class="md-nav__link">
+    1 sda-commons-server-testing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sda-commons-server-spring-data-mongo" class="md-nav__link">
+    2 sda-commons-server-spring-data-mongo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sda-commons-server-mongo-testing" class="md-nav__link">
+    3 sda-commons-server-mongo-testing
+  </a>
+  
+    <nav class="md-nav" aria-label="3 sda-commons-server-mongo-testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixturehelpers" class="md-nav__link">
+    FixtureHelpers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sda-commons-client-jersey-wiremock-testing" class="md-nav__link">
+    4 sda-commons-client-jersey-wiremock-testing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-sda-commons-server-circuitbreaker" class="md-nav__link">
+    5 sda-commons-server-circuitbreaker
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-sda-commons-shared-asyncapi" class="md-nav__link">
+    6 sda-commons-shared-asyncapi
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-sda-commons-server-kafka" class="md-nav__link">
+    7 sda-commons-server-kafka
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-sda-commons-server-s3" class="md-nav__link">
+    8 sda-commons-server-s3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-sda-commons-server-s3-testing" class="md-nav__link">
+    9 sda-commons-server-s3-testing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-sda-commons-server-prometheus" class="md-nav__link">
+    10 sda-commons-server-prometheus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#11-sda-commons-server-opentelemetry" class="md-nav__link">
+    11 sda-commons-server-opentelemetry
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automation" class="md-nav__link">
+    Automation
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="migration-guide-from-v5-to-v6">Migration Guide from v5 to v6<a class="headerlink" href="#migration-guide-from-v5-to-v6" title="Permanent link">&para;</a></h1>
+<h2 id="general-migration-changes">General migration changes<a class="headerlink" href="#general-migration-changes" title="Permanent link">&para;</a></h2>
+<p>Version 6 of sda-dropwizard-commons now builds with Java 17 + 21. Support for Java 11 was dropped.</p>
+<h2 id="dropwizard-4">Dropwizard 4<a class="headerlink" href="#dropwizard-4" title="Permanent link">&para;</a></h2>
+<p>One of the major changes was the update from Dropwizard 2 to 4.
+Dropwizard 4 is no longer based on the Java EE (and the <code>javax.*</code> packages) but on Jakarta EE
+and the <code>jakarta.*</code> packages. Please read the full release notes in the
+official <a href="https://github.com/dropwizard/dropwizard/releases/tag/v4.0.0">Dropwizard repository</a>.</p>
+<p>Below we list the most important changes:</p>
+<h3 id="dropwizard-package-structure-and-jpms">Dropwizard Package Structure and JPMS<a class="headerlink" href="#dropwizard-package-structure-and-jpms" title="Permanent link">&para;</a></h3>
+<p>In order to properly support the Java Platform Module System (JPMS), the Java packages in modules
+must not overlap, or put differently, the packages may not be split into multiple modules.</p>
+<p>Affected packages:</p>
+<table>
+<thead>
+<tr>
+<th>Maven module</th>
+<th>Old package</th>
+<th>New package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dropwizard-core</td>
+<td>io.dropwizard</td>
+<td>io.dropwizard.core</td>
+</tr>
+<tr>
+<td>dropwizard-logging</td>
+<td>io.dropwizard.logging</td>
+<td>io.dropwizard.logging.common</td>
+</tr>
+<tr>
+<td>dropwizard-metrics</td>
+<td>io.dropwizard.metrics</td>
+<td>io.dropwizard.metrics.common</td>
+</tr>
+<tr>
+<td>dropwizard-views</td>
+<td>io.dropwizard.views</td>
+<td>io.dropwizard.views.common</td>
+</tr>
+</tbody>
+</table>
+<h3 id="jakarta-package-namespace">Jakarta package namespace<a class="headerlink" href="#jakarta-package-namespace" title="Permanent link">&para;</a></h3>
+<p>The previous package namespace for Java EE, <code>javax.*</code> was replaced by <code>jakarta</code> namespace, so it was
+necessary to replace all the imports starting with <code>import javax.</code> to <code>import jakarta.</code> and
+dependencies.
+Here is the list with the modified dependencies:</p>
+<ul>
+<li>javax.xml.bind:jaxb-api -&gt; jakarta.xml.bind:jakarta.xml.bind-api</li>
+<li>javax.annotation:javax.annotation-api -&gt; jakarta.annotation:jakarta.annotation-api</li>
+<li>javax.transaction:javax.transaction-api -&gt; jakarta.transaction:jakarta.transaction-api</li>
+<li>io.swagger.core.v3:swagger-annotations -&gt; io.swagger.core.v3:swagger-annotations-jakarta</li>
+<li>io.swagger.core.v3:swagger-jaxrs2 -&gt; io.swagger.core.v3:swagger-jaxrs2-jakarta</li>
+<li>io.swagger.core.v3:swagger-annotations -&gt; io.swagger.core.v3:swagger-annotations-jakarta</li>
+<li>io.swagger.core.v3:swagger-core -&gt; io.swagger.core.v3:swagger-core-jakarta</li>
+</ul>
+<p>You can find more details about this change
+on <a href="https://www.dropwizard.io/en/latest/manual/upgrade-notes/upgrade-notes-4_0_x.html#transition-to-jakarta-ee">Upgrade Notes for Dropwizard 4.0.x</a>.</p>
+<h3 id="apache-http-client">Apache Http Client<a class="headerlink" href="#apache-http-client" title="Permanent link">&para;</a></h3>
+<p>The Apache version was upgraded from v4 to v5.
+The imports were changed from <code>org.apache.http</code> to <code>org.apache.hc.core5</code>
+and <code>org.apache.hc.client5</code>.
+You can check the full migration guide in the
+official
+documentation: <a href="https://hc.apache.org/httpcomponents-client-5.2.x/migration-guide/preparation.html">Migration from Apache HttpClient 4.x APIs</a></p>
+<p><strong>Closing Responses</strong></p>
+<p>The Apache 5 connector seems to be more sensitive and might get stuck if you don't
+close your <code>Response</code> objects. Make sure to use <em>try-with-resources</em> or
+<code>finally</code> when you use Jersey clients (either in tests or in production!).</p>
+<p>Example:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">Response</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DW</span><span class="p">.</span><span class="na">client</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">target</span><span class="p">(</span><span class="s">&quot;http://localhost:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DW</span><span class="p">.</span><span class="na">getLocalPort</span><span class="p">())</span>
+<span class="w">    </span><span class="p">.</span><span class="na">path</span><span class="p">(</span><span class="s">&quot;/example&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">request</span><span class="p">(</span><span class="n">APPLICATION_JSON</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">get</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">assertThat</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="na">getStatus</span><span class="p">()).</span><span class="na">isEqualTo</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="jetty-11">Jetty 11<a class="headerlink" href="#jetty-11" title="Permanent link">&para;</a></h3>
+<p>Dropwizard v4 upgraded to Jetty 11.0.x. The main changes were regarding supporting <code>jakarta.servlet</code>
+namespace and a complete WebSocket refactoring, those using the Jetty APIs or embedded-jetty will
+need to update their code.
+You can read more information in
+the <a href="https://github.com/jetty/jetty.project/releases/tag/jetty-11.0.0">release notes</a> and in
+the <a href="https://eclipse.dev/jetty/documentation/jetty-11/programming-guide/index.html#pg-migration-94-to-10">official migration guide</a>.</p>
+<h3 id="hibernate-6">Hibernate 6<a class="headerlink" href="#hibernate-6" title="Permanent link">&para;</a></h3>
+<p>The Hibernate library was upgraded to 6.1. Both of them provide compatible implementations for Jakarta Persistence 3.0.
+You can check the migration guide
+to <a href="https://github.com/hibernate/hibernate-orm/blob/6.0/migration-guide.adoc#60-migration-guide">v6.0</a>
+and
+to <a href="https://github.com/hibernate/hibernate-orm/blob/6.1/migration-guide.adoc#61-migration-guide">v6.1</a>.</p>
+<h2 id="modules">Modules<a class="headerlink" href="#modules" title="Permanent link">&para;</a></h2>
+<p>The following modules contain changes:</p>
+<ol>
+<li><a href="#1-sda-commons-server-testing">sda-commons-server-testing</a></li>
+<li><a href="#2-sda-commons-server-spring-data-mongo">sda-commons-server-spring-data-mongo</a></li>
+<li><a href="#3-sda-commons-server-mongo-testing">sda-commons-server-mongo-testing</a></li>
+<li><a href="#4-wiremock-3.0">sda-commons-client-jersey-wiremock-testing</a></li>
+<li><a href="#5-sda-commons-server-circuitbreaker">sda-commons-server-circuitbreaker</a></li>
+<li><a href="#6-sda-commons-shared-asyncapi">sda-commons-shared-asyncapi</a></li>
+<li><a href="#7-sda-commons-server-kafka">sda-commons-server-kafka</a></li>
+<li><a href="#8-sda-commons-server-s3">sda-commons-server-s3</a></li>
+<li><a href="#9-sda-commons-server-s3-testing">sda-commons-server-s3-testing</a></li>
+<li><a href="#10-sda-commons-server-prometheus">sda-commons-server-prometheus</a></li>
+</ol>
+<h3 id="1-sda-commons-server-testing">1 sda-commons-server-testing<a class="headerlink" href="#1-sda-commons-server-testing" title="Permanent link">&para;</a></h3>
+<p>Removed Support for JUnit 4.x
+You must use all JUnit 5 extensions, classes, annotations, and libraries and migrate all your JUnit
+4 tests to JUnit 5.</p>
+<h3 id="2-sda-commons-server-spring-data-mongo">2 sda-commons-server-spring-data-mongo<a class="headerlink" href="#2-sda-commons-server-spring-data-mongo" title="Permanent link">&para;</a></h3>
+<p>The deprecated legacy configuration support for individual properties like <code>hosts</code> or <code>database</code> was
+removed. The database connection must be configured with <a href="https://www.mongodb.com/docs/manual/reference/connection-string/"><code>connectionString</code></a>.</p>
+<h3 id="3-sda-commons-server-mongo-testing">3 sda-commons-server-mongo-testing<a class="headerlink" href="#3-sda-commons-server-mongo-testing" title="Permanent link">&para;</a></h3>
+<p>Removed custom proxy configuration for MongoDB executable download.
+OS proxy settings should be configured instead.</p>
+<p>Removed getters from the <code>MongoDb</code> interface which affects the <code>MongoDbClassExtension</code>.
+You can retrieve information about the database, username or password from the 
+<code>ConnectionString</code> that is provided by <code>MongoDbClassExtension#getMongoConnectionString()</code>.</p>
+<h4 id="fixturehelpers">FixtureHelpers<a class="headerlink" href="#fixturehelpers" title="Permanent link">&para;</a></h4>
+<p>The class <code>io.drowizard.helpers.fixtures.FixtureHelpers</code> is not available in Dropwizard v4. So
+you must read the file using other approaches, e.g.
+using <a href="https://wiremock.org/docs/stubbing/#specifying-the-response-body">Wiremock response body</a> or
+using an <a href="https://www.baeldung.com/jackson-object-mapper-tutorial">ObjectMapper</a>.</p>
+<h3 id="4-sda-commons-client-jersey-wiremock-testing">4 sda-commons-client-jersey-wiremock-testing<a class="headerlink" href="#4-sda-commons-client-jersey-wiremock-testing" title="Permanent link">&para;</a></h3>
+<p>Dropwizard v4 uses wiremock v3.x version. Were introduced some breaking changes, like dropping
+support for Java 8,
+upgrading from Jetty 9 to Jetty 11 and changing the repository groupID to org.wiremock for all
+artifacts : wiremock, wiremock-standalone, wiremock-webhooks-extension.
+Module <code>sda-commons-client-jersey-wiremock-testing</code> was renamed to <code>sda-commons-shared-wiremock-testing</code>.
+SDA specific Wiremock test extensions were removed and replaced with Wiremock internal extensions.
+You will find example tests in <a href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/69f1b0a7158d3ee6c1e0a55d63f77bd3282a6839/sda-commons-shared-wiremock-testing/src/test/java/org/sdase/commons/shared/wiremock/testing/WireMockExampleTest.java">WireMockExampleTest</a>.</p>
+<p>You can see all the release notes and breaking changes in
+the <a href="https://github.com/wiremock/wiremock/releases/3.0.0">official repository</a>. </p>
+<h3 id="5-sda-commons-server-circuitbreaker">5 sda-commons-server-circuitbreaker<a class="headerlink" href="#5-sda-commons-server-circuitbreaker" title="Permanent link">&para;</a></h3>
+<p>Resilience4j-Circuitbreaker was updated from 1.7.x to 2.1.
+Please check <a href="https://github.com/resilience4j/resilience4j/blob/master/RELEASENOTES.adoc#version-200">their release notes</a> for details.</p>
+<p>The class <code>org.sdase.commons.server.circuitbreaker.metrics.SdaCircuitBreakerMetricsCollector</code> was removed. 
+We now collect metrics using <a href="https://micrometer.io/">Micrometer</a>.</p>
+<p>The metric named <code>resilience4j_circuitbreaker_calls_bucket</code> is not exposed anymore.
+Please use Micrometer's metric <code>resilience4j_circuitbreaker_calls_count</code> instead.</p>
+<h3 id="6-sda-commons-shared-asyncapi">6 sda-commons-shared-asyncapi<a class="headerlink" href="#6-sda-commons-shared-asyncapi" title="Permanent link">&para;</a></h3>
+<p>Json Schemas for AsyncAPI are generated with
+<a href="https://github.com/victools/jsonschema-generator">Victools' Json Schema Generator</a> now.
+The <a href="https://github.com/mbknor/mbknor-jackson-jsonSchema">previously used library</a> is barely
+maintained in the past years.</p>
+<p>The old library provided their own annotations.
+Now, annotations of Jackson (e.g. <code>@JsonSchemaDescription</code>), Swagger (e.g. <code>@Schema</code>) and Jakarta
+Validation (e.g. <code>NotNull</code>) can be used.
+Note that not all attributes of all annotations are covered and multiple examples are not possible
+anymore.
+Only one example can be defined with <code>@Schema(example = "value")</code>.</p>
+<p>How the Java classes for schema definitions in the AsyncAPI are defined has changed.
+Previously, classes to integrate were defined in the code
+(<code>.withSchema("./schema.json", BaseEvent.class)</code>) and referenced in the AsyncAPI template
+(<code>$ref: './schema.json#/definitions/CarManufactured'</code>).
+Now the classes are referenced directly in the template (<code>$ref: 'class://com.example.BaseEvent</code>).
+The builder method <code>withSchema</code> does not exist anymore.</p>
+<p>Please review the differences in the generated AsyncAPI file.
+Both libraries work different and have a different feature set.
+The new generator may have some limitations but a great API for extensions.
+Please <a href="https://github.com/SDA-SE/sda-dropwizard-commons/issues">file an issue</a> if something
+important can't be expressed.</p>
+<h3 id="7-sda-commons-server-kafka">7 sda-commons-server-kafka<a class="headerlink" href="#7-sda-commons-server-kafka" title="Permanent link">&para;</a></h3>
+<p>The public init method</p>
+<p><code>MessageListenerStrategy#init(ConsumerTopicMessageHistogram consumerTopicMessageHistogram, Set&lt;String&gt; metadataFields)</code></p>
+<p>was removed. Internal metrics are collected automatically. Please use</p>
+<p><code>MessageListenerStrategy#init(Set&lt;String&gt; metadataFields)</code></p>
+<h3 id="8-sda-commons-server-s3">8 sda-commons-server-s3<a class="headerlink" href="#8-sda-commons-server-s3" title="Permanent link">&para;</a></h3>
+<p>The AWS SDK was upgraded from 1.12.x to <a href="https://github.com/aws/aws-sdk-java-v2">https://github.com/aws/aws-sdk-java-v2</a>.
+The new version is not compatible with the old one.
+You can find the official documentation for the migration <a href="https://github.com/aws/aws-sdk-java-v2/blob/master/docs/LaunchChangelog.md">https://github.com/aws/aws-sdk-java-v2/blob/master/docs/LaunchChangelog.md</a>.</p>
+<p>This can also be explained by the Jakarta update because the old AWS SDK still used the Apache
+HTTP Client v4, which is not compatible with Jakarta.
+The old AWS SDK did not have the option to pick a different HTTP client.</p>
+<p>Most noticeably, the base package of the classes moved from <code>com.amazonaws</code> to <code>software.amazon.awssdk</code>.
+The <code>S3Bundle</code> will not return an instance of <code>software.amazon.awssdk.services.s3.S3Client</code>
+instead of <code>com.amazonaws.services.s3.AmazonS3</code></p>
+<p>Moreover, the bundle now supports using the AWS <a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html">default credentials provider</a> 
+chain to retrieve credentials if you don't provide them in the <code>S3Configuration</code>.
+You can now also pass credentials
+via environment variables <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>
+or via system properties <code>aws.accessKeyId</code> and <code>aws.secretAccessKey</code>.</p>
+<h3 id="9-sda-commons-server-s3-testing">9 sda-commons-server-s3-testing<a class="headerlink" href="#9-sda-commons-server-s3-testing" title="Permanent link">&para;</a></h3>
+<p>Our previous S3 mock library <a href="https://github.com/Robothy/local-s3">s3mock</a> was also based on the old 
+AWS SDK v1.12.x and is no longer maintained. 
+We switched to <a href="https://github.com/Robothy/local-s3">Robothy local-s3</a> as alternative.
+You can still use our <code>S3ClassExtension</code> to start the S3 mock server in your tests.
+But it will now give you an instance of <code>software.amazon.awssdk.services.s3.S3Client</code> for the
+S3 client.
+Additionally, you need to annotate your S3 tests with <code>@LocalS3</code> due to an implementation detail
+of the underlying test library.</p>
+<h3 id="10-sda-commons-server-prometheus">10 sda-commons-server-prometheus<a class="headerlink" href="#10-sda-commons-server-prometheus" title="Permanent link">&para;</a></h3>
+<p>The endpoint <code>/healthcheck/prometheus</code> was removed. Health checks metrics are available using endpoint <code>/metrics/prometheus</code>.</p>
+<p>SDA specific metric <code>http_request_duration_seconds</code> was removed, please use <code>http_server_requests_seconds</code> instead.</p>
+<h3 id="11-sda-commons-server-opentelemetry">11 sda-commons-server-opentelemetry<a class="headerlink" href="#11-sda-commons-server-opentelemetry" title="Permanent link">&para;</a></h3>
+<p><strong>Important</strong>: The Java classes in the <code>io.opentelemetry.instrumentation.apachehttpclient.v5_2</code>
+package are provided as a temporary solution to support Apache Http Client version 5.2. However,
+these classes will only be available until the official Open Telemetry instrumentation team releases
+a version fully compatible with Apache Http Client 5.2.</p>
+<p><strong>Future Updates</strong>: Once the official Open Telemetry instrumentation team releases a version fully
+compatible with Apache Http Client 5.2, we will release a new version. This new release will
+seamlessly replace the temporary package with the official library, ensuring continued compatibility
+and access to the latest features.</p>
+<h2 id="automation">Automation<a class="headerlink" href="#automation" title="Permanent link">&para;</a></h2>
+<p>The following bash script can help you to quickly migrate your project to sda-dropwizard-commons 6.
+Copy the content to a file in the root of your project and execute it.</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code>touch<span class="w"> </span>migrate.sh
+chmod<span class="w"> </span>u+x<span class="w"> </span>migrate.sh
+<span class="sb">````</span>
+
+<span class="sb">```</span>bash
+<span class="c1">#!/bin/bash</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Migrating Java files&quot;</span>
+<span class="k">for</span><span class="w"> </span>file<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>find<span class="w"> </span>.<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.java&quot;</span><span class="sb">`</span>
+<span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Processing </span><span class="nv">$file</span><span class="s2">&quot;</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/javax.validation/jakarta.validation/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/javax.ws.rs/jakarta.ws.rs/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/javax.annotation/jakarta.annotation/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/io.dropwizard.Application/io.dropwizard.core.Application/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/io.dropwizard.Configuration/io.dropwizard.core.Configuration/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/io.dropwizard.setup.Bootstrap/io.dropwizard.core.setup.Bootstrap/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/io.dropwizard.setup.Environment/io.dropwizard.core.setup.Environment/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/com.amazonaws.services.s3.AmazonS3/software.amazon.awssdk.services.s3.S3Client/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/AmazonS3/S3Client/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/org.apache.http.HttpStatus/org.apache.hc.core5.http.HttpStatus/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+
+<span class="w">  </span><span class="c1"># test files only</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="nv">$file</span><span class="w"> </span><span class="o">=</span>~<span class="w"> </span>.*src<span class="se">\/</span>test.*<span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">      </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/org.sdase.commons.client.jersey.wiremock.testing.WireMockClassExtension/com.github.tomakehurst.wiremock.junit5.WireMockExtension/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">      </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/new WireMockClassExtension(wireMockConfig().dynamicPort());/new WireMockExtension().builder().build()/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">      </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/WireMockClassExtension;/WireMockExtension/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="k">done</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Migrating Gradle files&quot;</span>
+<span class="k">for</span><span class="w"> </span>file<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>find<span class="w"> </span>.<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;build.gradle&quot;</span><span class="sb">`</span>
+<span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Processing </span><span class="nv">$file</span><span class="s2">&quot;</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/org.sdase.commons:sda-commons-client-jersey-wiremock-testing/org.sdase.commons:sda-commons-shared-wiremock-testing/g&#39;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="k">done</span>
+</code></pre></div></td></tr></table></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "content.action.edit"], "search": "../../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="../../search/main.js"></script>
+      
+    
+  </body>
+</html>

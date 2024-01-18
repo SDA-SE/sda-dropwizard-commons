@@ -1213,9 +1213,9 @@
 <p>The SDA commons libraries provide support to generate the common error structures as described in the REST guide. This 
 implementation is part of the <a href="../server-jackson/#error-format"><code>sda-commons-server-jackson</code></a> bundle.</p>
 <p>The default way to inform clients about errors, exceptions should be thrown. These exceptions are mapped to the 
-common error structure using JAX-RS exception mapper (<code>javax.ws.rs.ext.ExceptionMapper</code>) automatically, if the Jackson bundle 
+common error structure using JAX-RS exception mapper (<code>jakarta.ws.rs.ext.ExceptionMapper</code>) automatically, if the Jackson bundle 
 is added to the application.</p>
-<p>Using a response object (<code>javax.ws.rs.core.Response</code>) to inform clients about exceptions will not
+<p>Using a response object (<code>jakarta.ws.rs.core.Response</code>) to inform clients about exceptions will not
 necessarily result in the agreed error structure. This is only the case if as entity, an 
 <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-error/src/main/java/org/sdase/commons/shared/api/error/ApiError.java"><code>ApiError</code></a>
 is used.</p>

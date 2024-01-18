@@ -978,26 +978,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#provided-helpers" class="md-nav__link">
-    Provided helpers
-  </a>
-  
-    <nav class="md-nav" aria-label="Provided helpers">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dropwizardconfigurationhelper" class="md-nav__link">
-    DropwizardConfigurationHelper
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#provided-junit-5-extensions" class="md-nav__link">
     Provided JUnit 5 Extensions
   </a>
@@ -1334,26 +1314,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#provided-helpers" class="md-nav__link">
-    Provided helpers
-  </a>
-  
-    <nav class="md-nav" aria-label="Provided helpers">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dropwizardconfigurationhelper" class="md-nav__link">
-    DropwizardConfigurationHelper
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#provided-junit-5-extensions" class="md-nav__link">
     Provided JUnit 5 Extensions
   </a>
@@ -1476,31 +1436,6 @@ allows for overriding or unsetting system properties for (integration) tests and
 <span class="w">    </span><span class="p">.</span><span class="na">setProperty</span><span class="p">(</span><span class="n">PROP_TO_SET</span><span class="p">,</span><span class="w"> </span><span class="n">VALUE</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">setProperty</span><span class="p">(</span><span class="n">PROP_TO_SET_SUPPLIER</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">VALUE</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">unsetProperty</span><span class="p">(</span><span class="n">PROP_TO_UNSET</span><span class="p">);</span>
-</code></pre></div></td></tr></table></div>
-<h2 id="provided-helpers">Provided helpers<a class="headerlink" href="#provided-helpers" title="Permanent link">&para;</a></h2>
-<h3 id="dropwizardconfigurationhelper">DropwizardConfigurationHelper<a class="headerlink" href="#dropwizardconfigurationhelper" title="Permanent link">&para;</a></h3>
-<p>The <code>DropwizardConfigurationHelper</code> allows to create a Dropwizard configuration programmatically in tests without the
-need for <code>test-config.yaml</code>. This can be useful when not using the default DropwizardAppRule, e.g. in combination with
-<a href="../server-weld-testing/"><code>sda-commons-server-weld-testing</code></a>:</p>
-<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CustomIT</span><span class="w"> </span><span class="p">{</span>
-
-<span class="w">  </span><span class="nd">@RegisterExtension</span>
-<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WeldAppExtension</span><span class="o">&lt;</span><span class="n">AppConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">APP</span><span class="w"> </span><span class="o">=</span>
-<span class="w">      </span><span class="k">new</span><span class="w"> </span><span class="n">WeldAppExtension</span><span class="o">&lt;&gt;</span><span class="p">(</span>
-<span class="w">          </span><span class="n">WeldExampleApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
-<span class="w">          </span><span class="n">configFrom</span><span class="p">(</span><span class="n">AppConfiguration</span><span class="p">::</span><span class="k">new</span><span class="p">).</span><span class="na">withPorts</span><span class="p">(</span><span class="mi">4567</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">).</span><span class="na">withRootPath</span><span class="p">(</span><span class="s">&quot;/api/*&quot;</span><span class="p">).</span><span class="na">build</span><span class="p">());</span>
-
-<span class="w">    </span><span class="c1">// ...</span>
-<span class="p">}</span>
 </code></pre></div></td></tr></table></div>
 <h2 id="provided-junit-5-extensions">Provided JUnit 5 Extensions<a class="headerlink" href="#provided-junit-5-extensions" title="Permanent link">&para;</a></h2>
 <h3 id="systempropertyclassextension_1">SystemPropertyClassExtension<a class="headerlink" href="#systempropertyclassextension_1" title="Permanent link">&para;</a></h3>

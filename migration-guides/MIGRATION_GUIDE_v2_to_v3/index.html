@@ -1,0 +1,2096 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.2.7">
+    
+    
+      
+        <title>Migration Guide from v2 to v3 - sda-dropwizard-commons</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.046329b4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#migration-guide-from-v2-to-v3" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="sda-dropwizard-commons" class="md-header__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sda-dropwizard-commons
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migration Guide from v2 to v3
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="sda-dropwizard-commons" class="md-nav__button md-logo" aria-label="sda-dropwizard-commons" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    sda-dropwizard-commons
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metadata-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metadata Context
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Modules
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Modules
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bom/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Bom
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client-jersey/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Client Jersey
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client-jersey-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Client Jersey Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client-jersey-wiremock-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Client Jersey Wiremock Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dependencies/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dependencies
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metadata-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metadata Context
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-auth/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Auth
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-auth-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Auth Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-circuit-breaker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Circuit Breaker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-cloud-events/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Cloud Events
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-consumer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Consumer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-cors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Cors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-dropwizard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Dropwizard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-error-handling/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Error Handling
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-healthcheck/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Healthcheck
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-healthcheck-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Healthcheck Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-hibernate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Hibernate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-hibernate-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Hibernate Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-hibernate-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Hibernate Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-jackson/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Jackson
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-kafka/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-kafka-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Kafka Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-kafka-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Kafka Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-key-mgmt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Key Management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-mongo-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Mongo Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-open-api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server OpenApi
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-openapi-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server OpenApi Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-opentelemetry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Open Telemetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-opentelemetry-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Open Telemetry Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-prometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-s3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server S3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-s3-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server S3 Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Security
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-spring-data-mongo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Spring Data Mongo
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-trace/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Trace
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-weld/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Weld
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-weld-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Weld Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server-weld-testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Weld Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-asyncapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Async API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-certificates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Certificates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-error/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Error
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-forms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Forms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-tracing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Tracing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shared-yaml/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shared Yaml
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Starter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Starter Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-sda-commons-server-testing" class="md-nav__link">
+    1 sda-commons-server-testing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-sda-commons-server-auth" class="md-nav__link">
+    2 sda-commons-server-auth
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-sda-commons-server-auth-testing" class="md-nav__link">
+    3 sda-commons-server-auth-testing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-sda-commons-server-opentracing" class="md-nav__link">
+    4 sda-commons-server-opentracing
+  </a>
+  
+    <nav class="md-nav" aria-label="4 sda-commons-server-opentracing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#starter-bundle" class="md-nav__link">
+    Starter Bundle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replace-opentracing-dependencies-to-opentelemetry-dependencies" class="md-nav__link">
+    Replace OpenTracing dependencies to OpenTelemetry dependencies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#executors-need-to-be-instrumented-to-follow-traces-when-parts-of-the-request-are-handled-asynchronously" class="md-nav__link">
+    Executors need to be instrumented to follow traces when parts of the request are handled asynchronously.
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    Environment variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-environment-variables" class="md-nav__link">
+    New environment variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-api-for-instrumentation" class="md-nav__link">
+    New API for instrumentation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-setup" class="md-nav__link">
+    Test Setup
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-sda-commons-server-morphia" class="md-nav__link">
+    5 sda-commons-server-morphia
+  </a>
+  
+    <nav class="md-nav" aria-label="5 sda-commons-server-morphia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#replacing-the-morphiabundle" class="md-nav__link">
+    Replacing the MorphiaBundle:
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mongo-configuration-options" class="md-nav__link">
+    Mongo Configuration Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#morphia-compatibility" class="md-nav__link">
+    Morphia compatibility
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    Validation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queries" class="md-nav__link">
+    Queries
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-queries-with-the-datastore" class="md-nav__link">
+    Building queries with the datastore
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto-generate-queries-out-of-method-names-with-the-mongorepository-interface" class="md-nav__link">
+    Auto-generate queries out of method names with the MongoRepository interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-functions" class="md-nav__link">
+    Query functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Query functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#equalignorecase" class="md-nav__link">
+    EqualIgnoreCase
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hasanyof" class="md-nav__link">
+    HasAnyOf
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    Filter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contains" class="md-nav__link">
+    Contains
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hasallof" class="md-nav__link">
+    HasAllOf
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    Error handling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#indexes" class="md-nav__link">
+    Indexes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-converters" class="md-nav__link">
+    Custom converters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#annotations" class="md-nav__link">
+    Annotations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-sda-commons-server-kafka" class="md-nav__link">
+    6 sda-commons-server-kafka
+  </a>
+  
+    <nav class="md-nav" aria-label="6 sda-commons-server-kafka">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kafka-configuration" class="md-nav__link">
+    Kafka Configuration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-deployment-and-release-of-upgraded-services" class="md-nav__link">
+    7. Deployment and Release of upgraded services
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Deployment and Release of upgraded services">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tracing" class="md-nav__link">
+    Tracing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kafka" class="md-nav__link">
+    Kafka
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mongodb" class="md-nav__link">
+    MongoDB
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="migration-guide-from-v2-to-v3">Migration Guide from v2 to v3<a class="headerlink" href="#migration-guide-from-v2-to-v3" title="Permanent link">&para;</a></h1>
+<p>The following modules contain changes:</p>
+<ol>
+<li><a href="#1-sda-commons-server-testing">sda-commons-server-testing</a></li>
+<li><a href="#2-sda-commons-server-auth">sda-commons-server-auth</a></li>
+<li><a href="#3-sda-commons-server-auth-testing">sda-commons-server-auth-testing</a></li>
+<li><a href="#4-sda-commons-server-opentracing">sda-commons-server-opentracing</a></li>
+<li><a href="#5-sda-commons-server-morphia">sda-commons-server-morphia</a></li>
+<li><a href="#6-sda-commons-server-kafka">sda-commons-server-kafka</a></li>
+<li><a href="#7-deployment-and-release-of-upgraded-services">Deployment and Release of upgraded services</a></li>
+</ol>
+<h2 id="1-sda-commons-server-testing">1 sda-commons-server-testing<a class="headerlink" href="#1-sda-commons-server-testing" title="Permanent link">&para;</a></h2>
+<p>Does not provide any JUnit 4 rules anymore.
+You should find JUnit 5 extensions for all of your rules.
+We recommend migrating all your JUnit 4 tests to JUnit 5.</p>
+<h2 id="2-sda-commons-server-auth">2 sda-commons-server-auth<a class="headerlink" href="#2-sda-commons-server-auth" title="Permanent link">&para;</a></h2>
+<p>The deprecated field <code>readTimeout</code> was removed from the class <code>OpaConfig</code>.
+Please set the timeout in the <code>opaClient</code> configuration instead.</p>
+<p>Example:</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">opa</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">opaClient</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500ms</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="3-sda-commons-server-auth-testing">3 sda-commons-server-auth-testing<a class="headerlink" href="#3-sda-commons-server-auth-testing" title="Permanent link">&para;</a></h2>
+<p>Please change your <code>test-config.yaml</code> if they use <code>${AUTH_RULE}</code> as placeholder.
+We wanted to get rid of all references to old JUnit 4 rules.</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">-   config: ${AUTH_RULE}</span>
+<span class="gi">+   config: ${AUTH_CONFIG_KEYS}</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="4-sda-commons-server-opentracing">4 sda-commons-server-opentracing<a class="headerlink" href="#4-sda-commons-server-opentracing" title="Permanent link">&para;</a></h2>
+<p>Migrate from OpenTracing to OpenTelemetry.</p>
+<h3 id="starter-bundle">Starter Bundle<a class="headerlink" href="#starter-bundle" title="Permanent link">&para;</a></h3>
+<p>If you do not use sda-commons-starter with <a href="../../sda-commons-starter/src/main/java/org/sdase/commons/starter/SdaPlatformBundle.java">SdaPlatformBundle</a>,
+you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTelemetry bundle.</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- bootstrap.addBundle(JaegerBundle.builder().build());</span>
+<span class="gd">- bootstrap.addBundle(OpenTracingBundle.builder().build());</span>
+<span class="gi">+ bootstrap.addBundle(</span>
+<span class="gi">+     OpenTelemetryBundle.builder()</span>
+<span class="gi">+       .withAutoConfiguredTelemetryInstance()</span>
+<span class="gi">+       .withExcludedUrlsPattern(Pattern.compile(String.join(&quot;|&quot;, Arrays.asList(</span>
+<span class="gi">+         &quot;/ping&quot;, &quot;/healthcheck&quot;, &quot;/healthcheck/internal&quot;, &quot;/metrics&quot;,</span>
+<span class="gi">+         &quot;/metrics/prometheus&quot;))))</span>
+<span class="gi">+       .build());</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="replace-opentracing-dependencies-to-opentelemetry-dependencies">Replace OpenTracing dependencies to OpenTelemetry dependencies<a class="headerlink" href="#replace-opentracing-dependencies-to-opentelemetry-dependencies" title="Permanent link">&para;</a></h3>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- testImplementation &#39;io.opentracing:opentracing-mock&#39;</span>
+<span class="gi">+ testImplementation &#39;io.opentelemetry:opentelemetry-sdk-testing&#39;</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="executors-need-to-be-instrumented-to-follow-traces-when-parts-of-the-request-are-handled-asynchronously">Executors need to be instrumented to follow traces when parts of the request are handled asynchronously.<a class="headerlink" href="#executors-need-to-be-instrumented-to-follow-traces-when-parts-of-the-request-are-handled-asynchronously" title="Permanent link">&para;</a></h3>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- return new AsyncEmailSendManager(</span>
+<span class="gd">-   new InMemoryAsyncTaskRepository&lt;&gt;(limits.getMaxAttempts()),</span>
+<span class="gd">-   environment</span>
+<span class="gd">-       .lifecycle()</span>
+<span class="gd">-       .executorService(&quot;email-sender-%d&quot;)</span>
+<span class="gd">-       .minThreads(1)</span>
+<span class="gd">-       .maxThreads(limits.getMaxParallel())</span>
+<span class="gd">-       .build(),</span>
+<span class="gi">+ return new AsyncEmailSendManager(</span>
+<span class="gi">+     new InMemoryAsyncTaskRepository&lt;&gt;(limits.getMaxAttempts()),</span>
+<span class="gi">+     io.opentelemetry.context.Context.taskWrapping(</span>
+<span class="gi">+       environment</span>
+<span class="gi">+           .lifecycle()</span>
+<span class="gi">+           .executorService(&quot;email-sender-%d&quot;)</span>
+<span class="gi">+           .minThreads(1)</span>
+<span class="gi">+           .maxThreads(limits.getMaxParallel())</span>
+<span class="gi">+           .build()),</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="environment-variables">Environment variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h3>
+<p>To disable tracing, you must set the variable <code>TRACING_DISABLED</code> to <code>true</code>.
+The legacy Jaeger environment variables are still supported, but they will be removed in later
+versions.</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- JAEGER_SAMPLER_TYPE=const</span>
+<span class="gd">- JAEGER_SAMPLER_PARAM=0</span>
+<span class="gi">+ TRACING_DISABLED=true</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="new-environment-variables">New environment variables<a class="headerlink" href="#new-environment-variables" title="Permanent link">&para;</a></h3>
+<p>In order to configure Open Telemetry, you can set some environment variables:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Default value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OTEL_PROPAGATORS</td>
+<td>jaeger,b3,tracecontext,baggage</td>
+<td>Propagators to be used as a comma-separated list</td>
+</tr>
+<tr>
+<td>OTEL_SERVICE_NAME</td>
+<td>value from env <code>JAEGER_SERVICE_NAME</code> (if set)</td>
+<td>The service name that will appear on tracing</td>
+</tr>
+<tr>
+<td>OTEL_EXPORTER_JAEGER_ENDPOINT</td>
+<td><a href="http://jaeger-collector.jaeger:14250">http://jaeger-collector.jaeger:14250</a></td>
+<td>Full URL of the Jaeger HTTP endpoint. The URL must point to the jaeger collector</td>
+</tr>
+<tr>
+<td>OTEL_TRACES_EXPORTER</td>
+<td>jaeger</td>
+<td>Trace exporter to be used (otlp, jaeger, zipkin, none)</td>
+</tr>
+</tbody>
+</table>
+<p>A full list of the configurable properties can be found in the <a href="https://opentelemetry.io/docs/reference/specification/sdk-environment-variables/">General SDK Configuration</a>.</p>
+<h3 id="new-api-for-instrumentation">New API for instrumentation<a class="headerlink" href="#new-api-for-instrumentation" title="Permanent link">&para;</a></h3>
+<p>If you use the OpenTracing API for manual instrumentation, you will have to replace it with the
+OpenTelemetry API.
+You can find the <a href="https://www.javadoc.io/static/io.opentelemetry/opentelemetry-api/1.0.1/io/opentelemetry/api/GlobalOpenTelemetry.html">API Definition</a>
+to see all the possible methods.</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- public void sendEmail(To recipient, String subject, EmailBody body) {</span>
+<span class="gd">-   Span span = GlobalTracer.get().buildSpan(&quot;sendSmtpMail&quot;).start();</span>
+<span class="gd">-   try (Scope ignored = GlobalTracer.get().scopeManager().activate(span)) {</span>
+<span class="gd">-     delegate.sendEmail(recipient, subject, body);</span>
+<span class="gd">-   } finally {</span>
+<span class="gd">-     span.finish();</span>
+<span class="gd">-   }</span>
+<span class="gd">- }</span>
+<span class="gi">+ public void sendEmail(To recipient, String subject, EmailBody body) {</span>
+<span class="gi">+   var tracer = GlobalOpenTelemetry.get().getTracer(getClass().getName());</span>
+<span class="gi">+   var span = tracer.spanBuilder(&quot;sendSmtpMail&quot;).startSpan();</span>
+<span class="gi">+   try (var ignored = span.makeCurrent()) {</span>
+<span class="gi">+     delegate.sendEmail(recipient, subject, body);</span>
+<span class="gi">+   } finally {</span>
+<span class="gi">+     span.end();</span>
+<span class="gi">+   }</span>
+<span class="gi">+ }</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="test-setup">Test Setup<a class="headerlink" href="#test-setup" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Add the opentelemetry test dependency
+  <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>testImplementation &#39;io.opentelemetry:opentelemetry-sdk-testing&#39; 
+</code></pre></div></td></tr></table></div></li>
+</ul>
+<ul>
+<li>
+<p>Replace <code>io.opentracing.mock.MockTracer</code> with
+  <code>io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension</code></p>
+<p><div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- private final MockTracer mockTracer = new MockTracer();</span>
+<span class="gi">+ @RegisterExtension</span>
+<span class="gi">+ @Order(0)</span>
+<span class="gi">+ static final OpenTelemetryExtension OTEL = OpenTelemetryExtension.create();</span>
+</code></pre></div></td></tr></table></div>
+- Clear metrics and spans before each test using OpenTelemetryExtension</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- @BeforeEach</span>
+<span class="gd">- void setupTestData() throws FolderException {</span>
+<span class="gd">-   GlobalTracerTestUtil.setGlobalTracerUnconditionally(mockTracer);</span>
+<span class="gd">-   mockTracer.reset();</span>
+<span class="gd">- }</span>
+<span class="gi">+ @BeforeEach</span>
+<span class="gi">+ void setupTestData() throws FolderException {</span>
+<span class="gi">+   OTEL.clearMetrics(); // OTEL is the OpenTelemetryExtension instance</span>
+<span class="gi">+   OTEL.clearSpans();</span>
+<span class="gi">+ }</span>
+</code></pre></div></td></tr></table></div>
+</li>
+</ul>
+<ul>
+<li>Capture spans using <code>OpenTelemetryExtension</code> and <code>io.opentelemetry.sdk.trace.data.SpanData</code><div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- assertThat(mockTracer.finishedSpans().stream()</span>
+<span class="gd">-     .filter(s -&gt; s.operationName().equals(&quot;expectedTracing&quot;)));</span>
+<span class="gi">+ assertThat(OTEL.getSpans().stream().filter(s -&gt; s.getName().equals(&quot;expectedTracing&quot;)));</span>
+</code></pre></div></td></tr></table></div>
+</li>
+</ul>
+<h2 id="5-sda-commons-server-morphia">5 sda-commons-server-morphia<a class="headerlink" href="#5-sda-commons-server-morphia" title="Permanent link">&para;</a></h2>
+<p>Migrate to <a href="https://docs.spring.io/spring-data/mongodb/docs/">Spring Data Mongo</a>.</p>
+<p>The spring-data-mongo package is available at the following coordinates:</p>
+<div class="language-groovy highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">implementation</span><span class="w"> </span><span class="s2">&quot;org.sdase.commons:sda-commons-server-spring-data-mongo&quot;</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="replacing-the-morphiabundle">Replacing the MorphiaBundle:<a class="headerlink" href="#replacing-the-morphiabundle" title="Permanent link">&para;</a></h3>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">-  private final MorphiaBundle&lt;AppConfiguration&gt; morphiaBundle =</span>
+<span class="gd">-    MorphiaBundle.builder()</span>
+<span class="gd">-      .withConfigurationProvider(AppConfiguration::getMongo)</span>
+<span class="gd">-      .withEntityScanPackageClass(ConsentConfigurationEntity.class)</span>
+<span class="gd">-      .withValidation()</span>
+<span class="gd">-      .build();</span>
+
+<span class="gi">+  private final SpringDataMongoBundle&lt;AppConfiguration&gt; mongoBundle = </span>
+<span class="gi">+    SpringDataMongoBundle.builder()</span>
+<span class="gi">+      .withConfigurationProvider(AppConfiguration::getMongo)</span>
+<span class="gi">+      .withEntities(ConsentConfigurationEntity.class)</span>
+<span class="gi">+      .build();</span>
+</code></pre></div></td></tr></table></div>
+<p>Morphia's <code>Datastore</code> can be replaced by Spring Data Mongo's <code>MongoOperations</code>:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">MongoOperations</span><span class="w"> </span><span class="nf">getMongoOperations</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">mongoBundle</span><span class="p">.</span><span class="na">getMongoOperations</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="mongo-configuration-options">Mongo Configuration Options<a class="headerlink" href="#mongo-configuration-options" title="Permanent link">&para;</a></h3>
+<p>The database connection can be configured in the <code>config.yaml</code> of the application.
+Please consult the <a href="./sda-commons-server-spring-data-mongo/README.md#Configuration">README of the Spring Data Mongo module</a>
+for further information on how to configure your database connection.</p>
+<blockquote>
+<p>Please note that we now prefer to configure the MongoDB connection using MongoDB's connection
+string.
+All other configuration options like hosts, options, etc. are still available but deprecated and
+will be removed in the next major release. 
+There is only one exception: The deprecated option <code>caCertificate</code> was removed.
+For more information how to mount a certificate please read the <a href="./sda-commons-server-spring-data-mongo/README.md#ca-certificates-support">module's documentation</a>.</p>
+</blockquote>
+<h3 id="morphia-compatibility">Morphia compatibility<a class="headerlink" href="#morphia-compatibility" title="Permanent link">&para;</a></h3>
+<p>When upgrading a service from 2.x.x a set of converters is provided to stay compatible with a
+database that was initialized with Morphia.
+To enable these converters, <code>.withMorphiaCompatibility()</code> can be used when building the
+<code>SpringDataMongoBundle</code>.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">SpringDataMongoBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">  </span><span class="p">.</span><span class="na">withConfigurationProvider</span><span class="p">(</span><span class="n">AppConfiguration</span><span class="p">::</span><span class="n">getSpringDataMongo</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="na">withMorphiaCompatibility</span><span class="p">()</span>
+<span class="w">  </span><span class="n">build</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">&para;</a></h3>
+<p>Automatic JSR validation is no longer provided in v3.
+If you still want to validate your models you can do so manually by using the <code>ValidationFactory</code>:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kt">boolean</span><span class="w"> </span><span class="n">isValid</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="n">Validation</span><span class="p">.</span><span class="na">buildDefaultValidatorFactory</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">getValidator</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">validate</span><span class="p">(</span><span class="n">myEntity</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">isEmpty</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="queries">Queries<a class="headerlink" href="#queries" title="Permanent link">&para;</a></h3>
+<h3 id="building-queries-with-the-datastore">Building queries with the datastore<a class="headerlink" href="#building-queries-with-the-datastore" title="Permanent link">&para;</a></h3>
+<p>Simple operations can be realised by the MongoOperations directly.</p>
+<p>Saving an entity:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="n">SampleEntity</span><span class="w"> </span><span class="n">entity</span><span class="p">){</span>
+<span class="w">  </span><span class="n">mongoOperations</span><span class="p">.</span><span class="na">insert</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>Find by id:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">SampleEntity</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findById</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">id</span><span class="p">){</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">Optional</span><span class="p">.</span><span class="na">ofNullable</span><span class="p">(</span><span class="n">mongoOperations</span><span class="p">.</span><span class="na">findById</span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">SampleEntity</span><span class="p">.</span><span class="na">class</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>More complex queries can be realised by building a compound <code>Query</code>:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">SampleEntity</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByArbitraryFields</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">Optional</span><span class="p">.</span><span class="na">ofNullable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">mongoOperations</span><span class="p">.</span><span class="na">findOne</span><span class="p">(</span>
+<span class="w">      </span><span class="k">new</span><span class="w"> </span><span class="n">Query</span><span class="p">(</span>
+<span class="w">        </span><span class="n">where</span><span class="p">(</span><span class="n">EntityFields</span><span class="p">.</span><span class="na">ARBITRARY_FIELD</span><span class="p">).</span><span class="na">is</span><span class="p">(</span><span class="n">identifier</span><span class="p">))</span>
+<span class="w">          </span><span class="p">.</span><span class="na">and</span><span class="p">(</span><span class="n">EntityFields</span><span class="p">.</span><span class="na">OTHER_FIELD</span><span class="p">).</span><span class="na">ne</span><span class="p">(</span><span class="n">value</span><span class="p">),</span>
+<span class="w">        </span><span class="n">SampleEntity</span><span class="p">.</span><span class="na">class</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>See the <a href="https://docs.spring.io/spring-data/mongodb/docs/current/api/org/springframework/data/mongodb/core/query/Criteria.html">official documentation</a>
+for further information.</p>
+<h3 id="auto-generate-queries-out-of-method-names-with-the-mongorepository-interface">Auto-generate queries out of method names with the <code>MongoRepository</code> interface<a class="headerlink" href="#auto-generate-queries-out-of-method-names-with-the-mongorepository-interface" title="Permanent link">&para;</a></h3>
+<p>Depending on the complexity, queries can also be auto-generated based on the method names by using
+the MongoRepository Interface provided by spring-data-mongo.</p>
+<p>Imagine the following simple entity class:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Person</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">Name</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>Now we can define queries directly through the method names (see the official documentation for the
+specific syntax).</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">PersonMongoRepository</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">MongoRepository</span><span class="o">&lt;</span><span class="n">Person</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByName</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findAllByAgeIsLessThanEqual</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findAllByNameIsNot</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>See the <a href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details">official documentation</a> for further details.</p>
+<h3 id="query-functions">Query functions<a class="headerlink" href="#query-functions" title="Permanent link">&para;</a></h3>
+<p>As Spring Data Mongo doesn't support/provide many query functions provided by Morphia, below are
+some replacements/alternatives.</p>
+<h4 id="equalignorecase">EqualIgnoreCase<a class="headerlink" href="#equalignorecase" title="Permanent link">&para;</a></h4>
+<p>Morphia supports usage of <em>equalIgnoreCase()</em>.
+Use <em>regex()</em> in Spring Data Mongo.
+For example</p>
+<ul>
+<li>Morphia - <code>query.criteria("fieldName").equalIgnoreCase(entity.getFieldName());</code></li>
+<li>Spring Data Mongo - <code>query.addCriteria(where("fieldName").regex(Pattern.compile("^" + Pattern.quote(entity.getFieldName()), Pattern.CASE_INSENSITIVE)));</code></li>
+</ul>
+<h4 id="hasanyof">HasAnyOf<a class="headerlink" href="#hasanyof" title="Permanent link">&para;</a></h4>
+<p>Morphia supports <em>hasAnyOf()</em> method. Use <em>in()</em> in Spring Data Mongo.
+For example</p>
+<ul>
+<li>Morphia - <code>query.field("id").hasAnyOf(getIds());</code></li>
+<li>Spring Data Mongo - <code>query.addCriteria(where("id").in(getIds()));</code></li>
+</ul>
+<h4 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h4>
+<p>Morphia supports <em>filter()</em> method.
+Use <em>is()</em> in Spring Data Mongo.
+For example</p>
+<ul>
+<li>Morphia - <code>query.filter("id", getId());</code></li>
+<li>Spring Data Mongo - <code>query.addCriteria(where("id").is(getId()));</code></li>
+</ul>
+<h4 id="contains">Contains<a class="headerlink" href="#contains" title="Permanent link">&para;</a></h4>
+<p>Morphia supports <em>contains()</em> method.
+Use <em>regex()</em> in Spring Data Mongo.
+For example</p>
+<ul>
+<li>Morphia - <code>query.criteria("fieldName").contains(entity.getFieldName());</code></li>
+<li>Spring Data Mongo - <code>query.addCriteria(where("fieldName").regex(Pattern.compile(".*" + Pattern.quote(entity.getFieldName()) + ".*")));</code></li>
+</ul>
+<h4 id="hasallof">HasAllOf<a class="headerlink" href="#hasallof" title="Permanent link">&para;</a></h4>
+<p>Morphia supports <em>contains()</em> method.
+Use <em>regex()</em> in Spring Data Mongo.
+For example</p>
+<ul>
+<li>Morphia - <code>query.field("fieldName").hasAllOf(getFieldNameValues());</code></li>
+<li>Spring Data Mongo - <code>query.addCriteria(where("fieldName").all(getFieldNameValues()));</code></li>
+</ul>
+<h3 id="error-handling">Error handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h3>
+<p>Morphia raised <code>ValidationException</code>s or subclasses of it when validation errors like duplicate
+unique keys occur at database level.
+Spring Data Mongo will throw more specific exceptions like
+<code>org.springframework.dao.DuplicateKeyException</code> or more generic
+<code>org.springframework.dao.DataAccessException</code>.
+Error handling must be updated.</p>
+<h3 id="indexes">Indexes<a class="headerlink" href="#indexes" title="Permanent link">&para;</a></h3>
+<p>While all <code>@Indexes</code> can be created at the main entity class in Morphia, each field must be
+<code>@Indexed</code>, <code>@TextIndexed</code> or <code>@WildcardIndexed</code> where it is defined in Spring Data Mongo.
+A <code>@CompoundIndex</code> can be declared at the entity class.</p>
+<p><strong>It is important to set the index name in the annotations to match the previous name created by
+Morphia.</strong>
+MongoDB makes it quite difficult to rename an index.
+It is highly recommended validating the indexes that are generated by Spring Data MongoDB in
+comparison with the existing indexes of a database populated with the latest version of a service.</p>
+<h3 id="custom-converters">Custom converters<a class="headerlink" href="#custom-converters" title="Permanent link">&para;</a></h3>
+<p>Custom converters can be added directly to the Entity class in Morphia by using annotation like
+<code>@Converters(value = {ExampleConverter.class})</code>.
+In Spring Data Mongo the custom converters can be added to the builder in your <code>Application.class</code>
+like below:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">SpringDataMongoBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">  </span><span class="p">.</span><span class="na">withConfigurationProvider</span><span class="p">(</span><span class="n">AppConfiguration</span><span class="p">::</span><span class="n">getSpringDataMongo</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="na">withEntities</span><span class="p">(</span><span class="n">ExampleClass</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="na">addCustomConverters</span><span class="p">(</span>
+<span class="w">    </span><span class="k">new</span><span class="w"> </span><span class="n">ExampleReadingConverter</span><span class="p">(),</span>
+<span class="w">    </span><span class="k">new</span><span class="w"> </span><span class="n">ExampleWritingConverter</span><span class="p">())</span>
+<span class="w">  </span><span class="n">build</span><span class="p">();</span>
+</code></pre></div></td></tr></table></div>
+<p>Implementing the converter changes from Morphia interface to using the Spring interface can be done
+like here <a href="../../sda-commons-server-spring-data-mongo/src/main/java/org/sdase/commons/server/spring/data/mongo/converter/ZonedDateTimeReadConverter.java">ZonedDateTimeReadConverter.java</a>.</p>
+<h3 id="annotations">Annotations<a class="headerlink" href="#annotations" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Morphia</th>
+<th>Spring Data Mongo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Entity(noClassnameStored = true, name="exampleEntity")</code></td>
+<td><code>@Document("exampleEntity")</code>. There is no property similar to <em>noClassnameStored</em> as the type/class can't be excluded with Spring Data.</td>
+</tr>
+<tr>
+<td><code>@PrePersist</code></td>
+<td>There is no replacement annotation for this. If you are using this on any fields, please set the field before save(). One very common example is to set the creation date like this <code>entity.setCreated(ZonedDateTime.now(ZoneOffset.UTC));</code></td>
+</tr>
+<tr>
+<td><code>@Embedded</code></td>
+<td>No replacement available as Spring Data already embeds the document.</td>
+</tr>
+<tr>
+<td><code>@Converters()</code></td>
+<td>Replaced with <code>@ReadingConverter</code> and <code>@WritingConverter</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-sda-commons-server-kafka">6 sda-commons-server-kafka<a class="headerlink" href="#6-sda-commons-server-kafka" title="Permanent link">&para;</a></h2>
+<p>Some deprecated code was removed.
+Especially we removed the feature <code>createTopicIfMissing</code> because we don't recommend services
+to do that.
+You usually need different privileges for topic creation that you don't want to give to your
+services.</p>
+<p>We also removed the topicana classes in package <code>org.sdase.commons.server.kafka.topicana</code>.
+For this reason the following methods were removed or changed
+on <a href="../../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/builder/MessageListenerRegistration.java">MessageListenerRegistration</a>
+and <a href="../../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/builder/ProducerRegistration.java">ProducerRegistration</a>:</p>
+<ul>
+<li>
+<p><code>checkTopicConfiguration</code></p>
+<p>This method compared the current topics with the configured ones and threw
+a <code>org.sdase.commons.server.kafka.topicana.MismatchedTopicConfigException</code> in case they did not
+match.
+It was removed in this version.</p>
+</li>
+</ul>
+<ul>
+<li>
+<p><code>forTopicConfigs</code></p>
+<p>This method accepted a list
+of <code>org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration</code> to compare against the
+current topic configuration.
+Now it accepts a list of <a href="../../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java">TopicConfig</a>,
+with only the name of the topic, but it does not perform any check in the configuration.</p>
+</li>
+</ul>
+<ul>
+<li>
+<p><code>forTopic(ExpectedTopicConfiguration topic)</code></p>
+<p>This method accepted an instance
+of <code>org.sdase.commons.server.kafka.topicana.ExpectedTopicConfiguration</code> to compare against the
+current topic configuration.
+Now it accepts a <a href="../../sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/config/TopicConfig.java">TopicConfig</a>
+instance, with only the name of the topic, but it does not perform any check in the configuration.</p>
+</li>
+</ul>
+<h3 id="kafka-configuration">Kafka Configuration<a class="headerlink" href="#kafka-configuration" title="Permanent link">&para;</a></h3>
+<p>As topic configuration is not defined in the service anymore, all properties but <code>name</code> have been
+removed from the topic configuration.</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code># example changes in config.yml
+
+kafka:
+<span class="w"> </span> topics:
+<span class="w"> </span>   event-topic:
+<span class="w"> </span>     name: ${KAFKA_CONSUMER_EVENT_TOPIC:-partner-ods-event-topic}
+<span class="gd">-     partitions: ${KAFKA_CONSUMER_EVENT_TOPIC_PARTITIONS:-2}</span>
+<span class="gd">-     replicationFactor: ${KAFKA_CONSUMER_EVENT_TOPIC_REPLICATION_FACTOR:-1}</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="7-deployment-and-release-of-upgraded-services">7. Deployment and Release of upgraded services<a class="headerlink" href="#7-deployment-and-release-of-upgraded-services" title="Permanent link">&para;</a></h2>
+<p>The changes mentioned above also have an impact on the deployment of a containerized service.
+This section summarizes notable changes of deployments, that are derived from the required migration
+in a service.</p>
+<p>Services that upgrade to SDA Dropwizard Commons v3 should mention this in their release notes.
+It may be required to introduce the upgrade as breaking change (aka new major release) if
+deployments are incompatible to the previous version.</p>
+<p>Additional service specific changes may apply as well.</p>
+<h3 id="tracing">Tracing<a class="headerlink" href="#tracing" title="Permanent link">&para;</a></h3>
+<p>Any Jaeger related configuration should be migrated to the Open Telemetry variant.
+The release notes of a service should provide respective information.</p>
+<p>Changes with backward compatible fallback:</p>
+<ul>
+<li>To identify the service, <code>JAEGER_SERVICE_NAME</code> is still supported.
+  Changing to <code>OTEL_SERVICE_NAME</code> is recommended.</li>
+<li>To disable tracing, <code>JAEGER_SAMPLER_TYPE=const</code> in combination with <code>JAEGER_SAMPLER_PARAM=0</code> is
+  still supported.
+  Changing to <code>TRACING_DISABLED=true</code> is recommended.</li>
+</ul>
+<p><strong>Incompatible changes:</strong></p>
+<ul>
+<li><code>JAEGER_AGENT_HOST</code> is not supported anymore.
+  <a href="https://opentelemetry.io/docs/reference/specification/sdk-environment-variables/#otlp-exporter">The official documentation</a>
+  provides all available options.
+  In an environment that previously used Jaeger, <code>OTEL_TRACES_EXPORTER=jaeger</code> and
+  <code>OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger-collector.jaeger:14250</code> may be suitable.
+  Note that the collector endpoint may not be the same as the agent endpoint configured for Jaeger.</li>
+</ul>
+<h3 id="kafka">Kafka<a class="headerlink" href="#kafka" title="Permanent link">&para;</a></h3>
+<p>All topic configurations for topic creation and validation are not considered anymore.
+Users of the service should be informed that the service will not create any topic and does not
+validate existing topics.
+Therefore, some configuration options of a service may be removed.</p>
+<h3 id="mongodb">MongoDB<a class="headerlink" href="#mongodb" title="Permanent link">&para;</a></h3>
+<p>Configuration of individual parts of the MongoDB Connection String is deprecated.
+Each service should provide a configuration option for the full MongoDB Connection String and
+inform about the deprecation in the release notes.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "content.action.edit"], "search": "../../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="../../search/main.js"></script>
+      
+    
+  </body>
+</html>

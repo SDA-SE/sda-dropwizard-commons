@@ -879,6 +879,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#credentials" class="md-nav__link">
+    Credentials
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#tracing" class="md-nav__link">
     Tracing
   </a>
@@ -1268,6 +1275,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#credentials" class="md-nav__link">
+    Credentials
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#tracing" class="md-nav__link">
     Tracing
   </a>
@@ -1305,7 +1319,7 @@
 <p><a href="https://javadoc.io/doc/org.sdase.commons/sda-commons-server-s3"><img alt="javadoc" src="https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-s3/javadoc.svg" /></a></p>
 <p>This module provides the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/main/java/org/sdase/commons/server/s3/S3Bundle.java"><code>S3Bundle</code></a>, 
 a Dropwizard bundle that is used to perform operations on an object storage.</p>
-<p>The bundle provides an S3 client based on the <a href="https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/examples-s3.html">Amazon AWS SDK</a>.</p>
+<p>The bundle provides an S3 client based on the <a href="https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/home.html">Amazon AWS SDK v2</a>.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/main/java/org/sdase/commons/server/s3/S3Bundle.java"><code>S3Bundle</code></a> should be added as a
 field in the application class instead of being anonymously added in the initialize method like other bundles of this 
@@ -1314,9 +1328,16 @@ library. Implementations need to refer to the instance to access the client.</p>
 <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/main/java/org/sdase/commons/server/s3/S3Configuration.java"><code>S3Configuration</code></a>.</p>
 <p>The bundle builder requires to define the getter of the <code>S3Configuration</code> as method reference to access the 
 configuration.</p>
-<p>Afterward, <code>getClient()</code> is used to access an instance of <code>AmazonS3</code> that is used to operate on the 
+<p>Afterward, <code>getClient()</code> is used to access an instance of <code>S3Client</code> that is used to operate on the 
 object storage. 
 See <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/test/java/org/sdase/commons/server/s3/S3BundleTest.java"><code>S3BundleTest</code></a> for a detailed usage example.   </p>
+<h3 id="credentials">Credentials<a class="headerlink" href="#credentials" title="Permanent link">&para;</a></h3>
+<p>Usually you can specify AWS credentials in the <code>S3Configuration</code>.
+But the bundle also supports AWS <a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html">default credentials provider</a> chain to retrieve credentials.
+Most prominently you can pass credentials 
+via environment variables <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> 
+or via system properties <code>aws.accessKeyId</code> and <code>aws.secretAccessKey</code>.</p>
+<p>If you want to use anonymous credentials, you can set <code>useAnonymousCredentials</code> to <code>true</code> in the <code>S3Configuration</code>.</p>
 <h3 id="tracing">Tracing<a class="headerlink" href="#tracing" title="Permanent link">&para;</a></h3>
 <p>The bundle comes with <a href="https://opentelemetry.io/">OpenTelemetry</a> instrumentation.</p>
 <h3 id="health-check">Health Check<a class="headerlink" href="#health-check" title="Permanent link">&para;</a></h3>

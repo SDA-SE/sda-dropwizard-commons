@@ -382,8 +382,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3rd-party-javaxwsrs-api-client-implementations-in-classpath" class="md-nav__link">
-    3rd Party javax.ws.rs-api Client Implementations in Classpath
+  <a href="#3rd-party-jakartawsrs-api-client-implementations-in-classpath" class="md-nav__link">
+    3rd Party jakarta.ws.rs-api Client Implementations in Classpath
   </a>
   
 </li>
@@ -1434,8 +1434,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3rd-party-javaxwsrs-api-client-implementations-in-classpath" class="md-nav__link">
-    3rd Party javax.ws.rs-api Client Implementations in Classpath
+  <a href="#3rd-party-jakartawsrs-api-client-implementations-in-classpath" class="md-nav__link">
+    3rd Party jakarta.ws.rs-api Client Implementations in Classpath
   </a>
   
 </li>
@@ -1575,18 +1575,18 @@ of this module.</p>
 <p>If a specific return type is defined (e.g. <code>List&lt;MyResource&gt; getMyResources();</code>), it is only returned for successful 
 requests. In any error or redirect case, an exception is thrown. The thrown exception is a 
 <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientRequestException.java"><code>ClientRequestException</code></a>
-wrapping <code>javax.ws.rs.ProcessingException</code> or subclasses of <code>javax.ws.rs.WebApplicationException</code>: 
-- <code>javax.ws.rs.RedirectionException</code> to indicate redirects 
-- <code>javax.ws.rs.ClientErrorException</code> for client errors
-- <code>javax.ws.rs.ServerErrorException</code> for server errors</p>
+wrapping <code>jakarta.ws.rs.ProcessingException</code> or subclasses of <code>jakarta.ws.rs.WebApplicationException</code>:
+- <code>jakarta.ws.rs.RedirectionException</code> to indicate redirects
+- <code>jakarta.ws.rs.ClientErrorException</code> for client errors
+- <code>jakarta.ws.rs.ServerErrorException</code> for server errors</p>
 <p>If the <code>ClientRequestException</code> exception is handled in the application code <strong>the application must <code>close()</code> the 
 exception</strong>.</p>
-<p>If a <code>javax.ws.rs.core.Response</code> is defined as return type, HTTP errors and redirects can be read from the <code>Response</code>
+<p>If a <code>jakarta.ws.rs.core.Response</code> is defined as return type, HTTP errors and redirects can be read from the <code>Response</code>
 object. <strong>Remember to always close the <code>Response</code> object. It references open socket streams.</strong></p>
 <p>In both variants a <code>java.net.ConnectException</code> may be thrown if the client can't connect to the server.</p>
 <h2 id="using-jersey-client">Using Jersey <code>Client</code><a class="headerlink" href="#using-jersey-client" title="Permanent link">&para;</a></h2>
 <p>Jersey Clients can be built using the client factory for cases where the API variant with an interface is not suitable.</p>
-<p>Jersey clients can not automatically convert <code>javax.ws.rs.WebApplicationException</code> into our 
+<p>Jersey clients can not automatically convert <code>jakarta.ws.rs.WebApplicationException</code> into our 
 <code>ClientRequestException</code>. To avoid passing through the error the application received to the caller of the application,
 the exceptions must be handled for all usages that expect a specific type as return value.</p>
 <p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-client-jersey/src/main/java/org/sdase/commons/client/jersey/error/ClientErrorUtil.java"><code>ClientErrorUtil</code></a> can be used to 
@@ -1825,11 +1825,11 @@ JerseyClientBuilder.</p>
 <span class="w">    </span><span class="p">.</span><span class="na">api</span><span class="p">(</span><span class="n">ApiA</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">atTarget</span><span class="p">(</span><span class="n">apiABaseUrl</span><span class="p">);</span>
 </code></pre></div></td></tr></table></div>
-<h3 id="3rd-party-javaxwsrs-api-client-implementations-in-classpath">3<sup>rd</sup> Party <code>javax.ws.rs-api</code> Client Implementations in Classpath<a class="headerlink" href="#3rd-party-javaxwsrs-api-client-implementations-in-classpath" title="Permanent link">&para;</a></h3>
+<h3 id="3rd-party-jakartawsrs-api-client-implementations-in-classpath">3<sup>rd</sup> Party <code>jakarta.ws.rs-api</code> Client Implementations in Classpath<a class="headerlink" href="#3rd-party-jakartawsrs-api-client-implementations-in-classpath" title="Permanent link">&para;</a></h3>
 <p>The clients used in sda-commons require the Jersey Client implementation. 
-If you are facing problems with other <code>javax.ws.rs-api</code> implementations in the classpath (e.g. RestEasy which comes
+If you are facing problems with other <code>jakarta.ws.rs-api</code> implementations in the classpath (e.g. RestEasy which comes
 with the Keycloak SDK) the Jersey Client Builder must be propagated in your project as service.
-Therefore, the service definition <code>src/main/resources/META-INF/services/javax.ws.rs.client.ClientBuilder</code> must be added
+Therefore, the service definition <code>src/main/resources/META-INF/services/jakarta.ws.rs.client.ClientBuilder</code> must be added
 to your project containing:</p>
 <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>org.glassfish.jersey.client.JerseyClientBuilder
 </code></pre></div></td></tr></table></div>

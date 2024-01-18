@@ -759,13 +759,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#http-proxy" class="md-nav__link">
-    HTTP Proxy
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#scripting" class="md-nav__link">
     Scripting
   </a>
@@ -1289,13 +1282,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#http-proxy" class="md-nav__link">
-    HTTP Proxy
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#scripting" class="md-nav__link">
     Scripting
   </a>
@@ -1406,9 +1392,6 @@ Often one need to pass the server address to the constructor of another extensio
 method to remove all documents from the database between tests, without restarting the extension.
 To verify and modify the database during tests, <code>MONGO_DB_EXTENSION.createClient()</code> provides a way to access the
 database using the <code>MongoClient</code>.</p>
-<h3 id="http-proxy">HTTP Proxy<a class="headerlink" href="#http-proxy" title="Permanent link">&para;</a></h3>
-<p>If the <code>http_proxy</code> environment variable is present, the configured proxy is used to download the
-<code>mongod</code> executable.</p>
 <h3 id="scripting">Scripting<a class="headerlink" href="#scripting" title="Permanent link">&para;</a></h3>
 <p>By default, scripting using JavaScript is disabled.
 You should avoid using it, as it can cause security issues.
@@ -1426,7 +1409,6 @@ environment variable <code>EMBEDDED_MONGO_DOWNLOAD_PATH</code>.
 If <code>EMBEDDED_MONGO_DOWNLOAD_PATH</code> is set to <code>http://example.com/download/</code>, the extension for example
 tries to download <code>http://example.com/download/osx/mongodb-osx-ssl-x86_64-3.6.5.tgz</code>.</p>
 <h3 id="use-an-existing-database">Use an Existing Database<a class="headerlink" href="#use-an-existing-database" title="Permanent link">&para;</a></h3>
-<p><strong>Experimental Feature</strong></p>
 <p>To test specific scenarios, e.g. a real database set up like in production, the extension can be
 configured to not bootstrap a database with Flapdoodle.</p>
 <p>A <a href="https://docs.mongodb.com/manual/reference/connection-string/">MongoDB Connection String</a> must be

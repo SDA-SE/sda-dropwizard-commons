@@ -942,19 +942,6 @@
     Configuration
   </a>
   
-    <nav class="md-nav" aria-label="Configuration">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#legacy-support" class="md-nav__link">
-    Legacy support
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -1306,19 +1293,6 @@
     Configuration
   </a>
   
-    <nav class="md-nav" aria-label="Configuration">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#legacy-support" class="md-nav__link">
-    Legacy support
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -1410,7 +1384,11 @@ adding <code>@Document</code>, <code>@MongoId</code> or <code>@Indexed</code>.</
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
-<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">SpringDataMongoBundle</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">springDataMongoBundle</span><span class="w"> </span><span class="o">=</span>
 <span class="w">      </span><span class="n">SpringDataMongoBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
@@ -1434,15 +1412,18 @@ adding <code>@Document</code>, <code>@MongoId</code> or <code>@Indexed</code>.</
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">springDataMongoBundle</span><span class="p">.</span><span class="na">getMongoOperations</span><span class="p">();</span>
 <span class="w">  </span><span class="p">}</span>
 
+<span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">GridFsOperations</span><span class="w"> </span><span class="nf">getGridFsOperations</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">springDataMongoBundle</span><span class="p">.</span><span class="na">getGridFsOperations</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
 <span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">PersonRepository</span><span class="w"> </span><span class="nf">getPersonRepository</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">personRepository</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
-<p>The database connection is configured in the <code>config.yaml</code> of the application. We recommend to use 
-the <a href="https://www.mongodb.com/docs/manual/reference/connection-string/"><code>connectionString</code></a> to 
-configure your database connection.</p>
+<p>The database connection is configured in the <code>config.yaml</code> of the application, specifically the
+<a href="https://www.mongodb.com/docs/manual/reference/connection-string/"><code>connectionString</code></a>.</p>
 <div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">mongo</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">connectionString</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MONGODB_CONNECTION_STRING:-}&quot;</span>
@@ -1454,25 +1435,6 @@ configure your database connection.</p>
 </code></pre></div></td></tr></table></div></p>
 <p>In tests the config is derived from the <code>MongoDbClassExtension</code>. See
 <a href="../server-mongo-testing/"><code>sda-commons-server-mongo-testing</code></a> for details.</p>
-<h3 id="legacy-support">Legacy support<a class="headerlink" href="#legacy-support" title="Permanent link">&para;</a></h3>
-<p>Application migration from sda-dropwizard-commons 2 that still used the Morphia bundle can also
-use the following configuration properties:</p>
-<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">mongo</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">connectionString</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MONGODB_CONNECTION_STRING:-}&quot;</span>
-<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MONGODB_HOSTS:-}&quot;</span>
-<span class="w">  </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MONGODB_DATABASE:-}&quot;</span>
-<span class="w">  </span><span class="nt">options</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MONGODB_OPTIONS:-}&quot;</span>
-<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MONGODB_USERNAME:-}&quot;</span>
-<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${MONGODB_PASSWORD:-}&quot;</span>
-<span class="w">  </span><span class="nt">useSsl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${MONGODB_USE_SSL:-true}</span>
-</code></pre></div></td></tr></table></div>
 <h2 id="inheritance-in-entities">Inheritance in Entities<a class="headerlink" href="#inheritance-in-entities" title="Permanent link">&para;</a></h2>
 <p>It is strongly recommended to annotate all types that are used in a field that does not exactly
 match the type with <code>@TypeAlias</code>.
