@@ -58,40 +58,32 @@ To automatically generate the OpenAPI spec and ensure that it is committed to ve
 one can use a test like this: 
 
 ```java
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.sdase.commons.server.openapi.OpenApiFileHelper.normalizeOpenApiYaml;
 
-import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.testing.GoldenFileAssertions;
 
 class OpenApiDocumentationTest {
-  // start your application
-  @RegisterExtension
-  public static final DropwizardAppExtension<Configuration> DW =
-      new DropwizardAppExtension<>(YourApplication.class, resourceFilePath("test-config.yaml"));
-
+  
   @Test
-  void shouldHaveSameOpenApiInRepository() throws IOException {
-    // receive the openapi.yaml from your service
-    String expected =
-        DW.client()
-            .target(String.format("http://localhost:%s", DW.getLocalPort()))
-            .path("openapi.yaml")
-            .request()
-            .get(String.class);
+  void shouldHaveSameOpenApiInRepository() throws Exception {
+    // receive the openapi.yaml from the OpenApiBundle
+    var bundle =
+        OpenApiBundle.builder()
+            .addResourcePackage(YourApplication.class.getPackageName())
+            .build();
+    var openapi = bundle.generateOpenApiAsYaml();
+    assertThat(openapi).isNotNull();
 
     // specify where you want your file to be stored
     Path filePath = Paths.get("openapi.yaml");
 
     // check and update the file
     GoldenFileAssertions.assertThat(filePath)
-        .hasContentAndUpdateGolden(normalizeOpenApiYaml(expected));
+        .hasYamlContentAndUpdateGolden(normalizeOpenApiYaml(openapi));
   }
 }
 ```
