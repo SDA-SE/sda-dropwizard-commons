@@ -1,5 +1,7 @@
 # SDA Dropwizard Commons
 
+[//]: # (TODO: Do not merge)
+
 SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow the patterns and specifications promoted by
 the SDA SE.
 
