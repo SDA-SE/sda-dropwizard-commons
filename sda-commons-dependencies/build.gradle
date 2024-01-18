@@ -74,8 +74,8 @@ dependencies {
     api "commons-fileupload:commons-fileupload:1.5", {
       because "CVE-2023-24998 in 1.4"
     }
-    api 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
-    api 'org.apache.httpcomponents.client5:httpclient5-fluent:5.2.1'
+    api 'org.apache.httpcomponents.client5:httpclient5:5.3'
+    api 'org.apache.httpcomponents.client5:httpclient5-fluent:5.3'
     api "io.github.classgraph:classgraph:4.8.165", {
       because "conflict between io.swagger.core.v3:swagger-jaxrs2, io.swagger.core.v3:swagger-integration, dev.morphia.morphia:core and com.kjetland:mbknor-jackson-jsonschema_2.13 upgrade"
     }
