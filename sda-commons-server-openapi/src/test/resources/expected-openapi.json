@@ -1,0 +1,373 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "description" : "Test",
+    "title" : "A test app",
+    "version" : "1"
+  },
+  "paths" : {
+    "/house" : {
+      "get" : {
+        "description" : "get",
+        "operationId" : "getHouse",
+        "parameters" : [ {
+          "description" : "Select linked resources that should be resolved and embedded into the response",
+          "in" : "query",
+          "name" : "embed",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "animals", "partners" ]
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/House"
+                }
+              }
+            },
+            "description" : "get"
+          }
+        }
+      }
+    },
+    "/houses" : {
+      "get" : {
+        "operationId" : "searchHouse",
+        "parameters" : [ {
+          "description" : "Select linked resources that should be resolved and embedded into the response",
+          "in" : "query",
+          "name" : "embed",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "animals", "partners" ]
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HouseSearchResource"
+                }
+              }
+            },
+            "description" : "get"
+          }
+        }
+      }
+    },
+    "/jdoe" : {
+      "delete" : {
+        "description" : "delete",
+        "operationId" : "deleteJohnDoe",
+        "responses" : {
+          "204" : {
+            "description" : "deleted"
+          }
+        }
+      },
+      "get" : {
+        "operationId" : "getJohnDoe",
+        "parameters" : [ {
+          "description" : "Select linked resources that should be resolved and embedded into the response",
+          "in" : "query",
+          "name" : "embed",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "options" ]
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Partner"
+                }
+              }
+            },
+            "description" : "get"
+          }
+        },
+        "summary" : "get"
+      },
+      "post" : {
+        "operationId" : "createJohnDoe",
+        "responses" : {
+          "201" : {
+            "description" : "post",
+            "headers" : {
+              "Location" : {
+                "description" : "Location",
+                "style" : "simple"
+              }
+            }
+          }
+        },
+        "summary" : "post"
+      }
+    },
+    "/partners" : {
+      "get" : {
+        "operationId" : "searchPartners",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PartnerSearchResultResource"
+                }
+              }
+            },
+            "description" : "get"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Animal" : {
+        "type" : "object",
+        "properties" : {
+          "_links" : {
+            "type" : "object",
+            "properties" : {
+              "self" : {
+                "$ref" : "#/components/schemas/HALLink"
+              }
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the animal",
+            "example" : "Hasso"
+          }
+        }
+      },
+      "AnimalFilter" : {
+        "type" : "object",
+        "properties" : {
+          "animal" : {
+            "type" : "string"
+          }
+        }
+      },
+      "HALLink" : {
+        "type" : "object",
+        "description" : "Representation of a link as defined in HAL",
+        "properties" : {
+          "deprecation" : {
+            "type" : "string",
+            "format" : "url"
+          },
+          "href" : {
+            "type" : "string"
+          },
+          "hreflang" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "profile" : {
+            "type" : "string",
+            "format" : "uri"
+          },
+          "seen" : {
+            "type" : "string"
+          },
+          "templated" : {
+            "type" : "boolean"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          }
+        }
+      },
+      "House" : {
+        "type" : "object",
+        "properties" : {
+          "_embedded" : {
+            "type" : "object",
+            "properties" : {
+              "animals" : {
+                "type" : "array",
+                "description" : "list of animals that live in the house (Embedded)",
+                "items" : {
+                  "$ref" : "#/components/schemas/Animal"
+                }
+              },
+              "partners" : {
+                "type" : "array",
+                "description" : "list of partners that live in the house (Embedded)",
+                "items" : {
+                  "$ref" : "#/components/schemas/Partner"
+                }
+              }
+            }
+          },
+          "_links" : {
+            "type" : "object",
+            "properties" : {
+              "animals" : {
+                "type" : "array",
+                "description" : "list of animals that live in the house (Link)",
+                "items" : {
+                  "$ref" : "#/components/schemas/HALLink"
+                }
+              },
+              "partners" : {
+                "type" : "array",
+                "description" : "list of partners that live in the house (Link)",
+                "items" : {
+                  "$ref" : "#/components/schemas/HALLink"
+                }
+              },
+              "self" : {
+                "$ref" : "#/components/schemas/HALLink"
+              }
+            }
+          }
+        }
+      },
+      "HouseSearchResource" : {
+        "type" : "object",
+        "properties" : {
+          "filters" : {
+            "type" : "array",
+            "description" : "The filters to apply",
+            "items" : {
+              "$ref" : "#/components/schemas/AnimalFilter"
+            }
+          },
+          "houses" : {
+            "type" : "array",
+            "description" : "A list of found houses",
+            "items" : {
+              "$ref" : "#/components/schemas/House"
+            }
+          },
+          "totalCount" : {
+            "type" : "integer",
+            "format" : "int32",
+            "description" : "The total count of houses"
+          }
+        },
+        "required" : [ "filters", "houses", "totalCount" ]
+      },
+      "NaturalPerson" : {
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/Partner"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "_embedded" : {
+              "type" : "object",
+              "properties" : {
+                "options" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            },
+            "_links" : {
+              "type" : "object",
+              "properties" : {
+                "self" : {
+                  "$ref" : "#/components/schemas/HALLink"
+                }
+              }
+            },
+            "firstName" : {
+              "type" : "string",
+              "example" : "John"
+            },
+            "lastName" : {
+              "type" : "string",
+              "example" : "Döe"
+            },
+            "traits" : {
+              "type" : "array",
+              "example" : [ "hipster", "generous" ],
+              "items" : {
+                "type" : "string"
+              }
+            }
+          }
+        } ],
+        "required" : [ "type" ]
+      },
+      "Partner" : {
+        "type" : "object",
+        "discriminator" : {
+          "propertyName" : "type"
+        },
+        "properties" : {
+          "_embedded" : {
+            "type" : "object",
+            "properties" : {
+              "options" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The type of partner, controls the available properties.",
+            "enum" : [ "naturalPerson" ],
+            "example" : "naturalPerson"
+          }
+        },
+        "required" : [ "type" ]
+      },
+      "PartnerSearchResultResource" : {
+        "type" : "object",
+        "properties" : {
+          "partners" : {
+            "type" : "array",
+            "description" : "The list of all partners based on the query request.",
+            "items" : {
+              "type" : "string",
+              "description" : "The list of all partners based on the query request."
+            }
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "The limiting timestamp until the consent has been selected by a user to be included in the search result.",
+            "example" : "2020-06-08T15:26:55Z"
+          },
+          "totalResults" : {
+            "type" : "integer",
+            "format" : "int64",
+            "description" : "The number of total partner found for the request",
+            "example" : 123
+          }
+        },
+        "required" : [ "partners", "timestamp", "totalResults" ]
+      }
+    }
+  }
+}

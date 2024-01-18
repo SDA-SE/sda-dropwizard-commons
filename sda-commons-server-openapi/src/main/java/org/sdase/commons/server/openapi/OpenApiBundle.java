@@ -17,13 +17,19 @@ import io.swagger.v3.parser.OpenAPIV3Parser;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterRegistration;
 import java.lang.invoke.MethodHandles;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.glassfish.jersey.internal.MapPropertiesDelegate;
+import org.glassfish.jersey.message.internal.OutboundJaxrsResponse;
+import org.glassfish.jersey.server.ContainerRequest;
+import org.glassfish.jersey.server.internal.routing.UriRoutingContext;
 import org.sdase.commons.optional.server.openapi.parameter.embed.EmbedParameterModifier;
 import org.sdase.commons.optional.server.openapi.sort.OpenAPISorter;
 import org.sdase.commons.server.openapi.filter.OpenAPISpecFilterSet;
@@ -94,23 +100,8 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
     OpenAPISpecFilterSet.register(serverUrlFilter);
     environment.lifecycle().manage(onShutdown(OpenAPISpecFilterSet::clear));
 
-    // Configure the OpenAPIConfiguration
-    SwaggerConfiguration oasConfig =
-        new SwaggerConfiguration()
-            .openAPI(existingOpenAPI != null ? existingOpenAPI : new OpenAPI())
-            .prettyPrint(true)
-            .resourcePackages(resourcePackages)
-            .readAllResources(false)
-            .sortOutput(true)
-            .filterClass(OpenAPISpecFilterSet.class.getName());
-
     // Register the resource that handles the openapi.{json|yaml} requests
-    environment
-        .jersey()
-        .register(
-            new ContextIdOpenApiResource()
-                .contextId(OPENAPI_CONTEXT_ID_PREFIX + instanceId)
-                .openApiConfiguration(oasConfig));
+    environment.jersey().register(createOpenApiResource(instanceId));
 
     // Allow CORS to access (via wildcard) from Swagger UI/editor
     String basePath = determineBasePath(configuration);
@@ -131,6 +122,68 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
         "Initialized OpenAPI with base path '{}' and resource packages: '{}'",
         basePath,
         resourcePackages);
+  }
+
+  private ContextIdOpenApiResource createOpenApiResource(String instanceId) {
+    var openApiConfiguration =
+        new SwaggerConfiguration()
+            .openAPI(existingOpenAPI != null ? existingOpenAPI : new OpenAPI())
+            .prettyPrint(true)
+            .resourcePackages(resourcePackages)
+            .readAllResources(false)
+            .sortOutput(true)
+            .filterClass(OpenAPISpecFilterSet.class.getName());
+
+    ContextIdOpenApiResource result = new ContextIdOpenApiResource();
+    result.contextId(OPENAPI_CONTEXT_ID_PREFIX + instanceId);
+    result.openApiConfiguration(openApiConfiguration);
+    return result;
+  }
+
+  /**
+   * This method can be used to generate the OpenAPI specification as YAML
+   *
+   * @return the OpenAPI specification as YAML
+   */
+  public String generateOpenApiAsYaml() throws Exception {
+    return generateOpenApi("yaml");
+  }
+
+  /**
+   * This method can be used to generate the OpenAPI specification as JSON
+   *
+   * @return the OpenAPI specification as JSON
+   */
+  public String generateOpenApiAsJson() throws Exception {
+    return generateOpenApi("json");
+  }
+
+  /**
+   * This method can be used to generate the OpenAPI specification as JSON or YAML.
+   *
+   * @param type the type of the specification, either 'json' or 'yaml'
+   * @return the OpenAPI specification as JSON or YAML
+   */
+  private String generateOpenApi(String type) throws Exception {
+    var uriInfo = mockUriInfo(type);
+    var resource = createOpenApiResource(UUID.randomUUID().toString());
+    try (var response = resource.getOpenApi(null, uriInfo, type)) {
+      OutboundJaxrsResponse outboundJaxrsResponse = (OutboundJaxrsResponse) response;
+      return (String) outboundJaxrsResponse.getContext().getEntity();
+    }
+  }
+
+  private UriRoutingContext mockUriInfo(String type) {
+    var containerRequest =
+        new ContainerRequest(
+            URI.create("http://localhost"),
+            URI.create("http://localhost/api/openapi." + type),
+            "GET",
+            null,
+            new MapPropertiesDelegate(),
+            null);
+
+    return new UriRoutingContext(containerRequest);
   }
 
   private String determineBasePath(Configuration configuration) {
@@ -177,7 +230,7 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
      */
     default FinalBuilder withExistingOpenAPIFromClasspathResource(String path) {
       try (Scanner scanner =
-          new Scanner(getClass().getResourceAsStream(path), StandardCharsets.UTF_8.name())) {
+          new Scanner(getClass().getResourceAsStream(path), StandardCharsets.UTF_8)) {
         return this.withExistingOpenAPI(scanner.useDelimiter("\\A").next());
       }
     }
