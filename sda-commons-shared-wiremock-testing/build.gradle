@@ -4,6 +4,7 @@ dependencies {
     exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
     exclude group: 'net.minidev', module: 'json-smart'
     exclude group: 'commons-io', module: 'commons-io'
+    exclude group: 'org.eclipse.jetty', module: 'jetty-bom'
   }
 
   api 'net.minidev:json-smart'
