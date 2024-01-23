@@ -1,12 +1,9 @@
 dependencies {
-  api "com.fasterxml.jackson.core:jackson-databind"
-  api "com.kjetland:mbknor-jackson-jsonschema_2.13", {
-    exclude group: "javax.validation", module: "validation-api"
-  }
+  api project(':sda-commons-shared-asyncapi')
+
   api "jakarta.validation:jakarta.validation-api"
 
   testImplementation project(':sda-commons-server-dropwizard')
-  testImplementation project(':sda-commons-shared-asyncapi')
   testImplementation project(':sda-commons-server-kafka')
   testImplementation project(':sda-commons-server-kafka-testing')
 }

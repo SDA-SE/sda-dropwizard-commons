@@ -29,8 +29,10 @@ dependencies {
     exclude group: 'io.swagger.core.v3', module: 'swagger-annotations'
     exclude group: 'io.swagger.core.v3', module: 'swagger-jaxrs2'
     exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
+    exclude group: 'jakarta.ws.rs', module: 'jakarta.ws.rs-api'
   }
   api 'io.swagger.core.v3:swagger-models-jakarta'
+  api 'jakarta.ws.rs:jakarta.ws.rs-api'
 
   api 'io.openapitools.jackson.dataformat:jackson-dataformat-hal', {
     exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'

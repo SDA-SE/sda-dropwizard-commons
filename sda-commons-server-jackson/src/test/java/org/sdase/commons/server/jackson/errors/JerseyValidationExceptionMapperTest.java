@@ -43,14 +43,14 @@ class JerseyValidationExceptionMapperTest {
   }
 
   static Stream<Arguments> realTestData() {
-    String javaxConstraintsPackageName = NotNull.class.getPackage().getName();
+    String jakartaConstraintsPackageName = NotNull.class.getPackage().getName();
     String hibernateConstraintsPackageName = ISBN.class.getPackage().getName();
     try (ScanResult scanResult = new ClassGraph().enableClassInfo().scan()) {
       return scanResult
           .getAllClasses()
           .filter(
               classInfo ->
-                  classInfo.getPackageName().startsWith(javaxConstraintsPackageName)
+                  classInfo.getPackageName().startsWith(jakartaConstraintsPackageName)
                       || classInfo.getPackageName().startsWith(hibernateConstraintsPackageName))
           .stream()
           .map(ClassInfo::getSimpleName)

@@ -1,20 +1,20 @@
 package org.sdase.commons.server.cloudevents.app.produce;
 
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaDefault;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.net.URI;
 import org.sdase.commons.server.cloudevents.CloudEventV1;
 
 public class PartnerCreatedEvent extends CloudEventV1<PartnerCreatedEvent.PartnerCreated> {
 
-  @JsonSchemaDefault("`/SDA-SE/partner/partner-stack/partner-service`")
+  @Schema(defaultValue = "`/SDA-SE/partner/partner-stack/partner-service`")
   @Override
   public URI getSource() {
     return super.getSource();
   }
 
-  @JsonPropertyDescription("`com.sdase.partner.ods.partner.created`")
-  @JsonSchemaDefault("com.sdase.partner.ods.partner.created")
+  @Schema(
+      description = "`com.sdase.partner.ods.partner.created`",
+      defaultValue = "com.sdase.partner.ods.partner.created")
   @Override
   public String getType() {
     return super.getType();

@@ -1,9 +1,7 @@
 package org.sdase.commons.server.cloudevents;
 
 import com.fasterxml.jackson.annotation.JsonClassDescription;
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaDefault;
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaExamples;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -20,18 +18,19 @@ import java.util.UUID;
         + "specification. The field documentation will contain the official documentation and also "
         + "some hints how values should should be set when used on the SDA platform.")
 public class CloudEventV1<T> extends BaseCloudEvent {
-
-  @JsonPropertyDescription(
-      """
+  @Schema(
+      description =
+          """
         Identifies the event. Producers MUST ensure that `source` + `id` is unique for each distinct event. If a duplicate event is re-sent (e.g. due to a network error) it MAY have the same id. Consumers MAY assume that Events with identical `source` and `id` are duplicates.
 
-        **SDA**: The default is to use a random UUID.""")
-  @JsonSchemaExamples("57d67827-3f4f-46e8-a126-fa6a6b724ae2")
+        **SDA**: The default is to use a random UUID.""",
+      example = "57d67827-3f4f-46e8-a126-fa6a6b724ae2")
   @NotEmpty
   private String id = UUID.randomUUID().toString();
 
-  @JsonPropertyDescription(
-      """
+  @Schema(
+      description =
+          """
         Identifies the context in which an event happened. Often this will include information such as the type of the event source, the organization publishing the event or the process that produced the event. The exact syntax and semantics behind the data encoded in the URI is defined by the event producer.
 
         Producers MUST ensure that `source` + `id` is unique for each distinct event.
@@ -46,11 +45,11 @@ public class CloudEventV1<T> extends BaseCloudEvent {
         - `COMPANY`: An identifier of the company that is responsible for the service, e.g. `SDA-SE`
         - `DOMAIN`: The name of the business domain of the service, e.g. `consent`
         - `SYSTEM`: The name of the system of the service, e.g. `partner-consent-stack`
-        - `SERVICE`: The name of the service, e.g. `consent-configuration-service`""")
-  @JsonSchemaExamples({
-    "/COMPANY/DOMAIN/SYSTEM/SERVICE",
-    "/SDA-SE/consent/partner-consent-stack/consent-configuration-service"
-  })
+        - `SERVICE`: The name of the service, e.g. `consent-configuration-service`""",
+      examples = {
+        "/COMPANY/DOMAIN/SYSTEM/SERVICE",
+        "/SDA-SE/consent/partner-consent-stack/consent-configuration-service"
+      })
   @NotNull
   private URI source;
 
@@ -59,30 +58,33 @@ public class CloudEventV1<T> extends BaseCloudEvent {
    *     href="https://github.com/cloudevents/spec/blob/v1.0/primer.md#versioning-of-attributes">Versioning
    *     of Attributes in the Primer</a>
    */
-  @JsonPropertyDescription(
-      """
+  @Schema(
+      description =
+          """
         This attribute contains a value describing the type of event related to the originating occurrence. Often this attribute is used for routing, observability, policy enforcement, etc. The format of this is producer defined and might include information such as the version of the type - see Versioning of Attributes in the Primer for more information.
 
         In compliance with the [Cloud Events specification](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#type) the value SHOULD be prefixed with a reverse-DNS name. The prefixed domain dictates the organization which defines the semantics of this event type.
-        ⚠️ Be careful if you want to derive the event type automatically from a class or package name, because it makes it harder to refactor/rename your class without changing your API.""")
-  @JsonSchemaExamples({
-    "com.sdase.relocation.service.customer.moved",
-    "com.sdase.consent.service.consent.agreed",
-    "com.sdase.offer.service.contract.offered"
-  })
+        ⚠️ Be careful if you want to derive the event type automatically from a class or package name, because it makes it harder to refactor/rename your class without changing your API.""",
+      examples = {
+        "com.sdase.relocation.service.customer.moved",
+        "com.sdase.consent.service.consent.agreed",
+        "com.sdase.offer.service.contract.offered"
+      })
   @NotEmpty
   private String type;
 
-  @JsonPropertyDescription(
-      """
+  @Schema(
+      description =
+          """
         This describes the subject of the event in the context of the event producer (identified by `source`). In publish-subscribe scenarios, a subscriber will typically subscribe to events emitted by a source, but the `source` identifier alone might not be sufficient as a qualifier for any specific event if the `source` context has internal sub-structure.
 
-        Identifying the subject of the event in context metadata (opposed to only in the data payload) is particularly helpful in generic subscription filtering scenarios where middleware is unable to interpret the data content. In the above example, the subscriber might only be interested in blobs with names ending with '.jpg' or '.jpeg' and the subject attribute allows for constructing a simple and efficient string-suffix filter for that subset of events.""")
-  @JsonSchemaExamples("terms-and-conditions-1")
+        Identifying the subject of the event in context metadata (opposed to only in the data payload) is particularly helpful in generic subscription filtering scenarios where middleware is unable to interpret the data content. In the above example, the subscriber might only be interested in blobs with names ending with '.jpg' or '.jpeg' and the subject attribute allows for constructing a simple and efficient string-suffix filter for that subset of events.""",
+      example = "terms-and-conditions-1")
   private String subject;
 
-  @JsonPropertyDescription(
-      """
+  @Schema(
+      description =
+          """
         Content type of data value. This attribute enables data to carry any type of content, whereby format and encoding might differ from that of the chosen event format. For example, an event rendered using the JSON envelope format might carry an XML payload in data, and the consumer is informed by this attribute being set to "application/xml". The rules for how data content is rendered for different `datacontenttype` values are defined in the event format specifications; for example, the JSON event format defines the relationship in section 3.1.
 
         For some binary mode protocol bindings, this field is directly mapped to the respective protocol's content-type metadata property. Normative rules for the binary mode and the content-type metadata mapping can be found in the respective protocol
@@ -91,22 +93,24 @@ public class CloudEventV1<T> extends BaseCloudEvent {
 
         When translating an event message with no `datacontenttype` attribute to a different format or protocol binding, the target `datacontenttype` SHOULD be set explicitly to the implied `datacontenttype` of the source.
 
-        **SDA**: The default is to use 'application/json'""")
-  @JsonSchemaExamples("application/json")
-  @JsonSchemaDefault("application/json")
+        **SDA**: The default is to use 'application/json'""",
+      example = "application/json",
+      defaultValue = "application/json")
   private String datacontenttype = "application/json";
 
-  @JsonPropertyDescription(
-      """
+  @Schema(
+      description =
+          """
         Timestamp of when the occurrence happened. If the time of the occurrence cannot be determined then this attribute MAY be set to some other time (such as the current time) by the CloudEvents producer, however all producers for the same source MUST be consistent in this respect. In other words, either they all use the actual time of the occurrence or they all use the same algorithm to determine the value used.
 
-        **SDA**: Default will be set to the current time.""")
-  @JsonSchemaExamples("2022-03-12T23:20:50.52Z")
+        **SDA**: Default will be set to the current time.""",
+      example = "2022-03-12T23:20:50.52Z")
   private OffsetDateTime time = OffsetDateTime.now();
 
-  @JsonPropertyDescription(
-      "As defined by the term Data, CloudEvents MAY include domain-specific "
-          + "information about the occurrence.")
+  @Schema(
+      description =
+          "As defined by the term Data, CloudEvents MAY include domain-specific "
+              + "information about the occurrence.")
   private T data;
 
   public CloudEventV1() {
