@@ -129,7 +129,7 @@ dependencies {
     api "it.unibo.tuprolog:parser-theory-jvm:$tuprologVersion"
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
-    api 'org.springframework.data:spring-data-mongodb:4.1.7' // Keep that version for now, since 4.2.0 introduces a bug
+    api 'org.springframework.data:spring-data-mongodb:4.1.8' // Keep that version for now, since 4.2.0 introduces a bug
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryVersion}-alpha"
     api "org.mongodb:mongodb-driver-core:${mongoDbDriverVersion}"
