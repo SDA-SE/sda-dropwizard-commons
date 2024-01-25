@@ -31,12 +31,25 @@ import java.time.format.DateTimeFormatter;
  *   }
  * }</pre>
  *
- * <p>Note that there is a subclass to write including milli seconds: {@link
+ * You can add the serializer to the {@link com.fasterxml.jackson.databind.ObjectMapper} to use it
+ * as default:
+ *
+ * <pre>
+ *  SimpleModule module = new SimpleModule();
+ *   module.addSerializer(ZonedDateTime.class, this.defaultSerializer);
+ *   objectMapper.registerModule(module);
+ * </pre>
+ *
+ * <p>Please note that the {@link Iso8601Serializer} is already registered in the default {@link
+ * com.fasterxml.jackson.databind.ObjectMapper} that is configured by the {@link
+ * ObjectMapperConfigurationUtil}.
+ *
+ * <p>Note that there is a subclass to write including milliseconds: {@link
  * Iso8601Serializer.WithMillis}
  */
 public class Iso8601Serializer extends StdSerializer<ZonedDateTime> {
 
-  private transient DateTimeFormatter formatter;
+  private final transient DateTimeFormatter formatter;
 
   // used by Jackson
   @SuppressWarnings("WeakerAccess")

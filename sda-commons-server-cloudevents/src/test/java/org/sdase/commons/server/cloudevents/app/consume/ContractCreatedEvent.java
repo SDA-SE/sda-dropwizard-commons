@@ -1,19 +1,20 @@
 package org.sdase.commons.server.cloudevents.app.consume;
 
-import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaDefault;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.net.URI;
 import org.sdase.commons.server.cloudevents.CloudEventV1;
 
 public class ContractCreatedEvent extends CloudEventV1<ContractCreatedEvent.ContractCreated> {
 
-  @JsonSchemaDefault(
-      "/SDA-SE/insurance-contract/insurance-contract-stack/insurance-contract-service")
+  @Schema(
+      defaultValue =
+          "/SDA-SE/insurance-contract/insurance-contract-stack/insurance-contract-service")
   @Override
   public URI getSource() {
     return super.getSource();
   }
 
-  @JsonSchemaDefault("com.sdase.contract.foo.contract.created")
+  @Schema(defaultValue = "com.sdase.contract.foo.contract.created")
   @Override
   public String getType() {
     return super.getType();

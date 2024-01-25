@@ -55,6 +55,8 @@ components:
             \ value in the serialization. Note: for 'release candidate' releases a\
             \ suffix might be used for testing purposes."
           minLength: 1
+          examples:
+          - "1.0"
         id:
           type: "string"
           description: "Identifies the event. Producers MUST ensure that `source`\
@@ -63,6 +65,8 @@ components:
             \ assume that Events with identical `source` and `id` are duplicates.\n\
             \n**SDA**: The default is to use a random UUID."
           minLength: 1
+          examples:
+          - "57d67827-3f4f-46e8-a126-fa6a6b724ae2"
         source:
           type: "string"
           format: "uri"
@@ -114,6 +118,8 @@ components:
             \ in blobs with names ending with '.jpg' or '.jpeg' and the subject attribute\
             \ allows for constructing a simple and efficient string-suffix filter\
             \ for that subset of events."
+          examples:
+          - "terms-and-conditions-1"
         datacontenttype:
           type: "string"
           description: "Content type of data value. This attribute enables data to\
@@ -137,6 +143,9 @@ components:
             \ format or protocol binding, the target `datacontenttype` SHOULD be set\
             \ explicitly to the implied `datacontenttype` of the source.\n\n**SDA**:\
             \ The default is to use 'application/json'"
+          default: "application/json"
+          examples:
+          - "application/json"
         time:
           type: "string"
           format: "date-time"
@@ -147,6 +156,8 @@ components:
             \ respect. In other words, either they all use the actual time of the\
             \ occurrence or they all use the same algorithm to determine the value\
             \ used.\n\n**SDA**: Default will be set to the current time."
+          examples:
+          - "2022-03-12T23:20:50.52Z"
         data:
           description: "As defined by the term Data, CloudEvents MAY include domain-specific\
             \ information about the occurrence."
@@ -180,6 +191,8 @@ components:
             \ value in the serialization. Note: for 'release candidate' releases a\
             \ suffix might be used for testing purposes."
           minLength: 1
+          examples:
+          - "1.0"
         id:
           type: "string"
           description: "Identifies the event. Producers MUST ensure that `source`\
@@ -188,6 +201,8 @@ components:
             \ assume that Events with identical `source` and `id` are duplicates.\n\
             \n**SDA**: The default is to use a random UUID."
           minLength: 1
+          examples:
+          - "57d67827-3f4f-46e8-a126-fa6a6b724ae2"
         source:
           type: "string"
           format: "uri"
@@ -239,6 +254,8 @@ components:
             \ in blobs with names ending with '.jpg' or '.jpeg' and the subject attribute\
             \ allows for constructing a simple and efficient string-suffix filter\
             \ for that subset of events."
+          examples:
+          - "terms-and-conditions-1"
         datacontenttype:
           type: "string"
           description: "Content type of data value. This attribute enables data to\
@@ -262,6 +279,9 @@ components:
             \ format or protocol binding, the target `datacontenttype` SHOULD be set\
             \ explicitly to the implied `datacontenttype` of the source.\n\n**SDA**:\
             \ The default is to use 'application/json'"
+          default: "application/json"
+          examples:
+          - "application/json"
         time:
           type: "string"
           format: "date-time"
@@ -272,6 +292,8 @@ components:
             \ respect. In other words, either they all use the actual time of the\
             \ occurrence or they all use the same algorithm to determine the value\
             \ used.\n\n**SDA**: Default will be set to the current time."
+          examples:
+          - "2022-03-12T23:20:50.52Z"
         data:
           allOf:
           - $ref: "#/components/schemas/ContractCreated"
@@ -301,6 +323,8 @@ components:
             \ value in the serialization. Note: for 'release candidate' releases a\
             \ suffix might be used for testing purposes."
           minLength: 1
+          examples:
+          - "1.0"
         id:
           type: "string"
           description: "Identifies the event. Producers MUST ensure that `source`\
@@ -309,6 +333,8 @@ components:
             \ assume that Events with identical `source` and `id` are duplicates.\n\
             \n**SDA**: The default is to use a random UUID."
           minLength: 1
+          examples:
+          - "57d67827-3f4f-46e8-a126-fa6a6b724ae2"
         source:
           type: "string"
           format: "uri"
@@ -360,6 +386,8 @@ components:
             \ in blobs with names ending with '.jpg' or '.jpeg' and the subject attribute\
             \ allows for constructing a simple and efficient string-suffix filter\
             \ for that subset of events."
+          examples:
+          - "terms-and-conditions-1"
         datacontenttype:
           type: "string"
           description: "Content type of data value. This attribute enables data to\
@@ -383,6 +411,9 @@ components:
             \ format or protocol binding, the target `datacontenttype` SHOULD be set\
             \ explicitly to the implied `datacontenttype` of the source.\n\n**SDA**:\
             \ The default is to use 'application/json'"
+          default: "application/json"
+          examples:
+          - "application/json"
         time:
           type: "string"
           format: "date-time"
@@ -393,6 +424,8 @@ components:
             \ respect. In other words, either they all use the actual time of the\
             \ occurrence or they all use the same algorithm to determine the value\
             \ used.\n\n**SDA**: Default will be set to the current time."
+          examples:
+          - "2022-03-12T23:20:50.52Z"
         data:
           allOf:
           - $ref: "#/components/schemas/PartnerCreated"
