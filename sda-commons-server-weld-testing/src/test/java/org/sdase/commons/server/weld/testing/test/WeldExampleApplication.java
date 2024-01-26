@@ -11,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
+import java.util.List;
 import org.sdase.commons.server.jackson.EmbedHelper;
 import org.sdase.commons.server.weld.DropwizardWeldHelper;
 import org.sdase.commons.server.weld.WeldBundle;
@@ -41,7 +42,7 @@ public class WeldExampleApplication extends Application<AppConfiguration> {
 
   @Override
   public void initialize(final Bootstrap<AppConfiguration> bootstrap) {
-    bootstrap.addBundle(new JobsBundle(testJob));
+    bootstrap.addBundle(new JobsBundle(List.of(testJob)));
     bootstrap.addBundle(new WeldBundle());
     bootstrap.addCommand(testCommand);
   }
