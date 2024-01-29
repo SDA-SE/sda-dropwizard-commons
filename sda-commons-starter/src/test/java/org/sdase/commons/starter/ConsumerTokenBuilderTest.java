@@ -1,7 +1,6 @@
 package org.sdase.commons.starter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
+import org.sdase.commons.server.consumer.filter.ConsumerTokenServerFilter;
 import org.sdase.commons.starter.test.BundleAssertion;
 
 class ConsumerTokenBuilderTest {
@@ -57,31 +57,18 @@ class ConsumerTokenBuilderTest {
   private void verifyRegisteredConsumerTokenFiltersEqual(
       SdaPlatformBundle<SdaPlatformConfiguration> actualSdaPlatformBundle,
       ConsumerTokenBundle<Configuration> expectedBundle) {
-    verifyRegisteredConsumerTokenFiltersEqual(
-        actualSdaPlatformBundle, expectedBundle, Configuration.class);
-  }
+    //noinspection unchecked
+    ConsumerTokenBundle<SdaPlatformConfiguration> actualConsumerTokenBundle =
+        bundleAssertion.getBundleOfType(actualSdaPlatformBundle, ConsumerTokenBundle.class);
 
-  private <C extends Configuration> void verifyRegisteredConsumerTokenFiltersEqual(
-      SdaPlatformBundle<SdaPlatformConfiguration> actualSdaPlatformBundle,
-      ConsumerTokenBundle<C> expectedBundle,
-      Class<C> configurationClass) {
-    try {
-      //noinspection unchecked
-      ConsumerTokenBundle<SdaPlatformConfiguration> actualConsumerTokenBundle =
-          bundleAssertion.getBundleOfType(actualSdaPlatformBundle, ConsumerTokenBundle.class);
+    actualConsumerTokenBundle.run(new SdaPlatformConfiguration(), environmentMock);
+    expectedBundle.run(new Configuration(), environmentMock);
 
-      actualConsumerTokenBundle.run(new SdaPlatformConfiguration(), environmentMock);
-      expectedBundle.run(configurationClass.newInstance(), environmentMock);
+    verify(environmentMock.jersey(), times(2)).register(jerseyRegistrationCaptor.capture());
 
-      verify(environmentMock.jersey(), times(2)).register(jerseyRegistrationCaptor.capture());
-
-      List<Object> registeredFilters = jerseyRegistrationCaptor.getAllValues();
-      assertThat(registeredFilters.get(0))
-          .usingRecursiveComparison()
-          .usingOverriddenEquals()
-          .isEqualTo(registeredFilters.get(1));
-    } catch (InstantiationException | IllegalAccessException e) {
-      fail("Fail to instantiate config class.", e);
-    }
+    List<Object> registeredFilters = jerseyRegistrationCaptor.getAllValues();
+    var filter1 = (ConsumerTokenServerFilter) registeredFilters.get(0);
+    var filter2 = (ConsumerTokenServerFilter) registeredFilters.get(1);
+    assertThat(filter1).isEqualTo(filter2);
   }
 }
