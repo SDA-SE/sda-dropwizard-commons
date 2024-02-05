@@ -84,7 +84,7 @@ class StartLocalMongoDbTest {
     wireMockServer.stubFor(
         get(urlMatching(".*")).willReturn(aResponse().proxiedFrom("https://fastdl.mongodb.org")));
     try {
-      runWithMongo(wireMockServer.baseUrl() + path);
+      runWithMongo(wireMockServer.baseUrl());
     } catch (Throwable t) {
       // We accept that the downloaded MongoDB is not starting.
       // It is assumed, that the wrong package is selected.

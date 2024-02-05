@@ -183,14 +183,21 @@ public class StartLocalMongoDb implements MongoDb {
     if (embeddedMongoDownloadPath == null) {
       return Optional.empty();
     } else {
-      ImmutablePackage.Builder downloadPackage =
+      // creates the package with the relative URL based on the OS selected, e.g.: Windows, Linux
+      ImmutablePackage relativePackage =
           Package.builder()
               .from(
                   new PlatformPackageResolver(Command.MongoD)
-                      .packageFor(Distribution.of(version, Platform.detect(CommonOS.list()))));
-      return Optional.of(
-          Start.to(Package.class)
-              .initializedWith(downloadPackage.url(embeddedMongoDownloadPath).build()));
+                      .packageFor(Distribution.of(version, Platform.detect(CommonOS.list()))))
+              .build();
+
+      // creating new client with the relativePackage config, but adding the custom http host
+      // information to the URL
+      ImmutablePackage downloadPackage =
+          ImmutablePackage.copyOf(relativePackage)
+              .withUrl(embeddedMongoDownloadPath + relativePackage.url());
+
+      return Optional.of(Start.to(Package.class).initializedWith(downloadPackage));
     }
   }
 
