@@ -1,0 +1,7 @@
+dependencies {
+  api project(':sda-commons-starter')
+  api project(':sda-commons-server-kafka')
+
+  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(':sda-commons-server-kafka-testing')
+}

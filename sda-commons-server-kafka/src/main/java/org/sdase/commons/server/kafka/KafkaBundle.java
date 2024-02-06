@@ -53,6 +53,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   private final Function<C, KafkaConfiguration> configurationProvider;
   private KafkaConfiguration kafkaConfiguration;
   private final boolean healthCheckDisabled;
+  private final String healthCheckName;
 
   private final List<MessageListener<?, ?>> messageListeners = new ArrayList<>();
   private final List<ThreadedMessageListener<?, ?>> threadedMessageListeners = new ArrayList<>();
@@ -65,9 +66,12 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
   private MicrometerConsumerListener micrometerConsumerListener;
 
   private KafkaBundle(
-      KafkaConfigurationProvider<C> configurationProvider, boolean healthCheckDisabled) {
+      KafkaConfigurationProvider<C> configurationProvider,
+      boolean healthCheckDisabled,
+      String healthCheckName) {
     this.configurationProvider = configurationProvider;
     this.healthCheckDisabled = healthCheckDisabled;
+    this.healthCheckName = healthCheckName;
   }
 
   public static InitialBuilder builder() {
@@ -86,10 +90,18 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     if (!kafkaConfiguration.isDisabled()) {
       if (healthCheckDisabled) {
         kafkaHealthCheck = new ExternalKafkaHealthCheck(kafkaConfiguration);
-        environment.healthChecks().register(EXTERNAL_HEALTHCHECK_NAME, kafkaHealthCheck);
+        environment
+            .healthChecks()
+            .register(
+                this.healthCheckName != null ? this.healthCheckName : EXTERNAL_HEALTHCHECK_NAME,
+                kafkaHealthCheck);
       } else {
         kafkaHealthCheck = new KafkaHealthCheck(kafkaConfiguration);
-        environment.healthChecks().register(HEALTHCHECK_NAME, kafkaHealthCheck);
+        environment
+            .healthChecks()
+            .register(
+                this.healthCheckName != null ? this.healthCheckName : HEALTHCHECK_NAME,
+                kafkaHealthCheck);
       }
     }
 
@@ -527,6 +539,20 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
      */
     FinalBuilder<T> withoutHealthCheck();
 
+    /**
+     * Defines a custom health check name for this kafka bundle. Defining a custom name is only
+     * needed and should only be set, if multiple {@code KafkaBundle}s are used for multiple brokers
+     * to create unique names.
+     *
+     * <p>An external health check, created when {@link #withoutHealthCheck()} is configured, uses
+     * {@value #EXTERNAL_HEALTHCHECK_NAME} as default and a regular health check uses {@value
+     * #HEALTHCHECK_NAME} as default.
+     *
+     * @param name the name of the health check
+     * @return the same builder instance
+     */
+    FinalBuilder<T> withHealthCheckName(String name);
+
     KafkaBundle<T> build();
   }
 
@@ -534,6 +560,7 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
     private KafkaConfigurationProvider<T> configurationProvider;
     private boolean healthCheckDisabled = false;
+    private String healthCheckName = null;
 
     private Builder() {}
 
@@ -548,8 +575,14 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
     }
 
     @Override
+    public FinalBuilder<T> withHealthCheckName(String name) {
+      this.healthCheckName = name;
+      return this;
+    }
+
+    @Override
     public KafkaBundle<T> build() {
-      return new KafkaBundle<>(configurationProvider, healthCheckDisabled);
+      return new KafkaBundle<>(configurationProvider, healthCheckDisabled, healthCheckName);
     }
 
     @Override
