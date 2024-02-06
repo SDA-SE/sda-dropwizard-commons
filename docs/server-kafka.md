@@ -223,6 +223,51 @@ public class DemoApplication {
 }
 ```
 
+### Connect to multiple Kafka Cluster in one application
+
+To connect to multiple Kafka Clusters in one application, one `KafkaBundle` for each Cluster must be
+used.
+A dedicated configuration for each bundle is needed as well.
+Only in this case, the name of the health check for each bundle must be customized.
+
+```java
+public class YourConfiguration extends SdaPlatformConfiguration {
+  private KafkaConfiguration kafkaExternal = new KafkaConfiguration();
+  private KafkaConfiguration kafkaInternal = new KafkaConfiguration();
+
+  // ...
+}
+```
+
+```java
+public class DemoApplication {
+   private final KafkaBundle<YourConfiguration> kafkaBundleExternal = 
+       KafkaBundle
+           .builder()
+           .withConfigurationProvider(YourConfiguration::getKafkaExternal)
+           .withHealthCheckName("kafkaConnectionExternal")
+           .build();
+   
+   private final KafkaBundle<YourConfiguration> kafkaBundleInternal = 
+       KafkaBundle
+           .builder()
+           .withConfigurationProvider(YourConfiguration::getKafkaInternal)
+           .withHealthCheckName("kafkaConnectionInternal")
+           .build();
+
+   public void initialize(Bootstrap<AppConfiguration> bootstrap) {
+      // ...
+      bootstrap.addBundle(kafkaBundleExternal);
+      bootstrap.addBundle(kafkaBundleInternal);
+   }
+
+   public void run(AppConfiguration configuration, Environment environment) throws Exception {
+       // ...
+   }
+}
+```
+
+
 ### Known Kafka Problems
 
 There exists a known Kafka issue in the new consumer API [KAFAK-4740](https://issues.apache.org/jira/browse/KAFKA-4740)
@@ -247,7 +292,7 @@ public class DemoApplication {
   public void run(AppConfiguration configuration, Environment environment) throws Exception {
     // register with default consumer and listener config
     // The handler implements the actual logic for the message processing
-      ...
+    // ...
 
     // JSON Example with wrapped Deserializer to avoid DeseriliazationException, see Note below
     List<MessageListener> jsonListener = kafkaBundle.registerMessageHandler(
