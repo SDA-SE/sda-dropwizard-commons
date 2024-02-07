@@ -707,6 +707,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#connect-to-multiple-kafka-cluster-in-one-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connect to multiple Kafka Cluster in one application
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#known-kafka-problems" class="md-nav__link">
     <span class="md-ellipsis">
       Known Kafka Problems
@@ -1660,6 +1669,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#connect-to-multiple-kafka-cluster-in-one-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connect to multiple Kafka Cluster in one application
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#known-kafka-problems" class="md-nav__link">
     <span class="md-ellipsis">
       Known Kafka Problems
@@ -2314,6 +2332,73 @@ The Builders for <code>MessageListenerRegistration</code> and <code>ProducerRegi
 <span class="w">   </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
+<h3 id="connect-to-multiple-kafka-cluster-in-one-application">Connect to multiple Kafka Cluster in one application<a class="headerlink" href="#connect-to-multiple-kafka-cluster-in-one-application" title="Permanent link">&para;</a></h3>
+<p>To connect to multiple Kafka Clusters in one application, one <code>KafkaBundle</code> for each Cluster must be
+used.
+A dedicated configuration for each bundle is needed as well.
+Only in this case, the name of the health check for each bundle must be customized.</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">YourConfiguration</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">SdaPlatformConfiguration</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">KafkaConfiguration</span><span class="w"> </span><span class="n">kafkaExternal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">KafkaConfiguration</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">KafkaConfiguration</span><span class="w"> </span><span class="n">kafkaInternal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">KafkaConfiguration</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DemoApplication</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">KafkaBundle</span><span class="o">&lt;</span><span class="n">YourConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">kafkaBundleExternal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">       </span><span class="n">KafkaBundle</span>
+<span class="w">           </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">           </span><span class="p">.</span><span class="na">withConfigurationProvider</span><span class="p">(</span><span class="n">YourConfiguration</span><span class="p">::</span><span class="n">getKafkaExternal</span><span class="p">)</span>
+<span class="w">           </span><span class="p">.</span><span class="na">withHealthCheckName</span><span class="p">(</span><span class="s">&quot;kafkaConnectionExternal&quot;</span><span class="p">)</span>
+<span class="w">           </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">KafkaBundle</span><span class="o">&lt;</span><span class="n">YourConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">kafkaBundleInternal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">       </span><span class="n">KafkaBundle</span>
+<span class="w">           </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">           </span><span class="p">.</span><span class="na">withConfigurationProvider</span><span class="p">(</span><span class="n">YourConfiguration</span><span class="p">::</span><span class="n">getKafkaInternal</span><span class="p">)</span>
+<span class="w">           </span><span class="p">.</span><span class="na">withHealthCheckName</span><span class="p">(</span><span class="s">&quot;kafkaConnectionInternal&quot;</span><span class="p">)</span>
+<span class="w">           </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">AppConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">kafkaBundleExternal</span><span class="p">);</span>
+<span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">kafkaBundleInternal</span><span class="p">);</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">AppConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
+<span class="w">       </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
 <h3 id="known-kafka-problems">Known Kafka Problems<a class="headerlink" href="#known-kafka-problems" title="Permanent link">&para;</a></h3>
 <p>There exists a known Kafka issue in the new consumer API <a href="https://issues.apache.org/jira/browse/KAFKA-4740">KAFAK-4740</a>
 that throws potentially a <code>org.apache.kafka.commons.errors.SerializationException</code> when a record key/value can't be deserialized depending on
@@ -2365,7 +2450,7 @@ strategy.</p>
 <span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">AppConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// register with default consumer and listener config</span>
 <span class="w">    </span><span class="c1">// The handler implements the actual logic for the message processing</span>
-<span class="w">      </span><span class="p">...</span>
+<span class="w">    </span><span class="c1">// ...</span>
 
 <span class="w">    </span><span class="c1">// JSON Example with wrapped Deserializer to avoid DeseriliazationException, see Note below</span>
 <span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">MessageListener</span><span class="o">&gt;</span><span class="w"> </span><span class="n">jsonListener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span><span class="p">.</span><span class="na">registerMessageHandler</span><span class="p">(</span>
