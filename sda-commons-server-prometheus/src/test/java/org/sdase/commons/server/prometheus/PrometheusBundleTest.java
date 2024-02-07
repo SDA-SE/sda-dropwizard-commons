@@ -252,6 +252,18 @@ class PrometheusBundleTest {
     assertThat(jvmGcList).hasSizeGreaterThanOrEqualTo(5);
   }
 
+  @Test
+  void micrometerJettyMetricsAvailable() {
+
+    MeterRegistry globalRegistry = Metrics.globalRegistry;
+    List<Meter> meters = globalRegistry.getMeters();
+    List<Meter> jettyList =
+        meters.stream().filter(m -> m.getId().getName().startsWith("jetty")).toList();
+
+    // assertions are not strict since metrics depend on Java version
+    assertThat(jettyList).hasSizeGreaterThanOrEqualTo(12);
+  }
+
   private Invocation.Builder prepareResourceRequest() {
     return DW.client().target(resourceUri).path("ping").request();
   }

@@ -11,6 +11,7 @@ import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.binder.jersey.server.DefaultJerseyTagsProvider;
 import io.micrometer.core.instrument.binder.jersey.server.MetricsApplicationEventListener;
+import io.micrometer.core.instrument.binder.jetty.JettyConnectionMetrics;
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
@@ -121,6 +122,12 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
                 new DefaultJerseyTagsProvider(),
                 "http.server.requests",
                 true));
+
+    environment
+        .lifecycle()
+        .addServerLifecycleListener(
+            server ->
+                JettyConnectionMetrics.addToAllConnectors(server, Metrics.globalRegistry, null));
   }
 
   private void initializeDropwizardMetricsBridge(Environment environment) {

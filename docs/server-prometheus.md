@@ -268,6 +268,18 @@ More details about resilience4j circuit breaker metrics can be found [here](http
 | `resilience4j_circuitbreaker_not_permitted_calls_total` | `kind`  | Total number of not permitted calls                                                           | Bridged from Micrometer   |
 | `resilience4j_circuitbreaker_calls_created`             | `kind`  | **Deprecated** Total number of calls by kind                                                  | Bridged from Micrometer   |
 
+
+### Jetty
+
+| Metric Name                      | Labels             | Description                                                                 | Source                    |
+|----------------------------------|--------------------|-----------------------------------------------------------------------------|---------------------------|
+| `jetty_connections_current`      | `connector_name`   | The current number of open Jetty connections                                | Bridged from Micrometer   |
+| `jetty_connections_max`          | `connector_name`   | The maximum number of observed connections over a rolling 2-minute interval | Bridged from Micrometer   |
+| `jetty_connections_messages_in`  | `connector_name`   | Messages received by tracked connections                                    | Bridged from Micrometer   |
+| `jetty_connections_messages_out` | `connector_name`   | Messages sent by tracked connections                                        | Bridged from Micrometer   |
+| `jetty_connections_bytes_in`     | `connector_name`   | Bytes received by tracked connections                                       | Bridged from Micrometer   |
+| `jetty_connections_bytes_out`    | `connector_name`   | Bytes sent by tracked connections                                           | Bridged from Micrometer   |
+
 ### Request Metrics
 
 | Metric Name                                                     | Labels                                            | Description                                                                                                                               | Source                    |
