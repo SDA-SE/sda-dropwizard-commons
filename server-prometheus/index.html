@@ -941,6 +941,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#jetty" class="md-nav__link">
+    <span class="md-ellipsis">
+      Jetty
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#request-metrics" class="md-nav__link">
     <span class="md-ellipsis">
       Request Metrics
@@ -1507,6 +1516,15 @@
   <a href="#circuit-breaker" class="md-nav__link">
     <span class="md-ellipsis">
       Circuit Breaker
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jetty" class="md-nav__link">
+    <span class="md-ellipsis">
+      Jetty
     </span>
   </a>
   
@@ -2940,6 +2958,55 @@ following metrics are available so far.</p>
 <td><code>resilience4j_circuitbreaker_calls_created</code></td>
 <td><code>kind</code></td>
 <td><strong>Deprecated</strong> Total number of calls by kind</td>
+<td>Bridged from Micrometer</td>
+</tr>
+</tbody>
+</table>
+<h3 id="jetty">Jetty<a class="headerlink" href="#jetty" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Metric Name</th>
+<th>Labels</th>
+<th>Description</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jetty_connections_current</code></td>
+<td><code>connector_name</code></td>
+<td>The current number of open Jetty connections</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jetty_connections_max</code></td>
+<td><code>connector_name</code></td>
+<td>The maximum number of observed connections over a rolling 2-minute interval</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jetty_connections_messages_in</code></td>
+<td><code>connector_name</code></td>
+<td>Messages received by tracked connections</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jetty_connections_messages_out</code></td>
+<td><code>connector_name</code></td>
+<td>Messages sent by tracked connections</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jetty_connections_bytes_in</code></td>
+<td><code>connector_name</code></td>
+<td>Bytes received by tracked connections</td>
+<td>Bridged from Micrometer</td>
+</tr>
+<tr>
+<td><code>jetty_connections_bytes_out</code></td>
+<td><code>connector_name</code></td>
+<td>Bytes sent by tracked connections</td>
 <td>Bridged from Micrometer</td>
 </tr>
 </tbody>
