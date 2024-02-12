@@ -101,9 +101,21 @@ public class OpenTelemetryBundle implements ConfiguredBundle<Configuration> {
   }
 
   private OpenTelemetry setupNoopOpenTelemetry() {
-    OpenTelemetry noop = OpenTelemetry.noop();
-    GlobalOpenTelemetry.set(noop);
-    return noop;
+    try {
+      OpenTelemetry noop = OpenTelemetry.noop();
+      GlobalOpenTelemetry.set(noop);
+      return noop;
+    } catch (IllegalStateException | ConfigurationException e) {
+      if (e instanceof IllegalStateException || e.getCause() instanceof IllegalStateException) {
+        LOG.warn(
+            "A global tracer already defined. "
+                + "This should only happen in a test that uses the OpenTelemetryExtension. "
+                + "If you see this in other circumstances, something with the setup is wrong.",
+            e);
+        return GlobalOpenTelemetry.get();
+      }
+      throw e;
+    }
   }
 
   public static InitialBuilder builder() {
