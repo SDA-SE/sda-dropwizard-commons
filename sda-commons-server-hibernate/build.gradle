@@ -16,6 +16,7 @@ dependencies {
   api 'org.flywaydb:flyway-core'
   api 'jakarta.annotation:jakarta.annotation-api'
   api 'org.flywaydb:flyway-core'
+  api 'org.flywaydb:flyway-database-postgresql'
   api 'jakarta.xml.bind:jakarta.xml.bind-api'
 
   testImplementation project(':sda-commons-server-hibernate-testing')
