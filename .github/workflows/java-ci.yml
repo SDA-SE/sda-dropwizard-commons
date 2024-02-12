@@ -63,7 +63,7 @@ jobs:
     if: (success() || failure()) && !(github.event.pull_request && github.event.pull_request.head.repo.fork) && github.actor != 'dependabot[bot]'
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v3
+        uses: actions/download-artifact@eaceaf801fd36c7dee90939fad912460b18a1ffe # v3
         with:
           path: artifacts
 
