@@ -1531,8 +1531,8 @@ designed to use PostgreSQL in production and H2 in memory in tests. </p>
 - configuration of the database to use,
 - db migration using <a href="https://flywaydb.org/">Flyway</a>,
 - a health check for the database connection</p>
-<p><code>sda-commons-server-hibernate</code> ships with <code>org.postgresql:postgresql:42.1.1</code> and <code>org.flywaydb:flyway-core:4.2.0</code> at
-compile scope.</p>
+<p><code>sda-commons-server-hibernate</code> ships with <code>org.postgresql:postgresql</code>, <code>org.flywaydb:flyway-core</code>
+and <code>org.flywaydb:flyway-database-postgresql</code> at compile scope.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <h3 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Permanent link">&para;</a></h3>
 <p>The <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-hibernate/src/main/java/org/sdase/commons/server/hibernate/HibernateBundle.java"><code>HibernateBundle</code></a> should be added as 
