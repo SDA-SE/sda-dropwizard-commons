@@ -27,6 +27,7 @@ ext {
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.77'
   victoolsVersion = '4.33.1'
+  flywayVersion = '10.7.2'
 }
 
 dependencies {
@@ -119,7 +120,8 @@ dependencies {
 
     // sda-commons-server-hibernate
     api "org.postgresql:postgresql:42.7.1"
-    api "org.flywaydb:flyway-core:10.7.2"
+    api "org.flywaydb:flyway-core:${flywayVersion}"
+    api "org.flywaydb:flyway-database-postgresql:${flywayVersion}"
 
     // sda-commons-server-hibernate-testing
     api "com.github.database-rider:rider-core:$dbRiderVersion"

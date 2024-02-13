@@ -10,8 +10,8 @@ It provides
 - db migration using [Flyway](https://flywaydb.org/),
 - a health check for the database connection
 
-`sda-commons-server-hibernate` ships with `org.postgresql:postgresql:42.1.1` and `org.flywaydb:flyway-core:4.2.0` at
-compile scope.
+`sda-commons-server-hibernate` ships with `org.postgresql:postgresql`, `org.flywaydb:flyway-core`
+and `org.flywaydb:flyway-database-postgresql` at compile scope.
 
 ## Usage
 

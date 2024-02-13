@@ -12,11 +12,11 @@ dependencies {
   }
   api 'jakarta.transaction:jakarta.transaction-api'
   api 'jakarta.servlet:jakarta.servlet-api'
+  api 'jakarta.annotation:jakarta.annotation-api'
+  api 'jakarta.xml.bind:jakarta.xml.bind-api'
   api 'org.postgresql:postgresql'
   api 'org.flywaydb:flyway-core'
-  api 'jakarta.annotation:jakarta.annotation-api'
-  api 'org.flywaydb:flyway-core'
-  api 'jakarta.xml.bind:jakarta.xml.bind-api'
+  api 'org.flywaydb:flyway-database-postgresql'
 
   testImplementation project(':sda-commons-server-hibernate-testing')
   testImplementation 'org.assertj:assertj-core'
