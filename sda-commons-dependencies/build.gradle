@@ -19,7 +19,7 @@ ext {
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.41.1'
   kotlinVersion = '1.9.22'
-  kotlinxCoroutinesVersion = '1.7.3'
+  kotlinxCoroutinesVersion = '1.8.0'
   resilience4jVersion = '2.2.0'
   openTelemetryVersion= '1.32.0'
   // should be aligned with transitive dependency of Spring Data MongoDB
