@@ -62,8 +62,8 @@ class ClientTraceTest {
 
     assertThat(spans.get(0).getAttributes())
         .extracting(
-            att -> att.get(SemanticAttributes.HTTP_URL),
-            att -> att.get(SemanticAttributes.HTTP_METHOD))
+            att -> att.get(SemanticAttributes.URL_FULL),
+            att -> att.get(SemanticAttributes.HTTP_REQUEST_METHOD))
         .contains(WIRE.baseUrl().concat("/"), "GET");
   }
 

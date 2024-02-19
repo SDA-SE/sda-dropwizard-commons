@@ -15,7 +15,10 @@ dependencies {
   api 'io.opentelemetry:opentelemetry-api'
 
   implementation 'io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0'
-
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2', {
+    exclude group: 'io.opentelemetry.instrumentation', module: 'opentelemetry-instrumentation-api'
+    exclude group: 'io.opentelemetry.semconv', module: 'opentelemetry-semconv'
+  }
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-shared-wiremock-testing')
   testImplementation 'org.awaitility:awaitility'

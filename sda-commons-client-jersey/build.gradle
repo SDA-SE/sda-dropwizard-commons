@@ -16,6 +16,10 @@ dependencies {
   api 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv'
 
   implementation 'io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0'
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2', {
+    exclude group: 'io.opentelemetry.instrumentation', module: 'opentelemetry-instrumentation-api'
+    exclude group: 'io.opentelemetry.semconv', module: 'opentelemetry-semconv'
+  }
 
 
   testImplementation project(':sda-commons-server-testing')

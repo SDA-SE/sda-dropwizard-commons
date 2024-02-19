@@ -142,7 +142,7 @@ class OpenIdProviderDiscoveryKeySourceIT {
               assertThat(spans)
                   .hasSize(2)
                   .extracting(
-                      s -> s.getAttributes().asMap().get(stringKey("http.url")), SpanData::getName)
+                      s -> s.getAttributes().asMap().get(stringKey("url.full")), SpanData::getName)
                   .containsExactly(
                       tuple(oidcHost + "/.well-known/openid-configuration", "GET"),
                       tuple(oidcHost + "/jwks", "GET"));

@@ -197,6 +197,7 @@ dependencies {
     // sda-commons-server-opentelemetry
     api "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:${openTelemetryVersion}"
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryVersion}-alpha"
+    api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:2.1.0-alpha"
     api "io.opentelemetry:opentelemetry-exporter-otlp:$openTelemetryVersion"
     api "io.opentelemetry:opentelemetry-exporter-jaeger:$openTelemetryVersion"
     api "io.opentelemetry:opentelemetry-extension-trace-propagators:$openTelemetryVersion"
