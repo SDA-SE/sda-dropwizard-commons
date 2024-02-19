@@ -32,7 +32,7 @@ jobs:
 
       # Download from previous workflow: https://github.com/dawidd6/action-download-artifact
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@e7466d1a7587ed14867642c2ca74b5bcc1e19a2d # v2
+        uses: dawidd6/action-download-artifact@72aaadce3bc708349fc665eee3785cbb1b6e51d0 # v2
         with:
           workflow: ${{ github.event.workflow_run.workflow_id }}
           run_id: ${{ github.event.workflow_run.id }}
