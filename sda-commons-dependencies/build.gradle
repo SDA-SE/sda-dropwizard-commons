@@ -59,7 +59,7 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.24.6")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.24.7")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
   api enforcedPlatform("io.netty:netty-bom:4.1.107.Final"), {
@@ -119,7 +119,7 @@ dependencies {
     api "org.objenesis:objenesis:3.3"
 
     // sda-commons-server-hibernate
-    api "org.postgresql:postgresql:42.7.1"
+    api "org.postgresql:postgresql:42.7.2"
     api "org.flywaydb:flyway-core:${flywayVersion}"
     api "org.flywaydb:flyway-database-postgresql:${flywayVersion}"
 
@@ -133,6 +133,9 @@ dependencies {
     api 'org.springframework.data:spring-data-mongodb:4.1.8' // Keep that version for now, since 4.2.0 introduces a bug
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:2.1.0-alpha"
+    // check if commons-compress management is still needed after flapdoodle upgrade
+    // flapdoodle 4.11.1 pulls commons-compress 1.25.0 with CVEs 2024-25710 and 2024-26308
+    api "org.apache.commons:commons-compress:1.26.0"
     api "org.mongodb:mongodb-driver-core:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-sync:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-legacy:${mongoDbDriverVersion}"
