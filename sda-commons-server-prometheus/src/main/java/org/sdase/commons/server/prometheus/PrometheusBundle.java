@@ -140,9 +140,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
         new DropwizardExports(environment.metrics(), sampleBuilder);
     CollectorRegistry.defaultRegistry.register(dropwizardExports);
 
-    environment
-        .lifecycle()
-        .manage(onShutdown(() -> CollectorRegistry.defaultRegistry.unregister(dropwizardExports)));
+    environment.lifecycle().manage(onShutdown(CollectorRegistry.defaultRegistry::clear));
   }
 
   private List<MapperConfig> createMetricsMapperConfigs() {
