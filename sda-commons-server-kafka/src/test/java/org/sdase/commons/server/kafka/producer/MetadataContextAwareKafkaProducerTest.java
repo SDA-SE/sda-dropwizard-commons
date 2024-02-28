@@ -29,6 +29,7 @@ import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.MetricName;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.metrics.KafkaMetric;
@@ -307,6 +308,17 @@ class MetadataContextAwareKafkaProducerTest {
     var arg = Duration.of(1, ChronoUnit.MINUTES);
     producer.close(arg);
     verify(delegateProducerMock, times(1)).close(arg);
+    verifyNoMoreInteractions(delegateProducerMock);
+  }
+
+  @Test
+  void shouldDelegateClientInstanceId() {
+    var arg = Duration.of(1, ChronoUnit.MINUTES);
+    var givenReturnValue = Uuid.randomUuid();
+    when(delegateProducerMock.clientInstanceId(arg)).thenReturn(givenReturnValue);
+    var actual = producer.clientInstanceId(arg);
+    assertThat(actual).isSameAs(givenReturnValue);
+    verify(delegateProducerMock, times(1)).clientInstanceId(arg);
     verifyNoMoreInteractions(delegateProducerMock);
   }
 }
