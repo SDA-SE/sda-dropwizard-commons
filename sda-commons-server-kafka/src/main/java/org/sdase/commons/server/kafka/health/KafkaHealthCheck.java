@@ -1,14 +1,12 @@
 package org.sdase.commons.server.kafka.health;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.codahale.metrics.health.annotation.Async;
 import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 import org.sdase.commons.server.kafka.KafkaProperties;
 import org.slf4j.LoggerFactory;
 
-@Async(period = 30, scheduleType = Async.ScheduleType.FIXED_DELAY)
 public class KafkaHealthCheck extends HealthCheck {
 
   private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(KafkaHealthCheck.class);
