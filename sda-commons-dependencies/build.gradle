@@ -135,7 +135,7 @@ dependencies {
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:2.1.0-alpha"
     // check if commons-compress management is still needed after flapdoodle upgrade
     // flapdoodle 4.11.1 pulls commons-compress 1.25.0 with CVEs 2024-25710 and 2024-26308
-    api "org.apache.commons:commons-compress:1.26.0"
+    api "org.apache.commons:commons-compress:1.26.1"
     api "org.mongodb:mongodb-driver-core:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-sync:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-legacy:${mongoDbDriverVersion}"
