@@ -11,14 +11,17 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.MDC;
 
+@SuppressWarnings("resource")
 class TraceTokenContextTest {
 
   private static final String EXPECTED_TRACE_TOKEN_MDC_KEY = "Trace-Token";
+  private static final String EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY = "Parent-Trace-Token";
 
   @BeforeEach
   @AfterEach
   void clearMdc() {
-    MDC.remove("Trace-Token");
+    MDC.remove(EXPECTED_TRACE_TOKEN_MDC_KEY);
+    MDC.remove(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY);
   }
 
   @Test
@@ -29,6 +32,7 @@ class TraceTokenContextTest {
     assertThat(actual.get()).isNotBlank();
 
     assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNotBlank().isEqualTo(actual.get());
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
   }
 
   @Test
@@ -45,6 +49,7 @@ class TraceTokenContextTest {
         .isNotBlank()
         .isEqualTo(actual.get())
         .isEqualTo(existingContext.get());
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
   }
 
   @Test
@@ -54,6 +59,7 @@ class TraceTokenContextTest {
     actual.closeIfCreated();
 
     assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNull();
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
   }
 
   @Test
@@ -64,8 +70,10 @@ class TraceTokenContextTest {
       assertThat(actual.isReused()).isFalse();
       assertThat(actual.get()).isNotBlank();
       assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNotBlank().isEqualTo(actual.get());
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
     }
     assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNull();
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
   }
 
   @Test
@@ -78,13 +86,16 @@ class TraceTokenContextTest {
       assertThat(actual.isReused()).isFalse();
       assertThat(actual.get()).isNotBlank();
       assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNotBlank().isEqualTo(actual.get());
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
       throw new UnsupportedOperationException();
     } catch (UnsupportedOperationException e) {
       passedCatch = true;
       assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNull();
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
     } finally {
       passedFinally = true;
       assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNull();
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
     }
     assertThat(passedCatch).isTrue();
     assertThat(passedFinally).isTrue();
@@ -99,12 +110,14 @@ class TraceTokenContextTest {
         .isNotBlank()
         .isEqualTo(actual.get())
         .isEqualTo(existingContext.get());
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
     actual.closeIfCreated();
 
     assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY))
         .isNotBlank()
         .isEqualTo(actual.get())
         .isEqualTo(existingContext.get());
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
   }
 
   @Test
@@ -120,8 +133,10 @@ class TraceTokenContextTest {
           .isNotBlank()
           .isEqualTo(actual.get())
           .isEqualTo(existingContext.get());
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
     }
     assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNotBlank().isEqualTo(existingContext.get());
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
   }
 
   @Test
@@ -143,6 +158,7 @@ class TraceTokenContextTest {
       assertThat(actual.isReused()).isFalse();
       assertThat(actual.get()).isNotBlank();
       assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNotBlank().isEqualTo(actual.get());
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
     }
   }
 
@@ -153,6 +169,7 @@ class TraceTokenContextTest {
       assertThat(actual.isReused()).isFalse();
       assertThat(actual.get()).isNotBlank();
       assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNotBlank().isEqualTo(actual.get());
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
     }
   }
 
@@ -167,6 +184,73 @@ class TraceTokenContextTest {
           .isNotBlank()
           .isEqualTo(actual.get())
           .isEqualTo(incomingTraceToken);
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
     }
+  }
+
+  @Test
+  void shouldCreateTraceTokenContextWithParent() {
+    try (var actual = TraceTokenContext.createFromAsynchronousTraceTokenContext("incoming-token")) {
+      assertThat(actual.isCreated()).isTrue();
+      assertThat(actual.isReused()).isFalse();
+      assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNotBlank().isEqualTo(actual.get());
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY))
+          .isNotBlank()
+          .isEqualTo("incoming-token");
+    }
+    assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNull();
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
+  }
+
+  @Test
+  void shouldNotAddBlankParent() {
+    try (var actual = TraceTokenContext.createFromAsynchronousTraceTokenContext("   ")) {
+      assertThat(actual.isCreated()).isTrue();
+      assertThat(actual.isReused()).isFalse();
+      assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNotBlank().isEqualTo(actual.get());
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
+    }
+    assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNull();
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
+  }
+
+  @Test
+  void shouldAddParentTokenToExistingTraceTokenContext() {
+    try (var givenContext = TraceTokenContext.getOrCreateTraceTokenContext()) {
+
+      var actual = TraceTokenContext.createFromAsynchronousTraceTokenContext("incoming-token");
+
+      assertThat(actual.isCreated()).isFalse();
+      assertThat(actual.isReused()).isTrue();
+      assertThat(actual.get()).isNotBlank().isEqualTo(givenContext.get());
+      assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY))
+          .isNotBlank()
+          .isEqualTo(actual.get())
+          .isEqualTo(givenContext.get());
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY))
+          .isNotBlank()
+          .isEqualTo("incoming-token");
+    }
+    assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNull();
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
+  }
+
+  @Test
+  void shouldNotOverwriteParentInExistingContext() {
+    try (var givenContext = TraceTokenContext.createFromAsynchronousTraceTokenContext("original")) {
+
+      var actual = TraceTokenContext.createFromAsynchronousTraceTokenContext("ignored");
+
+      assertThat(actual.isCreated()).isFalse();
+      assertThat(actual.isReused()).isTrue();
+      assertThat(actual.get()).isNotBlank().isEqualTo(givenContext.get());
+      assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY))
+          .isNotBlank()
+          .isEqualTo(actual.get())
+          .isEqualTo(givenContext.get());
+      assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNotBlank().isEqualTo("original");
+    }
+    assertThat(MDC.get(EXPECTED_TRACE_TOKEN_MDC_KEY)).isNull();
+    assertThat(MDC.get(EXPECTED_PARENT_TRACE_TOKEN_MDC_KEY)).isNull();
   }
 }

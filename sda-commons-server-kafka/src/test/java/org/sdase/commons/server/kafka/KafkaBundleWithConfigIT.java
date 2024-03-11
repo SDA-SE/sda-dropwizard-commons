@@ -2,6 +2,7 @@ package org.sdase.commons.server.kafka;
 
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -10,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -26,6 +27,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -58,6 +60,7 @@ import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
 import org.sdase.commons.server.kafka.serializers.WrappedNoSerializationErrorDeserializer;
 import org.sdase.commons.shared.tracing.TraceTokenContext;
+import org.slf4j.MDC;
 
 class KafkaBundleWithConfigIT {
 
@@ -498,9 +501,7 @@ class KafkaBundleWithConfigIT {
               h ->
                   traceContext
                       .get()
-                      .equals(
-                          new String(
-                              h.lastHeader("Parent-Trace-Token").value(), StandardCharsets.UTF_8)));
+                      .equals(new String(h.lastHeader("Parent-Trace-Token").value(), UTF_8)));
     }
   }
 
@@ -848,6 +849,49 @@ class KafkaBundleWithConfigIT {
 
       assertThat(KafkaHelper.getClientId(c1)).isEqualTo("c1-1");
     }
+  }
+
+  @Test
+  void shouldSetParentTraceTokenContextForConsumer() {
+    String topic = "shouldSetParentTraceTokenContextForConsumer";
+    AtomicReference<String> handledTraceToken = new AtomicReference<>();
+    AtomicReference<String> handledParentTraceToken = new AtomicReference<>();
+
+    kafkaBundle.createMessageListener(
+        MessageListenerRegistration.builder()
+            .withListenerConfig(ListenerConfig.builder().build(1))
+            .forTopic(topic)
+            .withConsumerConfig(ConsumerConfig.builder().withClientId("myclient").build())
+            .withKeyDeserializer(new StringDeserializer())
+            .withValueDeserializer(new StringDeserializer())
+            .withListenerStrategy(
+                new SyncCommitMLS<>(
+                    x -> {
+                      handledTraceToken.set(MDC.get("Trace-Token"));
+                      handledParentTraceToken.set(MDC.get("Parent-Trace-Token"));
+                    },
+                    new IgnoreAndProceedErrorHandler<>()))
+            .build());
+    KAFKA
+        .getKafkaTestUtils()
+        .produceRecords(
+            List.of(
+                new ProducerRecord<>(
+                    topic,
+                    0,
+                    "key".getBytes(UTF_8),
+                    "value".getBytes(UTF_8),
+                    List.of(new RecordHeader("Parent-Trace-Token", "produced".getBytes(UTF_8))))));
+    await()
+        .untilAsserted(
+            () -> {
+              assertThat(handledTraceToken)
+                  .doesNotHaveNullValue()
+                  .asString()
+                  .isNotBlank()
+                  .isNotEqualTo("produced");
+              assertThat(handledParentTraceToken).hasValue("produced");
+            });
   }
 
   @Test

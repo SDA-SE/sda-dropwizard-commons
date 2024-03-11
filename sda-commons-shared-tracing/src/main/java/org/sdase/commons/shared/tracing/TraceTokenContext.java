@@ -1,6 +1,9 @@
 package org.sdase.commons.shared.tracing;
 
+import java.io.Closeable;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 /**
@@ -8,11 +11,21 @@ import org.slf4j.MDC;
  * messages across services for a single synchronous process. It will be logged as {@link
  * org.slf4j.MDC} key {@value #TRACE_TOKEN_MDC_KEY}.
  */
-public class TraceTokenContext implements AutoCloseable {
+public class TraceTokenContext implements Closeable {
+
+  private static final Logger LOG = LoggerFactory.getLogger(TraceTokenContext.class);
 
   /** The key of the trace token in the {@link org.slf4j.MDC}. */
   // not private yet for RequestTracing
   static final String TRACE_TOKEN_MDC_KEY = "Trace-Token";
+
+  /**
+   * The name used to put an incoming {@value TRACE_TOKEN_MDC_KEY} in the {@link MDC} which logging
+   * trace should not be continued but related to the logs of the current synchronous process. The
+   * key is used, when a new {@value TRACE_TOKEN_MDC_KEY} is created when receiving {@value
+   * TRACE_TOKEN_MDC_KEY} information from an asynchronous process.
+   */
+  private static final String PARENT_TRACE_TOKEN_MDC_KEY = "Parent-Trace-Token";
 
   /** The name of the header containing the trace token in HTTP requests. */
   public static final String TRACE_TOKEN_HTTP_HEADER_NAME = TRACE_TOKEN_MDC_KEY;
@@ -88,10 +101,10 @@ public class TraceTokenContext implements AutoCloseable {
   public static TraceTokenContext getOrCreateTraceTokenContext() {
     synchronized (CREATE_SEMAPHORE) {
       if (isTraceTokenContextActive()) {
-        return new TraceTokenContext(false, MDC.get(TRACE_TOKEN_MDC_KEY));
+        return new TraceTokenContext(false, currentTraceToken());
       }
-      MDC.put(TRACE_TOKEN_MDC_KEY, createTraceToken());
-      return new TraceTokenContext(true, MDC.get(TRACE_TOKEN_MDC_KEY));
+      saveTraceToken(createTraceToken());
+      return new TraceTokenContext(true, currentTraceToken());
     }
   }
 
@@ -114,11 +127,50 @@ public class TraceTokenContext implements AutoCloseable {
     synchronized (CREATE_SEMAPHORE) {
       closeTraceTokenContext();
       if (incomingTraceToken != null && !incomingTraceToken.isBlank()) {
-        MDC.put(TRACE_TOKEN_MDC_KEY, incomingTraceToken);
+        saveTraceToken(incomingTraceToken);
       } else {
-        MDC.put(TRACE_TOKEN_MDC_KEY, createTraceToken());
+        saveTraceToken(createTraceToken());
       }
-      return new TraceTokenContext(true, MDC.get(TRACE_TOKEN_MDC_KEY));
+      return new TraceTokenContext(true, currentTraceToken());
+    }
+  }
+
+  /**
+   * Creates a new {@link TraceTokenContext} with a reference to a parent context. This should be
+   * used to keep track of asynchronous processes to have a connection from the producer process to
+   * the new consumer process(es).
+   *
+   * @param incomingParentTraceToken the {@value PARENT_TRACE_TOKEN_MDC_KEY} received from an
+   *     external asynchronous process, e.g. via message header {@value
+   *     TRACE_TOKEN_MESSAGING_HEADER_NAME} of a consumed Kafka message. May be {@code null}, if no
+   *     {@value TRACE_TOKEN_MESSAGING_HEADER_NAME} context was received.
+   * @return a {@link TraceTokenContext} with a reference to the given {@code
+   *     incomingParentTraceToken} as {@value PARENT_TRACE_TOKEN_MDC_KEY} in the {@link MDC}. If
+   *     there is a current trace token context that already has a {@value
+   *     PARENT_TRACE_TOKEN_MDC_KEY}, the current context is not changed. All received instances
+   *     must be {@linkplain #closeIfCreated() closed}. Only the context that started this trace
+   *     will actually remove the {@value TRACE_TOKEN_MDC_KEY} from the {@link MDC}.
+   */
+  public static TraceTokenContext createFromAsynchronousTraceTokenContext(
+      String incomingParentTraceToken) {
+    synchronized (CREATE_SEMAPHORE) {
+      if (isTraceContextActiveWithParent()) {
+        LOG.info(
+            "Not adding parent trace token '{}' to existing trace token context with parent.",
+            incomingParentTraceToken);
+        return new TraceTokenContext(false, currentTraceToken());
+      }
+
+      if (incomingParentTraceToken != null && !incomingParentTraceToken.isBlank()) {
+        MDC.put(PARENT_TRACE_TOKEN_MDC_KEY, incomingParentTraceToken);
+      }
+
+      if (isTraceTokenContextActive()) {
+        return new TraceTokenContext(false, currentTraceToken());
+      }
+
+      saveTraceToken(createTraceToken());
+      return new TraceTokenContext(true, currentTraceToken());
     }
   }
 
@@ -126,14 +178,27 @@ public class TraceTokenContext implements AutoCloseable {
    * @return if there is an active {@value TRACE_TOKEN_MDC_KEY} context in the current Thread.
    */
   public static boolean isTraceTokenContextActive() {
-    return MDC.get(TRACE_TOKEN_MDC_KEY) != null;
+    return currentTraceToken() != null;
+  }
+
+  private static boolean isTraceContextActiveWithParent() {
+    return currentTraceToken() != null && MDC.get(PARENT_TRACE_TOKEN_MDC_KEY) != null;
   }
 
   private static void closeTraceTokenContext() {
     MDC.remove(TRACE_TOKEN_MDC_KEY);
+    MDC.remove(PARENT_TRACE_TOKEN_MDC_KEY);
   }
 
   private static String createTraceToken() {
     return UUID.randomUUID().toString();
+  }
+
+  private static String currentTraceToken() {
+    return MDC.get(TRACE_TOKEN_MDC_KEY);
+  }
+
+  private static void saveTraceToken(String traceToken) {
+    MDC.put(TRACE_TOKEN_MDC_KEY, traceToken);
   }
 }

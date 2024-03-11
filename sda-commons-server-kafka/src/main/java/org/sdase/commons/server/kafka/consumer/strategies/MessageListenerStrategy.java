@@ -2,6 +2,7 @@ package org.sdase.commons.server.kafka.consumer.strategies;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.Closeable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import org.sdase.commons.server.dropwizard.metadata.MetadataContextCloseable;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
+import org.sdase.commons.shared.tracing.TraceTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +110,18 @@ public abstract class MessageListenerStrategy<K, V> {
    */
   protected MessageHandlerContextCloseable messageHandlerContextFor(
       ConsumerRecord<K, V> consumerRecord) {
-    return MessageHandlerContextCloseable.of(createMetadataContext(consumerRecord));
+    return MessageHandlerContextCloseable.of(
+        createMetadataContext(consumerRecord), createTraceTokenContext(consumerRecord));
+  }
+
+  private Closeable createTraceTokenContext(ConsumerRecord<K, V> consumerRecord) {
+    Header header =
+        consumerRecord.headers().lastHeader(TraceTokenContext.TRACE_TOKEN_MESSAGING_HEADER_NAME);
+    if (header != null && header.value() != null) {
+      String incomingParentTraceToken = new String(header.value(), UTF_8);
+      return TraceTokenContext.createFromAsynchronousTraceTokenContext(incomingParentTraceToken);
+    }
+    return TraceTokenContext.createFromAsynchronousTraceTokenContext(null);
   }
 
   private MetadataContextCloseable createMetadataContext(ConsumerRecord<K, V> consumerRecord) {
