@@ -1,15 +1,10 @@
 package org.sdase.commons.client.jersey.filter;
 
-import static org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder.currentRequestContext;
-
 import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.client.ClientRequestFilter;
 import jakarta.ws.rs.client.ClientResponseContext;
 import jakarta.ws.rs.client.ClientResponseFilter;
-import java.util.Optional;
-import java.util.UUID;
-import org.sdase.commons.shared.tracing.RequestTracing;
-import org.slf4j.MDC;
+import org.sdase.commons.shared.tracing.TraceTokenContext;
 
 /**
  * The {@code TraceTokenClientFilter} adds a trace token to client requests. If existing, the trace
@@ -18,42 +13,22 @@ import org.slf4j.MDC;
  */
 public class TraceTokenClientFilter implements ClientRequestFilter, ClientResponseFilter {
 
-  private static final String ADDED_TO_MDC_FOR_REQUEST =
-      TraceTokenClientFilter.class.getName() + "_ADDED_TO_MDC";
+  private static final String TRACE_TOKEN_CONTEXT =
+      TraceTokenClientFilter.class.getName() + "_TRACE_TOKEN_CONTEXT";
 
   @Override
   public void filter(ClientRequestContext requestContext) {
-    String traceToken =
-        takeTraceTokenFromIncomingRequest()
-            .orElseGet(() -> createTraceTokenForOutgoingRequest(requestContext));
-    requestContext.getHeaders().add(RequestTracing.TOKEN_HEADER, traceToken);
+    var traceTokenContext = TraceTokenContext.getOrCreateTraceTokenContext();
+    String traceToken = traceTokenContext.get();
+    requestContext.getHeaders().add(TraceTokenContext.TRACE_TOKEN_HTTP_HEADER_NAME, traceToken);
+    requestContext.setProperty(TRACE_TOKEN_CONTEXT, traceTokenContext);
   }
 
   @Override
   public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
-    if (Boolean.TRUE.equals(requestContext.getProperty(ADDED_TO_MDC_FOR_REQUEST))) {
-      requestContext.removeProperty(ADDED_TO_MDC_FOR_REQUEST);
-      MDC.getMDCAdapter().remove(RequestTracing.TOKEN_MDC_KEY);
+    if (requestContext.getProperty(TRACE_TOKEN_CONTEXT)
+        instanceof TraceTokenContext traceTokenContext) {
+      traceTokenContext.closeIfCreated();
     }
-  }
-
-  private String createTraceTokenForOutgoingRequest(ClientRequestContext clientRequestContext) {
-    String traceToken = UUID.randomUUID().toString();
-    addNewTokenToMdcForCurrentRequest(clientRequestContext, traceToken);
-    return traceToken;
-  }
-
-  private void addNewTokenToMdcForCurrentRequest(
-      ClientRequestContext requestContext, String newTraceToken) {
-    if (MDC.getMDCAdapter() != null) {
-      MDC.put(RequestTracing.TOKEN_MDC_KEY, newTraceToken);
-      requestContext.setProperty(ADDED_TO_MDC_FOR_REQUEST, Boolean.TRUE);
-    }
-  }
-
-  private Optional<String> takeTraceTokenFromIncomingRequest() {
-    return currentRequestContext()
-        .map(crc -> crc.getProperty(RequestTracing.TOKEN_ATTRIBUTE))
-        .map(Object::toString);
   }
 }

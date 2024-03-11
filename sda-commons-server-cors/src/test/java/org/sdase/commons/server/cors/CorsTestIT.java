@@ -18,8 +18,6 @@ import org.sdase.commons.server.cors.test.CorsAllowTestApp;
 import org.sdase.commons.server.cors.test.CorsDenyTestApp;
 import org.sdase.commons.server.cors.test.CorsRestrictedTestApp;
 import org.sdase.commons.server.cors.test.CorsTestConfiguration;
-import org.sdase.commons.shared.tracing.ConsumerTracing;
-import org.sdase.commons.shared.tracing.RequestTracing;
 
 class CorsTestIT {
 
@@ -353,8 +351,8 @@ class CorsTestIT {
     allowedHeaders.add("Authorization");
     allowedHeaders.add("X-Requested-With");
     allowedHeaders.add("Accept");
-    allowedHeaders.add(ConsumerTracing.TOKEN_HEADER);
-    allowedHeaders.add(RequestTracing.TOKEN_HEADER);
+    allowedHeaders.add("Consumer-Token");
+    allowedHeaders.add("Trace-Token");
     return allowedHeaders.toArray(new String[0]);
   }
 }
