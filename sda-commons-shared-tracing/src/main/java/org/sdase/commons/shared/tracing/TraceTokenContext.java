@@ -17,6 +17,13 @@ public class TraceTokenContext implements AutoCloseable {
   /** The name of the header containing the trace token in HTTP requests. */
   public static final String TRACE_TOKEN_HTTP_HEADER_NAME = TRACE_TOKEN_MDC_KEY;
 
+  /**
+   * The name of the header containing the trace token in asynchronous messages. Note that the trace
+   * token context should not be continued when processing asynchronous messages. It should only be
+   * used to connect a new trace token with the received trace token from the producer.
+   */
+  public static final String TRACE_TOKEN_MESSAGING_HEADER_NAME = "Parent-Trace-Token";
+
   private static final Object CREATE_SEMAPHORE = new Object();
 
   private final boolean created;

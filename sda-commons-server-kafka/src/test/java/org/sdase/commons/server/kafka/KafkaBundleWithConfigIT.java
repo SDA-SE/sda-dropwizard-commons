@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -56,6 +57,7 @@ import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
 import org.sdase.commons.server.kafka.serializers.WrappedNoSerializationErrorDeserializer;
+import org.sdase.commons.shared.tracing.TraceTokenContext;
 
 class KafkaBundleWithConfigIT {
 
@@ -191,7 +193,7 @@ class KafkaBundleWithConfigIT {
       assertThrows(
           ConfigurationException.class,
           () -> {
-            try (KafkaConsumer<String, String> consumer =
+            try (KafkaConsumer<String, String> ignored =
                 kafkaBundle.createConsumer(
                     keyDeSerializer, keyDeSerializer, "notExistingConsumerConfig")) {
               // empty
@@ -418,7 +420,7 @@ class KafkaBundleWithConfigIT {
     assertThat(producer).isNotNull();
 
     List<String> messages = new ArrayList<>();
-    List<String> receivedMessages = new ArrayList<>();
+    List<ConsumerRecord<String, String>> consumerRecords = new ArrayList<>();
 
     for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
       String message = UUID.randomUUID().toString();
@@ -430,18 +432,76 @@ class KafkaBundleWithConfigIT {
         .atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS)
         .until(
             () -> {
-              List<ConsumerRecord<String, String>> consumerRecords =
+              consumerRecords.clear();
+              consumerRecords.addAll(
                   KAFKA
                       .getKafkaTestUtils()
                       .consumeAllRecordsFromTopic(
-                          topic, StringDeserializer.class, StringDeserializer.class);
-              consumerRecords.forEach(r -> receivedMessages.add(r.value()));
-              return receivedMessages.size() == messages.size();
+                          topic, StringDeserializer.class, StringDeserializer.class));
+              return consumerRecords.size() == messages.size();
             });
 
-    assertThat(receivedMessages)
+    assertThat(consumerRecords)
         .hasSize(KafkaBundleConsts.N_MESSAGES)
+        .extracting(ConsumerRecord::value)
         .containsExactlyInAnyOrderElementsOf(messages);
+    assertThat(consumerRecords)
+        .extracting(ConsumerRecord::headers)
+        .allMatch(h -> !h.headers("Parent-Trace-Token").iterator().hasNext());
+  }
+
+  @Test
+  void producerShouldSendMessagesToKafkaWithTraceToken() {
+    try (var traceContext = TraceTokenContext.getOrCreateTraceTokenContext()) {
+      String topic = "producerShouldSendMessagesToKafkaWithTraceToken";
+      KAFKA.getKafkaTestUtils().createTopic(topic, 1, (short) 1);
+      MessageProducer<String, String> producer =
+          kafkaBundle.registerProducer(
+              ProducerRegistration.builder()
+                  .forTopic(topic)
+                  .withDefaultProducer()
+                  .withKeySerializer(new StringSerializer())
+                  .withValueSerializer(new StringSerializer())
+                  .build());
+
+      assertThat(producer).isNotNull();
+
+      List<String> messages = new ArrayList<>();
+      List<ConsumerRecord<String, String>> consumerRecords = new ArrayList<>();
+
+      for (int i = 0; i < KafkaBundleConsts.N_MESSAGES; i++) {
+        String message = UUID.randomUUID().toString();
+        messages.add(message);
+        producer.send("test", message);
+      }
+
+      await()
+          .atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS)
+          .until(
+              () -> {
+                consumerRecords.clear();
+                consumerRecords.addAll(
+                    KAFKA
+                        .getKafkaTestUtils()
+                        .consumeAllRecordsFromTopic(
+                            topic, StringDeserializer.class, StringDeserializer.class));
+                return consumerRecords.size() == messages.size();
+              });
+
+      assertThat(consumerRecords)
+          .hasSize(KafkaBundleConsts.N_MESSAGES)
+          .extracting(ConsumerRecord::value)
+          .containsExactlyInAnyOrderElementsOf(messages);
+      assertThat(consumerRecords)
+          .extracting(ConsumerRecord::headers)
+          .allMatch(
+              h ->
+                  traceContext
+                      .get()
+                      .equals(
+                          new String(
+                              h.lastHeader("Parent-Trace-Token").value(), StandardCharsets.UTF_8)));
+    }
   }
 
   @Test
