@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
-import org.sdase.commons.shared.tracing.RequestTracing;
+import org.sdase.commons.shared.tracing.TraceTokenContext;
 
 public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
@@ -35,7 +35,7 @@ public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> 
               HttpHeaders.AUTHORIZATION,
               "X-Requested-With",
               ConsumerTracing.TOKEN_HEADER,
-              RequestTracing.TOKEN_HEADER));
+              TraceTokenContext.TRACE_TOKEN_HTTP_HEADER_NAME));
 
   /**
    * The headers that are allowed to be exposed from the response when the {@code CorsBundle} is

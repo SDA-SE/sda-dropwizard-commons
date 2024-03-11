@@ -35,9 +35,14 @@ public class TraceTokenTestApp extends Application<Configuration> {
     return Response.ok().build();
   }
 
+  /**
+   * @deprecated should use {@link org.sdase.commons.shared.tracing.TraceTokenContext} when {@link
+   *     RequestTracing} is removed.
+   */
   @GET
   @Path("/token")
   @Produces(MediaType.APPLICATION_JSON)
+  @Deprecated(forRemoval = false)
   public Response getConsumerToken(@Context ContainerRequestContext requestContext) {
     return Response.ok(requestContext.getProperty(RequestTracing.TOKEN_ATTRIBUTE)).build();
   }

@@ -34,7 +34,7 @@ import org.sdase.commons.server.opa.extension.OpaInputExtension;
 import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.filter.model.OpaRequest;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
-import org.sdase.commons.shared.tracing.RequestTracing;
+import org.sdase.commons.shared.tracing.TraceTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,11 +100,11 @@ public class OpaAuthFilter implements ContainerRequestFilter {
             .setAttribute(OPA_ALLOW_ATTRIBUTE, false)
             .startSpan();
 
-    try (Scope ignored = span.makeCurrent()) {
+    try (Scope ignored = span.makeCurrent();
+        TraceTokenContext traceTokenContext = TraceTokenContext.getOrCreateTraceTokenContext()) {
       // collect input parameters for Opa request
       UriInfo uriInfo = requestContext.getUriInfo();
       String method = requestContext.getMethod();
-      String trace = requestContext.getHeaderString(RequestTracing.TOKEN_HEADER);
       String jwt = null;
 
       // if security context already exist and if it is a jwt security context,
@@ -127,7 +127,7 @@ public class OpaAuthFilter implements ContainerRequestFilter {
         // process the actual request to the open policy agent server
         String[] path =
             uriInfo.getPathSegments().stream().map(PathSegment::getPath).toArray(String[]::new);
-        OpaInput opaInput = new OpaInput(jwt, path, method, trace);
+        OpaInput opaInput = new OpaInput(jwt, path, method, traceTokenContext.get());
         ObjectNode objectNode = om.convertValue(opaInput, ObjectNode.class);
 
         // append the input extensions to the input object

@@ -6,10 +6,8 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.container.PreMatching;
-import java.util.Optional;
-import java.util.UUID;
 import org.sdase.commons.shared.tracing.RequestTracing;
-import org.slf4j.MDC;
+import org.sdase.commons.shared.tracing.TraceTokenContext;
 
 /**
  * A request filter land response filter that detects, optionally generates if not existing and
@@ -17,6 +15,9 @@ import org.slf4j.MDC;
  */
 @PreMatching // No matching is required, should happen as early as possible
 public class TraceTokenServerFilter implements ContainerRequestFilter, ContainerResponseFilter {
+
+  private static final String TRACE_TOKEN_CONTEXT_KEY =
+      TraceTokenServerFilter.class.getName() + "_TRACE_TOKEN_CONTEXT";
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
@@ -28,44 +29,33 @@ public class TraceTokenServerFilter implements ContainerRequestFilter, Container
     }
 
     // Get the HTTP trace token header from the request
-    String token = extractTokenFromRequest(requestContext).orElse(UUID.randomUUID().toString());
+    var incomingTraceToken =
+        requestContext.getHeaderString(TraceTokenContext.TRACE_TOKEN_HTTP_HEADER_NAME);
+    var traceTokenContext =
+        TraceTokenContext.continueSynchronousTraceTokenContext(incomingTraceToken);
+    requestContext.setProperty(TRACE_TOKEN_CONTEXT_KEY, traceTokenContext);
 
-    // Add token to request context so that it is available within the application
-    this.addTokenToRequest(requestContext, token);
-
-    this.addTokenToMdc(token);
+    // deprecated: Add token to request context so that it is available within the application
+    this.addTokenToRequest(requestContext, traceTokenContext.get());
   }
 
   @Override
   public void filter(
       ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-    Optional<String> token = extractTokenFromRequestProperties(requestContext);
-    token.ifPresent(s -> responseContext.getHeaders().add(RequestTracing.TOKEN_HEADER, s));
-  }
-
-  private Optional<String> extractTokenFromRequestProperties(
-      ContainerRequestContext requestContext) {
-    String requestToken = (String) requestContext.getProperty(RequestTracing.TOKEN_ATTRIBUTE);
-    if (requestToken == null || requestToken.trim().isEmpty()) {
-      return Optional.empty();
-    }
-    return Optional.of(requestToken);
-  }
-
-  private Optional<String> extractTokenFromRequest(ContainerRequestContext requestContext) {
-    String requestToken = requestContext.getHeaderString(RequestTracing.TOKEN_HEADER);
-    if (requestToken == null || requestToken.trim().isEmpty()) {
-      return Optional.empty();
-    }
-    return Optional.of(requestToken);
-  }
-
-  private void addTokenToMdc(String token) {
-    if (MDC.getMDCAdapter() != null) {
-      MDC.put(RequestTracing.TOKEN_MDC_KEY, token);
+    if (requestContext.getProperty(TRACE_TOKEN_CONTEXT_KEY)
+        instanceof TraceTokenContext traceTokenContext) {
+      responseContext
+          .getHeaders()
+          .add(TraceTokenContext.TRACE_TOKEN_HTTP_HEADER_NAME, traceTokenContext.get());
+      traceTokenContext.closeIfCreated();
     }
   }
 
+  /**
+   * @deprecated the trace token will not be stored in the request context in the future, check
+   *     {@link TraceTokenContext} to obtain the current trace token.
+   */
+  @Deprecated(forRemoval = true)
   private void addTokenToRequest(ContainerRequestContext requestContext, String token) {
     requestContext.setProperty(RequestTracing.TOKEN_ATTRIBUTE, token);
   }
