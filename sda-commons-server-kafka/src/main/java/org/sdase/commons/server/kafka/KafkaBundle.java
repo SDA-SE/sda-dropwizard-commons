@@ -39,6 +39,7 @@ import org.sdase.commons.server.kafka.health.KafkaHealthCheck;
 import org.sdase.commons.server.kafka.producer.KafkaMessageProducer;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
 import org.sdase.commons.server.kafka.producer.MetadataContextAwareKafkaProducer;
+import org.sdase.commons.server.kafka.producer.TraceTokenAwareKafkaProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -326,14 +327,14 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
       producerProperties.putAll(producerConfig.getConfig());
     }
 
-    KafkaProducer<K, V> kafkaProducer =
+    Producer<K, V> producer =
         new KafkaProducer<>(producerProperties, keySerializer, valueSerializer);
-
     Set<String> metadataFields = MetadataContext.metadataFields();
-    if (metadataFields.isEmpty()) {
-      return kafkaProducer;
+    if (!metadataFields.isEmpty()) {
+      producer =
+          new MetadataContextAwareKafkaProducer<>(producer, MetadataContext.metadataFields());
     }
-    return new MetadataContextAwareKafkaProducer<>(kafkaProducer, MetadataContext.metadataFields());
+    return new TraceTokenAwareKafkaProducer<>(producer);
   }
 
   /**

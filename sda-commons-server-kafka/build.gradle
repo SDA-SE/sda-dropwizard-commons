@@ -2,6 +2,7 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
 
   api project(':sda-commons-server-healthcheck')
+  api project(':sda-commons-shared-tracing')
 
   api "org.apache.kafka:kafka-clients"
 
