@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Map;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,7 @@ class OpaRequestsIT {
           config("opa.policyPackage", "my.policy"));
 
   private void mock() {
+    // NOSONAR
     WIRE.stubFor(
         post("/v1/data/my/policy")
             .willReturn(
@@ -49,11 +51,13 @@ class OpaRequestsIT {
                     .withHeader("Content-Type", "application/json")
                     .withStatus(200)
                     .withBody(
-                        "{\n"
-                            + "  \"result\": {\n" // NOSONAR
-                            + "    \"allow\": true\n"
-                            + "  }\n"
-                            + "}")));
+                        """
+                        {
+                          "result": {
+                            "allow": true
+                          }
+                        }
+                        """)));
   }
 
   @BeforeEach
@@ -72,7 +76,7 @@ class OpaRequestsIT {
     Map<String, Object> opaInput = new ObjectMapper().readValue(body, new TypeReference<>() {});
 
     basicAssertions(opaInput);
-    assertThat(opaInput).extracting("input").extracting("trace").isNull(); // NOSONAR
+    assertThat(opaInput).extracting("input").extracting("trace").asString().isNotBlank();
     assertThat(opaInput).extracting("input").extracting("jwt").isNull();
   }
 
@@ -87,7 +91,7 @@ class OpaRequestsIT {
     Map<String, Object> opaInput = new ObjectMapper().readValue(body, new TypeReference<>() {});
 
     basicAssertions(opaInput);
-    assertThat(opaInput).extracting("input").extracting("trace").isNull();
+    assertThat(opaInput).extracting("input").extracting("trace").asString().isNotBlank();
     assertThat(opaInput)
         .extracting("input")
         .extracting("jwt")
@@ -123,11 +127,17 @@ class OpaRequestsIT {
     Map<String, Object> opaInput = new ObjectMapper().readValue(body, new TypeReference<>() {});
 
     basicAssertions(opaInput);
-    //noinspection unchecked,ConstantConditions
+    //noinspection unchecked
     Map<String, Object> extractedHeaders =
         (Map<String, Object>) ((Map<String, Object>) opaInput.get("input")).get("headers");
-    assertThat(extractedHeaders).extracting("simple").asList().containsExactly("SimpleValue");
-    assertThat(extractedHeaders).extracting("complex").asList().containsExactly("1,2");
+    assertThat(extractedHeaders)
+        .extracting("simple")
+        .asInstanceOf(InstanceOfAssertFactories.LIST)
+        .containsExactly("SimpleValue");
+    assertThat(extractedHeaders)
+        .extracting("complex")
+        .asInstanceOf(InstanceOfAssertFactories.LIST)
+        .containsExactly("1,2");
   }
 
   private void doGetRequest(MultivaluedMap<String, Object> headers) {
@@ -148,7 +158,7 @@ class OpaRequestsIT {
     assertThat(opaInput)
         .extracting("input")
         .extracting("path")
-        .asList()
+        .asInstanceOf(InstanceOfAssertFactories.LIST)
         .containsExactly("resources");
   }
 }

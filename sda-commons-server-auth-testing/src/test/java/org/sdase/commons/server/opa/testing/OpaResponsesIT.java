@@ -53,7 +53,6 @@ class OpaResponsesIT {
                     """
                                 {
                                   "input": {
-                                    "trace": null,
                                     "jwt":null,
                                     "path": ["resources"],
                                     "httpMethod":"GET"

@@ -7,6 +7,7 @@ import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.opa.OpaBundle;
 import org.sdase.commons.server.openapi.OpenApiBundle;
+import org.sdase.commons.server.trace.TraceTokenBundle;
 
 public class OpaBundleTestApp extends Application<OpaBundeTestAppConfiguration> {
 
@@ -22,6 +23,7 @@ public class OpaBundleTestApp extends Application<OpaBundeTestAppConfiguration> 
         OpenApiBundle.builder().addResourcePackageClass(OpaBundleTestApp.class).build());
     bootstrap.addBundle(
         OpaBundle.builder().withOpaConfigProvider(OpaBundeTestAppConfiguration::getOpa).build());
+    bootstrap.addBundle(TraceTokenBundle.builder().build());
   }
 
   @Override
