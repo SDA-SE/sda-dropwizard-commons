@@ -9,7 +9,7 @@ javaPlatform {
 ext {
   dropwizardVersion = '4.0.7'
   prometheusVersion = '0.16.0'
-  micrometerVersion = '1.12.3'
+  micrometerVersion = '1.12.4'
   swaggerCoreV3Version = '2.2.20'
   weldVersion = '5.1.2.Final'
   jacksonVersion = '2.16.2'
