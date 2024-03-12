@@ -21,7 +21,7 @@ ext {
   kotlinVersion = '1.9.23'
   kotlinxCoroutinesVersion = '1.8.0'
   resilience4jVersion = '2.2.0'
-  openTelemetryVersion= '1.34.1'
+  openTelemetryVersion= '1.36.0'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '4.8.2'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
@@ -198,13 +198,10 @@ dependencies {
     api 'commons-io:commons-io:2.15.1'
 
     // sda-commons-server-opentelemetry
-    // TODO Some modules are behind and some are a major ahead of the bom versions.
-    //      Maybe they have been replaced by other jars or their classes are integrated in some core modules.
-    //      OTEL deps should be checked and cleaned up.
-    //      The bom is also not the latest!
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:2.1.0-alpha"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:2.1.0-alpha"
     api "io.opentelemetry:opentelemetry-semconv:1.30.1-alpha"
+    api "io.opentelemetry:opentelemetry-exporter-jaeger:1.34.1"
     api "io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.1.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.0-alpha"
