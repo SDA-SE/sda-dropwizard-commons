@@ -24,6 +24,13 @@ public class TraceTokenClientFilter implements ClientRequestFilter, ClientRespon
     requestContext.setProperty(TRACE_TOKEN_CONTEXT, traceTokenContext);
   }
 
+  // Note: This method is only called when the server responds. In case of timeouts or other errors
+  // without response from the server, it may happen that a Trace-Token context that has been
+  // initially created above, is not cleaned up. Usually such a Thread will terminate and the
+  // Trace-Token context disappears. In rare cases the Tread may continue running with the
+  // Trace-Token context created above.
+  // This will not happen, if a Trace-Token context already existed when the client request filtered
+  // started. In this case the context will be closed by the caller of the client.
   @Override
   public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
     if (requestContext.getProperty(TRACE_TOKEN_CONTEXT)
