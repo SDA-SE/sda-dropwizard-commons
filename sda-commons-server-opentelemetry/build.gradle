@@ -10,9 +10,7 @@ dependencies {
   // this module provides provides a builder to setup an instance sdk
   api 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure'
   api 'io.opentelemetry:opentelemetry-exporter-otlp'
-  api 'io.opentelemetry:opentelemetry-exporter-jaeger', {
-    exclude group: "io.opentelemetry", module: "opentelemetry-exporter-common"
-  }
+
   // provides some conventional static attributes that are recommended for manual instrumentation.
   api 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv', {
     exclude group: "io.opentelemetry.semconv", module: "opentelemetry-semconv"

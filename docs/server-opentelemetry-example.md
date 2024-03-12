@@ -7,9 +7,8 @@ See the [`OpenTelemetryTracingApp`](https://github.com/SDA-SE/sda-dropwizard-com
 
 ## How to run the example
 
-Start the example app and pass `server config.yml` as command line arguments and 
-- `otel.traces.exporter=jaeger`
-- `otel.exporter.jaeger.endpoint=http://jaeger-host:14250`.
+Start the example app and pass `server config.yml` as command line arguments and
+- `otel.exporter.otlp.endpoint=http://jaeger-host:4317`.
 You also have to start Jaeger, for example using the [Jaeger all-in-one image](https://hub.docker.com/r/jaegertracing/all-in-one).
 Afterwards you can perform the following requests:
 

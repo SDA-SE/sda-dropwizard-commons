@@ -22,8 +22,7 @@ class SdaConfigPropertyProviderTest {
   void shouldHaveDefaultProperties() {
     assertThat(SdaConfigPropertyProvider.getProperties())
         .containsEntry("otel.service.name", "my-example-service")
-        .containsEntry("otel.traces.exporter", "jaeger")
-        .containsEntry("otel.exporter.jaeger.endpoint", "http://jaeger-collector.jaeger:14250")
+        .containsEntry("otel.exporter.otlp.endpoint", "http://jaeger-collector.jaeger:4317")
         .containsEntry("otel.metrics.exporter", "none")
         .containsEntry("otel.propagators", "jaeger,b3,tracecontext,baggage");
   }
