@@ -1408,9 +1408,8 @@
 <p>It also provides an example for how to add custom manual instrumentation in case it is needed.
 See the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-opentelemetry-example/src/main/java/org/sdase/server/opentelemetry/example/OpenTelemetryTracingApp.java"><code>OpenTelemetryTracingApp</code></a> for the examples.</p>
 <h2 id="how-to-run-the-example">How to run the example<a class="headerlink" href="#how-to-run-the-example" title="Permanent link">&para;</a></h2>
-<p>Start the example app and pass <code>server config.yml</code> as command line arguments and 
-- <code>otel.traces.exporter=jaeger</code>
-- <code>otel.exporter.jaeger.endpoint=http://jaeger-host:14250</code>.
+<p>Start the example app and pass <code>server config.yml</code> as command line arguments and
+- <code>otel.exporter.otlp.endpoint=http://jaeger-host:4317</code>.
 You also have to start Jaeger, for example using the <a href="https://hub.docker.com/r/jaegertracing/all-in-one">Jaeger all-in-one image</a>.
 Afterwards you can perform the following requests:</p>
 <ul>

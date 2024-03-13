@@ -899,9 +899,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#using-otlp-exporter" class="md-nav__link">
+  <a href="#using-other-exporters" class="md-nav__link">
     <span class="md-ellipsis">
-      Using OTLP exporter
+      Using other exporters
     </span>
   </a>
   
@@ -1513,9 +1513,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#using-otlp-exporter" class="md-nav__link">
+  <a href="#using-other-exporters" class="md-nav__link">
     <span class="md-ellipsis">
-      Using OTLP exporter
+      Using other exporters
     </span>
   </a>
   
@@ -1610,20 +1610,16 @@ The configuration can be done either with environment variables or system proper
 <p>The service name is used to identify the source (the sender) of the received telemetry data in the monitoring backend. Therefore, it's important that every service has a unique name.
 To provide the application with a custom name for each deployment, the <code>OTEL_SERVICE_NAME</code> environment variable must be used.</p>
 <h3 id="basic-configuration">Basic configuration<a class="headerlink" href="#basic-configuration" title="Permanent link">&para;</a></h3>
-<p>By default, the module exports traces in the jaeger format, to a <a href="https://hub.docker.com/r/jaegertracing/jaeger-collector/">Jaeger collector</a>. This can be very handy for less local setup overhead, where the <a href="https://www.jaegertracing.io/docs/1.44/getting-started/#all-in-one">All-in-one Jaeger image</a> can be enough.
+<p>By default, the module exports traces in the otlp format, to a <a href="https://hub.docker.com/r/jaegertracing/jaeger-collector/">Jaeger collector</a>. This can be very handy for less local setup overhead, where the <a href="https://www.jaegertracing.io/docs/1.55/getting-started/#all-in-one">All-in-one Jaeger image</a> can be enough.
 - <code>OTEL_SERVICE_NAME=my-service</code>
-- <code>OTEL_TRACES_EXPORTER=jaeger</code>
-- <code>OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger-collector-host:14250</code></p>
-<blockquote>
-<p><strong><em>NOTE:</em></strong> It is recommended to not use this option in production even if the used monitoring backend is Jaeger. It is better to export the telemetry data in the <em>OTLP</em> format to a collector, and configure it to handle the transformation.</p>
-</blockquote>
-<h3 id="using-otlp-exporter">Using OTLP exporter<a class="headerlink" href="#using-otlp-exporter" title="Permanent link">&para;</a></h3>
-<p>To export traces in an otlp format, to an <a href="https://opentelemetry.io/docs/collector/">openTelemetry collector</a>. The most basic configuration would be to provide the service name and a collector endpoint.
-- <code>OTEL_SERVICE_NAME=my-service</code>
-- <code>OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-gateway-host:4317</code>
-- <code>OTEL_TRACES_EXPORTER=otlp</code></p>
+- <code>OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger-collector-host:4317</code></p>
 <p>Or in case if the collector is deployed as a sidecar:
 - <code>OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317</code></p>
+<h3 id="using-other-exporters">Using other exporters<a class="headerlink" href="#using-other-exporters" title="Permanent link">&para;</a></h3>
+<p>To export traces in a different format to an <a href="https://opentelemetry.io/docs/collector/">openTelemetry collector</a>,
+configure the exporter and exporter endpoint accordingly e.g.:
+- <code>OTEL_TRACES_EXPORTER=zipkin</code>
+- <code>OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://zipkin-host:9411</code></p>
 <h2 id="disable-tracing">Disable Tracing<a class="headerlink" href="#disable-tracing" title="Permanent link">&para;</a></h2>
 <p>In order to disable tracing in the applications that are using this bundle, or the <a href="../starter/">starter bundle</a>, the environment variable <code>TRACING_DISABLED=true</code> can be used.
 Setting <code>TRACING_DISABLED</code> to false will force the instrumented modules provided by sda-commons to use a no-op instance.</p>
