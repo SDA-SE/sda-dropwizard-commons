@@ -21,7 +21,8 @@ ext {
   kotlinVersion = '1.9.23'
   kotlinxCoroutinesVersion = '1.8.0'
   resilience4jVersion = '2.2.0'
-  openTelemetryVersion= '1.36.0'
+  openTelemetryVersion = '1.36.0'
+  openTelemetryAlpha2Version = '2.2.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '4.8.2'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
@@ -132,7 +133,7 @@ dependencies {
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
     api 'org.springframework.data:spring-data-mongodb:4.1.8' // Keep that version for now, since 4.2.0 introduces a bug
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
-    api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:2.2.0-alpha"
+    api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryAlpha2Version}"
     // check if commons-compress management is still needed after flapdoodle upgrade
     // flapdoodle 4.11.1 pulls commons-compress 1.25.0 with CVEs 2024-25710 and 2024-26308
     api "org.apache.commons:commons-compress:1.26.1"
@@ -160,7 +161,7 @@ dependencies {
 
     // sda-commons-server-s3
     api "org.reactivestreams:reactive-streams:1.0.4"
-    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2:2.2.0-alpha"
+    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2:${openTelemetryAlpha2Version}"
 
     // sda-commons-server-s3-testing
     api "io.findify:s3mock_2.13:0.2.6"
@@ -198,8 +199,8 @@ dependencies {
     api 'commons-io:commons-io:2.15.1'
 
     // sda-commons-server-opentelemetry
-    api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:2.2.0-alpha"
-    api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:2.2.0-alpha"
+    api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
+    api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
     api "io.opentelemetry:opentelemetry-semconv:1.30.1-alpha"
     api "io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.2.0"
