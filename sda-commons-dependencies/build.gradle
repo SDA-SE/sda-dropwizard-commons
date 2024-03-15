@@ -160,7 +160,7 @@ dependencies {
 
     // sda-commons-server-s3
     api "org.reactivestreams:reactive-streams:1.0.4"
-    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2:2.1.0-alpha"
+    api "io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2:2.2.0-alpha"
 
     // sda-commons-server-s3-testing
     api "io.findify:s3mock_2.13:0.2.6"
