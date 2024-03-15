@@ -132,7 +132,7 @@ dependencies {
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
     api 'org.springframework.data:spring-data-mongodb:4.1.8' // Keep that version for now, since 4.2.0 introduces a bug
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
-    api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:2.1.0-alpha"
+    api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:2.2.0-alpha"
     // check if commons-compress management is still needed after flapdoodle upgrade
     // flapdoodle 4.11.1 pulls commons-compress 1.25.0 with CVEs 2024-25710 and 2024-26308
     api "org.apache.commons:commons-compress:1.26.1"
