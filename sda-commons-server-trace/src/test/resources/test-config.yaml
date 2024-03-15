@@ -6,3 +6,6 @@ server:
   - type: http
     port: 0
   rootPath: "/api/*"
+logging:
+  appenders:
+    - type: console
