@@ -198,7 +198,7 @@ dependencies {
     api 'commons-io:commons-io:2.15.1'
 
     // sda-commons-server-opentelemetry
-    api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:2.1.0-alpha"
+    api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:2.2.0-alpha"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:2.2.0-alpha"
     api "io.opentelemetry:opentelemetry-semconv:1.30.1-alpha"
     api "io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha"
