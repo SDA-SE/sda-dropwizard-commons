@@ -28,6 +28,7 @@ public class TraceTokenTestApp extends Application<Configuration> {
   @Override
   public void run(Configuration configuration, Environment environment) {
     environment.jersey().register(this);
+    environment.admin().addTask(new TraceTokenAwareExampleTask());
   }
 
   @OPTIONS

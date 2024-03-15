@@ -46,3 +46,23 @@ public class MyApplication extends Application<MyConfiguration> {
    }
 }
 ```
+
+### Custom initialization
+
+In some cases, Dropwizard can't be configured to start correlation for a specific initialization
+point.
+For example, a dedicated correlation for each entity may be useful when batch processes act on
+multiple entities in the database.
+Also, [Dropwizard Tasks](https://www.dropwizard.io/en/release-3.0.x/manual/core.html#tasks) can't be
+configured on library level like regular HTTP endpoints although correlation may be desired here as
+well.
+
+To cover such individual cases, the library allows to wrap an operation in a `TraceTokenContext`.
+This will result in a `Trace-Token` in the log MDC, forwarding the trace token with clients build
+with [client-jersey](./client-jersey.md) and forwarding the parent trace token with producers of
+[server-kafka](./server-kafka.md).
+
+??? example "Trace Context for Dropwizard Tasks"
+    ```java
+    --8<-- "./sda-commons-server-trace/src/test/java/org/sdase/commons/server/trace/test/TraceTokenAwareExampleTask.java"
+    ```
