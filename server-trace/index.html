@@ -1018,6 +1018,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom initialization
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1386,6 +1401,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom initialization
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1457,6 +1487,79 @@ to the Dropwizard application:</p>
 <span class="w">   </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
+<h3 id="custom-initialization">Custom initialization<a class="headerlink" href="#custom-initialization" title="Permanent link">&para;</a></h3>
+<p>In some cases, Dropwizard can't be configured to start correlation for a specific initialization
+point.
+For example, a dedicated correlation for each entity may be useful when batch processes act on
+multiple entities in the database.
+Also, <a href="https://www.dropwizard.io/en/release-3.0.x/manual/core.html#tasks">Dropwizard Tasks</a> can't be
+configured on library level like regular HTTP endpoints although correlation may be desired here as
+well.</p>
+<p>To cover such individual cases, the library allows to wrap an operation in a <code>TraceTokenContext</code>.
+This will result in a <code>Trace-Token</code> in the log MDC, forwarding the trace token with clients build
+with <a href="../client-jersey/">client-jersey</a> and forwarding the parent trace token with producers of
+<a href="../server-kafka/">server-kafka</a>.</p>
+<details class="example">
+<summary>Trace Context for Dropwizard Tasks</summary>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nn">org.sdase.commons.server.trace.test</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">io.dropwizard.servlets.tasks.Task</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.io.PrintWriter</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Map</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.sdase.commons.shared.tracing.TraceTokenContext</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.slf4j.Logger</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.slf4j.LoggerFactory</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TraceTokenAwareExampleTask</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Logger</span><span class="w"> </span><span class="n">LOG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LoggerFactory</span><span class="p">.</span><span class="na">getLogger</span><span class="p">(</span><span class="n">TraceTokenAwareExampleTask</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="nf">TraceTokenAwareExampleTask</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">super</span><span class="p">(</span><span class="s">&quot;example-task&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@Override</span>
+<span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">parameters</span><span class="p">,</span><span class="w"> </span><span class="n">PrintWriter</span><span class="w"> </span><span class="n">output</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">traceTokenContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TraceTokenContext</span><span class="p">.</span><span class="na">getOrCreateTraceTokenContext</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">LOG</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;Log with a TraceToken in the MDC.&quot;</span><span class="p">);</span>
+<span class="w">      </span><span class="c1">// Note: Response headers will NOT contain the Trace-Token.</span>
+<span class="w">      </span><span class="n">output</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Trace-Token: %s&quot;</span><span class="p">.</span><span class="na">formatted</span><span class="p">(</span><span class="n">traceTokenContext</span><span class="p">.</span><span class="na">get</span><span class="p">()));</span>
+
+<span class="w">      </span><span class="c1">// Implement the task here. Logs will contain the &#39;Trace-Token&#39; from the MDC.</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+</details>
 
 
 
