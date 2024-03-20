@@ -371,6 +371,9 @@ opa:
   # Package name of the policy file that should be evaluated for authorization decision
   # The package name is used to resolve the full path
   policyPackage: http.authz
+  # By default, openapi(.json|.yaml) are excluded from authorization. 
+  # To include these endpoints, overwrite the default value of this property to false
+  excludeOpenApi: true
   # Advanced configuration of the HTTP client that is used to call the Open Policy Agent
   opaClient:
     # timeout for OPA requests, default 500ms

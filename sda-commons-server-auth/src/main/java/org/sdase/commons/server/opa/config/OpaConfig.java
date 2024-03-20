@@ -23,6 +23,8 @@ public class OpaConfig {
    */
   @NotNull private String policyPackage = "";
 
+  private boolean excludeOpenApi = true;
+
   public OpaClientConfiguration getOpaClient() {
     return opaClient;
   }
@@ -56,6 +58,15 @@ public class OpaConfig {
 
   public OpaConfig setPolicyPackage(String policyPackage) {
     this.policyPackage = policyPackage;
+    return this;
+  }
+
+  public boolean isExcludeOpenApi() {
+    return excludeOpenApi;
+  }
+
+  public OpaConfig setExcludeOpenApi(boolean excludeOpenApi) {
+    this.excludeOpenApi = excludeOpenApi;
     return this;
   }
 
