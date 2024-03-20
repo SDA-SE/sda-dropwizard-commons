@@ -16,9 +16,8 @@ metadata:
     SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow
     the patterns and specifications promoted by the SDA SE.
   links:
-    - url: https://github.com/SDA-SE/sda-dropwizard-commons
-      title: GitHub
-      icon: code
+    - url: https://medium.com/sda-se/sda-dropwizard-commons-v3-448302578112
+      title: SDA Dropwizard Commons v3
 spec:
   type: library
   lifecycle: production
