@@ -2041,7 +2041,10 @@ service must also be adjusted to start OPA as sidecar.</p>
 <span class="normal"> 9</span>
 <span class="normal">10</span>
 <span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">opa</span><span class="p">:</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">opa</span><span class="p">:</span>
 <span class="w">  </span><span class="c1"># Disable authorization. An empty prinicpal is created with an empty set of constraints</span>
 <span class="w">  </span><span class="nt">disableOpa</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="c1"># Url to the OPA sidecar</span>
@@ -2049,6 +2052,9 @@ service must also be adjusted to start OPA as sidecar.</p>
 <span class="w">  </span><span class="c1"># Package name of the policy file that should be evaluated for authorization decision</span>
 <span class="w">  </span><span class="c1"># The package name is used to resolve the full path</span>
 <span class="w">  </span><span class="nt">policyPackage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http.authz</span>
+<span class="w">  </span><span class="c1"># By default, openapi(.json|.yaml) are excluded from authorization. </span>
+<span class="w">  </span><span class="c1"># To include these endpoints, overwrite the default value of this property to false</span>
+<span class="w">  </span><span class="nt">excludeOpenApi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="c1"># Advanced configuration of the HTTP client that is used to call the Open Policy Agent</span>
 <span class="w">  </span><span class="nt">opaClient</span><span class="p">:</span>
 <span class="w">    </span><span class="c1"># timeout for OPA requests, default 500ms</span>
