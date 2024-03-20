@@ -126,7 +126,7 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
     // exclude OpenAPI
     List<String> excludePattern = new ArrayList<>();
-    if (excludeOpenApi()) {
+    if (excludeOpenApi(config.isExcludeOpenApi())) {
       excludePattern.addAll(getOpenApiExcludePatterns());
     }
 
@@ -202,10 +202,11 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
     return singletonList("openapi\\.(json|yaml)");
   }
 
-  private boolean excludeOpenApi() {
+  private boolean excludeOpenApi(boolean exclude) {
     try {
       if (getClass().getClassLoader().loadClass("org.sdase.commons.server.openapi.OpenApiBundle")
-          != null) {
+              != null
+          && exclude) {
         return true;
       }
     } catch (ClassNotFoundException e) {
