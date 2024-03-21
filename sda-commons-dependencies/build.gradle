@@ -100,7 +100,7 @@ dependencies {
     api "org.ow2.asm:asm:9.6", {
       because "version conflict within Wiremock"
     }
-    api "net.minidev:json-smart:2.5.0", {
+    api "net.minidev:json-smart:2.5.1", {
       because 'conflict between json-path 2.7.0 (2.4.7) and wirmock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
     }
 
