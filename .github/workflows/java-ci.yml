@@ -52,6 +52,7 @@ jobs:
           path: |
             build/reports/
             */build/test-results/**/*.xml
+            */build/classes/
           retention-days: 7
 
   publish-test-results:
