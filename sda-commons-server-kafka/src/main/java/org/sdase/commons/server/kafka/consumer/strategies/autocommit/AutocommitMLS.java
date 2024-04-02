@@ -60,7 +60,9 @@ public class AutocommitMLS<K, V> extends MessageListenerStrategy<K, V> {
               handler.getClass(),
               e);
           boolean shouldContinue = errorHandler.handleError(consumerRecord, e, consumer);
-          if (!shouldContinue) {
+          if (shouldContinue) {
+            addOffsetToCommitOnClose(consumerRecord);
+          } else {
             throw new StopListenerException(e);
           }
         }
