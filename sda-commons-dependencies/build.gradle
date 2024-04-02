@@ -196,7 +196,7 @@ dependencies {
     api 'org.jboss.weld:weld-junit5:4.0.3.Final'
 
     // sda-commons-shared-*
-    api 'commons-io:commons-io:2.15.1'
+    api 'commons-io:commons-io:2.16.0'
 
     // sda-commons-server-opentelemetry
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
