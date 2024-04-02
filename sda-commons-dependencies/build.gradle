@@ -25,7 +25,7 @@ ext {
   openTelemetryAlpha2Version = '2.2.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '4.8.2'
-  tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
+  tuprologVersion = '1.0.0' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.77'
   victoolsVersion = '4.35.0'
   flywayVersion = '10.10.0'
