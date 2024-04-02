@@ -5,6 +5,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_CREATED;
 import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.awaitility.Awaitility.await;
 
 import io.dropwizard.core.Application;
@@ -13,19 +14,19 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.EventData;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.data.StatusData;
-import io.opentelemetry.semconv.SemanticAttributes;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -121,17 +122,25 @@ class OpenTelemetryBundleIT {
               assertThat(events)
                   .isNotEmpty()
                   .extracting(EventData::getAttributes)
-                  .anyMatch(
+                  .extracting(Attributes::asMap)
+                  .anySatisfy(
                       attributes ->
-                          StringUtils.contains(
-                                  attributes.get(SemanticAttributes.EXCEPTION_TYPE),
-                                  "jakarta.ws.rs.InternalServerErrorException")
-                              && StringUtils.contains(
-                                  attributes.get(SemanticAttributes.EXCEPTION_MESSAGE),
-                                  "Something went wrong")
-                              && StringUtils.contains(
-                                  attributes.get(SemanticAttributes.EXCEPTION_STACKTRACE),
-                                  "jakarta.ws.rs.InternalServerErrorException: Something went wrong"));
+                          assertThat(attributes)
+                              .hasEntrySatisfying(
+                                  AttributeKey.stringKey("exception.type"),
+                                  v ->
+                                      assertThat(v)
+                                          .isEqualTo("jakarta.ws.rs.InternalServerErrorException"))
+                              .hasEntrySatisfying(
+                                  AttributeKey.stringKey("exception.message"),
+                                  v -> assertThat(v).isEqualTo("Something went wrong"))
+                              .hasEntrySatisfying(
+                                  AttributeKey.stringKey("exception.stacktrace"),
+                                  v ->
+                                      assertThat(v)
+                                          .asString()
+                                          .startsWith(
+                                              "jakarta.ws.rs.InternalServerErrorException: Something went wrong")));
             });
   }
 
@@ -163,7 +172,7 @@ class OpenTelemetryBundleIT {
               List<String> spanHeaders =
                   spans.get(0).getAttributes().get(HeadersUtils.HTTP_REQUEST_HEADERS);
               assertThat(spanHeaders)
-                  .asList()
+                  .asInstanceOf(LIST)
                   .doesNotContain("[Authorization = 'Bearer eyXXX.yyy.zzz']")
                   .contains("[Accept = 'text/html']", "[Authorization = 'Bearer ?']");
             });
@@ -197,7 +206,7 @@ class OpenTelemetryBundleIT {
                   spans.get(0).getAttributes().get(HeadersUtils.HTTP_RESPONSE_HEADERS);
               assertThat(spanHeaders)
                   .isNotEmpty()
-                  .asList()
+                  .asInstanceOf(LIST)
                   .contains("[Location = 'http://sdase/id']");
             });
   }

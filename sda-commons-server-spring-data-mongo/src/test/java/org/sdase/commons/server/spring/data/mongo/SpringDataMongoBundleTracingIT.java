@@ -8,9 +8,9 @@ import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.SpanData;
-import io.opentelemetry.semconv.SemanticAttributes;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +68,7 @@ class SpringDataMongoBundleTracingIT {
     assertThat(
             spans.stream()
                 .map(SpanData::getAttributes)
-                .map(attributes -> attributes.get(SemanticAttributes.DB_STATEMENT))
+                .map(attributes -> attributes.get(AttributeKey.stringKey("db.statement")))
                 .collect(Collectors.toList()))
         .isNotEmpty();
   }
@@ -85,7 +85,7 @@ class SpringDataMongoBundleTracingIT {
     List<String> dbStatements =
         spans.stream()
             .map(SpanData::getAttributes)
-            .map(attributes -> attributes.get(SemanticAttributes.DB_STATEMENT))
+            .map(attributes -> attributes.get(AttributeKey.stringKey("db.statement")))
             .toList();
     assertThat(dbStatements)
         .isNotEmpty()
