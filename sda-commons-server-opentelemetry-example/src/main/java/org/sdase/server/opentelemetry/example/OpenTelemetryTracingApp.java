@@ -144,9 +144,8 @@ public class OpenTelemetryTracingApp extends Application<Configuration> {
   }
 
   private void tagException(Span span, Exception ex) {
-    // Analogous to OpenTracing log fields that are recommended for instrumentors,
-    // OpenTelemetry defines SemanticAttributes that provide similar conventions.
-    // https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification/trace/semantic_conventions
+    // OpenTelemetry defines attribute conventions that should be followed:
+    // https://github.com/open-telemetry/opentelemetry-specification/tree/v1.23.0/specification/trace/semantic_conventions
 
     span.setStatus(StatusCode.ERROR, "Something bad happened!");
     span.setAttribute(SemanticAttributes.EXCEPTION_EVENT_NAME, "error");

@@ -13,9 +13,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.SpanData;
-import io.opentelemetry.semconv.SemanticAttributes;
 import jakarta.ws.rs.client.Client;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,8 +62,8 @@ class ClientTraceTest {
 
     assertThat(spans.get(0).getAttributes())
         .extracting(
-            att -> att.get(SemanticAttributes.URL_FULL),
-            att -> att.get(SemanticAttributes.HTTP_REQUEST_METHOD))
+            att -> att.get(AttributeKey.stringKey("url.full")),
+            att -> att.get(AttributeKey.stringKey("http.request.method")))
         .contains(WIRE.baseUrl().concat("/"), "GET");
   }
 

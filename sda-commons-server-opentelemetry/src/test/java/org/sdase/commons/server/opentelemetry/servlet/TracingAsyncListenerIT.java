@@ -12,15 +12,15 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.EventData;
 import io.opentelemetry.sdk.trace.data.SpanData;
-import io.opentelemetry.semconv.SemanticAttributes;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junitpioneer.jupiter.RetryingTest;
@@ -93,17 +93,23 @@ class TracingAsyncListenerIT {
               assertThat(events)
                   .isNotEmpty()
                   .extracting(EventData::getAttributes)
-                  .anyMatch(
+                  .extracting(Attributes::asMap)
+                  .anySatisfy(
                       attributes ->
-                          StringUtils.contains(
-                                  attributes.get(SemanticAttributes.EXCEPTION_TYPE),
-                                  "java.io.IOException")
-                              && StringUtils.contains(
-                                  attributes.get(SemanticAttributes.EXCEPTION_MESSAGE),
-                                  "Error while doing something.")
-                              && StringUtils.contains(
-                                  attributes.get(SemanticAttributes.EXCEPTION_STACKTRACE),
-                                  "java.io.IOException: Error while doing something."));
+                          assertThat(attributes)
+                              .hasEntrySatisfying(
+                                  AttributeKey.stringKey("exception.type"),
+                                  v -> assertThat(v).isEqualTo("java.io.IOException"))
+                              .hasEntrySatisfying(
+                                  AttributeKey.stringKey("exception.message"),
+                                  v -> assertThat(v).isEqualTo("Error while doing something."))
+                              .hasEntrySatisfying(
+                                  AttributeKey.stringKey("exception.stacktrace"),
+                                  v ->
+                                      assertThat(v)
+                                          .asString()
+                                          .startsWith(
+                                              "java.io.IOException: Error while doing something.")));
             });
   }
 
