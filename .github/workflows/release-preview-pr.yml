@@ -1,0 +1,46 @@
+name: Release Preview
+on:
+  pull_request:
+
+jobs:
+  notes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 #v4.1.2
+        with:
+          fetch-depth: 0
+      - name: Collect semantic-release-info
+        id: semantic_release_info
+        uses: fingerprintjs/action-semantic-release-info@67518674cf1e7edf4e0d565bcca4e08faf03caf3 # v2.0.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+    outputs:
+      version: ${{steps.semantic_release_info.outputs.version}}
+      type: ${{steps.semantic_release_info.outputs.type}}
+      notes: ${{steps.semantic_release_info.outputs.notes}}
+      no_release: ${{steps.semantic_release_info.outputs.no_release}}
+  release-comment:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    needs:
+      - notes
+    steps:
+      - if: ${{ needs.notes.outputs.no_release == 'false' }}
+        name: Add comment to the PR
+        uses: marocchino/sticky-pull-request-comment@331f8f5b4215f0445d3c07b4967662a32a2d3e31 # v2.9.0
+        with:
+          header: ReleasePreview
+          message: |
+            <details>
+            <summary>Next <strong>${{needs.notes.outputs.type}}</strong> release will be <strong>${{needs.notes.outputs.version}}</strong>, Show Release Notes</summary>
+
+            ${{needs.notes.outputs.notes}}
+            </details>
+
+      - if: ${{ needs.notes.outputs.no_release == 'true' }}
+        name: Add comment to the PR
+        uses: marocchino/sticky-pull-request-comment@331f8f5b4215f0445d3c07b4967662a32a2d3e31 # v2.9.0
+        with:
+          header: ReleasePreview
+          message: "⚠⚠⚠ This pull request will not create a new release. ⚠⚠⚠"
