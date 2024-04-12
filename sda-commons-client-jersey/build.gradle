@@ -14,10 +14,9 @@ dependencies {
   }
   api 'io.opentelemetry:opentelemetry-api'
   api 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv', {
-    exclude group: "io.opentelemetry.semconv", module: "opentelemetry-semconv"
     exclude group: "io.opentelemetry.instrumentation", module: "opentelemetry-instrumentation-api"
   }
-  api 'io.opentelemetry.semconv:opentelemetry-semconv'
+  api 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api'
 
   implementation 'io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0'
   implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2'
