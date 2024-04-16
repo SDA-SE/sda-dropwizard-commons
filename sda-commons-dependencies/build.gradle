@@ -228,7 +228,7 @@ dependencies {
 
     // Scala: Version conflicts between Jackson and Kafka
     api "org.scala-lang.modules:scala-java8-compat_2.13:1.0.2"
-    api "org.scala-lang.modules:scala-collection-compat_2.13:2.11.0"
+    api "org.scala-lang.modules:scala-collection-compat_2.13:2.12.0"
     api "org.scala-lang:scala-library:$scalaVersion"
     api "org.scala-lang:scala-reflect:$scalaVersion"
     api "com.typesafe.scala-logging:scala-logging_2.13:3.9.5"
