@@ -16,6 +16,8 @@ dependencies {
     exclude group: "io.opentelemetry.instrumentation", module: "opentelemetry-instrumentation-api"
     exclude(group: "io.opentelemetry.semconv", module: "opentelemetry-semconv")
   }
+  api('io.opentelemetry.semconv:opentelemetry-semconv')
+
   // Provides support for jaeger baggage
   api 'io.opentelemetry:opentelemetry-extension-trace-propagators'
   api "jakarta.xml.bind:jakarta.xml.bind-api"
