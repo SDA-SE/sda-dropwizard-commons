@@ -14,6 +14,7 @@ dependencies {
   // provides some conventional static attributes that are recommended for manual instrumentation.
   api 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv', {
     exclude group: "io.opentelemetry.instrumentation", module: "opentelemetry-instrumentation-api"
+    exclude(group: "io.opentelemetry.semconv", module: "opentelemetry-semconv")
   }
   // Provides support for jaeger baggage
   api 'io.opentelemetry:opentelemetry-extension-trace-propagators'
