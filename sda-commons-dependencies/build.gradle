@@ -152,12 +152,18 @@ dependencies {
     api "io.swagger.parser.v3:swagger-parser-v3:2.1.22"
 
     // sda-commons-server-prometheus
-    api "io.prometheus:simpleclient:$prometheusVersion"
     api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
     api "io.prometheus:simpleclient_servlet_jakarta:$prometheusVersion"
 
     api "io.micrometer:micrometer-core:$micrometerVersion"
-    api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
+    api "io.micrometer:micrometer-registry-prometheus-simpleclient:$micrometerVersion", {
+      because '''\
+          Dropwizard 4 is not compatible to Java client 1.x version.'
+          This module is deprecated, so when we upgrade to Dropwizard 5 there is a // TODO to
+          migrate to io.micrometer:micrometer-registry-prometheus:1.13.0.
+          See https://github.com/micrometer-metrics/micrometer/wiki/1.13-Migration-Guide#prometheus-java-client-0x-to-1x-upgrade
+          '''
+    }
 
     // sda-commons-server-s3
     api "org.reactivestreams:reactive-streams:1.0.4"
