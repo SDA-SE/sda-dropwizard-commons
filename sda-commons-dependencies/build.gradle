@@ -18,7 +18,7 @@ ext {
   kafkaVersion = '3.7.0'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.42.0'
-  kotlinVersion = '1.9.24'
+  kotlinVersion = '2.0.0'
   kotlinxCoroutinesVersion = '1.8.1'
   resilience4jVersion = '2.2.0'
   openTelemetryVersion = '1.36.0'
