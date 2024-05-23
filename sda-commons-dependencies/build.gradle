@@ -24,7 +24,7 @@ ext {
   openTelemetryVersion = '1.36.0'
   openTelemetryAlpha2Version = '2.3.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
-  mongoDbDriverVersion = '4.9.1'
+  mongoDbDriverVersion = '4.11.2'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.78.1'
   victoolsVersion = '4.35.0'
@@ -131,7 +131,7 @@ dependencies {
     api "it.unibo.tuprolog:parser-theory-jvm:$tuprologVersion"
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
-    api 'org.springframework.data:spring-data-mongodb:4.1.10' // Keep that version for now, since 4.2.0 introduces a bug
+    api 'org.springframework.data:spring-data-mongodb:4.1.12' // Keep that version for now, since 4.2.0 introduces a bug
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryAlpha2Version}"
     // check if commons-compress management is still needed after flapdoodle upgrade
@@ -158,8 +158,8 @@ dependencies {
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus-simpleclient:$micrometerVersion", {
       because '''\
-          Dropwizard 4 is not compatible to Java client 1.x version.'
-          This module is deprecated, so when we upgrade to Dropwizard 5 there is a // TODO to
+          Dropwizard 4 is not compatible to Java client 1.x version.
+          This module is deprecated, so when we upgrade to Dropwizard 5 we should
           migrate to io.micrometer:micrometer-registry-prometheus:1.13.0.
           See https://github.com/micrometer-metrics/micrometer/wiki/1.13-Migration-Guide#prometheus-java-client-0x-to-1x-upgrade
           '''
