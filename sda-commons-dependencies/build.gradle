@@ -9,7 +9,7 @@ javaPlatform {
 ext {
   dropwizardVersion = '4.0.7'
   prometheusVersion = '0.16.0'
-  micrometerVersion = '1.12.5'
+  micrometerVersion = '1.13.0'
   swaggerCoreV3Version = '2.2.22'
   weldVersion = '5.1.2.Final'
   jacksonVersion = '2.17.1'
@@ -22,9 +22,9 @@ ext {
   kotlinxCoroutinesVersion = '1.8.1'
   resilience4jVersion = '2.2.0'
   openTelemetryVersion = '1.36.0'
-  openTelemetryAlpha2Version = '2.3.0-alpha'
+  openTelemetryAlpha2Version = '2.4.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
-  mongoDbDriverVersion = '4.9.1'
+  mongoDbDriverVersion = '4.11.2'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.78.1'
   victoolsVersion = '4.35.0'
@@ -131,7 +131,7 @@ dependencies {
     api "it.unibo.tuprolog:parser-theory-jvm:$tuprologVersion"
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
-    api 'org.springframework.data:spring-data-mongodb:4.1.10' // Keep that version for now, since 4.2.0 introduces a bug
+    api 'org.springframework.data:spring-data-mongodb:4.1.12' // Keep that version for now, since 4.2.0 introduces a bug
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryAlpha2Version}"
     // check if commons-compress management is still needed after flapdoodle upgrade
@@ -152,12 +152,18 @@ dependencies {
     api "io.swagger.parser.v3:swagger-parser-v3:2.1.22"
 
     // sda-commons-server-prometheus
-    api "io.prometheus:simpleclient:$prometheusVersion"
     api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
     api "io.prometheus:simpleclient_servlet_jakarta:$prometheusVersion"
 
     api "io.micrometer:micrometer-core:$micrometerVersion"
-    api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
+    api "io.micrometer:micrometer-registry-prometheus-simpleclient:$micrometerVersion", {
+      because '''\
+          Dropwizard 4 is not compatible to Java client 1.x version.
+          This module is deprecated, so when we upgrade to Dropwizard 5 we should
+          migrate to io.micrometer:micrometer-registry-prometheus:1.13.0.
+          See https://github.com/micrometer-metrics/micrometer/wiki/1.13-Migration-Guide#prometheus-java-client-0x-to-1x-upgrade
+          '''
+    }
 
     // sda-commons-server-s3
     api "org.reactivestreams:reactive-streams:1.0.4"
@@ -203,8 +209,8 @@ dependencies {
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
     api "io.opentelemetry:opentelemetry-semconv:1.30.1-alpha"
     api "io.opentelemetry.semconv:opentelemetry-semconv:1.25.0-alpha"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.3.0"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.2-alpha"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.4.0"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.3-alpha"
     api "com.squareup.okhttp3:okhttp:4.12.0" // bump from 4.9.3 used in opentelemetry-exporter-otlp-common
     api 'com.squareup.okio:okio:3.9.0', {
       because 'CVE-2023-3635 in 3.2.0'

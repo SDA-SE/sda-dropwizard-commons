@@ -6,10 +6,7 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-certificates')
 
-  api 'org.springframework.data:spring-data-mongodb', {
-    // solve conflict, micrometer-observation is pulled in by micrometer-core anyway
-    exclude group: 'io.micrometer', module: 'micrometer-observation'
-  }
+  api 'org.springframework.data:spring-data-mongodb'
   api 'org.mongodb:mongodb-driver-core'
   api 'org.mongodb:mongodb-driver-sync'
   api "io.opentelemetry:opentelemetry-api"
