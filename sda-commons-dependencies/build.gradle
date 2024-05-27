@@ -91,7 +91,7 @@ dependencies {
 
     // overall testing dependencies
     api "org.awaitility:awaitility:4.2.1"
-    api 'org.assertj:assertj-core:3.25.3'
+    api 'org.assertj:assertj-core:3.26.0'
 
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
