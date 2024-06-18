@@ -1,0 +1,73 @@
+name: License Check
+
+# This check can be executed locally as follows:
+#
+# Install Trivy, see https://aquasecurity.github.io/trivy/v0.18.3/installation/
+# $ brew install aquasecurity/trivy/trivy
+#
+# Lock dependencies
+# $ ./gradlew clean cyclonedxBom
+#
+# Check for licenses
+# $ trivy sbom --scanners license --format table --ignore-policy .github/trivy/license-policy.rego build/reports/bom.json
+
+on:
+  pull_request: {}
+  release:
+    types:
+      - created
+
+jobs:
+  trivy-license-check:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          cache: 'gradle'
+
+      - name: Create SBOM
+        run: ./gradlew clean cyclonedxBom
+
+      - name: Attach SBOM to Release
+        if: github.event.release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" "./build/reports/bom.json#CycloneDX generated JSON SBOM"
+          gh release upload "${{ github.event.release.tag_name }}" "./build/reports/bom.xml#CycloneDX generated XML SBOM"
+
+      - name: Check for forbidden licenses
+        if: github.event.pull_request
+        run: >
+          docker run --rm
+          -v "${PWD}:/project"
+          aquasec/trivy:0.51.1
+          sbom --scanners license
+          --format json
+          --ignore-policy /project/.github/trivy/license-policy.rego
+          --exit-code 1
+          /project/build/reports/bom.json
+          >> trivy-licenses.json
+
+      - name: Add failure Job summary
+        if: failure() && github.event.pull_request
+        run: |
+          echo "| Dependency | License | Category | Severity |" > trivy-licenses.md
+          echo "|------------|---------|----------|----------|" >> trivy-licenses.md
+          cat trivy-licenses.json | jq --raw-output '.Results[] | select(.Licenses) | .Licenses[] | "| \(.PkgName) | \(.Name) | \(.Category) | \(.Severity) |"' >> trivy-licenses.md
+          echo '**License violations or unknown licenses found in dependencies:**' >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_STEP_SUMMARY
+          cat trivy-licenses.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Add success Job summary
+        if: success() && github.event.pull_request
+        run: |
+          echo 'All dependencies have allowed licenses.' >> $GITHUB_STEP_SUMMARY
