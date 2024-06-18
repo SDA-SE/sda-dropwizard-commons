@@ -85,3 +85,9 @@ ignore {
   input.PkgName == "org.reactivestreams:reactive-streams"
   input.Name == "MIT-0"
 }
+
+# org.slf4j:log4j-over-slf4j is Apache 2.0, see https://central.sonatype.com/artifact/org.slf4j/log4j-over-slf4j/2.0.12
+ignore {
+  input.PkgName == "org.slf4j:log4j-over-slf4j"
+  input.Name == "Apache-1.0"
+}
