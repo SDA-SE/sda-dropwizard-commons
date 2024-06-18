@@ -91,3 +91,10 @@ ignore {
   input.PkgName == "org.slf4j:log4j-over-slf4j"
   input.Name == "Apache-1.0"
 }
+
+# ignore Oracle Free Use Terms and Conditions (FUTC) used in com.oracle.database.* dependencies which
+# come transitive via DB Rider, license text: https://www.oracle.com/downloads/licenses/oracle-free-license.html
+# we allowed these dependencies in Fossa
+ignore {
+  input.Name == "Oracle Free Use Terms and Conditions (FUTC)"
+}
