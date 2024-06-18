@@ -98,3 +98,39 @@ ignore {
 ignore {
   input.Name == "Oracle Free Use Terms and Conditions (FUTC)"
 }
+
+# we allowed jakarta.activation:jakarta.activation-api in Fossa
+ignore {
+  input.PkgName == "jakarta.activation:jakarta.activation-api"
+  input.Name == "EDL 1.0"
+}
+
+# we allowed these dependencies in Fossa, CycloneDX identifies EDL 1.0 and jQuery license for them,
+# which are not covered by approvals in the Fossa export although they are accepted there
+default glassfishAllowedInFossa := [
+  "org.glassfish.jersey.connectors:jersey-apache5-connector",
+  "org.glassfish.jersey.containers:jersey-container-servlet",
+  "org.glassfish.jersey.containers:jersey-container-servlet-core",
+  "org.glassfish.jersey.core:jersey-client",
+  "org.glassfish.jersey.ext.cdi:jersey-cdi1x",
+  "org.glassfish.jersey.ext.cdi:jersey-cdi1x-servlet",
+  "org.glassfish.jersey.ext:jersey-bean-validation",
+  "org.glassfish.jersey.ext:jersey-metainf-services",
+  "org.glassfish.jersey.ext:jersey-proxy-client",
+  "org.glassfish.jersey.inject:jersey-hk2",
+  "org.glassfish.jersey.media:jersey-media-jaxb",
+  "org.glassfish.jersey.media:jersey-media-multipart",
+  "org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-inmemory",
+  "org.glassfish.jersey.test-framework:jersey-test-framework-core",
+]
+
+# we allowed glassfishAllowedInFossa in Fossa
+ignore {
+  input.PkgName == glassfishAllowedInFossa[_]
+  input.Name == "EDL 1.0"
+}
+# we allowed glassfishAllowedInFossa in Fossa
+ignore {
+  input.PkgName == glassfishAllowedInFossa[_]
+  input.Name == "jQuery license"
+}
