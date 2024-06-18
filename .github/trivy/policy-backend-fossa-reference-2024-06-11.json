@@ -1,0 +1,3576 @@
+{
+  "exportDate": "2024-06-11T09:04:04.685Z",
+  "policy": {
+    "title": "SDA-Services",
+    "type": "LICENSING",
+    "description": "Middleware components",
+    "organizationId": 8463,
+    "defaultAction": "APPROVE"
+  },
+  "rules": [
+    {
+      "type": "approved_license",
+      "licenseId": "0BSD",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "AAL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Abstyles",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Adobe-2006",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Adobe-Glyph",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ADSL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "AFL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "AFL-1.2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "AFL-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "AFL-2.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "AFL-3.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Afmparse",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "denied_license",
+      "licenseId": "AGPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Due to the way the software is distributed, linked and bundled, these licenses are almost always unusable because of their source disclosure requirements. We deny by default. "
+    },
+    {
+      "type": "denied_license",
+      "licenseId": "AGPL-3.0-only",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Due to the way the software is distributed, linked and bundled, these licenses are almost always unusable because of their source disclosure requirements. We deny by default. "
+    },
+    {
+      "type": "denied_license",
+      "licenseId": "AGPL-3.0-or-later",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Due to the way the software is distributed, linked and bundled, these licenses are almost always unusable because of their source disclosure requirements. We deny by default. "
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Aladdin",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Amazon-Software-License",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "AMDPLPA",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "AML",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "AMPAS",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "android-sdk",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ANTLR-PD",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Apache-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "Apache-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "Apache-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "APAFML",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "APL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "APSL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "APSL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "APSL-1.2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "APSL-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "Artistic-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": "DIRECT",
+      "notes": "Safe if code isn’t modified and notice requirements are followed. Otherwise, you must state and disclose the source code of modifications/derivative works."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Artistic-1.0-cl8",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Artistic-1.0-Perl",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Artistic-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": "DIRECT",
+      "notes": "Safe if code isn’t modified and notice requirements are followed. Otherwise, you must state and disclose the source code of modifications/derivative works."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Bahyph",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Barr",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Beerware",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BitTorrent-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BitTorrent-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Borceux",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "BouncyCastle",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "BSD-1-Clause",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "BSD-2-Clause",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-2-Clause-FreeBSD",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-2-Clause-NetBSD",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-2-Clause-Patent",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "BSD-3-Clause",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-3-Clause-Attribution",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-3-Clause-Clear",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-3-Clause-LBNL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-3-Clause-No-Nuclear-License",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-3-Clause-No-Nuclear-License-2014",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "BSD-3-Clause-No-Nuclear-Warranty",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "BSD-4-Clause",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-4-Clause-UC",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-Protection",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSD-Source-Code",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "BSL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "bzip2-1.0.5",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "bzip2-1.0.6",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Caldera",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CATOSL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "CC-BY-2.5",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "CC-BY-3.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-4.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-2.5",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-3.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-4.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-ND-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-ND-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-ND-2.5",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-ND-3.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-ND-4.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-SA-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-SA-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-SA-2.5",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-SA-3.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-NC-SA-4.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-ND-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-ND-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-ND-2.5",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-ND-3.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-ND-4.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-SA-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-SA-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-SA-2.5",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-SA-3.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CC-BY-SA-4.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "CC0-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "CDDL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Safe if code isn’t modified and notice requirements are followed. Otherwise, you must state and disclose the source code of modifications/derivative works."
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "CDDL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CDLA-Permissive-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CDLA-Sharing-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CECILL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CECILL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CECILL-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CECILL-2.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CECILL-B",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CECILL-C",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ClArtistic",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": "DIRECT",
+      "notes": "Safe if code isn’t modified and notice requirementsare followed. Otherwise, you must state and disclose the source code of modifications/derivative works."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CNRI-Jython",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CNRI-Python",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CNRI-Python-GPL-Compatible",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Colt",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Condor-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CPAL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "CPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "denied_license",
+      "licenseId": "CPOL-1.02",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Due to the way the software is distributed, linked and bundled, these licenses are almost always unusable because of their source disclosure requirements. We deny by default. "
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Crossword",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CrystalStacker",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "CUA-OPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Cube",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "curl",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "D-FSL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "diffmark",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "DOC",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Dotseqn",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "DSDP",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "dvipdfm",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ECL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ECL-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "eCos-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "EFL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "EFL-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "eGenix",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Entessa",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "EPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "EPL-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ErlPL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "EUDatagrid",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "EUPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "EUPL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "EUPL-1.2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Eurosym",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Fair",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Frameworx-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "FreeImage",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "FSFAP",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "FSFUL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "FSFULLR",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "FTL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GFDL-1.1-only",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GFDL-1.1-or-later",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GFDL-1.2-only",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GFDL-1.2-or-later",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GFDL-1.3-only",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GFDL-1.3-or-later",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Giftware",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GL2PS",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Glide",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Glulxe",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "gnuplot",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GPL-1.0-only",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GPL-1.0-or-later",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "denied_license",
+      "licenseId": "GPL-2.0-only",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Due to the way the software is distributed, linked and bundled, these licenses are almost always unusable because of their source disclosure requirements. We deny by default. "
+    },
+    {
+      "type": "denied_license",
+      "licenseId": "GPL-2.0-or-later",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Due to the way the software is distributed, linked and bundled, these licenses are almost always unusable because of their source disclosure requirements. We deny by default. "
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GPL-2.0-with-autoconf-exception",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GPL-2.0-with-bison-exception",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "GPL-2.0-with-classpath-exception",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Safe to include or link in an executable provided that source availability/attribution requirements are followed."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GPL-2.0-with-font-exception",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GPL-2.0-with-GCC-exception",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "denied_license",
+      "licenseId": "GPL-3.0-only",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Due to the way the software is distributed, linked and bundled, these licenses are almost always unusable because of their source disclosure requirements. We deny by default. "
+    },
+    {
+      "type": "denied_license",
+      "licenseId": "GPL-3.0-or-later",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Due to the way the software is distributed, linked and bundled, these licenses are almost always unusable because of their source disclosure requirements. We deny by default. "
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GPL-3.0-with-autoconf-exception",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "GPL-3.0-with-GCC-exception",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Safe to include or link in an executable provided that source availability/attribution requirements are followed."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "gSOAP-1.3b",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "HaskellReport",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "HPND",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "IBM-pibs",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "ICU",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "IJG",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ImageMagick",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "iMatix",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Imlib2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Info-ZIP",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Intel",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Intel-ACPI",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Interbase-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "IPA",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "IPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "ISC",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "JasPer-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "JSON",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LAL-1.2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LAL-1.3",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Latex2e",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Leptonica",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "LGPL-2.0-only",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Requires you to (effectively) disclose your source code if the library is statically linked to your project. Not triggered if dynamically linked or a separate process."
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "LGPL-2.0-or-later",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Requires you to (effectively) disclose your source code if the library is statically linked to your project. Not triggered if dynamically linked or a separate process."
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "LGPL-2.1-only",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Requires you to (effectively) disclose your source code if the library is statically linked to your project. Not triggered if dynamically linked or a separate process."
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "LGPL-2.1-or-later",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Requires you to (effectively) disclose your source code if the library is statically linked to your project. Not triggered if dynamically linked or a separate process."
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "LGPL-3.0-only",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Requires you to (effectively) disclose your source code ifthe library is statically linked to your project. Not triggered if dynamically linked or a separate process."
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "LGPL-3.0-or-later",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Requires you to (effectively) disclose your source code ifthe library is statically linked to your project. Not triggered if dynamically linked or a separate process."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LGPLLR",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Libpng",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "libtiff",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LiLiQ-P-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LiLiQ-R-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LiLiQ-Rplus-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LPL-1.02",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LPPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LPPL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LPPL-1.2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LPPL-1.3a",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "LPPL-1.3c",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MakeIndex",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MirOS",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "MIT",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MIT-advertising",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MIT-CMU",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MIT-enna",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MIT-feh",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MITNFA",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Motosoto",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "mpich2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "MPL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Safe if code isn’t modified and notice requirements are followed. Otherwise, you must state and disclose the source code of modifications/derivative works."
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "MPL-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Safe if code isn’t modified and notice requirements are followed. Otherwise, you must state and disclose thesource code of modifications/derivative works."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MPL-2.0-no-copyleft-exception",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MS-EULA",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MS-NET",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MS-PL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MS-RL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": "DIRECT",
+      "notes": "Safe if code isn’t modified and notice requirements are followed. Otherwise, you must state and disclose the source code of modifications/derivative works."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "MTLL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Multics",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Mup",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NASA-1.3",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Naumen",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NBPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NCSA",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Net-SNMP",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NetCDF",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Newsletr",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NGPL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NLOD-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NLPL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Nokia",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NOSL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Noweb",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NPL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NPOSL-3.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NRL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "NTP",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Nunit",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OCCT-PL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OCLC-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ODbL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OFL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OFL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OGTSL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-1.2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-1.3",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-1.4",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.0.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.2.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.2.2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.3",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.4",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.5",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.6",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "denied_license",
+      "licenseId": "OLDAP-2.7",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OLDAP-2.8",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OML",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "OpenSSL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OSET-PL-2.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OSL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OSL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OSL-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OSL-2.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "OSL-3.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "PDDL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "PHP-3.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "PHP-3.01",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Plexus",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "PostgreSQL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "psfrag",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "psutils",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "public-domain",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Python-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Qhull",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "QPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Rdisc",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "RHeCos-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "RPL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "RPL-1.5",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "RPSL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "RSA-MD",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "RSCPL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Ruby",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "SAX-PD",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Saxpath",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SCEA",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SCSL-2.8",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Sendmail",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SGI-B-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SGI-B-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SGI-B-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "denied_license",
+      "licenseId": "SimPL-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "SimPL requires you to disclose the source code of “derivative” works (similar to GPL). Due to the ambiguity of what triggers a “derivative” work, we by default deny SimPL."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SISSL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SISSL-1.2",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Sleepycat",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SMLNJ",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SMPPL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SNIA",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Spencer-86",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Spencer-94",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Spencer-99",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "StandardML-NJ",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SugarCRM-1.1.3",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "SWL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "TCL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "TCP-wrappers",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "TMate",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "TORQUE-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "TOSL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Unicode-DFS-2015",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Unicode-DFS-2016",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Unicode-TOU",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "unknown",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "Unlicense",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "UPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "A highly permissive license similar to the MIT License with added features including an explicit patent grant, clear ability to relicense (to commercial, proprietary, copyleft or etc...) and usable as a CLA."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Vim",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "VOSTROM",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "VSL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "W3C",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "W3C-19980720",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "W3C-20150513",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Watcom-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Wsuipa",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "WTFPL",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "wxWindows",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "X11",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Xerox",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "XFree86-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "xinetd",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Xnet",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "xpp",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "XSkat",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "YPL-1.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "YPL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Zed",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Zend-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Zimbra-1.3",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "Zimbra-1.4",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "approved_license",
+      "licenseId": "Zlib",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "zlib-acknowledgement",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": ""
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ZPL-1.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ZPL-2.0",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    },
+    {
+      "type": "flagged_license",
+      "licenseId": "ZPL-2.1",
+      "linkingCondition": null,
+      "nameCondition": null,
+      "depthCondition": null,
+      "notes": "Permissive license which is perfectly safe to use provided proper attribution is given and retained."
+    }
+  ],
+  "uncategorizedLicenses": [
+    "3com-microcode",
+    "3dslicer-1.0",
+    "996-icu-1.0",
+    "acdl-1.0",
+    "activestate-community",
+    "activestate-community-2012",
+    "adi-bsd",
+    "agpl-1.0-plus",
+    "agpl-2.0",
+    "agpl-3.0 WITH agpl-generic-additional-terms",
+    "agpl-3.0 WITH nicta-exception",
+    "agpl-3.0 WITH openssl-exception-agpl-3.0",
+    "agpl-3.0 WITH ps-or-pdf-font-exception-20170817",
+    "agpl-3.0-bacula",
+    "agpl-3.0-plus WITH agpl-generic-additional-terms",
+    "agpl-3.0-plus WITH linking-exception-agpl-3.0",
+    "agpl-3.0-plus WITH magpie-exception-1.0",
+    "agpl-3.0-plus WITH openssl-exception-agpl-3.0",
+    "alasir",
+    "alexisisaac-freeware",
+    "alfresco-exception-0.5",
+    "amazon-pml",
+    "amd-historical",
+    "ams-fonts",
+    "anu-license",
+    "apache-2.0 WITH apple-runtime-library-exception",
+    "apache-2.0 WITH commons-clause",
+    "apache-2.0 WITH llvm-exception",
+    "apache-2.0-linking-exception",
+    "apache-2.0-runtime-library-exception",
+    "apple-attribution-1997",
+    "apple-mpeg-4",
+    "apple-sscl",
+    "aptana-1.0",
+    "argouml",
+    "arm-llvm-sga",
+    "arphic-public",
+    "array-input-method-pl",
+    "aslp",
+    "aslr",
+    "atmosphere-0.4",
+    "bacula-exception",
+    "baekmuk-fonts",
+    "bea-2.1",
+    "beal-screamer",
+    "bigdigits",
+    "bigelow-holmes",
+    "biosl-4.0",
+    "BitstreamVera",
+    "bittorrent-1.2",
+    "blitz-artistic",
+    "bloomberg-blpapi",
+    "blueoak-1.0.0",
+    "bodo-moeller",
+    "bpmn-io",
+    "broadcom-cfe",
+    "broadcom-linking-exception-2.0",
+    "broadcom-linking-unmodified",
+    "broadcom-linux-timer",
+    "bsd-1-clause-build",
+    "bsd-1988",
+    "bsd-2-clause-plus-advertizing",
+    "bsd-2-clause-views",
+    "bsd-3-clause-devine",
+    "bsd-3-clause-fda",
+    "bsd-3-clause-jtag",
+    "bsd-3-clause-no-change",
+    "bsd-3-clause-no-military",
+    "bsd-3-clause-no-trademark",
+    "bsd-3-clause-open-mpi",
+    "bsd-3-clause-sun",
+    "bsd-4-clause-shortened",
+    "bsd-ack-carrot2",
+    "bsd-artwork",
+    "bsd-atmel",
+    "bsd-axis-nomod",
+    "bsd-credit",
+    "bsd-dpt",
+    "bsd-export",
+    "bsd-innosys",
+    "bsd-intel",
+    "bsd-mylex",
+    "bsd-new WITH ecma-no-patent",
+    "bsd-new-derivative",
+    "bsd-new-far-manager",
+    "bsd-new-tcpdump",
+    "bsd-no-disclaimer",
+    "bsd-no-disclaimer-unmodified",
+    "bsd-no-mod",
+    "bsd-original-muscle",
+    "bsd-original-uc-1986",
+    "bsd-original-uc-1990",
+    "bsd-plus-mod-notice",
+    "bsd-simplified-darwin",
+    "bsd-simplified-intel",
+    "bsd-simplified-source",
+    "bsd-top",
+    "bsd-top-gpl-addition",
+    "bsd-unchanged",
+    "bsd-unmodified",
+    "bsd-x11",
+    "bsl-original",
+    "bugsense-sdk",
+    "business-source-license-1.1",
+    "c-fsl-1.1",
+    "c-uda-1.0",
+    "cal-1.0",
+    "cal-1.0 WITH cal-1.0-combined-work-exception",
+    "cal-1.0-combined-work-exception",
+    "can-ogl-2.0-en",
+    "can-ogl-alberta-2.1",
+    "can-ogl-british-columbia-2.0",
+    "can-ogl-nova-scotia-1.0",
+    "can-ogl-ontario-1.0",
+    "can-ogl-toronto-1.0",
+    "carnegie-mellon",
+    "carnegie-mellon-contributors",
+    "cavium-malloc",
+    "cc-by-2.0-uk",
+    "cc-by-3.0-at",
+    "cc-by-3.0-de",
+    "cc-by-3.0-nl",
+    "cc-by-3.0-us",
+    "cc-by-nc-3.0-de",
+    "cc-by-nc-nd-2.0-au",
+    "cc-by-nc-nd-3.0-de",
+    "cc-by-nc-nd-3.0-igo",
+    "cc-by-nc-sa-2.0-fr",
+    "cc-by-nc-sa-2.0-uk",
+    "cc-by-nc-sa-3.0-de",
+    "cc-by-nc-sa-3.0-us",
+    "cc-by-nd-3.0-de",
+    "cc-by-sa-2.0-uk",
+    "cc-by-sa-2.1-jp",
+    "cc-by-sa-3.0-at",
+    "cc-by-sa-3.0-de",
+    "cc-devnations-2.0",
+    "cc-nc-sampling-plus-1.0",
+    "cc-pd",
+    "cc-sampling-1.0",
+    "cc-sampling-plus-1.0",
+    "cdla-permissive-2.0",
+    "cern-ohl-1.1",
+    "cern-ohl-1.2",
+    "cern-ohl-p-2.0",
+    "cern-ohl-s-2.0",
+    "cern-ohl-w-2.0",
+    "cmigemo",
+    "cmu-computing-services",
+    "cmu-mit",
+    "cmu-simple",
+    "cockroach",
+    "cognitive-web-osl-1.1",
+    "coil-1.0",
+    "Commercial",
+    "community-spec-1.0",
+    "Confluent",
+    "cooperative-non-violent-4.0",
+    "copyleft-next-0.3.0",
+    "copyleft-next-0.3.1",
+    "corporate-accountability-1.1",
+    "corporate-accountability-commercial-1.1",
+    "cosl",
+    "cosli",
+    "couchbase-community",
+    "couchbase-community-0.1",
+    "couchbase-use-grant-for-bsl-1.1",
+    "csla",
+    "cups",
+    "custom-license",
+    "cximage",
+    "d-fsl-1.0-en",
+    "day-spec",
+    "dbad",
+    "dbad-1.1",
+    "dbcl-1.0",
+    "delorie-historical",
+    "devblocks-1.0",
+    "digirule-foss-exception",
+    "dl-de-by-1-0-en",
+    "dl-de-by-2-0-en",
+    "dl-de-by-nc-1-0-en",
+    "do-no-harm-0.1",
+    "docbook",
+    "dom4j",
+    "drl-1.0",
+    "dynarch-linkware",
+    "ecfonts-1.0",
+    "eclipse-sua-2001",
+    "eclipse-sua-2002",
+    "eclipse-sua-2011",
+    "eclipse-sua-2014",
+    "eclipse-sua-2014-11",
+    "eclipse-sua-2017",
+    "ecma-patent-coc-1",
+    "ecma-patent-coc-2",
+    "ecos",
+    "EDL-1.0",
+    "efsl-1.0",
+    "egenix-1.0.0",
+    "emit",
+    "energyplus-bsd",
+    "enhydra-1.1",
+    "epics",
+    "epo-osl-2005.1",
+    "etalab-2.0",
+    "facebook-nuclide",
+    "facebook-patent-rights-2",
+    "facebook-software-license",
+    "fair-source-0.9",
+    "first-works-appreciative-1.2",
+    "flora-1.1",
+    "font-awesome-pro-2018",
+    "fpl",
+    "fplot",
+    "fraunhofer-fdk-aac-codec",
+    "free-art-1.3",
+    "free-fork",
+    "freebsd-doc",
+    "freebsd-first",
+    "freetype WITH autoconf-simple-exception-2.0",
+    "froala-owdl-1.0",
+    "fsl-1.0-apache-2.0",
+    "fsl-1.0-mit",
+    "glwtpl",
+    "google-patent-license",
+    "gpl-1.0 WITH bash-exception-gpl",
+    "gpl-1.0-plus WITH autoconf-exception-2.0",
+    "gpl-1.0-plus WITH autoconf-macro-exception",
+    "gpl-1.0-plus WITH autoconf-simple-exception-2.0",
+    "gpl-1.0-plus WITH bison-exception-2.0",
+    "gpl-1.0-plus WITH classpath-exception-2.0",
+    "gpl-1.0-plus WITH gcc-linking-exception-2.0",
+    "gpl-1.0-plus WITH generic-exception",
+    "gpl-1.0-plus WITH libtool-exception-2.0",
+    "gpl-1.0-plus WITH openssl-exception-gpl-2.0",
+    "gpl-1.0-plus WITH ps-or-pdf-font-exception-20170817",
+    "gpl-2.0 WITH 389-exception",
+    "gpl-2.0 WITH bash-exception-gpl",
+    "gpl-2.0 WITH bison-exception-2.2",
+    "gpl-2.0 WITH clisp-exception-2.0",
+    "gpl-2.0 WITH cygwin-exception-2.0",
+    "gpl-2.0 WITH dune-exception",
+    "gpl-2.0 WITH ecos-exception-2.0",
+    "gpl-2.0 WITH font-exception-gpl",
+    "gpl-2.0 WITH freertos-exception-2.0",
+    "gpl-2.0 WITH gcc-compiler-exception-2.0",
+    "gpl-2.0 WITH generic-exception",
+    "gpl-2.0 WITH gpl-generic-additional-terms",
+    "gpl-2.0 WITH ice-exception-2.0",
+    "gpl-2.0 WITH javascript-exception-2.0",
+    "gpl-2.0 WITH linux-syscall-exception-gpl",
+    "gpl-2.0 WITH mif-exception",
+    "gpl-2.0 WITH mysql-floss-exception-2.0",
+    "gpl-2.0 WITH mysql-linking-exception-2018",
+    "gpl-2.0 WITH openjdk-exception",
+    "gpl-2.0 WITH openssl-exception-gpl-2.0",
+    "gpl-2.0 WITH openssl-exception-gpl-3.0-plus",
+    "gpl-2.0 WITH oracle-mysql-foss-exception-2.0",
+    "gpl-2.0 WITH oracle-openjdk-classpath-exception-2.0",
+    "gpl-2.0 WITH qt-qca-exception-2.0",
+    "gpl-2.0 WITH trolltech-gpl-exception-1.2",
+    "gpl-2.0 WITH u-boot-exception-2.0",
+    "gpl-2.0 WITH universal-foss-exception-1.0",
+    "gpl-2.0-adaptec",
+    "gpl-2.0-autoconf",
+    "gpl-2.0-autoopts",
+    "gpl-2.0-bison",
+    "gpl-2.0-bison-2.2",
+    "gpl-2.0-broadcom-linking",
+    "gpl-2.0-classpath",
+    "gpl-2.0-cygwin",
+    "gpl-2.0-djvu",
+    "gpl-2.0-font",
+    "gpl-2.0-freertos",
+    "gpl-2.0-gcc",
+    "gpl-2.0-gcc-compiler-exception",
+    "gpl-2.0-glibc",
+    "gpl-2.0-guile",
+    "gpl-2.0-ice",
+    "gpl-2.0-iolib",
+    "gpl-2.0-iso-cpp",
+    "gpl-2.0-javascript",
+    "gpl-2.0-kernel",
+    "gpl-2.0-koterov",
+    "gpl-2.0-libgit2",
+    "gpl-2.0-libtool",
+    "gpl-2.0-lmbench",
+    "gpl-2.0-mysql-connector-odbc",
+    "gpl-2.0-mysql-floss",
+    "gpl-2.0-openssl",
+    "gpl-2.0-oracle-mysql-foss",
+    "gpl-2.0-plus WITH 389-exception",
+    "gpl-2.0-plus WITH ada-linking-exception",
+    "gpl-2.0-plus WITH autoconf-exception-2.0",
+    "gpl-2.0-plus WITH autoconf-macro-exception",
+    "gpl-2.0-plus WITH autoopts-exception-2.0",
+    "gpl-2.0-plus WITH avisynth-c-interface-exception",
+    "gpl-2.0-plus WITH bison-exception-2.0",
+    "gpl-2.0-plus WITH bison-exception-2.2",
+    "gpl-2.0-plus WITH bootloader-exception",
+    "gpl-2.0-plus WITH ecos-exception-2.0",
+    "gpl-2.0-plus WITH font-exception-gpl",
+    "gpl-2.0-plus WITH freertos-exception-2.0",
+    "gpl-2.0-plus WITH gcc-compiler-exception-2.0",
+    "gpl-2.0-plus WITH gcc-linking-exception-2.0",
+    "gpl-2.0-plus WITH generic-exception",
+    "gpl-2.0-plus WITH gnu-javamail-exception",
+    "gpl-2.0-plus WITH gpl-generic-additional-terms",
+    "gpl-2.0-plus WITH guile-exception-2.0",
+    "gpl-2.0-plus WITH iolib-exception-2.0",
+    "gpl-2.0-plus WITH javascript-exception-2.0",
+    "gpl-2.0-plus WITH linking-exception-2.0-plus",
+    "gpl-2.0-plus WITH mif-exception",
+    "gpl-2.0-plus WITH mysql-connector-odbc-exception-2.0",
+    "gpl-2.0-plus WITH mysql-floss-exception-2.0",
+    "gpl-2.0-plus WITH openjdk-exception",
+    "gpl-2.0-plus WITH openmotif-exception-2.0-plus",
+    "gpl-2.0-plus WITH openssl-exception-gpl-2.0",
+    "gpl-2.0-plus WITH openssl-exception-gpl-2.0-plus",
+    "gpl-2.0-plus WITH qt-kde-linking-exception",
+    "gpl-2.0-plus WITH tex-exception",
+    "gpl-2.0-plus WITH u-boot-exception-2.0",
+    "gpl-2.0-plus WITH ubdl",
+    "gpl-2.0-plus WITH unlimited-linking-exception-gpl",
+    "gpl-2.0-plus WITH upx-exception-2.0-plus",
+    "gpl-2.0-plus-ada",
+    "gpl-2.0-plus-ekiga",
+    "gpl-2.0-plus-gcc",
+    "gpl-2.0-plus-geoserver",
+    "gpl-2.0-plus-linking",
+    "gpl-2.0-plus-nant",
+    "gpl-2.0-plus-openmotif",
+    "gpl-2.0-plus-openssl",
+    "gpl-2.0-plus-sane",
+    "gpl-2.0-plus-subcommander",
+    "gpl-2.0-plus-syntext",
+    "gpl-2.0-plus-upx",
+    "gpl-2.0-proguard",
+    "gpl-2.0-qt-qca",
+    "gpl-2.0-redhat",
+    "gpl-2.0-rrdtool-floss",
+    "gpl-2.0-uboot",
+    "GPL-2.0-with-libtool-exception",
+    "gpl-3.0 WITH autoconf-simple-exception-2.0",
+    "gpl-3.0 WITH bison-exception-2.2",
+    "gpl-3.0 WITH classpath-exception-2.0",
+    "gpl-3.0 WITH font-exception-gpl",
+    "gpl-3.0 WITH gcc-exception-3.1",
+    "gpl-3.0 WITH gcc-linking-exception-2.0",
+    "gpl-3.0 WITH gpl-generic-additional-terms",
+    "gpl-3.0 WITH openssl-exception-gpl-2.0",
+    "gpl-3.0 WITH other-copyleft",
+    "gpl-3.0 WITH qt-gpl-exception-1.0",
+    "gpl-3.0-aptana",
+    "gpl-3.0-autoconf",
+    "gpl-3.0-bison",
+    "gpl-3.0-cygwin",
+    "gpl-3.0-font",
+    "gpl-3.0-gcc",
+    "gpl-3.0-linking-exception",
+    "gpl-3.0-openbd",
+    "gpl-3.0-plus WITH autoconf-exception-2.0",
+    "gpl-3.0-plus WITH autoconf-exception-3.0",
+    "gpl-3.0-plus WITH autoconf-macro-exception",
+    "gpl-3.0-plus WITH autoconf-simple-exception",
+    "gpl-3.0-plus WITH autoconf-simple-exception-2.0",
+    "gpl-3.0-plus WITH bison-exception-2.2",
+    "gpl-3.0-plus WITH classpath-exception-2.0",
+    "gpl-3.0-plus WITH cygwin-exception-3.0",
+    "gpl-3.0-plus WITH font-exception-gpl",
+    "gpl-3.0-plus WITH gcc-linking-exception-2.0",
+    "gpl-3.0-plus WITH libtool-exception-2.0",
+    "gpl-3.0-plus WITH linking-exception-2.0-plus",
+    "gpl-3.0-plus WITH openssl-exception-gpl-3.0-plus",
+    "gpl-3.0-plus WITH other-copyleft",
+    "gpl-3.0-plus WITH tex-exception",
+    "gpl-3.0-plus-openssl",
+    "gplcc-1.0",
+    "graphics-gems",
+    "GraphQLLanguageService",
+    "gsoap-1.3a",
+    "gust-font-1.0",
+    "gust-font-2006-09-30",
+    "gutenberg-2020",
+    "hacos-1.2",
+    "hazelcast-community-1.0",
+    "hdf5",
+    "hippocratic-1.0",
+    "hippocratic-1.1",
+    "Hippocratic-1.2",
+    "hippocratic-2.0",
+    "Hippocratic-2.1",
+    "honest-public-license-1.1",
+    "hp-netperf",
+    "hp-proliant-essentials",
+    "hp-snmp-pp",
+    "HPND-sell-variant",
+    "hsql",
+    "ibm-as-is",
+    "ibm-type1-interpreter",
+    "ICU-Composite",
+    "IETF",
+    "ietf-trust",
+    "initial-developer-public",
+    "inner-net-2.0",
+    "instabug",
+    "intel-bcl",
+    "intel-bsd",
+    "intel-bsd-2-clause",
+    "intel-disclaimer",
+    "intel-mcu-2018",
+    "intel-osl-1989",
+    "intel-osl-1993",
+    "intel-royalty-free",
+    "intel-sample-source-code-2015",
+    "intel-style-limited-patent",
+    "jahia-1.3.1",
+    "jamie-kyle",
+    "java-app-stub",
+    "jelurida-public-1.1",
+    "jpnic-idnkit",
+    "jpnic-mdnkit",
+    "jython",
+    "lal-1.2",
+    "lal-1.3",
+    "lgpl-2.0 WITH gcc-linking-exception-2.0",
+    "lgpl-2.0 WITH mini-xml-exception-lgpl-2.0",
+    "lgpl-2.0 WITH ocaml-lgpl-linking-exception",
+    "lgpl-2.0-fltk",
+    "lgpl-2.0-plus WITH fltk-exception-lgpl-2.0",
+    "lgpl-2.0-plus WITH gcc-linking-exception-2.0",
+    "lgpl-2.0-plus WITH generic-exception",
+    "lgpl-2.0-plus WITH libtool-exception-2.0",
+    "lgpl-2.0-plus WITH ocaml-lgpl-linking-exception",
+    "lgpl-2.0-plus WITH unlimited-binary-linking",
+    "lgpl-2.0-plus WITH wxwindows-exception-3.1",
+    "lgpl-2.0-plus-gcc",
+    "lgpl-2.1 WITH broadcom-linking-exception-2.0",
+    "lgpl-2.1 WITH gplcc-1.0",
+    "lgpl-2.1 WITH libwebsockets-exception",
+    "lgpl-2.1 WITH linking-exception-lgpl-2.0-plus",
+    "lgpl-2.1 WITH ocaml-lgpl-linking-exception",
+    "lgpl-2.1 WITH openssl-exception-lgpl-2.0-plus",
+    "lgpl-2.1 WITH qt-lgpl-exception-1.1",
+    "lgpl-2.1 WITH unlimited-linking-exception-lgpl",
+    "lgpl-2.1-digia-qt",
+    "lgpl-2.1-nokia-qt",
+    "lgpl-2.1-plus WITH linking-exception-2.1-plus",
+    "lgpl-2.1-plus WITH ocaml-lgpl-linking-exception",
+    "lgpl-2.1-plus WITH qt-company-exception-lgpl-2.1",
+    "lgpl-2.1-plus WITH qt-lgpl-exception-1.1",
+    "lgpl-2.1-plus WITH rxtx-exception-lgpl-2.1",
+    "lgpl-2.1-plus WITH spell-checker-exception-lgpl-2.1-plus",
+    "lgpl-2.1-plus WITH unlimited-linking-exception-lgpl",
+    "lgpl-2.1-plus-linking",
+    "lgpl-2.1-plus-unlimited-linking",
+    "lgpl-2.1-qt-company",
+    "lgpl-2.1-qt-company-2017",
+    "lgpl-2.1-rxtx",
+    "lgpl-2.1-spell-checker",
+    "lgpl-3-plus-linking",
+    "lgpl-3.0 WITH independent-module-linking-exception",
+    "lgpl-3.0 WITH lgpl-3.0-linking-exception",
+    "lgpl-3.0-cygwin",
+    "lgpl-3.0-plus WITH cygwin-exception-lgpl-3.0-plus",
+    "lgpl-3.0-plus WITH independent-module-linking-exception",
+    "lgpl-3.0-plus WITH lgpl-3.0-linking-exception",
+    "lgpl-3.0-plus WITH ocaml-lgpl-linking-exception",
+    "lgpl-3.0-plus WITH openssl-exception-lgpl-3.0-plus",
+    "lgpl-3.0-plus WITH zeromq-exception-lgpl-3.0",
+    "lgpl-3.0-plus-openssl",
+    "lgpl-3.0-zeromq",
+    "lha",
+    "libgd-2018",
+    "libpng-v2",
+    "libwebsockets-exception",
+    "lil-1",
+    "linux-openib",
+    "llama-2-community",
+    "llama-3-community",
+    "llgpl",
+    "logica-1.0",
+    "lyubinskiy-dropdown",
+    "m-plus",
+    "marvell-firmware",
+    "MatPlotLib",
+    "maxmind-geolite2-eula-2019",
+    "maxmind-odl",
+    "mediainfo-lib",
+    "mgopen-font-license",
+    "mini-xml-exception-lgpl-2.0",
+    "mit-0",
+    "mit-addition",
+    "mit-license-1998",
+    "mit-modern",
+    "mit-nagy",
+    "mit-no-advert-export-control",
+    "mit-old-style",
+    "mit-old-style-no-advert",
+    "mit-old-style-sparse",
+    "mit-open-group",
+    "mit-readme",
+    "mit-specification-disclaimer",
+    "mit-synopsys",
+    "mit-taylor-variant",
+    "mit-veillard-variant",
+    "mit-with-modification-obligations",
+    "mit-xfig",
+    "monetdb-1.1",
+    "mongodb-sspl-1.0",
+    "mongodb-sspl-1.0 WITH openssl-exception-mongodb-sspl",
+    "monkey",
+    "mozilla-ospl-1.0",
+    "ms-cl",
+    "ms-limited-community",
+    "ms-limited-public",
+    "ms-sspl",
+    "ms-vs-2017-pre-release",
+    "msppl",
+    "mulanpsl-1.0",
+    "mulanpsl-1.0-en",
+    "mulanpsl-2.0",
+    "mulanpsl-2.0-en",
+    "mule-source-1.1.4",
+    "MX4J1_0",
+    "naist-2003",
+    "ncgl-uk-2.0",
+    "netron",
+    "nicta-psl",
+    "nist-pd-fallback",
+    "non-violent-4.0",
+    "nvidia",
+    "nvidia-gov",
+    "nwhm",
+    "nxp-proprietary",
+    "o-uda-1.0",
+    "ocsl-1.0",
+    "oculus-sdk",
+    "oculus-sdk-2020",
+    "oculus-sdk-3.5",
+    "ODC-By-1.0",
+    "odl",
+    "ofl-1.1-no-rfn",
+    "ogc-1.0",
+    "ogdl-taiwan-1.0",
+    "ogl-uk-1.0",
+    "ogl-uk-2.0",
+    "ogl-uk-3.0",
+    "okl",
+    "open-grid-forum",
+    "open-group",
+    "openpub",
+    "openssh",
+    "openssl-exception-agpl-3.0",
+    "openssl-exception-agpl-3.0-plus",
+    "openssl-exception-gpl-2.0",
+    "openssl-exception-gpl-2.0-plus",
+    "openssl-exception-gpl-3.0-plus",
+    "openssl-exception-lgpl-2.0-plus",
+    "openssl-exception-lgpl-3.0-plus",
+    "openssl-exception-mongodb-sspl",
+    "openssl-nokia-psk-contribution",
+    "openssl-ssleay",
+    "opnl-1.0",
+    "opnl-2.0",
+    "Oracle",
+    "oracle-fdhut",
+    "oracle-futc",
+    "oracle-mysql-foss-exception-2.0",
+    "oracle-openjdk-classpath-exception-2.0",
+    "owtchart",
+    "ozplb-1.0",
+    "ozplb-1.1",
+    "pallets-flask-logo",
+    "parity-6.0.0",
+    "parity-7.0.0",
+    "passive-aggressive",
+    "pcre",
+    "pd-mit",
+    "pdl-1.0",
+    "pftus-1.1",
+    "php-2.0.2",
+    "PIL",
+    "polyform-defensive-1.0.0",
+    "polyform-free-trial-1.0.0",
+    "polyform-internal-use-1.0.0",
+    "polyform-noncommercial-1.0.0",
+    "polyform-perimeter-1.0.0",
+    "polyform-shield-1.0.0",
+    "polyform-small-business-1.0.0",
+    "polyform-strict-1.0.0",
+    "proprietary-license",
+    "Protobuf",
+    "PSF-2.0",
+    "psf-3.7.2",
+    "pushwoosh",
+    "qwt-1.0",
+    "rcl-1.00",
+    "rcsl-2.0",
+    "rcsl-3.0",
+    "red-hat-logos",
+    "redis-source-available-1.0",
+    "redis-source-available-2.0",
+    "regexp",
+    "Repoze",
+    "riverbank-sip",
+    "romantic-wtf",
+    "ryszard-szopa",
+    "saas-mit",
+    "saf",
+    "san-francisco-font",
+    "sata",
+    "sbia-b",
+    "scilab-en",
+    "scola-en",
+    "service-comp-arch",
+    "shl-0.5",
+    "shl-0.51",
+    "shl-2.0",
+    "shl-2.1",
+    "simpl-1.1",
+    "sparky",
+    "ssh-short",
+    "st-bsd-restricted",
+    "stream-benchmark",
+    "sugarcrm-1.1.2",
+    "sun-bsd-extra",
+    "sun-rpc",
+    "SunPro",
+    "Taligent",
+    "tapr-ohl-1.0",
+    "tex-live",
+    "tgppl-1.0",
+    "tidy",
+    "tpl-1.0",
+    "trca-odl-1.0",
+    "truecrypt-3.1",
+    "tsl-2018",
+    "tu-berlin",
+    "tu-berlin-2.0",
+    "ubdl",
+    "ubuntu-font-1.0",
+    "ucl-1.0",
+    "Unicode-DFS-2020",
+    "unity-companion-1.3",
+    "unity-companion-package-1.0",
+    "unity-package-distribution-2.0",
+    "unrar",
+    "uofu-rfpl",
+    "utopia",
+    "vhfpl-1.1",
+    "visual-idiot",
+    "vixie-cron",
+    "volatility-vsl-v1.0",
+    "wtfnmfpl-1.0",
+    "wtfpl-1.0",
+    "wthpl-1.0",
+    "wxwidgets",
+    "wxwindows-u-3.0",
+    "x11-adobe",
+    "x11-ibm",
+    "x11-opengroup",
+    "xfree86-1.0",
+    "yolo-1.0",
+    "zsh"
+  ]
+}
