@@ -79,3 +79,9 @@ ignore {
 ignore {
   licenseMapping[input.Name] == permissive[_]
 }
+
+# MIT-0 is even more permissive than MIT, see https://github.com/aws/mit-0
+ignore {
+  input.PkgName == "org.reactivestreams:reactive-streams"
+  input.Name == "MIT-0"
+}
