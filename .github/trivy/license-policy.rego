@@ -49,7 +49,33 @@ default permissive := {
     "Zlib", # Permissive license which is perfectly safe to use provided proper attribution is given and retained.
   }
 
+# mapping of licenses identified by cyclonedx to known license keys
+default licenseMapping := {
+    "Apache License, 2.0": "Apache-2.0",
+    "BSD-3": "BSD-3-Clause",
+    "Bouncy Castle Licence": "BouncyCastle",
+    "EPL 1.0": "EPL-1.0",
+    "Eclipse Public License (EPL) 2.0": "EPL-2.0",
+    "lgpl": "LGPL-2.1-only",
+    "GNU Lesser General Public License": "LGPL-2.1-only",
+    "LGPL-2.1+": "LGPL-2.1-only",
+    "GNU Lesser General Public License, Version 2.1": "LGPL-2.1-only",
+    "GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1": "LGPL-2.1-only",
+    "GPL-2.0+CE": "GPL-2.0-with-classpath-exception",
+    "The GNU General Public License (GPL), Version 2, With Classpath Exception": "GPL-2.0-with-classpath-exception",
+    "GNU General Public License, version 2 with the GNU Classpath Exception": "GPL-2.0-with-classpath-exception",
+    "Public Domain": "public-domain",
+    "Public Domain, per Creative Commons CC0": "CC0-1.0",
+    "W3C license": "W3C",
+    "Modified BSD": "BSD-3-Clause", # from repackaged ASM in Glassfish dependencies, see https://asm.ow2.io/license.html
+  }
+
 # default: allow everything defined in the list of permissive licenses
 ignore {
   input.Name == permissive[_]
+}
+
+# allow licenses that are only named different due to the used tooling
+ignore {
+  licenseMapping[input.Name] == permissive[_]
 }
