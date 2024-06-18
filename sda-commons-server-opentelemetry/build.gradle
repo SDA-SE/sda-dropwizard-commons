@@ -15,6 +15,7 @@ dependencies {
   api 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv', {
     exclude group: "io.opentelemetry.semconv", module: "opentelemetry-semconv"
     exclude group: "io.opentelemetry.instrumentation", module: "opentelemetry-instrumentation-api"
+    exclude group: "io.opentelemetry", module: "opentelemetry-api-incubator"
   }
   api 'io.opentelemetry.semconv:opentelemetry-semconv'
 
