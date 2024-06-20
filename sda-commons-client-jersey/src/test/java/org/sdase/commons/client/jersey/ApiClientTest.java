@@ -1,6 +1,7 @@
 package org.sdase.commons.client.jersey;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -12,6 +13,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.http.RequestMethod.GET;
+import static com.github.tomakehurst.wiremock.http.RequestMethod.POST;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static java.util.Arrays.asList;
@@ -627,6 +629,45 @@ public class ApiClientTest {
           .extracting(Car::getSign, Car::getColor)
           .containsExactly("HH XY 1234", "yellow");
     }
+  }
+
+  @Test
+  void seeOtherAfterPostWithAuth() {
+    WIRE.stubFor(
+        post("/api/cars")
+            .withRequestBody(
+                equalToJson("{ \"sign\": \"HH XY 1234\", \"color\": \"yellow\" }")) // NOSONAR
+            .willReturn(seeOther(WIRE.url("/api/cars/HH%20XY%201234")))); // NOSONAR
+    WIRE.stubFor(
+        get("/api/cars/HH%20XY%201234")
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .withBody("{ \"sign\": \"HH XY 1234\", \"color\": \"yellow\" }")));
+
+    // This test requires that gzip for request bodies is disabled, otherwise
+    // the automatic GET request after the see others fails as the
+    // content-encoding from the post request is also used for the GET
+    // request. However, neither Dropwizard nor Wiremock does handle this well
+    // for GET requests.
+    MockApiClient client = createMockApiClientWithBasicAuth();
+
+    try (Response r =
+        client.createCar(new Car().setSign("HH XY 1234").setColor("yellow"))) { // NOSONAR
+      assertThat(r.getStatus()).isEqualTo(SC_OK);
+      Car car = r.readEntity(Car.class);
+      assertThat(car)
+          .extracting(Car::getSign, Car::getColor)
+          .containsExactly("HH XY 1234", "yellow");
+    }
+
+    WIRE.verify(
+        RequestPatternBuilder.newRequestPattern(POST, anyUrl())
+            .withHeader("Authorization", equalTo("Basic Zm9vOmJhcg==")));
+    WIRE.verify(
+        RequestPatternBuilder.newRequestPattern(GET, anyUrl())
+            .withHeader("Authorization", equalTo("Basic Zm9vOmJhcg==")));
   }
 
   @Test
