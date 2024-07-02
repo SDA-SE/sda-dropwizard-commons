@@ -28,7 +28,7 @@ ext {
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.78.1'
   victoolsVersion = '4.35.0'
-  flywayVersion = '10.15.0'
+  flywayVersion = '10.15.2'
 }
 
 dependencies {
