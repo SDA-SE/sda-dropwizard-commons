@@ -43,7 +43,7 @@ dependencies {
     exclude group: 'org.jetbrains', module: 'annotations'
     because("this version is outdated, but the main dependency does not have yet an updated version")
   }
-  api enforcedPlatform("org.eclipse.jetty:jetty-bom:11.0.21"), {
+  api enforcedPlatform("org.eclipse.jetty:jetty-bom:11.0.22"), {
     because("dropwizard and dropwizard-metrics use different versions")
   }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
