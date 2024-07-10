@@ -3,7 +3,7 @@ dependencies {
 
   // old AWS SDK v1 is only used internally by robothy
   api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.759")
-  api 'io.github.robothy:local-s3-jupiter:1.15', {
+  api 'io.github.robothy:local-s3-jupiter:1.16', {
     exclude group: 'software.amazon.awssdk'
     exclude group: 'com.amazonaws', module: 'aws-java-sdk'
   }
