@@ -96,7 +96,7 @@ dependencies {
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
     // sda-commons-shared-wiremock-testing
-    api "org.wiremock:wiremock:3.8.0"
+    api "org.wiremock:wiremock:3.9.0"
     api "org.ow2.asm:asm:9.7", {
       because "version conflict within Wiremock"
     }
