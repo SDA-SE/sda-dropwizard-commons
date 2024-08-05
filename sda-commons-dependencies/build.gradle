@@ -177,10 +177,10 @@ dependencies {
     api "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"
 
     // sda-commons-server-testing
-    api "org.hamcrest:hamcrest:2.2", {
+    api "org.hamcrest:hamcrest:3.0", {
       because "hamcrest is the successor of hamcrest-core."
     }
-    api "org.hamcrest:hamcrest-core:2.2", {
+    api "org.hamcrest:hamcrest-core:3.0", {
       because '''\
           hamcrest-core is deprecated and overlaps with hamcrest, in hamcrest-core 2.2 is
           only one class named HamcrestCoreIsDeprecated. We force this version to avoid complex
