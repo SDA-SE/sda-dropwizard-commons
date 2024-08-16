@@ -1,6 +1,7 @@
 package org.sdase.commons.server.kafka.serializers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nullable;
 import java.util.Map;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serializer;
@@ -19,9 +20,10 @@ public class KafkaJsonSerializer<T> implements Serializer<T> {
   }
 
   @Override
+  @Nullable
   public byte[] serialize(String topic, T data) {
     if (data == null) {
-      return new byte[0];
+      return null;
     }
 
     try {
