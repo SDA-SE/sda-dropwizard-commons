@@ -13,15 +13,37 @@ class JsonSerializerTest {
     simpleEntity.setName("MyTestName");
     simpleEntity.setLastname("MyTestLastname");
 
-    KafkaJsonSerializer<SimpleEntity> jsonSerializer =
-        new KafkaJsonSerializer<>(new ObjectMapper());
-    byte[] serialize = jsonSerializer.serialize("123", simpleEntity);
+    byte[] serialize;
+    try (KafkaJsonSerializer<SimpleEntity> jsonSerializer =
+        new KafkaJsonSerializer<>(new ObjectMapper())) {
+      serialize = jsonSerializer.serialize("123", simpleEntity);
+    }
 
-    KafkaJsonDeserializer<SimpleEntity> jsonDeserializer =
-        new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class);
-    SimpleEntity deserialize = jsonDeserializer.deserialize("123", serialize);
+    SimpleEntity deserialize;
+    try (KafkaJsonDeserializer<SimpleEntity> jsonDeserializer =
+        new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)) {
+      deserialize = jsonDeserializer.deserialize("123", serialize);
+    }
 
     assertThat(deserialize.getLastname()).isEqualTo(simpleEntity.getLastname());
     assertThat(deserialize.getName()).isEqualTo(simpleEntity.getName());
+  }
+
+  @Test
+  void testSerializerWithNullData() {
+    byte[] serialize;
+    try (KafkaJsonSerializer<SimpleEntity> jsonSerializer =
+        new KafkaJsonSerializer<>(new ObjectMapper())) {
+      serialize = jsonSerializer.serialize("topic", null);
+    }
+
+    assertThat(serialize).isNull();
+    SimpleEntity deserialize;
+    try (KafkaJsonDeserializer<SimpleEntity> jsonDeserializer =
+        new KafkaJsonDeserializer<>(new ObjectMapper(), SimpleEntity.class)) {
+      deserialize = jsonDeserializer.deserialize("123", serialize);
+    }
+
+    assertThat(deserialize).isNull();
   }
 }
