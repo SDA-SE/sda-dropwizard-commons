@@ -2,19 +2,17 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: sda-dropwizard-commons
+  title: SDA Dropwizard Commons
   annotations:
-    sda.se/summary: |
-      The [sda-dropwizard-commons](https://github.com/SDA-SE/sda-dropwizard-commons) library
-      includes several modules to speed up SDA-compliant microservice development. It is
-      based on the [Dropwizard](https://www.dropwizard.io) framework, which offers a
-      bundle mechanism for extensions. The bundles that are provided with _sda-dropwizard-commons_
-      configure the framework with default SDA specific settings and add support for an easy and
-      fast integration of standard technologies such as SQL, noSQL, or messaging frameworks.
     sda.se/federation-scopes: public
     backstage.io/techdocs-ref: .
   description: |
-    SDA Dropwizard Commons is a set of libraries to bootstrap services easily that follow
-    the patterns and specifications promoted by the SDA SE.
+    The [sda-dropwizard-commons](https://github.com/SDA-SE/sda-dropwizard-commons) library
+    includes several modules to speed up SDA-compliant microservice development. It is
+    based on the [Dropwizard](https://www.dropwizard.io) framework, which offers a
+    bundle mechanism for extensions. The bundles that are provided with _sda-dropwizard-commons_
+    configure the framework with default SDA specific settings and add support for an easy and
+    fast integration of standard technologies such as SQL, noSQL, or messaging frameworks.
   links:
     - url: https://github.com/SDA-SE/sda-dropwizard-commons
       title: GitHub
