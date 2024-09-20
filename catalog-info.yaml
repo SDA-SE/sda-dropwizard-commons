@@ -5,7 +5,7 @@ metadata:
   title: SDA Dropwizard Commons
   annotations:
     sda.se/federation-scopes: public
-    backstage.io/techdocs-ref: .
+    backstage.io/techdocs-ref: dir:.
   description: |
     The [sda-dropwizard-commons](https://github.com/SDA-SE/sda-dropwizard-commons) library
     includes several modules to speed up SDA-compliant microservice development. It is
