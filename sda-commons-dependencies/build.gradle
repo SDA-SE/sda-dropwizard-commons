@@ -77,7 +77,7 @@ dependencies {
       because "CVE-2023-24998 in 1.4"
     }
     api 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
-    api 'org.apache.httpcomponents.client5:httpclient5-fluent:5.3.1'
+    api 'org.apache.httpcomponents.client5:httpclient5-fluent:5.4'
     api "io.github.classgraph:classgraph:4.8.176", {
       because "conflict between io.swagger.core.v3:swagger-jaxrs2 and io.swagger.core.v3:swagger-integration upgrade"
     }
