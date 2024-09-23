@@ -36,6 +36,9 @@ public class ValueMappingModel {
   }
 
   public Optional<String> mapToImpl(String apiValue) {
+    if (apiValue == null) {
+      return Optional.empty();
+    }
     return Optional.ofNullable(
         apiToImpl.getOrDefault(
             apiValue.toUpperCase(Locale.ROOT),
@@ -43,6 +46,9 @@ public class ValueMappingModel {
   }
 
   public Optional<String> mapToApi(String implValue) {
+    if (implValue == null) {
+      return Optional.empty();
+    }
     return Optional.ofNullable(
         implToApi.getOrDefault(implValue, implToApiBidirectional.get(implValue)));
   }
