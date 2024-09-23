@@ -30,6 +30,12 @@ This means, that the original value is just passed instead of being mapped. Ther
 
 This fail strategy can be configured as part of the builder. There is another fail strategy implemented (`FAIL_WITH_EXCEPTION`),
 that throws an `IllegalArgumentException` when no mapping can be found with no log message.
+Furthermore, there are three other fail strategies (`PLACEHOLDER_BIDIRECTIONAL`, `PLACEHOLDER_API_TO_IMPL`, `PLACEHOLDER_IMPL_TO_API`)
+which insert a placeholder value ("UNKNOWN_KEY_VALUE") and emit a warning if there's no available mapping.
+`PLACEHOLDER_BIDIRECTIONAL` performs this substitution in both directions. `PLACEHOLDER_API_TO_IMPL`
+only in the direction from api to implementation, and `PLACEHOLDER_IMPL_TO_API` only in the
+direction from implementation to api. (If no substitution is performed, the mapper continues to
+throw an `IllegalArgumentException` for unmappable values.)
 
 ## Usage
 ```
