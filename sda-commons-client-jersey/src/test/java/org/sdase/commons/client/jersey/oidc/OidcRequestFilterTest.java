@@ -16,6 +16,7 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MultivaluedHashMap;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 import org.sdase.commons.client.jersey.filter.ContainerRequestContextHolder;
+import org.sdase.commons.client.jersey.oidc.filter.OidcRequestFilter;
 import org.sdase.commons.client.jersey.test.ClientTestConfig;
 import org.sdase.commons.client.jersey.test.ClientWithoutConsumerTokenTestApp;
 
@@ -137,6 +139,26 @@ class OidcRequestFilterTest {
 
     verify(1, getRequestedFor(urlEqualTo("/api/cars")).withoutHeader(AUTHORIZATION));
     verify(1, postRequestedFor(urlEqualTo("/token")));
+  }
+
+  @Test
+  void shouldUseCustomNameForMetrics() {
+    // given
+    clearAuthenticationContext();
+    setupTokenEndpoint(true);
+
+    // when new custom filter is used
+    var filter =
+        new OidcRequestFilter(
+            app.getJerseyClientBundle().getClientFactory(),
+            DW.getConfiguration().getOidc(),
+            true,
+            "custom-oidc-client");
+    filter.filter(Mockito.mock(ClientRequestContext.class, Mockito.RETURNS_DEEP_STUBS));
+
+    // then metrics show name
+    var metrics = DW.getEnvironment().metrics().getMetrics().keySet();
+    assertThat(metrics).anyMatch(m -> m.contains(".custom-oidc-client."));
   }
 
   private void initializeAuthenticationContext() {
