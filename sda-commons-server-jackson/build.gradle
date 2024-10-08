@@ -9,7 +9,9 @@ dependencies {
   api "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider"
 
   api project(':sda-commons-shared-error')
-  api 'io.openapitools.jackson.dataformat:jackson-dataformat-hal'
+  api 'io.openapitools.jackson.dataformat:jackson-dataformat-hal', {
+    exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
+  }
   api 'jakarta.xml.bind:jakarta.xml.bind-api'
 
   testImplementation project(':sda-commons-server-testing')
