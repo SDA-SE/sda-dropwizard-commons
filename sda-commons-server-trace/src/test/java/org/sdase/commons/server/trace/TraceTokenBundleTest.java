@@ -92,10 +92,9 @@ class TraceTokenBundleTest {
 
   @Test
   @StdIo
-  @SuppressWarnings("JUnitMalformedDeclaration")
   void shouldHaveTraceTokenRequestedInTask(StdOut out) {
     String expectedLogPattern =
-        "^TraceTokenAwareExampleTask Log with a TraceToken in the MDC. (.+)$";
+        "^TraceTokenAwareExampleTask Log with a TraceToken in the MDC. ([0-9A-Fa-f-]{36}).*$";
     try (Response response =
         DW.client()
             .target("http://localhost:" + DW.getAdminPort())
