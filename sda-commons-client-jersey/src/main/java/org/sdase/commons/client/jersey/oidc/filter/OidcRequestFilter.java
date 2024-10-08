@@ -36,6 +36,19 @@ public class OidcRequestFilter implements ClientRequestFilter {
     }
   }
 
+  public OidcRequestFilter(
+      ClientFactory clientFactory,
+      OidcConfiguration oidc,
+      boolean authenticationPassthrough,
+      String clientName) {
+    if (authenticationPassthrough) {
+      authHeaderClientFilter = new AuthHeaderClientFilter();
+    }
+    if (!oidc.isDisabled()) {
+      this.oidcClient = new OidcClient(clientFactory, oidc, clientName);
+    }
+  }
+
   @Override
   public void filter(ClientRequestContext requestContext) {
     // Passing on existing tokens has precedence over creating new ones

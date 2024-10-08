@@ -25,6 +25,19 @@ public class IssuerClient {
   private final Client client;
   private final OpenIdDiscoveryApi discoveryApi;
 
+  public IssuerClient(ClientFactory clientFactory, OidcConfiguration config, String clientName) {
+    this.config = config;
+
+    this.client =
+        clientFactory.externalClient(config.getHttpClient()).buildGenericClient(clientName);
+
+    this.discoveryApi =
+        createProxy(
+            OpenIdDiscoveryApi.class,
+            WebResourceFactory.newResource(
+                OpenIdDiscoveryApi.class, client.target(config.getIssuerUrl())));
+  }
+
   public IssuerClient(ClientFactory clientFactory, OidcConfiguration config) {
     this.config = config;
 
