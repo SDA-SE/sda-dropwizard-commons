@@ -5,7 +5,8 @@ import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 import org.sdase.commons.keymgmt.config.KeyMgmtConfig;
 import org.sdase.commons.keymgmt.config.KeyMgmtConfigProvider;
 import org.sdase.commons.keymgmt.manager.*;
@@ -21,6 +22,8 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
 
   private final KeyMgmtConfigProvider<T> configProvider;
   private final FailStrategy failStrategy;
+  private final String apiPlaceholder;
+  private final String implPlaceholder;
 
   private Map<String, KeyDefinition> keys;
   private Map<String, KeyMappingModel> mappings;
@@ -31,9 +34,15 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
     return new Builder<>();
   }
 
-  private KeyMgmtBundle(KeyMgmtConfigProvider<T> configProvider, FailStrategy failStrategy) {
+  private KeyMgmtBundle(
+      KeyMgmtConfigProvider<T> configProvider,
+      FailStrategy failStrategy,
+      String apiPlaceholder,
+      String implPlaceholder) {
     this.configProvider = configProvider;
     this.failStrategy = failStrategy;
+    this.apiPlaceholder = apiPlaceholder;
+    this.implPlaceholder = implPlaceholder;
   }
 
   @Override
@@ -76,8 +85,9 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
   }
 
   private MapOrFailKeyMapper getMapOrFailKeyMapper(String keyDefinitionName) {
-    if (mappings.containsKey(keyDefinitionName)) {
-      return new MapOrFailKeyMapper(mappings.get(keyDefinitionName));
+    if (keyDefinitionName != null && mappings.containsKey(keyDefinitionName)) {
+      return new MapOrFailKeyMapper(
+          mappings.get(keyDefinitionName), apiPlaceholder, implPlaceholder);
     } else {
       throw new IllegalArgumentException(
           String.format("No mapping found for key '%s'", keyDefinitionName));
@@ -85,8 +95,9 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
   }
 
   private KeyMapper getMapOrPassthroughKeyMapper(String keyDefinitionName) {
-    if (mappings.containsKey(keyDefinitionName)) {
-      return new MapOrPassthroughKeyMapper(mappings.get(keyDefinitionName));
+    if (keyDefinitionName != null && mappings.containsKey(keyDefinitionName)) {
+      return new MapOrPassthroughKeyMapper(
+          mappings.get(keyDefinitionName), apiPlaceholder, implPlaceholder);
     } else {
       return new PassthroughKeyMapper();
     }
@@ -132,6 +143,10 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
 
     FinalBuilder<C> withFailStrategy(FailStrategy strategy);
 
+    FinalBuilder<C> withApiPlaceholder(String apiPlaceholder);
+
+    FinalBuilder<C> withImplPlaceholder(String implPlaceholder);
+
     KeyMgmtBundle<C> build();
   }
 
@@ -139,6 +154,8 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
 
     private KeyMgmtConfigProvider<C> keyMgmtConfigProvider;
     private FailStrategy failStrategy = FailStrategy.PASSTHROUGH;
+    private String apiPlaceholder;
+    private String implPlaceholder;
 
     private Builder() {
       // private method to prevent external instantiation
@@ -155,8 +172,21 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
     }
 
     @Override
+    public FinalBuilder<C> withApiPlaceholder(String apiPlaceholder) {
+      this.apiPlaceholder = apiPlaceholder;
+      return this;
+    }
+
+    @Override
+    public FinalBuilder<C> withImplPlaceholder(String implPlaceholder) {
+      this.implPlaceholder = implPlaceholder;
+      return this;
+    }
+
+    @Override
     public KeyMgmtBundle<C> build() {
-      return new KeyMgmtBundle<>(keyMgmtConfigProvider, failStrategy);
+      return new KeyMgmtBundle<>(
+          keyMgmtConfigProvider, failStrategy, apiPlaceholder, implPlaceholder);
     }
 
     @Override

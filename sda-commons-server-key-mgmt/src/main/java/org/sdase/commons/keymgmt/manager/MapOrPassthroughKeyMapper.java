@@ -2,6 +2,7 @@ package org.sdase.commons.keymgmt.manager;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import org.sdase.commons.keymgmt.model.KeyMappingModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +13,15 @@ public class MapOrPassthroughKeyMapper implements KeyMapper {
 
   private final KeyMappingModel mappingModel;
 
-  public MapOrPassthroughKeyMapper(KeyMappingModel mappingModel) {
+  private final Optional<String> apiPlaceholder;
+
+  private final Optional<String> implPlaceholder;
+
+  public MapOrPassthroughKeyMapper(
+      KeyMappingModel mappingModel, String apiPlaceholder, String implPlaceholder) {
     this.mappingModel = mappingModel;
+    this.apiPlaceholder = Optional.ofNullable(apiPlaceholder);
+    this.implPlaceholder = Optional.ofNullable(implPlaceholder);
   }
 
   @Override
@@ -21,10 +29,12 @@ public class MapOrPassthroughKeyMapper implements KeyMapper {
     return mappingModel
         .getMapping()
         .mapToImpl(value)
+        .or(() -> implPlaceholder)
         .orElseGet(
             () -> {
               LOG.warn(
-                  "No mapping to implementation found for key '{}' and value '{}'. Passing the value",
+                  "No mapping to implementation found for key '{}' and value '{}'. Passing the"
+                      + " value",
                   mappingModel.getName(),
                   value);
               return value;
@@ -36,6 +46,7 @@ public class MapOrPassthroughKeyMapper implements KeyMapper {
     return mappingModel
         .getMapping()
         .mapToApi(value)
+        .or(() -> apiPlaceholder)
         .map(s -> s.toUpperCase(Locale.ROOT))
         .orElseGet(
             () -> {
