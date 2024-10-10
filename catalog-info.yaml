@@ -14,9 +14,8 @@ metadata:
     configure the framework with default SDA specific settings and add support for an easy and
     fast integration of standard technologies such as SQL, noSQL, or messaging frameworks.
   links:
-    - url: https://github.com/SDA-SE/sda-dropwizard-commons
-      title: GitHub
-      icon: code
+    - url: https://medium.com/sda-se/sda-dropwizard-commons-v3-448302578112
+      title: SDA Dropwizard Commons v3
 spec:
   type: library
   lifecycle: production
