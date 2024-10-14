@@ -222,7 +222,7 @@ dependencies {
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
     api "org.apache.zookeeper:zookeeper:3.8.4" // Kafka Client 3.6.0 also uses 3.x
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
-    api "org.apache.curator:curator-test:5.7.0", {
+    api "org.apache.curator:curator-test:5.7.1", {
       because '''\
           Upgrade because kafka-junit still uses curator 2.12.0.
           The older version does not work when executing tests parallel because it starts the
