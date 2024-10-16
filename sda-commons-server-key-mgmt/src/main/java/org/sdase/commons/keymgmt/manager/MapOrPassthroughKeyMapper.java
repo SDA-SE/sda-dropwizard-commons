@@ -24,7 +24,8 @@ public class MapOrPassthroughKeyMapper implements KeyMapper {
         .orElseGet(
             () -> {
               LOG.warn(
-                  "No mapping to implementation found for key '{}' and value '{}'. Passing the value",
+                  "No mapping to implementation found for key '{}' and value '{}'. Passing the"
+                      + " value",
                   mappingModel.getName(),
                   value);
               return value;

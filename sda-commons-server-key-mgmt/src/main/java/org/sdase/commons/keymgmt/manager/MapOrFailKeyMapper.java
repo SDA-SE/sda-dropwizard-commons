@@ -2,14 +2,22 @@ package org.sdase.commons.keymgmt.manager;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import org.sdase.commons.keymgmt.model.KeyMappingModel;
 
 public class MapOrFailKeyMapper implements KeyMapper {
 
   private final KeyMappingModel mappingModel;
 
-  public MapOrFailKeyMapper(KeyMappingModel mappingModel) {
+  private final boolean useApiPlaceholder;
+
+  private final boolean useImplPlaceholder;
+
+  public MapOrFailKeyMapper(
+      KeyMappingModel mappingModel, boolean useApiPlaceholder, boolean useImplPlaceholder) {
     this.mappingModel = mappingModel;
+    this.useApiPlaceholder = useApiPlaceholder;
+    this.useImplPlaceholder = useImplPlaceholder;
   }
 
   @Override
@@ -17,6 +25,7 @@ public class MapOrFailKeyMapper implements KeyMapper {
     return mappingModel
         .getMapping()
         .mapToImpl(value)
+        .or(() -> useImplPlaceholder ? Optional.of("PLACEHOLDER") : Optional.empty())
         .orElseThrow(
             () ->
                 new IllegalArgumentException(
@@ -30,6 +39,7 @@ public class MapOrFailKeyMapper implements KeyMapper {
     return mappingModel
         .getMapping()
         .mapToApi(value)
+        .or(() -> useApiPlaceholder ? Optional.of("PLACEHOLDER") : Optional.empty())
         .map(s -> s.toUpperCase(Locale.ROOT))
         .orElseThrow(
             () ->
