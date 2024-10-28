@@ -149,7 +149,7 @@ dependencies {
     api "io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations-jakarta:$swaggerCoreV3Version"
-    api "io.swagger.parser.v3:swagger-parser-v3:2.1.22"
+    api "io.swagger.parser.v3:swagger-parser-v3:2.1.23"
 
     // sda-commons-server-prometheus
     api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
