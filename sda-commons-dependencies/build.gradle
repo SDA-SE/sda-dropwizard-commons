@@ -84,7 +84,7 @@ dependencies {
     api "org.jboss.logging:jboss-logging:3.6.1.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
     }
-    api "org.yaml:snakeyaml:2.2", {
+    api "org.yaml:snakeyaml:2.3", {
       because "conflict between com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
       because "vulnerability CVE-2022-1471 in 1.33 and below"
     }
