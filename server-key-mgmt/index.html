@@ -1505,7 +1505,13 @@ Therefore, every value mapping consists of an <code>api</code> and an <code>impl
 <p>The bundle provides a "pass through" default behavior for keys and mappings that are not known.
 This means, that the original value is just passed instead of being mapped. There is just a warning in the log files.</p>
 <p>This fail strategy can be configured as part of the builder. There is another fail strategy implemented (<code>FAIL_WITH_EXCEPTION</code>),
-that throws an <code>IllegalArgumentException</code> when no mapping can be found with no log message.</p>
+that throws an <code>IllegalArgumentException</code> when no mapping can be found with no log message.
+Furthermore, there are three other fail strategies (<code>PLACEHOLDER_BIDIRECTIONAL</code>, <code>PLACEHOLDER_API_TO_IMPL</code>, <code>PLACEHOLDER_IMPL_TO_API</code>)
+which insert a placeholder value ("UNKNOWN_KEY_VALUE") and emit a warning if there's no available mapping.
+<code>PLACEHOLDER_BIDIRECTIONAL</code> performs this substitution in both directions. <code>PLACEHOLDER_API_TO_IMPL</code>
+only in the direction from api to implementation, and <code>PLACEHOLDER_IMPL_TO_API</code> only in the
+direction from implementation to api. (If no substitution is performed, the mapper continues to
+throw an <code>IllegalArgumentException</code> for unmappable values.)</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>    implementation &#39;org.sdase.commons:sda-commons-server-key-mgmt:&lt;version&gt;&#39;
 </code></pre></div></td></tr></table></div>
