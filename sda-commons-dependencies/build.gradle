@@ -7,6 +7,7 @@ javaPlatform {
 }
 
 ext {
+  apacheHttpClient5Version = '5.4.1'
   dropwizardVersion = '4.0.10'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.13.6'
@@ -76,8 +77,8 @@ dependencies {
     api "commons-fileupload:commons-fileupload:1.5", {
       because "CVE-2023-24998 in 1.4"
     }
-    api 'org.apache.httpcomponents.client5:httpclient5:5.4.1'
-    api 'org.apache.httpcomponents.client5:httpclient5-fluent:5.4.1'
+    api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
+    api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
     api "io.github.classgraph:classgraph:4.8.177", {
       because "conflict between io.swagger.core.v3:swagger-jaxrs2 and io.swagger.core.v3:swagger-integration upgrade"
     }
