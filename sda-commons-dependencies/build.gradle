@@ -26,7 +26,7 @@ ext {
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '5.2.0'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
-  bouncyCastleVersion = '1.78.1'
+  bouncyCastleVersion = '1.79'
   victoolsVersion = '4.36.0'
   flywayVersion = '10.20.1'
 }
