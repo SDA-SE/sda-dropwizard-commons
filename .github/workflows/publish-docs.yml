@@ -8,7 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
         with:
           fetch-depth: 1
       - run: git config user.name 'github-actions[bot]' && git config user.email 'github-actions[bot]@users.noreply.github.com'
@@ -16,7 +16,7 @@ jobs:
       - run: >
           wget -q -O /usr/local/bin/plantuml https://github.com/mikaelhg/puni2/releases/download/1.2022.7/plantuml-1.2022.7-glibc-x86_64
           && chmod 755 /usr/local/bin/plantuml
-      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d #v.5.1.0
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b #v.5.3.0
         with:
           python-version: 3.12
       - run: pip install mkdocs-techdocs-core # Includes material theme
@@ -31,7 +31,7 @@ jobs:
         run: mkdocs build --config-file mkdocs.yaml && ls -al
       - name: Archive test build
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
         with:
           name: site
           path: |

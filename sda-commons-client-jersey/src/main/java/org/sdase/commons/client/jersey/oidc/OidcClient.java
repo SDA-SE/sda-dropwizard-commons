@@ -40,6 +40,26 @@ public class OidcClient {
     this.cache = Caffeine.newBuilder().expireAfter(new AfterCreateExpiry()).build();
   }
 
+  public OidcClient(ClientFactory clientFactory, OidcConfiguration config, String clientName) {
+    this.config = config;
+
+    if (config.isDisabled()) {
+      LOGGER.warn("OIDC was disabled.");
+      this.cache = null;
+      this.issuerClient = null;
+      return;
+    }
+
+    this.issuerClient = new IssuerClient(clientFactory, config, clientName);
+
+    if (config.getCache().isDisabled()) {
+      this.cache = null;
+      return;
+    }
+
+    this.cache = Caffeine.newBuilder().expireAfter(new AfterCreateExpiry()).build();
+  }
+
   /**
    * Retrieves a new access token from the token endpoint using the given {@link OidcConfiguration}.
    *

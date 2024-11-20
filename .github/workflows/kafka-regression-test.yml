@@ -1,0 +1,20 @@
+# This workflow tests a regression that came with a Kafka client update in apps running distroless
+# images with read only file system.
+# See sda-commons-server-kafka/src/test/DockerTest for details
+name: Read only file system
+
+on:
+  pull_request:
+
+jobs:
+  test-in-docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - name: build image
+        run: docker build -t kafka-ro:test .
+      - name: Run writable # should always pass
+        run: docker run kafka-ro:test
+      - name: Run readonly # should fail with wrong kafka-client version
+        run: docker run --read-only kafka-ro:test

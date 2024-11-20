@@ -68,16 +68,20 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
       throw new IllegalStateException(
           "KeyMapper can be build in run(C, Environment), not in initialize(Bootstrap)");
     }
-    if (failStrategy == FailStrategy.FAIL_WITH_EXCEPTION) {
-      return getMapOrFailKeyMapper(keyDefinitionName);
-    } else {
-      return getMapOrPassthroughKeyMapper(keyDefinitionName);
-    }
+    return switch (failStrategy) {
+      case FAIL_WITH_EXCEPTION -> getMapOrFailKeyMapper(keyDefinitionName, false, false);
+      case PLACEHOLDER_BIDIRECTIONAL -> getMapOrFailKeyMapper(keyDefinitionName, true, true);
+      case PLACEHOLDER_API_TO_IMPL -> getMapOrFailKeyMapper(keyDefinitionName, true, false);
+      case PLACEHOLDER_IMPL_TO_API -> getMapOrFailKeyMapper(keyDefinitionName, false, true);
+      default -> getMapOrPassthroughKeyMapper(keyDefinitionName);
+    };
   }
 
-  private MapOrFailKeyMapper getMapOrFailKeyMapper(String keyDefinitionName) {
-    if (mappings.containsKey(keyDefinitionName)) {
-      return new MapOrFailKeyMapper(mappings.get(keyDefinitionName));
+  private MapOrFailKeyMapper getMapOrFailKeyMapper(
+      String keyDefinitionName, boolean useApiPlaceholder, boolean useImplPlaceholder) {
+    if (keyDefinitionName != null && mappings.containsKey(keyDefinitionName)) {
+      return new MapOrFailKeyMapper(
+          mappings.get(keyDefinitionName), useApiPlaceholder, useImplPlaceholder);
     } else {
       throw new IllegalArgumentException(
           String.format("No mapping found for key '%s'", keyDefinitionName));
@@ -120,7 +124,10 @@ public class KeyMgmtBundle<T extends Configuration> implements ConfiguredBundle<
   // --------------
   public enum FailStrategy {
     PASSTHROUGH,
-    FAIL_WITH_EXCEPTION
+    FAIL_WITH_EXCEPTION,
+    PLACEHOLDER_BIDIRECTIONAL,
+    PLACEHOLDER_IMPL_TO_API,
+    PLACEHOLDER_API_TO_IMPL
   }
 
   public interface InitialBuilder {

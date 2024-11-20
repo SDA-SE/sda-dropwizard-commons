@@ -9,7 +9,9 @@ dependencies {
 
   api 'org.apache.kafka:kafka_2.13', {
     exclude group: 'org.slf4j', module: 'slf4j-api'
+    exclude group: 'commons-io', module: 'commons-io'
   }
+  api 'commons-io:commons-io'
   api 'com.salesforce.kafka.test:kafka-junit5', {
     exclude group: 'org.apache.curator', module: 'curator-test'
   }

@@ -102,6 +102,13 @@ class KeyMgmtBundleWithFailStrategyTest {
     assertThat(keyMapper.toApi("B")).isEqualTo("A");
   }
 
+  @Test
+  void shouldThrowIllegalArgumentExceptionForNulls() {
+    KeyMapper keyMapper = keyMgmtBundle.createKeyMapper("BIDIRECTIONAL_ONLY");
+    assertThrows(IllegalArgumentException.class, () -> keyMapper.toImpl(null));
+    assertThrows(IllegalArgumentException.class, () -> keyMapper.toApi(null));
+  }
+
   public static class KeyMgmtBundleTestApp extends Application<KeyMgmtBundleTestConfig> {
 
     private final KeyMgmtBundle<KeyMgmtBundleTestConfig> keyMgmt =

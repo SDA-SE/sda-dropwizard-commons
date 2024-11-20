@@ -7,28 +7,29 @@ javaPlatform {
 }
 
 ext {
-  dropwizardVersion = '4.0.7'
+  apacheHttpClient5Version = '5.4.1'
+  dropwizardVersion = '4.0.10'
   prometheusVersion = '0.16.0'
-  micrometerVersion = '1.13.1'
-  swaggerCoreV3Version = '2.2.22'
+  micrometerVersion = '1.14.1'
+  swaggerCoreV3Version = '2.2.25'
   weldVersion = '5.1.2.Final'
-  jacksonVersion = '2.17.1'
+  jacksonVersion = '2.18.1'
   jsonUnitVersion = '3.2.2'
-  scalaVersion = '2.13.14' // align transitive dependency from various modules, keep up to date
-  kafkaVersion = '3.7.0'
+  scalaVersion = '2.13.15' // align transitive dependency from various modules, keep up to date
+  kafkaVersion = '3.9.0'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
-  dbRiderVersion = '1.42.0'
-  kotlinVersion = '2.0.0'
-  kotlinxCoroutinesVersion = '1.8.1'
+  dbRiderVersion = '1.44.0'
+  kotlinVersion = '2.0.21'
+  kotlinxCoroutinesVersion = '1.9.0'
   resilience4jVersion = '2.2.0'
-  openTelemetryVersion = '1.36.0'
-  openTelemetryAlpha2Version = '2.5.0-alpha'
+  openTelemetryVersion = '1.41.0'
+  openTelemetryAlpha2Version = '2.10.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
-  mongoDbDriverVersion = '5.1.1'
+  mongoDbDriverVersion = '5.2.1'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
-  bouncyCastleVersion = '1.78.1'
-  victoolsVersion = '4.35.0'
-  flywayVersion = '10.15.0'
+  bouncyCastleVersion = '1.79'
+  victoolsVersion = '4.37.0'
+  flywayVersion = '10.21.0'
 }
 
 dependencies {
@@ -43,7 +44,7 @@ dependencies {
     exclude group: 'org.jetbrains', module: 'annotations'
     because("this version is outdated, but the main dependency does not have yet an updated version")
   }
-  api enforcedPlatform("org.eclipse.jetty:jetty-bom:11.0.21"), {
+  api enforcedPlatform("org.eclipse.jetty:jetty-bom:11.0.24"), {
     because("dropwizard and dropwizard-metrics use different versions")
   }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
@@ -60,10 +61,10 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.26.7")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.29.15")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
-  api enforcedPlatform("io.netty:netty-bom:4.1.111.Final"), {
+  api enforcedPlatform("io.netty:netty-bom:4.1.115.Final"), {
     because "various CVEs in earlier versions"
   }
 
@@ -72,32 +73,32 @@ dependencies {
 
   constraints {
     // overall conflicts
-    api "org.apache.commons:commons-lang3:3.14.0"
+    api "org.apache.commons:commons-lang3:3.17.0"
     api "commons-fileupload:commons-fileupload:1.5", {
       because "CVE-2023-24998 in 1.4"
     }
-    api 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
-    api 'org.apache.httpcomponents.client5:httpclient5-fluent:5.3.1.1'
-    api "io.github.classgraph:classgraph:4.8.174", {
+    api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
+    api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
+    api "io.github.classgraph:classgraph:4.8.179", {
       because "conflict between io.swagger.core.v3:swagger-jaxrs2 and io.swagger.core.v3:swagger-integration upgrade"
     }
-    api "org.jboss.logging:jboss-logging:3.6.0.Final", {
+    api "org.jboss.logging:jboss-logging:3.6.1.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
     }
-    api "org.yaml:snakeyaml:2.2", {
+    api "org.yaml:snakeyaml:2.3", {
       because "conflict between com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
       because "vulnerability CVE-2022-1471 in 1.33 and below"
     }
 
     // overall testing dependencies
-    api "org.awaitility:awaitility:4.2.1"
-    api 'org.assertj:assertj-core:3.26.0'
+    api "org.awaitility:awaitility:4.2.2"
+    api 'org.assertj:assertj-core:3.26.3'
 
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
     // sda-commons-shared-wiremock-testing
-    api "org.wiremock:wiremock:3.7.0"
-    api "org.ow2.asm:asm:9.7", {
+    api "org.wiremock:wiremock:3.9.2"
+    api "org.ow2.asm:asm:9.7.1", {
       because "version conflict within Wiremock"
     }
     api "net.minidev:json-smart:2.5.1", {
@@ -120,7 +121,7 @@ dependencies {
     api "org.objenesis:objenesis:3.4"
 
     // sda-commons-server-hibernate
-    api "org.postgresql:postgresql:42.7.3"
+    api "org.postgresql:postgresql:42.7.4"
     api "org.flywaydb:flyway-core:${flywayVersion}"
     api "org.flywaydb:flyway-database-postgresql:${flywayVersion}"
 
@@ -136,7 +137,7 @@ dependencies {
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryAlpha2Version}"
     // check if commons-compress management is still needed after flapdoodle upgrade
     // flapdoodle 4.11.1 pulls commons-compress 1.25.0 with CVEs 2024-25710 and 2024-26308
-    api "org.apache.commons:commons-compress:1.26.2"
+    api "org.apache.commons:commons-compress:1.27.1"
     api "org.mongodb:mongodb-driver-core:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-sync:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-legacy:${mongoDbDriverVersion}"
@@ -149,7 +150,7 @@ dependencies {
     api "io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations-jakarta:$swaggerCoreV3Version"
-    api "io.swagger.parser.v3:swagger-parser-v3:2.1.22"
+    api "io.swagger.parser.v3:swagger-parser-v3:2.1.23"
 
     // sda-commons-server-prometheus
     api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
@@ -177,15 +178,16 @@ dependencies {
     api "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"
 
     // sda-commons-server-testing
-    api "org.hamcrest:hamcrest:2.2", {
+    api "org.hamcrest:hamcrest:3.0", {
       because "hamcrest is the successor of hamcrest-core."
     }
-    api "org.hamcrest:hamcrest-core:2.2", {
+    api "org.hamcrest:hamcrest-core:3.0", {
       because '''\
           hamcrest-core is deprecated and overlaps with hamcrest, in hamcrest-core 2.2 is
           only one class named HamcrestCoreIsDeprecated. We force this version to avoid complex
           exclude and dependency substitution configuration as there is no conflict with
-          hamcrest in the code base. Please do not upgrade hamcrest-core.
+          hamcrest in the code base. Please do not upgrade hamcrest-core without verifying the
+          deprecation.
           '''
     }
 
@@ -196,32 +198,32 @@ dependencies {
       because "Dropwizard does not use the jakarta version yet so we replace it in weld with the javax version that comes as transitive dependency without explicit version."
     }
 
-    api "org.junit-pioneer:junit-pioneer:2.2.0"
+    api "org.junit-pioneer:junit-pioneer:2.3.0"
 
     // sda-commons-server-weld-testing
     api 'org.jboss.weld:weld-junit5:4.0.3.Final'
 
     // sda-commons-shared-*
-    api 'commons-io:commons-io:2.16.1'
+    api 'commons-io:commons-io:2.17.0'
 
     // sda-commons-server-opentelemetry
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
     api "io.opentelemetry:opentelemetry-semconv:1.30.1-alpha"
     api "io.opentelemetry.semconv:opentelemetry-semconv${openTelemetryAlpha2Version}"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.5.0"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.4-alpha"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.10.0"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.6-alpha"
     api "com.squareup.okhttp3:okhttp:4.12.0" // bump from 4.9.3 used in opentelemetry-exporter-otlp-common
-    api 'com.squareup.okio:okio:3.9.0', {
+    api 'com.squareup.okio:okio:3.9.1', {
       because 'CVE-2023-3635 in 3.2.0'
     }
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.8.4" // Kafka Client 3.6.0 also uses 3.x
+    api "org.apache.zookeeper:zookeeper:3.9.3"
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
-    api "org.apache.curator:curator-test:5.7.0", {
+    api "org.apache.curator:curator-test:5.7.1", {
       because '''\
           Upgrade because kafka-junit still uses curator 2.12.0.
           The older version does not work when executing tests parallel because it starts the
@@ -229,7 +231,7 @@ dependencies {
           anymore.
         '''
     }
-    api "org.xerial.snappy:snappy-java:1.1.10.5", {
+    api "org.xerial.snappy:snappy-java:1.1.10.7", {
       because "conflict between org.apache.kafka:kafka-clients and org.apache.curator:curator-test upgrade"
     }
 
