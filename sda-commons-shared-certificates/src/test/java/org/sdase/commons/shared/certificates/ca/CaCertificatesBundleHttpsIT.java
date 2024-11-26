@@ -30,7 +30,7 @@ import org.sdase.commons.shared.certificates.ca.ssl.SslUtil;
 class CaCertificatesBundleHttpsIT {
   private static final String DEFAULT_SSL_PROTOCOL = "TLSv1.2";
 
-  private static final String securedHost = "https://sda.se";
+  private static final String securedHost = "https://api.github.com";
 
   @Test
   void shouldFailWithCustomTrustStore() throws Exception {
