@@ -10,7 +10,7 @@ plugins {
   id 'jacoco'
   id 'signing'
   id 'org.sonarqube' version '6.0.1.5171'
-  id 'com.diffplug.spotless' version '6.25.0'
+  id 'com.diffplug.spotless' version '7.0.1'
   id 'io.codearte.nexus-staging' version '0.30.0'
   id 'project-report'
   id 'org.cyclonedx.bom' version '1.6.1' // no bom.json created in later versions
