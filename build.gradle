@@ -57,6 +57,9 @@ spotless {
   }
 }
 
+group 'org.sdase.commons'
+version = System.getenv('SEMANTIC_VERSION')
+
 /**
  * Settings for all modules
  */
@@ -66,7 +69,8 @@ subprojects {
   apply plugin: 'signing'
   apply plugin: 'project-report'
 
-  group 'org.sdase.commons'
+  group rootProject.group
+  version = rootProject.version
 
   repositories {
     mavenCentral()
@@ -94,8 +98,6 @@ subprojects {
       indentWithSpaces(2)
     }
   }
-
-  version = System.getenv('SEMANTIC_VERSION')
 
   // Don't configure publishing for the example projects
   if (!it.name.endsWith("-example")) {
