@@ -16,6 +16,10 @@ plugins {
   id 'org.cyclonedx.bom' version '2.0.0' // no bom.json created in later versions
 }
 
+cyclonedxBom {
+  schemaVersion = "1.4"
+}
+
 allprojects {
   apply plugin: 'idea'
   idea.module.inheritOutputDirs = true
