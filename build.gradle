@@ -53,7 +53,7 @@ project.ext.unpublishedModules = unpublishedModules
 spotless {
   groovyGradle {
     greclipse()
-    indentWithSpaces(2)
+    leadingTabsToSpaces(2)
   }
 }
 
