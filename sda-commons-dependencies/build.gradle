@@ -8,7 +8,7 @@ javaPlatform {
 
 ext {
   apacheHttpClient5Version = '5.4.1'
-  dropwizardVersion = '4.0.11'
+  dropwizardVersion = '4.0.12'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.14.3'
   swaggerCoreV3Version = '2.2.28'
