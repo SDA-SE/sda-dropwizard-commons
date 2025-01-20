@@ -2,6 +2,7 @@ package org.sdase.commons.server.dropwizard.bundles;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.SET;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -38,10 +39,10 @@ class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
 
     List<AppenderFactory<ILoggingEvent>> consoleAppenderFactories =
         defaultLoggingFactory.getAppenders().stream()
-            .filter(a -> a instanceof ConsoleAppenderFactory)
+            .filter(ConsoleAppenderFactory.class::isInstance)
             .toList();
 
-    assertThat(consoleAppenderFactories.size()).isEqualTo(1);
+    assertThat(consoleAppenderFactories.size()).isOne();
 
     ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory =
         (ConsoleAppenderFactory<ILoggingEvent>) consoleAppenderFactories.get(0);
@@ -54,7 +55,10 @@ class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
     EventJsonLayoutBaseFactory layout =
         (EventJsonLayoutBaseFactory) consoleAppenderFactory.getLayout();
 
-    assertThat(layout.isFlattenMdc()).isFalse();
+    assertThat(layout)
+        .isNotNull()
+        .extracting(EventJsonLayoutBaseFactory::isFlattenMdc)
+        .isEqualTo(false);
   }
 
   @Test
@@ -72,7 +76,10 @@ class DefaultLoggingConfigurationBundleWithJsonLoggingEnabledTest {
     AccessJsonLayoutBaseFactory accessJsonLayoutBaseFactory =
         (AccessJsonLayoutBaseFactory) consoleAppenderFactory.getLayout();
 
-    assertThat(accessJsonLayoutBaseFactory.getRequestHeaders())
+    assertThat(accessJsonLayoutBaseFactory)
+        .isNotNull()
+        .extracting(AccessJsonLayoutBaseFactory::getRequestHeaders)
+        .asInstanceOf(SET)
         .containsExactly("Trace-Token", "Consumer-Token");
     assertThat(accessJsonLayoutBaseFactory.getResponseHeaders()).containsExactly("Trace-Token");
   }
