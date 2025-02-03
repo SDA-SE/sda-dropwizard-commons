@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.43">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.0253249f.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.6f8fc17f.min.css">
       
       
 
@@ -1838,7 +1838,7 @@ They are forwarded as parsed by the framework. </p>
 Please be aware while a service might only consider one value of a specific header, the OPA is able to authorize on an array of those.
 Consider this in your policy when you want to make sure you authorize on the same value that a service might use to evaluate the output.</p>
 <p>These <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/filter/model/OpaInput.java">inputs</a> can be accessed inside a policy <code>.rego</code>-file in this way:
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<div class="language-rego highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
 <span class="normal"> 4</span>
@@ -1868,37 +1868,37 @@ Consider this in your policy when you want to make sure you authorize on the sam
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
-<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code># each policy lies in a package that is referenced in the configuration of the OpaBundle
-package example
+<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># each policy lies in a package that is referenced in the configuration of the OpaBundle</span>
+<span class="k">package</span><span class="w"> </span><span class="n">example</span>
 
-# decode the JWT as new variable &#39;token&#39;
-token = {&quot;payload&quot;: payload} {
-    not input.jwt == null
-    io.jwt.decode(input.jwt, [_, payload, _])
-}
+<span class="c1"># decode the JWT as new variable &#39;token&#39;</span>
+<span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;payload&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">payload</span><span class="p">}</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">not</span><span class="w"> </span><span class="nb">input</span><span class="p">.</span><span class="n">jwt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">null</span>
+<span class="w">    </span><span class="n">io</span><span class="p">.</span><span class="n">jwt</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="nb">input</span><span class="p">.</span><span class="n">jwt</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">])</span>
+<span class="p">}</span>
 
-# deny by default
-default allow = false
+<span class="c1"># deny by default</span>
+<span class="k">default</span><span class="w"> </span><span class="n">allow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">false</span>
 
-allow {
-    # allow if path match &#39;/contracts/:anyid&#39; 
-    input.path = [&quot;contracts&quot;, _]
+<span class="n">allow</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1"># allow if path match &#39;/contracts/:anyid&#39; </span>
+<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;contracts&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">]</span>
 
-    # allow if request method &#39;GET&#39; is used
-    input.httpMethod == &quot;GET&quot;
+<span class="w">    </span><span class="c1"># allow if request method &#39;GET&#39; is used</span>
+<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">httpMethod</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span>
 
-    # allow if &#39;claim&#39; exists in the JWT payload
-    token.payload.claim
+<span class="w">    </span><span class="c1"># allow if &#39;claim&#39; exists in the JWT payload</span>
+<span class="w">    </span><span class="n">token</span><span class="p">.</span><span class="n">payload</span><span class="p">.</span><span class="n">claim</span>
 
-    # allow if a request header &#39;HttpRequestHeaderName&#39; has a certain value 
-    input.headers[&quot;httprequestheadername&quot;][_] == &quot;certain-value&quot;
-}
+<span class="w">    </span><span class="c1"># allow if a request header &#39;HttpRequestHeaderName&#39; has a certain value </span>
+<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;httprequestheadername&quot;</span><span class="p">][</span><span class="n">_</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;certain-value&quot;</span>
+<span class="p">}</span>
 
-# set some example constraints 
-constraint1 := true                # always true
-constraint2 := [ &quot;v2.1&quot;, &quot;v2.2&quot; ]  # always an array of &quot;v2.1&quot; and &quot;v2.2&quot;
-constraint3[token.payload.sub].    # always a set that contains the &#39;sub&#39; claim from the token
-                                   # or is empty if no token is present
+<span class="c1"># set some example constraints </span>
+<span class="n">constraint1</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">true</span><span class="w">                </span><span class="c1"># always true</span>
+<span class="n">constraint2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;v2.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;v2.2&quot;</span><span class="w"> </span><span class="p">]</span><span class="w">  </span><span class="c1"># always an array of &quot;v2.1&quot; and &quot;v2.2&quot;</span>
+<span class="n">constraint3</span><span class="p">[</span><span class="n">token</span><span class="p">.</span><span class="n">payload</span><span class="p">.</span><span class="n">sub</span><span class="p">].</span><span class="w">    </span><span class="c1"># always a set that contains the &#39;sub&#39; claim from the token</span>
+<span class="w">                                   </span><span class="c1"># or is empty if no token is present</span>
 </code></pre></div></td></tr></table></div></p>
 <p>The response consists of two parts: The overall <code>allow</code> decision, and optional rules that represent <em>constraints</em> to limit data access
 within the service. These constraints are fully service dependent and MUST be applied when querying the database or
@@ -2128,19 +2128,19 @@ While the service (e.g. in case of query parameters) only considers the first va
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </code></pre></div></td></tr></table></div></p>
 <p>Access the additional input inside a policy <code>.rego</code>-file in this way:
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<div class="language-rego highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span>
 <span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code>exampleExtensionWorks {
-    # check if path match &#39;/contracts&#39; 
-    input.path = [&quot;contracts&quot;]
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">exampleExtensionWorks</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1"># check if path match &#39;/contracts&#39; </span>
+<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;contracts&quot;</span><span class="p">]</span>
 
-    # check if the custom input has a certain value 
-    input.myExtension == true 
-}
+<span class="w">    </span><span class="c1"># check if the custom input has a certain value </span>
+<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">myExtension</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">true</span><span class="w"> </span>
+<span class="p">}</span>
 </code></pre></div></td></tr></table></div></p>
 
 
@@ -2231,7 +2231,7 @@ While the service (e.g. in case of query parameters) only considers the first va
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      <script src="../assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
         <script src="../search/main.js"></script>
       
