@@ -7,7 +7,7 @@ javaPlatform {
 }
 
 ext {
-  apacheHttpClient5Version = '5.4.1'
+  apacheHttpClient5Version = '5.4.2'
   dropwizardVersion = '4.0.12'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.14.3'
