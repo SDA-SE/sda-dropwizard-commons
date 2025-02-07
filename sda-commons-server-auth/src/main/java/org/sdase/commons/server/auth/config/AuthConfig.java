@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 public class AuthConfig {
 
   /** The client configuration of the HTTP client that is used for the key loader. */
-  private JerseyClientConfiguration keyLoaderClient;
+  private JerseyClientConfiguration keyLoaderClient = new KeycloakLoaderClientConfig();
 
   /** Keys that are allowed to sign tokens derived from {@link #setKeys(List)}. */
   private final List<KeyLocation> keys = new ArrayList<>();
