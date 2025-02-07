@@ -5,7 +5,7 @@ import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.core.setup.Environment;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.apachehttpclient.v5_2.ApacheHttpClient5Telemetry;
+import io.opentelemetry.instrumentation.apachehttpclient.v5_2.ApacheHttpClientTelemetry;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientRequestFilter;
 import jakarta.ws.rs.core.Feature;
@@ -52,7 +52,7 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
         new HttpClientBuilder(environment) {
           @Override
           protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder createBuilder() {
-            return ApacheHttpClient5Telemetry.builder(openTelemetry).build().newHttpClientBuilder();
+            return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
           }
         });
     this.objectMapper = environment.getObjectMapper();
