@@ -13,7 +13,6 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jackson.Jackson;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.apachehttpclient.v5_2.ApacheHttpClient5Telemetry;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.WebTarget;
 import java.util.ArrayList;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.process.internal.RequestScoped;
+import org.sdase.commons.server.client.ClientBuilderUtil;
 import org.sdase.commons.server.opa.config.OpaClientConfiguration;
 import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.config.OpaConfigProvider;
@@ -174,13 +174,9 @@ public class OpaBundle<T extends Configuration> implements ConfiguredBundle<T> {
         config.getOpaClient() == null ? new OpaClientConfiguration() : config.getOpaClient();
 
     JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment);
+    // should be set as soon as creating the builder
     jerseyClientBuilder.setApacheHttpClientBuilder(
-        new io.dropwizard.client.HttpClientBuilder(environment) {
-          @Override
-          protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder createBuilder() {
-            return ApacheHttpClient5Telemetry.builder(openTelemetry).build().newHttpClientBuilder();
-          }
-        });
+        ClientBuilderUtil.createJerseyClientBuilder(environment, openTelemetry));
 
     return jerseyClientBuilder.using(clientConfig).using(objectMapper).build("opaClient");
   }

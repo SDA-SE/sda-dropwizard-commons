@@ -1,13 +1,9 @@
-package org.sdase.commons.server.opa.config;
+package org.sdase.commons.server.auth.config;
 
 import io.dropwizard.client.JerseyClientConfiguration;
 
-/** A customized {@link JerseyClientConfiguration} that disables gzip by default. */
-public class OpaClientConfiguration extends JerseyClientConfiguration {
-  public OpaClientConfiguration() {
-    setGzipEnabled(false);
-    setGzipEnabledForRequests(false);
-
+public class KeycloakLoaderClientConfig extends JerseyClientConfiguration {
+  public KeycloakLoaderClientConfig() {
     // since Apache HTTP5 Client 7.4, proxied connections request an upgrade for TLS/1.2 by default
     // this upgrade request breaks outgoing istio proxies, so we disable connection upgrades
     // https://issues.apache.org/jira/browse/HTTPCLIENT-751

@@ -27,7 +27,7 @@ public class HttpClientConfiguration extends JerseyClientConfiguration {
 
     // Gzip for request is disabled by default, because it breaks with some
     // server implementations in combination with the Content-Encoding: gzip
-    // header if supplied accidentally to a GET request. This happen after
+    // header if supplied accidentally to a GET request. This happens after
     // calling a POST and receiving a SEE_OTHER response that is executed with
     // the same headers as the POST request.
     setGzipEnabledForRequests(false);
@@ -41,6 +41,8 @@ public class HttpClientConfiguration extends JerseyClientConfiguration {
     // https://issues.apache.org/jira/browse/HTTPCLIENT-751
     // https://github.com/istio/istio/issues/53239
     // https://github.com/envoyproxy/envoy/issues/36305
+    //
+    // also see KeycloakLoaderClientConfiguration and OpaClientConfiguration in server-auth
     setProtocolUpgradeEnabled(false);
   }
 }
