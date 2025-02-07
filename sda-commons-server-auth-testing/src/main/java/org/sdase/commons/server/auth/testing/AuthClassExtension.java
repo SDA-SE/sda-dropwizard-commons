@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import java.util.Objects;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -88,7 +89,8 @@ public class AuthClassExtension extends AbstractAuth
     this.authConfig = new AuthConfig().setKeys(singletonList(createKeyLocation()));
 
     try {
-      String authKeysConfig = new ObjectMapper().writeValueAsString(authConfig);
+      String authKeysConfig =
+          new ObjectMapper().registerModule(new Jdk8Module()).writeValueAsString(authConfig);
       setValueForAuthKeysEnv(authKeysConfig);
     } catch (JsonProcessingException e) {
       fail("Failed to create the config keys: " + e.getMessage());
