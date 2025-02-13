@@ -1,0 +1,12 @@
+name: Temporary CI Proxy
+
+on:
+  pull_request:
+
+jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test with Gradle in Docker
+        run: ./proxy-docker-test.sh
