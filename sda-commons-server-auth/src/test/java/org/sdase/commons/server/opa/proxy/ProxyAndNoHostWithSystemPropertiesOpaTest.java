@@ -10,8 +10,8 @@ import org.junitpioneer.jupiter.SetSystemProperty;
     value = "org.sdase.commons.server.opa.proxy.OpaBundleProxyTestSetup#hostNotSet",
     disabledReason = "This test expects 'dummy.opa.test' to point to '127.0.0.1' in /etc/hosts")
 @SetSystemProperty(key = "http.proxyHost", value = "nowhere.example.com")
-@SetSystemProperty(key = "https.proxyHost", value = "nowhere.example.com")
-class ProxyWithSystemPropertiesTest extends OpaBundleProxyTestSetup {
+@SetSystemProperty(key = "http.nonProxyHosts", value = OpaBundleProxyTestSetup.OPA_DOMAIN)
+class ProxyAndNoHostWithSystemPropertiesOpaTest extends OpaBundleProxyTestSetup {
   @Test
   void shouldCallWiremockOpa() {
     var actual = pingRequest();
