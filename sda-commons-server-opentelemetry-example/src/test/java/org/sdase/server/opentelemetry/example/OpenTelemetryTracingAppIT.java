@@ -49,8 +49,6 @@ class OpenTelemetryTracingAppIT {
                         "someWork",
                         "instrumentedWork",
                         "GET /instrumented"));
-
-    ;
   }
 
   @Test
@@ -82,7 +80,6 @@ class OpenTelemetryTracingAppIT {
                     .extracting(SpanData::getStatus)
                     .extracting(StatusData::getStatusCode, StatusData::getDescription)
                     .contains(Tuple.tuple(StatusCode.ERROR, "Something bad happened!")));
-    ;
   }
 
   @Test

@@ -9,7 +9,7 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.semconv.SemanticAttributes;
+import io.opentelemetry.semconv.ExceptionAttributes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -148,7 +148,7 @@ public class OpenTelemetryTracingApp extends Application<Configuration> {
     // https://github.com/open-telemetry/opentelemetry-specification/tree/v1.23.0/specification/trace/semantic_conventions
 
     span.setStatus(StatusCode.ERROR, "Something bad happened!");
-    span.setAttribute(SemanticAttributes.EXCEPTION_EVENT_NAME, "error");
+    span.setAttribute(ExceptionAttributes.EXCEPTION_TYPE, "error");
     span.recordException(ex);
   }
 

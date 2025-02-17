@@ -1,7 +1,9 @@
 package org.sdase.commons.server.opentelemetry.decorators;
 
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.semconv.SemanticAttributes;
+import io.opentelemetry.semconv.HttpAttributes;
+import io.opentelemetry.semconv.ServerAttributes;
+import io.opentelemetry.semconv.UrlAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -22,16 +24,16 @@ public class ServerSpanDecorator {
         Objects.requireNonNull(new JerseySpanNameProvider().get(requestContext.getRequest()));
     updateSpanName(requestContext.getMethod(), route, span);
     // Add the attributes defined in the Semantic Conventions
-    span.setAttribute(SemanticAttributes.HTTP_ROUTE, route);
+    span.setAttribute(HttpAttributes.HTTP_ROUTE, route);
   }
 
   public static void decorateRequest(HttpServletRequest request, Span span) {
-    span.setAttribute(SemanticAttributes.HTTP_REQUEST_METHOD, request.getMethod());
-    span.setAttribute(SemanticAttributes.URL_SCHEME, request.getScheme());
+    span.setAttribute(HttpAttributes.HTTP_REQUEST_METHOD, request.getMethod());
+    span.setAttribute(UrlAttributes.URL_SCHEME, request.getScheme());
     span.setAttribute(
-        SemanticAttributes.SERVER_ADDRESS,
+        ServerAttributes.SERVER_ADDRESS,
         String.format("%s:%s", request.getRemoteHost(), request.getServerPort()));
-    span.setAttribute(SemanticAttributes.URL_FULL, request.getRequestURI());
+    span.setAttribute(UrlAttributes.URL_FULL, request.getRequestURI());
   }
 
   public static void decorateResponse(ContainerResponseContext responseContext, Span span) {
@@ -41,7 +43,7 @@ public class ServerSpanDecorator {
   }
 
   public static void decorateResponse(HttpServletResponse response, Span span) {
-    span.setAttribute(SemanticAttributes.HTTP_RESPONSE_STATUS_CODE, response.getStatus());
+    span.setAttribute(HttpAttributes.HTTP_RESPONSE_STATUS_CODE, response.getStatus());
   }
 
   private static void updateSpanName(String method, String route, Span span) {
