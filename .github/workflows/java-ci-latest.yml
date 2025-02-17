@@ -12,12 +12,14 @@
 # - only 3 retries
 # - no release (step 'semantic-release')
 # - no publication of the test results (step 'publish-test-results')
+# This is only to have awareness for potential issues of the next LTS version
 name: Java CI Latest
 
 on:
   push:
     branches:
       - main
+  pull_request: {} # WIP
 
 jobs:
   # build library
@@ -28,7 +30,7 @@ jobs:
       # always run all tests to avoid having different amounts of tests.
       fail-fast: false
       matrix:
-        java_version: ['22-ea']
+        java_version: ['23']
         os: ['ubuntu-latest']
 
     timeout-minutes: 60
