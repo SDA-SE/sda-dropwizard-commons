@@ -12,7 +12,7 @@ ext {
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.14.4'
   swaggerCoreV3Version = '2.2.28'
-  weldVersion = '5.1.2.Final'
+  weldVersion = '6.0.1.Final'
   jacksonVersion = '2.18.2'
   jsonUnitVersion = '4.1.0'
   scalaVersion = '2.13.16' // align transitive dependency from various modules, keep up to date
