@@ -43,7 +43,7 @@ jobs:
           cache: 'gradle'
 
       - name: Test with Gradle
-        uses: nick-invision/retry@7152eba30c6575329ac0576536151aca5a72780e # v2
+        uses: nick-invision/retry@c97818ca39074beaea45180dba704f92496a0082 # v2
         with:
           timeout_minutes: 30
           max_attempts: 3
