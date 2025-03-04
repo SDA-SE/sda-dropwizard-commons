@@ -7,6 +7,7 @@ javaPlatform {
 }
 
 ext {
+  antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.4.2'
   dropwizardVersion = '4.0.12'
   prometheusVersion = '0.16.0'
@@ -124,6 +125,8 @@ dependencies {
     api "org.postgresql:postgresql:42.7.5"
     api "org.flywaydb:flyway-core:${flywayVersion}"
     api "org.flywaydb:flyway-database-postgresql:${flywayVersion}"
+    // conflict between Flyway and tuprolog via DB Rider
+    api "org.antlr:antlr4-runtime:${antlr4Version}"
 
     // sda-commons-server-hibernate-testing
     api "com.github.database-rider:rider-core:$dbRiderVersion"
