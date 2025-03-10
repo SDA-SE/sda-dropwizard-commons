@@ -222,6 +222,9 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     options.encoding = 'UTF-8'
   }
 
+  jacoco {
+    toolVersion = "0.8.12"
+  }
   // Configure JaCoCo to export the reports in XML format
   jacocoTestReport {
     reports {
