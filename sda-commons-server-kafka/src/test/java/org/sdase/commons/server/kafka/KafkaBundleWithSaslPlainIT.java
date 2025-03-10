@@ -19,6 +19,8 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
@@ -27,6 +29,13 @@ import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 
+// Disabled specifically for Java 23 to get notified when upgrading to the next latest or finally a
+// LTS version. Until then, we want notifications for new issues coming up with latest Java version.
+// This test must pass when finally supporting a new Java version with SDA Dropwizard Commons!
+@DisabledOnJre(
+    value = JRE.JAVA_23,
+    disabledReason =
+        "Kafka auth mechanism requires SecurityManager https://issues.apache.org/jira/browse/KAFKA-15862")
 @ExtendWith(CleanupJaasConfigurationExtension.class)
 class KafkaBundleWithSaslPlainIT {
 
