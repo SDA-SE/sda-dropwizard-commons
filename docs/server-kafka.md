@@ -479,35 +479,41 @@ All mechanisms can be used with both `SASL_PLAINTEXT` and `SASL_SSL`.
     password: password
 ```
 
-Other mechanisms can be configured by overriding the config properties.
-Note that the properties can also be configured individually for each consumer, each producer, and the admin client.
+Further authentication mechanisms can be configured by setting the original Kafka config properties.
+The SDA Commons specific configuration of `security.saslMechanism` must be omitted in this case,
+because `secucrity.saslMechanism` will only accept the values documented above.
+The original Kafka config properties will be used to overwrite the defaults of the SDA Commons Kafka
+security configuration before the configuration is applied.
 
-```yaml
-  config:
-    sasl.mechanism: OTHER-VALUE
-    sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
-```
+??? example "Example configuration for `OAUTHBEARER`"
+    ```yaml
+    --8<-- "sda-commons-server-kafka/src/test/resources/config/given/kafka-bearer-custom.yaml"
+    ```
 
-OR
+#### Per Connection Configuration
 
-```yaml
-  consumers:
-    yourConsumer:
-      config:
-        sasl.mechanism: OTHER-VALUE
-        sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
+Properties can also be configured individually for each consumer, each producer, and the admin
+client.
 
-  producers:
-    yourProducer:
-      config:
-        sasl.mechanism: OTHER-VALUE
-        sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
-
-  adminConfig:
-    config:
-      sasl.mechanism: OTHER-VALUE
-      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
-```
+??? example "Individual configuration for consumers, producers and admin client"
+    ```yaml
+      consumers:
+        yourConsumer:
+          config:
+            sasl.mechanism: OTHER-VALUE
+            sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
+    
+      producers:
+        yourProducer:
+          config:
+            sasl.mechanism: OTHER-VALUE
+            sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
+    
+      adminConfig:
+        config:
+          sasl.mechanism: OTHER-VALUE
+          sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='youruser' password='yourpassword';"
+    ```
 
 #### Custom Certificate Authority and Client Certificates
 
