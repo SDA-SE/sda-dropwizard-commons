@@ -1,0 +1,13 @@
+# The expected Kafka config result
+
+bootstrap.servers: https://cluster.example.com:9443
+default.api.timeout.ms: 5000
+request.timeout.ms: 5000
+ssl.truststore.type: JKS
+ssl.truststore.location: clientTruststore.jks
+ssl.truststore.password: some-password-for-truststore
+security.protocol: SASL_SSL
+sasl.mechanism: OAUTHBEARER
+sasl.jaas.config: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required clientId="your-client-id" clientSecret="your-client-secret";
+sasl.login.callback.handler.class: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler
+sasl.oauthbearer.token.endpoint.url: https://idp.example.com/token

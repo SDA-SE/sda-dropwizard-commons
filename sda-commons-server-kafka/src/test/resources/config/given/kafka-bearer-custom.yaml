@@ -1,0 +1,14 @@
+kafka:
+  brokers:
+    - https://cluster.example.com:9443
+  security:
+    protocol: SASL_SSL
+    # saslMechanism: OAUTHBEARER # do not set here!
+  config:
+    ssl.truststore.type: JKS
+    ssl.truststore.location: clientTruststore.jks
+    ssl.truststore.password: some-password-for-truststore
+    sasl.mechanism: OAUTHBEARER # set here
+    sasl.jaas.config: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required clientId="your-client-id" clientSecret="your-client-secret";
+    sasl.login.callback.handler.class: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler
+    sasl.oauthbearer.token.endpoint.url: https://idp.example.com/token
