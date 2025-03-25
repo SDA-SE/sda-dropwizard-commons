@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 class KafkaPropertiesTest {
 
   static final String GIVEN_DW_COMMONS_CONFIG_RESOURCE = "/config/given/kafka-bearer-custom.yaml";
-  static final String EXPECTED_KAFKA_CONFIG_RESOURCE = "/config/expected/kafka-config.yaml";
+  static final String EXPECTED_KAFKA_CONFIG_RESOURCE = "/config/expected/kafka-bearer-config.yaml";
 
   @Test
   void shouldCreateKafkaPropertiesForOauthBearerAuthentication() {
