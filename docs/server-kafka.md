@@ -481,7 +481,7 @@ All mechanisms can be used with both `SASL_PLAINTEXT` and `SASL_SSL`.
 
 Further authentication mechanisms can be configured by setting the original Kafka config properties.
 The SDA Commons specific configuration of `security.saslMechanism` must be omitted in this case,
-because `secucrity.saslMechanism` will only accept the values documented above.
+because `security.saslMechanism` will only accept the values documented above.
 The original Kafka config properties will be used to overwrite the defaults of the SDA Commons Kafka
 security configuration before the configuration is applied.
 
