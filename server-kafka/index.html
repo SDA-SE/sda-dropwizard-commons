@@ -818,6 +818,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#per-connection-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Per Connection Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#custom-certificate-authority-and-client-certificates" class="md-nav__link">
     <span class="md-ellipsis">
       Custom Certificate Authority and Client Certificates
@@ -1807,6 +1816,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#per-connection-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Per Connection Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#custom-certificate-authority-and-client-certificates" class="md-nav__link">
     <span class="md-ellipsis">
       Custom Certificate Authority and Client Certificates
@@ -2757,15 +2775,47 @@ All mechanisms can be used with both <code>SASL_PLAINTEXT</code> and <code>SASL_
 <span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
 <span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
 </code></pre></div></td></tr></table></div>
-<p>Other mechanisms can be configured by overriding the config properties.
-Note that the properties can also be configured individually for each consumer, each producer, and the admin client.</p>
-<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="nt">config</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OTHER-VALUE</span>
-<span class="w">    </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username=&#39;youruser&#39;</span><span class="nv"> </span><span class="s">password=&#39;yourpassword&#39;;&quot;</span>
+<p>Further authentication mechanisms can be configured by setting the original Kafka config properties.
+The SDA Commons specific configuration of <code>security.saslMechanism</code> must be omitted in this case,
+because <code>security.saslMechanism</code> will only accept the values documented above.
+The original Kafka config properties will be used to overwrite the defaults of the SDA Commons Kafka
+security configuration before the configuration is applied.</p>
+<details class="example">
+<summary>Example configuration for <code>OAUTHBEARER</code></summary>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">brokers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://cluster.example.com:9443</span>
+<span class="w">  </span><span class="nt">security</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SASL_SSL</span>
+<span class="w">    </span><span class="c1"># saslMechanism: OAUTHBEARER # do not set here!</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ssl.truststore.type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">JKS</span>
+<span class="w">    </span><span class="nt">ssl.truststore.location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clientTruststore.jks</span>
+<span class="w">    </span><span class="nt">ssl.truststore.password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">some-password-for-truststore</span>
+<span class="w">    </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OAUTHBEARER</span><span class="w"> </span><span class="c1"># set here</span>
+<span class="w">    </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required clientId=&quot;your-client-id&quot; clientSecret=&quot;your-client-secret&quot;;</span>
+<span class="w">    </span><span class="nt">sasl.login.callback.handler.class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler</span>
+<span class="w">    </span><span class="nt">sasl.oauthbearer.token.endpoint.url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://idp.example.com/token</span>
 </code></pre></div></td></tr></table></div>
-<p>OR</p>
+</details>
+<h4 id="per-connection-configuration">Per Connection Configuration<a class="headerlink" href="#per-connection-configuration" title="Permanent link">&para;</a></h4>
+<p>Properties can also be configured individually for each consumer, each producer, and the admin
+client.</p>
+<details class="example">
+<summary>Individual configuration for consumers, producers and admin client</summary>
 <div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -2798,6 +2848,7 @@ Note that the properties can also be configured individually for each consumer, 
 <span class="w">      </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OTHER-VALUE</span>
 <span class="w">      </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username=&#39;youruser&#39;</span><span class="nv"> </span><span class="s">password=&#39;yourpassword&#39;;&quot;</span>
 </code></pre></div></td></tr></table></div>
+</details>
 <h4 id="custom-certificate-authority-and-client-certificates">Custom Certificate Authority and Client Certificates<a class="headerlink" href="#custom-certificate-authority-and-client-certificates" title="Permanent link">&para;</a></h4>
 <p><code>SSL</code> or <code>SASL_SSL</code> can also use Kafka brokers that have a self-signed or private-CA certificate. 
 Use the Java-default system properties <code>javax.net.ssl.trustStore</code> and <code>javax.net.ssl.trustStorePassword</code> to provide the certificates (see <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/test/java/org/sdase/commons/server/kafka/KafkaBundleWithSslTruststoreIT.java"><code>KafkaBundleWithSslTruststoreIT</code></a>).</p>
