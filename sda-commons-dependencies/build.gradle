@@ -99,7 +99,7 @@ dependencies {
 
     // sda-commons-shared-wiremock-testing
     api "org.wiremock:wiremock:3.12.1"
-    api "org.ow2.asm:asm:9.7.1", {
+    api "org.ow2.asm:asm:9.8", {
       because "version conflict within Wiremock"
     }
     api "net.minidev:json-smart:2.5.2", {
