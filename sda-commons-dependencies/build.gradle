@@ -29,7 +29,7 @@ ext {
   mongoDbDriverVersion = '5.4.0'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.80'
-  victoolsVersion = '4.37.0'
+  victoolsVersion = '4.38.0'
   flywayVersion = '11.5.0'
 }
 
