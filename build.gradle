@@ -10,7 +10,7 @@ plugins {
   id 'jacoco'
   id 'signing'
   id 'org.sonarqube' version '6.1.0.5360'
-  id 'com.diffplug.spotless' version '7.0.2'
+  id 'com.diffplug.spotless' version '7.0.3'
   id 'io.codearte.nexus-staging' version '0.30.0'
   id 'project-report'
   id 'org.cyclonedx.bom' version '2.2.0'
