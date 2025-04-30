@@ -3,7 +3,6 @@ package org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -22,33 +21,57 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link MessageListenerStrategy} commits records for each partition. In case of processing errors
- * an error handler can decide if processing should be retried or stopped.
+ * the message will be retried for a configured amount of times.
+ *
+ * <p>After each error an error handler can decide if processing should be retried or stopped.
+ *
+ * <p>If the retry count exceeds:
+ *
+ * <ul>
+ *   <li>The failed message handling will be logged as ERROR
+ *   <li>a retryLimitExceededErrorHandler will be called allowing to do more error handling (i.e.
+ *       write to DLT)
+ *   <li>the offset will get increased, so the message handling gets ignored.
+ * </ul>
  */
 public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RetryProcessingErrorMLS.class);
   private final MessageHandler<K, V> handler;
-  private final ErrorHandler<K, V> intermediateErrorHandler;
-  private final ErrorHandler<K, V> finalErrorHandler;
-  private final long maxRetryCount;
+  private final ErrorHandler<K, V> errorHandler;
+  private final ErrorHandler<K, V> retryLimitExceededErrorHandler;
   private String consumerName;
-  private Map<TopicPartition, OffsetCounter> offsetCounters =
-      Collections.synchronizedMap(new HashMap<>());
+  private final RetryCounter retryCounter;
 
-  public RetryProcessingErrorMLS(
-      MessageHandler<K, V> handler, ErrorHandler<K, V> intermediateErrorHandler) {
-    this(handler, intermediateErrorHandler, Long.MAX_VALUE, null);
+  /**
+   * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error
+   * infinite times.
+   *
+   * @param handler the message handler
+   * @param errorHandler the error handler called after each error
+   */
+  public RetryProcessingErrorMLS(MessageHandler<K, V> handler, ErrorHandler<K, V> errorHandler) {
+    this(handler, errorHandler, Long.MAX_VALUE, null);
   }
 
+  /**
+   * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error for a
+   * given amount of times
+   *
+   * @param handler the message handler
+   * @param errorHandler the error handler called after each error
+   * @param maxRetryCount the maximum number of retries
+   * @param retryLimitExceededErrorHandler the error handler called if the retry limit is exceeded
+   */
   public RetryProcessingErrorMLS(
       MessageHandler<K, V> handler,
-      ErrorHandler<K, V> intermediateErrorHandler,
+      ErrorHandler<K, V> errorHandler,
       long maxRetryCount,
-      ErrorHandler<K, V> finalErrorHandler) {
+      ErrorHandler<K, V> retryLimitExceededErrorHandler) {
     this.handler = handler;
-    this.intermediateErrorHandler = intermediateErrorHandler;
-    this.maxRetryCount = maxRetryCount;
-    this.finalErrorHandler = finalErrorHandler;
+    this.errorHandler = errorHandler;
+    this.retryLimitExceededErrorHandler = retryLimitExceededErrorHandler;
+    this.retryCounter = new RetryCounter(maxRetryCount);
   }
 
   @Override
@@ -83,27 +106,27 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
                 consumerName,
                 consumerRecord.topic());
           }
-
         } catch (RuntimeException e) {
-          long retryCount = getOffsetCounter(partition, consumerRecord.offset()).inc();
-          if (retryCount > maxRetryCount) {
+          retryCounter.incErrorCount(consumerRecord);
+          if (retryCounter.isMaxRetryCountReached(consumerRecord)) {
             LOGGER.error(
                 "Error while handling record {} in message handler {}, no more retries",
                 consumerRecord.key(),
                 handler.getClass(),
                 e);
 
-            callErrorHandler(finalErrorHandler, consumerRecord, e, consumer);
+            callErrorHandler(retryLimitExceededErrorHandler, consumerRecord, e, consumer);
             lastCommitOffset = markConsumerRecordProcessed(consumerRecord);
           } else {
             LOGGER.warn(
-                "Error while handling record {} in message handler {}, will be retried (%s / %s)..."
-                    .formatted(retryCount, maxRetryCount),
+                "Error while handling record {} in message handler {}, will be retried ({} / {})...",
                 consumerRecord.key(),
                 handler.getClass(),
+                retryCounter.getOffsetCounter(consumerRecord),
+                retryCounter.getMaxRetryCount(),
                 e);
 
-            callErrorHandler(intermediateErrorHandler, consumerRecord, e, consumer);
+            callErrorHandler(errorHandler, consumerRecord, e, consumer);
 
             // seek to the current offset of the failing record for retry
             consumer.seek(partition, consumerRecord.offset());
@@ -113,6 +136,7 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
       }
     }
     if (lastCommitOffset != null) {
+
       consumer.commitSync(Collections.singletonMap(partition, lastCommitOffset));
     }
   }
@@ -141,29 +165,5 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
   private OffsetAndMetadata markConsumerRecordProcessed(ConsumerRecord<K, V> consumerRecord) {
     addOffsetToCommitOnClose(consumerRecord);
     return new OffsetAndMetadata(consumerRecord.offset() + 1);
-  }
-
-  private OffsetCounter getOffsetCounter(TopicPartition partition, long offset) {
-    OffsetCounter counter = offsetCounters.computeIfAbsent(partition, k -> new OffsetCounter(0));
-    if (counter.offset != offset) {
-      counter.offset = offset;
-      counter.count = 0;
-    }
-
-    return counter;
-  }
-
-  public static class OffsetCounter {
-    private long offset = 0;
-    private long count = 0;
-
-    public OffsetCounter(long offset) {
-      this.offset = offset;
-      this.count = 0;
-    }
-
-    public long inc() {
-      return ++count;
-    }
   }
 }

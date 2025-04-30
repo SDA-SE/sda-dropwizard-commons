@@ -125,7 +125,8 @@ class RetryProcessingErrorStrategyTest {
     String topic = TOPIC_PARTITION.topic();
     List<ConsumerRecord<String, String>> messages = new ArrayList<>();
     for (int i = 0; i < noMessages; i++) {
-      messages.add(new ConsumerRecord<>(topic, 0, i, topic, "message-" + i));
+      messages.add(
+          new ConsumerRecord<>(topic, TOPIC_PARTITION.partition(), i, topic, "message-" + i));
     }
     payload.put(TOPIC_PARTITION, messages);
     return new ConsumerRecords<>(payload);
