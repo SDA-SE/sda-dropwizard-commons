@@ -8,13 +8,13 @@ javaPlatform {
 
 ext {
   antlr4Version = '4.13.2'
-  apacheHttpClient5Version = '5.4.3'
+  apacheHttpClient5Version = '5.4.4'
   dropwizardVersion = '4.0.12'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.14.6'
   swaggerCoreV3Version = '2.2.30'
   weldVersion = '5.1.2.Final'
-  jacksonVersion = '2.18.3'
+  jacksonVersion = '2.19.0'
   jsonUnitVersion = '4.1.0'
   scalaVersion = '2.13.16' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.9.0'
@@ -30,7 +30,7 @@ ext {
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.80'
   victoolsVersion = '4.38.0'
-  flywayVersion = '11.7.0'
+  flywayVersion = '11.8.0'
 }
 
 dependencies {
@@ -62,7 +62,7 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.31.21")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.31.35")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
   api enforcedPlatform("io.netty:netty-bom:4.2.0.Final"), {
@@ -98,7 +98,7 @@ dependencies {
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
     // sda-commons-shared-wiremock-testing
-    api "org.wiremock:wiremock:3.12.1"
+    api "org.wiremock:wiremock:3.13.0"
     api "org.ow2.asm:asm:9.8", {
       because "version conflict within Wiremock"
     }
