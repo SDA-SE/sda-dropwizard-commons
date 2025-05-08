@@ -17,7 +17,7 @@ ext {
   jacksonVersion = '2.19.0'
   jsonUnitVersion = '4.1.0'
   scalaVersion = '2.13.16' // align transitive dependency from various modules, keep up to date
-  kafkaVersion = '3.9.0'
+  kafkaVersion = '4.0.0'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.44.0'
   kotlinVersion = '2.1.20'
