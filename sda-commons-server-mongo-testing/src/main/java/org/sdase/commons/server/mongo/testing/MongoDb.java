@@ -1,6 +1,6 @@
 package org.sdase.commons.server.mongo.testing;
 
-import static de.flapdoodle.embed.mongo.distribution.Version.Main.V4_4;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.V6_0;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 import com.mongodb.ConnectionString;
@@ -101,7 +101,7 @@ public interface MongoDb {
 
   abstract class Builder<T extends MongoDb> {
 
-    public static final Version.Main DEFAULT_VERSION = V4_4;
+    public static final Version.Main DEFAULT_VERSION = V6_0;
     public static final Version.Main WINDOWS_VERSION = DEFAULT_VERSION;
 
     protected static final long DEFAULT_TIMEOUT_MS = MINUTES.toMillis(1L);
