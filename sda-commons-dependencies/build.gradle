@@ -11,7 +11,7 @@ ext {
   apacheHttpClient5Version = '5.4.4'
   dropwizardVersion = '4.0.12'
   prometheusVersion = '0.16.0'
-  micrometerVersion = '1.14.6'
+  micrometerVersion = '1.15.0'
   swaggerCoreV3Version = '2.2.32'
   weldVersion = '5.1.2.Final'
   jacksonVersion = '2.19.0'
