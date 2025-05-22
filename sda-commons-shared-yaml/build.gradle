@@ -1,14 +1,14 @@
 dependencies {
   api "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", {
-    exclude group: 'org.yaml', module: 'snakeyaml'
+    exclude group: "org.yaml", module: "snakeyaml"
   }
   api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
   api "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
   api "com.fasterxml.jackson.module:jackson-module-parameter-names", {
-    exclude group: 'org.yaml', module: 'snakeyaml'
+    exclude group: "org.yaml", module: "snakeyaml"
   }
   api "org.yaml:snakeyaml"
 
-  testImplementation project(':sda-commons-server-testing')
-  testImplementation 'commons-io:commons-io'
+  testImplementation project(":sda-commons-server-testing")
+  testImplementation "commons-io:commons-io"
 }

@@ -1,20 +1,20 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard'), {
-    exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-guava'
-    exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-blackbird'
-    exclude group: 'com.fasterxml.jackson.jakarta.rs', module: 'jackson-jakarta-rs-json-provider'
+  api project(":sda-commons-server-dropwizard"), {
+    exclude group: "com.fasterxml.jackson.datatype", module: "jackson-datatype-guava"
+    exclude group: "com.fasterxml.jackson.module", module: "jackson-module-blackbird"
+    exclude group: "com.fasterxml.jackson.jakarta.rs", module: "jackson-jakarta-rs-json-provider"
   }
   api "com.fasterxml.jackson.datatype:jackson-datatype-guava"
   api "com.fasterxml.jackson.module:jackson-module-blackbird"
   api "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider"
 
-  api project(':sda-commons-shared-error')
-  api 'io.openapitools.jackson.dataformat:jackson-dataformat-hal', {
-    exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
+  api project(":sda-commons-shared-error")
+  api "io.openapitools.jackson.dataformat:jackson-dataformat-hal", {
+    exclude group: "com.fasterxml.jackson.jaxrs", module: "jackson-jaxrs-json-provider"
   }
-  api 'jakarta.xml.bind:jakarta.xml.bind-api'
+  api "jakarta.xml.bind:jakarta.xml.bind-api"
 
-  testImplementation project(':sda-commons-server-testing')
-  testImplementation project(':sda-commons-shared-forms')
+  testImplementation project(":sda-commons-server-testing")
+  testImplementation project(":sda-commons-shared-forms")
   testImplementation "io.github.classgraph:classgraph"
 }

@@ -1,14 +1,14 @@
 dependencies {
-  api project(':sda-commons-server-jackson')
-  api project(':sda-commons-shared-yaml')
+  api project(":sda-commons-server-jackson")
+  api project(":sda-commons-shared-yaml")
 
-  api 'com.github.victools:jsonschema-generator'
-  api 'com.github.victools:jsonschema-module-jackson'
-  api 'com.github.victools:jsonschema-module-jakarta-validation'
-  api 'com.github.victools:jsonschema-module-swagger-2'
+  api "com.github.victools:jsonschema-generator"
+  api "com.github.victools:jsonschema-module-jackson"
+  api "com.github.victools:jsonschema-module-jakarta-validation"
+  api "com.github.victools:jsonschema-module-swagger-2"
 
-  api 'io.swagger.core.v3:swagger-annotations-jakarta'
-  api 'io.swagger.core.v3:swagger-models-jakarta'
+  api "io.swagger.core.v3:swagger-annotations-jakarta"
+  api "io.swagger.core.v3:swagger-models-jakarta"
 
-  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(":sda-commons-server-testing")
 }

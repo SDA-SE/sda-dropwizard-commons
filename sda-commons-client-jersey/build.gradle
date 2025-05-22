@@ -1,38 +1,38 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-shared-tracing')
-  api project(':sda-commons-shared-error')
-  api project(':sda-commons-server-opentelemetry')
+  api project(":sda-commons-server-dropwizard")
+  api project(":sda-commons-shared-tracing")
+  api project(":sda-commons-shared-error")
+  api project(":sda-commons-server-opentelemetry")
 
-  api 'io.dropwizard:dropwizard-client'
-  api 'jakarta.servlet:jakarta.servlet-api'
-  api 'org.glassfish.jersey.core:jersey-client'
-  api 'org.glassfish.jersey.ext:jersey-proxy-client'
-  api 'org.codefetti.proxy:proxy-handler:1.0.3'
-  api 'jakarta.xml.bind:jakarta.xml.bind-api', {
-    exclude group: 'jakarta.activation', module: 'jakarta.activation-api'
+  api "io.dropwizard:dropwizard-client"
+  api "jakarta.servlet:jakarta.servlet-api"
+  api "org.glassfish.jersey.core:jersey-client"
+  api "org.glassfish.jersey.ext:jersey-proxy-client"
+  api "org.codefetti.proxy:proxy-handler:1.0.3"
+  api "jakarta.xml.bind:jakarta.xml.bind-api", {
+    exclude group: "jakarta.activation", module: "jakarta.activation-api"
   }
-  api 'io.opentelemetry:opentelemetry-api'
-  api 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv', {
+  api "io.opentelemetry:opentelemetry-api"
+  api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv", {
     exclude group: "io.opentelemetry", module: "opentelemetry-semconv"
     exclude group: "io.opentelemetry.semconv", module: "opentelemetry-semconv"
     exclude group: "io.opentelemetry.instrumentation", module: "opentelemetry-instrumentation-api"
     exclude group: "io.opentelemetry", module: "opentelemetry-api-incubator"
   }
-  api 'io.opentelemetry.semconv:opentelemetry-semconv'
+  api "io.opentelemetry.semconv:opentelemetry-semconv"
 
-  implementation 'io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0'
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2'
+  implementation "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0"
+  implementation "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2"
 
 
-  testImplementation project(':sda-commons-server-testing')
-  testImplementation project(':sda-commons-shared-wiremock-testing')
-  testImplementation project(':sda-commons-server-trace')
-  testImplementation project(':sda-commons-server-jackson')
-  testImplementation project(':sda-commons-shared-forms')
+  testImplementation project(":sda-commons-server-testing")
+  testImplementation project(":sda-commons-shared-wiremock-testing")
+  testImplementation project(":sda-commons-server-trace")
+  testImplementation project(":sda-commons-server-jackson")
+  testImplementation project(":sda-commons-shared-forms")
 
-  testImplementation 'org.awaitility:awaitility'
-  testImplementation 'org.assertj:assertj-core'
+  testImplementation "org.awaitility:awaitility"
+  testImplementation "org.assertj:assertj-core"
 
-  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
+  testImplementation "io.opentelemetry:opentelemetry-sdk-testing"
 }

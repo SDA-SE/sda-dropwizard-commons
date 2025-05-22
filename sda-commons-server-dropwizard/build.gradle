@@ -1,11 +1,11 @@
 dependencies {
-  api 'io.dropwizard:dropwizard-core'
-  api 'jakarta.servlet:jakarta.servlet-api'
-  api 'io.dropwizard:dropwizard-json-logging'
+  api "io.dropwizard:dropwizard-core"
+  api "jakarta.servlet:jakarta.servlet-api"
+  api "io.dropwizard:dropwizard-json-logging"
 
-  testImplementation project(':sda-commons-starter')
-  testImplementation project(':sda-commons-server-kafka')
-  testImplementation project(':sda-commons-server-testing')
-  testImplementation project(':sda-commons-server-healthcheck')
-  testImplementation('org.awaitility:awaitility')
+  testImplementation project(":sda-commons-starter")
+  testImplementation project(":sda-commons-server-kafka")
+  testImplementation project(":sda-commons-server-testing")
+  testImplementation project(":sda-commons-server-healthcheck")
+  testImplementation("org.awaitility:awaitility")
 }

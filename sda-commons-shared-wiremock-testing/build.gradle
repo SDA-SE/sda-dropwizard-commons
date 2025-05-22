@@ -1,14 +1,14 @@
 dependencies {
 
   api "org.wiremock:wiremock", {
-    exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
-    exclude group: 'net.minidev', module: 'json-smart'
-    exclude group: 'commons-io', module: 'commons-io'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-bom'
+    exclude group: "com.fasterxml.jackson", module: "jackson-bom"
+    exclude group: "net.minidev", module: "json-smart"
+    exclude group: "commons-io", module: "commons-io"
+    exclude group: "org.eclipse.jetty", module: "jetty-bom"
   }
 
-  api 'net.minidev:json-smart'
-  api 'commons-io:commons-io'
+  api "net.minidev:json-smart"
+  api "commons-io:commons-io"
 
-  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(":sda-commons-server-testing")
 }

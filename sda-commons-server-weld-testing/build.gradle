@@ -1,17 +1,17 @@
 dependencies {
-  api project(':sda-commons-server-testing')
-  api project(':sda-commons-server-weld')
+  api project(":sda-commons-server-testing")
+  api project(":sda-commons-server-weld")
 
-  api 'org.jboss.weld:weld-junit5', {
+  api "org.jboss.weld:weld-junit5", {
     // Dropwizard is using org.glassfish:jakarta.el:4.0.2
-    exclude group: 'jakarta.el', module: 'jakarta.el-api'
-    exclude group: 'org.junit', module: 'junit-bom'
+    exclude group: "jakarta.el", module: "jakarta.el-api"
+    exclude group: "org.junit", module: "junit-bom"
     // javax imports
-    exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    exclude group: "com.google.code.findbugs", module: "jsr305"
   }
 
-  testImplementation project(':sda-commons-server-jackson')
-  testImplementation 'io.github.dropwizard-jobs:dropwizard-jobs-core:6.0.1'
+  testImplementation project(":sda-commons-server-jackson")
+  testImplementation "io.github.dropwizard-jobs:dropwizard-jobs-core:6.0.1"
 }
 
 task copyTestResources(type: Copy) {

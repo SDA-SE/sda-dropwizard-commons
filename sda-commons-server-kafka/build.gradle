@@ -1,23 +1,23 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard')
+  api project(":sda-commons-server-dropwizard")
 
-  api project(':sda-commons-server-healthcheck')
-  api project(':sda-commons-shared-tracing')
+  api project(":sda-commons-server-healthcheck")
+  api project(":sda-commons-shared-tracing")
 
   api "org.apache.kafka:kafka-clients"
 
-  implementation 'io.micrometer:micrometer-core'
+  implementation "io.micrometer:micrometer-core"
 
   api "jakarta.xml.bind:jakarta.xml.bind-api"
 
-  testImplementation 'org.mockito:mockito-core'
-  testImplementation 'org.mockito:mockito-junit-jupiter'
-  testImplementation 'org.objenesis:objenesis'
+  testImplementation "org.mockito:mockito-core"
+  testImplementation "org.mockito:mockito-junit-jupiter"
+  testImplementation "org.objenesis:objenesis"
 
-  testImplementation 'org.assertj:assertj-core'
+  testImplementation "org.assertj:assertj-core"
 
-  testImplementation project(':sda-commons-server-kafka-testing')
-  testImplementation('io.micrometer:micrometer-registry-prometheus-simpleclient')
+  testImplementation project(":sda-commons-server-kafka-testing")
+  testImplementation("io.micrometer:micrometer-registry-prometheus-simpleclient")
 
   test {
     // running one test at time, to avoid problems with kafka servers concurrency

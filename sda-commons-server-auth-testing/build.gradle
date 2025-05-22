@@ -1,14 +1,14 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-server-testing')
-  api project(':sda-commons-server-auth')
-  api project(':sda-commons-server-trace')
-  api 'com.auth0:java-jwt'
-  api project(':sda-commons-shared-wiremock-testing')
+  api project(":sda-commons-server-dropwizard")
+  api project(":sda-commons-server-testing")
+  api project(":sda-commons-server-auth")
+  api project(":sda-commons-server-trace")
+  api "com.auth0:java-jwt"
+  api project(":sda-commons-shared-wiremock-testing")
 
-  api('org.apache.commons:commons-lang3')
+  api("org.apache.commons:commons-lang3")
 
-  testImplementation project(':sda-commons-server-openapi')
+  testImplementation project(":sda-commons-server-openapi")
 
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }

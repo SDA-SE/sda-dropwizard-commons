@@ -1,12 +1,12 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-shared-tracing')
-  api 'jakarta.xml.bind:jakarta.xml.bind-api'
+  api project(":sda-commons-server-dropwizard")
+  api project(":sda-commons-shared-tracing")
+  api "jakarta.xml.bind:jakarta.xml.bind-api"
 
-  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(":sda-commons-server-testing")
 }
 
 test {
-  // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
+  // We need to disable this property, otherwise Jersey doesn"t allow to set the Origin header
   systemProperty "sun.net.http.allowRestrictedHeaders", "true"
 }

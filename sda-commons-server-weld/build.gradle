@@ -1,63 +1,63 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard')
+  api project(":sda-commons-server-dropwizard")
 
-  api 'org.jboss.weld.se:weld-se-core', {
-    exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
-    exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
+  api "org.jboss.weld.se:weld-se-core", {
+    exclude group: "org.jboss.spec.javax.el", module: "jboss-el-api_3.0_spec"
+    exclude group: "jakarta.transaction", module: "jakarta.transaction-api"
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
      * jakarta.inject.
      * Both contain the same classes.
      */
-    exclude group: 'jakarta.inject', module: 'jakarta.inject-api'
+    exclude group: "jakarta.inject", module: "jakarta.inject-api"
     /**
      * Dropwizard manages jakarta.el from Glassfish
      */
-    exclude group: 'jakarta.el', module: 'jakarta.el-api'
+    exclude group: "jakarta.el", module: "jakarta.el-api"
 
     /**
      * The probe bundle is responsible for most vulnerabilities in the weld bundle.
      * However, it is not needed at runtime as it is a developer tool.
      */
-    exclude group: 'org.jboss.weld.probe', module: 'weld-probe-core'
+    exclude group: "org.jboss.weld.probe", module: "weld-probe-core"
   }
-  api 'org.jboss.weld.servlet:weld-servlet-core', {
+  api "org.jboss.weld.servlet:weld-servlet-core", {
     /**
      * Dropwizard manages jakarta.el from Glassfish
      */
-    exclude group: 'jakarta.el', module: 'jakarta.el-api'
+    exclude group: "jakarta.el", module: "jakarta.el-api"
 
-    exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
+    exclude group: "jakarta.transaction", module: "jakarta.transaction-api"
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
      * jakarta.inject.
      * Both contain the same classes.
      */
-    exclude group: 'jakarta.inject', module: 'jakarta.inject-api'
+    exclude group: "jakarta.inject", module: "jakarta.inject-api"
 
     /**
      * The probe bundle is responsible for most vulnerabilities in the weld bundle.
      * However, it is not needed at runtime as it is a developer tool.
      */
-    exclude group: 'org.jboss.weld.probe', module: 'weld-probe-core'
+    exclude group: "org.jboss.weld.probe", module: "weld-probe-core"
   }
-  api 'jakarta.inject:jakarta.inject-api'
-  api 'org.glassfish:jakarta.el'
-  api 'jakarta.annotation:jakarta.annotation-api'
+  api "jakarta.inject:jakarta.inject-api"
+  api "org.glassfish:jakarta.el"
+  api "jakarta.annotation:jakarta.annotation-api"
 
-  api 'jakarta.enterprise:jakarta.enterprise.cdi-api', {
-    exclude group: 'jakarta.transaction', module: 'jakarta.transaction-api'
+  api "jakarta.enterprise:jakarta.enterprise.cdi-api", {
+    exclude group: "jakarta.transaction", module: "jakarta.transaction-api"
     /**
      * Dropwizard comes with jakarta.inject-api repackaged by glassfish for hk2 instead of
      * jakarta.inject.
      * Both contain the same classes.
      */
-    exclude group: 'jakarta.inject', module: 'jakarta.inject-api'
+    exclude group: "jakarta.inject", module: "jakarta.inject-api"
     /**
      * Dropwizard manages jakarta.el from Glassfish
      */
-    exclude group: 'jakarta.el', module: 'jakarta.el-api'
+    exclude group: "jakarta.el", module: "jakarta.el-api"
   }
-  api 'jakarta.transaction:jakarta.transaction-api'
-  api 'org.glassfish.jersey.ext.cdi:jersey-cdi1x-servlet'
+  api "jakarta.transaction:jakarta.transaction-api"
+  api "org.glassfish.jersey.ext.cdi:jersey-cdi1x-servlet"
 }

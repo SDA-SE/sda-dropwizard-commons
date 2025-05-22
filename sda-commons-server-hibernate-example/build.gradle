@@ -1,6 +1,6 @@
 dependencies {
-  api project(':sda-commons-server-hibernate')
+  api project(":sda-commons-server-hibernate")
 
-  testImplementation project(':sda-commons-server-hibernate-testing')
-  testImplementation 'org.assertj:assertj-core'
+  testImplementation project(":sda-commons-server-hibernate-testing")
+  testImplementation "org.assertj:assertj-core"
 }

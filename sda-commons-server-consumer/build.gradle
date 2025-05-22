@@ -1,10 +1,10 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-shared-tracing')
-  api project(':sda-commons-shared-error')
+  api project(":sda-commons-server-dropwizard")
+  api project(":sda-commons-shared-tracing")
+  api project(":sda-commons-shared-error")
 
-  testImplementation project(':sda-commons-server-jackson')
-  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(":sda-commons-server-jackson")
+  testImplementation project(":sda-commons-server-testing")
 
-  testImplementation project(':sda-commons-server-openapi')
+  testImplementation project(":sda-commons-server-openapi")
 }

@@ -1,17 +1,17 @@
 dependencies {
 
-  api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-shared-tracing')
-  api 'io.dropwizard:dropwizard-client'
-  api 'jakarta.servlet:jakarta.servlet-api'
+  api project(":sda-commons-server-dropwizard")
+  api project(":sda-commons-shared-tracing")
+  api "io.dropwizard:dropwizard-client"
+  api "jakarta.servlet:jakarta.servlet-api"
 
-  api 'io.prometheus:simpleclient'
-  api 'io.prometheus:simpleclient_dropwizard'
-  api 'io.prometheus:simpleclient_servlet_jakarta'
+  api "io.prometheus:simpleclient"
+  api "io.prometheus:simpleclient_dropwizard"
+  api "io.prometheus:simpleclient_servlet_jakarta"
 
-  implementation('io.micrometer:micrometer-core')
-  implementation('io.micrometer:micrometer-registry-prometheus-simpleclient')
+  implementation("io.micrometer:micrometer-core")
+  implementation("io.micrometer:micrometer-registry-prometheus-simpleclient")
 
-  testImplementation project(':sda-commons-server-testing')
-  testImplementation project(':sda-commons-client-jersey')
+  testImplementation project(":sda-commons-server-testing")
+  testImplementation project(":sda-commons-client-jersey")
 }

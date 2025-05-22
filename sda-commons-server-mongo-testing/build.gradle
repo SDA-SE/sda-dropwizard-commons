@@ -1,7 +1,7 @@
 dependencies {
-  api project(':sda-commons-server-testing')
-  api project(':sda-commons-shared-wiremock-testing')
+  api project(":sda-commons-server-testing")
+  api project(":sda-commons-shared-wiremock-testing")
 
-  api 'org.mongodb:mongodb-driver-legacy'
-  api 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+  api "org.mongodb:mongodb-driver-legacy"
+  api "de.flapdoodle.embed:de.flapdoodle.embed.mongo"
 }

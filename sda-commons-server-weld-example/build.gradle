@@ -1,4 +1,4 @@
-// we need the 'beans.xml' in the classes directory
+// we need the "beans.xml" in the classes directory
 task copyMainMetaInf(type: Copy) {
   from "${projectDir}/src/main/resources/META-INF"
   into "${buildDir}/classes/java/main/META-INF"
@@ -11,10 +11,10 @@ jar {
 }
 
 dependencies {
-  api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-server-weld')
+  api project(":sda-commons-server-dropwizard")
+  api project(":sda-commons-server-weld")
 
-  testImplementation project(':sda-commons-server-weld-testing')
-  testImplementation 'org.assertj:assertj-core'
+  testImplementation project(":sda-commons-server-weld-testing")
+  testImplementation "org.assertj:assertj-core"
 }
 

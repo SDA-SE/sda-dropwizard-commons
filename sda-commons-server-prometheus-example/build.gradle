@@ -1,5 +1,5 @@
 dependencies {
-  api project(':sda-commons-starter')
+  api project(":sda-commons-starter")
 
-  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(":sda-commons-server-testing")
 }
