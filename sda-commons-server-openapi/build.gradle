@@ -1,46 +1,46 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-shared-yaml')
+  api project(":sda-commons-server-dropwizard")
+  api project(":sda-commons-shared-yaml")
 
-  api 'io.swagger.core.v3:swagger-jaxrs2-jakarta'
-  api 'com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider'
-  api 'io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta'
-  api 'io.swagger.parser.v3:swagger-parser-v3', {
+  api "io.swagger.core.v3:swagger-jaxrs2-jakarta"
+  api "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider"
+  api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta"
+  api "io.swagger.parser.v3:swagger-parser-v3", {
     // we use a different version of Jackson
-    exclude group: "io.swagger.core.v3", module: 'swagger-models'
-    exclude group: "io.swagger.core.v3", module: 'swagger-core'
-    exclude group: "io.swagger.core.v3", module: 'swagger-annotations'
+    exclude group: "io.swagger.core.v3", module: "swagger-models"
+    exclude group: "io.swagger.core.v3", module: "swagger-core"
+    exclude group: "io.swagger.core.v3", module: "swagger-annotations"
     exclude group: "com.fasterxml.jackson.core", module: "jackson-databind"
     exclude group: "com.fasterxml.jackson.core", module: "jackson-annotations"
     exclude group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml"
   }
-  api 'com.fasterxml.jackson.core:jackson-databind'
-  api 'com.fasterxml.jackson.core:jackson-annotations'
-  api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml', {
-    exclude group: 'org.yaml', module: 'snakeyaml'
+  api "com.fasterxml.jackson.core:jackson-databind"
+  api "com.fasterxml.jackson.core:jackson-annotations"
+  api "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", {
+    exclude group: "org.yaml", module: "snakeyaml"
   }
   api "org.yaml:snakeyaml"
 
   // swagger-hal >= 2.0.0 supports io.swagger.core.v3
-  api 'io.openapitools.hal:swagger-hal:2.0.2', {
-    exclude group: 'io.swagger.core.v3', module: 'swagger-core'
-    exclude group: 'io.swagger.core.v3', module: 'swagger-models'
-    exclude group: 'io.swagger.core.v3', module: 'swagger-integration'
-    exclude group: 'io.swagger.core.v3', module: 'swagger-annotations'
-    exclude group: 'io.swagger.core.v3', module: 'swagger-jaxrs2'
-    exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
-    exclude group: 'jakarta.ws.rs', module: 'jakarta.ws.rs-api'
+  api "io.openapitools.hal:swagger-hal:2.0.2", {
+    exclude group: "io.swagger.core.v3", module: "swagger-core"
+    exclude group: "io.swagger.core.v3", module: "swagger-models"
+    exclude group: "io.swagger.core.v3", module: "swagger-integration"
+    exclude group: "io.swagger.core.v3", module: "swagger-annotations"
+    exclude group: "io.swagger.core.v3", module: "swagger-jaxrs2"
+    exclude group: "com.fasterxml.jackson.jaxrs", module: "jackson-jaxrs-json-provider"
+    exclude group: "jakarta.ws.rs", module: "jakarta.ws.rs-api"
   }
-  api 'io.swagger.core.v3:swagger-models-jakarta'
-  api 'jakarta.ws.rs:jakarta.ws.rs-api'
+  api "io.swagger.core.v3:swagger-models-jakarta"
+  api "jakarta.ws.rs:jakarta.ws.rs-api"
 
-  api 'io.openapitools.jackson.dataformat:jackson-dataformat-hal', {
-    exclude group: 'com.fasterxml.jackson.jaxrs', module: 'jackson-jaxrs-json-provider'
+  api "io.openapitools.jackson.dataformat:jackson-dataformat-hal", {
+    exclude group: "com.fasterxml.jackson.jaxrs", module: "jackson-jaxrs-json-provider"
   }
-  api 'jakarta.xml.bind:jakarta.xml.bind-api'
+  api "jakarta.xml.bind:jakarta.xml.bind-api"
 
-  testImplementation project(':sda-commons-server-testing')
-  testImplementation 'net.javacrumbs.json-unit:json-unit-assertj'
+  testImplementation project(":sda-commons-server-testing")
+  testImplementation "net.javacrumbs.json-unit:json-unit-assertj"
 }
 
 test {

@@ -1,16 +1,16 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard')
+  api project(":sda-commons-server-dropwizard")
 
-  api 'org.javassist:javassist'
-  api 'io.github.resilience4j:resilience4j-circuitbreaker'
-  implementation 'io.micrometer:micrometer-core'
-  api 'io.github.resilience4j:resilience4j-micrometer', {
+  api "org.javassist:javassist"
+  api "io.github.resilience4j:resilience4j-circuitbreaker"
+  implementation "io.micrometer:micrometer-core"
+  api "io.github.resilience4j:resilience4j-micrometer", {
     // solve conflict, micrometer-observation is pulled in by micrometer-core anyway
-    exclude group: 'io.micrometer', module: 'micrometer-observation'
+    exclude group: "io.micrometer", module: "micrometer-observation"
   }
-  api 'org.objenesis:objenesis'
+  api "org.objenesis:objenesis"
 
-  testImplementation project(':sda-commons-server-prometheus')
-  testImplementation project(':sda-commons-server-testing')
-  testImplementation project(':sda-commons-shared-wiremock-testing')
+  testImplementation project(":sda-commons-server-prometheus")
+  testImplementation project(":sda-commons-server-testing")
+  testImplementation project(":sda-commons-shared-wiremock-testing")
 }

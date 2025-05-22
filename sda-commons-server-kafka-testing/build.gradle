@@ -1,32 +1,32 @@
 configurations.all {
-  exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-  exclude group: 'log4j', module: 'log4j'
+  exclude group: "org.slf4j", module: "slf4j-log4j12"
+  exclude group: "log4j", module: "log4j"
 }
 
 dependencies {
 
-  api project(':sda-commons-server-testing')
+  api project(":sda-commons-server-testing")
 
-  api 'org.apache.kafka:kafka_2.13', {
-    exclude group: 'org.slf4j', module: 'slf4j-api'
-    exclude group: 'commons-io', module: 'commons-io'
+  api "org.apache.kafka:kafka_2.13", {
+    exclude group: "org.slf4j", module: "slf4j-api"
+    exclude group: "commons-io", module: "commons-io"
   }
-  api 'commons-io:commons-io'
-  api 'com.salesforce.kafka.test:kafka-junit5', {
-    exclude group: 'org.apache.curator', module: 'curator-test'
+  api "commons-io:commons-io"
+  api "com.salesforce.kafka.test:kafka-junit5", {
+    exclude group: "org.apache.curator", module: "curator-test"
   }
-  api 'org.apache.curator:curator-test', {
-    exclude group: 'org.xerial.snappy', module: 'snappy-java'
-    exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+  api "org.apache.curator:curator-test", {
+    exclude group: "org.xerial.snappy", module: "snappy-java"
+    exclude group: "org.apache.zookeeper", module: "zookeeper"
   }
-  api 'org.xerial.snappy:snappy-java'
-  api 'org.awaitility:awaitility'
-  api 'org.apache.commons:commons-lang3'
-  api 'org.apache.zookeeper:zookeeper', {
-    exclude group: 'org.slf4j', module: 'slf4j-api'
+  api "org.xerial.snappy:snappy-java"
+  api "org.awaitility:awaitility"
+  api "org.apache.commons:commons-lang3"
+  api "org.apache.zookeeper:zookeeper", {
+    exclude group: "org.slf4j", module: "slf4j-api"
   }
-  api 'org.slf4j:slf4j-api'
+  api "org.slf4j:slf4j-api"
 
   // just to check transitive dependency versions
-  testImplementation project(':sda-commons-server-dropwizard')
+  testImplementation project(":sda-commons-server-dropwizard")
 }

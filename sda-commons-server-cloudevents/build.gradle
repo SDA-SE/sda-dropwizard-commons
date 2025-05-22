@@ -1,9 +1,9 @@
 dependencies {
-  api project(':sda-commons-shared-asyncapi')
+  api project(":sda-commons-shared-asyncapi")
 
   api "jakarta.validation:jakarta.validation-api"
 
-  testImplementation project(':sda-commons-server-dropwizard')
-  testImplementation project(':sda-commons-server-kafka')
-  testImplementation project(':sda-commons-server-kafka-testing')
+  testImplementation project(":sda-commons-server-dropwizard")
+  testImplementation project(":sda-commons-server-kafka")
+  testImplementation project(":sda-commons-server-kafka-testing")
 }

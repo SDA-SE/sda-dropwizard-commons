@@ -6,14 +6,14 @@ buildscript {
 }
 
 plugins {
-  id 'maven-publish'
-  id 'jacoco'
-  id 'signing'
-  id 'org.sonarqube' version '6.1.0.5360'
-  id 'com.diffplug.spotless' version '7.0.3'
-  id 'io.codearte.nexus-staging' version '0.30.0'
-  id 'project-report'
-  id 'org.cyclonedx.bom' version '2.3.0'
+  id "maven-publish"
+  id "jacoco"
+  id "signing"
+  id "org.sonarqube" version "6.1.0.5360"
+  id "com.diffplug.spotless" version "7.0.3"
+  id "io.codearte.nexus-staging" version "0.30.0"
+  id "project-report"
+  id "org.cyclonedx.bom" version "2.3.0"
 }
 
 cyclonedxBom {
@@ -21,7 +21,7 @@ cyclonedxBom {
 }
 
 allprojects {
-  apply plugin: 'idea'
+  apply plugin: "idea"
   idea.module.inheritOutputDirs = true
 
   // Task for creating gradle.lockfile per module. Needed for Trivy vulnerability scan.
@@ -61,19 +61,19 @@ spotless {
   }
 }
 
-group 'org.sdase.commons'
-version = System.getenv('SEMANTIC_VERSION')
+group = "org.sdase.commons"
+version = System.getenv("SEMANTIC_VERSION")
 
 /**
  * Settings for all modules
  */
 subprojects {
-  apply plugin: 'maven-publish'
-  apply plugin: 'com.diffplug.spotless'
-  apply plugin: 'signing'
-  apply plugin: 'project-report'
+  apply plugin: "maven-publish"
+  apply plugin: "com.diffplug.spotless"
+  apply plugin: "signing"
+  apply plugin: "project-report"
 
-  group rootProject.group
+  group = rootProject.group
   version = rootProject.version
 
   repositories {
@@ -94,7 +94,7 @@ subprojects {
   spotless {
     if (!javaPlatformModules.contains(project.name)) {
       java {
-        googleJavaFormat('1.17.0')
+        googleJavaFormat("1.17.0")
       }
     }
     groovyGradle {
@@ -122,38 +122,38 @@ subprojects {
         maven(MavenPublication) {
           pom {
             name = project.group + ":" + project.name
-            description = 'A libraries to bootstrap services easily that follow the patterns and specifications promoted by the SDA SE'
-            url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
+            description = "A libraries to bootstrap services easily that follow the patterns and specifications promoted by the SDA SE"
+            url = "https://github.com/SDA-SE/sda-dropwizard-commons"
 
             licenses {
               license {
-                name = 'MIT License'
-                url = 'https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/main/LICENSE'
+                name = "MIT License"
+                url = "https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/main/LICENSE"
               }
             }
 
             organization {
-              name = 'SDA SE Open Industry Solutions'
-              url = 'https://sda.se'
+              name = "SDA SE Open Industry Solutions"
+              url = "https://sda.se"
             }
 
             issueManagement {
-              system = 'GitHub'
-              url = 'https://github.com/SDA-SE/sda-dropwizard-commons/issues'
+              system = "GitHub"
+              url = "https://github.com/SDA-SE/sda-dropwizard-commons/issues"
             }
 
             developers {
               developer {
-                id = 'maintainer'
-                name = 'SDA SE Open Industry Solutions Maintainer'
-                email = 'sda-dropwizard-commons@sda.se'
+                id = "maintainer"
+                name = "SDA SE Open Industry Solutions Maintainer"
+                email = "sda-dropwizard-commons@sda.se"
               }
             }
 
             scm {
-              connection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
-              developerConnection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
-              url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
+              connection = "scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git"
+              developerConnection = "scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git"
+              url = "https://github.com/SDA-SE/sda-dropwizard-commons"
             }
           }
         }
@@ -164,25 +164,25 @@ subprojects {
           name = "sdaIntern"
           def releasesRepoUrl = "https://nexus.sda-se.io/repository/sda-se-releases/"
           def snapshotsRepoUrl = "https://nexus.sda-se.io/repository/sda-se-snapshots/"
-          url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+          url = version.endsWith("-SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
 
           credentials {
-            username System.getenv('SDA_NEXUS_USER')
-            password System.getenv('SDA_NEXUS_PASSWORD')
+            username System.getenv("SDA_NEXUS_USER")
+            password System.getenv("SDA_NEXUS_PASSWORD")
           }
         }
         maven {
-          name 'mavenCentral'
+          name "mavenCentral"
           def releasesRepoUrl =
-              System.getenv('SONATYPE_STAGING_REPOSITORY_ID')
-              ? "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/${System.getenv('SONATYPE_STAGING_REPOSITORY_ID')}"
+              System.getenv("SONATYPE_STAGING_REPOSITORY_ID")
+              ? "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/${System.getenv("SONATYPE_STAGING_REPOSITORY_ID")}"
               : "https://oss.sonatype.org/service/local/staging/deploy/maven2"
           def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-          url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+          url = version.endsWith("-SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
 
           credentials {
-            username System.getenv('SDA_SONATYPE_USER')
-            password System.getenv('SDA_SONATYPE_PASSWORD')
+            username System.getenv("SDA_SONATYPE_USER")
+            password System.getenv("SDA_SONATYPE_PASSWORD")
           }
         }
       }
@@ -196,8 +196,8 @@ subprojects {
  * Problem is: You can't apply plugins 'java' and 'java-platform' at the same time.
  */
 configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
-  apply plugin: 'java-library'
-  apply plugin: 'jacoco'
+  apply plugin: "java-library"
+  apply plugin: "jacoco"
 
   // activate dependency locking for most configurations
   var ignoredConfigurationPatternsForDependencyLocking = Set.of("test.*", "jacoco.*")
@@ -219,7 +219,7 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   }
 
   tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
+    options.encoding = "UTF-8"
   }
 
   jacoco {
@@ -235,21 +235,21 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   // Configure sonar to use the aggregated global report file
   sonarqube {
     properties {
-      property "sonar.coverage.jacoco.xmlReportPaths", '../build/reports/jacoco/report.xml'
+      property "sonar.coverage.jacoco.xmlReportPaths", "../build/reports/jacoco/report.xml"
     }
   }
 
   dependencies {
-    api enforcedPlatform(project(':sda-commons-dependencies'))
+    api enforcedPlatform(project(":sda-commons-dependencies"))
   }
 
   configurations {
-    all*.exclude group: 'javax.servlet', module: 'javax.servlet-api' // prefer jakarta.servlet-api
-    all*.exclude group: 'org.glassfish.hk2.external', module: 'jakarta.inject' // prefer jakarta.inject:jakarta.inject-api
-    all*.exclude group: 'commons-logging', module: 'commons-logging' // prefer jcl-over-slf4j
-    all*. exclude group: 'org.eclipse.jetty.toolchain', module: 'jetty-jakarta-servlet-api' // prefer jakarta.servlet:jakarta-servlet-api
-    all*. exclude group: 'com.sun.activation', module: 'jakarta.activation' // prefer jakarta.servlet:jakarta-activation
-    all*. exclude group : 'org.apache.httpcomponents', module: 'httpclient' // prefer org.apache.httpcomponents.client5
+    all*.exclude group: "javax.servlet", module: "javax.servlet-api" // prefer jakarta.servlet-api
+    all*.exclude group: "org.glassfish.hk2.external", module: "jakarta.inject" // prefer jakarta.inject:jakarta.inject-api
+    all*.exclude group: "commons-logging", module: "commons-logging" // prefer jcl-over-slf4j
+    all*. exclude group: "org.eclipse.jetty.toolchain", module: "jetty-jakarta-servlet-api" // prefer jakarta.servlet:jakarta-servlet-api
+    all*. exclude group: "com.sun.activation", module: "jakarta.activation" // prefer jakarta.servlet:jakarta-activation
+    all*. exclude group : "org.apache.httpcomponents", module: "httpclient" // prefer org.apache.httpcomponents.client5
   }
 
   test {
@@ -279,7 +279,7 @@ configure(subprojects.findAll {
   }
 
   javadoc {
-    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption("encoding", "UTF-8")
   }
 
   publishing {
@@ -302,7 +302,7 @@ configure(subprojects.findAll {
  * Add publishing configuration for Java platforms.
  */
 configure(subprojects.findAll { javaPlatformModules.contains(it.name) }) {
-  apply plugin: 'java-platform'
+  apply plugin: "java-platform"
 
   publishing {
     publications {
@@ -342,29 +342,29 @@ task codeCoverageReport(type: JacocoReport) {
 // Automatically close and release the staging repository that gets created
 // during the upload to maven central.
 nexusStaging {
-  username System.getenv('SDA_SONATYPE_USER')
-  password System.getenv('SDA_SONATYPE_PASSWORD')
+  username System.getenv("SDA_SONATYPE_USER")
+  password System.getenv("SDA_SONATYPE_PASSWORD")
   packageGroup "org.sdase.commons"
   // Read the stagingRepositoryId from the environment
-  stagingRepositoryId.set(System.getenv('SONATYPE_STAGING_REPOSITORY_ID'))
+  stagingRepositoryId.set(System.getenv("SONATYPE_STAGING_REPOSITORY_ID"))
 }
 
 sonarqube {
   properties {
-    property 'sonar.projectKey', 'SDA-SE_sda-dropwizard-commons'
-    property 'sonar.organization', 'sda-se'
-    property 'sonar.host.url', 'https://sonarcloud.io'
-    property 'sonar.token', System.getenv('SONAR_LOGIN_TOKEN')
+    property "sonar.projectKey", "SDA-SE_sda-dropwizard-commons"
+    property "sonar.organization", "sda-se"
+    property "sonar.host.url", "https://sonarcloud.io"
+    property "sonar.token", System.getenv("SONAR_LOGIN_TOKEN")
 
-    property 'sonar.pullrequest.provider', 'GitHub'
-    property 'sonar.pullrequest.github.repository', System.getenv('GITHUB_REPOSITORY')
+    property "sonar.pullrequest.provider", "GitHub"
+    property "sonar.pullrequest.github.repository", System.getenv("GITHUB_REPOSITORY")
 
-    if (System.getenv('GITHUB_PR') != null) {
-      property 'sonar.pullrequest.key', System.getenv('GITHUB_PR')
+    if (System.getenv("GITHUB_PR") != null) {
+      property "sonar.pullrequest.key", System.getenv("GITHUB_PR")
     }
 
-    if (System.getenv('SONAR_SCM_REVISION') != null) {
-      property 'sonar.scm.revision', System.getenv('SONAR_SCM_REVISION')
+    if (System.getenv("SONAR_SCM_REVISION") != null) {
+      property "sonar.scm.revision", System.getenv("SONAR_SCM_REVISION")
     }
   }
 }

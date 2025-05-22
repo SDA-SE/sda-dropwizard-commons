@@ -1,5 +1,5 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard')
+  api project(":sda-commons-server-dropwizard")
 
-  testImplementation project(':sda-commons-server-testing')
+  testImplementation project(":sda-commons-server-testing")
 }

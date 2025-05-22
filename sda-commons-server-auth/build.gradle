@@ -1,23 +1,23 @@
 dependencies {
-  api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-shared-error')
-  api project(':sda-commons-shared-tracing')
+  api project(":sda-commons-server-dropwizard")
+  api project(":sda-commons-shared-error")
+  api project(":sda-commons-shared-tracing")
   // had to add this dependency because we are not using the library.
   // Once we send the PR to the library and it is merged, this can be removed
-  api project(':sda-commons-server-opentelemetry')
+  api project(":sda-commons-server-opentelemetry")
 
-  api 'io.dropwizard:dropwizard-auth'
-  api 'io.dropwizard:dropwizard-client'
+  api "io.dropwizard:dropwizard-auth"
+  api "io.dropwizard:dropwizard-client"
 
-  api 'com.auth0:java-jwt'
-  api 'org.bouncycastle:bcpkix-jdk18on'
-  api 'jakarta.xml.bind:jakarta.xml.bind-api'
-  api 'io.opentelemetry:opentelemetry-api'
+  api "com.auth0:java-jwt"
+  api "org.bouncycastle:bcpkix-jdk18on"
+  api "jakarta.xml.bind:jakarta.xml.bind-api"
+  api "io.opentelemetry:opentelemetry-api"
 
-  implementation 'io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0'
-  implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2'
-  testImplementation project(':sda-commons-server-testing')
-  testImplementation project(':sda-commons-shared-wiremock-testing')
-  testImplementation 'org.awaitility:awaitility'
-  testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
+  implementation "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0"
+  implementation "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2"
+  testImplementation project(":sda-commons-server-testing")
+  testImplementation project(":sda-commons-shared-wiremock-testing")
+  testImplementation "org.awaitility:awaitility"
+  testImplementation "io.opentelemetry:opentelemetry-sdk-testing"
 }
