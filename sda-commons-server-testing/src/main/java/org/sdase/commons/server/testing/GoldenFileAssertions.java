@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
+import org.sdase.commons.server.openapi.OpenApiFileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,12 +158,13 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
     try {
       // assert if exists
       Assertions.assertThat(actual).as(ASSERTION_TEXT, fileName, fileName, fileName).exists();
+      String actualAsString = new String(Files.readAllBytes(actual));
 
       // assert YAML / JSON
       ObjectMapper objectMapper = Jackson.newObjectMapper(new YAMLFactory());
-      Assertions.assertThat(objectMapper.readTree(actual.toFile()))
+      Assertions.assertThat(objectMapper.readTree(OpenApiFileHelper.removeInfoVersionFromOpenApiYaml(actualAsString)))
           .as(ASSERTION_TEXT, fileName, fileName, fileName)
-          .isEqualTo(objectMapper.readTree(expected));
+          .isEqualTo(objectMapper.readTree(OpenApiFileHelper.removeInfoVersionFromOpenApiYaml(expected)));
     } finally {
       // eventually update the file content
       if (ciUtil.isRunningInCiPipeline()) {

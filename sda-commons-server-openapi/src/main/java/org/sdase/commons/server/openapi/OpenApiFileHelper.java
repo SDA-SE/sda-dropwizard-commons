@@ -26,6 +26,21 @@ public class OpenApiFileHelper {
     LinkedHashMap<String, Object> yamlMap =
         YamlUtil.load(yaml, new TypeReference<LinkedHashMap<String, Object>>() {});
     yamlMap.remove("servers");
+    yamlMap.get("info");
+    return YamlUtil.writeValueAsString(yamlMap);
+  }
+
+  /**
+   * Remove version from the info field from a textual OpenApi in the {@code yaml} format
+   * so that it is ignored during comparison .
+   *
+   * @param yaml the content of the {@code openapi.yaml} file
+   * @return the cleaned up {@code yaml}
+   */
+  public static String removeInfoVersionFromOpenApiYaml(String yaml) {
+    LinkedHashMap<String, Object> yamlMap =
+        YamlUtil.load(yaml, new TypeReference<LinkedHashMap<String, Object>>() {});
+    ((LinkedHashMap<String, Object>) yamlMap.get("info")).remove("version");
     return YamlUtil.writeValueAsString(yamlMap);
   }
 }
