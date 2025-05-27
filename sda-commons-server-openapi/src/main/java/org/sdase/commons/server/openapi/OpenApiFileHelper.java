@@ -43,7 +43,8 @@ public class OpenApiFileHelper {
    * @param actualYaml the current content of the {@code openapi.yaml} file
    * @return the cleaned up {@code yaml}
    */
-  public static String normalizeOpenApiYamlAndReplaceVersion(String expectedYaml, String actualYaml) {
+  public static String normalizeOpenApiYamlAndReplaceVersion(
+      String expectedYaml, String actualYaml) {
     LinkedHashMap<String, Object> expectedYamlMap =
         (LinkedHashMap)
             YamlUtil.load(expectedYaml, new TypeReference<LinkedHashMap<String, Object>>() {});
