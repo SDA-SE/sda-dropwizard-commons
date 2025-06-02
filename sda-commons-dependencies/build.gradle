@@ -204,7 +204,7 @@ dependencies {
     api "org.junit-pioneer:junit-pioneer:2.3.0"
 
     // sda-commons-server-weld-testing
-    api 'org.jboss.weld:weld-junit5:4.0.3.Final'
+    api 'org.jboss.weld:weld-junit5:5.0.1.Final'
 
     // sda-commons-shared-*
     api 'commons-io:commons-io:2.19.0'
