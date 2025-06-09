@@ -28,7 +28,7 @@ ext {
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '5.4.0' // 5.5.0 incompatible with AWS DocumentDB 4
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
-  bouncyCastleVersion = '1.80'
+  bouncyCastleVersion = '1.81'
   victoolsVersion = '4.38.0'
   flywayVersion = '11.8.2'
 }
