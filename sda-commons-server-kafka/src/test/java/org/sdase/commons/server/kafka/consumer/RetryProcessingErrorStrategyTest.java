@@ -30,6 +30,7 @@ class RetryProcessingErrorStrategyTest {
   @Mock private KafkaConsumer<String, String> consumer;
 
   private RetryProcessingErrorMLS<String, String> strategy;
+  private RetryProcessingErrorMLS<String, String> defaultStrategy;
 
   @BeforeEach
   void init() {
@@ -38,12 +39,27 @@ class RetryProcessingErrorStrategyTest {
     strategy =
         new RetryProcessingErrorMLS<>(
             messageHandler, intermediateErrorHandler, MAX_RETRIES, finalErrorHandler);
+    defaultStrategy =
+        new RetryProcessingErrorMLS<>(
+            messageHandler, intermediateErrorHandler, finalErrorHandler);
+    defaultStrategy.init(null, 5);
   }
 
   @Test
   void shouldCallMessageHandler() {
     ConsumerRecords<String, String> records = createConsumerRecords(2);
     strategy.processRecords(records, consumer);
+
+    verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(1));
+    verifyNoMoreInteractions(messageHandler);
+    verifyNoInteractions(intermediateErrorHandler, finalErrorHandler);
+  }
+
+  @Test
+  void shouldCallMessageHandlerDefaultStrategy() {
+    ConsumerRecords<String, String> records = createConsumerRecords(2);
+    defaultStrategy.processRecords(records, consumer);
 
     verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(0));
     verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(1));
@@ -77,6 +93,31 @@ class RetryProcessingErrorStrategyTest {
   }
 
   @Test
+  void shouldCallMessageHandlerMultipleTimesOnErrorDefaultStrategy() {
+    ConsumerRecords<String, String> records = createConsumerRecords(2);
+    RuntimeException exception = new RuntimeException("Test");
+
+    // we fail in first call
+    doThrow(exception).when(messageHandler).handle(any());
+    defaultStrategy.processRecords(records, consumer);
+
+    verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(intermediateErrorHandler)
+        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+    verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
+    verifyNoInteractions(finalErrorHandler);
+
+    // second call is fine
+    doNothing().when(messageHandler).handle(any());
+    defaultStrategy.processRecords(records, consumer);
+
+    verify(messageHandler, times(2)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(1));
+    verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
+    verifyNoInteractions(finalErrorHandler);
+  }
+
+  @Test
   void shouldStopCallingAfterMaxRetries() {
     ConsumerRecords<String, String> records = createConsumerRecords(2);
     RuntimeException exception = new RuntimeException("Test");
@@ -91,7 +132,7 @@ class RetryProcessingErrorStrategyTest {
     verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
     verifyNoInteractions(finalErrorHandler);
 
-    // we fail in second call
+    // we fail in the second call
     strategy.processRecords(records, consumer);
 
     verify(messageHandler, times(2)).handle(records.records(TOPIC_PARTITION).get(0));
@@ -100,11 +141,78 @@ class RetryProcessingErrorStrategyTest {
     verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
     verifyNoInteractions(finalErrorHandler);
 
-    // and we fail in third (last) call
+    // and we fail in the third (last) call
     strategy.processRecords(records, consumer);
 
     verify(messageHandler, times(3)).handle(records.records(TOPIC_PARTITION).get(0));
     verify(intermediateErrorHandler, times(2))
+        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+    verify(finalErrorHandler)
+        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+
+    // as the first record has been thrown away, the second now can also be processed (due to mock,
+    // preparation it will also fail)
+    verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(1));
+    verify(intermediateErrorHandler)
+        .handleError(records.records(TOPIC_PARTITION).get(1), exception, consumer);
+
+    verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
+    verifyNoMoreInteractions(finalErrorHandler);
+  }
+
+  @Test
+  void shouldStopCallingAfterDefaultMaxRetries() {
+    ConsumerRecords<String, String> records = createConsumerRecords(2);
+    RuntimeException exception = new RuntimeException("Test");
+
+    // we fail in the first call
+    doThrow(exception).when(messageHandler).handle(any());
+    defaultStrategy.processRecords(records, consumer);
+
+    verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(intermediateErrorHandler)
+        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+    verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
+    verifyNoInteractions(finalErrorHandler);
+
+    // we fail in second call
+    defaultStrategy.processRecords(records, consumer);
+
+    verify(messageHandler, times(2)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(intermediateErrorHandler, times(2))
+        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+    verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
+    verifyNoInteractions(finalErrorHandler);
+
+    // and we fail in the third call
+    defaultStrategy.processRecords(records, consumer);
+
+    verify(messageHandler, times(3)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(intermediateErrorHandler, times(3))
+        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+    verifyNoInteractions(finalErrorHandler);
+
+    // and we fail in the fourth call
+    defaultStrategy.processRecords(records, consumer);
+
+    verify(messageHandler, times(4)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(intermediateErrorHandler, times(4))
+        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+    verifyNoInteractions(finalErrorHandler);
+
+    // and we fail in the fifth call
+    defaultStrategy.processRecords(records, consumer);
+
+    verify(messageHandler, times(5)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(intermediateErrorHandler, times(5))
+        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+    verifyNoInteractions(finalErrorHandler);
+
+    // and we fail in the (last) sixth call
+    defaultStrategy.processRecords(records, consumer);
+
+    verify(messageHandler, times(6)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(intermediateErrorHandler, times(5))
         .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
     verify(finalErrorHandler)
         .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);

@@ -48,6 +48,7 @@ kafka:
   listenerConfig:
     async:
       topicMissingRetryMs: 40000
+      maxRetries: 3
 
   topics:
     topicId1:

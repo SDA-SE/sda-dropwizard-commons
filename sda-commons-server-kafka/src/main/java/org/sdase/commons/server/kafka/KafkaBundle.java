@@ -168,7 +168,9 @@ public class KafkaBundle<C extends Configuration> implements ConfiguredBundle<C>
 
     List<MessageListener<K, V>> listener = new ArrayList<>(listenerConfig.getInstances());
     for (int i = 0; i < listenerConfig.getInstances(); i++) {
-      registration.getStrategy().init(MetadataContext.metadataFields());
+      registration
+          .getStrategy()
+          .init(MetadataContext.metadataFields(), listenerConfig.getMaxRetries());
       MessageListener<K, V> instance =
           new MessageListener<>(
               registration.getTopicsNames(),

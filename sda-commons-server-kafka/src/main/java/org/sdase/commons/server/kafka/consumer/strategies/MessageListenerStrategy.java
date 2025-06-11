@@ -28,12 +28,13 @@ import org.sdase.commons.server.dropwizard.metadata.MetadataContextCloseable;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
+import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.RetryCounter;
 import org.sdase.commons.shared.tracing.TraceTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base for MessageListener strategies. A strategy defies the way how records are handled and how
+ * Base for MessageListener strategies. A strategy defines the way how records are handled and how
  * the consumer interacts with the kafka broker, i.e. the commit handling.
  *
  * <p>A strategy might support the usage of a @{@link MessageHandler} that encapsulates the business
@@ -44,16 +45,29 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class MessageListenerStrategy<K, V> {
 
+  protected RetryCounter retryCounter;
   private static final Logger LOGGER = LoggerFactory.getLogger(MessageListenerStrategy.class);
-
   private Map<TopicPartition, OffsetAndMetadata> offsetsToCommitOnClose = new HashMap<>();
   private Set<String> metadataFields = Set.of();
 
   /**
-   * @param metadataFields the configured {@link MetadataContext#metadataFields()}
+   * Initializes the MessageListenerStrategy with metadata fields and a maximum retry count 0.
+   *
+   * @param metadataFields a set of metadata field names to be considered when processing records
    */
   public void init(Set<String> metadataFields) {
     this.metadataFields = Optional.ofNullable(metadataFields).orElse(Set.of());
+  }
+
+  /**
+   * Initializes the MessageListenerStrategy with metadata fields and a maximum retry count.
+   *
+   * @param metadataFields a set of metadata field names to be considered when processing records
+   * @param maxRetriesCount the maximum number of retries allowed for failed operations
+   */
+  public void init(Set<String> metadataFields, int maxRetriesCount) {
+    this.metadataFields = Optional.ofNullable(metadataFields).orElse(Set.of());
+    this.retryCounter = new RetryCounter(maxRetriesCount);
   }
 
   /**
