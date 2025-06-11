@@ -397,6 +397,8 @@ kafka:
       topicMissingRetryMs: 60000
       # Milliseconds to sleep between two poll intervals if no messages are available
       pollInterval: 200
+      # Number of retries in case a Retry processing error MessageListenerStrategy is chosen. If no value is given, the default is to retry infinitely
+      maxRetries: 5
 ```
 
 You can disable the  health check manually if Kafka is not essential for the functionality of your service,
@@ -590,11 +592,12 @@ No defaults
 
 #### listenerConfig
 
-| Key                 | Value |
-|---------------------|-------|
-| instances           | 1     |
-| topicMissingRetryMs | 0     |
-| pollInterval        | 100   |
+| Key                 | Value          |
+|---------------------|----------------|
+| instances           | 1              |
+| topicMissingRetryMs | 0              |
+| pollInterval        | 100            |
+| maxRetries          | Long.MAX_VALUE |
 
 ## MessageListener
 A MessageListener [`MessageListener`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-kafka/src/main/java/org/sdase/commons/server/kafka/consumer/MessageListener.java)
