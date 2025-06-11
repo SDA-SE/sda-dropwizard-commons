@@ -64,6 +64,9 @@ public class MessageListener<K, V> implements Runnable {
     this.currentPollIntervalMillis = new AtomicLong(this.configuredPollIntervalMillis);
     this.pollIntervalFactorOnError = listenerConfig.getPollIntervalFactorOnError();
     this.maxPollIntervalMillis = listenerConfig.getMaxPollInterval();
+    if (null != this.strategy) {
+      this.strategy.setRetryCounterIfApplicable(listenerConfig.getMaxRetries());
+    }
   }
 
   @Override

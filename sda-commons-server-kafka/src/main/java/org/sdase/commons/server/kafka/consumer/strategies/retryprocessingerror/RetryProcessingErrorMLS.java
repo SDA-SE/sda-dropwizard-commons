@@ -1,5 +1,6 @@
 package org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror;
 
+import jakarta.annotation.Nullable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
@@ -20,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link MessageListenerStrategy} commits records for each partition. In case of processing errors
- * the message will be retried for a configured amount of times.
+ * {@link MessageListenerStrategy} commits records for each partition. In case of processing errors,
+ * the message will be retried for a configured number of times.
  *
  * <p>After each error an error handler can decide if processing should be retried or stopped.
  *
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
  *
  * <ul>
  *   <li>The failed message handling will be logged as ERROR
- *   <li>a retryLimitExceededErrorHandler will be called allowing to do more error handling (i.e.
+ *   <li>a retryLimitExceededErrorHandler will be called allowing to do more error handling (i.e.,
  *       write to DLT)
  *   <li>the offset will get increased, so the message handling gets ignored.
  * </ul>
@@ -41,37 +42,60 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
   private final ErrorHandler<K, V> errorHandler;
   private final ErrorHandler<K, V> retryLimitExceededErrorHandler;
   private String consumerName;
-  private final RetryCounter retryCounter;
+  private RetryCounter retryCounter;
 
   /**
    * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error
    * infinite times.
    *
    * @param handler the message handler
-   * @param errorHandler the error handler called after each error
+   * @param errorHandler the error handler called after each error, can be null
    */
-  public RetryProcessingErrorMLS(MessageHandler<K, V> handler, ErrorHandler<K, V> errorHandler) {
-    this(handler, errorHandler, Long.MAX_VALUE, null);
+  public RetryProcessingErrorMLS(
+      MessageHandler<K, V> handler, @Nullable ErrorHandler<K, V> errorHandler) {
+    this(handler, errorHandler, null);
   }
 
   /**
    * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error for a
-   * given amount of times
+   * given number of times configured in the listener configuration
    *
    * @param handler the message handler
-   * @param errorHandler the error handler called after each error
+   * @param errorHandler the error handler called after each error, can be null
    * @param maxRetryCount the maximum number of retries
-   * @param retryLimitExceededErrorHandler the error handler called if the retry limit is exceeded
+   * @param retryLimitExceededErrorHandler the error handler called if the retry limit is exceeded,
+   *     can be null
+   * @deprecated the parameter maxRetryCount will be removed in the future, it should be configured
+   *     in the listener config
    */
+  @Deprecated
   public RetryProcessingErrorMLS(
       MessageHandler<K, V> handler,
-      ErrorHandler<K, V> errorHandler,
+      @Nullable ErrorHandler<K, V> errorHandler,
       long maxRetryCount,
-      ErrorHandler<K, V> retryLimitExceededErrorHandler) {
+      @Nullable ErrorHandler<K, V> retryLimitExceededErrorHandler) {
     this.handler = handler;
     this.errorHandler = errorHandler;
     this.retryLimitExceededErrorHandler = retryLimitExceededErrorHandler;
     this.retryCounter = new RetryCounter(maxRetryCount);
+  }
+
+  /**
+   * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error for a
+   * given number of times configured in the listener configuration
+   *
+   * @param handler the message handler
+   * @param errorHandler the error handler called after each error, can be null
+   * @param retryLimitExceededErrorHandler the error handler called if the retry limit is exceeded,
+   *     can be null
+   */
+  public RetryProcessingErrorMLS(
+      MessageHandler<K, V> handler,
+      @Nullable ErrorHandler<K, V> errorHandler,
+      @Nullable ErrorHandler<K, V> retryLimitExceededErrorHandler) {
+    this.handler = handler;
+    this.errorHandler = errorHandler;
+    this.retryLimitExceededErrorHandler = retryLimitExceededErrorHandler;
   }
 
   @Override
@@ -143,14 +167,14 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
 
   @Override
   public void verifyConsumerConfig(Map<String, String> config) {
-    if (Boolean.TRUE.equals(Boolean.valueOf(config.getOrDefault("enable.auto.commit", "true")))) {
+    if (Boolean.parseBoolean(config.getOrDefault("enable.auto.commit", "true"))) {
       throw new ConfigurationException(
           "The strategy should commit explicitly by partition but property 'enable.auto.commit' in consumer config is set to 'true'");
     }
   }
 
   private void callErrorHandler(
-      ErrorHandler<K, V> errorHandler,
+      @Nullable ErrorHandler<K, V> errorHandler,
       ConsumerRecord<K, V> consumerRecord,
       RuntimeException e,
       KafkaConsumer<K, V> consumer) {
@@ -165,5 +189,18 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
   private OffsetAndMetadata markConsumerRecordProcessed(ConsumerRecord<K, V> consumerRecord) {
     addOffsetToCommitOnClose(consumerRecord);
     return new OffsetAndMetadata(consumerRecord.offset() + 1);
+  }
+
+  /**
+   * Creates the RetryCounter with the given value.
+   *
+   * @param maxRetriesCount max retries value from config
+   */
+  @Override
+  public void setRetryCounterIfApplicable(long maxRetriesCount) {
+    // only create a new retry counter if it was not created before by the constructor
+    if (null == this.retryCounter) {
+      this.retryCounter = new RetryCounter(maxRetriesCount);
+    }
   }
 }

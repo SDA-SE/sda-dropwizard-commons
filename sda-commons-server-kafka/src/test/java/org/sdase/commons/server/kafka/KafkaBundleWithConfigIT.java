@@ -577,6 +577,9 @@ class KafkaBundleWithConfigIT {
 
                   @Override
                   public void verifyConsumerConfig(Map<String, String> config) {}
+
+                  @Override
+                  public void setRetryCounterIfApplicable(long maxRetriesCount) {}
                 })
             .build());
 

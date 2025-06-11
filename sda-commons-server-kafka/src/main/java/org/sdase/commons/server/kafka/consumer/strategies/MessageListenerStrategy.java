@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base for MessageListener strategies. A strategy defies the way how records are handled and how
+ * Base for MessageListener strategies. A strategy defines the way how records are handled and how
  * the consumer interacts with the kafka broker, i.e. the commit handling.
  *
  * <p>A strategy might support the usage of a @{@link MessageHandler} that encapsulates the business
@@ -45,12 +45,13 @@ import org.slf4j.LoggerFactory;
 public abstract class MessageListenerStrategy<K, V> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MessageListenerStrategy.class);
-
   private Map<TopicPartition, OffsetAndMetadata> offsetsToCommitOnClose = new HashMap<>();
   private Set<String> metadataFields = Set.of();
 
   /**
-   * @param metadataFields the configured {@link MetadataContext#metadataFields()}
+   * Initializes the MessageListenerStrategy with metadata fields and a maximum retry count 0.
+   *
+   * @param metadataFields a set of metadata field names to be considered when processing records
    */
   public void init(Set<String> metadataFields) {
     this.metadataFields = Optional.ofNullable(metadataFields).orElse(Set.of());
@@ -193,4 +194,11 @@ public abstract class MessageListenerStrategy<K, V> {
   public Map<String, String> forcedConfigToApply() {
     return Collections.emptyMap();
   }
+
+  /**
+   * Creates the RetryCounter with the given value, if applicable for the strategy.
+   *
+   * @param maxRetriesCount max retries value from config
+   */
+  public abstract void setRetryCounterIfApplicable(long maxRetriesCount);
 }

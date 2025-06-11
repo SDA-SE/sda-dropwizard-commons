@@ -9,6 +9,7 @@ public class ListenerConfig {
   private long pollInterval = 100;
   private long pollIntervalFactorOnError = 4;
   private long maxPollInterval = 25_000;
+  private long maxRetries = Long.MAX_VALUE;
 
   private ListenerConfig() {
     // empty constructor for jackson
@@ -62,12 +63,21 @@ public class ListenerConfig {
     this.maxPollInterval = maxPollInterval;
   }
 
+  public long getMaxRetries() {
+    return maxRetries;
+  }
+
+  public void setMaxRetries(long maxRetries) {
+    this.maxRetries = maxRetries;
+  }
+
   public static class ListenerConfigBuilder {
 
     private long topicMissingRetryMs = 0;
     private long pollInterval = 100;
     private long pollIntervalFactorOnError = 4;
     private long maxPollInterval = 25_000;
+    private long maxRetries = Long.MAX_VALUE;
 
     public ListenerConfigBuilder withTopicMissingRetryMs(@NotNull long ms) {
       this.topicMissingRetryMs = ms;
@@ -89,6 +99,11 @@ public class ListenerConfig {
       return this;
     }
 
+    public ListenerConfigBuilder withMaxRetries(@NotNull int maxRetries) {
+      this.maxRetries = maxRetries;
+      return this;
+    }
+
     public ListenerConfig build(@NotNull int numberInstances) {
       ListenerConfig build = new ListenerConfig();
       build.setTopicMissingRetryMs(topicMissingRetryMs);
@@ -96,6 +111,7 @@ public class ListenerConfig {
       build.setMaxPollInterval(maxPollInterval);
       build.setPollIntervalFactorOnError(pollIntervalFactorOnError);
       build.setInstances(numberInstances);
+      build.setMaxRetries(maxRetries);
       return build;
     }
   }
