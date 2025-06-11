@@ -64,7 +64,6 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
    * @param retryLimitExceededErrorHandler the error handler called if the retry limit is exceeded,
    *     can be null
    */
-  @Deprecated
   public RetryProcessingErrorMLS(
       MessageHandler<K, V> handler,
       @Nullable ErrorHandler<K, V> errorHandler,
