@@ -45,8 +45,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class MessageListenerStrategy<K, V> {
 
-  protected RetryCounter retryCounter;
   private static final Logger LOGGER = LoggerFactory.getLogger(MessageListenerStrategy.class);
+  protected RetryCounter retryCounter;
   private Map<TopicPartition, OffsetAndMetadata> offsetsToCommitOnClose = new HashMap<>();
   private Set<String> metadataFields = Set.of();
 
