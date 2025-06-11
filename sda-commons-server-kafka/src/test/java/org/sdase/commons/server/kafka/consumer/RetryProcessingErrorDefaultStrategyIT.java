@@ -159,16 +159,16 @@ public class RetryProcessingErrorDefaultStrategyIT {
   private void configureFailCountPerMessage(int failCount) {
     Map<String, Integer> errorCount = new HashMap<>();
     doAnswer(
-        invocation -> {
-          ConsumerRecord<String, String> consumerRecord = invocation.getArgument(0);
-          String key = consumerRecord.value();
-          Integer myErrors = errorCount.computeIfAbsent(key, k -> 0);
-          if (myErrors < failCount) {
-            errorCount.put(key, myErrors + 1);
-            throw new RuntimeException("Simulated processing error");
-          }
-          return null;
-        })
+            invocation -> {
+              ConsumerRecord<String, String> consumerRecord = invocation.getArgument(0);
+              String key = consumerRecord.value();
+              Integer myErrors = errorCount.computeIfAbsent(key, k -> 0);
+              if (myErrors < failCount) {
+                errorCount.put(key, myErrors + 1);
+                throw new RuntimeException("Simulated processing error");
+              }
+              return null;
+            })
         .when(messageHandler)
         .handle(any(ConsumerRecord.class));
   }
@@ -182,8 +182,8 @@ public class RetryProcessingErrorDefaultStrategyIT {
     List<String> expectedMessages = new ArrayList<>();
     for (int i = 0; i < noOfMessages; i++) {
       for (int j = 0;
-           j < failCount + 1;
-           j++) { // +1 because the message will be executed as least once
+          j < failCount + 1;
+          j++) { // +1 because the message will be executed as least once
         expectedMessages.add("test message " + i);
       }
     }

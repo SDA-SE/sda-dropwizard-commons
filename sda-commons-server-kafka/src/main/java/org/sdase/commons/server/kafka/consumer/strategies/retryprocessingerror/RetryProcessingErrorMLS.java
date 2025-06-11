@@ -62,7 +62,7 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
    * @param errorHandler the error handler called after each error, can be null
    * @param maxRetryCount the maximum number of retries
    * @param retryLimitExceededErrorHandler the error handler called if the retry limit is exceeded,
-   *                                       can be null
+   *     can be null
    */
   public RetryProcessingErrorMLS(
       MessageHandler<K, V> handler,
@@ -82,7 +82,7 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
    * @param handler the message handler
    * @param errorHandler the error handler called after each error, can be null
    * @param retryLimitExceededErrorHandler the error handler called if the retry limit is exceeded,
-   *                                       can be null
+   *     can be null
    */
   public RetryProcessingErrorMLS(
       MessageHandler<K, V> handler,

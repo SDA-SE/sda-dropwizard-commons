@@ -40,8 +40,7 @@ class RetryProcessingErrorStrategyTest {
         new RetryProcessingErrorMLS<>(
             messageHandler, intermediateErrorHandler, MAX_RETRIES, finalErrorHandler);
     defaultStrategy =
-        new RetryProcessingErrorMLS<>(
-            messageHandler, intermediateErrorHandler, finalErrorHandler);
+        new RetryProcessingErrorMLS<>(messageHandler, intermediateErrorHandler, finalErrorHandler);
     defaultStrategy.init(null, 5);
   }
 
