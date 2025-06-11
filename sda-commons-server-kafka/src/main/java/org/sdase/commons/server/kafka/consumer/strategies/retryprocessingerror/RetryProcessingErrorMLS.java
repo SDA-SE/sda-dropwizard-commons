@@ -51,28 +51,7 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
    * @param errorHandler the error handler called after each error
    */
   public RetryProcessingErrorMLS(MessageHandler<K, V> handler, ErrorHandler<K, V> errorHandler) {
-    this(handler, errorHandler, Long.MAX_VALUE, null);
-  }
-
-  /**
-   * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error for a
-   * given number of times
-   *
-   * @param handler the message handler
-   * @param errorHandler the error handler called after each error, can be null
-   * @param maxRetryCount the maximum number of retries
-   * @param retryLimitExceededErrorHandler the error handler called if the retry limit is exceeded,
-   *     can be null
-   */
-  public RetryProcessingErrorMLS(
-      MessageHandler<K, V> handler,
-      @Nullable ErrorHandler<K, V> errorHandler,
-      long maxRetryCount,
-      @Nullable ErrorHandler<K, V> retryLimitExceededErrorHandler) {
-    this.handler = handler;
-    this.errorHandler = errorHandler;
-    this.retryLimitExceededErrorHandler = retryLimitExceededErrorHandler;
-    this.retryCounter = new RetryCounter(maxRetryCount);
+    this(handler, errorHandler, null);
   }
 
   /**
