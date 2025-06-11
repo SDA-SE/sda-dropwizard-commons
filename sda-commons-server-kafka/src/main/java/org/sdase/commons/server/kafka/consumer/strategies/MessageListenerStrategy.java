@@ -65,7 +65,7 @@ public abstract class MessageListenerStrategy<K, V> {
    * @param metadataFields a set of metadata field names to be considered when processing records
    * @param maxRetriesCount the maximum number of retries allowed for failed operations
    */
-  public void init(Set<String> metadataFields, int maxRetriesCount) {
+  public void init(Set<String> metadataFields, long maxRetriesCount) {
     this.metadataFields = Optional.ofNullable(metadataFields).orElse(Set.of());
     this.retryCounter = new RetryCounter(maxRetriesCount);
   }
