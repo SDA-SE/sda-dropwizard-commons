@@ -82,4 +82,10 @@ public class AutocommitMLS<K, V> extends MessageListenerStrategy<K, V> {
   public Map<String, String> forcedConfigToApply() {
     return Collections.singletonMap(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
   }
+
+  @Override
+  public void setRetryCounterIfApplicable(long maxRetriesCount) {
+    // noop
+    LOGGER.info("Retry counter is not applicable for autocommit strategy");
+  }
 }

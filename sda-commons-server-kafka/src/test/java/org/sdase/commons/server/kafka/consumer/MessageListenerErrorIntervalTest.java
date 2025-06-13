@@ -57,6 +57,7 @@ class MessageListenerErrorIntervalTest {
             .withPollInterval(1)
             .withMaxPollInterval(10)
             .withPollIntervalFactorOnError(3)
+            .withMaxRetries(3)
             .build(1);
     messageListener =
         new MessageListener<>(
