@@ -28,7 +28,6 @@ import org.sdase.commons.server.dropwizard.metadata.MetadataContextCloseable;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
-import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.RetryCounter;
 import org.sdase.commons.shared.tracing.TraceTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,6 @@ import org.slf4j.LoggerFactory;
 public abstract class MessageListenerStrategy<K, V> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MessageListenerStrategy.class);
-  protected RetryCounter retryCounter;
   private Map<TopicPartition, OffsetAndMetadata> offsetsToCommitOnClose = new HashMap<>();
   private Set<String> metadataFields = Set.of();
 
@@ -57,17 +55,6 @@ public abstract class MessageListenerStrategy<K, V> {
    */
   public void init(Set<String> metadataFields) {
     this.metadataFields = Optional.ofNullable(metadataFields).orElse(Set.of());
-  }
-
-  /**
-   * Initializes the MessageListenerStrategy with metadata fields and a maximum retry count.
-   *
-   * @param metadataFields a set of metadata field names to be considered when processing records
-   * @param maxRetriesCount the maximum number of retries allowed for failed operations
-   */
-  public void init(Set<String> metadataFields, long maxRetriesCount) {
-    this.metadataFields = Optional.ofNullable(metadataFields).orElse(Set.of());
-    this.retryCounter = new RetryCounter(maxRetriesCount);
   }
 
   /**
@@ -207,4 +194,11 @@ public abstract class MessageListenerStrategy<K, V> {
   public Map<String, String> forcedConfigToApply() {
     return Collections.emptyMap();
   }
+
+  /**
+   * Creates the RetryCounter with the given value, if applicable for the strategy.
+   *
+   * @param maxRetriesCount max retries value from config
+   */
+  public abstract void setRetryCounterIfApplicable(long maxRetriesCount);
 }

@@ -42,6 +42,7 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
   private final ErrorHandler<K, V> errorHandler;
   private final ErrorHandler<K, V> retryLimitExceededErrorHandler;
   private String consumerName;
+  private RetryCounter retryCounter;
 
   /**
    * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error
@@ -52,6 +53,30 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
    */
   public RetryProcessingErrorMLS(MessageHandler<K, V> handler, ErrorHandler<K, V> errorHandler) {
     this(handler, errorHandler, null);
+  }
+
+  /**
+   * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error for a
+   * given number of times configured in the listener configuration
+   *
+   * @param handler the message handler
+   * @param errorHandler the error handler called after each error, can be null
+   * @param maxRetryCount the maximum number of retries
+   * @param retryLimitExceededErrorHandler the error handler called if the retry limit is exceeded,
+   *     can be null
+   * @deprecated the parameter maxRetryCount will be removed in the future, it should be configured
+   *     in the listener config
+   */
+  @Deprecated
+  public RetryProcessingErrorMLS(
+      MessageHandler<K, V> handler,
+      @Nullable ErrorHandler<K, V> errorHandler,
+      long maxRetryCount,
+      @Nullable ErrorHandler<K, V> retryLimitExceededErrorHandler) {
+    this.handler = handler;
+    this.errorHandler = errorHandler;
+    this.retryLimitExceededErrorHandler = retryLimitExceededErrorHandler;
+    this.retryCounter = new RetryCounter(maxRetryCount);
   }
 
   /**
@@ -163,5 +188,18 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
   private OffsetAndMetadata markConsumerRecordProcessed(ConsumerRecord<K, V> consumerRecord) {
     addOffsetToCommitOnClose(consumerRecord);
     return new OffsetAndMetadata(consumerRecord.offset() + 1);
+  }
+
+  /**
+   * Creates the RetryCounter with the given value.
+   *
+   * @param maxRetriesCount max retries value from config
+   */
+  @Override
+  public void setRetryCounterIfApplicable(long maxRetriesCount) {
+    // only create a new retry counter if it was not created before by the constructor
+    if (null == this.retryCounter) {
+      this.retryCounter = new RetryCounter(maxRetriesCount);
+    }
   }
 }
