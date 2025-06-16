@@ -216,7 +216,7 @@ dependencies {
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.16.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.6-alpha"
     api "com.squareup.okhttp3:okhttp:4.12.0" // bump from 4.9.3 used in opentelemetry-exporter-otlp-common
-    api 'com.squareup.okio:okio:3.12.0', {
+    api 'com.squareup.okio:okio:3.13.0', {
       because 'CVE-2023-3635 in 3.2.0'
     }
 
