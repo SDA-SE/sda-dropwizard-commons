@@ -92,6 +92,7 @@ class MessageListenerStrategyMetadataContextIntegrationTest {
       boolean stopsInTopic,
       MessageListenerStrategy<String, String> messageListenerStrategy) {
     messageListenerStrategy.init(Set.of("tenant-id"));
+    messageListenerStrategy.setRetryCounterIfApplicable(3);
     var recordsMap = new LinkedHashMap<TopicPartition, List<ConsumerRecord<String, String>>>();
     recordsMap.put(
         new TopicPartition(TOPIC, 1),

@@ -30,9 +30,13 @@ import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 
 class RetryProcessingErrorStrategyIT {
-  private static final String TOPIC_NAME = "some-topic";
 
-  private static final int MAX_RETRIES = 2;
+  private static final String TOPIC_NAME = "some-topic";
+  private static final int MAX_RETRIES = 3;
+  private static KafkaProducer<String, String> stringStringProducer;
+  private static final MessageHandler<String, String> messageHandler = mock(MessageHandler.class);
+  private static final ErrorHandler<String, String> errorHandler = mock(ErrorHandler.class);
+  private static final ErrorHandler<String, String> finalErrorHandler = mock(ErrorHandler.class);
 
   @RegisterExtension
   @Order(0)
@@ -52,22 +56,14 @@ class RetryProcessingErrorStrategyIT {
           resourceFilePath("test-config-default.yml"),
           config("kafka.brokers", KAFKA::getKafkaConnectString));
 
-  private static KafkaProducer<String, String> stringStringProducer;
-
-  private static MessageHandler<String, String> messageHandler = mock(MessageHandler.class);
-
-  private static ErrorHandler<String, String> errorHandler = mock(ErrorHandler.class);
-  private static ErrorHandler<String, String> finalErrorHandler = mock(ErrorHandler.class);
-
   @BeforeAll
   static void beforeAll() {
     KAFKA.getKafkaTestUtils().createTopic(TOPIC_NAME, 3, Short.parseShort("1"));
-
     KafkaTestApplication testApplication = DROPWIZARD_APP_EXTENSION.getApplication();
     KafkaBundle<KafkaTestConfiguration> kafkaBundle = testApplication.kafkaBundle();
     kafkaBundle.createMessageListener(
         MessageListenerRegistration.builder()
-            .withDefaultListenerConfig()
+            .withListenerConfig("async")
             .forTopic(TOPIC_NAME)
             .withConsumerConfig(
                 ConsumerConfig.builder()
@@ -77,8 +73,7 @@ class RetryProcessingErrorStrategyIT {
                     .build())
             .withValueDeserializer(new StringDeserializer())
             .withListenerStrategy(
-                new RetryProcessingErrorMLS<>(
-                    messageHandler, errorHandler, MAX_RETRIES, finalErrorHandler))
+                new RetryProcessingErrorMLS<>(messageHandler, errorHandler, finalErrorHandler))
             .build());
 
     kafkaBundle.registerProducer(
@@ -166,11 +161,7 @@ class RetryProcessingErrorStrategyIT {
             invocation -> {
               ConsumerRecord<String, String> consumerRecord = invocation.getArgument(0);
               String key = consumerRecord.value();
-              Integer myErrors = errorCount.get(key);
-              if (myErrors == null) {
-                myErrors = 0;
-                errorCount.put(key, myErrors);
-              }
+              Integer myErrors = errorCount.computeIfAbsent(key, k -> 0);
               if (myErrors < failCount) {
                 errorCount.put(key, myErrors + 1);
                 throw new RuntimeException("Simulated processing error");
@@ -185,10 +176,8 @@ class RetryProcessingErrorStrategyIT {
     ArgumentCaptor<ConsumerRecord<String, String>> captor =
         ArgumentCaptor.forClass(ConsumerRecord.class);
     Mockito.verify(messageHandler, atLeast(1)).handle(captor.capture());
-
     List<ConsumerRecord<String, String>> capturedRecords = captor.getAllValues();
     List<String> capturedMessages = capturedRecords.stream().map(ConsumerRecord::value).toList();
-
     List<String> expectedMessages = new ArrayList<>();
     for (int i = 0; i < noOfMessages; i++) {
       for (int j = 0;
@@ -197,7 +186,6 @@ class RetryProcessingErrorStrategyIT {
         expectedMessages.add("test message " + i);
       }
     }
-
     assertThat(capturedMessages).containsExactlyInAnyOrderElementsOf(expectedMessages);
   }
 
