@@ -2621,7 +2621,9 @@ strategy.</p>
 <span class="normal">79</span>
 <span class="normal">80</span>
 <span class="normal">81</span>
-<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">kafka</span><span class="p">:</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">kafka</span><span class="p">:</span>
 <span class="w">  </span><span class="c1"># For testing without a kafka in integration tests, the bundle api can be disabled. No consumers and providers will be created</span>
 <span class="w">  </span><span class="nt">disabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 
@@ -2703,6 +2705,8 @@ strategy.</p>
 <span class="w">      </span><span class="nt">topicMissingRetryMs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60000</span>
 <span class="w">      </span><span class="c1"># Milliseconds to sleep between two poll intervals if no messages are available</span>
 <span class="w">      </span><span class="nt">pollInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
+<span class="w">      </span><span class="c1"># Number of retries in case a Retry processing error MessageListenerStrategy is chosen. If no value is given, the default is to retry infinitely</span>
+<span class="w">      </span><span class="nt">maxRetries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
 </code></pre></div></td></tr></table></div></p>
 <p>You can disable the  health check manually if Kafka is not essential for the functionality of your service,
 e.g. it's only used to invalidate a cache, notify about updates or other minor tasks that could fail without
@@ -3021,6 +3025,10 @@ Use the Java-default system properties <code>javax.net.ssl.trustStore</code> and
 <tr>
 <td>pollInterval</td>
 <td>100</td>
+</tr>
+<tr>
+<td>maxRetries</td>
+<td>Long.MAX_VALUE</td>
 </tr>
 </tbody>
 </table>
