@@ -212,7 +212,7 @@ dependencies {
     // sda-commons-server-opentelemetry
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
-    api "io.opentelemetry.semconv:opentelemetry-semconv:1.32.0"
+    api "io.opentelemetry.semconv:opentelemetry-semconv:1.34.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.16.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.6-alpha"
     api "com.squareup.okhttp3:okhttp:4.12.0" // bump from 4.9.3 used in opentelemetry-exporter-otlp-common
