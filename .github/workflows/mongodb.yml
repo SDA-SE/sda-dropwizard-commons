@@ -24,8 +24,11 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
+      # Main purpose of this test is to verify the external DB connection for tests.
+      # Currently, we use an old MongoDB version to verify compatibility until we drop support for
+      # MongoDB 4 and AWS DocumentDB 4.
       - name: Start MongoDB
-        run: docker run -d -e MONGO_INITDB_ROOT_USERNAME=test -e MONGO_INITDB_ROOT_PASSWORD=example -p 27017:27017 --name test_mongo mongo:5.0.20-focal
+        run: docker run -d -e MONGO_INITDB_ROOT_USERNAME=test -e MONGO_INITDB_ROOT_PASSWORD=example -p 27017:27017 --name test_mongo mongo:4.0.28
 
       - name: Test with Gradle
         run: ./gradlew :sda-commons-server-spring-data-mongo:test
