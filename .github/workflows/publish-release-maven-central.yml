@@ -6,14 +6,15 @@ on:
     types:
       - released
       - prereleased
+  pull_request:
 
 concurrency:
   group: maven-central-release
   cancel-in-progress: false
 
 env:
-  SEMANTIC_VERSION: ${{ github.event.release.tag_name }}
-  SONATYPE_PROFILE_ID: 33839da457341f
+  SEMANTIC_VERSION: "0.0.1-release-test" # ${{ github.event.release.tag_name }}
+#  SONATYPE_PROFILE_ID: 33839da457341f
 
 jobs:
   upload-maven-central:
@@ -50,7 +51,8 @@ jobs:
 #          SDA_MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_LOGIN_PASSWORD }}
 
       - name: Upload to Maven Central
-        run: ./gradlew publishMavenPublicationToMavenCentralRepository closeAndReleaseRepository
+        run: ./gradlew publishMavenPublicationToMavenCentralRepository
+        # closeAndReleaseRepository
         env:
           SDA_MVN_CENTRAL_USERNAME: ${{ secrets.MVN_CENTRAL_LOGIN_USERNAME }}
           SDA_MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_LOGIN_PASSWORD }}
