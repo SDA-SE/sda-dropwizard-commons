@@ -173,7 +173,7 @@ subprojects {
         }
         maven {
           name 'mavenCentral'
-          def releasesRepoUrl = "https://central.sonatype.com/repository/maven-releases/" // "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+          def releasesRepoUrl = "https://central.sonatype.com/service/local/staging/deploy/maven2/"
 //              System.getenv('SONATYPE_STAGING_REPOSITORY_ID')
 //              ? "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/${System.getenv('SONATYPE_STAGING_REPOSITORY_ID')}"
 //              : "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
