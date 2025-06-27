@@ -6,9 +6,8 @@ buildscript {
 }
 
 plugins {
-  id 'maven-publish'
+  id "com.vanniktech.maven.publish" version "0.33.0"
   id 'jacoco'
-  id 'signing'
   id 'org.sonarqube' version '6.2.0.5505'
   id 'com.diffplug.spotless' version '7.0.4'
   id 'io.codearte.nexus-staging' version '0.30.0'
@@ -68,7 +67,6 @@ version = System.getenv('SEMANTIC_VERSION')
  * Settings for all modules
  */
 subprojects {
-  apply plugin: 'maven-publish'
   apply plugin: 'com.diffplug.spotless'
   apply plugin: 'signing'
   apply plugin: 'project-report'
@@ -105,85 +103,45 @@ subprojects {
 
   // Don't configure publishing for the example projects
   if (!it.name.endsWith("-example")) {
-    signing {
-      def signingKey = findProperty("signingKey")
-      def signingPassword = findProperty("signingPassword")
-      useInMemoryPgpKeys(signingKey, signingPassword)
-      sign publishing.publications
-    }
+    apply plugin: "com.vanniktech.maven.publish"
+    mavenPublishing {
+      publishToMavenCentral()
+      signAllPublications()
 
-    tasks.withType(Sign) {
-      // skip signing a publication to maven local
-      onlyIf { !gradle.taskGraph.hasTask(publishMavenPublicationToMavenLocal) }
-    }
+      pom {
+        name = project.group + ":" + project.name
+        description = 'A libraries to bootstrap services easily that follow the patterns and specifications promoted by the SDA SE'
+        url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
 
-    publishing {
-      publications {
-        maven(MavenPublication) {
-          pom {
-            name = project.group + ":" + project.name
-            description = 'A libraries to bootstrap services easily that follow the patterns and specifications promoted by the SDA SE'
-            url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
-
-            licenses {
-              license {
-                name = 'MIT License'
-                url = 'https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/main/LICENSE'
-              }
-            }
-
-            organization {
-              name = 'SDA SE Open Industry Solutions'
-              url = 'https://sda.se'
-            }
-
-            issueManagement {
-              system = 'GitHub'
-              url = 'https://github.com/SDA-SE/sda-dropwizard-commons/issues'
-            }
-
-            developers {
-              developer {
-                id = 'maintainer'
-                name = 'SDA SE Open Industry Solutions Maintainer'
-                email = 'sda-dropwizard-commons@sda.se'
-              }
-            }
-
-            scm {
-              connection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
-              developerConnection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
-              url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
-            }
+        licenses {
+          license {
+            name = 'MIT License'
+            url = 'https://raw.githubusercontent.com/SDA-SE/sda-dropwizard-commons/main/LICENSE'
           }
         }
-      }
 
-      repositories {
-        maven {
-          name = "sdaIntern"
-          def releasesRepoUrl = "https://nexus.sda-se.io/repository/sda-se-releases/"
-          def snapshotsRepoUrl = "https://nexus.sda-se.io/repository/sda-se-snapshots/"
-          url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        organization {
+          name = 'SDA SE Open Industry Solutions'
+          url = 'https://sda.se'
+        }
 
-          credentials {
-            username System.getenv('SDA_NEXUS_USER')
-            password System.getenv('SDA_NEXUS_PASSWORD')
+        issueManagement {
+          system = 'GitHub'
+          url = 'https://github.com/SDA-SE/sda-dropwizard-commons/issues'
+        }
+
+        developers {
+          developer {
+            id = 'maintainer'
+            name = 'SDA SE Open Industry Solutions Maintainer'
+            email = 'sda-dropwizard-commons@sda.se'
           }
         }
-        maven {
-          name 'mavenCentral'
-          def releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
-//              System.getenv('SONATYPE_STAGING_REPOSITORY_ID')
-//              ? "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/${System.getenv('SONATYPE_STAGING_REPOSITORY_ID')}"
-//              : "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
-          def snapshotsRepoUrl = "https://central.sonatype.com/repository/maven-snapshots/"
-          url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
-          credentials {
-            username System.getenv('SDA_MVN_CENTRAL_USERNAME')
-            password System.getenv('SDA_MVN_CENTRAL_PASSWORD')
-          }
+        scm {
+          url = 'https://github.com/SDA-SE/sda-dropwizard-commons'
+          connection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
+          developerConnection = 'scm:git:https://github.com/SDA-SE/sda-dropwizard-commons.git'
         }
       }
     }
@@ -282,14 +240,6 @@ configure(subprojects.findAll {
     options.addStringOption('encoding', 'UTF-8')
   }
 
-  publishing {
-    publications {
-      maven(MavenPublication) {
-        from components.java
-      }
-    }
-  }
-
   jar {
     into("META-INF/maven/$project.group/$project.name") {
       from { generatePomFileForMavenPublication }
@@ -303,14 +253,6 @@ configure(subprojects.findAll {
  */
 configure(subprojects.findAll { javaPlatformModules.contains(it.name) }) {
   apply plugin: 'java-platform'
-
-  publishing {
-    publications {
-      maven(MavenPublication) {
-        from components.javaPlatform
-      }
-    }
-  }
 }
 
 // Reconfigure the testReport task to display the results of all modules into a single report

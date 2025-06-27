@@ -6,7 +6,7 @@ on:
     types:
       - released
       - prereleased
-  pull_request:
+# TODO need to test  pull_request:
 
 concurrency:
   group: maven-central-release
@@ -14,7 +14,6 @@ concurrency:
 
 env:
   SEMANTIC_VERSION: "0.0.1-release-test" # ${{ github.event.release.tag_name }}
-#  SONATYPE_PROFILE_ID: 33839da457341f
 
 jobs:
   upload-maven-central:
@@ -34,21 +33,6 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
-
-#      - name: Create Staging Repository
-#        id: create-staging-repo
-#        run: |
-#          ID=`echo "<promoteRequest><data><description>Created from GitHub Action for version $SEMANTIC_VERSION</description></data></promoteRequest>" \
-#              | curl -X POST \
-#                  -d @- \
-#                  -u $SDA_SONATYPE_USER:$SDA_SONATYPE_PASSWORD \
-#                  -H "Content-Type:application/xml" \
-#                  https://oss.sonatype.org/service/local/staging/profiles/$SONATYPE_PROFILE_ID/start \
-#              | sed -n 's:.*<stagedRepositoryId>\(.*\)</stagedRepositoryId>.*:\1:p'`
-#          echo "STAGING_PROFILE_ID=$ID" >> $GITHUB_OUTPUT
-#        env:
-#          SDA_MVN_CENTRAL_USERNAME: ${{ secrets.MVN_CENTRAL_LOGIN_USERNAME }}
-#          SDA_MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_LOGIN_PASSWORD }}
 
       - name: Upload to Maven Central
         run: ./gradlew publishMavenPublicationToMavenCentralRepository closeRepository
