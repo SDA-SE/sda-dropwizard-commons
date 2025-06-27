@@ -7,6 +7,9 @@ concurrency:
   group: maven-central-snapshot
   cancel-in-progress: false
 
+env:
+  SEMANTIC_VERSION: PR-${{ github.event.number }}-try-SNAPSHOT # FIXME
+
 jobs:
   pull-request-snapshots:
     # do not execute for PRs that origin from forks or created by dependabot since we are missing the secrets for the push
@@ -22,12 +25,11 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
-#      - name: Build and Sign packages
-#        run: ./gradlew --parallel signMavenPublication
-#        env:
-#          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
-#          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
-#          SEMANTIC_VERSION: PR-${{ github.event.number }}-SNAPSHOT
+      - name: Build and sign packages
+        run: ./gradlew --parallel javadoc assemble signMavenPublication
+        env:
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
 
       - name: Upload SNAPSHOT to Maven Central
         run: ./gradlew publishToMavenCentral
@@ -36,4 +38,3 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MVN_CENTRAL_LOGIN_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MVN_CENTRAL_LOGIN_PASSWORD }}
-          SEMANTIC_VERSION: PR-${{ github.event.number }}-SNAPSHOT

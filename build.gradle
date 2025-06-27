@@ -286,16 +286,6 @@ task codeCoverageReport(type: JacocoReport) {
   dependsOn ":testReport"
 }
 
-// Automatically close and release the staging repository that gets created
-// during the upload to maven central.
-nexusStaging {
-  username System.getenv('SDA_SONATYPE_USER')
-  password System.getenv('SDA_SONATYPE_PASSWORD')
-  packageGroup "org.sdase.commons"
-  // Read the stagingRepositoryId from the environment
-  stagingRepositoryId.set(System.getenv('SONATYPE_STAGING_REPOSITORY_ID'))
-}
-
 sonarqube {
   properties {
     property 'sonar.projectKey', 'SDA-SE_sda-dropwizard-commons'
