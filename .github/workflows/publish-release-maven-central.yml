@@ -51,8 +51,8 @@ jobs:
 #          SDA_MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_LOGIN_PASSWORD }}
 
       - name: Upload to Maven Central
-        run: ./gradlew publishMavenPublicationToMavenCentralRepository
-        # closeAndReleaseRepository
+        run: ./gradlew publishMavenPublicationToMavenCentralRepository closeRepository
+        # TODO closeAndReleaseRepository
         env:
           SDA_MVN_CENTRAL_USERNAME: ${{ secrets.MVN_CENTRAL_LOGIN_USERNAME }}
           SDA_MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_LOGIN_PASSWORD }}
