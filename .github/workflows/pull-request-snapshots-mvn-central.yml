@@ -1,7 +1,11 @@
 # This workflow uploads snapshots of Pull Requests
-name: Pull Request Snapshots
+name: Pull Request Snapshots Maven Central
 
 on: [pull_request]
+
+concurrency:
+  group: maven-central-snapshot
+  cancel-in-progress: false
 
 jobs:
   pull-request-snapshots:
@@ -25,11 +29,11 @@ jobs:
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
           SEMANTIC_VERSION: PR-${{ github.event.number }}-SNAPSHOT
 
-      - name: Upload to SDA Nexus
-        run: ./gradlew publishMavenPublicationToSdaInternRepository
+      - name: Upload SNAPSHOT to Maven Central
+        run: ./gradlew publishMavenPublicationToMavenCentralRepository
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
-          SDA_NEXUS_USER: ${{ secrets.NEXUS_LOGIN_USER }}
-          SDA_NEXUS_PASSWORD: ${{ secrets.NEXUS_LOGIN_PASSWORD }}
+          SDA_MVN_CENTRAL_USERNAME: ${{ secrets.MVN_CENTRAL_LOGIN_USERNAME }}
+          SDA_MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_LOGIN_PASSWORD }}
           SEMANTIC_VERSION: PR-${{ github.event.number }}-SNAPSHOT
