@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SEMANTIC_VERSION: "0.0.1-release-test" # ${{ github.event.release.tag_name }}
+  SEMANTIC_VERSION: "0.0.1-release-test-2" # ${{ github.event.release.tag_name }}
 
 jobs:
   upload-maven-central:
