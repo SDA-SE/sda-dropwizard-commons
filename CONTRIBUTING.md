@@ -43,7 +43,7 @@ Our [changelog](https://github.com/SDA-SE/sda-dropwizard-commons/releases/) is m
 Each PR creates a snapshot that can _temporarily_ be included in other projects for testing.
 The generated version uses the format: `PR-<pr_number>-SNAPSHOT`.
 Snapshots are cleaned up regularly from the repository so never use snapshots in stable releases.
-The snapshots are currently hosted in our internal Nexus repository.
+The snapshots are available in the [Maven Central snapshot repository](https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/org/sdase/commons/sda-commons-starter/).
 
 Import snapshots by adding the snapshot repository to the `build.gradle`:
 
@@ -51,11 +51,7 @@ Import snapshots by adding the snapshot repository to the `build.gradle`:
     repositories {
       ...
       maven {
-        url "https://nexus.sda-se.io/repository/sda-se-snapshots/"
-        credentials {
-          username sdaNexusUser
-          password sdaNexusPassword
-        }
+        url "https://central.sonatype.com/repository/maven-snapshots/"
       }
       ...
     }
