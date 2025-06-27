@@ -1,3 +1,6 @@
+import com.vanniktech.maven.publish.JavaLibrary
+import com.vanniktech.maven.publish.JavadocJar
+
 buildscript {
   repositories {
     maven { url "https://plugins.gradle.org/m2/" }
@@ -104,6 +107,12 @@ subprojects {
   // Don't configure publishing for the example projects
   if (!it.name.endsWith("-example")) {
     apply plugin: "com.vanniktech.maven.publish"
+
+    tasks.withType(Sign) {
+      // skip signing a publication to maven local
+      onlyIf { !gradle.taskGraph.hasTask(publishToMavenLocal) }
+    }
+
     mavenPublishing {
       publishToMavenCentral()
       signAllPublications()
@@ -231,10 +240,6 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
 configure(subprojects.findAll {
   !unpublishedModules.contains(it.name) && !it.name.endsWith("-example")
 }) {
-  java {
-    withJavadocJar()
-    withSourcesJar()
-  }
 
   javadoc {
     options.addStringOption('encoding', 'UTF-8')

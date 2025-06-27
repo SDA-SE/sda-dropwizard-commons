@@ -22,12 +22,12 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
-      - name: Build and Sign packages
-        run: ./gradlew --parallel signMavenPublication
-        env:
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
-          SEMANTIC_VERSION: PR-${{ github.event.number }}-SNAPSHOT
+#      - name: Build and Sign packages
+#        run: ./gradlew --parallel signMavenPublication
+#        env:
+#          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
+#          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
+#          SEMANTIC_VERSION: PR-${{ github.event.number }}-SNAPSHOT
 
       - name: Upload SNAPSHOT to Maven Central
         run: ./gradlew publishToMavenCentral
