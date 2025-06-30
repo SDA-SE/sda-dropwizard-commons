@@ -20,7 +20,7 @@ ext {
   kafkaVersion = '3.9.0'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.44.0'
-  kotlinVersion = '2.1.21'
+  kotlinVersion = '2.2.0'
   kotlinxCoroutinesVersion = '1.10.2'
   resilience4jVersion = '2.2.0'
   openTelemetryVersion = '1.41.0'
@@ -37,14 +37,8 @@ dependencies {
   // overwrite version used by Dropwizard to comply with Snakeyaml 2.0
   api enforcedPlatform("com.fasterxml.jackson:jackson-bom:${jacksonVersion}")
   // override version from dropwizard-bom
-  api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"), {
-    exclude group: 'org.jetbrains', module: 'annotations'
-    because("this version is outdated, but the main dependency does not have yet an updated version")
-  }
-  api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion"), {
-    exclude group: 'org.jetbrains', module: 'annotations'
-    because("this version is outdated, but the main dependency does not have yet an updated version")
-  }
+  api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion")
+  api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
   api enforcedPlatform("org.eclipse.jetty:jetty-bom:11.0.25"), {
     because("dropwizard and dropwizard-metrics use different versions")
   }
