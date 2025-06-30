@@ -63,6 +63,7 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
   api enforcedPlatform("software.amazon.awssdk:bom:2.31.68")
+  api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
   api enforcedPlatform("io.netty:netty-bom:4.2.2.Final"), {
@@ -194,9 +195,6 @@ dependencies {
     // sda-commons-server-weld
     api "org.jboss.weld.se:weld-se-core:$weldVersion"
     api "org.jboss.weld.servlet:weld-servlet-core:$weldVersion"
-    api "jakarta.transaction:jakarta.transaction-api:2.0.1", {
-      because "Dropwizard does not use the jakarta version yet so we replace it in weld with the javax version that comes as transitive dependency without explicit version."
-    }
 
     api "org.junit-pioneer:junit-pioneer:2.3.0"
 
