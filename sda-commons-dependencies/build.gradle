@@ -68,6 +68,7 @@ dependencies {
   api enforcedPlatform("io.netty:netty-bom:4.2.2.Final"), {
     because "various CVEs in earlier versions"
   }
+  api enforcedPlatform("io.prometheus:simpleclient_bom:${prometheusVersion}")
 
   // asyncapi generation
   api enforcedPlatform("com.github.victools:jsonschema-generator-bom:${victoolsVersion}")
@@ -154,10 +155,6 @@ dependencies {
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations-jakarta:$swaggerCoreV3Version"
     api "io.swagger.parser.v3:swagger-parser-v3:2.1.30"
-
-    // sda-commons-server-prometheus
-    api "io.prometheus:simpleclient_dropwizard:$prometheusVersion"
-    api "io.prometheus:simpleclient_servlet_jakarta:$prometheusVersion"
 
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus-simpleclient:$micrometerVersion", {
