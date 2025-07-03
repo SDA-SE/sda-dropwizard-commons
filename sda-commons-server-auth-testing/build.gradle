@@ -9,6 +9,4 @@ dependencies {
   api('org.apache.commons:commons-lang3')
 
   testImplementation project(':sda-commons-server-openapi')
-
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
