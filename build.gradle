@@ -1,15 +1,12 @@
-import com.vanniktech.maven.publish.JavaLibrary
-import com.vanniktech.maven.publish.JavadocJar
-
 buildscript {
   repositories {
-    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url = "https://plugins.gradle.org/m2/" }
     mavenCentral()
   }
 }
 
 plugins {
-  id "com.vanniktech.maven.publish" version "0.33.0"
+  id 'com.vanniktech.maven.publish' version '0.33.0'
   id 'jacoco'
   id 'org.sonarqube' version '6.2.0.5505'
   id 'com.diffplug.spotless' version '7.0.4'
@@ -27,7 +24,7 @@ allprojects {
   idea.module.inheritOutputDirs = true
 
   // Task for creating gradle.lockfile per module. Needed for Trivy vulnerability scan.
-  task resolveAndLockAll {
+  tasks.register('resolveAndLockAll') {
     doFirst {
       assert gradle.startParameter.writeDependencyLocks
     }
@@ -63,7 +60,7 @@ spotless {
   }
 }
 
-group 'org.sdase.commons'
+group = 'org.sdase.commons'
 version = System.getenv('SEMANTIC_VERSION')
 
 /**
@@ -74,21 +71,15 @@ subprojects {
   apply plugin: 'signing'
   apply plugin: 'project-report'
 
-  group rootProject.group
+  group = rootProject.group
   version = rootProject.version
 
   repositories {
     mavenCentral()
   }
 
-  // create file that includes all dependencies in "build/deps"
-  task allDeps(type: DependencyReportTask) {
-    outputFile(new File("${rootProject.buildDir}/deps", "${project.name}.txt"))
-  }
-  check.dependsOn allDeps
-
   // Disable publication of Gradle Module Metadata
-  tasks.withType(GenerateModuleMetadata) {
+  tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
   }
 
@@ -108,7 +99,7 @@ subprojects {
   if (!it.name.endsWith("-example")) {
     apply plugin: "com.vanniktech.maven.publish"
 
-    tasks.withType(Sign) {
+    tasks.withType(Sign).configureEach {
       // skip signing a publication to maven local
       onlyIf { !gradle.taskGraph.hasTask(publishToMavenLocal) }
     }
@@ -185,7 +176,7 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     sourceCompatibility = JavaVersion.VERSION_17
   }
 
-  tasks.withType(JavaCompile) {
+  tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
   }
 
@@ -261,7 +252,7 @@ configure(subprojects.findAll { javaPlatformModules.contains(it.name) }) {
 }
 
 // Reconfigure the testReport task to display the results of all modules into a single report
-task testReport(type: TestReport) {
+tasks.register("testReport", TestReport) {
   destinationDirectory = project.layout.buildDirectory.dir("reports/allTests")
   // Include the results from the `test` task in all subprojects
   testResults.from(
@@ -270,7 +261,7 @@ task testReport(type: TestReport) {
 }
 
 // Create a combined XML report of all modules in the root project
-task codeCoverageReport(type: JacocoReport) {
+tasks.register("codeCoverageReport", JacocoReport) {
   executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
 
   subprojects.findAll { !unpublishedModules.contains(it.name) }.each {
@@ -283,7 +274,7 @@ task codeCoverageReport(type: JacocoReport) {
     xml.outputLocation = project.layout.buildDirectory.file("reports/jacoco/report.xml")
   }
 
-  dependsOn ":testReport"
+  dependsOn [testReport]
 }
 
 sonarqube {
