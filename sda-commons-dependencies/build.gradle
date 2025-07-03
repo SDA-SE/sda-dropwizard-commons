@@ -95,9 +95,6 @@ dependencies {
 
     // sda-commons-shared-wiremock-testing
     api "org.wiremock:wiremock:3.13.1"
-    api "org.ow2.asm:asm:9.8", {
-      because "version conflict within Wiremock"
-    }
     api "net.minidev:json-smart:2.5.2", {
       because 'conflict between json-path 2.7.0 (2.4.7) and wirmock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
     }
@@ -108,9 +105,6 @@ dependencies {
     // sda-commons-server-auth
     api "com.auth0:java-jwt:4.5.0"
     api "org.bouncycastle:bcpkix-jdk18on:$bouncyCastleVersion"
-    api "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion", {
-      because 'CVE-2023-33201 in 1.70'
-    }
 
     // sda-commons-server-circuitbreaker
     api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
@@ -205,9 +199,6 @@ dependencies {
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.17.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.6-alpha"
     api "com.squareup.okhttp3:okhttp:4.12.0" // bump from 4.9.3 used in opentelemetry-exporter-otlp-common
-    api 'com.squareup.okio:okio:3.14.0', {
-      because 'CVE-2023-3635 in 3.2.0'
-    }
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
