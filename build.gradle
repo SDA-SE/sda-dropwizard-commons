@@ -199,7 +199,13 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
 
   dependencies {
     api enforcedPlatform(project(':sda-commons-dependencies'))
-  }
+    if (it.name.startsWith("spotless")) {
+      // Workaround for https://github.com/diffplug/spotless/issues/1965.
+    } else {
+      it.resolutionStrategy {
+        failOnVersionConflict()
+      }
+}
 
   configurations {
     all*.exclude group: 'javax.servlet', module: 'javax.servlet-api' // prefer jakarta.servlet-api
