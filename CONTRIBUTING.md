@@ -51,7 +51,7 @@ Import snapshots by adding the snapshot repository to the `build.gradle`:
     repositories {
       ...
       maven {
-        url "https://central.sonatype.com/repository/maven-snapshots/"
+        url = "https://central.sonatype.com/repository/maven-snapshots/"
       }
       ...
     }
