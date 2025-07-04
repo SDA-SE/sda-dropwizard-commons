@@ -87,6 +87,10 @@ dependencies {
       because "vulnerability CVE-2022-1471 in 1.33 and below"
     }
 
+    api 'commons-beanutils:commons-beanutils:1.11.0', {
+      because "vulnerability CVE-2025-48734 in versions < 1.11.0"
+    }
+
     // overall testing dependencies
     api "org.awaitility:awaitility:4.3.0"
     api 'org.assertj:assertj-core:3.27.3'
