@@ -7,7 +7,6 @@ dependencies {
   testImplementation project(':sda-commons-server-testing')
   // provides some testing extensions for the tracing api
   testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'
-  testImplementation project(':sda-commons-server-testing')
   testImplementation 'org.assertj:assertj-core'
   testImplementation 'org.awaitility:awaitility'
 }

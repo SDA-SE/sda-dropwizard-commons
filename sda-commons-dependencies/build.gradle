@@ -9,7 +9,7 @@ javaPlatform {
 ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.5'
-  dropwizardVersion = '4.0.12'
+  dropwizardVersion = '4.0.14'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.15.1'
   swaggerCoreV3Version = '2.2.34'
@@ -87,6 +87,10 @@ dependencies {
       because "vulnerability CVE-2022-1471 in 1.33 and below"
     }
 
+    api 'commons-beanutils:commons-beanutils:1.11.0', {
+      because "vulnerability CVE-2025-48734 in versions < 1.11.0"
+    }
+
     // overall testing dependencies
     api "org.awaitility:awaitility:4.3.0"
     api 'org.assertj:assertj-core:3.27.3'
@@ -95,9 +99,6 @@ dependencies {
 
     // sda-commons-shared-wiremock-testing
     api "org.wiremock:wiremock:3.13.1"
-    api "org.ow2.asm:asm:9.8", {
-      because "version conflict within Wiremock"
-    }
     api "net.minidev:json-smart:2.5.2", {
       because 'conflict between json-path 2.7.0 (2.4.7) and wirmock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
     }
@@ -108,9 +109,6 @@ dependencies {
     // sda-commons-server-auth
     api "com.auth0:java-jwt:4.5.0"
     api "org.bouncycastle:bcpkix-jdk18on:$bouncyCastleVersion"
-    api "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion", {
-      because 'CVE-2023-33201 in 1.70'
-    }
 
     // sda-commons-server-circuitbreaker
     api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
@@ -205,9 +203,6 @@ dependencies {
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.17.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.6-alpha"
     api "com.squareup.okhttp3:okhttp:4.12.0" // bump from 4.9.3 used in opentelemetry-exporter-otlp-common
-    api 'com.squareup.okio:okio:3.14.0', {
-      because 'CVE-2023-3635 in 3.2.0'
-    }
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
