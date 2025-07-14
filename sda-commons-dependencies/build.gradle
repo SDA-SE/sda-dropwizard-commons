@@ -12,7 +12,7 @@ ext {
   // Check on upgrade, if org.apache.commons:commons-lang3 enforcement below (L72) is still needed!
   dropwizardVersion = '4.0.14'
   prometheusVersion = '0.16.0'
-  micrometerVersion = '1.15.1'
+  micrometerVersion = '1.15.2'
   swaggerCoreV3Version = '2.2.34'
   weldVersion = '5.1.2.Final'
   jacksonVersion = '2.19.1'
