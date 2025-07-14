@@ -70,7 +70,7 @@ dependencies {
 
   constraints {
     // overall conflicts
-    api "org.apache.commons:commons-lang3:3.17.0"
+    api "org.apache.commons:commons-lang3:3.18.0"
     api "commons-fileupload:commons-fileupload:1.6.0", {
       because "CVE-2023-24998 in 1.4"
     }
