@@ -9,7 +9,7 @@ javaPlatform {
 ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.5'
-  // Check on upgrade, if org.apache.commons:commons-lang3 enforcement below (L72) is still needed!
+  // Check on upgrade, if org.apache.commons:commons-lang3 enforcement below (L48 + L73) is still needed!
   dropwizardVersion = '4.0.14'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.15.2'
@@ -45,6 +45,7 @@ dependencies {
   }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
+    exclude group: 'org.apache.commons', module: 'commons-lang3'
     exclude group: 'jakarta.xml.bind', module: 'jakarta.xml.bind-api'
     exclude group: 'com.fasterxml.jackson'
     exclude group: 'com.fasterxml.jackson.core'
