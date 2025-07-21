@@ -214,7 +214,7 @@ dependencies {
           anymore.
         '''
     }
-    api "org.xerial.snappy:snappy-java:1.1.10.7", {
+    api "org.xerial.snappy:snappy-java:1.1.10.8", {
       because "conflict between org.apache.kafka:kafka-clients and org.apache.curator:curator-test upgrade"
     }
 
