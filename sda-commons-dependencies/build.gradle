@@ -107,6 +107,7 @@ dependencies {
     // sda-commons-server-auth
     api "com.auth0:java-jwt:4.5.0"
     api "org.bouncycastle:bcpkix-jdk18on:$bouncyCastleVersion"
+    api "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion"
 
     // sda-commons-server-circuitbreaker
     api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
