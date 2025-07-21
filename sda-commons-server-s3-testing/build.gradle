@@ -6,7 +6,9 @@ dependencies {
   api 'io.github.robothy:local-s3-jupiter:1.24', {
     exclude group: 'software.amazon.awssdk'
     exclude group: 'com.amazonaws', module: 'aws-java-sdk'
+    exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
+  api 'org.bouncycastle:bcprov-jdk18on'
   api 'software.amazon.awssdk:s3', {
     exclude group: 'software.amazon.awssdk', module: 'apache-client' // use url-connection-client instead
   }
