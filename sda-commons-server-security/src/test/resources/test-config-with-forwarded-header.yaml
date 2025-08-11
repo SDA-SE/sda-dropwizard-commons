@@ -1,0 +1,3 @@
+# a server starting with this config and the SecurityBundle must pass the security test
+server:
+  rootPath: /api/*

@@ -5,6 +5,9 @@ import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.server.ServerFactory;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import jakarta.servlet.DispatcherType;
+import java.util.EnumSet;
+import org.sdase.commons.server.security.filter.ForwardedPrefixFilter;
 import org.sdase.commons.server.security.filter.WebSecurityApiOnlyHeaderFilter;
 import org.sdase.commons.server.security.filter.WebSecurityFrontendSupportHeaderFilter;
 import org.sdase.commons.server.security.handler.ObscuringErrorHandler;
@@ -76,6 +79,11 @@ public class SecurityBundle<T extends Configuration> implements ConfiguredBundle
     } else {
       environment.jersey().register(WebSecurityApiOnlyHeaderFilter.class);
     }
+
+    environment
+        .servlets()
+        .addFilter("forwarded-prefix", new ForwardedPrefixFilter())
+        .addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
   }
 
   private ObscuringErrorHandler createNewErrorHandler(Environment environment) {
