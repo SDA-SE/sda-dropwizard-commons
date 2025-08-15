@@ -45,7 +45,6 @@ dependencies {
   }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
-    exclude group: 'org.apache.commons', module: 'commons-lang3'
     exclude group: 'jakarta.xml.bind', module: 'jakarta.xml.bind-api'
     exclude group: 'com.fasterxml.jackson'
     exclude group: 'com.fasterxml.jackson.core'
@@ -70,13 +69,6 @@ dependencies {
 
   constraints {
     // overall conflicts
-    api "org.apache.commons:commons-lang3:3.18.0", {
-      because '''\
-          Upgrade managed dependency of io.dropwizard:dropwizard-dependencies:4.0.14
-          to fix CVE-2025-48924 in 3.17.0
-          Check for removal on upgrade of io.dropwizard:dropwizard-dependencies > 4.0.14
-          '''
-    }
     api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
     api "io.github.classgraph:classgraph:4.8.181"
