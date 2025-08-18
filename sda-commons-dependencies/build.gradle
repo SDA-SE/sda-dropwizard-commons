@@ -40,7 +40,7 @@ dependencies {
   // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion")
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
-  api enforcedPlatform("org.eclipse.jetty:jetty-bom:11.0.25"), {
+  api enforcedPlatform("org.eclipse.jetty:jetty-bom:11.0.26"), {
     because("dropwizard and dropwizard-metrics use different versions")
   }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
