@@ -197,7 +197,7 @@ dependencies {
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.9.3"
+    api "org.apache.zookeeper:zookeeper:3.9.4"
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
     api "org.apache.curator:curator-test:5.9.0", {
       because '''\
