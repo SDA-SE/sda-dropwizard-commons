@@ -44,8 +44,11 @@ public class SyncCommitMLS<K, V> extends AutocommitMLS<K, V> {
 
   @Override
   public void processRecords(ConsumerRecords<K, V> records, KafkaConsumer<K, V> consumer) {
-    super.processRecords(records, consumer);
-    commitSync(consumer);
+    // Only process and commit if there are records to process
+    if (!records.isEmpty()) {
+      super.processRecords(records, consumer);
+      this.commitSync(consumer);
+    }
   }
 
   private void commitSync(KafkaConsumer<K, V> consumer) {

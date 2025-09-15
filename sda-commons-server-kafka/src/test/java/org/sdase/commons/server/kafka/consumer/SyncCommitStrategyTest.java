@@ -6,6 +6,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,5 +84,19 @@ class SyncCommitStrategyTest {
         () -> strategy.processRecords(TestHelper.createConsumerRecords(5, "topic"), consumer));
 
     Mockito.verify(consumer, timeout(100).times(1)).commitSync();
+  }
+
+  @Test
+  void shouldNotCommitOnEmptyRecords() {
+    // given
+    SyncCommitMLS<String, String> strategy = new SyncCommitMLS<>(handler, errorHandler);
+    strategy.init(null);
+    ConsumerRecords<String, String> emptyRecords = new ConsumerRecords<>(Collections.emptyMap());
+
+    // when the strategy processes the empty records
+    strategy.processRecords(emptyRecords, consumer);
+
+    // then commitSync() should never be called on the consumer
+    Mockito.verify(consumer, Mockito.never()).commitSync();
   }
 }
