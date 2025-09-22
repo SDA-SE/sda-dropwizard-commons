@@ -216,7 +216,7 @@ dependencies {
     api "org.scala-lang.modules:scala-collection-compat_2.13:2.13.0"
     api "org.scala-lang:scala-library:$scalaVersion"
     api "org.scala-lang:scala-reflect:$scalaVersion"
-    api "com.typesafe.scala-logging:scala-logging_2.13:3.9.5"
+    api "com.typesafe.scala-logging:scala-logging_2.13:3.9.6"
 
     api "jakarta.xml.bind:jakarta.xml.bind-api:4.0.2"
   }
