@@ -1,5 +1,6 @@
-configurations {
-  all*.exclude group: 'org.springframework', module: 'spring-jcl' // clashes with jcl-over-slf4j
+configurations.all {
+  exclude group: 'org.springframework', module: 'spring-jcl' // clashes with jcl-over-slf4j
+  exclude group: 'io.micrometer', module: 'micrometer-observation'
 }
 
 dependencies {

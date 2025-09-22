@@ -120,7 +120,7 @@ dependencies {
     api "it.unibo.tuprolog:parser-theory-jvm:$tuprologVersion"
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
-    api 'org.springframework.data:spring-data-mongodb:4.1.12' // Keep that version for now, since 4.2.0 introduces a bug
+    api 'org.springframework.data:spring-data-mongodb:4.5.4'
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryAlpha2Version}"
     // check if commons-compress management is still needed after flapdoodle upgrade
