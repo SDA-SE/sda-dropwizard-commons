@@ -21,9 +21,10 @@ dependencies {
   }
   api 'io.opentelemetry.semconv:opentelemetry-semconv'
 
+  api("org.checkerframework:checker-qual")
+
   implementation 'io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0'
   implementation 'io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2'
-
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-shared-wiremock-testing')

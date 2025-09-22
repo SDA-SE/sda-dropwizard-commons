@@ -10,5 +10,15 @@ dependencies {
   api 'net.minidev:json-smart'
   api 'commons-io:commons-io'
 
+  api "org.eclipse.jetty.ee10:jetty-ee10-bom"
+
+  api "org.wiremock:wiremock-jetty12", {
+    exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
+    exclude group: 'net.minidev', module: 'json-smart'
+    exclude group: 'commons-io', module: 'commons-io'
+    exclude group: 'org.eclipse.jetty', module: 'jetty-bom'
+    exclude group: 'org.eclipse.jettyee10', module: 'jetty-ee10-bom'
+  }
+
   testImplementation project(':sda-commons-server-testing')
 }

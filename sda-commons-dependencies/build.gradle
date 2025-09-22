@@ -9,13 +9,12 @@ javaPlatform {
 ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.5'
-  // Check on upgrade, if org.apache.commons:commons-lang3 enforcement below (L48 + L73) is still needed!
   dropwizardVersion = '5.0.0'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.15.4'
   swaggerCoreV3Version = '2.2.36'
   weldVersion = '5.1.2.Final'
-  jacksonVersion = '2.19.2'
+  jacksonVersion = '2.20.0'
   jsonUnitVersion = '4.1.1'
   scalaVersion = '2.13.16' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.9.1'
@@ -40,7 +39,7 @@ dependencies {
   // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion")
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
-  api enforcedPlatform("org.eclipse.jetty:jetty-bom:11.0.26"), {
+  api enforcedPlatform("org.eclipse.jetty.ee10:jetty-ee10-bom:12.1.1"), {
     because("dropwizard and dropwizard-metrics use different versions")
   }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
@@ -66,6 +65,16 @@ dependencies {
 
   // asyncapi generation
   api enforcedPlatform("com.github.victools:jsonschema-generator-bom:${victoolsVersion}")
+
+  api "org.checkerframework:checker-qual:3.51.0"
+
+  api "org.wiremock:wiremock-jetty12:3.13.1", {
+    exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
+    exclude group: 'net.minidev', module: 'json-smart'
+    exclude group: 'commons-io', module: 'commons-io'
+    exclude group: 'org.eclipse.jetty', module: 'jetty-bom'
+    exclude group: 'org.eclipse.jettyee10', module: 'jetty-ee10-bom'
+  }
 
   constraints {
     // overall conflicts
