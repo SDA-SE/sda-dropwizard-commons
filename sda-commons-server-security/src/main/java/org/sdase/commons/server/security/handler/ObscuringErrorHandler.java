@@ -2,13 +2,14 @@ package org.sdase.commons.server.security.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import org.apache.commons.lang3.SerializationUtils;
+import org.eclipse.jetty.ee10.servlet.ErrorHandler;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.ErrorHandler;
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.util.Callback;
 import org.sdase.commons.shared.api.error.ApiError;
 
 /**
@@ -34,15 +35,15 @@ public class ObscuringErrorHandler extends ErrorHandler {
   }
 
   @Override
-  public void handle(
-      String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
-    response.setContentType(MediaType.APPLICATION_JSON);
-    try (PrintWriter writer = response.getWriter()) {
-      int status = response.getStatus();
-      String bodyContent = errorBody(status);
-      writer.print(bodyContent);
-    }
+  public boolean handle(Request request, Response response, Callback callback) {
+    response.getHeaders().add(HttpHeader.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+    int status = response.getStatus();
+    String bodyContent = errorBody(status);
+
+    ByteBuffer byteBuffer = ByteBuffer.wrap(SerializationUtils.serialize(bodyContent));
+    response.setStatus(status);
+    response.write(true, byteBuffer, callback);
+    return true;
   }
 
   private String errorBody(int status) {
