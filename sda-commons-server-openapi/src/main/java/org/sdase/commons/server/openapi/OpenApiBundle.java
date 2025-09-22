@@ -14,18 +14,14 @@ import io.dropwizard.core.setup.Environment;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
-import jakarta.servlet.DispatcherType;
-import jakarta.servlet.FilterRegistration;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.EnumSet;
-import java.util.LinkedHashSet;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.CrossOriginHandler;
 import org.glassfish.jersey.internal.MapPropertiesDelegate;
 import org.glassfish.jersey.message.internal.OutboundJaxrsResponse;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -106,22 +102,34 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
     // Allow CORS to access (via wildcard) from Swagger UI/editor
     String basePath = determineBasePath(configuration);
 
-    String filterBasePath = basePath.endsWith("/") ? basePath : basePath + "/"; // NOSONAR
-    FilterRegistration.Dynamic filter =
-        environment.servlets().addFilter("CORS OpenAPI", CrossOriginFilter.class);
-    filter.addMappingForUrlPatterns(
-        EnumSet.allOf(DispatcherType.class),
-        true,
-        filterBasePath + "openapi.yaml",
-        filterBasePath + "openapi.json");
-    filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
-    filter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, Boolean.TRUE.toString());
-    filter.setInitParameter(CrossOriginFilter.CHAIN_PREFLIGHT_PARAM, Boolean.FALSE.toString());
+    ContextHandler contextHandler =
+        createCrossOriginHandler(basePath, environment.getApplicationContext().getHandler());
+
+    environment.getApplicationContext().setHandler(contextHandler);
 
     LOG.info(
         "Initialized OpenAPI with base path '{}' and resource packages: '{}'",
         basePath,
         resourcePackages);
+  }
+
+  private ContextHandler createCrossOriginHandler(String basePath, Handler existingHandler) {
+    String filterBasePath = basePath.endsWith("/") ? basePath : basePath + "/"; // NOSONAR
+
+    CrossOriginHandler originHandler = new CrossOriginHandler();
+    originHandler.setAllowedOriginPatterns(Set.of(".*"));
+    originHandler.setAllowCredentials(true);
+    originHandler.setDeliverPreflightRequests(false);
+
+    ContextHandler openApiContext = new ContextHandler();
+    openApiContext.setContextPath(filterBasePath);
+    openApiContext.setHandler(originHandler);
+    openApiContext.setVirtualHosts(
+        List.of(filterBasePath + "openapi.yaml", filterBasePath + "openapi.json"));
+
+    originHandler.setHandler(existingHandler);
+
+    return openApiContext;
   }
 
   private ContextIdOpenApiResource createOpenApiResource(String instanceId) {
