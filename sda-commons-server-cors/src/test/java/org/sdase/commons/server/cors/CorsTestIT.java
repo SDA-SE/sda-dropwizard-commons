@@ -10,7 +10,6 @@ import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -63,16 +62,16 @@ class CorsTestIT {
             .client()
             .target(denyEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", "server-a.com")
+            .header(CorsHeader.ORIGIN_HEADER, "server-a.com")
             .get()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
           .isNullOrEmpty();
     }
   }
@@ -85,15 +84,15 @@ class CorsTestIT {
             .client()
             .target(allowAllEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
+            .header(CorsHeader.ORIGIN_HEADER, origin)
             .get()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isEqualTo(origin);
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-          .isEqualTo("Location,exposed");
-      assertThat(
-              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+      assertStringContainsAllWithoutOrder(
+          response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER),
+          List.of("Location", "exposed"));
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
           .isEqualTo(Boolean.TRUE.toString());
     }
   }
@@ -106,15 +105,15 @@ class CorsTestIT {
             .client()
             .target(restrictedEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
+            .header(CorsHeader.ORIGIN_HEADER, origin)
             .get()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isEqualTo(origin);
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-          .isEqualTo("Location,exposed");
-      assertThat(
-              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+      assertStringContainsAllWithoutOrder(
+          response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER),
+          List.of("Location", "exposed"));
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
           .isEqualTo(Boolean.TRUE.toString());
     }
   }
@@ -127,39 +126,39 @@ class CorsTestIT {
             .client()
             .target(restrictedEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
+            .header(CorsHeader.ORIGIN_HEADER, origin)
             .get()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
           .isNullOrEmpty();
     }
   }
 
   @Test
-  void shouldNotSetHeaderWhenDenyedPreflight() {
+  void shouldNotSetHeaderWhenDeniedPreflight() {
     String origin = "server-a.com";
     try (Response response =
         DW_DENY
             .client()
             .target(denyEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
-            .header(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER, "POST")
+            .header(CorsHeader.ORIGIN_HEADER, origin)
+            .header(CorsHeader.ACCESS_CONTROL_ALLOW_METHODS_HEADER, "POST")
             .options()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
           .isNullOrEmpty();
     }
   }
@@ -172,23 +171,21 @@ class CorsTestIT {
             .client()
             .target(allowAllEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
-            .header(CrossOriginFilter.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "POST")
+            .header(CorsHeader.ORIGIN_HEADER, origin)
+            .header(CorsHeader.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "POST")
             .options()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isEqualTo(origin);
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
-          .isEqualTo("HEAD,GET,POST,PUT,DELETE,PATCH");
-      assertThat(
-              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+      assertStringContainsAllWithoutOrder(
+          response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_METHODS_HEADER),
+          List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
           .isEqualTo(Boolean.TRUE.toString());
       assertThat(
-              response
-                  .getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER)
-                  .split(","))
+              response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_HEADERS_HEADER).split(","))
           .containsExactlyInAnyOrder(getAllowedHeaderList("some"));
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
           .isNullOrEmpty();
     }
   }
@@ -200,9 +197,10 @@ class CorsTestIT {
             .client()
             .target(allowAllEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", "some-origin.com")
+            .header(CorsHeader.ORIGIN_HEADER, "some-origin.com")
             .options()) {
-      assertThat(response.getHeaderString(HttpHeaders.ALLOW)).isEqualTo("HEAD,GET,OPTIONS");
+      assertStringContainsAllWithoutOrder(
+          response.getHeaderString(HttpHeaders.ALLOW), List.of("HEAD", "GET", "OPTIONS"));
     }
   }
 
@@ -214,23 +212,21 @@ class CorsTestIT {
             .client()
             .target(restrictedEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
-            .header(CrossOriginFilter.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "POST")
+            .header(CorsHeader.ORIGIN_HEADER, origin)
+            .header(CorsHeader.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "POST")
             .options()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isEqualTo(origin);
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
-          .isEqualTo("GET,POST");
-      assertThat(
-              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+      assertStringContainsAllWithoutOrder(
+          response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_METHODS_HEADER),
+          List.of("GET", "POST"));
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
           .isEqualTo(Boolean.TRUE.toString());
       assertThat(
-              response
-                  .getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER)
-                  .split(","))
+              response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_HEADERS_HEADER).split(","))
           .containsExactlyInAnyOrder(getAllowedHeaderList("some"));
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
           .isNullOrEmpty();
     }
   }
@@ -243,17 +239,17 @@ class CorsTestIT {
             .client()
             .target(restrictedEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
-            .header(CrossOriginFilter.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "POST")
+            .header(CorsHeader.ORIGIN_HEADER, origin)
+            .header(CorsHeader.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "POST")
             .options()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
           .isNullOrEmpty();
     }
   }
@@ -261,23 +257,27 @@ class CorsTestIT {
   @Test
   void shouldNotSetHeaderWhenMethodNotAllowedPreflight() {
     String origin = "server-a.com";
+
     try (Response response =
         DW_RESTRICTED
             .client()
             .target(restrictedEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
-            .header(CrossOriginFilter.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "PUT")
+            .header(CorsHeader.ORIGIN_HEADER, origin)
+            .header(CorsHeader.ACCESS_CONTROL_REQUEST_METHOD_HEADER, "PUT")
             .options()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
-          .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER))
-          .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-          .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER))
-          .isNullOrEmpty();
+      // Origin is allowed, so header is present
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+          .isEqualTo("server-a.com");
+
+      // The allowed methods header is present, but should NOT contain the requested PUT
+      // Since jetty12 browser have to check themselves if the request is allowed in case of
+      // preflight
+      String[] allowMethods =
+          response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_METHODS_HEADER).split(",");
+      assertThat(allowMethods).contains("POST", "GET");
+      assertThat(allowMethods).doesNotContain("PUT");
     }
   }
 
@@ -289,15 +289,14 @@ class CorsTestIT {
             .client()
             .target(patternEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
+            .header(CorsHeader.ORIGIN_HEADER, origin)
             .get()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isNullOrEmpty();
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
           .isNullOrEmpty();
-      assertThat(
-              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
           .isNullOrEmpty();
     }
   }
@@ -310,15 +309,15 @@ class CorsTestIT {
             .client()
             .target(patternEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
+            .header(CorsHeader.ORIGIN_HEADER, origin)
             .get()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isEqualTo(origin);
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-          .isEqualTo("Location,exposed");
-      assertThat(
-              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+      assertStringContainsAllWithoutOrder(
+          response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER),
+          List.of("Location", "exposed"));
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
           .isEqualTo(Boolean.TRUE.toString());
     }
   }
@@ -331,16 +330,16 @@ class CorsTestIT {
             .client()
             .target(patternEndpoint)
             .request(MediaType.APPLICATION_JSON)
-            .header("Origin", origin)
-            .header(CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER, "POST")
+            .header(CorsHeader.ORIGIN_HEADER, origin)
+            .header(CorsHeader.ACCESS_CONTROL_ALLOW_METHODS_HEADER, "POST")
             .get()) {
 
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER))
           .isEqualTo(origin);
-      assertThat(response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER))
-          .isEqualTo("Location,exposed");
-      assertThat(
-              response.getHeaderString(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
+      assertStringContainsAllWithoutOrder(
+          response.getHeaderString(CorsHeader.ACCESS_CONTROL_EXPOSE_HEADERS_HEADER),
+          List.of("Location", "exposed"));
+      assertThat(response.getHeaderString(CorsHeader.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER))
           .isEqualTo(Boolean.TRUE.toString());
     }
   }
@@ -354,5 +353,12 @@ class CorsTestIT {
     allowedHeaders.add("Consumer-Token");
     allowedHeaders.add("Trace-Token");
     return allowedHeaders.toArray(new String[0]);
+  }
+
+  private void assertStringContainsAllWithoutOrder(String actual, List<String> expected) {
+    List<String> actualAsList =
+        Arrays.stream(actual.split(",")).map(String::trim).distinct().toList();
+
+    assertThat(actualAsList).containsExactlyInAnyOrder(expected.toArray(new String[0]));
   }
 }
