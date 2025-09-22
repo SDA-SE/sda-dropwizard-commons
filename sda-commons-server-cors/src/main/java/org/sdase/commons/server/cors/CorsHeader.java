@@ -17,6 +17,5 @@ public class CorsHeader {
   public static final String ACCESS_CONTROL_EXPOSE_HEADERS_HEADER = "Access-Control-Expose-Headers";
   public static final String TIMING_ALLOW_ORIGIN_HEADER = "Timing-Allow-Origin";
 
-  private CorsHeader() {
-  }
+  private CorsHeader() {}
 }
