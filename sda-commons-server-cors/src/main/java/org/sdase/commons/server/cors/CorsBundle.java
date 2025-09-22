@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.CrossOriginHandler;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.sdase.commons.shared.tracing.TraceTokenContext;
@@ -86,9 +85,7 @@ public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> 
     cors.setAllowCredentials(true);
     cors.setDeliverPreflightRequests(false);
 
-    Handler originalHandler = environment.getApplicationContext().getHandler();
-    cors.setHandler(originalHandler);
-    environment.getApplicationContext().setHandler(cors);
+    environment.getApplicationContext().insertHandler(cors);
   }
 
   private Set<String> createCorsOriginPattern(CorsConfiguration config) {
