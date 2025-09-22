@@ -218,6 +218,6 @@ dependencies {
     api "org.scala-lang:scala-reflect:$scalaVersion"
     api "com.typesafe.scala-logging:scala-logging_2.13:3.9.6"
 
-    api "jakarta.xml.bind:jakarta.xml.bind-api:4.0.2"
+    api "jakarta.xml.bind:jakarta.xml.bind-api:4.0.4"
   }
 }
