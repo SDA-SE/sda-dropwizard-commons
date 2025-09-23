@@ -10,6 +10,11 @@ dependencies {
   api 'io.prometheus:simpleclient_servlet_jakarta'
 
   implementation('io.micrometer:micrometer-core')
+  // TODO
+  //  Dropwizard 4 is not compatible to Java client 1.x version.
+  //  This module is deprecated, so when we upgrade to Dropwizard 5 we should
+  //  migrate to io.micrometer:micrometer-registry-prometheus:1.13.0.
+  //  See https://github.com/micrometer-metrics/micrometer/wiki/1.13-Migration-Guide#prometheus-java-client-0x-to-1x-upgrade
   implementation('io.micrometer:micrometer-registry-prometheus-simpleclient')
 
   testImplementation project(':sda-commons-server-testing')
