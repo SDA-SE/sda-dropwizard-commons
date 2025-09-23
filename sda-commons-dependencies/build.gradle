@@ -149,6 +149,7 @@ dependencies {
           See https://github.com/micrometer-metrics/micrometer/wiki/1.13-Migration-Guide#prometheus-java-client-0x-to-1x-upgrade
           '''
     }
+    api "io.micrometer:micrometer-observation:$micrometerVersion"
 
     // sda-commons-server-s3
     api "org.reactivestreams:reactive-streams:1.0.4"
