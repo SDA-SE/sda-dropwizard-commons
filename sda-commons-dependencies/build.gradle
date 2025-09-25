@@ -219,5 +219,7 @@ dependencies {
     api "com.typesafe.scala-logging:scala-logging_2.13:3.9.6"
 
     api "jakarta.xml.bind:jakarta.xml.bind-api:4.0.4"
+
+    api 'org.springframework:spring-core:6.2.11'
   }
 }
