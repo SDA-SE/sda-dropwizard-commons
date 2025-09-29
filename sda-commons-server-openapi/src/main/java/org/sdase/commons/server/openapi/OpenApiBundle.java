@@ -19,8 +19,10 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.handler.CrossOriginHandler;
+import org.eclipse.jetty.util.Callback;
 import org.glassfish.jersey.internal.MapPropertiesDelegate;
 import org.glassfish.jersey.message.internal.OutboundJaxrsResponse;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -101,9 +103,10 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
     // Allow CORS to access (via wildcard) from Swagger UI/editor
     String basePath = determineBasePath(configuration);
 
-    ContextHandler contextHandler = createCrossOriginHandler(basePath);
+    // Create the CORS handler
+    CrossOriginHandler corsHandler = createCrossOriginHandler(basePath);
 
-    environment.getApplicationContext().insertHandler(contextHandler);
+    environment.getApplicationContext().insertHandler(corsHandler);
 
     LOG.info(
         "Initialized OpenAPI with base path '{}' and resource packages: '{}'",
@@ -111,20 +114,35 @@ public final class OpenApiBundle implements ConfiguredBundle<Configuration> {
         resourcePackages);
   }
 
-  private ContextHandler createCrossOriginHandler(String basePath) {
+  private CrossOriginHandler createCrossOriginHandler(String basePath) {
     String filterBasePath = basePath.endsWith("/") ? basePath : basePath + "/"; // NOSONAR
 
-    CrossOriginHandler originHandler = new CrossOriginHandler();
+    CrossOriginHandler originHandler = createOriginHandler(filterBasePath);
     originHandler.setAllowedOriginPatterns(Set.of(".*"));
     originHandler.setAllowCredentials(true);
     originHandler.setDeliverPreflightRequests(false);
 
-    ContextHandler openApiContext = new ContextHandler();
-    openApiContext.setContextPath(filterBasePath);
-    openApiContext.insertHandler(originHandler);
-    openApiContext.setVirtualHosts(
-        List.of(filterBasePath + "openapi.yaml", filterBasePath + "openapi.json"));
-    return openApiContext;
+    return originHandler;
+  }
+
+  private CrossOriginHandler createOriginHandler(String filterBasePath) {
+    return new CrossOriginHandler() {
+      @Override
+      public boolean handle(Request request, Response response, Callback callback)
+          throws Exception {
+        String path = request.getHttpURI().getPath();
+        if (path.endsWith(filterBasePath + "openapi.yaml")
+            || path.endsWith(filterBasePath + "openapi.json")) {
+          return super.handle(request, response, callback);
+        } else {
+          // pass through to the next handler without adding CORS headers
+          if (getHandler() != null) {
+            return getHandler().handle(request, response, callback);
+          }
+        }
+        return true;
+      }
+    };
   }
 
   private ContextIdOpenApiResource createOpenApiResource(String instanceId) {
