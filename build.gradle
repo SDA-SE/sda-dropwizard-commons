@@ -13,11 +13,11 @@ plugins {
   id 'org.sonarqube' version '6.3.1.5724'
   id 'project-report'
   id 'io.codearte.nexus-staging' version '0.30.0'
-  id 'org.cyclonedx.bom' version '2.3.1'
+  id 'org.cyclonedx.bom' version '2.4.0'
 }
 
 cyclonedxBom {
-  schemaVersion = "1.4"
+  schemaVersion = "1.4" //DEPRECATED, please change as soon as possible. See https://github.com/CycloneDX/cyclonedx-gradle-plugin/issues/690
 }
 
 repositories {
