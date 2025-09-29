@@ -67,15 +67,6 @@ dependencies {
   // asyncapi generation
   api enforcedPlatform("com.github.victools:jsonschema-generator-bom:${victoolsVersion}")
 
-  api "org.wiremock:wiremock-jetty12:${wiremockVersion}", {
-    exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
-    exclude group: 'net.minidev', module: 'json-smart'
-    exclude group: 'commons-io', module: 'commons-io'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-bom'
-    exclude group: 'org.eclipse.jettyee10', module: 'jetty-ee10-bom'
-    exclude group: 'net.javacrumbs.json-unit', module: 'json-unit-core'
-  }
-
   constraints {
     // overall conflicts
     api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
@@ -92,6 +83,8 @@ dependencies {
     }
 
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+
+    api "org.wiremock:wiremock-jetty12:${wiremockVersion}"
 
     api "net.minidev:json-smart:2.6.0", {
       because 'conflict between json-path 2.7.0 (2.4.7) and wiremock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
