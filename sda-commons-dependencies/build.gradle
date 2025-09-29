@@ -8,7 +8,7 @@ javaPlatform {
 
 ext {
   antlr4Version = '4.13.2'
-  apacheHttpClient5Version = '5.5'
+  apacheHttpClient5Version = '5.5.1'
   // Check on upgrade, if org.apache.commons:commons-lang3 enforcement below (L48 + L73) is still needed!
   dropwizardVersion = '4.0.15'
   prometheusVersion = '0.16.0'
