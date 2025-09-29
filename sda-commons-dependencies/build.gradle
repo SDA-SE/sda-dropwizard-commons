@@ -9,13 +9,12 @@ javaPlatform {
 ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.5'
-  // Check on upgrade, if org.apache.commons:commons-lang3 enforcement below (L48 + L73) is still needed!
-  dropwizardVersion = '4.0.15'
+  dropwizardVersion = '5.0.0'
   prometheusVersion = '0.16.0'
   micrometerVersion = '1.15.4'
   swaggerCoreV3Version = '2.2.37'
-  weldVersion = '5.1.2.Final'
-  jacksonVersion = '2.19.2'
+  weldVersion = '6.0.3.Final'
+  jacksonVersion = '2.20.0'
   jsonUnitVersion = '4.1.1'
   scalaVersion = '2.13.16' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.9.1'
@@ -32,6 +31,7 @@ ext {
   bouncyCastleVersion = '1.82'
   victoolsVersion = '4.38.0'
   flywayVersion = '11.13.1'
+  wiremockVersion = '3.13.1'
 }
 
 dependencies {
@@ -40,7 +40,7 @@ dependencies {
   // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion")
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
-  api enforcedPlatform("org.eclipse.jetty:jetty-bom:11.0.26"), {
+  api enforcedPlatform("org.eclipse.jetty.ee10:jetty-ee10-bom:12.1.1"), {
     because("dropwizard and dropwizard-metrics use different versions")
   }
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
@@ -73,9 +73,6 @@ dependencies {
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
     api "io.github.classgraph:classgraph:4.8.181"
 
-    api "org.jboss.logging:jboss-logging:3.6.1.Final", {
-      because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
-    }
     api "org.yaml:snakeyaml:2.3", {
       because "conflict between com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
       because "vulnerability CVE-2022-1471 in 1.33 and below"
@@ -87,10 +84,10 @@ dependencies {
 
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
-    // sda-commons-shared-wiremock-testing
-    api "org.wiremock:wiremock:3.13.1"
+    api "org.wiremock:wiremock-jetty12:${wiremockVersion}"
+
     api "net.minidev:json-smart:2.6.0", {
-      because 'conflict between json-path 2.7.0 (2.4.7) and wirmock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
+      because 'conflict between json-path 2.7.0 (2.4.7) and wiremock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
     }
 
     // sda-commons-shared-asyncapi
@@ -184,7 +181,7 @@ dependencies {
     api "org.junit-pioneer:junit-pioneer:2.3.0"
 
     // sda-commons-server-weld-testing
-    api 'org.jboss.weld:weld-junit5:4.0.5.Final'
+    api 'org.jboss.weld:weld-junit5:5.0.2.Final'
 
     // sda-commons-shared-*
     api 'commons-io:commons-io:2.20.0'
