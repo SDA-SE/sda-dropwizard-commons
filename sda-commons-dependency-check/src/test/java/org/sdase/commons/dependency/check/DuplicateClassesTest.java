@@ -20,7 +20,11 @@ class DuplicateClassesTest {
           // There only seems to be one very old release of aopalliance that HK2 and Spring
           // repackaged into their own artifacts. Assumption is that the included versions are
           // identical and the duplication is not an issue.
-          Pattern.compile("org/aopalliance.*"));
+          Pattern.compile("org/aopalliance.*"),
+          // There is jna and jna-jpms; The second is a version of the lib with extra platform
+          // related dependencies. Flapdoodle includes both libs. The duplicate classes should be
+          // identical.
+          Pattern.compile("com/sun/jna.*"));
 
   private static final Logger LOG = LoggerFactory.getLogger(DuplicateClassesTest.class);
 
