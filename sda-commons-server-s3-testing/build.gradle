@@ -10,6 +10,5 @@ dependencies {
     exclude group: 'software.amazon.awssdk', module: 'apache-client' // use url-connection-client instead
   }
   api 'software.amazon.awssdk:url-connection-client'
-  api 'software.amazon.awssdk:s3:2.34.0'
   api 'commons-io:commons-io'
 }
