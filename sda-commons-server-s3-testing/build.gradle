@@ -1,11 +1,8 @@
 dependencies {
   api project(':sda-commons-server-testing')
 
-  // old AWS SDK v1 is only used internally by robothy
-  api enforcedPlatform("com.amazonaws:aws-java-sdk-bom:1.12.791")
   api 'io.github.robothy:local-s3-jupiter:2.0', {
     exclude group: 'software.amazon.awssdk'
-    exclude group: 'com.amazonaws', module: 'aws-java-sdk'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
   api 'org.bouncycastle:bcprov-jdk18on'
@@ -13,6 +10,6 @@ dependencies {
     exclude group: 'software.amazon.awssdk', module: 'apache-client' // use url-connection-client instead
   }
   api 'software.amazon.awssdk:url-connection-client'
-  api 'com.amazonaws:aws-java-sdk-s3'
+  api 'software.amazon.awssdk:s3:2.34.0'
   api 'commons-io:commons-io'
 }
