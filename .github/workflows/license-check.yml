@@ -9,7 +9,7 @@ name: License Check
 # $ ./gradlew clean cyclonedxBom
 #
 # Check for licenses
-# $ trivy sbom --scanners license --format table --ignore-policy .github/trivy/license-policy.rego build/reports/bom.json
+# $ trivy sbom --scanners license --format table --ignore-policy .github/trivy/license-policy.rego build/reports/cyclonedx/bom.json
 
 on:
   pull_request: {}
@@ -41,8 +41,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          gh release upload "${{ github.event.release.tag_name }}" "./build/reports/bom.json#CycloneDX generated JSON SBOM"
-          gh release upload "${{ github.event.release.tag_name }}" "./build/reports/bom.xml#CycloneDX generated XML SBOM"
+          gh release upload "${{ github.event.release.tag_name }}" "./build/reports/cyclonedx/bom.json#CycloneDX generated JSON SBOM"
+          gh release upload "${{ github.event.release.tag_name }}" "./build/reports/cyclonedx/bom.xml#CycloneDX generated XML SBOM"
 
       - name: Check for forbidden licenses
         if: github.event.pull_request
@@ -54,7 +54,7 @@ jobs:
           --format json
           --ignore-policy /project/.github/trivy/license-policy.rego
           --exit-code 1
-          /project/build/reports/bom.json
+          /project/build/reports/cyclonedx/bom.json
           >> trivy-licenses.json
 
       - name: Add failure Job summary
