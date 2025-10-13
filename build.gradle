@@ -16,8 +16,10 @@ plugins {
   id 'org.cyclonedx.bom' version '3.0.1'
 }
 
-cyclonedxBom {
-  schemaVersion = "1.4" //DEPRECATED, please change as soon as possible. See https://github.com/CycloneDX/cyclonedx-gradle-plugin/issues/690
+import org.cyclonedx.Version
+
+tasks.cyclonedxBom {
+  schemaVersion = Version.VERSION_14
 }
 
 repositories {
