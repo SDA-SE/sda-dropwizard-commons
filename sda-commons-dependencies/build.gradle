@@ -16,7 +16,7 @@ ext {
   weldVersion = '6.0.3.Final'
   jacksonVersion = '2.20.0'
   jsonUnitVersion = '4.1.1'
-  scalaVersion = '2.13.16' // align transitive dependency from various modules, keep up to date
+  scalaVersion = '2.13.17' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.9.1'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.44.0'
@@ -24,9 +24,9 @@ ext {
   kotlinxCoroutinesVersion = '1.10.2'
   resilience4jVersion = '2.2.0'
   openTelemetryVersion = '1.41.0'
-  openTelemetryAlpha2Version = '2.20.0-alpha'
+  openTelemetryAlpha2Version = '2.20.1-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
-  mongoDbDriverVersion = '5.6.0'
+  mongoDbDriverVersion = '5.6.1'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.82'
   victoolsVersion = '4.38.0'
@@ -55,7 +55,7 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.34.0")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.35.5")
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
@@ -71,7 +71,7 @@ dependencies {
     // overall conflicts
     api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
-    api "io.github.classgraph:classgraph:4.8.181"
+    api "io.github.classgraph:classgraph:4.8.184"
 
     api "org.yaml:snakeyaml:2.3", {
       because "conflict between com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
@@ -190,7 +190,7 @@ dependencies {
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.semconv:opentelemetry-semconv:1.37.0"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.20.0"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.20.1"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.6-alpha"
 
     // Kafka
@@ -212,7 +212,7 @@ dependencies {
 
     // Scala: Version conflicts between Jackson and Kafka
     api "org.scala-lang.modules:scala-java8-compat_2.13:1.0.2"
-    api "org.scala-lang.modules:scala-collection-compat_2.13:2.13.0"
+    api "org.scala-lang.modules:scala-collection-compat_2.13:2.14.0"
     api "org.scala-lang:scala-library:$scalaVersion"
     api "org.scala-lang:scala-reflect:$scalaVersion"
     api "com.typesafe.scala-logging:scala-logging_2.13:3.9.6"
