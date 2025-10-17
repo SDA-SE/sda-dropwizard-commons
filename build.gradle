@@ -175,7 +175,7 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   }
 
   jacoco {
-    toolVersion = "0.8.12"
+    toolVersion = "0.8.14"
   }
   // Configure JaCoCo to export the reports in XML format
   jacocoTestReport {
