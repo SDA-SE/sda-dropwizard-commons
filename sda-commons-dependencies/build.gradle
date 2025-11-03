@@ -133,7 +133,7 @@ dependencies {
     api "org.mongodb:mongodb-driver-legacy:${mongoDbDriverVersion}"
 
     // sda-commons-server-openapi
-    api "com.jayway.jsonpath:json-path:2.9.0"
+    api "com.jayway.jsonpath:json-path:2.10.0"
 
     // sda-commons-server-openapi
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9" // TODO Needed for OpenAPI?
