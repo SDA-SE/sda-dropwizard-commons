@@ -15,7 +15,7 @@ ext {
   micrometerVersion = '1.15.5'
   swaggerCoreV3Version = '2.2.39'
   weldVersion = '5.1.2.Final'
-  jacksonVersion = '2.19.2'
+  jacksonVersion = '2.20.1'
   jsonUnitVersion = '5.0.0'
   scalaVersion = '2.13.17' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.9.1'
