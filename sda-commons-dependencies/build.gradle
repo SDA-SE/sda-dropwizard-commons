@@ -88,7 +88,7 @@ dependencies {
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
     // sda-commons-shared-wiremock-testing
-    api "org.wiremock:wiremock:3.13.1"
+    api "org.wiremock:wiremock:3.13.2"
     api "net.minidev:json-smart:2.6.0", {
       because 'conflict between json-path 2.7.0 (2.4.7) and wirmock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
     }
