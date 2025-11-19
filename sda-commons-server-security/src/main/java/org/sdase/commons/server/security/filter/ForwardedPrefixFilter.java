@@ -8,9 +8,9 @@ import java.io.IOException;
 
 /**
  * This filter is used to apply the X-Forwarded-Prefix header and adds it as a prefix to the
- * requested URI. This leverages the behavior of Jetty's
- * {@link org.eclipse.jetty.server.ForwardedRequestCustomizer which does not support prefix when
- * handling forwarded requests.
+ * requested URI. This leverages the behavior of Jetty's {@link
+ * org.eclipse.jetty.server.ForwardedRequestCustomizer} which does not support prefix when handling
+ * forwarded requests.
  */
 public class ForwardedPrefixFilter implements Filter {
 
