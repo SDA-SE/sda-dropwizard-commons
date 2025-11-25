@@ -1,8 +1,8 @@
 package org.sdase.commons.server.prometheus.example;
 
-import io.prometheus.client.Counter;
-import io.prometheus.client.Gauge;
-import io.prometheus.client.Histogram;
+import io.prometheus.metrics.core.metrics.Counter;
+import io.prometheus.metrics.core.metrics.Gauge;
+import io.prometheus.metrics.core.metrics.Histogram;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,31 +18,32 @@ public class MyServiceWithMetrics {
   // tracked as
   // double value.
   private Histogram someOperationDurationTracker =
-      Histogram.build(
-              "some_operation_execution_duration_seconds", "Tracks duration of some operation.")
+      Histogram.builder()
+          .name("some_operation_execution_duration_seconds")
+          .help("Tracks duration of some operation.")
           .register();
 
   // Create a Counter to count events.
   private Counter someOperationSuccessCounter =
-      Counter.build(
-              "some_operation_success_counter_total",
-              "Counts successes occurred when some operation is invoked.")
+      Counter.builder()
+          .name("some_operation_success_counter_total")
+          .help("Counts successes occurred when some operation is invoked.")
           .register();
 
   // Create a Counter to count events.
   private Counter someOperationErrorCounter =
-      Counter.build(
-              "some_operation_error_counter_total",
-              "Counts errors occurred when some operation is invoked.")
+      Counter.builder()
+          .name("some_operation_error_counter_total")
+          .help("Counts errors occurred when some operation is invoked.")
           .register();
 
   // Create a Gauge to track the most recent value of a metric. The name of a gauge metric should
   // use the unit of the
   // recorded value as suffix.
   private Gauge someOperationCurrentValueGauge =
-      Gauge.build(
-              "some_operation_temperature_celsius",
-              "Tracks the temperature recorded within the operation.")
+      Gauge.builder()
+          .name("some_operation_temperature_celsius")
+          .help("Tracks the temperature recorded within the operation.")
           .register();
 
   private Random random = new Random();

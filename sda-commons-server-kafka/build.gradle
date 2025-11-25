@@ -17,7 +17,7 @@ dependencies {
   testImplementation 'org.assertj:assertj-core'
 
   testImplementation project(':sda-commons-server-kafka-testing')
-  testImplementation('io.micrometer:micrometer-registry-prometheus-simpleclient')
+  testImplementation('io.micrometer:micrometer-registry-prometheus')
 
   test {
     // running one test at time, to avoid problems with kafka servers concurrency

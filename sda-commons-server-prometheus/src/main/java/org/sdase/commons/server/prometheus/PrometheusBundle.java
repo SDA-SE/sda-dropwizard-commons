@@ -2,6 +2,7 @@ package org.sdase.commons.server.prometheus;
 
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
+import com.codahale.metrics.MetricFilter;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.AdminEnvironment;
@@ -9,21 +10,18 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
-import io.micrometer.core.instrument.binder.jersey.server.DefaultJerseyTagsProvider;
-import io.micrometer.core.instrument.binder.jersey.server.MetricsApplicationEventListener;
 import io.micrometer.core.instrument.binder.jetty.JettyConnectionMetrics;
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
-import io.micrometer.prometheus.PrometheusMeterRegistry;
-import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.dropwizard.DropwizardExports;
-import io.prometheus.client.dropwizard.samplebuilder.CustomMappingSampleBuilder;
-import io.prometheus.client.dropwizard.samplebuilder.MapperConfig;
-import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
-import io.prometheus.client.servlet.jakarta.exporter.MetricsServlet;
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
+import io.prometheus.metrics.exporter.servlet.jakarta.PrometheusMetricsServlet;
+import io.prometheus.metrics.instrumentation.dropwizard.DropwizardExports;
+import io.prometheus.metrics.instrumentation.dropwizard5.labels.CustomLabelMapper;
+import io.prometheus.metrics.instrumentation.dropwizard5.labels.MapperConfig;
+import io.prometheus.metrics.model.registry.PrometheusRegistry;
 import jakarta.servlet.ServletRegistration;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -31,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.glassfish.jersey.micrometer.server.DefaultJerseyTagsProvider;
+import org.glassfish.jersey.micrometer.server.MetricsApplicationEventListener;
 import org.sdase.commons.server.prometheus.health.DropwizardHealthCheckMeters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +56,10 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
   private static final String METRICS_SERVLET_URL = "/metrics/prometheus"; // NOSONAR
 
   private static final Logger LOG = LoggerFactory.getLogger(PrometheusBundle.class);
-  public static final String APACHE_HTTP_CLIENT_CONNECTIONS = "apache_http_client_connections";
+  public static final String APACHE_HTTP_CLIENT_CONNECTIONS = "apache_http_client_connections_${1}";
   public static final String MANAGER = "manager";
   public static final String APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS =
-      "apache_http_client_request_duration_seconds";
+      "apache_http_client_request_${1}_duration_seconds";
 
   private static final String DEPRECATED = "deprecated";
 
@@ -85,7 +85,7 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
    */
   private void createPrometheusRegistry(Environment environment) {
     PrometheusMeterRegistry meterRegistry =
-        new PrometheusMeterRegistry(key -> null, CollectorRegistry.defaultRegistry, Clock.SYSTEM);
+        new PrometheusMeterRegistry(key -> null, PrometheusRegistry.defaultRegistry, Clock.SYSTEM);
 
     Metrics.addRegistry(meterRegistry);
 
@@ -135,17 +135,19 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
     // to Prometheus metrics.
     List<MapperConfig> mappers = createMetricsMapperConfigs();
 
-    SampleBuilder sampleBuilder = new CustomMappingSampleBuilder(mappers);
+    CustomLabelMapper mapper = new CustomLabelMapper(mappers);
+    MetricFilter metricFilter = MetricFilter.ALL;
     DropwizardExports dropwizardExports =
-        new DropwizardExports(environment.metrics(), sampleBuilder);
-    CollectorRegistry.defaultRegistry.register(dropwizardExports);
+        new DropwizardExports(environment.metrics(), metricFilter, mapper);
+    PrometheusRegistry.defaultRegistry.register(dropwizardExports);
 
-    environment.lifecycle().manage(onShutdown(CollectorRegistry.defaultRegistry::clear));
+    environment.lifecycle().manage(onShutdown(PrometheusRegistry.defaultRegistry::clear));
   }
 
   private List<MapperConfig> createMetricsMapperConfigs() {
     List<MapperConfig> mappers = new ArrayList<>();
-    mappers.add(createMapperConfig("ch.qos.logback.core.*.*", "logback_appender", "name", "level"));
+    mappers.add(
+        createMapperConfig("ch.qos.logback.core.*.*", "logback_appender_${1}", "name", "level"));
     mappers.add(createMapperConfig("jvm.gc.*.count", "jvm_gc_total", "step", DEPRECATED));
     mappers.add(createMapperConfig("jvm.gc.*.time", "jvm_gc_seconds", "step", DEPRECATED));
     mappers.add(
@@ -175,84 +177,84 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.available-connections",
-            APACHE_HTTP_CLIENT_CONNECTIONS,
+            APACHE_HTTP_CLIENT_CONNECTIONS + "_available_connections",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "available"))); // NOSONAR
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.leased-connections",
-            APACHE_HTTP_CLIENT_CONNECTIONS,
+            APACHE_HTTP_CLIENT_CONNECTIONS + "_leased_connections",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "leased")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.max-connections",
-            APACHE_HTTP_CLIENT_CONNECTIONS,
+            APACHE_HTTP_CLIENT_CONNECTIONS + "_max_connections",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "max")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.pending-connections",
-            APACHE_HTTP_CLIENT_CONNECTIONS,
+            APACHE_HTTP_CLIENT_CONNECTIONS + "_pending_connections",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "pending")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.get-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_get_requests",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "get"))); // NOSONAR
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.post-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_post_requests",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "post")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.put-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_put_requests",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "put")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.delete-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_delete_requests",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "delete")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.head-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_head_requests",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "head")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.connect-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_connect_requests",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "connect")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.options-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_options_requests",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "options")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.trace-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_trace_requests",
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "trace")));
@@ -262,41 +264,41 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
     mappers.add(
         createMapperConfig(
             "org.eclipse.jetty.util.thread.*.*.jobs",
-            "jetty_util_thread_jobs_count",
+            "jetty_util_thread_${1}_jobs_count",
             "type",
             "pool"));
     mappers.add(
         createMapperConfig(
             "org.eclipse.jetty.util.thread.*.*.size",
-            "jetty_util_thread_size_count",
+            "jetty_util_thread_${1}_size_count",
             "type",
             "pool"));
     mappers.add(
         createMapperConfig(
             "org.eclipse.jetty.util.thread.*.*.utilization",
-            "jetty_util_thread_utilization_ratio",
+            "jetty_util_thread_${1}_utilization_ratio",
             "type",
             "pool"));
     mappers.add(
         createMapperConfig(
             "org.eclipse.jetty.util.thread.*.*.utilization-max",
-            "jetty_util_thread_max_utilization_ratio",
+            "jetty_util_thread_${1}_max_utilization_ratio",
             "type",
             "pool"));
     mappers.add(
         createMapperConfig(
             "io.dropwizard.jetty.*.active-dispatches",
-            "jetty_handler_active_dispatches_total",
+            "jetty_handler_active_${1}_dispatches_total",
             "handler")); // NOSONAR
     mappers.add(
         createMapperConfig(
             "io.dropwizard.jetty.*.active-requests",
-            "jetty_handler_active_requests_total",
+            "jetty_handler_active_${1}_requests_total",
             "handler"));
     mappers.add(
         createMapperConfig(
             "io.dropwizard.jetty.*.active-suspended",
-            "jetty_handler_active_suspended_total",
+            "jetty_handler_active_${1}_suspended_total",
             "handler"));
     mappers.add(
         createMapperConfig(
@@ -327,7 +329,8 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
 
   private void registerMetricsServlet(AdminEnvironment environment) {
     // Prometheus Servlet registration
-    ServletRegistration.Dynamic dynamic = environment.addServlet("metrics", MetricsServlet.class);
+    ServletRegistration.Dynamic dynamic =
+        environment.addServlet("metrics", PrometheusMetricsServlet.class);
     dynamic.addMapping(METRICS_SERVLET_URL);
     LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);
   }
