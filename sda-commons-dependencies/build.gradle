@@ -8,30 +8,30 @@ javaPlatform {
 
 ext {
   antlr4Version = '4.13.2'
-  apacheHttpClient5Version = '5.5'
+  apacheHttpClient5Version = '5.5.1'
   dropwizardVersion = '5.0.0'
   prometheusVersion = '1.4.3'
-  micrometerVersion = '1.15.4'
-  swaggerCoreV3Version = '2.2.37'
+  micrometerVersion = '1.16.0'
+  swaggerCoreV3Version = '2.2.40'
   weldVersion = '6.0.3.Final'
   jacksonVersion = '2.20.0'
-  jsonUnitVersion = '4.1.1'
-  scalaVersion = '2.13.16' // align transitive dependency from various modules, keep up to date
+  jsonUnitVersion = '5.1.0'
+  scalaVersion = '2.13.17' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.9.1'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.44.0'
-  kotlinVersion = '2.2.20'
+  kotlinVersion = '2.2.21'
   kotlinxCoroutinesVersion = '1.10.2'
   resilience4jVersion = '2.2.0'
   openTelemetryVersion = '1.41.0'
-  openTelemetryAlpha2Version = '2.20.0-alpha'
+  openTelemetryAlpha2Version = '2.21.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
-  mongoDbDriverVersion = '5.6.0'
+  mongoDbDriverVersion = '5.6.1'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.82'
   victoolsVersion = '4.38.0'
-  flywayVersion = '11.13.1'
-  wiremockVersion = '3.13.1'
+  flywayVersion = '11.17.0'
+  wiremockVersion = '3.13.2'
 }
 
 dependencies {
@@ -53,11 +53,11 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.34.0")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.38.9")
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
-  api enforcedPlatform("io.netty:netty-bom:4.2.6.Final"), {
+  api enforcedPlatform("io.netty:netty-bom:4.2.7.Final"), {
     because "various CVEs in earlier versions"
   }
   api enforcedPlatform("io.prometheus:prometheus-metrics-bom:${prometheusVersion}")
@@ -69,7 +69,7 @@ dependencies {
     // overall conflicts
     api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
-    api "io.github.classgraph:classgraph:4.8.181"
+    api "io.github.classgraph:classgraph:4.8.184"
 
     api "org.yaml:snakeyaml:2.3", {
       because "conflict between com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
@@ -83,7 +83,6 @@ dependencies {
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
     api "org.wiremock:wiremock-jetty12:${wiremockVersion}"
-
     api "net.minidev:json-smart:2.6.0", {
       because 'conflict between json-path 2.7.0 (2.4.7) and wiremock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
     }
@@ -117,7 +116,7 @@ dependencies {
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
     // Keep that version for now, since 4.2.0 introduces a bug.
     // Newer Versions contain breaking change. Update, when v5 gets released
-    api 'org.springframework.data:spring-data-mongodb:4.1.12'
+    api 'org.springframework.data:spring-data-mongodb:5.0.0'
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryAlpha2Version}"
     // check if commons-compress management is still needed after flapdoodle upgrade
@@ -128,14 +127,14 @@ dependencies {
     api "org.mongodb:mongodb-driver-legacy:${mongoDbDriverVersion}"
 
     // sda-commons-server-openapi
-    api "com.jayway.jsonpath:json-path:2.9.0"
+    api "com.jayway.jsonpath:json-path:2.10.0"
 
     // sda-commons-server-openapi
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9" // TODO Needed for OpenAPI?
     api "io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations-jakarta:$swaggerCoreV3Version"
-    api "io.swagger.parser.v3:swagger-parser-v3:2.1.34"
+    api "io.swagger.parser.v3:swagger-parser-v3:2.1.35"
 
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
@@ -177,13 +176,13 @@ dependencies {
     api 'org.jboss.weld:weld-junit5:5.0.2.Final'
 
     // sda-commons-shared-*
-    api 'commons-io:commons-io:2.20.0'
+    api 'commons-io:commons-io:2.21.0'
 
     // sda-commons-server-opentelemetry
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.semconv:opentelemetry-semconv:1.37.0"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.20.0"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.21.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.6-alpha"
 
     // Kafka
@@ -205,7 +204,7 @@ dependencies {
 
     // Scala: Version conflicts between Jackson and Kafka
     api "org.scala-lang.modules:scala-java8-compat_2.13:1.0.2"
-    api "org.scala-lang.modules:scala-collection-compat_2.13:2.13.0"
+    api "org.scala-lang.modules:scala-collection-compat_2.13:2.14.0"
     api "org.scala-lang:scala-library:$scalaVersion"
     api "org.scala-lang:scala-reflect:$scalaVersion"
     api "com.typesafe.scala-logging:scala-logging_2.13:3.9.6"
@@ -214,6 +213,6 @@ dependencies {
 
     //spring-data-mongodb can't be updated without breaking changes.
     //Instead we can add the spring-core dependency to fix spring related CVEs.
-    api 'org.springframework:spring-core:6.2.11'
+    api 'org.springframework:spring-core:6.2.12'
   }
 }

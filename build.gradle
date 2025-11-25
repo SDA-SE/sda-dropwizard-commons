@@ -8,16 +8,18 @@ buildscript {
 plugins {
   id 'jacoco'
   id 'idea'
-  id 'com.vanniktech.maven.publish' version '0.34.0'
-  id 'com.diffplug.spotless' version '7.2.1'
-  id 'org.sonarqube' version '6.3.1.5724'
+  id 'com.vanniktech.maven.publish' version '0.35.0'
+  id 'com.diffplug.spotless' version '8.0.0'
+  id 'org.sonarqube' version '7.0.1.6134'
   id 'project-report'
   id 'io.codearte.nexus-staging' version '0.30.0'
-  id 'org.cyclonedx.bom' version '2.4.0'
+  id 'org.cyclonedx.bom' version '3.0.2'
 }
 
-cyclonedxBom {
-  schemaVersion = "1.4" //DEPRECATED, please change as soon as possible. See https://github.com/CycloneDX/cyclonedx-gradle-plugin/issues/690
+import org.cyclonedx.Version
+
+tasks.cyclonedxBom {
+  schemaVersion = Version.VERSION_14
 }
 
 repositories {
