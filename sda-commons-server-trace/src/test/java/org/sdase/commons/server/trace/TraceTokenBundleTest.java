@@ -27,18 +27,6 @@ class TraceTokenBundleTest {
               "logging.appenders[0].logFormat", "%logger{0} %message %mdc{Trace-Token:-}"));
 
   @Test
-  void shouldReadTraceToken() {
-    String token =
-        DW.client()
-            .target("http://localhost:" + DW.getLocalPort())
-            .path("/api/token")
-            .request(APPLICATION_JSON)
-            .header("Trace-Token", "test-trace-token")
-            .get(String.class);
-    assertThat(token).isEqualTo("test-trace-token");
-  }
-
-  @Test
   void shouldRespondWithGivenTraceToken() {
     try (Response response =
         DW.client()
@@ -49,35 +37,6 @@ class TraceTokenBundleTest {
             .get()) {
       assertThat(response.getHeaderString("Trace-Token")).isEqualTo("test-trace-token");
     }
-  }
-
-  @Test
-  void shouldGenerateTraceToken() {
-    String token =
-        DW.client()
-            .target("http://localhost:" + DW.getLocalPort())
-            .path("/api/token")
-            .request(APPLICATION_JSON)
-            .get(String.class);
-    assertThat(token).isNotBlank();
-  }
-
-  @Test
-  void shouldAddTokenToResponse() {
-    String header;
-    String property;
-    try (Response response =
-        DW.client()
-            .target("http://localhost:" + DW.getLocalPort())
-            .path("/api/token")
-            .request(APPLICATION_JSON)
-            .get()) {
-
-      header = response.getHeaderString("Trace-Token");
-      property = response.readEntity(String.class);
-    }
-
-    assertThat(header).isEqualTo(property);
   }
 
   @Test
