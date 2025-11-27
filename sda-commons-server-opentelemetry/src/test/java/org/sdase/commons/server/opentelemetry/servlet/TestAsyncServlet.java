@@ -5,13 +5,13 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import jakarta.servlet.AsyncContext;
+import jakarta.servlet.AsyncEvent;
+import jakarta.servlet.AsyncListener;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import org.eclipse.jetty.server.AsyncContextState;
-import org.eclipse.jetty.server.HttpChannel;
-import org.junit.platform.commons.util.ReflectionUtils;
+import org.eclipse.jetty.ee10.servlet.AsyncContextState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,21 +80,38 @@ public class TestAsyncServlet extends HttpServlet {
    */
   private static void informForFlakyTest(AsyncContext ctx) {
     if (ctx instanceof AsyncContextState) {
-      var httpChannel = ((AsyncContextState) ctx).getHttpChannel();
-      var executorTry =
-          ReflectionUtils.tryToReadFieldValue(HttpChannel.class, "_executor", httpChannel);
-      executorTry
-          .ifSuccess(
-              executor ->
-                  LOG.warn(
-                      "Using Executor {} of type {} in HttpChannel {}",
-                      executor,
-                      executor.getClass(),
-                      httpChannel))
-          .ifFailure(
-              exception ->
-                  LOG.warn(
-                      "Could not extract executor from HttpChannel {}", httpChannel, exception));
+      ctx.addListener(
+          new AsyncListener() {
+            @Override
+            public void onComplete(AsyncEvent event) {
+              LOG.info(
+                  "Async Event {} completed successfully in AsyncContext {}",
+                  event,
+                  event.getAsyncContext());
+            }
+
+            @Override
+            public void onTimeout(AsyncEvent event) {
+              LOG.warn(
+                  "Async Event {} run into timeout in AsyncContext {}",
+                  event,
+                  event.getAsyncContext());
+            }
+
+            @Override
+            public void onError(AsyncEvent event) {
+              LOG.warn(
+                  "Async Event {} run into error {} in AsyncContext {}",
+                  event,
+                  event.getThrowable(),
+                  event.getAsyncContext());
+            }
+
+            @Override
+            public void onStartAsync(AsyncEvent event) {
+              LOG.warn("Async Event {} started in AsyncContext {}", event, event.getAsyncContext());
+            }
+          });
     }
   }
 }
