@@ -16,7 +16,7 @@ ext {
   weldVersion = '6.0.3.Final'
   jacksonVersion = '2.20.0'
   jsonUnitVersion = '5.1.0'
-  scalaVersion = '2.13.17' // align transitive dependency from various modules, keep up to date
+  scalaVersion = '2.13.18' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.9.1'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.44.0'
@@ -30,7 +30,7 @@ ext {
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.82'
   victoolsVersion = '4.38.0'
-  flywayVersion = '11.17.0'
+  flywayVersion = '11.17.1'
   wiremockVersion = '3.13.2'
 }
 
@@ -53,7 +53,7 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.38.9")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.39.2")
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
@@ -208,5 +208,8 @@ dependencies {
     api "com.typesafe.scala-logging:scala-logging_2.13:3.9.6"
 
     api "jakarta.xml.bind:jakarta.xml.bind-api:4.0.4"
+
+    //Fixes CVE-2025-11226, future updates of Dropwizard have to be checked if this is still necessary
+    api 'ch.qos.logback:logback-core:1.5.21'
   }
 }
