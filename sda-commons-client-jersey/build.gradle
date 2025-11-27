@@ -13,12 +13,7 @@ dependencies {
     exclude group: 'jakarta.activation', module: 'jakarta.activation-api'
   }
   api 'io.opentelemetry:opentelemetry-api'
-  api 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv', {
-    exclude group: "io.opentelemetry", module: "opentelemetry-semconv"
-    exclude group: "io.opentelemetry.semconv", module: "opentelemetry-semconv"
-    exclude group: "io.opentelemetry.instrumentation", module: "opentelemetry-instrumentation-api"
-    exclude group: "io.opentelemetry", module: "opentelemetry-api-incubator"
-  }
+  api 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator'
   api 'io.opentelemetry.semconv:opentelemetry-semconv'
 
   implementation 'io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0'

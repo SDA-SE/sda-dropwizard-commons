@@ -181,7 +181,7 @@ dependencies {
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.semconv:opentelemetry-semconv:1.37.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.22.0"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.6-alpha"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator:${openTelemetryAlpha2Version}"
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
