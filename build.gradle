@@ -13,7 +13,7 @@ plugins {
   id 'org.sonarqube' version '7.1.0.6387'
   id 'project-report'
   id 'io.codearte.nexus-staging' version '0.30.0'
-  id 'org.cyclonedx.bom' version '3.0.2'
+  id 'org.cyclonedx.bom' version '3.1.0'
 }
 
 import org.cyclonedx.Version
