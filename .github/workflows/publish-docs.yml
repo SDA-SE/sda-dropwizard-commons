@@ -16,7 +16,7 @@ jobs:
       - run: >
           wget -q -O /usr/local/bin/plantuml https://github.com/mikaelhg/puni2/releases/download/1.2022.7/plantuml-1.2022.7-glibc-x86_64
           && chmod 755 /usr/local/bin/plantuml
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c #v.6.0.0
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 #v.6.1.0
         with:
           python-version: 3.12
       - run: pip install mkdocs-techdocs-core # Includes material theme
