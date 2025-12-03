@@ -46,6 +46,8 @@ public class OidcConfiguration {
 
   private String password;
 
+  private String scope;
+
   private CacheConfiguration cache = new CacheConfiguration();
 
   /**
@@ -116,6 +118,15 @@ public class OidcConfiguration {
 
   public OidcConfiguration setPassword(String password) {
     this.password = password;
+    return this;
+  }
+
+  public String getScope() {
+    return scope;
+  }
+
+  public OidcConfiguration setScope(String scope) {
+    this.scope = scope;
     return this;
   }
 
