@@ -8,6 +8,7 @@ import io.dropwizard.core.setup.AdminEnvironment;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.binder.jersey.server.DefaultJerseyTagsProvider;
 import io.micrometer.core.instrument.binder.jersey.server.MetricsApplicationEventListener;
@@ -17,6 +18,8 @@ import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
+import io.micrometer.core.instrument.config.MeterFilter;
+import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.dropwizard.DropwizardExports;
@@ -25,12 +28,11 @@ import io.prometheus.client.dropwizard.samplebuilder.MapperConfig;
 import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
 import io.prometheus.client.servlet.jakarta.exporter.MetricsServlet;
 import jakarta.servlet.ServletRegistration;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import jakarta.validation.constraints.NotNull;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Function;
+import org.sdase.commons.server.prometheus.config.PrometheusConfiguration;
 import org.sdase.commons.server.prometheus.health.DropwizardHealthCheckMeters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * }
  * }</pre>
  */
-public class PrometheusBundle implements ConfiguredBundle<Configuration> {
+public class PrometheusBundle<P extends Configuration> implements ConfiguredBundle<P> {
 
   // sonar: this path is used as a convention in our world!
   private static final String METRICS_SERVLET_URL = "/metrics/prometheus"; // NOSONAR
@@ -62,21 +64,82 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
       "apache_http_client_request_duration_seconds";
 
   private static final String DEPRECATED = "deprecated";
+  private final Function<P, PrometheusConfiguration> configurationProvider;
 
   // use PrometheusBundle.builder()... to get an instance
-  private PrometheusBundle() {}
+  private PrometheusBundle(PrometheusConfigurationProvider<P> configurationProvider) {
+    this.configurationProvider = configurationProvider;
+  }
 
   @Override
-  public void run(Configuration configuration, Environment environment) {
-
+  public void run(P configuration, Environment environment) {
+    PrometheusConfiguration prometheusConfiguration = configurationProvider.apply(configuration);
     registerMetricsServlet(environment.admin());
     registerHealthCheckMetrics(environment);
     environment.jersey().register(this);
+
+    registerMeterFilter(prometheusConfiguration);
 
     initializeDropwizardMetricsBridge(environment);
 
     createPrometheusRegistry(environment);
     bindJvmAndSystemMetricsToGlobalRegistry(environment);
+  }
+
+  private void registerMeterFilter(PrometheusConfiguration prometheusConfiguration) {
+    if ((prometheusConfiguration.getRequestPercentiles() == null
+            || prometheusConfiguration.getRequestPercentiles().isEmpty())
+        && !prometheusConfiguration.isEnableRequestHistogram()) {
+      LOG.info("No request percentiles specified and histogram disabled.");
+      return;
+    }
+    if (prometheusConfiguration.getRequestPercentiles() != null
+        && !prometheusConfiguration.getRequestPercentiles().isEmpty()
+        && prometheusConfiguration.isEnableRequestHistogram()) {
+      LOG.warn(
+          "It is only possible to show the percentiles or the histogram for a metric in prometheus. Only the percentiles will be configured.");
+    }
+    Metrics.globalRegistry
+        .config()
+        .meterFilter(
+            new MeterFilter() {
+              @Override
+              public DistributionStatisticConfig configure(
+                  Meter.Id id, DistributionStatisticConfig config) {
+                if (id.getName().startsWith("http.server.requests")) {
+                  return configureDistributionStatisticConfig(config, prometheusConfiguration);
+                }
+                return config;
+              }
+            });
+  }
+
+  private static DistributionStatisticConfig configureDistributionStatisticConfig(
+      DistributionStatisticConfig config, PrometheusConfiguration prometheusConfiguration) {
+    DistributionStatisticConfig.Builder builder = DistributionStatisticConfig.builder();
+    if (prometheusConfiguration.getRequestPercentiles() != null
+        && !prometheusConfiguration.getRequestPercentiles().isEmpty()) {
+      double[] arrayPrimitive =
+          convertDoubleListToPrimitiveArray(prometheusConfiguration.getRequestPercentiles());
+      if (arrayPrimitive.length > 0) {
+        builder.percentiles(arrayPrimitive);
+      }
+    } else {
+      builder.percentilesHistogram(true);
+      if (prometheusConfiguration.getRequestSlos() != null) {
+        builder.serviceLevelObjectives(
+            convertDoubleListToPrimitiveArray(prometheusConfiguration.getRequestSlos()));
+      }
+    }
+
+    return builder
+        .percentilePrecision(prometheusConfiguration.getRequestDigitsOfPrecision())
+        .build()
+        .merge(config);
+  }
+
+  private static double[] convertDoubleListToPrimitiveArray(List<Double> doubleList) {
+    return doubleList.stream().filter(Objects::nonNull).mapToDouble(d -> d).toArray();
   }
 
   /**
@@ -352,15 +415,67 @@ public class PrometheusBundle implements ConfiguredBundle<Configuration> {
   //
 
   public interface InitialBuilder {
-    PrometheusBundle build();
+    <C extends Configuration> FinalBuilder<C> withConfigurationProvider(
+        @NotNull PrometheusConfigurationProvider<C> configurationProvider);
+
+    <C extends Configuration> FinalBuilder<C> withDefaultPrometheusConfig();
+
+    /**
+     * @deprecated Deprecated way to get a PrometheusBundle. Use
+     *     withoutConfigurationProvider().build() instead
+     * @return PrometheusBundle with default configuration
+     */
+    @Deprecated(since = "8.2.0")
+    PrometheusBundle<Configuration> build();
+  }
+
+  public interface FinalBuilder<C extends Configuration> {
+    PrometheusBundle<C> build();
   }
 
   public static class Builder implements InitialBuilder {
 
-    private Builder() {}
+    @Override
+    public <C extends Configuration> FinalBuilder<C> withConfigurationProvider(
+        PrometheusConfigurationProvider<C> configurationProvider) {
+      return new ConfigurationProviderBuilder<>(configurationProvider);
+    }
 
-    public PrometheusBundle build() {
-      return new PrometheusBundle();
+    @Override
+    public <C extends Configuration> FinalBuilder<C> withDefaultPrometheusConfig() {
+      return new ConfigurationProviderBuilder<>();
+    }
+
+    @Override
+    public PrometheusBundle<Configuration> build() {
+      // to be consistent in the workflow we call ConfigurationProviderBuilder and then build()
+      return new ConfigurationProviderBuilder<>().build();
+    }
+  }
+
+  public static class ConfigurationProviderBuilder<C extends Configuration>
+      implements FinalBuilder<C> {
+    private final PrometheusConfigurationProvider<C> prometheusConfigurationProvider;
+
+    private ConfigurationProviderBuilder(
+        PrometheusConfigurationProvider<C> prometheusConfigurationProvider) {
+      this.prometheusConfigurationProvider = prometheusConfigurationProvider;
+    }
+
+    private ConfigurationProviderBuilder() {
+      this.prometheusConfigurationProvider = c -> createDefaultPrometheusConfiguration();
+    }
+
+    private PrometheusConfiguration createDefaultPrometheusConfiguration() {
+      PrometheusConfiguration configuration = new PrometheusConfiguration();
+      configuration.setRequestPercentiles(List.of(0.25, 0.5, 0.75, 0.9, 0.95, 0.99));
+      configuration.setRequestDigitsOfPrecision(3);
+      return configuration;
+    }
+
+    @Override
+    public PrometheusBundle<C> build() {
+      return new PrometheusBundle<>(prometheusConfigurationProvider);
     }
   }
 }
