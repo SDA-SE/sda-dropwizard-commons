@@ -37,7 +37,8 @@ class OidcConfigurationTest {
                     .setIssuerUrl("asd")
                     .setGrantType("client_credentials")
                     .setClientId("clientid")
-                    .setClientSecret("clientsecret")))
+                    .setClientSecret("clientsecret")
+                    .setScope("openid profile email")))
         .isEmpty();
   }
 
@@ -52,7 +53,8 @@ class OidcConfigurationTest {
                     .setClientId("clientid")
                     .setClientSecret("clientsecret")
                     .setUsername("user")
-                    .setPassword("pass")))
+                    .setPassword("pass")
+                    .setScope("openid profile email")))
         .isEmpty();
   }
 }
