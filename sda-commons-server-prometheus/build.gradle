@@ -14,4 +14,9 @@ dependencies {
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey')
+
+  test {
+    // running one test at time, to avoid problems with concurrency
+    maxParallelForks = (int) (Runtime.runtime.availableProcessors() / 2 + 1)
+  }
 }
