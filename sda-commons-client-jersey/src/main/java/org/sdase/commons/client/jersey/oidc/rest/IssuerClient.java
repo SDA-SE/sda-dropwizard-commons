@@ -98,6 +98,9 @@ public class IssuerClient {
       tokenForm.param("username", config.getUsername());
       tokenForm.param("password", config.getPassword());
     }
+    if (config.getScope() != null && !config.getScope().isBlank()) {
+      tokenForm.param("scope", config.getScope());
+    }
     return tokenForm;
   }
 

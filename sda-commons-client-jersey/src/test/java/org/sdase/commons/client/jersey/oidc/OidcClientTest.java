@@ -37,7 +37,10 @@ class OidcClientTest {
 
   private static final String CLIENT_ID = "id";
   private static final String CLIENT_SECRET = "secret";
-  private static final String GRANT_TYPE = "client_credentials";
+  private static final String PASSWORD = "test1234";
+  private static final String USERNAME = "user1";
+  private static final String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
+  private static final String GRANT_TYPE_PASSWORD = "password";
 
   @RegisterExtension
   @Order(0)
@@ -76,11 +79,6 @@ class OidcClientTest {
 
     WIRE.stubFor(
         post("/token")
-            .withHeader(
-                AUTHORIZATION,
-                equalTo(
-                    new BasicCredentials(CLIENT_ID, CLIENT_SECRET).asAuthorizationHeaderValue()))
-            .withRequestBody(containing("grant_type=" + GRANT_TYPE))
             .willReturn(
                 aResponse()
                     .withStatus(200)
@@ -90,6 +88,9 @@ class OidcClientTest {
 
   @Test
   void shouldRequestConfigurationAndProduceToken() {
+    OidcConfiguration oidcConfig = DW.getConfiguration().getOidc();
+    oidcConfig.setUseAuthHeader(true);
+
     OidcResult firstResult = app.getOidcClient().createAccessToken();
     assertThat(firstResult.getState()).isEqualTo(OidcState.OK);
 
@@ -99,6 +100,9 @@ class OidcClientTest {
 
   @Test
   void shouldUseCacheIfTokensAreRequestedWithinLifetime() {
+    OidcConfiguration oidcConfig = DW.getConfiguration().getOidc();
+    oidcConfig.setUseAuthHeader(true);
+
     OidcResult firstResult = app.getOidcClient().createAccessToken();
     assertThat(firstResult.getState()).isEqualTo(OidcState.OK);
 
@@ -122,6 +126,9 @@ class OidcClientTest {
 
   @Test
   void shouldRequestNewTokenAfterCacheExpires() {
+    OidcConfiguration oidcConfig = DW.getConfiguration().getOidc();
+    oidcConfig.setUseAuthHeader(true);
+
     OidcResult firstResult = app.getOidcClient().createAccessToken();
     assertThat(firstResult.getState()).isEqualTo(OidcState.OK);
 
@@ -140,5 +147,77 @@ class OidcClientTest {
         2,
         postRequestedFor(urlEqualTo("/token"))
             .withBasicAuth(new BasicCredentials(CLIENT_ID, CLIENT_SECRET)));
+  }
+
+  @Test
+  void shouldCreateTokenFormForClientCredentialsNotUsingAuthHeader() {
+    // given
+    OidcConfiguration oidcConfig = DW.getConfiguration().getOidc();
+
+    // Disable auth header so client_id / client_secret go into the form body
+    oidcConfig.setUseAuthHeader(false);
+    oidcConfig.setGrantType(GRANT_TYPE_CLIENT_CREDENTIALS);
+    assertThat(oidcConfig.isUseAuthHeader()).isFalse();
+
+    // when
+    OidcResult firstResult = app.getOidcClient().createAccessToken();
+    assertThat(firstResult.getState()).isEqualTo(OidcState.OK);
+
+    // then
+    WIRE.verify(1, getRequestedFor(urlEqualTo("/issuer/.well-known/openid-configuration")));
+    WIRE.verify(
+        1,
+        postRequestedFor(urlEqualTo("/token"))
+            .withoutHeader(AUTHORIZATION)
+            .withRequestBody(containing("grant_type=" + GRANT_TYPE_CLIENT_CREDENTIALS))
+            .withRequestBody(containing("client_id=" + CLIENT_ID))
+            .withRequestBody(containing("client_secret=" + CLIENT_SECRET)));
+  }
+
+  @Test
+  void shouldCreateTokenFormWithScope() {
+    // given
+    OidcConfiguration oidcConfig = DW.getConfiguration().getOidc();
+    oidcConfig.setUseAuthHeader(true);
+    oidcConfig.setScope("email");
+
+    // when
+    OidcResult firstResult = app.getOidcClient().createAccessToken();
+    assertThat(firstResult.getState()).isEqualTo(OidcState.OK);
+
+    // then
+    WIRE.verify(1, getRequestedFor(urlEqualTo("/issuer/.well-known/openid-configuration")));
+    WIRE.verify(
+        1,
+        postRequestedFor(urlEqualTo("/token"))
+            .withBasicAuth(new BasicCredentials(CLIENT_ID, CLIENT_SECRET))
+            .withRequestBody(containing("scope=email")));
+  }
+
+  @Test
+  void shouldCreateTokenFormForPasswordGrantType() {
+    // given
+    OidcConfiguration oidcConfig = DW.getConfiguration().getOidc();
+    // configure password grant with body credentials
+    oidcConfig.setGrantType(GRANT_TYPE_PASSWORD);
+    oidcConfig.setUsername(USERNAME);
+    oidcConfig.setPassword(PASSWORD);
+
+    // when
+    OidcResult result = app.getOidcClient().createAccessToken();
+
+    // then
+    assertThat(result.getState()).isEqualTo(OidcState.OK);
+    WIRE.verify(1, getRequestedFor(urlEqualTo("/issuer/.well-known/openid-configuration")));
+    WIRE.verify(
+        1,
+        postRequestedFor(urlEqualTo("/token"))
+            .withHeader(
+                AUTHORIZATION,
+                equalTo(
+                    new BasicCredentials(CLIENT_ID, CLIENT_SECRET).asAuthorizationHeaderValue()))
+            .withRequestBody(containing("grant_type=" + GRANT_TYPE_PASSWORD))
+            .withRequestBody(containing("username=" + USERNAME))
+            .withRequestBody(containing("password=" + PASSWORD)));
   }
 }
