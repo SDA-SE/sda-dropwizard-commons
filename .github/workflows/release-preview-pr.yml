@@ -4,6 +4,7 @@ on:
 
 jobs:
   notes:
+    if: ${{ !github.event.pull_request.head.repo.fork }} 
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -11,8 +12,6 @@ jobs:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #v6.0.0
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Collect semantic-release-info
         id: semantic_release_info
         uses: fingerprintjs/action-semantic-release-info@67518674cf1e7edf4e0d565bcca4e08faf03caf3 # v2.0.0
