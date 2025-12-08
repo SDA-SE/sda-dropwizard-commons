@@ -4,6 +4,7 @@ on:
 
 jobs:
   notes:
+    if: ${{ !github.event.pull_request.head.repo.fork }} 
     permissions:
       contents: write
     runs-on: ubuntu-latest
