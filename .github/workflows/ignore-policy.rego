@@ -10,10 +10,10 @@ ignore_cves := {
   "CVE-2024-6763",
   # Spring Context is just in the background because we use Spring Data MongoDB.
   "CVE-2024-38820",
-  # It is not expected that an untrusted party is able to configure the Kafka connection in any
-  # service that is build with sda-dropwizard-commons. All configuration in the library is build to
-  # be defined in a deployment.
-  "CVE-2025-27817"
+  # lz4-java is only used by Kafka. And they staid there code is not affected under Linux, besides some corner cases.
+  # https://issues.apache.org/jira/browse/KAFKA-19951?focusedCommentId=18042357&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-18042357
+  "CVE-2025-12183",
+  "CVE-2025-66566"
 }
 
 ignore {
