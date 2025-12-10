@@ -335,3 +335,58 @@ public class MyApplication extends Application<MyConfiguration> {
 }
 ```
  
+### Server Request Histogram and Percentile
+
+It is optional possible to active histogram bucket or percentile output for the `http_server_requests` metric.
+!It is only possible to activate one of the two because of limitations in prometheus.
+
+For this it is necessary to set `requestPercentiles` or `enableRequestHistogram` in the configuration.
+
+```yaml
+prometheus:
+  requestPercentiles: [0.05,0.95]
+```
+or
+```yaml
+prometheus:
+  enableRequestHistogram: true
+```
+
+additionally it is optionally possible to set  `requestDigitsOfPrecision` which describes digits of precision to maintain for percentile approximations.
+
+```yaml
+prometheus:
+  requestDigitsOfPrecision: 5
+```
+
+The usage of the [`PrometheusBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-prometheus/src/main/java/org/sdase/commons/server/prometheus/PrometheusBundle.java) changes slightly through this:
+
+```java
+import PrometheusBundle;
+import io.dropwizard.core.Application;
+
+public class MyApplication extends Application<MyConfiguration> {
+
+    private PrometheusBundle<PrometheusTestConfiguration> prometheusBundle =
+        PrometheusBundle.builder()
+            .withConfigurationProvider(MyConfiguration::getPrometheus);
+  
+    public static void main(final String[] args) {
+        new MyApplication().run(args);
+    }
+
+   @Override
+   public void initialize(Bootstrap<MyConfiguration> bootstrap) {
+      // ...
+      bootstrap.addBundle(prometheusBundle);
+      // ...
+   }
+
+   @Override
+   public void run(MyConfiguration configuration, Environment environment) {
+      // ...
+   }
+}
+```
+
+or 
