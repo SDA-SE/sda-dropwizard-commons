@@ -1,9 +1,9 @@
 package org.sdase.commons.server.prometheus;
 
 import static io.dropwizard.testing.ConfigOverride.randomPorts;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.core.Response;
 import java.util.stream.Stream;
@@ -26,9 +26,8 @@ class PrometheusBundleWithRequestHistogramIT {
   static final DropwizardAppExtension<PrometheusTestConfiguration> DW =
       new DropwizardAppExtension<>(
           PrometheusConfiguredTestApplication.class,
-          null,
-          randomPorts(),
-          ConfigOverride.config("prometheus.enableRequestHistogram", String.valueOf(true)));
+          resourceFilePath("prometheus-test-config-histogram.yaml"),
+          randomPorts());
 
   private static final String REST_URI = "http://localhost:%d";
   private String resourceUri;
@@ -41,7 +40,8 @@ class PrometheusBundleWithRequestHistogramIT {
   @Test
   void shouldTrackRequestsAndAddHistogram() {
     // check for
-    // http_server_requests_seconds_bucket{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",le="0.033554431",} 1.0
+    // http_server_requests_seconds_bucket{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",le="0.01",} 1.0
+    // http_server_requests_seconds_bucket{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",le="0.4",} 1.0
     // http_server_requests_seconds_count{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 1.0
     // http_server_requests_seconds_sum{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 8.42042E-4
     // http_server_requests_seconds_max{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 8.42042E-4
@@ -64,10 +64,16 @@ class PrometheusBundleWithRequestHistogramIT {
         extractSpecificMetric(metrics, "http_server_requests_seconds_max", "uri=\"/path/{param}\"");
     double maxValue = extractValue(max);
     assertThat(maxValue).isPositive().isEqualTo(sumValue);
-    String bucket =
-        extractSpecificMetric(metrics, "http_server_requests_seconds_bucket", "le=\"0.033554431\"");
-    double bucketValue = extractValue(bucket);
-    assertThat(bucketValue).isEqualTo(1.0);
+    String bucket01 =
+        extractSpecificMetric(metrics, "http_server_requests_seconds_bucket", "le=\"0.01\"");
+    assertThat(bucket01).isNotNull();
+    double bucketValue01 = extractValue(bucket01);
+    assertThat(bucketValue01).isEqualTo(0.0);
+    String bucket04 =
+        extractSpecificMetric(metrics, "http_server_requests_seconds_bucket", "le=\"0.4\"");
+    assertThat(bucket04).isNotNull();
+    double bucketValue04 = extractValue(bucket04);
+    assertThat(bucketValue04).isEqualTo(1.0);
   }
 
   private String extractSpecificMetric(String metrics, String metricName, String tagMatch) {

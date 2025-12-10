@@ -7,6 +7,7 @@ public class PrometheusConfiguration {
   private List<Double> requestPercentiles;
   private boolean enableRequestHistogram;
   private Integer requestDigitsOfPrecision;
+  private List<Double> requestSlos;
 
   public List<Double> getRequestPercentiles() {
     return requestPercentiles;
@@ -32,6 +33,15 @@ public class PrometheusConfiguration {
 
   public PrometheusConfiguration setRequestDigitsOfPrecision(Integer requestDigitsOfPrecision) {
     this.requestDigitsOfPrecision = requestDigitsOfPrecision;
+    return this;
+  }
+
+  public List<Double> getRequestSlos() {
+    return requestSlos;
+  }
+
+  public PrometheusConfiguration setRequestSlos(List<Double> requestSlos) {
+    this.requestSlos = requestSlos;
     return this;
   }
 }

@@ -18,9 +18,9 @@ import org.sdase.commons.shared.tracing.ConsumerTracing;
 
 @Path("/")
 public class PrometheusConfiguredTestApplication extends Application<PrometheusTestConfiguration> {
-  private JerseyClientBundle<Configuration> jerseyClientBundle =
+  private final JerseyClientBundle<Configuration> jerseyClientBundle =
       JerseyClientBundle.builder().build();
-  private PrometheusBundle<PrometheusTestConfiguration> prometheusBundle =
+  private final PrometheusBundle<PrometheusTestConfiguration> prometheusBundle =
       PrometheusBundle.builder()
           .withConfigurationProvider(PrometheusTestConfiguration::getPrometheus);
   private Client myClient;

@@ -126,7 +126,12 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
       }
     } else {
       builder.percentilesHistogram(true);
+      if (prometheusConfiguration.getRequestSlos() != null) {
+        builder.serviceLevelObjectives(
+            convertDoubleListToPrimitiveArray(prometheusConfiguration.getRequestSlos()));
+      }
     }
+
     return builder
         .percentilePrecision(prometheusConfiguration.getRequestDigitsOfPrecision())
         .build()
@@ -435,7 +440,13 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
     }
 
     public PrometheusBundle<Configuration> build() {
-      return new PrometheusBundle<>(c -> new PrometheusConfiguration());
+      return new PrometheusBundle<>(
+          c -> {
+            PrometheusConfiguration configuration = new PrometheusConfiguration();
+            configuration.setRequestPercentiles(List.of(0.25, 0.5, 0.75, 0.9, 0.95, 0.99));
+            configuration.setRequestDigitsOfPrecision(3);
+            return configuration;
+          });
     }
   }
 }

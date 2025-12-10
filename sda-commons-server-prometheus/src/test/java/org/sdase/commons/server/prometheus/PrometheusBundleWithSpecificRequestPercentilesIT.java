@@ -21,9 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ExtendWith(MicrometerTestExtension.class)
-class PrometheusBundleWithRequestPercentilesIT {
+class PrometheusBundleWithSpecificRequestPercentilesIT {
   private static final Logger LOGGER =
-      LoggerFactory.getLogger(PrometheusBundleWithRequestPercentilesIT.class);
+      LoggerFactory.getLogger(PrometheusBundleWithSpecificRequestPercentilesIT.class);
 
   @RegisterExtension
   static final DropwizardAppExtension<PrometheusTestConfiguration> DW =
@@ -41,10 +41,10 @@ class PrometheusBundleWithRequestPercentilesIT {
   }
 
   @Test
-  void shouldTrackRequestsAndAddHistogram() throws IOException {
+  void shouldTrackRequestsAndAddQuantile() throws IOException {
     // check for
-    // http_server_requests_seconds{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",quantile="0.05",} 32.21225472
-    // http_server_requests_seconds{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",quantile="0.95",} 32.21225472
+    // http_server_requests_seconds{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",quantile="0.4",} 32.21225472
+    // http_server_requests_seconds{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",quantile="0.7",} 32.21225472
     // http_server_requests_seconds_count{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 1.0
     // http_server_requests_seconds_sum{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 8.42042E-4
     // http_server_requests_seconds_max{exception="None",method="GET",outcome="SUCCESS",status="200",uri="/path/{param}",} 8.42042E-4
@@ -68,12 +68,16 @@ class PrometheusBundleWithRequestPercentilesIT {
         extractSpecificMetric(metrics, "http_server_requests_seconds_max", "uri=\"/path/{param}\"");
     double maxValue = extractValue(max);
     assertThat(maxValue).isPositive().isEqualTo(sumValue);
-    String quantile005 =
-        extractSpecificMetric(metrics, "http_server_requests_seconds", "quantile=\"0.05\"");
-    assertThat(quantile005).isNotNull();
-    String quantile095 =
-        extractSpecificMetric(metrics, "http_server_requests_seconds", "quantile=\"0.95\"");
-    assertThat(quantile095).isNotNull();
+    assertRequestQuantile(metrics, new double[] {0.4, 0.7});
+  }
+
+  private void assertRequestQuantile(String metrics, double[] quantile) {
+    for (double q : quantile) {
+      String quantileMetric =
+          extractSpecificMetric(
+              metrics, "http_server_requests_seconds", String.format("quantile=\"%s\"", q));
+      assertThat(quantileMetric).isNotNull();
+    }
   }
 
   private String extractSpecificMetric(String metrics, String metricName, String tagMatch) {
