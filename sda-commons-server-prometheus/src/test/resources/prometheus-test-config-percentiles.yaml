@@ -1,0 +1,11 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 0
+  adminConnectors:
+    - type: http
+      port: 0
+
+prometheus:
+  requestPercentiles: [0.4,0.7]
+  requestDigitsOfPrecision: 5
