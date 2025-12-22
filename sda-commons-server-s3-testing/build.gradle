@@ -1,7 +1,7 @@
 dependencies {
   api project(':sda-commons-server-testing')
 
-  api 'io.github.robothy:local-s3-jupiter:2.0', {
+  api 'io.github.robothy:local-s3-jupiter:2.1', {
     exclude group: 'software.amazon.awssdk'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
