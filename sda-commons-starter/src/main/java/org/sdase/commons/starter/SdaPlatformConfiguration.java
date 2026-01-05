@@ -4,6 +4,7 @@ import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.auth.config.AuthConfig;
 import org.sdase.commons.server.cors.CorsConfiguration;
 import org.sdase.commons.server.opa.config.OpaConfig;
+import org.sdase.commons.server.prometheus.config.PrometheusConfiguration;
 
 /** Default configuration for the {@link SdaPlatformBundle}. */
 public class SdaPlatformConfiguration extends Configuration {
@@ -16,6 +17,9 @@ public class SdaPlatformConfiguration extends Configuration {
 
   /** Configuration of the CORS filter. */
   private CorsConfiguration cors = new CorsConfiguration();
+
+  /** Configuration of Prometheus */
+  private PrometheusConfiguration prometheus = new PrometheusConfiguration();
 
   public AuthConfig getAuth() {
     return auth;
@@ -41,6 +45,15 @@ public class SdaPlatformConfiguration extends Configuration {
 
   public SdaPlatformConfiguration setOpa(OpaConfig opa) {
     this.opa = opa;
+    return this;
+  }
+
+  public PrometheusConfiguration getPrometheus() {
+    return prometheus;
+  }
+
+  public SdaPlatformConfiguration setPrometheus(PrometheusConfiguration prometheus) {
+    this.prometheus = prometheus;
     return this;
   }
 }

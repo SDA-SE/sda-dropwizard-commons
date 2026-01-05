@@ -4,6 +4,7 @@ import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
 import org.sdase.commons.server.cors.CorsConfigProvider;
 import org.sdase.commons.server.opa.config.OpaConfigProvider;
+import org.sdase.commons.server.prometheus.PrometheusConfigurationProvider;
 import org.sdase.commons.starter.builder.OpenApiCustomizer.OpenApiInitialBuilder;
 
 /**
@@ -62,5 +63,12 @@ public interface CustomConfigurationProviders {
      * @return the builder instance
      */
     OpenApiInitialBuilder<C> withCorsConfigProvider(CorsConfigProvider<C> corsConfigProvider);
+  }
+
+  interface PrometheusConfigProviderBuilder<C extends Configuration> {
+    OpenApiInitialBuilder<C> withPrometheusConfigProvider(
+        PrometheusConfigurationProvider<C> prometheusConfigProvider);
+
+    OpenApiInitialBuilder<C> withDefaultPrometheusConfig();
   }
 }
