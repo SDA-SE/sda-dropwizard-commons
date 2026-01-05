@@ -11,6 +11,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.hc.core5.http.HttpHeaders.ACCEPT;
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
@@ -69,6 +70,8 @@ class OidcClientCacheDisabledTest {
 
     WIRE.stubFor(
         post("/token")
+            .withHeader(ACCEPT, containing(APPLICATION_FORM_URLENCODED))
+            .withHeader(ACCEPT, containing(APPLICATION_JSON))
             .withHeader(
                 AUTHORIZATION,
                 equalTo(
