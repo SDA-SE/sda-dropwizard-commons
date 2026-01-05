@@ -71,7 +71,7 @@ public class IssuerClient {
     final Invocation.Builder requestBuilder =
         client
             .target(discoveryResource.getTokenEndpoint())
-            .request(MediaType.APPLICATION_FORM_URLENCODED);
+            .request(MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON);
     if (config.isUseAuthHeader()) {
       requestBuilder.header(HttpHeaders.AUTHORIZATION, createBasicAuthHeader());
     }

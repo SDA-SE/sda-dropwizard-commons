@@ -12,6 +12,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.hc.core5.http.HttpHeaders.ACCEPT;
@@ -79,6 +80,8 @@ class OidcClientTest {
 
     WIRE.stubFor(
         post("/token")
+            .withHeader(ACCEPT, containing(APPLICATION_FORM_URLENCODED))
+            .withHeader(ACCEPT, containing(APPLICATION_JSON))
             .willReturn(
                 aResponse()
                     .withStatus(200)
