@@ -36,7 +36,8 @@ public interface InitialPlatformBundleBuilder {
 
   /**
    * Start an application that uses a custom configuration has to define providers for the
-   * configurations required by the {@link SdaPlatformBundle}.
+   * configurations required by the {@link SdaPlatformBundle}. It is recommended to use {@link
+   * #usingSdaPlatformConfiguration(Class)} instead.
    *
    * @param configurationClass the class that stores the configuration
    * @param <C> the type of the applications configuration class

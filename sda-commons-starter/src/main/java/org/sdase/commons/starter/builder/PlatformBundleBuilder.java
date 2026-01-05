@@ -10,7 +10,10 @@ import org.sdase.commons.starter.SdaPlatformBundle;
  * @param <C> the type of the applications configuration class
  */
 public interface PlatformBundleBuilder<C extends Configuration>
-    extends CorsCustomizer<C>, SecurityCustomizer<C>, JacksonCustomizer<C> {
+    extends CorsCustomizer<C>,
+        SecurityCustomizer<C>,
+        JacksonCustomizer<C>,
+        CustomConfigurationProviders.PrometheusConfigProviderBuilder<C> {
 
   /**
    * Builds the configured {@link SdaPlatformBundle} which must be added to the {@link Bootstrap} in
