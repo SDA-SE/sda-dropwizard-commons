@@ -282,14 +282,16 @@ More details about resilience4j circuit breaker metrics can be found [here](http
 
 ### Request Metrics
 
-| Metric Name                                                     | Labels                                            | Description                                                                                                                               | Source                    |
-|-----------------------------------------------------------------|---------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|---------------------------|
-| `http_server_requests_seconds_count`                            | `exception`, `method`, `outcome`, `status`, `uri` | Total number of requests your application received at this endpoint.                                                                      | Bridged from Micrometer   |
-| `http_server_requests_seconds_sum`                              | `exception`, `method`, `outcome`, `status`, `uri` | Sum of the duration of every request your application received at this endpoint.                                                          | Bridged from Micrometer   |
-| `http_server_requests_seconds_max`                              | `exception`, `method`, `outcome`, `status`, `uri` | Maximum request duration during a time window. The value resets to 0 when a new time window starts. The default time window is 2 minutes. | Bridged from Micrometer   |
-| `apache_http_client_request_duration_seconds`                   | `manager`, `method`, `name`, `quantile`           | Apache request duration summary.                                                                                                          | Bridged from Micrometer   |
-| `jetty_connections`                                             | `factory`, `port`, `quantile`                     | Jetty Connections summary.                                                                                                                | Bridged from Micrometer   |
-| `io_dropwizard_jetty_MutableServletContextHandler_get_requests` | `quantile`                                        | io_dropwizard_jetty_MutableServletContextHandler_get_requests summary.                                                                    | Bridged from Micrometer   |
+| Metric Name                                                     | Labels                                                        | Description                                                                                                                               | Source                  | Note                                    |
+|-----------------------------------------------------------------|---------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|-----------------------------------------|
+| `http_server_requests_seconds_count`                            | `exception`, `method`, `outcome`, `status`, `uri`             | Total number of requests your application received at this endpoint.                                                                      | Bridged from Micrometer |                                         |
+| `http_server_requests_seconds_sum`                              | `exception`, `method`, `outcome`, `status`, `uri`             | Sum of the duration of every request your application received at this endpoint.                                                          | Bridged from Micrometer |                                         |
+| `http_server_requests_seconds_max`                              | `exception`, `method`, `outcome`, `status`, `uri`             | Maximum request duration during a time window. The value resets to 0 when a new time window starts. The default time window is 2 minutes. | Bridged from Micrometer |                                         |
+| `http_server_requests_seconds_bucket`                           | `exception`, `method`, `outcome`, `status`, `uri`, `le`       | Histogram bucket over every request your application received at this endpoint.                                                           | Bridged from Micrometer | enableRequestHistogram needs to be set. |
+| `http_server_requests_seconds`                                  | `exception`, `method`, `outcome`, `status`, `uri`, `quantile` | Quantile over every request your application received at this endpoint.                                                                   | Bridged from Micrometer | requestPercentiles needs to be set.     |
+| `apache_http_client_request_duration_seconds`                   | `manager`, `method`, `name`, `quantile`                       | Apache request duration summary.                                                                                                          | Bridged from Micrometer |                                         |
+| `jetty_connections`                                             | `factory`, `port`, `quantile`                                 | Jetty Connections summary.                                                                                                                | Bridged from Micrometer |                                         |
+| `io_dropwizard_jetty_MutableServletContextHandler_get_requests` | `quantile`                                                    | io_dropwizard_jetty_MutableServletContextHandler_get_requests summary.                                                                    | Bridged from Micrometer |                                         |
 
 ## Health Checks
 
@@ -335,3 +337,73 @@ public class MyApplication extends Application<MyConfiguration> {
 }
 ```
  
+### Server Request Histogram and Percentile
+
+It is optional possible to active histogram bucket or percentile output for the `http_server_requests` metric.
+It is only possible to activate one of the two because of limitations in prometheus.
+
+For this it is necessary to set `requestPercentiles` or `enableRequestHistogram` in the configuration.
+
+```yaml
+prometheus:
+  requestPercentiles: [0.05,0.95]
+```
+or
+```yaml
+prometheus:
+  enableRequestHistogram: true
+```
+
+additionally it is optionally possible to set  `requestDigitsOfPrecision` which describes digits of precision to maintain for percentile approximations.
+
+```yaml
+prometheus:
+  requestDigitsOfPrecision: 5
+```
+
+and it is also possible to set `serviceLevelObjectives` to define specific boundaries for the histogramm.
+The values are in nanoseconds.
+
+```yaml
+prometheus:
+  enableRequestHistogram: true
+  requestSlos: [2000000000, 3000000000]
+```
+
+Default configuration that is always active is:
+
+```yaml
+prometheus:
+  requestPercentiles: [0.25, 0.5, 0.75, 0.9, 0.95, 0.99]
+  requestDigitsOfPrecision: 3
+```
+
+The usage of the [`PrometheusBundle`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-prometheus/src/main/java/org/sdase/commons/server/prometheus/PrometheusBundle.java) changes slightly through this:
+
+```java
+import PrometheusBundle;
+import io.dropwizard.core.Application;
+
+public class MyApplication extends Application<MyConfiguration> {
+
+    private PrometheusBundle<PrometheusTestConfiguration> prometheusBundle =
+        PrometheusBundle.builder()
+            .withConfigurationProvider(MyConfiguration::getPrometheus).buildBundle();
+  
+    public static void main(final String[] args) {
+        new MyApplication().run(args);
+    }
+
+   @Override
+   public void initialize(Bootstrap<MyConfiguration> bootstrap) {
+      // ...
+      bootstrap.addBundle(prometheusBundle);
+      // ...
+   }
+
+   @Override
+   public void run(MyConfiguration configuration, Environment environment) {
+      // ...
+   }
+}
+```
