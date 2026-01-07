@@ -1242,6 +1242,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-request-histogram-and-percentile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Request Histogram and Percentile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1985,6 +2002,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-request-histogram-and-percentile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Request Histogram and Percentile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3447,6 +3481,7 @@ following metrics are available so far.</p>
 <th>Labels</th>
 <th>Description</th>
 <th>Source</th>
+<th>Note</th>
 </tr>
 </thead>
 <tbody>
@@ -3455,36 +3490,56 @@ following metrics are available so far.</p>
 <td><code>exception</code>, <code>method</code>, <code>outcome</code>, <code>status</code>, <code>uri</code></td>
 <td>Total number of requests your application received at this endpoint.</td>
 <td>Bridged from Micrometer</td>
+<td></td>
 </tr>
 <tr>
 <td><code>http_server_requests_seconds_sum</code></td>
 <td><code>exception</code>, <code>method</code>, <code>outcome</code>, <code>status</code>, <code>uri</code></td>
 <td>Sum of the duration of every request your application received at this endpoint.</td>
 <td>Bridged from Micrometer</td>
+<td></td>
 </tr>
 <tr>
 <td><code>http_server_requests_seconds_max</code></td>
 <td><code>exception</code>, <code>method</code>, <code>outcome</code>, <code>status</code>, <code>uri</code></td>
 <td>Maximum request duration during a time window. The value resets to 0 when a new time window starts. The default time window is 2 minutes.</td>
 <td>Bridged from Micrometer</td>
+<td></td>
+</tr>
+<tr>
+<td><code>http_server_requests_seconds_bucket</code></td>
+<td><code>exception</code>, <code>method</code>, <code>outcome</code>, <code>status</code>, <code>uri</code>, <code>le</code></td>
+<td>Histogram bucket over every request your application received at this endpoint.</td>
+<td>Bridged from Micrometer</td>
+<td>enableRequestHistogram needs to be set.</td>
+</tr>
+<tr>
+<td><code>http_server_requests_seconds</code></td>
+<td><code>exception</code>, <code>method</code>, <code>outcome</code>, <code>status</code>, <code>uri</code>, <code>quantile</code></td>
+<td>Quantile over every request your application received at this endpoint.</td>
+<td>Bridged from Micrometer</td>
+<td>requestPercentiles needs to be set.</td>
 </tr>
 <tr>
 <td><code>apache_http_client_request_duration_seconds</code></td>
 <td><code>manager</code>, <code>method</code>, <code>name</code>, <code>quantile</code></td>
 <td>Apache request duration summary.</td>
 <td>Bridged from Micrometer</td>
+<td></td>
 </tr>
 <tr>
 <td><code>jetty_connections</code></td>
 <td><code>factory</code>, <code>port</code>, <code>quantile</code></td>
 <td>Jetty Connections summary.</td>
 <td>Bridged from Micrometer</td>
+<td></td>
 </tr>
 <tr>
 <td><code>io_dropwizard_jetty_MutableServletContextHandler_get_requests</code></td>
 <td><code>quantile</code></td>
 <td>io_dropwizard_jetty_MutableServletContextHandler_get_requests summary.</td>
 <td>Bridged from Micrometer</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -3535,6 +3590,90 @@ the application:</p>
 <span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="c1">// ...</span>
 <span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">PrometheusBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">build</span><span class="p">());</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Environment</span><span class="w"> </span><span class="n">environment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="server-request-histogram-and-percentile">Server Request Histogram and Percentile<a class="headerlink" href="#server-request-histogram-and-percentile" title="Permanent link">&para;</a></h3>
+<p>It is optional possible to active histogram bucket or percentile output for the <code>http_server_requests</code> metric.
+It is only possible to activate one of the two because of limitations in prometheus.</p>
+<p>For this it is necessary to set <code>requestPercentiles</code> or <code>enableRequestHistogram</code> in the configuration.</p>
+<p><div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">prometheus</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">requestPercentiles</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.05</span><span class="p p-Indicator">,</span><span class="nv">0.95</span><span class="p p-Indicator">]</span>
+</code></pre></div></td></tr></table></div>
+or
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">prometheus</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enableRequestHistogram</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div></td></tr></table></div></p>
+<p>additionally it is optionally possible to set  <code>requestDigitsOfPrecision</code> which describes digits of precision to maintain for percentile approximations.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">prometheus</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">requestDigitsOfPrecision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div></td></tr></table></div>
+<p>and it is also possible to set <code>serviceLevelObjectives</code> to define specific boundaries for the histogramm.
+The values are in nanoseconds.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">prometheus</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enableRequestHistogram</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">requestSlos</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2000000000</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3000000000</span><span class="p p-Indicator">]</span>
+</code></pre></div></td></tr></table></div>
+<p>Default configuration that is always active is:</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">prometheus</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">requestPercentiles</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.25</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.75</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.9</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.95</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.99</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">requestDigitsOfPrecision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</code></pre></div></td></tr></table></div>
+<p>The usage of the <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-prometheus/src/main/java/org/sdase/commons/server/prometheus/PrometheusBundle.java"><code>PrometheusBundle</code></a> changes slightly through this:</p>
+<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">PrometheusBundle</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io.dropwizard.core.Application</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyApplication</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">PrometheusBundle</span><span class="o">&lt;</span><span class="n">PrometheusTestConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prometheusBundle</span><span class="w"> </span><span class="o">=</span>
+<span class="w">        </span><span class="n">PrometheusBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="na">withConfigurationProvider</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="p">::</span><span class="n">getPrometheus</span><span class="p">).</span><span class="na">buildBundle</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">MyApplication</span><span class="p">().</span><span class="na">run</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nd">@Override</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// ...</span>
+<span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">prometheusBundle</span><span class="p">);</span>
 <span class="w">      </span><span class="c1">// ...</span>
 <span class="w">   </span><span class="p">}</span>
 

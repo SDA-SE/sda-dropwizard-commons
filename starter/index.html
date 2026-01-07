@@ -1865,7 +1865,12 @@ additionally to the defaults of Dropwizard's <code>Configuration</code>:</p>
 <span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
-<span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># See sda-commons-server-auth</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># See sda-commons-server-auth</span>
 <span class="nt">auth</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">disableAuth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${DISABLE_AUTH:-false}</span>
 <span class="w">  </span><span class="nt">leeway</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${AUTH_LEEWAY:-0}</span>
@@ -1888,6 +1893,11 @@ additionally to the defaults of Dropwizard's <code>Configuration</code>:</p>
 <span class="w">  </span><span class="c1">#    - https://*test.sdase.com</span>
 <span class="w">  </span><span class="c1"># To use configurable patterns per environment the Json in Yaml syntax may be used with an environment placeholder:</span>
 <span class="w">  </span><span class="c1"># allowedOrigins: ${CORS_ALLOWED_ORIGINS:-[&quot;*&quot;]}</span>
+
+<span class="c1"># See server-prometheus for other possible configurations.</span>
+<span class="nt">prometheus</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Enables histogram for the `http_server_requests` metric.</span>
+<span class="w">  </span><span class="nt">enableRequestHistogram</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div></td></tr></table></div>
 <p>By using <code>.usingSdaPlatformConfiguration()</code> or <code>.usingSdaPlatformConfiguration(MyCustomConfiguration.class)</code> 
 the authorization including the open policy agent are automatically enabled as well as the cors settings. </p>
