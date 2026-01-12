@@ -26,8 +26,10 @@ import org.sdase.commons.server.opa.config.OpaConfigProvider;
 import org.sdase.commons.server.openapi.OpenApiBundle;
 import org.sdase.commons.server.opentelemetry.OpenTelemetryBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
+import org.sdase.commons.server.prometheus.PrometheusConfigurationProvider;
 import org.sdase.commons.server.security.SecurityBundle;
 import org.sdase.commons.server.trace.TraceTokenBundle;
+import org.sdase.commons.starter.builder.CustomConfigurationProviders;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders.AuthConfigProviderBuilder;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders.CorsConfigProviderBuilder;
 import org.sdase.commons.starter.builder.InitialPlatformBundleBuilder;
@@ -47,6 +49,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
   private final OpaBuilder<C> opaBundleBuilder;
   private final CorsBundle.FinalBuilder<C> corsBundleBuilder;
   private final OpenApiBundle.FinalBuilder openApiBundleBuilder;
+  private final PrometheusBundle.FinalBuilder<C> prometheusBundleBuilder;
 
   private final List<String> excludedTracingUrls =
       Arrays.asList(
@@ -58,13 +61,15 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
       AuthBundle.AuthBuilder<C> authBundleBuilder,
       OpaBundle.OpaBuilder<C> opaBundleBuilder,
       CorsBundle.FinalBuilder<C> corsBundleBuilder,
-      OpenApiBundle.FinalBuilder openApiBundleBuilder) {
+      OpenApiBundle.FinalBuilder openApiBundleBuilder,
+      PrometheusBundle.FinalBuilder<C> prometheusBundleBuilder) {
     this.securityBundleBuilder = securityBundleBuilder;
     this.jacksonConfigurationBundleBuilder = jacksonConfigurationBundleBuilder;
     this.authBundleBuilder = authBundleBuilder;
     this.opaBundleBuilder = opaBundleBuilder;
     this.corsBundleBuilder = corsBundleBuilder;
     this.openApiBundleBuilder = openApiBundleBuilder;
+    this.prometheusBundleBuilder = prometheusBundleBuilder;
   }
 
   public static InitialPlatformBundleBuilder builder() {
@@ -83,12 +88,16 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
     bootstrap.addBundle(ConfigurationSubstitutionBundle.builder().build());
     bootstrap.addBundle(DefaultLoggingConfigurationBundle.builder().build());
     bootstrap.addBundle(InternalHealthCheckEndpointBundle.builder().build());
-    bootstrap.addBundle(PrometheusBundle.builder().build());
     bootstrap.addBundle(TraceTokenBundle.builder().build());
     bootstrap.addBundle(MetadataContextBundle.builder().build());
 
     // add configured bundles
     List<ConfiguredBundle<? super C>> configuredBundles = new ArrayList<>();
+    if (prometheusBundleBuilder != null) {
+      configuredBundles.add(prometheusBundleBuilder.build());
+    } else {
+      configuredBundles.add(PrometheusBundle.builder().withDefaultPrometheusConfig().build());
+    }
     configuredBundles.add(jacksonConfigurationBundleBuilder.build());
     configuredBundles.add(securityBundleBuilder.build());
     if (openApiBundleBuilder != null) {
@@ -118,7 +127,8 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
           CorsConfigProviderBuilder<C>,
           OpenApiInitialBuilder<C>,
           OpenApiFinalBuilder<C>,
-          PlatformBundleBuilder<C> {
+          PlatformBundleBuilder<C>,
+          CustomConfigurationProviders.PrometheusConfigProviderBuilder<C> {
 
     private AuthBundle.AuthBuilder<C> authBundleBuilder;
     private OpaBundle.OpaBuilder<C> opaBundleBuilder;
@@ -127,6 +137,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
         JacksonConfigurationBundle.builder();
     private CorsBundle.FinalBuilder<C> corsBundleBuilder;
     private OpenApiBundle.FinalBuilder openApiBundleBuilder;
+    private PrometheusBundle.FinalBuilder<C> prometheusBundleBuilder;
 
     private InitialBuilder() {}
 
@@ -140,7 +151,8 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
           authBundleBuilder,
           opaBundleBuilder,
           corsBundleBuilder,
-          openApiBundleBuilder);
+          openApiBundleBuilder,
+          prometheusBundleBuilder);
     }
 
     // InitialBuilder
@@ -155,7 +167,8 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
         OpenApiInitialBuilder<T> usingSdaPlatformConfiguration(Class<T> configurationClass) {
       return usingCustomConfig(configurationClass)
           .withOpaAuthorization(SdaPlatformConfiguration::getAuth, SdaPlatformConfiguration::getOpa)
-          .withCorsConfigProvider(SdaPlatformConfiguration::getCors);
+          .withCorsConfigProvider(SdaPlatformConfiguration::getCors)
+          .withPrometheusConfigProvider(SdaPlatformConfiguration::getPrometheus);
     }
 
     @Override
@@ -309,6 +322,20 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
         throw new IllegalStateException(
             "Attempt to configure CORS details, but CORS is not active.");
       }
+    }
+
+    @Override
+    public OpenApiInitialBuilder<C> withPrometheusConfigProvider(
+        PrometheusConfigurationProvider<C> prometheusConfigProvider) {
+      prometheusBundleBuilder =
+          PrometheusBundle.builder().withConfigurationProvider(prometheusConfigProvider);
+      return this;
+    }
+
+    @Override
+    public OpenApiInitialBuilder<C> withDefaultPrometheusConfig() {
+      prometheusBundleBuilder = PrometheusBundle.builder().withDefaultPrometheusConfig();
+      return this;
     }
   }
 }

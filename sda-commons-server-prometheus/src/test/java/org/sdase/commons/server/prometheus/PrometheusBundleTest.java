@@ -91,6 +91,16 @@ class PrometheusBundleTest {
         extractSpecificMetric(metrics, "http_server_requests_seconds_max", "uri=\"/path/{param}\"");
     double maxValue = extractValue(max);
     assertThat(maxValue).isPositive().isEqualTo(sumValue);
+    assertRequestQuantile(metrics, new double[] {0.25, 0.5, 0.75, 0.9, 0.95, 0.99});
+  }
+
+  private void assertRequestQuantile(String metrics, double[] quantile) {
+    for (double q : quantile) {
+      String quantileMetric =
+          extractSpecificMetric(
+              metrics, "http_server_requests_seconds", String.format("quantile=\"%s\"", q));
+      assertThat(quantileMetric).isNotNull();
+    }
   }
 
   private String extractSpecificMetric(String metrics, String metricName, String tagMatch) {

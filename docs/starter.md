@@ -107,6 +107,11 @@ cors:
   #    - https://*test.sdase.com
   # To use configurable patterns per environment the Json in Yaml syntax may be used with an environment placeholder:
   # allowedOrigins: ${CORS_ALLOWED_ORIGINS:-["*"]}
+
+# See server-prometheus for other possible configurations.
+prometheus:
+  # Enables histogram for the `http_server_requests` metric.
+  enableRequestHistogram: true
 ```
 
 By using `.usingSdaPlatformConfiguration()` or `.usingSdaPlatformConfiguration(MyCustomConfiguration.class)` 

@@ -71,7 +71,7 @@ public class IssuerClient {
     final Invocation.Builder requestBuilder =
         client
             .target(discoveryResource.getTokenEndpoint())
-            .request(MediaType.APPLICATION_FORM_URLENCODED);
+            .request(MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON);
     if (config.isUseAuthHeader()) {
       requestBuilder.header(HttpHeaders.AUTHORIZATION, createBasicAuthHeader());
     }
@@ -97,6 +97,9 @@ public class IssuerClient {
     if ("password".equals(config.getGrantType())) {
       tokenForm.param("username", config.getUsername());
       tokenForm.param("password", config.getPassword());
+    }
+    if (config.getScope() != null && !config.getScope().isBlank()) {
+      tokenForm.param("scope", config.getScope());
     }
     return tokenForm;
   }

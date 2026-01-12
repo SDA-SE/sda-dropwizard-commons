@@ -11,8 +11,8 @@ ext {
   apacheHttpClient5Version = '5.5.1'
   dropwizardVersion = '5.0.0'
   prometheusVersion = '1.4.3'
-  micrometerVersion = '1.16.0'
-  swaggerCoreV3Version = '2.2.40'
+  micrometerVersion = '1.16.1'
+  swaggerCoreV3Version = '2.2.41'
   weldVersion = '6.0.3.Final'
   jacksonVersion = '2.20.0'
   jsonUnitVersion = '5.1.0'
@@ -26,11 +26,11 @@ ext {
   openTelemetryVersion = '1.41.0'
   openTelemetryAlpha2Version = '2.22.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
-  mongoDbDriverVersion = '5.6.1'
+  mongoDbDriverVersion = '5.6.2'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
-  bouncyCastleVersion = '1.82'
+  bouncyCastleVersion = '1.83'
   victoolsVersion = '4.38.0'
-  flywayVersion = '11.17.1'
+  flywayVersion = '11.20.0'
   wiremockVersion = '3.13.2'
 }
 
@@ -53,11 +53,11 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.39.2")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.41.1")
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
-  api enforcedPlatform("io.netty:netty-bom:4.2.7.Final"), {
+  api enforcedPlatform("io.netty:netty-bom:4.2.9.Final"), {
     because "various CVEs in earlier versions"
   }
   api enforcedPlatform("io.prometheus:prometheus-metrics-bom:${prometheusVersion}")
@@ -132,7 +132,7 @@ dependencies {
     api "io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations-jakarta:$swaggerCoreV3Version"
-    api "io.swagger.parser.v3:swagger-parser-v3:2.1.35"
+    api "io.swagger.parser.v3:swagger-parser-v3:2.1.36"
 
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
@@ -211,5 +211,8 @@ dependencies {
 
     //Fixes CVE-2025-11226, future updates of Dropwizard have to be checked if this is still necessary
     api 'ch.qos.logback:logback-core:1.5.21'
+
+    //Fixes CVE-2024-29371, Kafka 3.9.1 still uses 0.9.4; can be removed at a future update of Kafka
+    api 'org.bitbucket.b_c:jose4j:0.9.6'
   }
 }
