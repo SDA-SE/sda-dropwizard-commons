@@ -5,12 +5,13 @@ dependencies {
   api 'io.dropwizard:dropwizard-client'
   api 'jakarta.servlet:jakarta.servlet-api'
 
-  api 'io.prometheus:simpleclient'
-  api 'io.prometheus:simpleclient_dropwizard'
-  api 'io.prometheus:simpleclient_servlet_jakarta'
+  api 'io.prometheus:prometheus-metrics-core'
+  api 'io.prometheus:prometheus-metrics-instrumentation-dropwizard'
+  api 'io.prometheus:prometheus-metrics-exporter-servlet-jakarta'
 
   implementation('io.micrometer:micrometer-core')
-  implementation('io.micrometer:micrometer-registry-prometheus-simpleclient')
+  implementation('io.micrometer:micrometer-registry-prometheus')
+  implementation('org.glassfish.jersey.ext:jersey-micrometer')
 
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-client-jersey')
