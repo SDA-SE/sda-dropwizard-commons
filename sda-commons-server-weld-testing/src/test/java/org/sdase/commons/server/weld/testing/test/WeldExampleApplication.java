@@ -10,6 +10,7 @@ import io.dropwizard.jobs.JobsBundle;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import java.util.List;
 import org.sdase.commons.server.jackson.EmbedHelper;
@@ -62,7 +63,9 @@ public class WeldExampleApplication extends Application<AppConfiguration> {
 
     fooEvent.fire(foo);
     environment.jersey().register(DummyResource.class);
-    environment.getApplicationContext().addServlet(TestServlet.class, "/foo");
+    // Necessary now in Weld 6
+    TestServlet servlet = CDI.current().select(TestServlet.class).get();
+    environment.getApplicationContext().addServlet(servlet, "/foo");
     environment.admin().addTask(testTask);
     this.embedHelper = new EmbedHelper(environment);
   }
@@ -75,7 +78,7 @@ public class WeldExampleApplication extends Application<AppConfiguration> {
    */
   public static void main(String... args) throws Exception {
     DropwizardWeldHelper.run(
-        WeldExampleApplication.class, "server", resourceFilePath("config-test.yaml"));
+        WeldExampleApplication.class, "server", resourceFilePath("test-config.yaml"));
   }
 
   @Produces
