@@ -9,12 +9,13 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
-import io.prometheus.client.Collector;
-import io.prometheus.client.CollectorRegistry;
+import io.prometheus.metrics.model.registry.PrometheusRegistry;
+import io.prometheus.metrics.model.snapshots.CounterSnapshot;
+import io.prometheus.metrics.model.snapshots.DataPointSnapshot;
+import io.prometheus.metrics.model.snapshots.MetricSnapshot;
+import io.prometheus.metrics.model.snapshots.MetricSnapshots;
 import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -162,7 +163,7 @@ class PrometheusBundleTest {
 
     assertThat(metrics)
         .contains(
-            "apache_http_client_request_duration_seconds{manager=\"HttpClient\",method=\"get\",name=\"myClient\",quantile=\"0.5\",}");
+            "apache_http_client_request_myClient_duration_seconds_get_requests{manager=\"HttpClient\",method=\"get\",name=\"myClient\",quantile=\"0.5\"}");
   }
 
   @Test
@@ -170,8 +171,8 @@ class PrometheusBundleTest {
     String healthChecks = readMetrics();
 
     assertThat(healthChecks)
-        .contains("healthcheck_status{name=\"anUnhealthyCheck\",} 0.0")
-        .contains("healthcheck_status{name=\"aHealthyCheck\",} 1.0");
+        .contains("healthcheck_status{name=\"anUnhealthyCheck\"} 0.0")
+        .contains("healthcheck_status{name=\"aHealthyCheck\"} 1.0");
   }
 
   @Test
@@ -211,23 +212,27 @@ class PrometheusBundleTest {
       counter.increment();
       counter.increment();
 
-      ArrayList<Collector.MetricFamilySamples> testCounterTotal =
-          Collections.list(
-              CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(
-                  s -> s.equals("micrometerTestCounter_total")));
+      MetricSnapshots snapshots = PrometheusRegistry.defaultRegistry.scrape();
 
-      assertThat(testCounterTotal).hasSize(1);
+      MetricSnapshot metricSnapshot =
+          snapshots.stream()
+              .filter(f -> f.getMetadata().getName().equals("micrometerTestCounter"))
+              .findFirst()
+              .orElseThrow(() -> new AssertionError("Metric micrometerTestCounter not found"));
 
-      Collector.MetricFamilySamples testCounterSamples = testCounterTotal.get(0);
-      assertThat(testCounterSamples.name).isEqualTo("micrometerTestCounter");
+      assertThat(metricSnapshot.getDataPoints()).hasSize(1);
 
-      List<Collector.MetricFamilySamples.Sample> sampleList = testCounterSamples.samples;
-      assertThat(sampleList).hasSize(1);
+      DataPointSnapshot dataPointSnapshot = metricSnapshot.getDataPoints().get(0);
 
-      assertThat(sampleList.get(0).labelNames).contains("testTagKey");
-      assertThat(sampleList.get(0).labelValues).contains("testTagValue");
+      // Labels
+      assertThat(dataPointSnapshot.getLabels().size()).isEqualTo(1);
+      assertThat(dataPointSnapshot.getLabels().get("testTagKey")).isNotNull();
+      assertThat(dataPointSnapshot.getLabels().get("testTagKey")).isEqualTo("testTagValue");
 
-      assertThat(sampleList.get(0).value).isEqualTo(2);
+      assertThat(dataPointSnapshot).isInstanceOf(CounterSnapshot.CounterDataPointSnapshot.class);
+
+      assertThat(((CounterSnapshot.CounterDataPointSnapshot) dataPointSnapshot).getValue())
+          .isEqualTo(2.0);
     } finally {
       Metrics.globalRegistry.remove(counter);
     }
