@@ -122,6 +122,7 @@ default glassfishAllowedInFossa := [
   "org.glassfish.jersey.media:jersey-media-multipart",
   "org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-inmemory",
   "org.glassfish.jersey.test-framework:jersey-test-framework-core",
+  "org.glassfish.jersey.ext:jersey-micrometer"
 ]
 
 # we allowed glassfishAllowedInFossa in Fossa
