@@ -14,7 +14,7 @@ dependencies {
   testImplementation 'io.github.dropwizard-jobs:dropwizard-jobs-core:6.0.1'
 }
 
-task copyTestResources(type: Copy) {
+tasks.register('copyTestResources', Copy) {
   from "${projectDir}/src/test/resources"
   into "${buildDir}/classes/java/test"
 }
