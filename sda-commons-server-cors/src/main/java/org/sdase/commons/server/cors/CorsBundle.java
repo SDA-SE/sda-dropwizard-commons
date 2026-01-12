@@ -6,18 +6,13 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
-import jakarta.servlet.DispatcherType;
-import jakarta.servlet.FilterRegistration;
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.HttpHeaders;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.eclipse.jetty.server.handler.CrossOriginHandler;
 import org.sdase.commons.shared.tracing.ConsumerTracing;
 import org.sdase.commons.shared.tracing.TraceTokenContext;
 
@@ -81,25 +76,40 @@ public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> 
   public void run(C configuration, Environment environment) {
     CorsConfiguration config = configProvider.apply(configuration);
 
-    FilterRegistration.Dynamic filter =
-        environment.servlets().addFilter("CORS", CrossOriginFilter.class);
+    CrossOriginHandler cors = new CrossOriginHandler();
 
-    // UrlPatterns where to apply the filter
-    filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
+    cors.setAllowedOriginPatterns(createCorsOriginPattern(config));
+    cors.setAllowedMethods(allowedHttpMethods);
+    cors.setAllowedHeaders(allowedHeaders);
+    cors.setExposedHeaders(exposedHeaders);
+    cors.setAllowCredentials(true);
+    cors.setDeliverPreflightRequests(false);
 
-    filter.setInitParameter(
-        CrossOriginFilter.ALLOWED_ORIGINS_PARAM, String.join(",", config.getAllowedOrigins()));
-    filter.setInitParameter(
-        CrossOriginFilter.ALLOWED_METHODS_PARAM, String.join(",", allowedHttpMethods));
-    filter.setInitParameter(
-        CrossOriginFilter.ALLOWED_HEADERS_PARAM, String.join(",", allowedHeaders));
-    filter.setInitParameter(
-        CrossOriginFilter.EXPOSED_HEADERS_PARAM, String.join(",", exposedHeaders));
+    environment.getApplicationContext().insertHandler(cors);
+  }
 
-    filter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, Boolean.TRUE.toString());
+  private Set<String> createCorsOriginPattern(CorsConfiguration config) {
+    return config.getAllowedOrigins().stream()
+        .map(this::wildcardToRegex)
+        .collect(Collectors.toSet());
+  }
 
-    // affects only pre flight requests, regular options mapping is still possible
-    filter.setInitParameter(CrossOriginFilter.CHAIN_PREFLIGHT_PARAM, Boolean.FALSE.toString());
+  private String wildcardToRegex(String origin) {
+    if ("*".equals(origin)) {
+      return ".*"; // match any origin
+    }
+    // Split on '*' and quote each literal segment, then join with ".*"
+    String[] parts = origin.split("\\*", -1); // keep empty segments
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < parts.length; i++) {
+      sb.append(Pattern.quote(parts[i]));
+      if (i < parts.length - 1) {
+        sb.append(".*");
+      }
+    }
+    // Optional: anchor to full string so the regex matches the entire Origin header.
+    // Jetty examples typically don't add ^/$, but it's safer to control exact-matching:
+    return "^" + sb.toString() + "$";
   }
 
   @Override
