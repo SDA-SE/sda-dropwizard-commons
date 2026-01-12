@@ -83,7 +83,7 @@ class FilterPriorityTest {
 
     assertThat(metrics)
         .contains(
-            "http_server_requests_seconds_count{exception=\"ForbiddenException\",method=\"GET\",outcome=\"CLIENT_ERROR\",status=\"403\",uri=\"/api/ping\",}");
+            "http_server_requests_seconds_count{exception=\"ForbiddenException\",method=\"GET\",outcome=\"CLIENT_ERROR\",status=\"403\",uri=\"/api/ping\"}");
   }
 
   @Test
@@ -110,6 +110,6 @@ class FilterPriorityTest {
 
     assertThat(metrics)
         .contains(
-            "http_server_requests_seconds_count{exception=\"ForbiddenException\",method=\"GET\",outcome=\"CLIENT_ERROR\",status=\"403\",uri=\"/api/ping\",}");
+            "http_server_requests_seconds_count{exception=\"ForbiddenException\",method=\"GET\",outcome=\"CLIENT_ERROR\",status=\"403\",uri=\"/api/ping\"}");
   }
 }
