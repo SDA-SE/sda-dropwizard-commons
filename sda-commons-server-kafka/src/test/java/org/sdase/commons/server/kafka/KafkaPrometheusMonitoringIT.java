@@ -10,9 +10,11 @@ import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
-import io.micrometer.prometheus.PrometheusMeterRegistry;
-import io.prometheus.client.Collector;
-import io.prometheus.client.CollectorRegistry;
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
+import io.prometheus.metrics.model.registry.PrometheusRegistry;
+import io.prometheus.metrics.model.snapshots.Label;
+import io.prometheus.metrics.model.snapshots.MetricSnapshot;
+import io.prometheus.metrics.model.snapshots.MetricSnapshots;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -81,12 +83,14 @@ class KafkaPrometheusMonitoringIT {
 
     AutocommitMLS<Long, Long> longLongAutocommitMLS =
         new AutocommitMLS<>(
-            record -> resultsLong.add(record.value()), new IgnoreAndProceedErrorHandler<>());
+            consumerRecord -> resultsLong.add(consumerRecord.value()),
+            new IgnoreAndProceedErrorHandler<>());
     createMessageListener(topic, CONSUMER_1, longLongAutocommitMLS);
 
     AutocommitMLS<Long, Long> longLongAutocommitMLS2 =
         new AutocommitMLS<>(
-            record -> resultsLong2.add(record.value()), new IgnoreAndProceedErrorHandler<>());
+            consumerRecord -> resultsLong2.add(consumerRecord.value()),
+            new IgnoreAndProceedErrorHandler<>());
     createMessageListener(topic2, "consumer3", longLongAutocommitMLS2);
 
     MessageProducer<Long, Long> producer = registerProducer(topic, PRODUCER_1);
@@ -109,22 +113,25 @@ class KafkaPrometheusMonitoringIT {
         .atMost(KafkaBundleConsts.N_MAX_WAIT_MS, MILLISECONDS)
         .until(() -> resultsLong2.size() == 2);
 
-    ArrayList<Collector.MetricFamilySamples> collectorMetricSamplesErrorTotal =
-        Collections.list(
-            CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(
-                s -> s.equals("kafka_producer_record_error_total")));
+    MetricSnapshots snapshots = PrometheusRegistry.defaultRegistry.scrape();
 
-    //    assert that metric exists
-    assertThat(collectorMetricSamplesErrorTotal).hasSize(1);
+    MetricSnapshot metricSnapshot =
+        snapshots.stream()
+            .filter(f -> f.getMetadata().getName().equals("kafka_producer_record_error"))
+            .findFirst()
+            .orElseThrow(() -> new AssertionError("Metric kafka_producer_record_error not found"));
 
-    //    assert that samples for both producers are recorded
-    assertThat(collectorMetricSamplesErrorTotal.get(0).samples).hasSize(2);
+    assertThat(metricSnapshot).isNotNull();
 
-    List<Collector.MetricFamilySamples.Sample> samples =
-        collectorMetricSamplesErrorTotal.get(0).samples;
+    assertThat(metricSnapshot.getDataPoints()).hasSize(2);
 
-    List<String> sampleLabelValueNames = samples.stream().map(s -> s.labelValues.get(0)).toList();
-    assertThat(sampleLabelValueNames).contains("producer1", "producer3");
+    List<String> labels =
+        metricSnapshot.getDataPoints().stream()
+            .flatMap(dataPointSnapshot -> dataPointSnapshot.getLabels().stream())
+            .map(Label::getValue)
+            .toList();
+
+    assertThat(labels).contains("producer1", "producer3");
   }
 
   @Test
@@ -136,7 +143,8 @@ class KafkaPrometheusMonitoringIT {
 
     AutocommitMLS<Long, Long> longLongAutocommitMLS =
         new AutocommitMLS<>(
-            record -> resultsLong.add(record.value()), new IgnoreAndProceedErrorHandler<>());
+            consumerRecord -> resultsLong.add(consumerRecord.value()),
+            new IgnoreAndProceedErrorHandler<>());
     createMessageListener(topic, CONSUMER_1, longLongAutocommitMLS);
 
     producer.send(1L, 1L);
@@ -389,7 +397,7 @@ class KafkaPrometheusMonitoringIT {
 
   private void attachPrometheusToMicrometer() {
     PrometheusMeterRegistry meterRegistry =
-        new PrometheusMeterRegistry(key -> null, CollectorRegistry.defaultRegistry, Clock.SYSTEM);
+        new PrometheusMeterRegistry(key -> null, PrometheusRegistry.defaultRegistry, Clock.SYSTEM);
     Metrics.addRegistry(meterRegistry);
   }
 }
