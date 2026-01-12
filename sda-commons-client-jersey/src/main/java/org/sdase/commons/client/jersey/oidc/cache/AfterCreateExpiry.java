@@ -1,9 +1,9 @@
 package org.sdase.commons.client.jersey.oidc.cache;
 
 import com.github.benmanes.caffeine.cache.Expiry;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.sdase.commons.client.jersey.oidc.rest.model.TokenResource;
 
 public class AfterCreateExpiry implements Expiry<String, TokenResource> {
@@ -16,7 +16,7 @@ public class AfterCreateExpiry implements Expiry<String, TokenResource> {
    */
   @Override
   public long expireAfterCreate(
-      @NonNull String key, @NonNull TokenResource value, long currentTime) {
+      @NotNull String key, @NotNull TokenResource value, long currentTime) {
     long expirationTime = Duration.ofSeconds(value.getAccessTokenExpiresInSeconds()).toNanos();
 
     long buffer = Duration.ofSeconds(BUFFER_SECONDS).toNanos();
@@ -30,10 +30,10 @@ public class AfterCreateExpiry implements Expiry<String, TokenResource> {
    */
   @Override
   public long expireAfterUpdate(
-      @NonNull String key,
-      @NonNull TokenResource value,
+      @NotNull String key,
+      @NotNull TokenResource value,
       long currentTime,
-      @NonNegative long currentDuration) {
+      @Min(0) long currentDuration) {
     return currentDuration;
   }
 
@@ -44,10 +44,10 @@ public class AfterCreateExpiry implements Expiry<String, TokenResource> {
    */
   @Override
   public long expireAfterRead(
-      @NonNull String key,
-      @NonNull TokenResource value,
+      @NotNull String key,
+      @NotNull TokenResource value,
       long currentTime,
-      @NonNegative long currentDuration) {
+      @Min(0) long currentDuration) {
     return currentDuration;
   }
 }
