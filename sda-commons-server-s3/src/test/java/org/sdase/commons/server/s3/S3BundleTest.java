@@ -16,7 +16,6 @@ import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -70,13 +69,13 @@ class S3BundleTest {
       List<SpanData> spans = OTEL.getSpans();
       assertThat(spans).extracting(SpanData::getName).contains("S3.GetObject");
 
-      AttributeKey<String> AWS_S3_BUCKET_NAME = stringKey("aws.bucket.name");
+      AttributeKey<String> awsS3BucketName = stringKey("aws.s3.bucket");
 
       assertThat(
               spans.stream()
                   .map(SpanData::getAttributes)
-                  .map(attributes -> attributes.get(AWS_S3_BUCKET_NAME))
-                  .collect(Collectors.toList()))
+                  .map(attributes -> attributes.get(awsS3BucketName))
+                  .toList())
           .isNotEmpty()
           .contains("bucket");
     }
