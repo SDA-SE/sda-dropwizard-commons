@@ -107,7 +107,7 @@ dependencies {
     api "org.objenesis:objenesis:3.4"
 
     // sda-commons-server-hibernate
-    api "org.postgresql:postgresql:42.7.8"
+    api "org.postgresql:postgresql:42.7.9"
     api "org.flywaydb:flyway-core:${flywayVersion}"
     api "org.flywaydb:flyway-database-postgresql:${flywayVersion}"
     // conflict between Flyway and tuprolog via DB Rider
