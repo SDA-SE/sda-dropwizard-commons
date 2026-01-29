@@ -19,7 +19,10 @@ public class SdaPlatformConfiguration extends Configuration {
   private CorsConfiguration cors = new CorsConfiguration();
 
   /** Configuration of Prometheus */
-  private PrometheusConfiguration prometheus = new PrometheusConfiguration();
+  // setPrometheus is called if any configuration is set in config.yml, that overwrites the defaults
+  // then
+  private PrometheusConfiguration prometheus =
+      new PrometheusConfiguration().withDefaultConfiguration();
 
   public AuthConfig getAuth() {
     return auth;

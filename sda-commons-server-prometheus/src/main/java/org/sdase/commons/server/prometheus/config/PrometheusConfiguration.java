@@ -44,4 +44,10 @@ public class PrometheusConfiguration {
     this.requestSlos = requestSlos;
     return this;
   }
+
+  public PrometheusConfiguration withDefaultConfiguration() {
+    this.requestPercentiles = List.of(0.25, 0.5, 0.75, 0.9, 0.95, 0.99);
+    this.requestDigitsOfPrecision = 3;
+    return this;
+  }
 }

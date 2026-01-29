@@ -463,14 +463,8 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
     }
 
     private ConfigurationProviderBuilder() {
-      this.prometheusConfigurationProvider = c -> createDefaultPrometheusConfiguration();
-    }
-
-    private PrometheusConfiguration createDefaultPrometheusConfiguration() {
-      PrometheusConfiguration configuration = new PrometheusConfiguration();
-      configuration.setRequestPercentiles(List.of(0.25, 0.5, 0.75, 0.9, 0.95, 0.99));
-      configuration.setRequestDigitsOfPrecision(3);
-      return configuration;
+      this.prometheusConfigurationProvider =
+          c -> new PrometheusConfiguration().withDefaultConfiguration();
     }
 
     @Override
