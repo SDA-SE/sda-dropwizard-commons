@@ -29,7 +29,7 @@ jobs:
       # always run all tests to avoid having different amounts of tests.
       fail-fast: false
       matrix:
-        java_version: ['23']
+        java_version: ['25']
         os: ['ubuntu-22.04']
 
     timeout-minutes: 60
