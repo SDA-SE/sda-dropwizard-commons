@@ -6,7 +6,10 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-shared-certificates')
 
-  api 'org.springframework.data:spring-data-mongodb'
+  api("org.slf4j:jcl-over-slf4j") //added, so that the exclude in l11 can't be breaking
+  api 'org.springframework.data:spring-data-mongodb', {
+    exclude group: "org.springframework", module: "spring-jcl" //conflict with jcl-over-slf4j
+  }
   api 'org.mongodb:mongodb-driver-core'
   api 'org.mongodb:mongodb-driver-sync'
   api "io.opentelemetry:opentelemetry-api"
