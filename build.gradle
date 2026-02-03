@@ -158,11 +158,26 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
 
   // activate dependency locking for most configurations
   var ignoredConfigurationPatternsForDependencyLocking = Set.of("test.*")
-  configurations.matching { configuration ->
-    !ignoredConfigurationPatternsForDependencyLocking.any { configuration.name.matches(it) }
-  }.each {configuration ->
-    // println "Activating dependency locking for '${it.name}:${configuration.name}'"
-    configuration.resolutionStrategy.activateDependencyLocking()
+
+  configurations.configureEach { conf ->
+    conf.exclude group: 'javax.servlet', module: 'javax.servlet-api' // prefer jakarta.servlet-api
+    conf.exclude group: 'org.glassfish.hk2.external', module: 'jakarta.inject' // prefer jakarta.inject:jakarta.inject-api
+    conf.exclude group: 'commons-logging', module: 'commons-logging' // prefer jcl-over-slf4j
+    conf.exclude group: 'org.eclipse.jetty.toolchain', module: 'jetty-jakarta-servlet-api' // prefer jakarta.servlet:jakarta-servlet-api
+    conf.exclude group: 'com.sun.activation', module: 'jakarta.activation'  // prefer jakarta.servlet:jakarta-activation
+    conf.exclude group: 'org.apache.httpcomponents', module: 'httpclient' // prefer org.apache.httpcomponents.client5
+
+    if (conf.canBeResolved) {
+      def ignoreLocking = ignoredConfigurationPatternsForDependencyLocking.any { p -> (conf.name ==~ p) }
+      if (!ignoreLocking) {
+        conf.resolutionStrategy.activateDependencyLocking()
+      }
+
+      // Workaround for https://github.com/diffplug/spotless/issues/1965.
+      if (!conf.name.startsWith("spotless")) {
+        conf.resolutionStrategy.failOnVersionConflict()
+      }
+    }
   }
 
   java {
@@ -192,27 +207,8 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
     }
   }
 
-  configurations {
-    all*.exclude group: 'javax.servlet', module: 'javax.servlet-api' // prefer jakarta.servlet-api
-    all*.exclude group: 'org.glassfish.hk2.external', module: 'jakarta.inject' // prefer jakarta.inject:jakarta.inject-api
-    all*.exclude group: 'commons-logging', module: 'commons-logging' // prefer jcl-over-slf4j
-    all*. exclude group: 'org.eclipse.jetty.toolchain', module: 'jetty-jakarta-servlet-api' // prefer jakarta.servlet:jakarta-servlet-api
-    all*. exclude group: 'com.sun.activation', module: 'jakarta.activation' // prefer jakarta.servlet:jakarta-activation
-    all*. exclude group : 'org.apache.httpcomponents', module: 'httpclient' // prefer org.apache.httpcomponents.client5
-  }
-
   test {
     useJUnitPlatform()
-  }
-
-  configurations.configureEach {
-    if (it.name.startsWith("spotless")) {
-      // Workaround for https://github.com/diffplug/spotless/issues/1965.
-    } else {
-      it.resolutionStrategy {
-        failOnVersionConflict()
-      }
-    }
   }
 
   dependencies {
