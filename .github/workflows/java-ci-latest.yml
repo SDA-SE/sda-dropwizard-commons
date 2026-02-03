@@ -19,8 +19,6 @@ on:
   push:
     branches:
       - main
-  # FIXME temporary build on PR
-  pull_request:
 
 jobs:
   # build library
