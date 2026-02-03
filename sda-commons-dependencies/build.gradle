@@ -32,6 +32,7 @@ ext {
   bouncyCastleVersion = '1.83'
   victoolsVersion = '4.38.0'
   flywayVersion = '11.20.3'
+  logbackVersion = "1.5.27"
 }
 
 dependencies {
@@ -227,7 +228,8 @@ dependencies {
     api 'org.springframework:spring-core:6.2.12'
 
     //Fixes CVE-2025-11226, future updates of Dropwizard have to be checked if this is still necessary
-    api 'ch.qos.logback:logback-core:1.5.27'
+    api "ch.qos.logback:logback-core:$logbackVersion"
+    api "ch.qos.logback:logback-classic:$logbackVersion"
 
     //Fixes CVE-2024-29371, Kafka 3.9.1 still uses 0.9.4; can be removed at a future update of Kafka
     api 'org.bitbucket.b_c:jose4j:0.9.6'
