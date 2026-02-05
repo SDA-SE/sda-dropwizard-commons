@@ -18,7 +18,7 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
 
   @Override
   public Response toResponse(ApiException e) {
-    LOGGER.error(ERROR_MESSAGE, e);
+    LOGGER.info(ERROR_MESSAGE, e);
     return Response.status(e.getHttpCode())
         .type(MediaType.APPLICATION_JSON)
         .entity(e.getDTO())
