@@ -133,7 +133,7 @@ subprojects {
           developer {
             id = 'maintainer'
             name = 'SDA SE Open Industry Solutions Maintainer'
-            email = 'sda-dropwizard-commons@sda.se'
+            email = 'oss@sda-se.com'
           }
         }
 

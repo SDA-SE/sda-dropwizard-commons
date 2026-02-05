@@ -9,7 +9,7 @@ In case you identified a security related issue with severity of _low_ to _mediu
 
 ## Security related bugs with severity _high_ or _critical_
 
-In case you identified a security related issue with severity of _high_ or _critical_, please disclose information about the issue non public via email to `opensource-security@sda.se`.
+In case you identified a security related issue with severity of _high_ or _critical_, please disclose information about the issue non public via email to `oss@sda-se.com`.
 
 We encourage researchers to include a Proof-of-Concept, supported by screenshots or videos.
 For each given security related issue with severity _high_ or _critical_ (based on SDA SE own assessment), we will respond within one week.
