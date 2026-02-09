@@ -60,7 +60,7 @@ dependencies {
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
-  api enforcedPlatform("io.netty:netty-bom:4.2.9.Final"), {
+  api enforcedPlatform("io.netty:netty-bom:4.2.10.Final"), {
     because "various CVEs in earlier versions"
   }
   api enforcedPlatform("io.prometheus:simpleclient_bom:${prometheusVersion}")
