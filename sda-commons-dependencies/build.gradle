@@ -221,7 +221,7 @@ dependencies {
     api "org.scala-lang:scala-reflect:$scalaVersion"
     api "com.typesafe.scala-logging:scala-logging_2.13:3.9.6"
 
-    api "jakarta.xml.bind:jakarta.xml.bind-api:4.0.4"
+    api "jakarta.xml.bind:jakarta.xml.bind-api:4.0.5"
 
     //spring-data-mongodb can't be updated without breaking changes.
     //Instead we can add the spring-core dependency to fix spring related CVEs.
