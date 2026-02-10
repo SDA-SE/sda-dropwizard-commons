@@ -2,6 +2,7 @@ buildscript {
   repositories {
     maven { url = "https://plugins.gradle.org/m2/" }
     mavenCentral()
+    mavenLocal()
   }
 }
 
@@ -23,6 +24,7 @@ tasks.cyclonedxBom {
 
 repositories {
   mavenCentral()
+  mavenLocal()
 }
 
 group = 'org.sdase.commons'
@@ -72,6 +74,7 @@ subprojects {
 
   repositories {
     mavenCentral()
+    mavenLocal()
   }
 
   group = rootProject.group

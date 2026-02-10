@@ -2,6 +2,7 @@ package org.sdase.commons.server.prometheus;
 
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
+import com.codahale.metrics.MetricFilter;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.AdminEnvironment;
@@ -10,8 +11,6 @@ import io.dropwizard.core.setup.Environment;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Metrics;
-import io.micrometer.core.instrument.binder.jersey.server.DefaultJerseyTagsProvider;
-import io.micrometer.core.instrument.binder.jersey.server.MetricsApplicationEventListener;
 import io.micrometer.core.instrument.binder.jetty.JettyConnectionMetrics;
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
@@ -20,18 +19,19 @@ import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
-import io.micrometer.prometheus.PrometheusMeterRegistry;
-import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.dropwizard.DropwizardExports;
-import io.prometheus.client.dropwizard.samplebuilder.CustomMappingSampleBuilder;
-import io.prometheus.client.dropwizard.samplebuilder.MapperConfig;
-import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
-import io.prometheus.client.servlet.jakarta.exporter.MetricsServlet;
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
+import io.prometheus.metrics.exporter.servlet.jakarta.PrometheusMetricsServlet;
+import io.prometheus.metrics.instrumentation.dropwizard.DropwizardExports;
+import io.prometheus.metrics.instrumentation.dropwizard5.labels.CustomLabelMapper;
+import io.prometheus.metrics.instrumentation.dropwizard5.labels.MapperConfig;
+import io.prometheus.metrics.model.registry.PrometheusRegistry;
 import jakarta.servlet.ServletRegistration;
 import jakarta.validation.constraints.NotNull;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import org.glassfish.jersey.micrometer.server.DefaultJerseyTagsProvider;
+import org.glassfish.jersey.micrometer.server.MetricsApplicationEventListener;
 import org.sdase.commons.server.prometheus.config.PrometheusConfiguration;
 import org.sdase.commons.server.prometheus.health.DropwizardHealthCheckMeters;
 import org.slf4j.Logger;
@@ -148,7 +148,7 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
    */
   private void createPrometheusRegistry(Environment environment) {
     PrometheusMeterRegistry meterRegistry =
-        new PrometheusMeterRegistry(key -> null, CollectorRegistry.defaultRegistry, Clock.SYSTEM);
+        new PrometheusMeterRegistry(key -> null, PrometheusRegistry.defaultRegistry, Clock.SYSTEM);
 
     Metrics.addRegistry(meterRegistry);
 
@@ -198,12 +198,13 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
     // to Prometheus metrics.
     List<MapperConfig> mappers = createMetricsMapperConfigs();
 
-    SampleBuilder sampleBuilder = new CustomMappingSampleBuilder(mappers);
+    CustomLabelMapper mapper = new CustomLabelMapper(mappers);
+    MetricFilter metricFilter = MetricFilter.ALL;
     DropwizardExports dropwizardExports =
-        new DropwizardExports(environment.metrics(), sampleBuilder);
-    CollectorRegistry.defaultRegistry.register(dropwizardExports);
+        new DropwizardExports(environment.metrics(), metricFilter, mapper);
+    PrometheusRegistry.defaultRegistry.register(dropwizardExports);
 
-    environment.lifecycle().manage(onShutdown(CollectorRegistry.defaultRegistry::clear));
+    environment.lifecycle().manage(onShutdown(PrometheusRegistry.defaultRegistry::clear));
   }
 
   private List<MapperConfig> createMetricsMapperConfigs() {
@@ -390,7 +391,8 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
 
   private void registerMetricsServlet(AdminEnvironment environment) {
     // Prometheus Servlet registration
-    ServletRegistration.Dynamic dynamic = environment.addServlet("metrics", MetricsServlet.class);
+    ServletRegistration.Dynamic dynamic =
+        environment.addServlet("metrics", PrometheusMetricsServlet.class);
     dynamic.addMapping(METRICS_SERVLET_URL);
     LOG.info("Registered Prometheus metrics servlet at '{}'", METRICS_SERVLET_URL);
   }
