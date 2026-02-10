@@ -58,10 +58,10 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
   private static final String METRICS_SERVLET_URL = "/metrics/prometheus"; // NOSONAR
 
   private static final Logger LOG = LoggerFactory.getLogger(PrometheusBundle.class);
-  public static final String APACHE_HTTP_CLIENT_CONNECTIONS = "apache_http_client_connections_${1}";
+  public static final String APACHE_HTTP_CLIENT_CONNECTIONS = "apache_http_client_connections";
   public static final String MANAGER = "manager";
   public static final String APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS =
-      "apache_http_client_request_${1}_duration_seconds";
+      "apache_http_client_request_duration_seconds";
 
   private static final String DEPRECATED = "deprecated";
   private final Function<P, PrometheusConfiguration> configurationProvider;
@@ -209,8 +209,7 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
 
   private List<MapperConfig> createMetricsMapperConfigs() {
     List<MapperConfig> mappers = new ArrayList<>();
-    mappers.add(
-        createMapperConfig("ch.qos.logback.core.*.*", "logback_appender_${1}", "name", "level"));
+    mappers.add(createMapperConfig("ch.qos.logback.core.*.*", "logback_appender", "name", "level"));
     mappers.add(createMapperConfig("jvm.gc.*.count", "jvm_gc_total", "step", DEPRECATED));
     mappers.add(createMapperConfig("jvm.gc.*.time", "jvm_gc_seconds", "step", DEPRECATED));
     mappers.add(
@@ -240,84 +239,84 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.available-connections",
-            APACHE_HTTP_CLIENT_CONNECTIONS + "_available_connections",
+            APACHE_HTTP_CLIENT_CONNECTIONS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "available"))); // NOSONAR
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.leased-connections",
-            APACHE_HTTP_CLIENT_CONNECTIONS + "_leased_connections",
+            APACHE_HTTP_CLIENT_CONNECTIONS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "leased")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.max-connections",
-            APACHE_HTTP_CLIENT_CONNECTIONS + "_max_connections",
+            APACHE_HTTP_CLIENT_CONNECTIONS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "max")));
     mappers.add(
         createMapperConfig(
             "org.apache.http.conn.*.*.pending-connections",
-            APACHE_HTTP_CLIENT_CONNECTIONS + "_pending_connections",
+            APACHE_HTTP_CLIENT_CONNECTIONS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("state", "pending")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.get-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_get_requests",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "get"))); // NOSONAR
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.post-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_post_requests",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "post")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.put-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_put_requests",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "put")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.delete-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_delete_requests",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "delete")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.head-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_head_requests",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "head")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.connect-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_connect_requests",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "connect")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.options-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_options_requests",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "options")));
     mappers.add(
         createMapperConfig(
             "org.apache.hc.client5.http.classic.*.*.trace-requests",
-            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS + "_trace_requests",
+            APACHE_HTTP_CLIENT_REQUEST_DURATION_SECONDS,
             MANAGER,
             "name",
             new AbstractMap.SimpleImmutableEntry<>("method", "trace")));
@@ -327,41 +326,41 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
     mappers.add(
         createMapperConfig(
             "org.eclipse.jetty.util.thread.*.*.jobs",
-            "jetty_util_thread_${1}_jobs_count",
+            "jetty_util_thread_jobs_count",
             "type",
             "pool"));
     mappers.add(
         createMapperConfig(
             "org.eclipse.jetty.util.thread.*.*.size",
-            "jetty_util_thread_${1}_size_count",
+            "jetty_util_thread_size_count",
             "type",
             "pool"));
     mappers.add(
         createMapperConfig(
             "org.eclipse.jetty.util.thread.*.*.utilization",
-            "jetty_util_thread_${1}_utilization_ratio",
+            "jetty_util_thread_utilization_ratio",
             "type",
             "pool"));
     mappers.add(
         createMapperConfig(
             "org.eclipse.jetty.util.thread.*.*.utilization-max",
-            "jetty_util_thread_${1}_max_utilization_ratio",
+            "jetty_util_thread_max_utilization_ratio",
             "type",
             "pool"));
     mappers.add(
         createMapperConfig(
             "io.dropwizard.jetty.*.active-dispatches",
-            "jetty_handler_active_${1}_dispatches_total",
+            "jetty_handler_active_dispatches_total",
             "handler")); // NOSONAR
     mappers.add(
         createMapperConfig(
             "io.dropwizard.jetty.*.active-requests",
-            "jetty_handler_active_${1}_requests_total",
+            "jetty_handler_active_requests_total",
             "handler"));
     mappers.add(
         createMapperConfig(
             "io.dropwizard.jetty.*.active-suspended",
-            "jetty_handler_active_${1}_suspended_total",
+            "jetty_handler_active_suspended_total",
             "handler"));
     mappers.add(
         createMapperConfig(
