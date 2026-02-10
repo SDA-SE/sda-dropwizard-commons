@@ -163,7 +163,7 @@ class PrometheusBundleTest {
 
     assertThat(metrics)
         .contains(
-            "apache_http_client_request_myClient_duration_seconds_get_requests{manager=\"HttpClient\",method=\"get\",name=\"myClient\",quantile=\"0.5\"}");
+            "apache_http_client_request_duration_seconds{manager=\"HttpClient\",method=\"get\",name=\"myClient\",quantile=\"0.5\"}");
   }
 
   @Test
