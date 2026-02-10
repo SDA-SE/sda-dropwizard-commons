@@ -10,7 +10,7 @@ ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.5.1'
   dropwizardVersion = '5.0.0'
-  prometheusVersion = '1.4.3'
+  prometheusVersion = '1.5.0-SNAPSHOT'
   micrometerVersion = '1.16.2'
   swaggerCoreV3Version = '2.2.42'
   weldVersion = '6.0.3.Final'
@@ -116,7 +116,7 @@ dependencies {
     api "it.unibo.tuprolog:parser-theory-jvm:$tuprologVersion"
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
-    api 'org.springframework.data:spring-data-mongodb:5.0.1'
+    api 'org.springframework.data:spring-data-mongodb:5.0.2'
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryAlpha2Version}"
     // check if commons-compress management is still needed after flapdoodle upgrade
