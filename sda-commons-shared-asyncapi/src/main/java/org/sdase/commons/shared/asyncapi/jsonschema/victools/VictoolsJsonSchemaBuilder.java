@@ -52,7 +52,10 @@ public class VictoolsJsonSchemaBuilder implements JsonSchemaBuilder {
             .with(new SwaggerExampleModule())
             .with(new NotBlankModule());
     // see https://github.com/victools/jsonschema-generator/issues/125#issuecomment-657014858
-    configBuilder.forTypesInGeneral().withPropertySorter((o1, o2) -> 0);
+    configBuilder
+        .forTypesInGeneral()
+        .withPropertySorter((o1, o2) -> 0)
+        .withDefinitionNamingStrategy(new DefaultSchemaDefinitionNamingStrategy());
 
     SchemaGeneratorConfig config = configBuilder.build();
     return new VictoolsJsonSchemaBuilder(config);

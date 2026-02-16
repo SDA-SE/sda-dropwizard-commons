@@ -47,7 +47,7 @@ public abstract class AbstractJsonSchemaBuilderTest {
   protected static final String EXPECTED_SCHEMA_LOCATION =
       "src/test/resources/JsonSchemaBuilderTest";
 
-  final JsonSchemaBuilder jsonSchemaBuilder;
+  protected final JsonSchemaBuilder jsonSchemaBuilder;
   final String testClass;
 
   protected AbstractJsonSchemaBuilderTest(JsonSchemaBuilder jsonSchemaBuilder) {
