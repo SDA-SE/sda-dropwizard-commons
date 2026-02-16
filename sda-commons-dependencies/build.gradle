@@ -98,7 +98,7 @@ dependencies {
     api "io.swagger.core.v3:swagger-models-jakarta:${swaggerCoreV3Version}"
 
     // sda-commons-server-auth
-    api "com.auth0:java-jwt:4.5.0"
+    api "com.auth0:java-jwt:4.5.1"
     api "org.bouncycastle:bcpkix-jdk18on:$bouncyCastleVersion"
     api "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion"
 
