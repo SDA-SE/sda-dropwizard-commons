@@ -30,7 +30,6 @@ ext {
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.83'
   victoolsVersion = '4.38.0'
-  wiremockVersion = '3.13.1'
   flywayVersion = '11.20.3'
   logbackVersion = "1.5.32"
 }
@@ -83,7 +82,7 @@ dependencies {
 
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
-    api "org.wiremock:wiremock-jetty12:${wiremockVersion}"
+    api "org.wiremock:wiremock-jetty12:3.13.2"
 
     api "net.minidev:json-smart:2.6.0", {
       because 'conflict between json-path 2.7.0 (2.4.7) and wiremock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
