@@ -149,7 +149,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     return AwsSdkTelemetry.builder(currentTelemetryInstance)
         .setCaptureExperimentalSpanAttributes(true)
         .build()
-        .newExecutionInterceptor();
+        .createExecutionInterceptor();
   }
 
   private Signer createSigner(S3Configuration s3Configuration) {
