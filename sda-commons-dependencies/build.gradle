@@ -116,7 +116,7 @@ dependencies {
     api "it.unibo.tuprolog:parser-theory-jvm:$tuprologVersion"
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
-    api 'org.springframework.data:spring-data-mongodb:5.0.1'
+    api 'org.springframework.data:spring-data-mongodb:5.0.3'
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryAlpha2Version}"
     // check if commons-compress management is still needed after flapdoodle upgrade
@@ -138,6 +138,7 @@ dependencies {
 
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
+    api "io.micrometer:micrometer-observation:$micrometerVersion"
 
     api "org.glassfish.jersey.ext:jersey-micrometer:3.1.11"
 
