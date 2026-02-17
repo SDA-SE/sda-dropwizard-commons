@@ -52,7 +52,9 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
         new HttpClientBuilder(environment) {
           @Override
           protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder createBuilder() {
-            return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
+            return ApacheHttpClientTelemetry.builder(openTelemetry)
+                .build()
+                .createHttpClientBuilder();
           }
         });
     this.objectMapper = environment.getObjectMapper();
