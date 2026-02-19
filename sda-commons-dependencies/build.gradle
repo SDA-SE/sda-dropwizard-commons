@@ -11,7 +11,7 @@ ext {
   apacheHttpClient5Version = '5.5.1'
   apacheHttpCore5Version = '5.4.2'
   // Check on upgrade, if org.apache.commons:commons-lang3 enforcement below (L48 + L73) is still needed!
-  dropwizardVersion = '5.0.0'
+  dropwizardVersion = '5.0.1'
   prometheusVersion = '1.5.0'
   micrometerVersion = '1.16.3'
   swaggerCoreV3Version = '2.2.43'
