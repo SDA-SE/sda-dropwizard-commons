@@ -279,6 +279,25 @@ class PrometheusBundleTest {
     assertThat(jettyList).hasSizeGreaterThanOrEqualTo(12);
   }
 
+  @Test
+  void testDropwizardTimerAnnotationMetricsAvailableAndNotThrowingException() {
+    prepareResourceRequest().get(String.class);
+
+    String metrics = readMetrics();
+    String count =
+        extractSpecificMetric(
+            metrics,
+            "org_sdase_commons_server_prometheus_test_PrometheusTestApplication_pingpongTimer_count",
+            null);
+    assertThat(extractValue(count)).isGreaterThanOrEqualTo(1);
+    String quantile =
+        extractSpecificMetric(
+            metrics,
+            "org_sdase_commons_server_prometheus_test_PrometheusTestApplication_pingpongTimer",
+            "quantile=\"0.5\"");
+    assertThat(quantile).isNotNull();
+  }
+
   private Invocation.Builder prepareResourceRequest() {
     return DW.client().target(resourceUri).path("ping").request();
   }
