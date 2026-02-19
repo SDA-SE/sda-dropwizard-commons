@@ -16,7 +16,7 @@ public class ClientBuilderUtil {
     return new HttpClientBuilder(environment) {
       @Override
       protected org.apache.hc.client5.http.impl.classic.HttpClientBuilder createBuilder() {
-        return ApacheHttpClientTelemetry.builder(openTelemetry).build().newHttpClientBuilder();
+        return ApacheHttpClientTelemetry.builder(openTelemetry).build().createHttpClientBuilder();
       }
     };
   }
