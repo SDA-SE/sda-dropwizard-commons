@@ -3,6 +3,7 @@ package org.sdase.commons.server.prometheus;
 import static org.sdase.commons.server.dropwizard.lifecycle.ManagedShutdownListener.onShutdown;
 
 import com.codahale.metrics.MetricFilter;
+import com.codahale.metrics.Timer;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.AdminEnvironment;
@@ -199,7 +200,10 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
     List<MapperConfig> mappers = createMetricsMapperConfigs();
 
     CustomLabelMapper mapper = new CustomLabelMapper(mappers);
-    MetricFilter metricFilter = MetricFilter.ALL;
+    // see https://github.com/prometheus/client_java/issues/1321#issuecomment-2792675277
+    // @Timer creates a .total metric which prometheus can't work with correctly
+    MetricFilter metricFilter =
+        (name, metric) -> !(metric instanceof Timer && name.matches(".*[._]total"));
     DropwizardExports dropwizardExports =
         new DropwizardExports(environment.metrics(), metricFilter, mapper);
     PrometheusRegistry.defaultRegistry.register(dropwizardExports);

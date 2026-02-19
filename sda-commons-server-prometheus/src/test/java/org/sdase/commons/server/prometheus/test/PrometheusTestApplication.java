@@ -1,5 +1,6 @@
 package org.sdase.commons.server.prometheus.test;
 
+import com.codahale.metrics.annotation.Timed;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
@@ -71,6 +72,7 @@ public class PrometheusTestApplication extends Application<Configuration> {
 
   @GET
   @Path("/ping")
+  @Timed(name = "pingpongTimer")
   public Response pingResource() {
     return Response.ok("pong").build();
   }
