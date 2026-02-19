@@ -25,7 +25,7 @@ ext {
   kotlinxCoroutinesVersion = '1.10.2'
   resilience4jVersion = '2.2.0'
   openTelemetryVersion = '1.41.0'
-  openTelemetryAlpha2Version = '2.21.0-alpha'
+  openTelemetryAlpha2Version = '2.25.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '5.6.3'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
