@@ -182,7 +182,7 @@ dependencies {
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.semconv:opentelemetry-semconv:1.39.0"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.22.0"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.25.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator:${openTelemetryAlpha2Version}"
 
     // Kafka
