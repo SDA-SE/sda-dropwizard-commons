@@ -40,7 +40,6 @@ dependencies {
   // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion")
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
-  api enforcedPlatform("org.eclipse.jetty.ee10:jetty-ee10-bom:12.1.1")
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'jakarta.xml.bind', module: 'jakarta.xml.bind-api'
