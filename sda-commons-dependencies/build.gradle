@@ -9,6 +9,7 @@ javaPlatform {
 ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.5.1'
+  apacheHttpCore5Version = '5.4.1'
   // Check on upgrade, if org.apache.commons:commons-lang3 enforcement below (L48 + L73) is still needed!
   dropwizardVersion = '4.0.17'
   prometheusVersion = '0.16.0'
@@ -70,6 +71,8 @@ dependencies {
 
   constraints {
     // overall conflicts
+    api "org.apache.httpcomponents.core5:httpcore5:${apacheHttpCore5Version}"
+    api "org.apache.httpcomponents.core5:httpcore5-h2:${apacheHttpCore5Version}"
     api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
     api "io.github.classgraph:classgraph:4.8.184"
