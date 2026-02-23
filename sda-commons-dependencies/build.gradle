@@ -86,17 +86,11 @@ dependencies {
       because "vulnerability CVE-2022-1471 in 1.33 and below"
     }
 
-    api 'commons-beanutils:commons-beanutils:1.11.0', {
-      because "vulnerability CVE-2025-48734 in versions < 1.11.0"
-    }
-
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
     // sda-commons-shared-wiremock-testing
     api "org.wiremock:wiremock:3.13.2"
-    api "net.minidev:json-smart:2.6.0", {
-      because 'conflict between json-path 2.7.0 (2.4.7) and wirmock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
-    }
+    api "net.minidev:json-smart:2.6.0"
 
     // sda-commons-shared-asyncapi
     api "io.swagger.core.v3:swagger-models-jakarta:${swaggerCoreV3Version}"
@@ -136,9 +130,6 @@ dependencies {
     api "org.mongodb:mongodb-driver-core:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-sync:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-legacy:${mongoDbDriverVersion}"
-
-    // sda-commons-server-openapi
-    api "com.jayway.jsonpath:json-path:2.10.0"
 
     // sda-commons-server-openapi
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9" // TODO Needed for OpenAPI?
@@ -234,8 +225,5 @@ dependencies {
     //Fixes CVE-2025-11226, future updates of Dropwizard have to be checked if this is still necessary
     api "ch.qos.logback:logback-core:$logbackVersion"
     api "ch.qos.logback:logback-classic:$logbackVersion"
-
-    //Fixes CVE-2024-29371, Kafka 3.9.1 still uses 0.9.4; can be removed at a future update of Kafka
-    api 'org.bitbucket.b_c:jose4j:0.9.6'
   }
 }
