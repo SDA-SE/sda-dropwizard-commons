@@ -9,6 +9,7 @@ javaPlatform {
 ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.5.1'
+  apacheHttpCore5Version = '5.4.1'
   dropwizardVersion = '5.0.1'
   prometheusVersion = '1.5.0'
   micrometerVersion = '1.16.3'
@@ -66,9 +67,11 @@ dependencies {
 
   constraints {
     // overall conflicts
+    // Keep Apache HttpCore/HttpClient aligned and validate upgrades in a downstream service
+    api "org.apache.httpcomponents.core5:httpcore5:${apacheHttpCore5Version}"
+    api "org.apache.httpcomponents.core5:httpcore5-h2:${apacheHttpCore5Version}"
     api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
-    api "org.apache.httpcomponents.core5:httpcore5:5.4.1"
     api "io.github.classgraph:classgraph:4.8.184"
 
     api "org.yaml:snakeyaml:2.3", {
