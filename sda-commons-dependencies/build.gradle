@@ -90,9 +90,7 @@ dependencies {
 
     // sda-commons-shared-wiremock-testing
     api "org.wiremock:wiremock:3.13.2"
-    api "net.minidev:json-smart:2.6.0", {
-      because 'conflict between json-path 2.7.0 (2.4.7) and wirmock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
-    }
+    api "net.minidev:json-smart:2.6.0"
 
     // sda-commons-shared-asyncapi
     api "io.swagger.core.v3:swagger-models-jakarta:${swaggerCoreV3Version}"
@@ -132,9 +130,6 @@ dependencies {
     api "org.mongodb:mongodb-driver-core:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-sync:${mongoDbDriverVersion}"
     api "org.mongodb:mongodb-driver-legacy:${mongoDbDriverVersion}"
-
-    // sda-commons-server-openapi
-    api "com.jayway.jsonpath:json-path:3.0.0"
 
     // sda-commons-server-openapi
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9" // TODO Needed for OpenAPI?
