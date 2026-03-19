@@ -49,6 +49,8 @@ kafka:
     async:
       topicMissingRetryMs: 40000
       maxRetries: 3
+      pollIntervalFactorOnError: 1
+
 
   topics:
     topicId1:

@@ -1,5 +1,6 @@
 package org.sdase.commons.server.kafka.consumer;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -15,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.ProcessingErrorRetryException;
 import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.RetryProcessingErrorMLS;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,7 +59,8 @@ class RetryProcessingErrorStrategyTest {
 
     // we fail in first call
     doThrow(exception).when(messageHandler).handle(any());
-    strategy.processRecords(records, consumer);
+    assertThrows(
+        ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
     verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(0));
     verify(intermediateErrorHandler)
@@ -82,7 +85,8 @@ class RetryProcessingErrorStrategyTest {
 
     // we fail in the first call
     doThrow(exception).when(messageHandler).handle(any());
-    strategy.processRecords(records, consumer);
+    assertThrows(
+        ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
     verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(0));
     verify(intermediateErrorHandler)
@@ -91,7 +95,8 @@ class RetryProcessingErrorStrategyTest {
     verifyNoInteractions(finalErrorHandler);
 
     // we fail in second call
-    strategy.processRecords(records, consumer);
+    assertThrows(
+        ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
     verify(messageHandler, times(2)).handle(records.records(TOPIC_PARTITION).get(0));
     verify(intermediateErrorHandler, times(2))
@@ -100,7 +105,8 @@ class RetryProcessingErrorStrategyTest {
     verifyNoInteractions(finalErrorHandler);
 
     // and we fail in the third call
-    strategy.processRecords(records, consumer);
+    assertThrows(
+        ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
     verify(messageHandler, times(3)).handle(records.records(TOPIC_PARTITION).get(0));
     verify(intermediateErrorHandler, times(3))
@@ -108,7 +114,8 @@ class RetryProcessingErrorStrategyTest {
     verifyNoInteractions(finalErrorHandler);
 
     // and we fail in the fourth call
-    strategy.processRecords(records, consumer);
+    assertThrows(
+        ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
     verify(messageHandler, times(4)).handle(records.records(TOPIC_PARTITION).get(0));
     verify(intermediateErrorHandler, times(4))
@@ -116,7 +123,8 @@ class RetryProcessingErrorStrategyTest {
     verifyNoInteractions(finalErrorHandler);
 
     // and we fail in the fifth call
-    strategy.processRecords(records, consumer);
+    assertThrows(
+        ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
     verify(messageHandler, times(5)).handle(records.records(TOPIC_PARTITION).get(0));
     verify(intermediateErrorHandler, times(5))
@@ -124,7 +132,8 @@ class RetryProcessingErrorStrategyTest {
     verifyNoInteractions(finalErrorHandler);
 
     // and we fail in the (last) sixth call
-    strategy.processRecords(records, consumer);
+    assertThrows(
+        ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
     verify(messageHandler, times(6)).handle(records.records(TOPIC_PARTITION).get(0));
     verify(intermediateErrorHandler, times(5))
