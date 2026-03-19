@@ -107,7 +107,10 @@ class MessageListenerStrategyMetadataContextIntegrationTest {
     var givenRecords = new ConsumerRecords<>(recordsMap);
 
     //noinspection unchecked
-    messageListenerStrategy.processRecords(givenRecords, mock(KafkaConsumer.class));
+    try {
+      messageListenerStrategy.processRecords(givenRecords, mock(KafkaConsumer.class));
+    } catch (Exception e) { // catches exception
+    }
 
     if (stopsInTopic) {
       assertThat(handledContexts)

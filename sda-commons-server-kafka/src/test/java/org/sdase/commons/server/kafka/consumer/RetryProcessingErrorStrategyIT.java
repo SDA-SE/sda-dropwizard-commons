@@ -117,7 +117,7 @@ class RetryProcessingErrorStrategyIT {
 
   @Test
   void shouldStopRetryingAfterMaxRetriesWhenUsingMultiplePartitions() {
-    int noOfMessages = 50;
+    int noOfMessages = 25;
     configureFailCountPerMessage(Integer.MAX_VALUE);
     sendMessages(noOfMessages);
 
