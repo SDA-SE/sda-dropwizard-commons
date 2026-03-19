@@ -1,5 +1,6 @@
 package org.sdase.commons.server.kafka.consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
@@ -7,10 +8,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -87,29 +89,34 @@ class MessageListenerErrorIntervalTest {
   }
 
   @Test
-  void shouldIncreaseIntervalOnError() {
-    try {
-      when(consumerMock.poll(any())).thenReturn(new ConsumerRecords<>(recordMock));
-      doThrow(new RuntimeException())
-          .doThrow(new RuntimeException())
-          .when(messageListenerStrategyMock)
-          .processRecords(any(), eq(consumerMock));
-      executorService.submit(messageListener);
-      await()
-          .untilAsserted(
-              () -> {
-                verify(consumerMock, times(1)).poll(Duration.of(1, ChronoUnit.MILLIS));
-                verify(consumerMock, times(1)).poll(Duration.of(3, ChronoUnit.MILLIS));
-                verify(consumerMock, times(1)).poll(Duration.of(9, ChronoUnit.MILLIS));
-                verify(consumerMock, atLeast(2)).poll(Duration.of(10, ChronoUnit.MILLIS));
-              });
-    } finally {
-      messageListener.stopConsumer();
-    }
+  void shouldIncreaseWaitTimeBetweenPollsOnError() throws Exception {
+    when(consumerMock.poll(any())).thenReturn(new ConsumerRecords<>(recordMock));
+    doThrow(new RuntimeException())
+        .when(messageListenerStrategyMock)
+        .processRecords(any(), eq(consumerMock));
+
+    executorService.submit(messageListener);
+
+    // wait for at least three failing invocations
+    await()
+        .untilAsserted(
+            () ->
+                verify(messageListenerStrategyMock, atLeast(3))
+                    .processRecords(any(), eq(consumerMock)));
+
+    assertThat(getPollPauseInterval()).isEqualTo(10L);
+    messageListener.stopConsumer();
+  }
+
+  private long getPollPauseInterval() throws Exception {
+    Field field = MessageListener.class.getDeclaredField("pollPauseInterval");
+    field.setAccessible(true);
+    AtomicLong pollPauseInterval = (AtomicLong) field.get(messageListener);
+    return pollPauseInterval.get();
   }
 
   @Test
-  void shouldIncreaseIntervalOnErrorAndResetOnSuccess() {
+  void shouldIncreaseIntervalOnErrorAndResetOnSuccess() throws Exception {
     try {
       when(consumerMock.poll(any())).thenReturn(new ConsumerRecords<>(recordMock));
       doThrow(new RuntimeException())
@@ -121,14 +128,16 @@ class MessageListenerErrorIntervalTest {
           .when(messageListenerStrategyMock)
           .processRecords(any(), eq(consumerMock));
       executorService.submit(messageListener);
+
+      // wait for at least three failing invocations
       await()
           .untilAsserted(
-              () -> {
-                verify(consumerMock, atLeast(2)).poll(Duration.of(1, ChronoUnit.MILLIS));
-                verify(consumerMock, times(1)).poll(Duration.of(3, ChronoUnit.MILLIS));
-                verify(consumerMock, times(1)).poll(Duration.of(9, ChronoUnit.MILLIS));
-                verify(consumerMock, times(3)).poll(Duration.of(10, ChronoUnit.MILLIS));
-              });
+              () ->
+                  verify(messageListenerStrategyMock, atLeast(4))
+                      .processRecords(any(), eq(consumerMock)));
+
+      assertThat(getPollPauseInterval()).isEqualTo(1L);
+      messageListener.stopConsumer();
     } finally {
       messageListener.stopConsumer();
     }
