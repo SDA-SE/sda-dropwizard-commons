@@ -45,18 +45,6 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
   private RetryCounter retryCounter;
 
   /**
-   * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error
-   * infinite times.
-   *
-   * @param handler the message handler
-   * @param errorHandler the error handler called after each error, can be null
-   */
-  public RetryProcessingErrorMLS(
-      MessageHandler<K, V> handler, @Nullable ErrorHandler<K, V> errorHandler) {
-    this(handler, errorHandler, null);
-  }
-
-  /**
    * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error for a
    * given number of times configured in the listener configuration
    *
@@ -78,6 +66,18 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
     this.errorHandler = errorHandler;
     this.retryLimitExceededErrorHandler = retryLimitExceededErrorHandler;
     this.retryCounter = new RetryCounter(maxRetryCount);
+  }
+
+  /**
+   * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error
+   * infinite times.
+   *
+   * @param handler the message handler
+   * @param errorHandler the error handler called after each error, can be null
+   */
+  public RetryProcessingErrorMLS(
+      MessageHandler<K, V> handler, @Nullable ErrorHandler<K, V> errorHandler) {
+    this(handler, errorHandler, null);
   }
 
   /**
@@ -104,24 +104,46 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
       consumerName = KafkaHelper.getClientId(consumer);
     }
 
+    boolean shouldRetry = false;
     for (TopicPartition partition : records.partitions()) {
-      processRecordsByPartition(records, consumer, partition);
+      shouldRetry = shouldRetry || processRecordsByPartition(records, consumer, partition);
+    }
+    if (shouldRetry) {
+      throw new ProcessingErrorRetryException(
+          "Errors during processing of records. Triggering retry.");
     }
   }
 
-  private void processRecordsByPartition(
+  /**
+   * @param records records in this partition
+   * @param consumer consumer to set the offset correctly
+   * @param partition the partition
+   * @return error status of the processing. true if there has been errors during processing
+   */
+  private boolean processRecordsByPartition(
       ConsumerRecords<K, V> records, KafkaConsumer<K, V> consumer, TopicPartition partition) {
     List<ConsumerRecord<K, V>> partitionRecords = records.records(partition);
     OffsetAndMetadata lastCommitOffset = null;
+    LOGGER.info("Processing {} records for partition {}", records.count(), partition);
+    boolean error = false;
     for (ConsumerRecord<K, V> consumerRecord : partitionRecords) {
-      LOGGER.debug("Handling message for {}", consumerRecord.key());
-
+      LOGGER.debug(
+          "Handling message with key {} on [topic: {}, partition: {}, offset: {}]    ",
+          consumerRecord.key(),
+          consumerRecord.topic(),
+          consumerRecord.partition(),
+          consumerRecord.offset());
       try (var ignored = messageHandlerContextFor(consumerRecord)) {
         try {
           Instant timerStart = Instant.now();
           handler.handle(consumerRecord);
+          LOGGER.debug(
+              "Success for message with key {} on [topic: {}, partition: {}, offset: {}]    ",
+              consumerRecord.key(),
+              consumerRecord.topic(),
+              consumerRecord.partition(),
+              consumerRecord.offset());
           lastCommitOffset = markConsumerRecordProcessed(consumerRecord);
-
           Instant timerEnd = Instant.now();
           if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
@@ -134,12 +156,13 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
           retryCounter.incErrorCount(consumerRecord);
           if (retryCounter.isMaxRetryCountReached(consumerRecord)) {
             LOGGER.error(
-                "Error while handling record {} in message handler {}, no more retries",
+                "Error while handling record {} in message handler {}, no more retries.",
                 consumerRecord.key(),
                 handler.getClass(),
                 e);
 
             callErrorHandler(retryLimitExceededErrorHandler, consumerRecord, e, consumer);
+            LOGGER.error("Skipping record {}.", consumerRecord.key());
             lastCommitOffset = markConsumerRecordProcessed(consumerRecord);
           } else {
             LOGGER.warn(
@@ -150,7 +173,15 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
                 retryCounter.getMaxRetryCount(),
                 e);
 
-            callErrorHandler(errorHandler, consumerRecord, e, consumer);
+            // call the error handler for the message. The error handler might throw a
+            // StopListenerException
+            // the exception must be cached, since we do not want to
+            try {
+              callErrorHandler(errorHandler, consumerRecord, e, consumer);
+            } catch (StopListenerException ex) {
+              // ignore the exception, since listener should not stop until maximum number of
+              // retries
+            }
 
             // seek to the current offset of the failing record for retry
             consumer.seek(partition, consumerRecord.offset());
@@ -159,10 +190,11 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
         }
       }
     }
+    // commit all processed messages of this partition
     if (lastCommitOffset != null) {
-
       consumer.commitSync(Collections.singletonMap(partition, lastCommitOffset));
     }
+    return error;
   }
 
   @Override
