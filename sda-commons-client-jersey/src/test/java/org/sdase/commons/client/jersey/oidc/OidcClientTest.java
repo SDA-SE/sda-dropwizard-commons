@@ -8,7 +8,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
@@ -22,7 +21,6 @@ import static org.awaitility.Awaitility.given;
 
 import com.codahale.metrics.MetricFilter;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
-import com.github.tomakehurst.wiremock.jetty.JettyHttpServerFactory;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,10 +43,7 @@ class OidcClientTest {
 
   @RegisterExtension
   @Order(0)
-  static final WireMockExtension WIRE =
-      new WireMockExtension.Builder()
-          .options(wireMockConfig().httpServerFactory(new JettyHttpServerFactory()))
-          .build();
+  static final WireMockExtension WIRE = new WireMockExtension.Builder().build();
 
   @RegisterExtension
   @Order(1)
