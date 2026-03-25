@@ -85,8 +85,9 @@ public class AuthService implements TokenAuthorizer {
       case "ES256" -> Algorithm.ECDSA256((ECPublicKey) loadedPublicKey.getPublicKey(), null);
       case "ES384" -> Algorithm.ECDSA384((ECPublicKey) loadedPublicKey.getPublicKey(), null);
       case "ES512" -> Algorithm.ECDSA512((ECPublicKey) loadedPublicKey.getPublicKey(), null);
-      default -> throw new JwtAuthException(
-          "Unsupported algorithm :'" + loadedPublicKey.getSigAlgorithm() + "'");
+      default ->
+          throw new JwtAuthException(
+              "Unsupported algorithm :'" + loadedPublicKey.getSigAlgorithm() + "'");
     };
   }
 
