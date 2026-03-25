@@ -123,8 +123,9 @@ public class JwksKeySource implements KeySource {
       case "P-256" -> "secp256r1";
       case "P-384" -> "secp384r1";
       case "P-521" -> "secp521r1";
-      default -> throw new KeyLoadFailedException(
-          "EC keys are supported but loaded an unsupported EC curve: '" + crv + "'");
+      default ->
+          throw new KeyLoadFailedException(
+              "EC keys are supported but loaded an unsupported EC curve: '" + crv + "'");
     };
   }
 
@@ -135,8 +136,9 @@ public class JwksKeySource implements KeySource {
       return switch (keyType) {
         case RSA_KTY -> toRsaPublicKey(key, keyFactory);
         case EC_KTY -> toEcPublicKey(key, keyFactory);
-        default -> throw new KeyLoadFailedException(
-            "Unsupported key: " + key.getClass() + " from " + jwksUri);
+        default ->
+            throw new KeyLoadFailedException(
+                "Unsupported key: " + key.getClass() + " from " + jwksUri);
       };
     } catch (NullPointerException
         | InvalidKeySpecException

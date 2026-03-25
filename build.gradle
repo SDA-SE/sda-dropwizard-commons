@@ -85,7 +85,7 @@ subprojects {
   spotless {
     if (!javaPlatformModules.contains(project.name)) {
       java {
-        googleJavaFormat('1.17.0')
+        googleJavaFormat('1.35.0')
       }
       groovyGradle {
         greclipse()
@@ -183,7 +183,7 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   java {
     // preferring `sourceCompatibility` over `toolchains` to be able to do builds with different
     // Java versions
-    sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
   }
 
   tasks.withType(JavaCompile).configureEach {
