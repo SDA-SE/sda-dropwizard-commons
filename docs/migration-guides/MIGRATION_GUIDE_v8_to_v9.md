@@ -49,3 +49,9 @@ Metrics don't have a closing `,` any longer.
 `apache_http_client_request_duration_seconds{manager="HttpClient",method="get",name="myClient",quantile="0.5",}`
 is now:
 `apache_http_client_request_duration_seconds{manager="HttpClient",method="get",name="myClient",quantile="0.5"}`
+
+## Java
+
+Dropped support for Java 17.
+The minimal supported version is Java 21 now.
+Added support for Java 25.

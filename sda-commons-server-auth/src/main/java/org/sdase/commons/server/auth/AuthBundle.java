@@ -139,11 +139,12 @@ public class AuthBundle<T extends Configuration> implements ConfiguredBundle<T> 
 
   private KeySource createKeySources(KeyLocation keyLocation, Client client) {
     return switch (keyLocation.getType()) {
-      case PEM -> new PemKeySource(
-          keyLocation.getPemKeyId(),
-          keyLocation.getPemSignAlg(),
-          keyLocation.getLocation(),
-          keyLocation.getRequiredIssuer());
+      case PEM ->
+          new PemKeySource(
+              keyLocation.getPemKeyId(),
+              keyLocation.getPemSignAlg(),
+              keyLocation.getLocation(),
+              keyLocation.getRequiredIssuer());
       case OPEN_ID_DISCOVERY -> {
         validateKeyLocation(keyLocation.getLocation(), keyLocation.getRequiredIssuer());
         yield new OpenIdProviderDiscoveryKeySource(
