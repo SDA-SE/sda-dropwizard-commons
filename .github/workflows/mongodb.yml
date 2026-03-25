@@ -4,7 +4,7 @@ name: Java Test MongoDB
 on:
   push:
     branches:
-      - main
+      - release/8.x.x
   pull_request:
 
 jobs:
