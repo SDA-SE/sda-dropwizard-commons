@@ -12,10 +12,7 @@ name: License Check
 # $ trivy sbom --scanners license --format table --ignore-policy .github/trivy/license-policy.rego build/reports/cyclonedx/bom.json
 
 on:
-  pull_request: {}
-  release:
-    types:
-      - created
+  pull_request:
 
 jobs:
   trivy-license-check:
