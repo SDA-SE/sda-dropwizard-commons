@@ -18,7 +18,7 @@ name: Java CI Latest
 on:
   push:
     branches:
-      - main
+      - release/8.x.x
 
 jobs:
   # build library
