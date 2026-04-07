@@ -3,7 +3,10 @@ dependencies {
   api project(':sda-commons-server-testing')
   api project(':sda-commons-server-auth')
   api project(':sda-commons-server-trace')
-  api 'com.auth0:java-jwt'
+  api 'com.auth0:java-jwt', {
+    exclude group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml" //because conflict of jackson versions
+  }
+  api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
   api project(':sda-commons-shared-wiremock-testing')
 
   api('org.apache.commons:commons-lang3')
