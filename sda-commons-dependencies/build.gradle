@@ -26,7 +26,7 @@ ext {
   kotlinxCoroutinesVersion = '1.10.2'
   resilience4jVersion = '2.4.0'
   openTelemetryVersion = '1.59.0'
-  openTelemetryAlpha2Version = '2.25.0-alpha'
+  openTelemetryAlpha2Version = '2.26.1-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '5.6.5'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
@@ -182,8 +182,8 @@ dependencies {
     // sda-commons-server-opentelemetry
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
-    api "io.opentelemetry.semconv:opentelemetry-semconv:1.39.0"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.25.0"
+    api "io.opentelemetry.semconv:opentelemetry-semconv:1.40.0"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.26.1"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator:${openTelemetryAlpha2Version}"
 
     // Kafka
