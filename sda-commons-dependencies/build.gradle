@@ -9,30 +9,29 @@ javaPlatform {
 ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.5.1'
-  apacheHttpCore5Version = '5.4.1'
+  apacheHttpCore5Version = '5.4.2'
   dropwizardVersion = '5.0.1'
   prometheusVersion = '1.5.0'
-  micrometerVersion = '1.16.3'
-  swaggerCoreV3Version = '2.2.42'
+  micrometerVersion = '1.16.4'
+  swaggerCoreV3Version = '2.2.43'
   weldVersion = '6.0.4.Final'
-  jacksonVersion = '2.21.0'
-  jsonUnitVersion = '5.1.0'
+  jacksonVersion = '2.21.2'
+  jsonUnitVersion = '5.1.1'
   scalaVersion = '2.13.18' // align transitive dependency from various modules, keep up to date
-  kafkaVersion = '3.9.1'
+  kafkaVersion = '3.9.2'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
   dbRiderVersion = '1.44.0'
-  kotlinVersion = '2.3.10'
+  kotlinVersion = '2.3.20'
   kotlinxCoroutinesVersion = '1.10.2'
-  resilience4jVersion = '2.2.0'
+  resilience4jVersion = '2.4.0'
   openTelemetryVersion = '1.59.0'
   openTelemetryAlpha2Version = '2.25.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
-  mongoDbDriverVersion = '5.6.3'
+  mongoDbDriverVersion = '5.6.4'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.83'
   victoolsVersion = '4.38.0'
-  flywayVersion = '11.20.3'
-  logbackVersion = "1.5.32"
+  flywayVersion = '12.2.0'
 }
 
 dependencies {
@@ -53,11 +52,11 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.41.29")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.42.23")
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
-  api enforcedPlatform("io.netty:netty-bom:4.2.10.Final"), {
+  api enforcedPlatform("io.netty:netty-bom:4.2.12.Final"), {
     because "various CVEs in earlier versions"
   }
   api enforcedPlatform("io.prometheus:prometheus-metrics-bom:${prometheusVersion}")
@@ -74,13 +73,12 @@ dependencies {
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
     api "io.github.classgraph:classgraph:4.8.184"
 
+    api "org.jboss.logging:jboss-logging:3.6.3.Final", {
+      because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
+    }
     api "org.yaml:snakeyaml:2.3", {
       because "conflict between com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
       because "vulnerability CVE-2022-1471 in 1.33 and below"
-    }
-
-    api 'commons-beanutils:commons-beanutils:1.11.0', {
-      because "vulnerability CVE-2025-48734 in versions < 1.11.0"
     }
 
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
@@ -129,14 +127,11 @@ dependencies {
     api "org.mongodb:mongodb-driver-legacy:${mongoDbDriverVersion}"
 
     // sda-commons-server-openapi
-    api "com.jayway.jsonpath:json-path:2.10.0"
-
-    // sda-commons-server-openapi
     api "io.openapitools.jackson.dataformat:jackson-dataformat-hal:1.0.9" // TODO Needed for OpenAPI?
     api "io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations-jakarta:$swaggerCoreV3Version"
-    api "io.swagger.parser.v3:swagger-parser-v3:2.1.37"
+    api "io.swagger.parser.v3:swagger-parser-v3:2.1.39"
 
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
@@ -184,14 +179,14 @@ dependencies {
     // sda-commons-server-opentelemetry
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
-    api "io.opentelemetry.semconv:opentelemetry-semconv:1.39.0"
+    api "io.opentelemetry.semconv:opentelemetry-semconv:1.40.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.25.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator:${openTelemetryAlpha2Version}"
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.9.4"
+    api "org.apache.zookeeper:zookeeper:3.9.5"
     api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
     api "org.apache.curator:curator-test:5.9.0", {
       because '''\
@@ -214,11 +209,5 @@ dependencies {
 
     api "jakarta.xml.bind:jakarta.xml.bind-api:4.0.5"
 
-    //Fixes CVE-2025-11226, future updates of Dropwizard have to be checked if this is still necessary
-    api "ch.qos.logback:logback-core:$logbackVersion"
-    api "ch.qos.logback:logback-classic:$logbackVersion"
-
-    //Fixes CVE-2024-29371, Kafka 3.9.1 still uses 0.9.4; can be removed at a future update of Kafka
-    api 'org.bitbucket.b_c:jose4j:0.9.6'
   }
 }
