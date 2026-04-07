@@ -34,7 +34,7 @@ jobs:
 
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Set up JDK ${{ matrix.java_version }}
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
@@ -44,7 +44,7 @@ jobs:
           cache: 'gradle'
 
       - name: Test with Gradle
-        uses: nick-invision/retry@ce71cc2ab81d554ebbe88c79ab5975992d79ba08 # v2
+        uses: nick-invision/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v2
         with:
           timeout_minutes: 30
           max_attempts: 3
@@ -56,7 +56,7 @@ jobs:
         if: always()
         run: ./gradlew -x test testReport codeCoverageReport
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: always()
         with:
           name: ${{ matrix.os }}-${{ matrix.java_version }}-test-results

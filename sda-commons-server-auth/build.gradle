@@ -9,7 +9,10 @@ dependencies {
   api 'io.dropwizard:dropwizard-auth'
   api 'io.dropwizard:dropwizard-client'
 
-  api 'com.auth0:java-jwt'
+  api 'com.auth0:java-jwt', {
+    exclude group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml" //because conflict of jackson versions
+  }
+  api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
   api 'org.bouncycastle:bcpkix-jdk18on'
   api 'jakarta.xml.bind:jakarta.xml.bind-api'
   api 'io.opentelemetry:opentelemetry-api'
