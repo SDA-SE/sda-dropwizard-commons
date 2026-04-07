@@ -16,7 +16,7 @@ ext {
   swaggerCoreV3Version = '2.2.43'
   weldVersion = '6.0.4.Final'
   jacksonVersion = '2.21.2'
-  jackson3Version = '3.1.1'
+  jackson3Version = '3.1.2'
   jsonUnitVersion = '5.1.1'
   scalaVersion = '2.13.18' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.9.2'
@@ -25,10 +25,10 @@ ext {
   kotlinVersion = '2.3.20'
   kotlinxCoroutinesVersion = '1.10.2'
   resilience4jVersion = '2.4.0'
-  openTelemetryVersion = '1.41.0'
-  openTelemetryAlpha2Version = '2.21.0-alpha'
+  openTelemetryVersion = '1.59.0'
+  openTelemetryAlpha2Version = '2.26.1-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
-  mongoDbDriverVersion = '5.6.4'
+  mongoDbDriverVersion = '5.6.5'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.83'
   victoolsVersion = '4.38.0'
@@ -57,7 +57,7 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.42.29")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.42.33")
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
@@ -186,8 +186,8 @@ dependencies {
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.semconv:opentelemetry-semconv:1.40.0"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.21.0"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.33.6-alpha"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.26.1"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator:${openTelemetryAlpha2Version}"
 
     // Kafka
     api "org.apache.kafka:kafka_2.13:$kafkaVersion"
