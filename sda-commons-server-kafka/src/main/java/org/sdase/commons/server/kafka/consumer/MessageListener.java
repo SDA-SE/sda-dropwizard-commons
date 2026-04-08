@@ -38,9 +38,9 @@ public class MessageListener<K, V> implements Runnable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MessageListener.class);
   private final long configuredPollIntervalMillis;
-  private final long maxPollIntervalMillis;
-  private final AtomicLong currentPollIntervalMillis;
-  private final long pollIntervalFactorOnError;
+  private final long maxPausePollIntervalMillis;
+  private final AtomicLong pollPauseInterval;
+  private final long pollPauseFactorOnError;
   private final long topicMissingRetryMs;
   private final MessageListenerStrategy<K, V> strategy;
   private final Collection<String> topics;
@@ -61,9 +61,9 @@ public class MessageListener<K, V> implements Runnable {
     this.strategy = strategy;
     this.configuredPollIntervalMillis = listenerConfig.getPollInterval();
     this.topicMissingRetryMs = listenerConfig.getTopicMissingRetryMs();
-    this.currentPollIntervalMillis = new AtomicLong(this.configuredPollIntervalMillis);
-    this.pollIntervalFactorOnError = listenerConfig.getPollIntervalFactorOnError();
-    this.maxPollIntervalMillis = listenerConfig.getMaxPollInterval();
+    this.pollPauseInterval = new AtomicLong(this.configuredPollIntervalMillis);
+    this.pollPauseFactorOnError = listenerConfig.getPollIntervalFactorOnError();
+    this.maxPausePollIntervalMillis = listenerConfig.getMaxPollInterval();
     if (null != this.strategy) {
       this.strategy.setRetryCounterIfApplicable(listenerConfig.getMaxRetries());
     }
@@ -76,19 +76,22 @@ public class MessageListener<K, V> implements Runnable {
     while (!shouldStop.get()) {
       // return immediately and resubmit Runnable
       try {
+        // wait for the next poll interval
+        waitForNextPoll();
+
         ConsumerRecords<K, V> records =
-            consumer.poll(Duration.ofMillis(currentPollIntervalMillis.get()));
+            consumer.poll(Duration.ofMillis(configuredPollIntervalMillis));
 
         if (records.count() > 0) {
           LOGGER.debug("Received {} messages from topics [{}]", records.count(), joinedTopics);
+          strategy.resetOffsetsToCommitOnClose();
+          strategy.processRecords(records, consumer);
+
+          configureAfterSuccess();
         } else {
           LOGGER.trace("Received {} messages from topics [{}]", records.count(), joinedTopics);
         }
 
-        strategy.resetOffsetsToCommitOnClose();
-        strategy.processRecords(records, consumer);
-
-        configureAfterSuccess();
       } catch (WakeupException w) {
         if (shouldStop.get()) {
           LOGGER.info("Woke up to stop consuming.");
@@ -111,6 +114,19 @@ public class MessageListener<K, V> implements Runnable {
     } finally {
       // close will auto-commit if enabled
       doCloseConsumer();
+    }
+  }
+
+  private void waitForNextPoll() {
+    try {
+      long start = System.currentTimeMillis();
+      LOGGER.trace("start sleeping for {}ms at {}", pollPauseInterval.get(), start);
+      Thread.sleep(pollPauseInterval.get());
+      long end = System.currentTimeMillis();
+      LOGGER.trace("end sleeping at {}. Sleeping last {}ms", end, end - start);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      LOGGER.warn("Thread interrupted while waiting for next poll", e);
     }
   }
 
@@ -174,15 +190,15 @@ public class MessageListener<K, V> implements Runnable {
   }
 
   private void configureAfterSuccess() {
-    long oldValue = currentPollIntervalMillis.getAndSet(configuredPollIntervalMillis);
+    long oldValue = pollPauseInterval.getAndSet(configuredPollIntervalMillis);
     if (oldValue != configuredPollIntervalMillis) {
-      LOGGER.info("Resetting poll interval to {}ms after success", currentPollIntervalMillis);
+      LOGGER.info("Resetting poll interval to {}ms after success", pollPauseInterval);
     }
   }
 
   private void configureAfterError() {
-    long nextPollIntervalAfterError = currentPollIntervalMillis.get() * pollIntervalFactorOnError;
-    currentPollIntervalMillis.set(Math.min(maxPollIntervalMillis, nextPollIntervalAfterError));
-    LOGGER.info("Setting poll interval to {}ms after error", currentPollIntervalMillis);
+    long nextPollIntervalAfterError = pollPauseInterval.get() * pollPauseFactorOnError;
+    pollPauseInterval.set(Math.min(maxPausePollIntervalMillis, nextPollIntervalAfterError));
+    LOGGER.info("Setting poll interval to {}ms after error", pollPauseInterval);
   }
 }
