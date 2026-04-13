@@ -1,5 +1,6 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
+  api 'org.eclipse.jetty.ee10:jetty-ee10-cdi'
 
   api 'org.jboss.weld.se:weld-se-core', {
     exclude group: 'org.jboss.spec.javax.el', module: 'jboss-el-api_3.0_spec'
