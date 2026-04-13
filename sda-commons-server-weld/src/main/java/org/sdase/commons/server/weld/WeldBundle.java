@@ -4,6 +4,8 @@ import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import org.eclipse.jetty.ee10.cdi.CdiDecoratingListener;
+import org.eclipse.jetty.ee10.cdi.CdiServletContainerInitializer;
 import org.jboss.weld.environment.servlet.Listener;
 
 /**
@@ -21,6 +23,8 @@ import org.jboss.weld.environment.servlet.Listener;
  * }</pre>
  */
 public class WeldBundle implements ConfiguredBundle<Configuration> {
+  private static final String CDI_DECORATING_LISTENER_MODE = "CdiDecoratingListener";
+
   @Override
   public void initialize(final Bootstrap<?> bootstrap) {
     // not implemented
@@ -28,6 +32,12 @@ public class WeldBundle implements ConfiguredBundle<Configuration> {
 
   @Override
   public void run(final Configuration configuration, final Environment environment) {
-    environment.getApplicationContext().addEventListener(new Listener());
+    var applicationContext = environment.getApplicationContext();
+    // Jetty 12 no longer applies Weld servlet decoration through the old listener-only setup.
+    // Tell Jetty to use CDI decoration so addServlet(MyServlet.class, ...) remains injection-aware.
+    applicationContext.setAttribute(
+        CdiServletContainerInitializer.CDI_INTEGRATION_ATTRIBUTE, CDI_DECORATING_LISTENER_MODE);
+    applicationContext.addEventListener(new Listener());
+    applicationContext.addEventListener(new CdiDecoratingListener(applicationContext));
   }
 }
