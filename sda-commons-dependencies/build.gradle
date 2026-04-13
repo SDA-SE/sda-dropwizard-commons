@@ -68,6 +68,7 @@ dependencies {
 
   // asyncapi generation
   api enforcedPlatform("com.github.victools:jsonschema-generator-bom:${victoolsVersion}")
+  api enforcedPlatform("org.eclipse.jetty.ee10:jetty-ee10-bom:12.1.5")
 
   constraints {
     // overall conflicts
@@ -217,5 +218,7 @@ dependencies {
 
     //Fixes CVE-2024-29371, Kafka 3.9.1 still uses 0.9.4; can be removed at a future update of Kafka
     api 'org.bitbucket.b_c:jose4j:0.9.6'
+
+    api 'org.ow2.asm:asm:9.7.1' //because conflict
   }
 }
