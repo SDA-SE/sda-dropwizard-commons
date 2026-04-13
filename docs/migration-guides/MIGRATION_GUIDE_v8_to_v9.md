@@ -23,16 +23,6 @@ The `org.eclipse.jetty.servlets.CrossOriginFilter` header can now be accessed th
 ## Weld 6
 
 Weld was upgraded from 5 to 6. 
-Biggest change in combination with dropwizard is, that Beans are no longer autoloaded into the application context.
-Instead of
-```
-environment.getApplicationContext().addServlet(TestServlet.class, "/foo");
-```
-it is now necessary to register the bean directly
-```
-TestServlet servlet = CDI.current().select(TestServlet.class).get();
-environment.getApplicationContext().addServlet(servlet, "/foo");
-```
 
 See also the release notes from [RC-1](https://weld.cdi-spec.org/news/2024/11/13/weld-600CR1/) and [RC-2](https://weld.cdi-spec.org/news/2024/11/28/weld-600CR2/)
 
