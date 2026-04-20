@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import org.sdase.commons.starter.example.people.rest.NewPersonResource;
 
 /** Mock implementation of a database manager for {@link PersonEntity}. */
 public class PersonManager {
@@ -21,5 +23,11 @@ public class PersonManager {
 
   public PersonEntity findById(String id) {
     return peopleDatabase.get(id);
+  }
+
+  public String save(NewPersonResource newPerson) {
+    String id = UUID.randomUUID().toString();
+    peopleDatabase.put(id, new PersonEntity(id, newPerson.getFirstName(), newPerson.getLastName()));
+    return id;
   }
 }
