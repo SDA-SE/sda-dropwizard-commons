@@ -75,7 +75,7 @@ public class WeldExampleApplication extends Application<AppConfiguration> {
    */
   public static void main(String... args) throws Exception {
     DropwizardWeldHelper.run(
-        WeldExampleApplication.class, "server", resourceFilePath("config-test.yaml"));
+        WeldExampleApplication.class, "server", resourceFilePath("test-config.yaml"));
   }
 
   @Produces

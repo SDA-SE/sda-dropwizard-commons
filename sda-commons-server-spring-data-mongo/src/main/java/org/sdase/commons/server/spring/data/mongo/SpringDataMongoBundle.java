@@ -251,7 +251,7 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
   private CommandListener createTracingCommandListener() {
     OpenTelemetry currentTelemetryInstance =
         this.openTelemetry == null ? GlobalOpenTelemetry.get() : this.openTelemetry;
-    return MongoTelemetry.builder(currentTelemetryInstance).build().newCommandListener();
+    return MongoTelemetry.builder(currentTelemetryInstance).build().createCommandListener();
   }
 
   /** shutdowns mongo and spring application context */
