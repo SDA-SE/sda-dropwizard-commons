@@ -34,6 +34,7 @@ ext {
   victoolsVersion = '4.38.0'
   flywayVersion = '12.3.0'
   logbackVersion = "1.5.32"
+  jettyVersion = "12.1.8"
 }
 
 dependencies {
@@ -68,7 +69,8 @@ dependencies {
 
   // asyncapi generation
   api enforcedPlatform("com.github.victools:jsonschema-generator-bom:${victoolsVersion}")
-  api enforcedPlatform("org.eclipse.jetty.ee10:jetty-ee10-bom:12.1.5")
+  api enforcedPlatform("org.eclipse.jetty.ee10:jetty-ee10-bom:${jettyVersion}")
+  api enforcedPlatform("org.eclipse.jetty:jetty-bom:${jettyVersion}")
 
   constraints {
     // overall conflicts
@@ -87,6 +89,10 @@ dependencies {
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
     api "org.wiremock:wiremock-jetty12:3.13.2"
+
+    api "org.eclipse.jetty:jetty-server:${jettyVersion}", {
+      because 'wiremock-jetty12 enforces older version'
+    }
 
     api "net.minidev:json-smart:2.6.0", {
       because 'conflict between json-path 2.7.0 (2.4.7) and wiremock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
