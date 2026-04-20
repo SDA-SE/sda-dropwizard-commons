@@ -7,10 +7,12 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 import org.sdase.commons.starter.example.people.db.PersonEntity;
 import org.sdase.commons.starter.example.people.db.PersonManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Example endpoint for getting information about people. */
 @Path("people") // define the base path of this endpoint
@@ -28,6 +32,8 @@ import org.sdase.commons.starter.example.people.db.PersonManager;
 @Consumes({APPLICATION_JSON}) // should be set to produce 406 for other accept headers
 @PermitAll // Require authentication for this endpoint
 public class PersonEndpoint implements ContextAwareEndpoint {
+
+  private static final Logger LOG = LoggerFactory.getLogger(PersonEndpoint.class);
 
   /**
    * Information about the requested URI. Jersey will inject a Proxy of {@code UriInfo} that is
@@ -43,12 +49,22 @@ public class PersonEndpoint implements ContextAwareEndpoint {
 
   @GET // maps to "GET /people"
   public List<PersonResource> findAllPeople() {
+    LOG.info("Find all people.");
     return personManager.findAll().stream().map(this::toResource).toList();
+  }
+
+  @POST
+  public Response createPerson(NewPersonResource newPerson) {
+    LOG.info("Create person.");
+    String id = personManager.save(newPerson);
+    URI location = URI.create(new HALLink.Builder(personLocation(id)).build().getHref());
+    return Response.created(location).build();
   }
 
   @GET
   @Path("{personId}") // maps to "GET /people/{personId}, e.g. "GET /people/john-doe"
   public PersonResource findPersonById(@PathParam("personId") String personId) {
+    LOG.info("Find person.");
     PersonEntity personEntity = personManager.findById(personId);
     if (personEntity == null) {
       throw new NotFoundException();
