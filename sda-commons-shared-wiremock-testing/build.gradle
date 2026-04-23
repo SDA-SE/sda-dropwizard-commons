@@ -4,7 +4,7 @@ dependencies {
     exclude group: 'net.minidev', module: 'json-smart'
     exclude group: 'commons-io', module: 'commons-io'
     exclude group: 'org.eclipse.jetty', module: 'jetty-bom'
-    exclude group: 'org.eclipse.jettyee10', module: 'jetty-ee10-bom'
+    exclude group: 'org.eclipse.jetty.ee10', module: 'jetty-ee10-bom'
   }
 
   api 'net.minidev:json-smart'
