@@ -41,19 +41,27 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
 
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          fields: workflow,job,commit,repo,ref,author,took
-          custom_payload: |
-            {
-              username: 'Maven Central Upload',
-              icon_emoji: ':coffin-dance:',
-              attachments: [{
-                color: 'danger',
-                text: `Maven Central Upload of sda-dropwizard-commons:${{ github.event.release.tag_name }} failed!\n\nWorkflow ${process.env.AS_WORKFLOW}`,
-              }]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+      - name: Notify Maven Central upload failure in Slack
         if: failure()
+        uses: slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95 # v3.0.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          # C05NM8419JM is sda-dropwizard-commons-security
+          payload: |
+            channel: C05NM8419JM
+            text: "${{ github.event.repository.name }}: Maven Central upload of ${{ github.event.release.tag_name }} failed."
+            blocks:
+              - type: header
+                text:
+                  type: plain_text
+                  text: Maven Central Upload
+                  emoji: true
+              - type: section
+                text:
+                  type: mrkdwn
+                  text: ":red_circle: Maven Central upload of *${{ github.event.repository.name }}:${{ github.event.release.tag_name }}* failed."
+              - type: context
+                elements:
+                  - type: mrkdwn
+                    text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Open workflow run>"
