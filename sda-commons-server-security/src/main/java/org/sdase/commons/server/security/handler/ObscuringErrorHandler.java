@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.core.MediaType;
 import java.nio.ByteBuffer;
-import org.apache.commons.lang3.SerializationUtils;
+import java.nio.charset.StandardCharsets;
 import org.eclipse.jetty.ee10.servlet.ErrorHandler;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.server.Request;
@@ -40,7 +40,7 @@ public class ObscuringErrorHandler extends ErrorHandler {
     int status = response.getStatus();
     String bodyContent = errorBody(status);
 
-    ByteBuffer byteBuffer = ByteBuffer.wrap(SerializationUtils.serialize(bodyContent));
+    ByteBuffer byteBuffer = ByteBuffer.wrap(bodyContent.getBytes(StandardCharsets.UTF_8));
     response.setStatus(status);
     response.write(true, byteBuffer, callback);
     return true;
