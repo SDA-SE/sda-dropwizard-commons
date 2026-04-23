@@ -23,6 +23,16 @@ import org.sdase.commons.server.opa.testing.OpaClassExtension;
 import org.sdase.commons.starter.SdaPlatformConfiguration;
 import org.sdase.commons.starter.example.people.db.TestDataUtil;
 
+/**
+ * Verifies the practical effect of CVE-2026-2332 (Jetty chunk-extension quoted-string parsing) in
+ * this application setup.
+ *
+ * <p>The crafted payload exercises the request-splitting behavior described in the advisory: one
+ * TCP payload is interpreted as a malformed POST plus a smuggled GET. In this setup, the smuggled
+ * request is still processed through the normal auth/OPA checks. GET /people remains denied, so no
+ * authorization bypass or data leak is observed even though the underlying Jetty parser version is
+ * in the advisory range.
+ */
 class VerifyEffectOfCve20262332IT {
 
   @Order(0)
@@ -77,6 +87,10 @@ class VerifyEffectOfCve20262332IT {
     }
   }
 
+  /**
+   * Verifies that a crafted payload for CVE-2026-2332 does not bypass authorization for GET
+   * /people.
+   */
   @Test
   @SuppressWarnings("java:S3457")
   void shouldNotGet() throws IOException {
@@ -113,11 +127,27 @@ class VerifyEffectOfCve20262332IT {
         System.out.println(line);
         response.append(line);
       }
-      assertThat(response).doesNotContain("John").contains("Not authorized");
+      assertThat(countOccurrences(response, "HTTP/1.1 ")).isEqualTo(2);
+      assertThat(response)
+          .contains("HTTP/1.1 400 Bad Request")
+          .contains("HTTP/1.1 403 Forbidden")
+          .doesNotContain("John")
+          .contains("Not authorized");
     }
   }
 
   private WebTarget createTarget() {
     return DW.client().target(String.format("http://localhost:%d/", DW.getLocalPort()));
+  }
+
+  private int countOccurrences(CharSequence input, String needle) {
+    int count = 0;
+    int index = 0;
+    String haystack = input.toString();
+    while ((index = haystack.indexOf(needle, index)) >= 0) {
+      count++;
+      index += needle.length();
+    }
+    return count;
   }
 }
