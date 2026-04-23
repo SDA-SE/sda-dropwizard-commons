@@ -46,6 +46,9 @@ dependencies {
   // override version from dropwizard-bom
   api enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion")
   api enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinxCoroutinesVersion")
+  // Keep Jetty ahead of Dropwizard in the published Maven BOM so Jetty 12.1.8 wins for downstreams.
+  api enforcedPlatform("org.eclipse.jetty.ee10:jetty-ee10-bom:${jettyVersion}")
+  api enforcedPlatform("org.eclipse.jetty:jetty-bom:${jettyVersion}")
   api enforcedPlatform("io.dropwizard:dropwizard-bom:$dropwizardVersion")
   api enforcedPlatform("io.dropwizard:dropwizard-dependencies:$dropwizardVersion"), {
     exclude group: 'jakarta.xml.bind', module: 'jakarta.xml.bind-api'
@@ -69,8 +72,6 @@ dependencies {
 
   // asyncapi generation
   api enforcedPlatform("com.github.victools:jsonschema-generator-bom:${victoolsVersion}")
-  api enforcedPlatform("org.eclipse.jetty.ee10:jetty-ee10-bom:${jettyVersion}")
-  api enforcedPlatform("org.eclipse.jetty:jetty-bom:${jettyVersion}")
 
   constraints {
     // overall conflicts
