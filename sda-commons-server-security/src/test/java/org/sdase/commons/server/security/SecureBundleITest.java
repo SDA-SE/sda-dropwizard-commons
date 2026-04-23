@@ -2,11 +2,13 @@ package org.sdase.commons.server.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.security.test.SecurityTestApp;
@@ -71,15 +73,20 @@ class SecureBundleITest extends AbstractSecurityTest<Configuration> {
   }
 
   @Test
-  void useCustomErrorPageHandlerForErrorPages() {
+  void useCustomErrorPageHandlerForErrorPages() throws Exception {
     try (Response response = getAppClient().path("404").request().get()) {
       assertThat(response.getStatus()).isEqualTo(404);
-      var content = response.readEntity(String.class);
+      assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+      byte[] contentRaw = response.readEntity(byte[].class);
+      var content = new String(contentRaw, StandardCharsets.UTF_8);
       assertThat(content)
           .doesNotMatch(".*\"code\"\\s*:\\s*500.*") // no default exception mapper
           .doesNotContain("<html") // no html page
           .doesNotContain("<h1>") // no html page
           .doesNotContain("<h2>"); // no html page
+
+      var json = new ObjectMapper().readTree(content);
+      assertThat(json.path("title").asText()).isEqualTo("HTTP Error 404 occurred.");
     }
   }
 }
