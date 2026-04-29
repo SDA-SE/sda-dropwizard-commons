@@ -3,16 +3,10 @@ dependencies {
     exclude group: 'com.fasterxml.jackson', module: 'jackson-bom'
     exclude group: 'net.minidev', module: 'json-smart'
     exclude group: 'commons-io', module: 'commons-io'
-    // WireMock publishes these modules directly and they otherwise stay on the older Jetty line.
-    exclude group: 'org.eclipse.jetty', module: 'jetty-server'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-proxy'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-server'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-java-server'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-java-client'
-    exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-client'
-    exclude group: 'org.eclipse.jetty.http2', module: 'jetty-http2-server'
-    exclude group: 'org.eclipse.jetty.ee10', module: 'jetty-ee10-servlets'
-    exclude group: 'org.eclipse.jetty.ee10', module: 'jetty-ee10-webapp'
+    // WireMock publishes older Jetty platforms and direct Jetty modules in its metadata.
+    exclude group: 'org.eclipse.jetty'
+    exclude group: 'org.eclipse.jetty.http2'
+    exclude group: 'org.eclipse.jetty.ee10'
   }
 
   api 'org.eclipse.jetty:jetty-server'
