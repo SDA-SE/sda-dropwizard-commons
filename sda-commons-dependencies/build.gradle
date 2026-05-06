@@ -64,7 +64,7 @@ dependencies {
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
-  api enforcedPlatform("io.netty:netty-bom:4.2.12.Final"), {
+  api enforcedPlatform("io.netty:netty-bom:4.2.13.Final"), {
     because "various CVEs in earlier versions"
   }
   api enforcedPlatform("io.prometheus:simpleclient_bom:${prometheusVersion}")
@@ -109,7 +109,7 @@ dependencies {
     api "org.objenesis:objenesis:3.5"
 
     // sda-commons-server-hibernate
-    api "org.postgresql:postgresql:42.7.10"
+    api "org.postgresql:postgresql:42.7.11"
     api "org.flywaydb:flyway-core:${flywayVersion}"
     api "org.flywaydb:flyway-database-postgresql:${flywayVersion}"
     // conflict between Flyway and tuprolog via DB Rider
