@@ -142,7 +142,7 @@ dependencies {
     api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
     api "io.micrometer:micrometer-observation:$micrometerVersion"
 
-    api "org.glassfish.jersey.ext:jersey-micrometer:3.1.11"
+    api "org.glassfish.jersey.ext:jersey-micrometer:4.0.2"
 
     // sda-commons-server-s3
     api "org.reactivestreams:reactive-streams:1.0.4"
