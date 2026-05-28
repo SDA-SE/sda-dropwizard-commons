@@ -34,7 +34,7 @@ ext {
   victoolsVersion = '4.38.0'
   flywayVersion = '12.5.0'
   logbackVersion = "1.5.32"
-  jettyVersion = "12.1.8"
+  jettyVersion = "12.1.9"
 }
 
 dependencies {
