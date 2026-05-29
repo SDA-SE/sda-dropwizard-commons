@@ -117,9 +117,13 @@ class KafkaPrometheusMonitoringIT {
 
     MetricSnapshot metricSnapshot =
         snapshots.stream()
-            .filter(f -> f.getMetadata().getName().equals("kafka_producer_record_error"))
+            .filter(
+                f ->
+                    f.getMetadata().getName().equals("kafka_producer_record_error")
+                        || f.getMetadata().getName().equals("kafka_producer_record_error_total"))
             .findFirst()
-            .orElseThrow(() -> new AssertionError("Metric kafka_producer_record_error not found"));
+            .orElseThrow(
+                () -> new AssertionError("Metric kafka_producer_record_error(_total) not found"));
 
     assertThat(metricSnapshot).isNotNull();
 
