@@ -27,7 +27,7 @@ public class ClientFactory {
    * to the API resources and can optionally send a {@code Consumer-Token} or pass through the
    * {@code Authorization} header from the incoming request.
    *
-   * <p>The client is using gzip compression.
+   * <p>The client accepts gzip-compressed responses by default.
    *
    * @return a builder to configure the client
    */
@@ -53,7 +53,7 @@ public class ClientFactory {
    * Starts creation of a client that calls APIs outside of the SDA SE Platform. This clients does
    * no header magic.
    *
-   * <p>The client is using gzip compression.
+   * <p>The client accepts gzip-compressed responses by default.
    *
    * @return a builder to configure the client
    */

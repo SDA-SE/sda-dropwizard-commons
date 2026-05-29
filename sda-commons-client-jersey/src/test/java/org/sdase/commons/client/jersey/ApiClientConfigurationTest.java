@@ -3,8 +3,8 @@ package org.sdase.commons.client.jersey;
 import static com.github.tomakehurst.wiremock.client.WireMock.created;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
-import static com.github.tomakehurst.wiremock.client.WireMock.notMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
@@ -20,7 +20,11 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.core.Response;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
@@ -81,8 +85,28 @@ class ApiClientConfigurationTest {
 
     WIRE.stubFor(
         get("/api/cars") // NOSONAR
-            .withHeader("Accept", notMatching("gzip"))
             .willReturn(ok().withHeader("Content-type", "application/json").withBody("[]")));
+
+    assertThat(client.getCars()).isEmpty();
+    verify(getRequestedFor(urlEqualTo("/api/cars")).withoutHeader("Accept-Encoding"));
+  }
+
+  @Test
+  void useGzipForResponsesByDefault() throws IOException {
+    MockApiClient client =
+        app.getJerseyClientBundle()
+            .getClientFactory()
+            .externalClient()
+            .api(MockApiClient.class)
+            .atTarget(WIRE.baseUrl());
+
+    WIRE.stubFor(
+        get("/api/cars") // NOSONAR
+            .withHeader("Accept-Encoding", matching(".*gzip.*"))
+            .willReturn(
+                ok().withHeader("Content-type", "application/json")
+                    .withHeader("Content-Encoding", "gzip")
+                    .withBody(gzip("[]"))));
 
     assertThat(client.getCars()).isEmpty();
   }
@@ -90,6 +114,7 @@ class ApiClientConfigurationTest {
   @Test
   void enableGzipForRequests() {
     HttpClientConfiguration config = new HttpClientConfiguration();
+    config.setGzipEnabled(true);
     config.setGzipEnabledForRequests(true);
 
     MockApiClient client =
@@ -175,5 +200,13 @@ class ApiClientConfigurationTest {
     } finally {
       MetadataContext.createContext(new DetachedMetadataContext());
     }
+  }
+
+  private byte[] gzip(String value) throws IOException {
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream)) {
+      gzipOutputStream.write(value.getBytes(StandardCharsets.UTF_8));
+    }
+    return byteArrayOutputStream.toByteArray();
   }
 }

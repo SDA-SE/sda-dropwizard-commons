@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
+import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.apachehttpclient.v5_2.ApacheHttpClientTelemetry;
 import jakarta.ws.rs.client.Client;
@@ -12,9 +14,11 @@ import jakarta.ws.rs.core.Feature;
 import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
+import org.sdase.commons.client.jersey.filter.AddRequestHeaderFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,10 +118,34 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
     // Create a copy of the configuration
     final HttpClientConfiguration configuration =
         objectMapper.convertValue(httpClientConfiguration, httpClientConfiguration.getClass());
+    boolean gzipEnabled = configuration.isGzipEnabled();
+    boolean gzipEnabledForRequests = configuration.isGzipEnabledForRequests();
+
+    if (gzipEnabled) {
+      // Avoid Dropwizard wiring its own gzip support on top of Apache HttpClient content handling.
+      configuration.setGzipEnabled(false);
+      configuration.setGzipEnabledForRequests(false);
+    }
 
     Client client = jerseyClientBuilder.using(configuration).build(name);
     filters.forEach(client::register);
     features.forEach(client::register);
+    if (gzipEnabled) {
+      client.register(new GZipDecoder());
+      client.register(new ConfiguredGZipEncoder(gzipEnabledForRequests));
+      client.register(
+          new AddRequestHeaderFilter() {
+            @Override
+            public String getHeaderName() {
+              return "Accept-Encoding";
+            }
+
+            @Override
+            public Optional<String> getHeaderValue() {
+              return Optional.of("gzip");
+            }
+          });
+    }
     client.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
     registerMultiPartIfAvailable(client);
     return client;
