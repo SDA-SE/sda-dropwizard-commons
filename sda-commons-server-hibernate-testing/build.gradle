@@ -1,14 +1,16 @@
+def dbRiderVersion = findProject(':sda-commons-dependencies').ext.dbRiderVersion
+
 dependencies {
   api project(':sda-commons-server-testing')
   api 'com.h2database:h2'
-  api "com.github.database-rider:rider-core:${project(':sda-commons-dependencies').dbRiderVersion}:jakarta", {
+  api "com.github.database-rider:rider-core:${dbRiderVersion}:jakarta", {
     // excluded due to licensing issues
     exclude group: 'mysql', module: 'mysql-connector-java'
     // exclude due to version conflict for Kotlin in "it.unibo.tuprolog:solve-classic-jvm
     exclude group: 'it.unibo.tuprolog', module: 'solve-classic-jvm'
     exclude group: 'it.unibo.tuprolog', module: 'parser-theory-jvm'
   }
-  api "com.github.database-rider:rider-junit5:${project(':sda-commons-dependencies').dbRiderVersion}:jakarta", {
+  api "com.github.database-rider:rider-junit5:${dbRiderVersion}:jakarta", {
     // excluded due to licensing issues
     exclude group: 'mysql', module: 'mysql-connector-java'
     exclude group: 'com.github.database-rider', module: 'rider-core'
