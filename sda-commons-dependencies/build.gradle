@@ -17,7 +17,7 @@ ext {
   weldVersion = '6.0.4.Final'
   jacksonVersion = '2.21.3'
   jackson3Version = '3.1.3'
-  jsonUnitVersion = '5.1.1'
+  jsonUnitVersion = '5.1.2'
   scalaVersion = '2.13.18' // align transitive dependency from various modules, keep up to date
   kafkaVersion = '3.9.2'
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
