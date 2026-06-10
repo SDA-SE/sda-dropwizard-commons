@@ -5,6 +5,7 @@ import static io.dropwizard.testing.ConfigOverride.randomPorts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mongodb.client.internal.MongoClientImpl;
+import com.mongodb.connection.SslSettings;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
@@ -49,6 +50,17 @@ abstract class SpringDataMongoBundleSSLConfigurationIT {
             // make sure certificates dir is unset
             config("config.customCaCertificateDir", ""));
 
+    @RegisterExtension
+    @Order(3)
+    static final DropwizardAppExtension<MyConfiguration> DW_WITH_SSL_DISABLED =
+        new DropwizardAppExtension<>(
+            AutoIndexDisabledApp.class,
+            null,
+            randomPorts(),
+            config("springDataMongo.connectionString", () -> withSslDisabled(mongo)),
+            config(
+                "config.customCaCertificateDir", Paths.get("src", "test", "resources").toString()));
+
     @Override
     DropwizardAppExtension<MyConfiguration> getDW() {
       return DW;
@@ -57,6 +69,13 @@ abstract class SpringDataMongoBundleSSLConfigurationIT {
     @Override
     DropwizardAppExtension<MyConfiguration> getDwWithoutSSL() {
       return DW_WITHOUT_SSL;
+    }
+
+    @Test
+    void shouldRespectExplicitSslDisabledFlag() {
+      var sslSettings = getSslSettings(DW_WITH_SSL_DISABLED);
+      assertThat(sslSettings.isEnabled()).isFalse();
+      assertThat(sslSettings.getContext()).isNotNull();
     }
   }
 
@@ -193,12 +212,24 @@ abstract class SpringDataMongoBundleSSLConfigurationIT {
 
   abstract DropwizardAppExtension<MyConfiguration> getDwWithoutSSL();
 
-  private SSLContext getSSLContext(DropwizardAppExtension<MyConfiguration> DW) {
+  private static SSLContext getSSLContext(
+      DropwizardAppExtension<MyConfiguration> dropwizardAppExtension) {
+    return getSslSettings(dropwizardAppExtension).getContext();
+  }
+
+  private static SslSettings getSslSettings(
+      DropwizardAppExtension<MyConfiguration> dropwizardAppExtension) {
     return ((MongoClientImpl)
-            DW.<AutoIndexDisabledApp>getApplication().springDataMongoBundle.mongoClient())
+            dropwizardAppExtension
+                .<AutoIndexDisabledApp>getApplication()
+                .springDataMongoBundle
+                .mongoClient())
         .getSettings()
-        .getSslSettings()
-        .getContext();
+        .getSslSettings();
+  }
+
+  private static String withSslDisabled(MongoDbClassExtension mongo) {
+    return mongo.getConnectionString() + "&ssl=false";
   }
 
   public static class AutoIndexDisabledApp extends Application<MyConfiguration> {
