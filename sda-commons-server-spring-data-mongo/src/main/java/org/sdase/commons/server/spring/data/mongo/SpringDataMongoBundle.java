@@ -150,7 +150,9 @@ public class SpringDataMongoBundle<C extends Configuration> implements Configure
       clientSettingsBuilder.applyToSslSettings(
           builder -> {
             builder.context(this.caCertificatesBundle.getSslContext());
-            builder.enabled(true);
+            if (!Boolean.FALSE.equals(cs.getSslEnabled())) {
+              builder.enabled(true);
+            }
           });
     }
     clientSettingsBuilder.addCommandListener(createTracingCommandListener());
