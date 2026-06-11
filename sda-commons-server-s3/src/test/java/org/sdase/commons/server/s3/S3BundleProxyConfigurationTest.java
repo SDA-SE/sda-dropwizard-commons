@@ -12,7 +12,8 @@ class S3BundleProxyConfigurationTest {
   void shouldCreateProxyConfigurationWithNonProxyHosts() {
     // given
     var s3Config =
-        new S3Configuration().setNonProxyHosts(List.of(" localhost ", "internal.example.com"));
+        new S3Configuration()
+            .setNonProxyHosts(List.of(" localhost ", "*.internal.example.com|api.local"));
     var s3Bundle = createS3BundleWithConfig(s3Config);
 
     // when
@@ -21,7 +22,7 @@ class S3BundleProxyConfigurationTest {
     // then
     assertThat(proxyConfiguration).isNotNull();
     assertThat(proxyConfiguration.nonProxyHosts())
-        .containsExactlyInAnyOrder("localhost", "internal.example.com");
+        .containsExactlyInAnyOrder("localhost", ".*?.internal.example.com", "api.local");
     assertThat(proxyConfiguration.host()).isNull();
     assertThat(proxyConfiguration.port()).isZero();
   }

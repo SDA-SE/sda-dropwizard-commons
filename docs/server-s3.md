@@ -23,6 +23,21 @@ Afterward, `getClient()` is used to access an instance of `S3Client` that is use
 object storage. 
 See [`S3BundleTest`](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-s3/src/test/java/org/sdase/commons/server/s3/S3BundleTest.java) for a detailed usage example.   
 
+## Configuration
+
+Assuming the applications configuration field is named `s3`, a typical configuration may look like:
+
+```yaml
+s3:
+  endpoint: ${S3_ENDPOINT}
+  region: ${S3_REGION}
+  accessKey: ${S3_ACCESS_KEY}
+  secretKey: ${S3_SECRET_KEY}
+  # To configure non-proxy hosts per environment, Json in Yaml syntax may be used with an
+  # environment placeholder:
+  nonProxyHosts: ${S3_NON_PROXY_HOSTS:-[]}
+```
+
 ### Credentials
 
 Usually you can specify AWS credentials in the `S3Configuration`.

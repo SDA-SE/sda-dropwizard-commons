@@ -22,10 +22,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.sdase.commons.server.s3.health.ExternalS3HealthCheck;
 import org.sdase.commons.server.s3.health.S3HealthCheck;
 import org.sdase.commons.server.s3.health.S3HealthCheckType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
@@ -43,11 +46,13 @@ import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.utils.StringUtils;
 
 public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
 
   public static final String S3_HEALTH_CHECK_NAME = "s3Connection";
   public static final String S3_EXTERNAL_HEALTH_CHECK_NAME = "s3ConnectionExternal";
+  private static final Logger LOG = LoggerFactory.getLogger(S3Bundle.class);
 
   private final S3ConfigurationProvider<C> configurationProvider;
   private final OpenTelemetry openTelemetry;
@@ -137,6 +142,7 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
     if (nonProxyHosts.isEmpty()) {
       return null;
     }
+    LOG.info("Configuring S3 proxy bypass hosts: {}", String.join(", ", nonProxyHosts));
     return ProxyConfiguration.builder()
         .useSystemPropertyValues(true)
         .useEnvironmentVariablesValues(true)
@@ -149,8 +155,12 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
       return Collections.emptySet();
     }
     return config.getNonProxyHosts().stream()
+        .filter(Objects::nonNull)
+        .flatMap(host -> Stream.of(host.split("\\|")))
         .map(String::trim)
         .filter(host -> !isBlank(host))
+        .map(String::toLowerCase)
+        .map(s -> StringUtils.replace(s, "*", ".*?"))
         .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
