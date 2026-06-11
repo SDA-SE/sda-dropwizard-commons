@@ -33,6 +33,23 @@ or via system properties `aws.accessKeyId` and `aws.secretAccessKey`.
 
 If you want to use anonymous credentials, you can set `useAnonymousCredentials` to `true` in the `S3Configuration`.
 
+If your runtime uses an HTTP proxy, you can optionally set `nonProxyHosts` in the `S3Configuration`
+to bypass the proxy for specific S3 hosts.
+
+```yaml
+s3:
+  nonProxyHosts:
+    - localhost
+    - minio.internal.example.org
+```
+
+### Environment Variables
+
+* `S3_NON_PROXY_HOSTS` _array_
+  * Hosts that should bypass the HTTP proxy for S3 access.
+  * Example: `["localhost", "minio.internal.example.org"]`
+  * Default: `[]`
+
 ### Tracing
 
 The bundle comes with [OpenTelemetry](https://opentelemetry.io/) instrumentation.

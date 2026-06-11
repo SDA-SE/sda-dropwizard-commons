@@ -1,6 +1,7 @@
 package org.sdase.commons.server.s3;
 
 import jakarta.validation.constraints.NotEmpty;
+import java.util.List;
 
 /** Defines the configuration ot the {@link S3Bundle}. */
 public class S3Configuration {
@@ -62,6 +63,9 @@ public class S3Configuration {
    */
   private String signerOverride = "AWSS3V4SignerType";
 
+  /** Optional list of hosts that should bypass any configured proxy for the S3 client. */
+  private List<String> nonProxyHosts;
+
   public String getEndpoint() {
     return endpoint;
   }
@@ -113,6 +117,15 @@ public class S3Configuration {
 
   public S3Configuration setSignerOverride(String signerOverride) {
     this.signerOverride = signerOverride;
+    return this;
+  }
+
+  public List<String> getNonProxyHosts() {
+    return nonProxyHosts;
+  }
+
+  public S3Configuration setNonProxyHosts(List<String> nonProxyHosts) {
+    this.nonProxyHosts = nonProxyHosts;
     return this;
   }
 }

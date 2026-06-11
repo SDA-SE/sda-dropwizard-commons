@@ -16,6 +16,7 @@ import io.opentelemetry.instrumentation.awssdk.v2_2.AwsSdkTelemetry;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -37,6 +38,7 @@ import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.core.client.config.SdkAdvancedClientOption;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptor;
 import software.amazon.awssdk.core.signer.Signer;
+import software.amazon.awssdk.http.urlconnection.ProxyConfiguration;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -116,9 +118,40 @@ public class S3Bundle<C extends Configuration> implements ConfiguredBundle<C> {
                 .executionInterceptors(List.of(createTracingExecutingInterceptor()))
                 .putAdvancedOption(SdkAdvancedClientOption.SIGNER, createSigner(s3Configuration))
                 .build())
-        .httpClient(UrlConnectionHttpClient.builder().build())
+        .httpClient(createHttpClient(s3Configuration))
         .credentialsProvider(createCredentialsProvider(s3Configuration))
         .build();
+  }
+
+  UrlConnectionHttpClient createHttpClient(S3Configuration config) {
+    var builder = UrlConnectionHttpClient.builder();
+    var proxyConfiguration = createProxyConfiguration(config);
+    if (proxyConfiguration != null) {
+      builder.proxyConfiguration(proxyConfiguration);
+    }
+    return (UrlConnectionHttpClient) builder.build();
+  }
+
+  ProxyConfiguration createProxyConfiguration(S3Configuration config) {
+    Set<String> nonProxyHosts = normalizeNonProxyHosts(config);
+    if (nonProxyHosts.isEmpty()) {
+      return null;
+    }
+    return ProxyConfiguration.builder()
+        .useSystemPropertyValues(true)
+        .useEnvironmentVariablesValues(true)
+        .nonProxyHosts(nonProxyHosts)
+        .build();
+  }
+
+  Set<String> normalizeNonProxyHosts(S3Configuration config) {
+    if (config.getNonProxyHosts() == null || config.getNonProxyHosts().isEmpty()) {
+      return Collections.emptySet();
+    }
+    return config.getNonProxyHosts().stream()
+        .map(String::trim)
+        .filter(host -> !isBlank(host))
+        .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   public S3Presigner newPresigner() {
