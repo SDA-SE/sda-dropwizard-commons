@@ -79,6 +79,9 @@ public class MessageListener<K, V> implements Runnable {
         // wait for the next poll interval
         waitForNextPoll();
 
+        // allow to run optional pre-poll logic
+        strategy.beforePoll(consumer);
+
         ConsumerRecords<K, V> records =
             consumer.poll(Duration.ofMillis(configuredPollIntervalMillis));
 
