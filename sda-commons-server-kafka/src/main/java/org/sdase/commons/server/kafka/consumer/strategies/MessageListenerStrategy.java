@@ -79,6 +79,20 @@ public abstract class MessageListenerStrategy<K, V> {
   public abstract void processRecords(ConsumerRecords<K, V> records, KafkaConsumer<K, V> consumer);
 
   /**
+   * A hook that is called once per poll cycle, right before the consumer polls for new records.
+   *
+   * <p>This enables strategies to perform periodic tasks, such as reacting to external signals,
+   * independently of the received records. The base implementation is empty to ensure backward
+   * compatibility.
+   *
+   * @param consumer The consumer instance, which can be manipulated (e.g., with {@code seek()})
+   *     before polling.
+   */
+  public void beforePoll(@SuppressWarnings("unused") KafkaConsumer<K, V> consumer) {
+    // Base implementation does nothing.
+  }
+
+  /**
    * Creates a context for the current {@link Thread} to handle a message with appropriate
    * information in {@link ThreadLocal}s.
    *
