@@ -37,14 +37,16 @@ class MessageListenerHookTest {
     strategyMock = mock(MessageListenerStrategy.class);
     executorService = Executors.newSingleThreadExecutor();
 
-    when(consumerMock.partitionsFor(anyString())).thenReturn(Collections.singletonList(mock(PartitionInfo.class)));
+    when(consumerMock.partitionsFor(anyString()))
+        .thenReturn(Collections.singletonList(mock(PartitionInfo.class)));
     when(consumerMock.poll(any(Duration.class))).thenReturn(ConsumerRecords.empty());
 
-    messageListener = new MessageListener<>(
-        Collections.singletonList(TOPIC_NAME),
-        consumerMock,
-        ListenerConfig.getDefault(),
-        strategyMock);
+    messageListener =
+        new MessageListener<>(
+            Collections.singletonList(TOPIC_NAME),
+            consumerMock,
+            ListenerConfig.getDefault(),
+            strategyMock);
 
     verify(consumerMock).subscribe(anyCollection());
   }
@@ -77,10 +79,11 @@ class MessageListenerHookTest {
 
       await()
           .atMost(Duration.ofSeconds(5))
-          .untilAsserted(() -> {
-            inOrder.verify(strategyMock).beforePoll(consumerMock);
-            inOrder.verify(consumerMock).poll(any(Duration.class));
-          });
+          .untilAsserted(
+              () -> {
+                inOrder.verify(strategyMock).beforePoll(consumerMock);
+                inOrder.verify(consumerMock).poll(any(Duration.class));
+              });
 
     } finally {
       messageListener.stopConsumer();
@@ -89,18 +92,22 @@ class MessageListenerHookTest {
 
   @Test
   void shouldExecuteActionsWithinHook() {
-    doAnswer(invocation -> {
-      KafkaConsumer<String, String> consumer = invocation.getArgument(0);
-      consumer.seek(new TopicPartition(TOPIC_NAME, 0), 123L);
-      return null;
-    }).when(strategyMock).beforePoll(consumerMock);
+    doAnswer(
+            invocation -> {
+              KafkaConsumer<String, String> consumer = invocation.getArgument(0);
+              consumer.seek(new TopicPartition(TOPIC_NAME, 0), 123L);
+              return null;
+            })
+        .when(strategyMock)
+        .beforePoll(consumerMock);
 
     try {
       executorService.submit(messageListener);
 
       await()
           .atMost(Duration.ofSeconds(5))
-          .untilAsserted(() -> verify(consumerMock, atLeastOnce()).seek(any(TopicPartition.class), anyLong()));
+          .untilAsserted(
+              () -> verify(consumerMock, atLeastOnce()).seek(any(TopicPartition.class), anyLong()));
 
       InOrder inOrder = inOrder(strategyMock, consumerMock);
       inOrder.verify(strategyMock).beforePoll(consumerMock);
