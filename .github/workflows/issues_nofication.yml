@@ -1,0 +1,33 @@
+name: Issue Notification Workflow
+on:
+  issues:
+    types:
+      - opened
+jobs:
+  notificate_slack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: C05NM8419JM
+            text: "${{ github.event.repository.name }}: new issue #${{ github.event.issue.number }} opened - ${{ github.event.issue.html_url }}"
+            blocks:
+              - type: header
+                text:
+                  type: plain_text
+                  text: GitHub Issue Opened
+                  emoji: true
+              - type: section
+                text:
+                  type: mrkdwn
+                  text: "*<${{ github.event.issue.html_url }}|Issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}>*"
+              - type: context
+                elements:
+                  - type: mrkdwn
+                    text: "Repository: `${{ github.event.repository.name }}`"
+                  - type: mrkdwn
+                    text: "Opened by `${{ github.event.issue.user.login }}`"
