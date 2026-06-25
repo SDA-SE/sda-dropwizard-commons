@@ -10,7 +10,7 @@ ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.5.1'
   apacheHttpCore5Version = '5.4.2'
-  dropwizardVersion = '5.0.1'
+  dropwizardVersion = '5.0.2'
   prometheusVersion = '1.7.0'
   micrometerVersion = '1.17.0'
   swaggerCoreV3Version = '2.2.50'
