@@ -90,6 +90,10 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
             .setFirstName("John")
             .setLastName("Doe")
             .setNickName("Johnny")
+            .setAddress(new Address().setCity("Hamburg").setId("Hamburg"))
+            .setNestedResource(
+                new NestedResource()
+                    .setAnotherNestedResource(new NestedNestedResource().setAnotherNested("deep")))
             .setSelf(new HALLink.Builder(self).build());
     john.setChildren(
         singletonList(
