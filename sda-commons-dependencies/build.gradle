@@ -13,7 +13,7 @@ ext {
   dropwizardVersion = '5.0.1'
   prometheusVersion = '1.7.0'
   micrometerVersion = '1.17.0'
-  swaggerCoreV3Version = '2.2.50'
+  swaggerCoreV3Version = '2.2.52'
   weldVersion = '6.0.4.Final'
   jacksonVersion = '2.22.0'
   jackson3Version = '3.2.0'
