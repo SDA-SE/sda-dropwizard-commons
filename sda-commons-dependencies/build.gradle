@@ -8,12 +8,12 @@ javaPlatform {
 
 ext {
   antlr4Version = '4.13.2'
-  apacheHttpClient5Version = '5.5.1'
+  apacheHttpClient5Version = '5.6.1'
   apacheHttpCore5Version = '5.4.3'
-  dropwizardVersion = '5.0.1'
-  prometheusVersion = '1.7.0'
+  dropwizardVersion = '5.0.2'
+  prometheusVersion = '1.8.0'
   micrometerVersion = '1.17.0'
-  swaggerCoreV3Version = '2.2.50'
+  swaggerCoreV3Version = '2.2.52'
   weldVersion = '6.0.4.Final'
   jacksonVersion = '2.22.0'
   jackson3Version = '3.2.0'
@@ -26,13 +26,13 @@ ext {
   kotlinxCoroutinesVersion = '1.11.0'
   resilience4jVersion = '2.4.0'
   openTelemetryVersion = '1.62.0'
-  openTelemetryAlpha2Version = '2.28.1-alpha'
+  openTelemetryAlpha2Version = '2.29.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '5.8.0'
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.84'
   victoolsVersion = '4.38.0'
-  flywayVersion = '12.8.1'
+  flywayVersion = '12.9.0'
   logbackVersion = "1.5.37"
   jettyVersion = "12.1.10"
 }
@@ -136,13 +136,13 @@ dependencies {
     api "io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations-jakarta:$swaggerCoreV3Version"
-    api "io.swagger.parser.v3:swagger-parser-v3:2.1.43"
+    api "io.swagger.parser.v3:swagger-parser-v3:2.1.45"
 
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
     api "io.micrometer:micrometer-observation:$micrometerVersion"
 
-    api "org.glassfish.jersey.ext:jersey-micrometer:3.1.11"
+    api "org.glassfish.jersey.ext:jersey-micrometer:4.0.2"
 
     // sda-commons-server-s3
     api "org.reactivestreams:reactive-streams:1.0.4"
@@ -184,8 +184,8 @@ dependencies {
     // sda-commons-server-opentelemetry
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
-    api "io.opentelemetry.semconv:opentelemetry-semconv:1.41.1"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.28.1"
+    api "io.opentelemetry.semconv:opentelemetry-semconv:1.42.0"
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.29.0"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator:${openTelemetryAlpha2Version}"
 
     // Kafka
