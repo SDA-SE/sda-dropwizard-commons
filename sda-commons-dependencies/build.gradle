@@ -9,7 +9,7 @@ javaPlatform {
 ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.5.1'
-  apacheHttpCore5Version = '5.4.2'
+  apacheHttpCore5Version = '5.4.3'
   dropwizardVersion = '5.0.2'
   prometheusVersion = '1.7.0'
   micrometerVersion = '1.17.0'
@@ -33,7 +33,7 @@ ext {
   bouncyCastleVersion = '1.84'
   victoolsVersion = '4.38.0'
   flywayVersion = '12.8.1'
-  logbackVersion = "1.5.34"
+  logbackVersion = "1.5.37"
   jettyVersion = "12.1.10"
 }
 
@@ -61,7 +61,7 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.46.6")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.46.17")
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
