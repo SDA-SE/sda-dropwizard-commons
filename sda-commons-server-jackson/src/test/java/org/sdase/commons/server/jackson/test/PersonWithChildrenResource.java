@@ -25,6 +25,8 @@ public class PersonWithChildrenResource {
   @JsonProperty("renamedCustomProp")
   private NestedResource nestedResource;
 
+  private UnfilteredChildResource unfilteredChild;
+
   private List<PersonResource> children;
 
   public HALLink getSelf() {
@@ -78,6 +80,15 @@ public class PersonWithChildrenResource {
 
   public PersonWithChildrenResource setNestedResource(NestedResource nestedResource) {
     this.nestedResource = nestedResource;
+    return this;
+  }
+
+  public UnfilteredChildResource getUnfilteredChild() {
+    return unfilteredChild;
+  }
+
+  public PersonWithChildrenResource setUnfilteredChild(UnfilteredChildResource unfilteredChild) {
+    this.unfilteredChild = unfilteredChild;
     return this;
   }
 

@@ -564,6 +564,22 @@ class JacksonConfigurationBundleIT {
   }
 
   @Test
+  void shouldKeepFullSubtreeForUnannotatedChildEvenIfSubFieldIsRequested() {
+    JsonNode johnny =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("jdoe-and-children")
+            .queryParam("fields", "unfilteredChild.name")
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+
+    JsonNode unfilteredChild = johnny.path("unfilteredChild");
+    assertThat(unfilteredChild.path("name").asText()).isEqualTo("Jane");
+    assertThat(unfilteredChild.path("lastName").asText()).isEqualTo("Doey");
+  }
+
+  @Test
   void shouldFilterNickNameInList() {
     List<PersonWithChildrenResource> people =
         DropwizardLegacyHelper.client(DW.getObjectMapper())
