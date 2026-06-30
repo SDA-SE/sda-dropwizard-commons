@@ -91,7 +91,8 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
             .setLastName("Doe")
             .setNickName("Johnny")
             .setAddress(new Address().setCity("Hamburg").setId("Hamburg"))
-            .setUnfilteredChild(new UnfilteredChildResource().setFirstName("Jane").setLastName("Doey"))
+            .setUnfilteredChild(
+                new UnfilteredChildResource().setFirstName("Jane").setLastName("Doey"))
             .setNestedResource(
                 new NestedResource()
                     .setAnotherNestedResource(new NestedNestedResource().setAnotherNested("deep")))
