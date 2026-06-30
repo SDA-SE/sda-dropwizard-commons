@@ -487,7 +487,7 @@ class JacksonConfigurationBundleIT {
   }
 
   @Test
-  void shouldFilterChildrenAndNestedFieldsByPath() throws Exception {
+  void shouldFilterChildrenAndNestedFieldsByPath() {
     JsonNode johnny =
         DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
@@ -528,7 +528,7 @@ class JacksonConfigurationBundleIT {
   }
 
   @Test
-  void shouldKeepFullSubtreeForParentPathsFromRepeatedFieldParams() throws Exception {
+  void shouldKeepFullSubtreeForParentPathsFromRepeatedFieldParams() {
     JsonNode johnny =
         DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
