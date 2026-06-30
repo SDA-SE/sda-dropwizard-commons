@@ -29,6 +29,10 @@ import org.sdase.commons.server.jackson.EnableFieldFilter;
  *       fields ({@code &fields=} parameter)
  *   <li>The property is returned if it is part of an embedded object
  * </ol>
+ *
+ * <p>Nested field paths are only applied inside nested object types that are also annotated. If a
+ * nested object type is not annotated, selecting one of its sub-fields keeps the whole nested
+ * object.
  */
 public class FieldFilterSerializerModifier extends BeanSerializerModifier {
 
