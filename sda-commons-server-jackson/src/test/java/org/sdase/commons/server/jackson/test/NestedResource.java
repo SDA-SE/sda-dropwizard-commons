@@ -3,7 +3,9 @@ package org.sdase.commons.server.jackson.test;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import org.sdase.commons.server.jackson.EnableFieldFilter;
 
+@EnableFieldFilter
 public class NestedResource {
 
   @NotEmpty()

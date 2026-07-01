@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.WebApplicationException;
@@ -483,6 +484,99 @@ class JacksonConfigurationBundleIT {
             PersonWithChildrenResource::getChildren)
         .containsExactly(
             "http://localhost:" + DW.getLocalPort() + "/people/jdoe", null, null, "Johnny", null);
+  }
+
+  @Test
+  void shouldFilterChildrenAndNestedFieldsByPath() {
+    JsonNode johnny =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("jdoe-and-children")
+            .queryParam(
+                "fields",
+                "children.nickName,renamedCustomProp.myNestedResource.anotherNestedField,address.city")
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+
+    assertThat(johnny.has("_links")).isTrue();
+    assertThat(johnny.has("children")).isTrue();
+    assertThat(johnny.has("renamedCustomProp")).isTrue();
+    assertThat(johnny.has("address")).isTrue();
+
+    assertThat(johnny.has("firstName")).isFalse();
+    assertThat(johnny.has("lastName")).isFalse();
+    assertThat(johnny.has("nickName")).isFalse();
+
+    JsonNode child = johnny.path("children").get(0);
+    assertThat(child.path("nickName").asText()).isEqualTo("Yassie");
+    assertThat(child.has("_links")).isTrue();
+    assertThat(child.has("firstName")).isFalse();
+    assertThat(child.has("lastName")).isFalse();
+
+    JsonNode customNested = johnny.path("renamedCustomProp");
+    assertThat(customNested.size()).isEqualTo(1);
+    assertThat(customNested.has("myNestedResource")).isTrue();
+
+    JsonNode nestedResource = customNested.path("myNestedResource");
+    assertThat(nestedResource.size()).isEqualTo(1);
+    assertThat(nestedResource.path("anotherNestedField").asText()).isEqualTo("deep");
+    assertThat(nestedResource.has("someNumber")).isFalse();
+
+    assertThat(johnny.path("address").size()).isEqualTo(1);
+    assertThat(johnny.path("address").path("city").asText()).isEqualTo("Hamburg");
+  }
+
+  @Test
+  void shouldKeepFullSubtreeForParentPathsFromRepeatedFieldParams() {
+    JsonNode johnny =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("jdoe-and-children")
+            .queryParam("fields", "children")
+            .queryParam("fields", "renamedCustomProp")
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+
+    assertThat(johnny.has("_links")).isTrue();
+    assertThat(johnny.has("children")).isTrue();
+    assertThat(johnny.has("renamedCustomProp")).isTrue();
+    assertThat(johnny.has("firstName")).isFalse();
+    assertThat(johnny.has("lastName")).isFalse();
+    assertThat(johnny.has("nickName")).isFalse();
+    assertThat(johnny.has("address")).isFalse();
+
+    JsonNode child = johnny.path("children").get(0);
+    assertThat(child.has("_links")).isTrue();
+    assertThat(child.path("firstName").asText()).isEqualTo("Yasmine");
+    assertThat(child.path("lastName").asText()).isEqualTo("Doe");
+    assertThat(child.path("nickName").asText()).isEqualTo("Yassie");
+
+    JsonNode customNested = johnny.path("renamedCustomProp");
+    assertThat(customNested.has("myNestedField")).isTrue();
+    assertThat(customNested.has("someNumber")).isTrue();
+    assertThat(customNested.has("myNestedResource")).isTrue();
+
+    JsonNode nestedResource = customNested.path("myNestedResource");
+    assertThat(nestedResource.has("anotherNestedField")).isTrue();
+    assertThat(nestedResource.has("someNumber")).isTrue();
+  }
+
+  @Test
+  void shouldKeepFullSubtreeForUnannotatedChildEvenIfSubFieldIsRequested() {
+    JsonNode johnny =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("jdoe-and-children")
+            .queryParam("fields", "unfilteredChild.name")
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+
+    JsonNode unfilteredChild = johnny.path("unfilteredChild");
+    assertThat(unfilteredChild.path("name").asText()).isEqualTo("Jane");
+    assertThat(unfilteredChild.path("lastName").asText()).isEqualTo("Doey");
   }
 
   @Test
