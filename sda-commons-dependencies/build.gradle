@@ -222,5 +222,7 @@ dependencies {
 
     //Fixes CVE-2024-29371, Kafka 3.9.1 still uses 0.9.4; can be removed at a future update of Kafka
     api 'org.bitbucket.b_c:jose4j:0.9.6'
+
+    api 'com.github.jknack:handlebars:4.5.2' //CVE-2026-55760 (check if still needed by next wiremock update)
   }
 }
