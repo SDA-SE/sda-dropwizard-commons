@@ -8,7 +8,7 @@ javaPlatform {
 
 ext {
   antlr4Version = '4.13.2'
-  apacheHttpClient5Version = '5.5.1'
+  apacheHttpClient5Version = '5.6.2'
   apacheHttpCore5Version = '5.4.3'
   dropwizardVersion = '5.0.2'
   prometheusVersion = '1.8.0'
