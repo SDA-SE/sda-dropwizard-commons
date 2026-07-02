@@ -72,6 +72,8 @@ dependencies {
   // asyncapi generation
   api enforcedPlatform("com.github.victools:jsonschema-generator-bom:${victoolsVersion}")
 
+  api enforcedPlatform("org.ow2.asm:asm-bom:9.10.1") //because conflicts
+
   constraints {
     // overall conflicts
     // Keep Apache HttpCore/HttpClient aligned and validate upgrades in a downstream service
