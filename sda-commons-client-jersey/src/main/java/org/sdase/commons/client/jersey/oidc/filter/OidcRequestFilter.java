@@ -22,17 +22,21 @@ public class OidcRequestFilter implements ClientRequestFilter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(OidcRequestFilter.class);
 
+  private final OidcConfiguration oidcConfiguration;
+
   private OidcClient oidcClient;
 
   private AuthHeaderClientFilter authHeaderClientFilter;
 
   public OidcRequestFilter(
       ClientFactory clientFactory, OidcConfiguration oidc, boolean authenticationPassthrough) {
+    this.oidcConfiguration = oidc;
     if (authenticationPassthrough) {
       authHeaderClientFilter = new AuthHeaderClientFilter();
     }
     if (!oidc.isDisabled()) {
       this.oidcClient = new OidcClient(clientFactory, oidc);
+      this.validateOidcConfig();
     }
   }
 
@@ -41,12 +45,55 @@ public class OidcRequestFilter implements ClientRequestFilter {
       OidcConfiguration oidc,
       boolean authenticationPassthrough,
       String clientName) {
+    this.oidcConfiguration = oidc;
     if (authenticationPassthrough) {
       authHeaderClientFilter = new AuthHeaderClientFilter();
     }
     if (!oidc.isDisabled()) {
       this.oidcClient = new OidcClient(clientFactory, oidc, clientName);
+      this.validateOidcConfig();
     }
+  }
+
+  /**
+   * Validates that an OIDC access token can be retrieved successfully.
+   *
+   * <p>This method is called during construction when OIDC is enabled. It enforces fast startup
+   * failure for invalid OIDC settings, unreachable token endpoints, or credentials that cannot
+   * retrieve a token.
+   *
+   * <p>Validation is skipped when {@link OidcConfiguration#isEnableStartupValidation()} returns
+   * {@code false}. The constructors also skip this validation when OIDC is disabled.
+   *
+   * @throws IllegalStateException if startup validation is enabled and the OIDC client is not
+   *     initialized, the token endpoint cannot be reached, or no valid access token can be
+   *     retrieved
+   */
+  private void validateOidcConfig() {
+    if (!oidcConfiguration.isEnableStartupValidation()) {
+      return;
+    }
+
+    OidcResult oidcResult;
+    try {
+      oidcResult = oidcClient.createAccessToken();
+    } catch (RuntimeException e) {
+      throw new IllegalStateException(
+          buildOidcConfigValidationErrorMessage("Token retrieval failed."), e);
+    }
+
+    if (oidcResult == null || oidcResult.getState() == OidcState.ERROR) {
+      throw new IllegalStateException(
+          buildOidcConfigValidationErrorMessage(
+              "Could not retrieve access token. State was: "
+                  + (oidcResult == null ? "null" : oidcResult.getState())));
+    }
+  }
+
+  private String buildOidcConfigValidationErrorMessage(String detail) {
+    return String.format(
+        "OIDC startup validation failed. %s Configuration: issuerUrl='%s', grantType='%s'. Check OIDC provider settings.",
+        detail, oidcConfiguration.getIssuerUrl(), oidcConfiguration.getGrantType());
   }
 
   @Override

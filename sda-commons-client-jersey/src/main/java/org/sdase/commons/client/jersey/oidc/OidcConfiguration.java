@@ -48,6 +48,8 @@ public class OidcConfiguration {
 
   private String scope;
 
+  private boolean enableStartupValidation;
+
   private CacheConfiguration cache = new CacheConfiguration();
 
   /**
@@ -127,6 +129,15 @@ public class OidcConfiguration {
 
   public OidcConfiguration setScope(String scope) {
     this.scope = scope;
+    return this;
+  }
+
+  public boolean isEnableStartupValidation() {
+    return enableStartupValidation;
+  }
+
+  public OidcConfiguration setEnableStartupValidation(boolean enableStartupValidation) {
+    this.enableStartupValidation = enableStartupValidation;
     return this;
   }
 

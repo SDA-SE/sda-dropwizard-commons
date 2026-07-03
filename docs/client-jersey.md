@@ -256,6 +256,7 @@ Example config for **production** to be used with environment variables of the c
 ```yaml
 oidc:
   disabled: ${OIDC_DISABLED:-false}
+  enableStartupValidation: ${OIDC_ENABLE_STARTUP_VALIDATION:-false}
   grantType: ${OIDC_GRANT_TYPE:-client_credentials}
   clientId: ${OIDC_CLIENT_ID}
   clientSecret: ${OIDC_CLIENT_SECRET}
@@ -269,6 +270,13 @@ oidc:
 - _OIDC_DISABLED_
   * Disable retrieving a new token completely. Not meant for production! 
   * Example: `false`
+
+- _OIDC_ENABLE_STARTUP_VALIDATION_
+  * Enables startup validation of the OIDC configuration by performing an initial access-token retrieval.
+    Set to `true` to fail fast during startup if the OIDC provider is unreachable or misconfigured.
+  * Note: this only verifies that a token can be retrieved — it does **not** check whether the token
+    has the required scopes or permissions to access the target resource server.
+  * Default: `false`
 
 - _OIDC_GRANT_TYPE_
   * Sets the OIDC grant type.

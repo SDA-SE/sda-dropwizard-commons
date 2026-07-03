@@ -10,6 +10,8 @@ import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.apache.hc.core5.http.HttpHeaders.ACCEPT;
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.codahale.metrics.MetricFilter;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
@@ -160,6 +162,50 @@ class OidcRequestFilterTest {
     // then metrics show name
     var metrics = DW.getEnvironment().metrics().getMetrics().keySet();
     assertThat(metrics).anyMatch(m -> m.contains(".custom-oidc-client."));
+  }
+
+  @Test
+  void shouldThrowOnConstructionWhenStartupValidationEnabledAndTokenEndpointFails() {
+    // given – token endpoint returns no body → OidcState.ERROR
+    setupTokenEndpoint(false);
+    var clientFactory = app.getJerseyClientBundle().getClientFactory();
+    var config = buildOidcConfig(true);
+
+    // when / then
+    assertThatThrownBy(() -> new OidcRequestFilter(clientFactory, config, true))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining("OIDC startup validation failed");
+  }
+
+  @Test
+  void shouldNotThrowOnConstructionWhenStartupValidationEnabledAndTokenEndpointWorks() {
+    // given – token endpoint returns a valid token
+    setupTokenEndpoint(true);
+    var clientFactory = app.getJerseyClientBundle().getClientFactory();
+    var config = buildOidcConfig(true);
+
+    // when / then – no exception
+    assertThatNoException().isThrownBy(() -> new OidcRequestFilter(clientFactory, config, true));
+  }
+
+  @Test
+  void shouldNotThrowOnConstructionWhenStartupValidationIsDisabled() {
+    // given – token endpoint returns no body → OidcState.ERROR, but validation is disabled
+    setupTokenEndpoint(false);
+    var clientFactory = app.getJerseyClientBundle().getClientFactory();
+    var config = buildOidcConfig(false);
+
+    // when / then – no exception despite broken token endpoint
+    assertThatNoException().isThrownBy(() -> new OidcRequestFilter(clientFactory, config, true));
+  }
+
+  private OidcConfiguration buildOidcConfig(boolean enableStartupValidation) {
+    return new OidcConfiguration()
+        .setIssuerUrl(WIRE.baseUrl() + "/issuer")
+        .setClientId(CLIENT_ID)
+        .setClientSecret(CLIENT_SECRET)
+        .setUseAuthHeader(true)
+        .setEnableStartupValidation(enableStartupValidation);
   }
 
   private void initializeAuthenticationContext() {
