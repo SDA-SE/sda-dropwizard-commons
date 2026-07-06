@@ -198,6 +198,36 @@ GET /persons/123?fields=firstName,nickName
 => {"firstName":"John","nickName":"Johnny"}
 ```
 
+List endpoints apply the field filter to each returned element:
+
+```javascript
+GET /people?fields=nickName
+
+=> [{"nickName":"Johnny"}, {"nickName":"Timmy"}]
+```
+
+Nested field paths may be selected with dot notation:
+
+```javascript
+GET /persons/123?fields=contact.address.city
+
+=> {"contact":{"address":{"city":"Hamburg"}}}
+```
+
+Requesting a parent path keeps the full subtree:
+
+```javascript
+GET /persons/123?fields=children
+
+=> {"children":[{"firstName":"Jane","lastName":"Doe","nickName":"Junior"}]}
+```
+
+The annotation is required on the serialized response type itself. For wrapped responses such as
+`{"results":[...]}`, the wrapper class must be annotated as well.
+
+Nested field paths are only applied inside nested objects that are also annotated with `@EnableFieldFilter`.
+If a nested object is not annotated, selecting one of its sub-fields keeps the whole nested object.
+
 ## Configuration
 
 ### Disable HAL support
