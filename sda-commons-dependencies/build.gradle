@@ -117,10 +117,10 @@ dependencies {
     api "org.antlr:antlr4-runtime:${antlr4Version}"
 
     // sda-commons-server-hibernate-testing
-    api "com.github.database-rider:rider-core:$dbRiderVersion"
-    api "com.github.database-rider:rider-junit5:$dbRiderVersion"
-    api "it.unibo.tuprolog:solve-classic-jvm:$tuprologVersion"
-    api "it.unibo.tuprolog:parser-theory-jvm:$tuprologVersion"
+    api "com.github.database-rider:rider-core:${dbRiderVersion}"
+    api "com.github.database-rider:rider-junit5:${dbRiderVersion}"
+    api "it.unibo.tuprolog:solve-classic-jvm:${tuprologVersion}"
+    api "it.unibo.tuprolog:parser-theory-jvm:${tuprologVersion}"
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
     api 'org.springframework.data:spring-data-mongodb:5.1.0'
