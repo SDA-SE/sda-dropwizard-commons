@@ -55,7 +55,8 @@ List<String> javaPlatformModules = Arrays.asList('sda-commons-dependencies', 'sd
 /**
  * There are some additional modules that are excluded from publishing
  */
-List<String> unpublishedModules = javaPlatformModules + Arrays.asList('sda-commons-dependency-check')
+List<String> unpublishedJavaModules = Arrays.asList('sda-commons-dependency-check')
+List<String> unpublishedModules = javaPlatformModules + unpublishedJavaModules
 project.ext.unpublishedModules = unpublishedModules
 
 spotless {
@@ -95,7 +96,7 @@ subprojects {
   }
 
   // Don't configure publishing for the example projects
-  if (!it.name.endsWith("-example")) {
+  if (!unpublishedJavaModules.contains(it.name) && !it.name.endsWith("-example")) {
     apply plugin: "com.vanniktech.maven.publish"
 
     tasks.withType(Sign).configureEach {
