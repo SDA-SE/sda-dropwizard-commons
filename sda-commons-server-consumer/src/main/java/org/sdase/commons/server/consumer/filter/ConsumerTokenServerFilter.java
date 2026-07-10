@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import org.sdase.commons.server.dropwizard.model.error.ApiException;
 import org.sdase.commons.server.dropwizard.tracing.ConsumerTracing;
-import org.sdase.commons.shared.api.error.ApiException;
 import org.slf4j.MDC;
 
 /** A request filter that detects, verifies and provides the consumer token in incoming requests. */
