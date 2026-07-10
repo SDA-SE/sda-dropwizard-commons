@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.tracing;
+package org.sdase.commons.server.dropwizard.tracing;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
