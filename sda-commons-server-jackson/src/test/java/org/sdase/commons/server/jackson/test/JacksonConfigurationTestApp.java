@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.assertj.core.util.Lists;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -107,6 +108,46 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
                     new HALLink.Builder(uriInfo.getBaseUriBuilder().path("ydoe").build())
                         .build())));
     return john;
+  }
+
+  @GET
+  @Path("people/jdoe-and-children-with-flag")
+  @Produces(MediaType.APPLICATION_JSON)
+  public PersonWithChildrenResourceWithFlag getJohnDoeWithChildrenOptIn() {
+    URI self =
+        uriInfo.getBaseUriBuilder().path(JacksonConfigurationTestApp.class, "getJohnDoe").build();
+    return new PersonWithChildrenResourceWithFlag()
+        .setFirstName("John")
+        .setLastName("Doe")
+        .setNickName("Johnny")
+        .setChildren(
+            singletonList(
+                new PersonResourceWithFlag()
+                    .setFirstName("Yasmine")
+                    .setLastName("Doe")
+                    .setNickName("Yassie")
+                    .setSelf(
+                        new HALLink.Builder(uriInfo.getBaseUriBuilder().path("ydoe").build())
+                            .build())))
+        .setAddress(new AddressResourceWithFlag().setCity("Hamburg").setId("Hamburg"))
+        .setUnfilteredChild(new UnfilteredChildResource().setFirstName("Jane").setLastName("Doey"))
+        .setNestedResource(
+            new NestedResourceWithFlag()
+                .setAnotherNestedResource(
+                    new NestedNestedResourceWithFlag().setAnotherNested("deep")))
+        .setSelf(new HALLink.Builder(self).build());
+  }
+
+  @GET
+  @Path("people/search-result-list")
+  @Produces(MediaType.APPLICATION_JSON)
+  public PersonSearchResultResource getPeopleSearchResult() {
+    return new PersonSearchResultResource()
+        .setResults(
+            singletonList(
+                new PersonSearchItemResource()
+                    .setName("bundle-a")
+                    .setCustomMap((Map<String, String>) null)));
   }
 
   @GET

@@ -28,6 +28,7 @@ import org.sdase.commons.server.jackson.test.NameSearchFilterResource;
 import org.sdase.commons.server.jackson.test.NestedNestedResource;
 import org.sdase.commons.server.jackson.test.NestedResource;
 import org.sdase.commons.server.jackson.test.PersonResource;
+import org.sdase.commons.server.jackson.test.PersonSearchResultResource;
 import org.sdase.commons.server.jackson.test.PersonWithChildrenResource;
 import org.sdase.commons.server.jackson.test.ValidationResource;
 import org.sdase.commons.server.testing.DropwizardLegacyHelper;
@@ -487,12 +488,12 @@ class JacksonConfigurationBundleIT {
   }
 
   @Test
-  void shouldFilterChildrenAndNestedFieldsByPath() {
+  void shouldFilterChildrenAndNestedFieldsByPathIfFlagIsTrue() {
     JsonNode johnny =
         DropwizardLegacyHelper.client(DW.getObjectMapper())
             .target("http://localhost:" + DW.getLocalPort())
             .path("people")
-            .path("jdoe-and-children")
+            .path("jdoe-and-children-with-flag")
             .queryParam(
                 "fields",
                 "children.nickName,renamedCustomProp.myNestedResource.anotherNestedField,address.city")
@@ -525,6 +526,35 @@ class JacksonConfigurationBundleIT {
 
     assertThat(johnny.path("address").size()).isEqualTo(1);
     assertThat(johnny.path("address").path("city").asText()).isEqualTo("Hamburg");
+  }
+
+  @Test
+  void shouldKeepFullSubtreeForNestedAnnotatedChildByDefault() {
+    JsonNode johnny =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("jdoe-and-children")
+            .queryParam(
+                "fields",
+                "children.nickName,renamedCustomProp.myNestedResource.anotherNestedField,address.city")
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+
+    JsonNode child = johnny.path("children").get(0);
+    assertThat(child.has("firstName")).isTrue();
+    assertThat(child.has("lastName")).isTrue();
+
+    JsonNode customNested = johnny.path("renamedCustomProp");
+    assertThat(customNested.has("myNestedField")).isTrue();
+    assertThat(customNested.has("someNumber")).isTrue();
+
+    JsonNode nestedResource = customNested.path("myNestedResource");
+    assertThat(nestedResource.has("anotherNestedField")).isTrue();
+    assertThat(nestedResource.has("someNumber")).isTrue();
+
+    assertThat(johnny.path("address").has("id")).isTrue();
+    assertThat(johnny.path("address").has("city")).isTrue();
   }
 
   @Test
@@ -577,6 +607,22 @@ class JacksonConfigurationBundleIT {
     JsonNode unfilteredChild = johnny.path("unfilteredChild");
     assertThat(unfilteredChild.path("name").asText()).isEqualTo("Jane");
     assertThat(unfilteredChild.path("lastName").asText()).isEqualTo("Doey");
+  }
+
+  @Test
+  void shouldKeepExcludedNestedFieldAsNullInDefaultMode() {
+    PersonSearchResultResource result =
+        DropwizardLegacyHelper.client(DW.getObjectMapper())
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("search-result-list")
+            .queryParam("fields", "results.name")
+            .request(MediaType.APPLICATION_JSON)
+            .get(PersonSearchResultResource.class);
+
+    assertThat(result.getResults()).hasSize(1);
+    assertThat(result.getResults().get(0).getName()).isEqualTo("bundle-a");
+    assertThat(result.getResults().get(0).getCustomMap()).isNull();
   }
 
   @Test

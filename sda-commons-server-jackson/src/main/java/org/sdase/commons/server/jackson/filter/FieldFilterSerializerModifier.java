@@ -28,11 +28,14 @@ import org.sdase.commons.server.jackson.EnableFieldFilter;
  *   <li>The property is <b>not</b> returned if the field path is <b>not</b> part of the filtered
  *       fields ({@code &fields=} parameter)
  *   <li>The property is returned if it is part of an embedded object
+ *   <li>If {@link EnableFieldFilter#filterNestedPaths()} is {@code false}, nested properties keep
+ *       the full subtree once the parent property is included
  * </ol>
  *
  * <p>Nested field paths are only applied inside nested object types that are also annotated. If a
  * nested object type is not annotated, selecting one of its sub-fields keeps the whole nested
- * object.
+ * object. If a nested annotated type should also filter by nested paths, it must set {@link
+ * EnableFieldFilter#filterNestedPaths()} to {@code true}.
  */
 public class FieldFilterSerializerModifier extends BeanSerializerModifier {
 
@@ -43,30 +46,38 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
   @Override
   public JsonSerializer<?> modifySerializer(
       SerializationConfig config, BeanDescription beanDesc, JsonSerializer<?> serializer) {
-    if (serializer instanceof BeanSerializer beanSerializer
-        && beanDesc.getBeanClass().isAnnotationPresent(EnableFieldFilter.class)) {
-      return new FieldFilterSerializer(beanSerializer, uriInfo);
+    EnableFieldFilter fieldFilterAnnotation = getFieldFilterAnnotation(beanDesc);
+    if (serializer instanceof BeanSerializer beanSerializer && fieldFilterAnnotation != null) {
+      return new FieldFilterSerializer(
+          beanSerializer, uriInfo, fieldFilterAnnotation.filterNestedPaths());
     } else {
       return serializer;
     }
   }
 
+  private static EnableFieldFilter getFieldFilterAnnotation(BeanDescription beanDesc) {
+    return beanDesc.getBeanClass().getAnnotation(EnableFieldFilter.class);
+  }
+
   private static class FieldFilterSerializer extends BeanSerializer {
-    FieldFilterSerializer(BeanSerializerBase src, UriInfo uriInfo) {
+    FieldFilterSerializer(BeanSerializerBase src, UriInfo uriInfo, boolean filterNestedPaths) {
       super(src);
       for (int i = 0; i < _props.length; i++) {
         BeanPropertyWriter prop = _props[i];
-        _props[i] = new SkipFieldBeanPropertyWriter(prop, uriInfo);
+        _props[i] = new SkipFieldBeanPropertyWriter(prop, uriInfo, filterNestedPaths);
       }
     }
 
     private static class SkipFieldBeanPropertyWriter extends BeanPropertyWriter {
 
       private final transient UriInfo uriInfo;
+      private final boolean filterNestedPaths;
 
-      SkipFieldBeanPropertyWriter(BeanPropertyWriter prop, UriInfo uriInfo) {
+      SkipFieldBeanPropertyWriter(
+          BeanPropertyWriter prop, UriInfo uriInfo, boolean filterNestedPaths) {
         super(prop);
         this.uriInfo = uriInfo;
+        this.filterNestedPaths = filterNestedPaths;
       }
 
       @Override
@@ -75,10 +86,15 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
         List<String> currentFieldPath =
             getPath(gen.getOutputContext(), getName(), new ArrayList<>());
         if (!hasAnyFieldFilter()
+            || shouldKeepFullNestedSubtree(currentFieldPath)
             || isIncludedField(currentFieldPath)
             || isEmbedded(currentFieldPath)) {
           super.serializeAsField(bean, gen, prov);
         }
+      }
+
+      private boolean shouldKeepFullNestedSubtree(List<String> currentFieldPath) {
+        return !filterNestedPaths && currentFieldPath.size() > 1;
       }
 
       private boolean hasAnyFieldFilter() {
