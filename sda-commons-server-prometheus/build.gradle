@@ -1,7 +1,7 @@
 dependencies {
 
   api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-shared-tracing')
+  api project(':sda-commons-shared-tracing') // TODO next-major remove deprecated dependency
   api 'io.dropwizard:dropwizard-client'
   api 'jakarta.servlet:jakarta.servlet-api'
 

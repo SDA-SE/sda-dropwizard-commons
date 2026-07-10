@@ -6,7 +6,7 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.container.PreMatching;
-import org.sdase.commons.shared.tracing.TraceTokenContext;
+import org.sdase.commons.shared.tracing.TraceTokenContext; // TODO next-major change import
 
 /**
  * A request filter land response filter that detects, optionally generates if not existing and

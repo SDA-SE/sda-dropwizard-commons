@@ -11,8 +11,8 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.sdase.commons.server.dropwizard.tracing.ConsumerTracing;
 import org.sdase.commons.shared.api.error.ApiException;
-import org.sdase.commons.shared.tracing.ConsumerTracing;
 
 class ConsumerTokenServerFilterTest {
 
