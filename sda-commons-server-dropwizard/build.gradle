@@ -1,4 +1,6 @@
 dependencies {
+  compileOnly 'io.swagger.core.v3:swagger-annotations-jakarta'
+
   api 'io.dropwizard:dropwizard-core'
   api 'jakarta.servlet:jakarta.servlet-api'
   api 'io.dropwizard:dropwizard-json-logging'
