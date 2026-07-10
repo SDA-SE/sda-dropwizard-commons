@@ -25,10 +25,10 @@ import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.sdase.commons.server.dropwizard.metadata.DetachedMetadataContext;
 import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
 import org.sdase.commons.server.dropwizard.metadata.MetadataContextCloseable;
+import org.sdase.commons.server.dropwizard.tracing.TraceTokenContext;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.consumer.MessageHandler;
 import org.sdase.commons.server.kafka.consumer.MessageListener;
-import org.sdase.commons.shared.tracing.TraceTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jetty.server.handler.CrossOriginHandler;
-import org.sdase.commons.shared.tracing.ConsumerTracing;
-import org.sdase.commons.shared.tracing.TraceTokenContext;
+import org.sdase.commons.server.dropwizard.tracing.ConsumerTracing;
+import org.sdase.commons.server.dropwizard.tracing.TraceTokenContext;
 
 public class CorsBundle<C extends Configuration> implements ConfiguredBundle<C> {
 

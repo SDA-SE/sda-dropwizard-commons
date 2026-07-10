@@ -4,7 +4,7 @@ import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.client.ClientRequestFilter;
 import jakarta.ws.rs.client.ClientResponseContext;
 import jakarta.ws.rs.client.ClientResponseFilter;
-import org.sdase.commons.shared.tracing.TraceTokenContext;
+import org.sdase.commons.shared.tracing.TraceTokenContext; // TODO next-major change import
 
 /**
  * The {@code TraceTokenClientFilter} adds a trace token to client requests. If existing, the trace
