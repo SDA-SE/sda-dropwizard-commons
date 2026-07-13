@@ -11,3 +11,9 @@ dependencies {
   testImplementation project(':sda-commons-server-healthcheck')
   testImplementation('org.awaitility:awaitility')
 }
+
+test {
+  // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
+  // for CORS testing.
+  systemProperty "sun.net.http.allowRestrictedHeaders", "true"
+}
