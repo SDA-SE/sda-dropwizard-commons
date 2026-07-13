@@ -16,9 +16,9 @@ import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBund
 import org.sdase.commons.server.dropwizard.bundles.ConsumerTokenBundle;
 import org.sdase.commons.server.dropwizard.bundles.CorsBundle;
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
+import org.sdase.commons.server.dropwizard.bundles.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.dropwizard.bundles.MetadataContextBundle;
 import org.sdase.commons.server.dropwizard.bundles.TraceTokenBundle;
-import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.opa.OpaBundle;
 import org.sdase.commons.server.opa.OpaBundle.OpaBuilder;
