@@ -33,7 +33,7 @@ ext {
   bouncyCastleVersion = '1.84'
   victoolsVersion = '4.38.0'
   flywayVersion = '12.10.0'
-  logbackVersion = "1.5.37"
+  logbackVersion = "1.5.38"
   jettyVersion = "12.1.10"
 }
 
