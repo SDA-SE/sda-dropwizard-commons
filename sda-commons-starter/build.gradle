@@ -1,6 +1,5 @@
 dependencies {
   api project(':sda-commons-server-auth')
-  api project(':sda-commons-server-consumer')
   api project(':sda-commons-server-cors')
   api project(':sda-commons-server-dropwizard')
   api project(':sda-commons-server-healthcheck')
