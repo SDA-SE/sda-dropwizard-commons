@@ -9,6 +9,7 @@ import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBund
 import org.sdase.commons.server.dropwizard.bundles.ConsumerTokenBundle;
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
 import org.sdase.commons.server.dropwizard.bundles.MetadataContextBundle;
+import org.sdase.commons.server.dropwizard.bundles.TraceTokenBundle;
 import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.opa.OpaBundle;
@@ -16,7 +17,6 @@ import org.sdase.commons.server.openapi.OpenApiBundle;
 import org.sdase.commons.server.opentelemetry.OpenTelemetryBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.server.security.SecurityBundle;
-import org.sdase.commons.server.trace.TraceTokenBundle;
 import org.sdase.commons.starter.test.BundleAssertion;
 
 class SdaPlatformBundleBuilderTest {
