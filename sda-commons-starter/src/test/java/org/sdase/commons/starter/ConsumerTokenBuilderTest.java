@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
-import org.sdase.commons.server.consumer.filter.ConsumerTokenServerFilter;
+import org.sdase.commons.server.dropwizard.filter.ConsumerTokenServerFilter;
 import org.sdase.commons.starter.test.BundleAssertion;
 
 class ConsumerTokenBuilderTest {

@@ -1,0 +1,128 @@
+package org.sdase.commons.server.dropwizard.bundles;
+
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import jakarta.ws.rs.core.Response;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.SetSystemProperty;
+import org.sdase.commons.server.dropwizard.bundles.test.ConsumerTokenOptionalTestApp;
+import org.sdase.commons.server.dropwizard.bundles.test.ConsumerTokenTestApp;
+import org.sdase.commons.server.dropwizard.bundles.test.ConsumerTokenTestConfig;
+
+@SetSystemProperty(key = "CONSUMER_TOKEN_OPTIONAL", value = "true")
+class ConsumerTokenBundleOptionalTokenTest {
+
+  @RegisterExtension
+  @Order(0)
+  static final DropwizardAppExtension<ConsumerTokenTestConfig> DW =
+      new DropwizardAppExtension<>(
+          ConsumerTokenTestApp.class,
+          ResourceHelpers.resourceFilePath("test-config-consumer.yaml"));
+
+  @RegisterExtension
+  @Order(1)
+  static final DropwizardAppExtension<ConsumerTokenTestConfig> DW_OPTIONAL =
+      new DropwizardAppExtension<>(
+          ConsumerTokenOptionalTestApp.class,
+          ResourceHelpers.resourceFilePath("test-config-consumer.yaml"));
+
+  @Test
+  void shouldReadConsumerToken() {
+    String consumerToken =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("/api/token")
+            .request(APPLICATION_JSON)
+            .header("Consumer-Token", "test-consumer")
+            .get(String.class);
+    assertThat(consumerToken).isEqualTo("test-consumer");
+  }
+
+  @Test
+  void shouldReadConsumerName() {
+    String consumerToken =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("/api/name")
+            .request(APPLICATION_JSON)
+            .header("Consumer-Token", "test-consumer")
+            .get(String.class);
+    assertThat(consumerToken).isEqualTo("test-consumer");
+  }
+
+  @Test
+  void shouldNotRejectRequestWithoutConsumerToken() {
+    try (Response response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("/api/name")
+            .request(APPLICATION_JSON)
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
+  }
+
+  @Test
+  void shouldNotRejectOptionsRequest() {
+    try (Response response =
+        DW.client().target("http://localhost:" + DW.getLocalPort()).request().options()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
+  }
+
+  @Test
+  void shouldReadConsumerTokenFixedConfig() {
+    String consumerToken =
+        DW_OPTIONAL
+            .client()
+            .target("http://localhost:" + DW_OPTIONAL.getLocalPort())
+            .path("/api/token")
+            .request(APPLICATION_JSON)
+            .header("Consumer-Token", "test-consumer")
+            .get(String.class);
+    assertThat(consumerToken).isEqualTo("test-consumer");
+  }
+
+  @Test
+  void shouldReadConsumerNameFixedConfig() {
+    String consumerToken =
+        DW_OPTIONAL
+            .client()
+            .target("http://localhost:" + DW_OPTIONAL.getLocalPort())
+            .path("/api/name")
+            .request(APPLICATION_JSON)
+            .header("Consumer-Token", "test-consumer")
+            .get(String.class);
+    assertThat(consumerToken).isEqualTo("test-consumer");
+  }
+
+  @Test
+  void shouldNotRejectRequestWithoutConsumerTokenFixedConfig() {
+    try (Response response =
+        DW_OPTIONAL
+            .client()
+            .target("http://localhost:" + DW_OPTIONAL.getLocalPort())
+            .path("/api/name")
+            .request(APPLICATION_JSON)
+            .get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
+  }
+
+  @Test
+  void shouldNotRejectOptionsRequestFixedConfig() {
+    try (Response response =
+        DW_OPTIONAL
+            .client()
+            .target("http://localhost:" + DW_OPTIONAL.getLocalPort())
+            .request()
+            .options()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
+  }
+}
