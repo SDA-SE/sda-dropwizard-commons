@@ -1,34 +1,30 @@
 package org.sdase.commons.server.healthcheck.helper;
 
-import com.codahale.metrics.health.HealthCheck;
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import org.eclipse.jetty.http.HttpStatus;
 import org.sdase.commons.server.healthcheck.ExternalHealthCheck;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default health check for checking if an external URL returns status code 2xx when invoking a
  * simple HTTP GET
+ *
+ * @deprecated This class will be replaced by {@link
+ *     org.sdase.commons.server.dropwizard.healthcheck.helper.ExternalServiceHealthCheck} when
+ *     removing the module {@code sda-commons-server-healthcheck}. To prepare for the upcoming
+ *     breaking change, update all references to {@link
+ *     org.sdase.commons.server.dropwizard.healthcheck.helper.ExternalServiceHealthCheck} and remove
+ *     direct dependencies to {@code sda-commons-server-healthcheck}.
  */
+@Deprecated(forRemoval = true)
 @ExternalHealthCheck
-public class ExternalServiceHealthCheck extends HealthCheck {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(ExternalServiceHealthCheck.class);
-
-  private final String requestMethod;
-  private final String url;
-  private final int timeout;
-  private final OpenConnectionFunction openConnection;
+public class ExternalServiceHealthCheck
+    extends org.sdase.commons.server.dropwizard.healthcheck.helper.ExternalServiceHealthCheck {
 
   /**
    * @param url the URL that is requested using {@code GET}
    * @param timeoutMillis the timeout for establishing the connection and waiting for data
    */
   public ExternalServiceHealthCheck(String url, int timeoutMillis) {
-    this("GET", url, timeoutMillis, ExternalServiceHealthCheck::openHttpURLConnection);
+    super(url, timeoutMillis);
   }
 
   /**
@@ -38,7 +34,7 @@ public class ExternalServiceHealthCheck extends HealthCheck {
    * @param timeoutMillis the timeout for establishing the connection and waiting for data
    */
   public ExternalServiceHealthCheck(String requestMethod, String url, int timeoutMillis) {
-    this(requestMethod, url, timeoutMillis, ExternalServiceHealthCheck::openHttpURLConnection);
+    super(requestMethod, url, timeoutMillis);
   }
 
   /**
@@ -49,7 +45,7 @@ public class ExternalServiceHealthCheck extends HealthCheck {
   @SuppressWarnings("WeakerAccess")
   public ExternalServiceHealthCheck(
       String url, int timeoutMillis, OpenConnectionFunction openConnection) {
-    this("GET", url, timeoutMillis, openConnection);
+    super(url, timeoutMillis, openConnection);
   }
 
   /**
@@ -61,58 +57,6 @@ public class ExternalServiceHealthCheck extends HealthCheck {
    */
   public ExternalServiceHealthCheck(
       String requestMethod, String url, int timeoutMillis, OpenConnectionFunction openConnection) {
-    super();
-    if ("GET".equalsIgnoreCase(requestMethod)) {
-      this.requestMethod = "GET";
-    } else if ("HEAD".equalsIgnoreCase(requestMethod)) {
-      this.requestMethod = "HEAD";
-    } else {
-      throw new IllegalArgumentException(
-          "Only GET and HEAD are allowed as requestMethod, but requestMethod is" + requestMethod);
-    }
-    this.url = url;
-    this.timeout = timeoutMillis;
-    this.openConnection = openConnection;
-    LOGGER.info(
-        "Creating {} for '{} {}' with timeout of {}ms",
-        this.getClass(),
-        this.requestMethod,
-        this.url,
-        this.timeout);
-  }
-
-  @Override
-  public Result check() throws Exception {
-    LOGGER.debug("Check if Endpoint is available (URL: {})", this.url);
-
-    int statusCode;
-
-    try {
-      HttpURLConnection connection = openConnection.call(url);
-
-      try (AutoCloseable ignored = connection::disconnect) {
-        connection.setConnectTimeout(timeout);
-        connection.setReadTimeout(timeout);
-        connection.setRequestMethod(requestMethod);
-        statusCode = connection.getResponseCode();
-        if (HttpStatus.isSuccess(statusCode)) {
-          LOGGER.debug("Endpoint is available (URL: {})", this.url);
-          return Result.healthy();
-        }
-      }
-    } catch (IOException exception) {
-      LOGGER.warn(
-          "IOException (Details in Logs) - Endpoint not available (URL: {})", this.url, exception);
-      return Result.unhealthy(
-          "IOException (Details in Logs) - Endpoint not available (URL: %s)", this.url);
-    }
-
-    LOGGER.warn("Endpoint not available (URL: {})", this.url);
-    return Result.unhealthy(
-        "Endpoint not available (URL: %s, StatusCode: %s)", this.url, statusCode);
-  }
-
-  private static HttpURLConnection openHttpURLConnection(String url) throws IOException {
-    return (HttpURLConnection) new URL(url).openConnection();
+    super(requestMethod, url, timeoutMillis, openConnection);
   }
 }

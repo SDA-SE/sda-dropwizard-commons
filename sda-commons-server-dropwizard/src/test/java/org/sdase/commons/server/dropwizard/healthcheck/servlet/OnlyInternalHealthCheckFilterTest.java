@@ -1,10 +1,10 @@
-package org.sdase.commons.server.healthcheck.servlet;
+package org.sdase.commons.server.dropwizard.healthcheck.servlet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.metrics.health.HealthCheck;
 import org.junit.jupiter.api.Test;
-import org.sdase.commons.server.healthcheck.ExternalHealthCheck;
+import org.sdase.commons.server.dropwizard.healthcheck.ExternalHealthCheck;
 
 class OnlyInternalHealthCheckFilterTest {
 
@@ -21,8 +21,8 @@ class OnlyInternalHealthCheckFilterTest {
   }
 
   @Test
-  void identifyNewAnnotatedCheckAsExternal() {
-    assertThat(filter.matches("external", new NewExternalBaseHealthCheck())).isFalse();
+  void identifyDeprecatedAnnotatedCheckAsExternal() {
+    assertThat(filter.matches("external", new DeprecatedExternalBaseHealthCheck())).isFalse();
   }
 
   @Test
@@ -39,8 +39,8 @@ class OnlyInternalHealthCheckFilterTest {
   // health check dummies for testing
   //
 
-  @ExternalHealthCheck
-  static class ExternalBaseHealthCheck extends HealthCheck {
+  @org.sdase.commons.server.healthcheck.ExternalHealthCheck
+  static class DeprecatedExternalBaseHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() {
@@ -48,8 +48,8 @@ class OnlyInternalHealthCheckFilterTest {
     }
   }
 
-  @org.sdase.commons.server.dropwizard.healthcheck.ExternalHealthCheck
-  static class NewExternalBaseHealthCheck extends HealthCheck {
+  @ExternalHealthCheck
+  static class ExternalBaseHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() {
