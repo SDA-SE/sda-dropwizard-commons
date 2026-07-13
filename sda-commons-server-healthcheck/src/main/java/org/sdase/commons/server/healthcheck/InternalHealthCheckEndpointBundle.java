@@ -1,51 +1,42 @@
 package org.sdase.commons.server.healthcheck;
 
-import io.dropwizard.core.Configuration;
-import io.dropwizard.core.ConfiguredBundle;
-import io.dropwizard.core.setup.Bootstrap;
-import io.dropwizard.core.setup.Environment;
-import org.sdase.commons.server.healthcheck.servlet.OnlyInternalHealthCheckServlet;
-
 /**
  * This bundle registers a new servlet to provide all registered health checks that are not
  * {@linkplain ExternalHealthCheck external}. The health checks are provided at {@code
  * /healthcheck/internal} at the admin port.
+ *
+ * @deprecated This class will be replaced by {@link
+ *     org.sdase.commons.server.dropwizard.bundles.InternalHealthCheckEndpointBundle} when removing
+ *     the module {@code sda-commons-server-healthcheck}. To prepare for the upcoming breaking
+ *     change, update all references to {@link
+ *     org.sdase.commons.server.dropwizard.bundles.InternalHealthCheckEndpointBundle} and remove
+ *     direct dependencies to {@code sda-commons-server-healthcheck}.
  */
-public class InternalHealthCheckEndpointBundle implements ConfiguredBundle<Configuration> {
+@Deprecated(forRemoval = true)
+@SuppressWarnings("java:S2176") // intentionally the same name until removed
+public class InternalHealthCheckEndpointBundle
+    extends org.sdase.commons.server.dropwizard.bundles.InternalHealthCheckEndpointBundle {
 
   private InternalHealthCheckEndpointBundle() {
-    // deny public access
-  }
-
-  @Override
-  public void run(Configuration configuration, Environment environment) {
-    // Register a new endpoints that provides only the internal health checks
-    // The default healthcheck endpoint '/healthcheck' provides both, internal and external
-    // health checks
-    environment
-        .admin()
-        .addServlet(
-            "Internal Health Check", new OnlyInternalHealthCheckServlet(environment.healthChecks()))
-        .addMapping("/healthcheck/internal");
-  }
-
-  @Override
-  public void initialize(Bootstrap<?> bootstrap) {
-    // Nothing here
+    super();
   }
 
   public static Builder builder() {
     return new Builder();
   }
 
-  public interface InternalHealthCheckEndpointBuilder {
+  public interface InternalHealthCheckEndpointBuilder
+      extends org.sdase.commons.server.dropwizard.bundles.InternalHealthCheckEndpointBundle
+          .InternalHealthCheckEndpointBuilder {
     InternalHealthCheckEndpointBundle build();
   }
 
-  public static class Builder implements InternalHealthCheckEndpointBuilder {
+  public static class Builder
+      extends org.sdase.commons.server.dropwizard.bundles.InternalHealthCheckEndpointBundle.Builder
+      implements InternalHealthCheckEndpointBuilder {
 
     private Builder() {
-      // deny public access
+      super();
     }
 
     @Override
