@@ -12,10 +12,9 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
-import org.sdase.commons.server.cors.CorsBundle;
-import org.sdase.commons.server.cors.CorsConfigProvider;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
 import org.sdase.commons.server.dropwizard.bundles.ConsumerTokenBundle;
+import org.sdase.commons.server.dropwizard.bundles.CorsBundle;
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
 import org.sdase.commons.server.dropwizard.bundles.MetadataContextBundle;
 import org.sdase.commons.server.dropwizard.bundles.TraceTokenBundle;
@@ -212,7 +211,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
     @Override
     public OpenApiInitialBuilder<C> withCorsConfigProvider(
-        CorsConfigProvider<C> corsConfigProvider) {
+        CorsBundle.CorsConfigProvider<C> corsConfigProvider) {
       this.corsBundleBuilder = CorsBundle.builder().withCorsConfigProvider(corsConfigProvider);
       return this;
     }

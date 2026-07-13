@@ -2,7 +2,7 @@ package org.sdase.commons.starter;
 
 import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.auth.config.AuthConfig;
-import org.sdase.commons.server.cors.CorsConfiguration;
+import org.sdase.commons.server.dropwizard.bundles.CorsConfiguration;
 import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.prometheus.config.PrometheusConfiguration;
 
