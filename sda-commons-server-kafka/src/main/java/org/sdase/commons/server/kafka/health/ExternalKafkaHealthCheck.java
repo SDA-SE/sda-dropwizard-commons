@@ -1,6 +1,6 @@
 package org.sdase.commons.server.kafka.health;
 
-import org.sdase.commons.server.healthcheck.ExternalHealthCheck;
+import org.sdase.commons.server.dropwizard.healthcheck.ExternalHealthCheck;
 import org.sdase.commons.server.kafka.KafkaConfiguration;
 
 @ExternalHealthCheck

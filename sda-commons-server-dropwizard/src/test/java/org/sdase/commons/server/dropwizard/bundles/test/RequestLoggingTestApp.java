@@ -10,7 +10,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.util.Collections;
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
-import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
+import org.sdase.commons.server.dropwizard.bundles.InternalHealthCheckEndpointBundle;
 
 @Path("test")
 @Produces(MediaType.APPLICATION_JSON)
