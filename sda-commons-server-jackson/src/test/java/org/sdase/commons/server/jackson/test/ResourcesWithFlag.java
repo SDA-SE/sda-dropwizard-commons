@@ -8,6 +8,7 @@ import io.openapitools.jackson.dataformat.hal.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.Map;
 import org.sdase.commons.server.jackson.EnableFieldFilter;
 
 @Resource
@@ -235,6 +236,57 @@ class PersonWithChildrenResourceWithFlag {
 
   public PersonWithChildrenResourceWithFlag setChildren(List<PersonResourceWithFlag> children) {
     this.children = children;
+    return this;
+  }
+}
+
+@EnableFieldFilter(filterNestedPaths = true)
+class MapChildResourceWithFlag {
+
+  private String name;
+  private String description;
+
+  public String getName() {
+    return name;
+  }
+
+  public MapChildResourceWithFlag setName(String name) {
+    this.name = name;
+    return this;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public MapChildResourceWithFlag setDescription(String description) {
+    this.description = description;
+    return this;
+  }
+}
+
+@EnableFieldFilter(filterNestedPaths = true)
+class MapContainerResourceWithFlag {
+
+  private String id;
+  private Map<String, MapChildResourceWithFlag> attributes;
+
+  public String getId() {
+    return id;
+  }
+
+  public MapContainerResourceWithFlag setId(String id) {
+    this.id = id;
+    return this;
+  }
+
+  public Map<String, MapChildResourceWithFlag> getAttributes() {
+    return attributes;
+  }
+
+  public MapContainerResourceWithFlag setAttributes(
+      Map<String, MapChildResourceWithFlag> attributes) {
+    this.attributes = attributes;
     return this;
   }
 }

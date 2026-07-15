@@ -20,6 +20,7 @@ import jakarta.ws.rs.core.UriInfo;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.assertj.core.util.Lists;
@@ -136,6 +137,19 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
                 .setAnotherNestedResource(
                     new NestedNestedResourceWithFlag().setAnotherNested("deep")))
         .setSelf(new HALLink.Builder(self).build());
+  }
+
+  @GET
+  @Path("people/attributes-with-flag")
+  @Produces(MediaType.APPLICATION_JSON)
+  public MapContainerResourceWithFlag getAttributesWithFlag() {
+    Map<String, MapChildResourceWithFlag> attributes = new LinkedHashMap<>();
+    attributes.put(
+        "alpha", new MapChildResourceWithFlag().setName("first").setDescription("hidden-one"));
+    attributes.put(
+        "beta", new MapChildResourceWithFlag().setName("second").setDescription("hidden-two"));
+
+    return new MapContainerResourceWithFlag().setId("map-resource").setAttributes(attributes);
   }
 
   @GET

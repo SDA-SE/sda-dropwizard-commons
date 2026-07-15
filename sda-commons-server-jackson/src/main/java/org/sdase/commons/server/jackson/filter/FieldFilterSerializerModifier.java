@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.sdase.commons.server.jackson.EnableFieldFilter;
 
@@ -161,11 +162,15 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
         // add the provided name or read from the properties
         if (name != null) {
           path.add(name);
-        } else if (context.getCurrentName() != null) {
+        } else if (context.getCurrentName() != null && !isMapEntryContext(context)) {
           path.add(context.getCurrentName());
         }
 
         return path;
+      }
+
+      private boolean isMapEntryContext(JsonStreamContext context) {
+        return context.getCurrentValue() instanceof Map<?, ?>;
       }
     }
   }
