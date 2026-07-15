@@ -153,6 +153,17 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
   }
 
   @GET
+  @Path("people/attributes-without-flag")
+  @Produces(MediaType.APPLICATION_JSON)
+  public MapContainerResource getAttributesWithoutFlag() {
+    Map<String, MapChildResource> attributes = new LinkedHashMap<>();
+    attributes.put("alpha", new MapChildResource().setName("first").setDescription("hidden-one"));
+    attributes.put("beta", new MapChildResource().setName("second").setDescription("hidden-two"));
+
+    return new MapContainerResource().setId("map-resource").setAttributes(attributes);
+  }
+
+  @GET
   @Path("people/search-result-list")
   @Produces(MediaType.APPLICATION_JSON)
   public PersonSearchResultResource getPeopleSearchResult() {

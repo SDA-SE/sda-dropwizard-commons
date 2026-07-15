@@ -652,6 +652,27 @@ class JacksonConfigurationBundleIT {
   }
 
   @Test
+  void shouldKeepFullMapSubtreeWhenNestedFilteringDisabled() {
+    JsonNode response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("attributes-without-flag")
+            .queryParam("fields", "attributes.name")
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+
+    assertThat(response.has("attributes")).isTrue();
+    assertThat(response.has("id")).isFalse();
+
+    JsonNode attributes = response.path("attributes");
+    assertThat(attributes.path("alpha").path("name").asText()).isEqualTo("first");
+    assertThat(attributes.path("alpha").path("description").asText()).isEqualTo("hidden-one");
+    assertThat(attributes.path("beta").path("name").asText()).isEqualTo("second");
+    assertThat(attributes.path("beta").path("description").asText()).isEqualTo("hidden-two");
+  }
+
+  @Test
   void shouldKeepExcludedNestedFieldAsNullInDefaultMode() {
     PersonSearchResultResource result =
         DropwizardLegacyHelper.client(DW.getObjectMapper())
