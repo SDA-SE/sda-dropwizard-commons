@@ -174,10 +174,14 @@ In an application that uses CDI the `EmbedHelper` should be instantiated the sam
 
 ### Field filtering feature for resources
 
-The `JacksonConfigurationBundle` registers the `FieldFilterModule` to add the `FieldFilterSerializerModifier`. The
-modifier uses the JAX-RS request context to identify the query param `fields`. If such a query param is present, only
-the requested fields (comma separated) are rendered in the resource view. additionally HAL links and embedded resources
-are rendered as well.  
+The `JacksonConfigurationBundle` registers the `FieldFilterModule`, which adds the
+`FieldFilterSerializerModifier`. The modifier reads the `fields` query parameter from the JAX-RS request
+context. If `fields` is present, only requested fields are rendered. Field names can be comma-separated or
+provided through repeated query parameters. Whitespace is ignored.
+
+Field filtering is enabled per serialized type with `@EnableFieldFilter`. If no `fields` parameter is
+provided, the complete response is rendered. HAL links and embedded resources are rendered regardless of
+the requested fields.
 
 Field filtering support may be disabled in the `JacksonConfigurationBundle.builder()`.
 
@@ -198,35 +202,87 @@ GET /persons/123?fields=firstName,nickName
 => {"firstName":"John","nickName":"Johnny"}
 ```
 
-List endpoints apply the field filter to each returned element:
+#### Nested fields
 
-```javascript
-GET /people?fields=nickName
+Nested paths use dot notation. Nested filtering must be enabled on every serialized type whose nested
+properties should be filtered:
 
-=> [{"nickName":"Johnny"}, {"nickName":"Timmy"}]
+```java
+@EnableFieldFilter(filterNestedPaths = true)
+public class Person {
+   private Address address;
+   // ...
+}
+
+@EnableFieldFilter(filterNestedPaths = true)
+public class Address {
+   private String city;
+   private String country;
+   // ...
+}
 ```
 
-Nested field paths may be selected with dot notation:
+Requesting `attributes.name` filters each map value. Map keys are not path segments. This response is
+produced by the integration test and embedded from its test resource:
 
-```javascript
-GET /persons/123?fields=contact.address.city
-
-=> {"contact":{"address":{"city":"Hamburg"}}}
+```http
+GET /people/attributes-with-flag?fields=attributes.name
 ```
 
-Requesting a parent path keeps the full subtree:
-
-```javascript
-GET /persons/123?fields=children
-
-=> {"children":[{"firstName":"Jane","lastName":"Doe","nickName":"Junior"}]}
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/nested-fields.json"
 ```
 
-The annotation is required on the serialized response type itself. For wrapped responses such as
-`{"results":[...]}`, the wrapper class must be annotated as well.
+By default, `filterNestedPaths` is `false`. Once a parent property is selected, its complete subtree is
+kept. For example:
 
-Nested field paths are only applied inside nested objects that are also annotated with `@EnableFieldFilter`.
-If a nested object is not annotated, selecting one of its sub-fields keeps the whole nested object.
+```http
+GET /people/attributes-with-flag?fields=attributes
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/full-subtree.json"
+```
+
+If a nested object is not annotated with `@EnableFieldFilter`, selecting one of its sub-fields keeps the
+complete nested object. The `filterNestedPaths` setting is evaluated per annotated type.
+
+#### List endpoints
+
+For a top-level list, field filtering is applied to every list element. For a wrapped list, include
+wrapper property in field path and annotate wrapper type:
+
+```java
+@EnableFieldFilter
+public class PersonSearchResult {
+   private List<PersonSearchItem> results;
+   // ...
+}
+```
+
+```http
+GET /people/search-result-list?fields=results.name
+```
+
+Response is tested and embedded from `src/test/resources`:
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/wrapped-results.json"
+```
+
+`results` remains list. `name` selects field inside each item. With default nested filtering,
+selected nested item keeps its complete subtree; `customMap` appears here because test item sets it to
+`null`. To filter nested item properties, annotate item type and enable `filterNestedPaths` there too.
+
+For example, selecting parent field `children` keeps complete child objects:
+
+```http
+GET /people/jdoe-and-children?fields=children
+```
+
+HAL links inside returned child resources remain included.
+
+The examples above are verified by [`JacksonConfigurationBundleIT`](https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-jackson/src/test/java/org/sdase/commons/server/jackson/JacksonConfigurationBundleIT.java).
 
 ## Configuration
 
