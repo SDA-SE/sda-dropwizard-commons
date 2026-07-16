@@ -228,19 +228,23 @@ GET /persons/123?fields=firstName,nickName
 Nested paths use dot notation. Nested filtering must be enabled on every serialized type whose nested
 properties should be filtered. This applies to nested objects, list items and map values.
 
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/combined-nested.http"
 ```
-GET /persons/123?fields=children.nickName,address.city
 
-=> {"children":[{"nickName":"Yassie"}],"address":{"city":"Hamburg"}}
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/combined-nested.json"
 ```
 
 By default, `enableNestedPathFiltering` is `false`. Once a parent property is selected, its complete subtree is
 kept. For example:
 
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/parent-subtrees.http"
 ```
-GET /persons/123?fields=children,address
 
-=> {"children":[{"firstName":"Yasmine","lastName":"Doe","nickName":"Yassie"}],"address":{"id":"Hamburg","city":"Hamburg","country":"DE"}}
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/parent-subtrees.json"
 ```
 
 If a nested object is not annotated with `@EnableFieldFilter`, selecting one of its sub-fields keeps the

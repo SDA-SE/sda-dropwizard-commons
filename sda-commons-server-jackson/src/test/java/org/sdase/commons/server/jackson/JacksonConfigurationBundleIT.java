@@ -496,15 +496,12 @@ class JacksonConfigurationBundleIT {
   @Test
   void shouldFilterChildrenAndNestedFieldsByPathIfFlagIsTrue() {
     JsonNode johnny =
-        DW.client()
-            .target("http://localhost:" + DW.getLocalPort())
-            .path("people")
-            .path("jdoe-and-children-with-flag")
-            .queryParam(
-                "fields",
-                "children.nickName,renamedCustomProp.myNestedResource.anotherNestedField,address.city")
-            .request(MediaType.APPLICATION_JSON)
-            .get(JsonNode.class);
+        readFieldFilterFragments(
+            "combined-nested.http",
+            "combined-nested.json",
+            "children",
+            "address",
+            "renamedCustomProp");
 
     assertThat(johnny.has("_links")).isTrue();
     assertThat(johnny.has("children")).isTrue();
@@ -637,6 +634,15 @@ class JacksonConfigurationBundleIT {
     assertThat(response.path("children").get(0).path("firstName").asText()).isEqualTo("Yasmine");
     assertThat(response.path("children").get(0).path("lastName").asText()).isEqualTo("Doe");
     assertThat(response.path("children").get(0).path("nickName").asText()).isEqualTo("Yassie");
+  }
+
+  @Test
+  void shouldMatchParentSubtreesDocumentationExample() {
+    JsonNode response =
+        readFieldFilterFragments(
+            "parent-subtrees.http", "parent-subtrees.json", "children", "address");
+
+    assertThat(response.path("address").path("id").asText()).isEqualTo("Hamburg");
   }
 
   @Test
@@ -973,9 +979,17 @@ class JacksonConfigurationBundleIT {
 
   private static JsonNode readFieldFilterFragment(
       String requestFile, String responseFile, String responseField) {
+    return readFieldFilterFragments(requestFile, responseFile, responseField);
+  }
+
+  private static JsonNode readFieldFilterFragments(
+      String requestFile, String responseFile, String... responseFields) {
     JsonNode actual = requestFieldFilterExample(requestFile);
-    assertThat(removeHalLinks(actual.path(responseField).deepCopy()))
-        .isEqualTo(readFieldFilterFixture(responseFile).path(responseField));
+    JsonNode expected = readFieldFilterFixture(responseFile);
+    for (String responseField : responseFields) {
+      assertThat(removeHalLinks(actual.path(responseField).deepCopy()))
+          .isEqualTo(expected.path(responseField));
+    }
     return actual;
   }
 

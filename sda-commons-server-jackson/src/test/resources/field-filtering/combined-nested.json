@@ -1,0 +1,15 @@
+{
+  "children": [
+    {
+      "nickName": "Yassie"
+    }
+  ],
+  "address": {
+    "city": "Hamburg"
+  },
+  "renamedCustomProp": {
+    "myNestedResource": {
+      "anotherNestedField": "deep"
+    }
+  }
+}
