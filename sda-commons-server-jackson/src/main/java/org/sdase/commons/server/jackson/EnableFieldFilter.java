@@ -35,8 +35,8 @@ import org.sdase.commons.server.jackson.filter.JacksonFieldFilterModule;
  * </pre>
  *
  * <p>By default, nested annotated properties keep their full subtree. Set {@link
- * #enableNestedPathFiltering()} to {@code true} to enable filtering for nested field paths inside that
- * type.
+ * #enableNestedPathFiltering()} to {@code true} to enable filtering for nested field paths inside
+ * that type.
  *
  * <p>Nested path filtering is configured per annotated type. If a nested annotated child should
  * also filter its own nested paths, that child type must opt in separately.

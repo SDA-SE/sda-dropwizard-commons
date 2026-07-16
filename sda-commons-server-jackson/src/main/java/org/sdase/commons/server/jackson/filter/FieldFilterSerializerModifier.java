@@ -29,8 +29,8 @@ import org.sdase.commons.server.jackson.EnableFieldFilter;
  *   <li>The property is <b>not</b> returned if the field path is <b>not</b> part of the filtered
  *       fields ({@code &fields=} parameter)
  *   <li>The property is returned if it is part of an embedded object
- *   <li>If {@link EnableFieldFilter#enableNestedPathFiltering()} is {@code false}, nested properties keep
- *       the full subtree once the parent property is included
+ *   <li>If {@link EnableFieldFilter#enableNestedPathFiltering()} is {@code false}, nested
+ *       properties keep the full subtree once the parent property is included
  * </ol>
  *
  * <p>Nested field paths are only applied inside nested object types that are also annotated. If a
