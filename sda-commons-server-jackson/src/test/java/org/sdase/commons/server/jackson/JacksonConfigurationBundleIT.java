@@ -494,6 +494,15 @@ class JacksonConfigurationBundleIT {
   }
 
   @Test
+  void shouldMatchBasicFieldFilteringDocumentationExample() {
+    JsonNode response =
+        readFieldFilterFragments("basic-fields.http", "basic-fields.json", "firstName", "nickName");
+
+    assertThat(response.path("firstName").asText()).isEqualTo("John");
+    assertThat(response.path("nickName").asText()).isEqualTo("Johnny");
+  }
+
+  @Test
   void shouldFilterChildrenAndNestedFieldsByPathIfFlagIsTrue() {
     JsonNode johnny =
         readFieldFilterFragments(

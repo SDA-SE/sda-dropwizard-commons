@@ -196,10 +196,14 @@ import org.sdase.commons.server.jackson.EnableFieldFilter;
 
 @EnableFieldFilter(enableNestedPathFiltering = true)
 record Person(
+    String id,
     String firstName,
+    String lastName,
+    String nickName,
     List<Child> children,
     Address address,
     Map<String, Attribute> attributes,
+    NestedResource renamedCustomProp,
     UnfilteredChild unfilteredChild,
     List<UnfilteredChild> unfilteredChildren) {}
 
@@ -207,20 +211,28 @@ record Person(
 record Child(String nickName, String firstName, String lastName) {}
 
 @EnableFieldFilter(enableNestedPathFiltering = true)
-record Address(String id, String city, String country) {}
+record Address(String id, String city) {}
 
 @EnableFieldFilter(enableNestedPathFiltering = true)
 record Attribute(String name, String description) {}
+
+@EnableFieldFilter(enableNestedPathFiltering = true)
+record NestedResource(String myNestedField, int someNumber, NestedNestedResource myNestedResource) {}
+
+@EnableFieldFilter(enableNestedPathFiltering = true)
+record NestedNestedResource(String anotherNestedField, int someNumber) {}
 
 record UnfilteredChild(String name, String lastName) {}
 ```
 
 To enable field filtering for a resource, annotate the serialized type with `@EnableFieldFilter`.
 
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/basic-fields.http"
 ```
-GET /persons/123?fields=firstName,nickName
 
-=> {"firstName":"John","nickName":"Johnny"}
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/basic-fields.json"
 ```
 
 #### Nested fields
