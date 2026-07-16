@@ -1,0 +1,12 @@
+{
+  "attributes": {
+    "alpha": {
+      "name": "first",
+      "description": "hidden-one"
+    },
+    "beta": {
+      "name": "second",
+      "description": "hidden-two"
+    }
+  }
+}

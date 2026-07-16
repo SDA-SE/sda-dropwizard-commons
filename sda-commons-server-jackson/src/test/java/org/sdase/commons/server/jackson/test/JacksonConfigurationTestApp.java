@@ -28,7 +28,6 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.sdase.commons.server.dropwizard.ContextAwareEndpoint;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
-import org.sdase.commons.server.jackson.test.snippets.EnableFieldFilterExampleModel;
 import org.sdase.commons.shared.api.error.ApiException;
 
 @Path("")
@@ -115,33 +114,28 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
   @GET
   @Path("people/jdoe-and-children-with-flag")
   @Produces(MediaType.APPLICATION_JSON)
-  public EnableFieldFilterExampleModel.Person getJohnDoeWithChildrenOptIn() {
+  public PersonWithChildrenResourceWithFlag getJohnDoeWithChildrenOptIn() {
     URI self =
         uriInfo.getBaseUriBuilder().path(JacksonConfigurationTestApp.class, "getJohnDoe").build();
-    EnableFieldFilterExampleModel.Person child = new EnableFieldFilterExampleModel.Person();
+    PersonResourceWithFlag child = new PersonResourceWithFlag();
     child
         .setFirstName("Yasmine")
         .setLastName("Doe")
         .setNickName("Yassie")
         .setSelf(new HALLink.Builder(uriInfo.getBaseUriBuilder().path("ydoe").build()).build());
 
-    EnableFieldFilterExampleModel.Address address =
-        new EnableFieldFilterExampleModel.Address().setCity("Hamburg").setId("Hamburg");
-    EnableFieldFilterExampleModel.UnfilteredChild unfilteredChild =
-        new EnableFieldFilterExampleModel.UnfilteredChild()
-            .setFirstName("Jane")
-            .setLastName("Doey");
-    EnableFieldFilterExampleModel.UnfilteredChild listChild =
-        new EnableFieldFilterExampleModel.UnfilteredChild()
-            .setFirstName("Janet")
-            .setLastName("Doe");
-    EnableFieldFilterExampleModel.NestedResource nestedResource =
-        new EnableFieldFilterExampleModel.NestedResource()
-            .setAnotherNestedResource(
-                new EnableFieldFilterExampleModel.NestedNestedResource().setAnotherNested("deep"));
+    AddressResourceWithFlag address =
+        new AddressResourceWithFlag().setCity("Hamburg").setId("Hamburg");
+    UnfilteredChildResource unfilteredChild =
+        new UnfilteredChildResource().setFirstName("Jane").setLastName("Doey");
+    UnfilteredChildResource listChild =
+        new UnfilteredChildResource().setFirstName("Janet").setLastName("Doe");
+    NestedResourceWithFlag nestedResource =
+        new NestedResourceWithFlag()
+            .setAnotherNestedResource(new NestedNestedResourceWithFlag().setAnotherNested("deep"));
 
-    EnableFieldFilterExampleModel.Person person =
-        new EnableFieldFilterExampleModel.Person()
+    PersonWithChildrenResourceWithFlag person =
+        new PersonWithChildrenResourceWithFlag()
             .setFirstName("John")
             .setLastName("Doe")
             .setNickName("Johnny")
@@ -157,20 +151,16 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
   @GET
   @Path("people/attributes-with-flag")
   @Produces(MediaType.APPLICATION_JSON)
-  public EnableFieldFilterExampleModel.Person getAttributesWithFlag() {
-    Map<String, EnableFieldFilterExampleModel.Attribute> attributes = new LinkedHashMap<>();
-    EnableFieldFilterExampleModel.Attribute alpha =
-        new EnableFieldFilterExampleModel.Attribute().setName("first").setDescription("hidden-one");
+  public MapContainerResourceWithFlag getAttributesWithFlag() {
+    Map<String, MapChildResourceWithFlag> attributes = new LinkedHashMap<>();
+    MapChildResourceWithFlag alpha =
+        new MapChildResourceWithFlag().setName("first").setDescription("hidden-one");
     attributes.put("alpha", alpha);
-    EnableFieldFilterExampleModel.Attribute beta =
-        new EnableFieldFilterExampleModel.Attribute()
-            .setName("second")
-            .setDescription("hidden-two");
+    MapChildResourceWithFlag beta =
+        new MapChildResourceWithFlag().setName("second").setDescription("hidden-two");
     attributes.put("beta", beta);
 
-    return new EnableFieldFilterExampleModel.Person()
-        .setId("map-resource")
-        .setAttributes(attributes);
+    return new MapContainerResourceWithFlag().setId("map-resource").setAttributes(attributes);
   }
 
   @GET
