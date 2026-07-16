@@ -227,6 +227,14 @@ GET /persons/123?fields=unfilteredChild.name
 => {"unfilteredChild":{"name":"Jane","lastName":"Doey"}}
 ```
 
+The same rule applies to unannotated list items:
+
+```
+GET /persons/123?fields=unfilteredChildren.name
+
+=> {"unfilteredChildren":[{"name":"Jane","lastName":"Doey"}]}
+```
+
 ##### Nested filtering on maps
 Requesting `attributes.name` filters each map value. Map keys are not path segments. To filter
 fields inside map values, nested filtering must be enabled on the serialized container type and on

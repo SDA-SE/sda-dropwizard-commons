@@ -14,9 +14,6 @@ import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -610,6 +607,21 @@ class JacksonConfigurationBundleIT {
     JsonNode unfilteredChild = johnny.path("unfilteredChild");
     assertThat(unfilteredChild.path("name").asText()).isEqualTo("Jane");
     assertThat(unfilteredChild.path("lastName").asText()).isEqualTo("Doey");
+  }
+
+  @Test
+  void shouldKeepFullSubtreeForUnannotatedListChildEvenIfSubFieldIsRequested() {
+    JsonNode response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people/jdoe-and-children-with-flag")
+            .queryParam("fields", "unfilteredChildren.name")
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+
+    JsonNode unfilteredChild = response.path("unfilteredChildren").get(0);
+    assertThat(unfilteredChild.path("name").asText()).isEqualTo("Janet");
+    assertThat(unfilteredChild.path("lastName").asText()).isEqualTo("Doe");
   }
 
   @Test
