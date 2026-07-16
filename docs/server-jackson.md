@@ -185,18 +185,14 @@ the requested fields.
 
 Field filtering support may be disabled in the `JacksonConfigurationBundle.builder()`.
 
-Example:
+??? example "Example resource model"
+    ```java
+    --8<-- "sda-commons-server-jackson/src/test/java/org/sdase/commons/server/jackson/test/snippets/EnableFieldFilterExampleModel.java"
+    ```
 
-```java
-@EnableFieldFilter
-public class Person {
-   private String firstName;
-   private String surName;
-   private String nickName;
-   // ...
-}
+To enable field filtering for a resource, annotate the serialized type with `@EnableFieldFilter`.
+
 ```
-```javascript
 GET /persons/123?fields=firstName,nickName
 
 => {"firstName":"John","nickName":"Johnny"}
@@ -205,84 +201,66 @@ GET /persons/123?fields=firstName,nickName
 #### Nested fields
 
 Nested paths use dot notation. Nested filtering must be enabled on every serialized type whose nested
-properties should be filtered:
+properties should be filtered. This applies to nested objects, list items and map values.
 
-```java
-@EnableFieldFilter(filterNestedPaths = true)
-public class Person {
-   private Address address;
-   // ...
-}
+```
+GET /persons/123?fields=children.nickName,address.city
 
-@EnableFieldFilter(filterNestedPaths = true)
-public class Address {
-   private String city;
-   private String country;
-   // ...
-}
+=> {"children":[{"nickName":"Yassie"}],"address":{"city":"Hamburg"}}
 ```
 
-Requesting `attributes.name` filters each map value. Map keys are not path segments. This response is
-produced by the integration test and embedded from its test resource:
-
-```http
-GET /people/attributes-with-flag?fields=attributes.name
-```
-
-```json
---8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/nested-fields.json"
-```
-
-By default, `filterNestedPaths` is `false`. Once a parent property is selected, its complete subtree is
+By default, `enableNestedPathFiltering` is `false`. Once a parent property is selected, its complete subtree is
 kept. For example:
 
-```http
-GET /people/attributes-with-flag?fields=attributes
 ```
+GET /persons/123?fields=children,address
 
-```json
---8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/full-subtree.json"
+=> {"children":[{"firstName":"Yasmine","lastName":"Doe","nickName":"Yassie"}],"address":{"id":"Hamburg","city":"Hamburg","country":"DE"}}
 ```
 
 If a nested object is not annotated with `@EnableFieldFilter`, selecting one of its sub-fields keeps the
-complete nested object. The `filterNestedPaths` setting is evaluated per annotated type.
+complete nested object. The `enableNestedPathFiltering` setting is evaluated per annotated type.
 
-#### List endpoints
+```
+GET /persons/123?fields=unfilteredChild.name
 
-For a top-level list, field filtering is applied to every list element. For a wrapped list, include
-wrapper property in field path and annotate wrapper type:
-
-```java
-@EnableFieldFilter
-public class PersonSearchResult {
-   private List<PersonSearchItem> results;
-   // ...
-}
+=> {"unfilteredChild":{"name":"Jane","lastName":"Doey"}}
 ```
 
-```http
-GET /people/search-result-list?fields=results.name
+##### Nested filtering on maps
+Requesting `attributes.name` filters each map value. Map keys are not path segments. To filter
+fields inside map values, nested filtering must be enabled on the serialized container type and on
+the map value type with `@EnableFieldFilter(enableNestedPathFiltering = true)`. If either type does
+not enable nested path filtering, the complete map value is kept.
+
+```
+GET /persons/123?fields=attributes.name,firstName
+
+=> {"attributes":{"alpha":{"name":"first"},"beta":{"name":"second"}},"firstName":"John"}
 ```
 
-Response is tested and embedded from `src/test/resources`:
+##### Nested filtering on lists
 
-```json
---8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/wrapped-results.json"
+The same rules apply to list items. Requesting a nested path filters each item in the list. To
+filter fields inside list items, nested filtering must be enabled on the serialized parent type and
+on the list item type with `@EnableFieldFilter(enableNestedPathFiltering = true)`. If either type
+does not enable nested path filtering, the complete list item is kept.
+
+```
+GET /persons/123?fields=children.nickName
+
+=> {"children":[{"nickName":"Yassie"},{"nickName":"Maddie"}]}
 ```
 
-`results` remains list. `name` selects field inside each item. With default nested filtering,
-selected nested item keeps its complete subtree; `customMap` appears here because test item sets it to
-`null`. To filter nested item properties, annotate item type and enable `filterNestedPaths` there too.
+Requesting the parent list keeps the complete subtree of each item.
 
-For example, selecting parent field `children` keeps complete child objects:
+```
+GET /persons/123?fields=children
 
-```http
-GET /people/jdoe-and-children?fields=children
+=> {"children":[{"firstName":"Yasmine","lastName":"Doe","nickName":"Yassie"},{"firstName":"Martha","lastName":"Doe","nickName":"Maddie"}]}
 ```
 
 HAL links inside returned child resources remain included.
-
-The examples above are verified by [`JacksonConfigurationBundleIT`](https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-jackson/src/test/java/org/sdase/commons/server/jackson/JacksonConfigurationBundleIT.java).
 
 ## Configuration
 

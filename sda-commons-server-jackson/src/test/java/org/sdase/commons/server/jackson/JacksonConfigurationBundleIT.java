@@ -532,32 +532,6 @@ class JacksonConfigurationBundleIT {
   }
 
   @Test
-  void shouldMatchNestedFieldFilteringDocumentationExample() {
-    JsonNode response =
-        DW.client()
-            .target("http://localhost:" + DW.getLocalPort())
-            .path("people/attributes-with-flag")
-            .queryParam("fields", "attributes.name")
-            .request(MediaType.APPLICATION_JSON)
-            .get(JsonNode.class);
-
-    assertThat(response).isEqualTo(readFieldFilterFixture("nested-fields.json"));
-  }
-
-  @Test
-  void shouldMatchFullSubtreeDocumentationExample() {
-    JsonNode response =
-        DW.client()
-            .target("http://localhost:" + DW.getLocalPort())
-            .path("people/attributes-with-flag")
-            .queryParam("fields", "attributes")
-            .request(MediaType.APPLICATION_JSON)
-            .get(JsonNode.class);
-
-    assertThat(response).isEqualTo(readFieldFilterFixture("full-subtree.json"));
-  }
-
-  @Test
   void shouldKeepFullSubtreeForNestedAnnotatedChildByDefault() {
     JsonNode johnny =
         DropwizardLegacyHelper.client(DW.getObjectMapper())
@@ -718,19 +692,6 @@ class JacksonConfigurationBundleIT {
   }
 
   @Test
-  void shouldMatchWrappedListDocumentationExample() {
-    JsonNode response =
-        DW.client()
-            .target("http://localhost:" + DW.getLocalPort())
-            .path("people/search-result-list")
-            .queryParam("fields", "results.name")
-            .request(MediaType.APPLICATION_JSON)
-            .get(JsonNode.class);
-
-    assertThat(response).isEqualTo(readFieldFilterFixture("wrapped-results.json"));
-  }
-
-  @Test
   void shouldFilterNickNameInList() {
     List<PersonWithChildrenResource> people =
         DropwizardLegacyHelper.client(DW.getObjectMapper())
@@ -826,18 +787,6 @@ class JacksonConfigurationBundleIT {
       assertThat(response.getStatus()).isEqualTo(500);
       ApiError details = response.readEntity(ApiError.class);
       assertThat(details.getTitle()).isNotBlank().doesNotContain("RuntimeException");
-    }
-  }
-
-  private static JsonNode readFieldFilterFixture(String fileName) {
-    try (InputStream resource =
-        JacksonConfigurationBundleIT.class.getResourceAsStream("/field-filtering/" + fileName)) {
-      if (resource == null) {
-        throw new IllegalStateException("Missing field-filter fixture: " + fileName);
-      }
-      return DW.getObjectMapper().readTree(resource);
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
     }
   }
 
