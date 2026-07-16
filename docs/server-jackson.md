@@ -237,8 +237,8 @@ To enable field filtering for a resource, annotate the serialized type with `@En
 
 #### Nested fields
 
-Nested paths use dot notation. Nested filtering must be enabled on every serialized type whose nested
-properties should be filtered. This applies to nested objects, list items and map values.
+Nested paths use dot notation. Nested filtering is configured per annotated type. A nested type must
+enable `enableNestedPathFiltering` to filter its own properties; parent and child settings are independent:
 
 ```http
 --8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/combined-nested.http"
