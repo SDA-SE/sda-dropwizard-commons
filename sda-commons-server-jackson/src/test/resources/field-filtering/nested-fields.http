@@ -1,0 +1,1 @@
+GET /people/attributes-with-flag?fields=attributes.name

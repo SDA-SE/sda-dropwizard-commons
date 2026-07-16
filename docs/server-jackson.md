@@ -174,28 +174,175 @@ In an application that uses CDI the `EmbedHelper` should be instantiated the sam
 
 ### Field filtering feature for resources
 
-The `JacksonConfigurationBundle` registers the `FieldFilterModule` to add the `FieldFilterSerializerModifier`. The
-modifier uses the JAX-RS request context to identify the query param `fields`. If such a query param is present, only
-the requested fields (comma separated) are rendered in the resource view. additionally HAL links and embedded resources
-are rendered as well.  
+The `JacksonConfigurationBundle` registers the `JacksonFieldFilterModule`, which adds the
+`FieldFilterSerializerModifier`. The modifier reads the `fields` query parameter from the JAX-RS request
+context. If `fields` is present, only requested fields are rendered. Field names can be comma-separated or
+provided through repeated query parameters. Whitespace is ignored.
+
+Field filtering is enabled per serialized type with `@EnableFieldFilter`. If no `fields` parameter is
+provided, the complete response is rendered. HAL links and embedded resources are rendered regardless of
+the requested fields.
 
 Field filtering support may be disabled in the `JacksonConfigurationBundle.builder()`.
 
-Example:
+Response fixtures below omit HAL `_links`; field-filtering tests still verify links remain present.
+
+Example model:
 
 ```java
-@EnableFieldFilter
-public class Person {
-   private String firstName;
-   private String surName;
-   private String nickName;
-   // ...
-}
-```
-```javascript
-GET /persons/123?fields=firstName,nickName
+import java.util.List;
+import java.util.Map;
+import org.sdase.commons.server.jackson.EnableFieldFilter;
 
-=> {"firstName":"John","nickName":"Johnny"}
+@EnableFieldFilter(enableNestedPathFiltering = true)
+record Person(
+    String id,
+    String firstName,
+    String lastName,
+    String nickName,
+    List<Child> children,
+    Address address,
+    Map<String, Attribute> attributes,
+    NestedResource renamedCustomProp,
+    UnfilteredChild unfilteredChild,
+    List<UnfilteredChild> unfilteredChildren) {}
+
+@EnableFieldFilter(enableNestedPathFiltering = true)
+record Child(String nickName, String firstName, String lastName) {}
+
+@EnableFieldFilter(enableNestedPathFiltering = true)
+record Address(String id, String city) {}
+
+@EnableFieldFilter(enableNestedPathFiltering = true)
+record Attribute(String name, String description) {}
+
+@EnableFieldFilter(enableNestedPathFiltering = true)
+record NestedResource(String myNestedField, int someNumber, NestedNestedResource myNestedResource) {}
+
+@EnableFieldFilter(enableNestedPathFiltering = true)
+record NestedNestedResource(String anotherNestedField, int someNumber) {}
+
+record UnfilteredChild(String name, String lastName) {}
+```
+
+To enable field filtering for a resource, annotate the serialized type with `@EnableFieldFilter`.
+
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/basic-fields.http"
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/basic-fields.json"
+```
+
+#### Nested fields
+
+Nested paths use dot notation. Nested filtering is configured per annotated type. A nested type must
+enable `enableNestedPathFiltering` to filter its own properties; parent and child settings are independent:
+
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/combined-nested.http"
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/combined-nested.json"
+```
+
+By default, `enableNestedPathFiltering` is `false`. Once a parent property is selected, its complete subtree is
+kept. For example:
+
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/parent-subtrees.http"
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/parent-subtrees.json"
+```
+
+If a nested object is not annotated with `@EnableFieldFilter`, selecting one of its sub-fields keeps the
+complete nested object. The `enableNestedPathFiltering` setting is evaluated per annotated type.
+
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/unfiltered-child.http"
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/unfiltered-child.json"
+```
+
+The same rule applies to unannotated list items:
+
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/unfiltered-list-child.http"
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/unfiltered-list-child.json"
+```
+
+##### Nested filtering on maps
+
+Requesting `attributes.name` filters each map value. Map keys are not path segments. To filter
+fields inside map values, nested filtering must be enabled on the serialized container type and on
+the map value type with `@EnableFieldFilter(enableNestedPathFiltering = true)`. If either type does
+not enable nested path filtering, the complete map value is kept.
+
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/nested-fields.http"
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/nested-fields.json"
+```
+
+Requesting parent map keeps complete values:
+
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/full-subtree.http"
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/full-subtree.json"
+```
+
+##### Nested filtering on lists
+
+The same rules apply to list items. Requesting a nested path filters each item in the list. To
+filter fields inside list items, nested filtering must be enabled on the serialized parent type and
+on the list item type with `@EnableFieldFilter(enableNestedPathFiltering = true)`. If either type
+does not enable nested path filtering, the complete list item is kept.
+
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/nested-children.http"
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/nested-children.json"
+```
+
+Requesting the parent list keeps the complete subtree of each item.
+
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/parent-children.http"
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/parent-children.json"
+```
+
+HAL links remain included; omitted from fixtures for stable documentation output.
+
+##### Wrapped lists
+
+For wrapped lists, include wrapper property in field path. Wrapper and item types must be annotated
+when nested item filtering is enabled.
+
+```http
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/wrapped-results.http"
+```
+
+```json
+--8<-- "sda-commons-server-jackson/src/test/resources/field-filtering/wrapped-results.json"
 ```
 
 ## Configuration

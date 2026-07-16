@@ -12,9 +12,9 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.sdase.commons.server.jackson.EnableFieldFilter;
 
@@ -26,10 +26,17 @@ import org.sdase.commons.server.jackson.EnableFieldFilter;
  *
  * <ol>
  *   <li>The property is returned if no field filter is set
- *   <li>The property is <b>not</b> returned if the field (at the top level) is <b>not</b> part of
- *       the set of filtered fields ({@code &fields=} parameter)
- *   <li>The property is returned if it is part of a nested or embedded object
+ *   <li>The property is <b>not</b> returned if the field path is <b>not</b> part of the filtered
+ *       fields ({@code &fields=} parameter)
+ *   <li>The property is returned if it is part of an embedded object
+ *   <li>If {@link EnableFieldFilter#enableNestedPathFiltering()} is {@code false}, nested
+ *       properties keep the full subtree once the parent property is included
  * </ol>
+ *
+ * <p>Nested field paths are only applied inside nested object types that are also annotated. If a
+ * nested object type is not annotated, selecting one of its sub-fields keeps the whole nested
+ * object. If a nested annotated type should also filter by nested paths, it must set {@link
+ * EnableFieldFilter#enableNestedPathFiltering()} to {@code true}.
  */
 public class FieldFilterSerializerModifier extends BeanSerializerModifier {
 
@@ -40,44 +47,55 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
   @Override
   public JsonSerializer<?> modifySerializer(
       SerializationConfig config, BeanDescription beanDesc, JsonSerializer<?> serializer) {
-    if (serializer instanceof BeanSerializer beanSerializer
-        && beanDesc.getBeanClass().isAnnotationPresent(EnableFieldFilter.class)) {
-      return new FieldFilterSerializer(beanSerializer, uriInfo);
+    EnableFieldFilter fieldFilterAnnotation = getFieldFilterAnnotation(beanDesc);
+    if (serializer instanceof BeanSerializer beanSerializer && fieldFilterAnnotation != null) {
+      return new FieldFilterSerializer(
+          beanSerializer, uriInfo, fieldFilterAnnotation.enableNestedPathFiltering());
     } else {
       return serializer;
     }
   }
 
+  private static EnableFieldFilter getFieldFilterAnnotation(BeanDescription beanDesc) {
+    return beanDesc.getBeanClass().getAnnotation(EnableFieldFilter.class);
+  }
+
   private static class FieldFilterSerializer extends BeanSerializer {
-    FieldFilterSerializer(BeanSerializerBase src, UriInfo uriInfo) {
+    FieldFilterSerializer(BeanSerializerBase src, UriInfo uriInfo, boolean filterNestedPaths) {
       super(src);
       for (int i = 0; i < _props.length; i++) {
         BeanPropertyWriter prop = _props[i];
-        _props[i] = new SkipFieldBeanPropertyWriter(prop, uriInfo);
+        _props[i] = new SkipFieldBeanPropertyWriter(prop, uriInfo, filterNestedPaths);
       }
     }
 
     private static class SkipFieldBeanPropertyWriter extends BeanPropertyWriter {
 
       private final transient UriInfo uriInfo;
+      private final boolean filterNestedPaths;
 
-      SkipFieldBeanPropertyWriter(BeanPropertyWriter prop, UriInfo uriInfo) {
+      SkipFieldBeanPropertyWriter(
+          BeanPropertyWriter prop, UriInfo uriInfo, boolean filterNestedPaths) {
         super(prop);
         this.uriInfo = uriInfo;
+        this.filterNestedPaths = filterNestedPaths;
       }
 
       @Override
       public void serializeAsField(Object bean, JsonGenerator gen, SerializerProvider prov)
           throws Exception {
-        if (!hasAnyFieldFilter() || isIncludedField() || isEmbeddedOrNested(gen)) {
+        List<String> currentFieldPath =
+            getPath(gen.getOutputContext(), getName(), new ArrayList<>());
+        if (!hasAnyFieldFilter()
+            || shouldKeepFullNestedSubtree(currentFieldPath)
+            || isIncludedField(currentFieldPath)
+            || isEmbedded(currentFieldPath)) {
           super.serializeAsField(bean, gen, prov);
         }
       }
 
-      private boolean isEmbeddedOrNested(JsonGenerator generator) {
-        Set<String> pathSet =
-            getPath(generator.getOutputContext(), getName(), new LinkedHashSet<>());
-        return isEmbedded(pathSet) || isNested(pathSet);
+      private boolean shouldKeepFullNestedSubtree(List<String> currentFieldPath) {
+        return !filterNestedPaths && currentFieldPath.size() > 1;
       }
 
       private boolean hasAnyFieldFilter() {
@@ -90,33 +108,39 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
         }
       }
 
-      private boolean isIncludedField() {
+      private boolean isIncludedField(List<String> currentPath) {
         Stream<String> requestedFields =
             uriInfo.getQueryParameters().get(FIELD_FILTER_QUERY_PARAM).stream()
                 .map(fields -> fields.split(","))
                 .flatMap(Stream::of)
-                .map(String::trim);
-        return requestedFields.anyMatch(fieldName -> fieldName.equals(getName()));
-      }
-
-      /**
-       * Checks if the property is part of a nested object
-       *
-       * @param set the full path of the object
-       * @return true if the property is part of a nested object
-       */
-      private boolean isNested(Set<String> set) {
-        return set.size() > 1;
+                .map(String::trim)
+                .filter(fieldName -> !fieldName.isEmpty());
+        String serializedPath = String.join(".", currentPath);
+        return requestedFields.anyMatch(requestedPath -> matches(requestedPath, serializedPath));
       }
 
       /**
        * Checks if the object is part to an embedded object
        *
-       * @param set the full path of the object
+       * @param path the full path of the object
        * @return true if the object is part to an embedded object
        */
-      private boolean isEmbedded(Set<String> set) {
-        return set.contains("_embedded");
+      private boolean isEmbedded(List<String> path) {
+        return path.contains("_embedded");
+      }
+
+      /**
+       * Checks whether the current path should be included for a requested path.
+       *
+       * @param requestedPath the field path that should be included
+       * @param currentPath the serialized field path currently being evaluated
+       * @return true if the paths match exactly, if the current path is a parent of the requested
+       *     path, or if the current path is a child of the requested path
+       */
+      private boolean matches(String requestedPath, String currentPath) {
+        return currentPath.equals(requestedPath)
+            || requestedPath.startsWith(currentPath + ".")
+            || currentPath.startsWith(requestedPath + ".");
       }
 
       /**
@@ -127,22 +151,26 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
        *     is used. This might
        * @return the path segments from root -> [parent_node] -> ... -> your property
        */
-      private Set<String> getPath(JsonStreamContext context, String name, Set<String> set) {
+      private List<String> getPath(JsonStreamContext context, String name, List<String> path) {
         JsonStreamContext parentContext = context.getParent();
 
         // Add all parent paths
         if (parentContext != null) {
-          getPath(parentContext, null, set);
+          getPath(parentContext, null, path);
         }
 
         // add the provided name or read from the properties
         if (name != null) {
-          set.add(name);
-        } else if (context.getCurrentName() != null) {
-          set.add(context.getCurrentName());
+          path.add(name);
+        } else if (context.getCurrentName() != null && !isMapEntryContext(context)) {
+          path.add(context.getCurrentName());
         }
 
-        return set;
+        return path;
+      }
+
+      private boolean isMapEntryContext(JsonStreamContext context) {
+        return context.getCurrentValue() instanceof Map<?, ?>;
       }
     }
   }

@@ -1,0 +1,13 @@
+{
+  "children": [
+    {
+      "firstName": "Yasmine",
+      "lastName": "Doe",
+      "nickName": "Yassie"
+    }
+  ],
+  "address": {
+    "id": "Hamburg",
+    "city": "Hamburg"
+  }
+}

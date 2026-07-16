@@ -1,5 +1,6 @@
 package org.sdase.commons.server.jackson.test;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.openapitools.jackson.dataformat.hal.HALLink;
 import io.openapitools.jackson.dataformat.hal.annotation.Link;
 import io.openapitools.jackson.dataformat.hal.annotation.Resource;
@@ -18,6 +19,13 @@ public class PersonWithChildrenResource {
   private String lastName;
 
   private String nickName;
+
+  private Address address;
+
+  @JsonProperty("renamedCustomProp")
+  private NestedResource nestedResource;
+
+  private UnfilteredChildResource unfilteredChild;
 
   private List<PersonResource> children;
 
@@ -54,6 +62,33 @@ public class PersonWithChildrenResource {
 
   public PersonWithChildrenResource setNickName(String nickName) {
     this.nickName = nickName;
+    return this;
+  }
+
+  public Address getAddress() {
+    return address;
+  }
+
+  public PersonWithChildrenResource setAddress(Address address) {
+    this.address = address;
+    return this;
+  }
+
+  public NestedResource getNestedResource() {
+    return nestedResource;
+  }
+
+  public PersonWithChildrenResource setNestedResource(NestedResource nestedResource) {
+    this.nestedResource = nestedResource;
+    return this;
+  }
+
+  public UnfilteredChildResource getUnfilteredChild() {
+    return unfilteredChild;
+  }
+
+  public PersonWithChildrenResource setUnfilteredChild(UnfilteredChildResource unfilteredChild) {
+    this.unfilteredChild = unfilteredChild;
     return this;
   }
 

@@ -20,7 +20,9 @@ import jakarta.ws.rs.core.UriInfo;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.assertj.core.util.Lists;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -90,6 +92,12 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
             .setFirstName("John")
             .setLastName("Doe")
             .setNickName("Johnny")
+            .setAddress(new Address().setCity("Hamburg").setId("Hamburg"))
+            .setUnfilteredChild(
+                new UnfilteredChildResource().setFirstName("Jane").setLastName("Doey"))
+            .setNestedResource(
+                new NestedResource()
+                    .setAnotherNestedResource(new NestedNestedResource().setAnotherNested("deep")))
             .setSelf(new HALLink.Builder(self).build());
     john.setChildren(
         singletonList(
@@ -101,6 +109,81 @@ public class JacksonConfigurationTestApp extends Application<Configuration>
                     new HALLink.Builder(uriInfo.getBaseUriBuilder().path("ydoe").build())
                         .build())));
     return john;
+  }
+
+  @GET
+  @Path("people/jdoe-and-children-with-flag")
+  @Produces(MediaType.APPLICATION_JSON)
+  public PersonWithChildrenResourceWithFlag getJohnDoeWithChildrenOptIn() {
+    URI self =
+        uriInfo.getBaseUriBuilder().path(JacksonConfigurationTestApp.class, "getJohnDoe").build();
+    PersonResourceWithFlag child = new PersonResourceWithFlag();
+    child
+        .setFirstName("Yasmine")
+        .setLastName("Doe")
+        .setNickName("Yassie")
+        .setSelf(new HALLink.Builder(uriInfo.getBaseUriBuilder().path("ydoe").build()).build());
+
+    AddressResourceWithFlag address =
+        new AddressResourceWithFlag().setCity("Hamburg").setId("Hamburg");
+    UnfilteredChildResource unfilteredChild =
+        new UnfilteredChildResource().setFirstName("Jane").setLastName("Doey");
+    UnfilteredChildResource listChild =
+        new UnfilteredChildResource().setFirstName("Janet").setLastName("Doe");
+    NestedResourceWithFlag nestedResource =
+        new NestedResourceWithFlag()
+            .setAnotherNestedResource(new NestedNestedResourceWithFlag().setAnotherNested("deep"));
+
+    PersonWithChildrenResourceWithFlag person =
+        new PersonWithChildrenResourceWithFlag()
+            .setFirstName("John")
+            .setLastName("Doe")
+            .setNickName("Johnny")
+            .setChildren(singletonList(child))
+            .setAddress(address)
+            .setUnfilteredChild(unfilteredChild)
+            .setUnfilteredChildren(singletonList(listChild))
+            .setNestedResource(nestedResource)
+            .setSelf(new HALLink.Builder(self).build());
+    return person;
+  }
+
+  @GET
+  @Path("people/attributes-with-flag")
+  @Produces(MediaType.APPLICATION_JSON)
+  public MapContainerResourceWithFlag getAttributesWithFlag() {
+    Map<String, MapChildResourceWithFlag> attributes = new LinkedHashMap<>();
+    MapChildResourceWithFlag alpha =
+        new MapChildResourceWithFlag().setName("first").setDescription("hidden-one");
+    attributes.put("alpha", alpha);
+    MapChildResourceWithFlag beta =
+        new MapChildResourceWithFlag().setName("second").setDescription("hidden-two");
+    attributes.put("beta", beta);
+
+    return new MapContainerResourceWithFlag().setId("map-resource").setAttributes(attributes);
+  }
+
+  @GET
+  @Path("people/attributes-without-flag")
+  @Produces(MediaType.APPLICATION_JSON)
+  public MapContainerResource getAttributesWithoutFlag() {
+    Map<String, MapChildResource> attributes = new LinkedHashMap<>();
+    attributes.put("alpha", new MapChildResource().setName("first").setDescription("hidden-one"));
+    attributes.put("beta", new MapChildResource().setName("second").setDescription("hidden-two"));
+
+    return new MapContainerResource().setId("map-resource").setAttributes(attributes);
+  }
+
+  @GET
+  @Path("people/search-result-list")
+  @Produces(MediaType.APPLICATION_JSON)
+  public PersonSearchResultResource getPeopleSearchResult() {
+    return new PersonSearchResultResource()
+        .setResults(
+            singletonList(
+                new PersonSearchItemResource()
+                    .setName("bundle-a")
+                    .setCustomMap((Map<String, String>) null)));
   }
 
   @GET

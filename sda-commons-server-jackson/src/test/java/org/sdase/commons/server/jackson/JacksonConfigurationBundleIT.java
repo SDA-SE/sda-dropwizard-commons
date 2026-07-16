@@ -5,6 +5,8 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.WebApplicationException;
@@ -13,6 +15,11 @@ import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +34,7 @@ import org.sdase.commons.server.jackson.test.NameSearchFilterResource;
 import org.sdase.commons.server.jackson.test.NestedNestedResource;
 import org.sdase.commons.server.jackson.test.NestedResource;
 import org.sdase.commons.server.jackson.test.PersonResource;
+import org.sdase.commons.server.jackson.test.PersonSearchResultResource;
 import org.sdase.commons.server.jackson.test.PersonWithChildrenResource;
 import org.sdase.commons.server.jackson.test.ValidationResource;
 import org.sdase.commons.server.testing.DropwizardLegacyHelper;
@@ -486,6 +494,240 @@ class JacksonConfigurationBundleIT {
   }
 
   @Test
+  void shouldMatchBasicFieldFilteringDocumentationExample() {
+    JsonNode response =
+        readFieldFilterFragments("basic-fields.http", "basic-fields.json", "firstName", "nickName");
+
+    assertThat(response.path("firstName").asText()).isEqualTo("John");
+    assertThat(response.path("nickName").asText()).isEqualTo("Johnny");
+  }
+
+  @Test
+  void shouldFilterChildrenAndNestedFieldsByPathIfFlagIsTrue() {
+    JsonNode johnny =
+        readFieldFilterFragments(
+            "combined-nested.http",
+            "combined-nested.json",
+            "children",
+            "address",
+            "renamedCustomProp");
+
+    assertThat(johnny.has("_links")).isTrue();
+    assertThat(johnny.has("children")).isTrue();
+    assertThat(johnny.has("renamedCustomProp")).isTrue();
+    assertThat(johnny.has("address")).isTrue();
+
+    assertThat(johnny.has("firstName")).isFalse();
+    assertThat(johnny.has("lastName")).isFalse();
+    assertThat(johnny.has("nickName")).isFalse();
+
+    JsonNode child = johnny.path("children").get(0);
+    assertThat(child.path("nickName").asText()).isEqualTo("Yassie");
+    assertThat(child.has("_links")).isTrue();
+    assertThat(child.has("firstName")).isFalse();
+    assertThat(child.has("lastName")).isFalse();
+
+    JsonNode customNested = johnny.path("renamedCustomProp");
+    assertThat(customNested.size()).isEqualTo(1);
+    assertThat(customNested.has("myNestedResource")).isTrue();
+
+    JsonNode nestedResource = customNested.path("myNestedResource");
+    assertThat(nestedResource.size()).isEqualTo(1);
+    assertThat(nestedResource.path("anotherNestedField").asText()).isEqualTo("deep");
+    assertThat(nestedResource.has("someNumber")).isFalse();
+
+    assertThat(johnny.path("address").size()).isEqualTo(1);
+    assertThat(johnny.path("address").path("city").asText()).isEqualTo("Hamburg");
+  }
+
+  @Test
+  void shouldMatchNestedChildrenDocumentationExample() {
+    JsonNode response =
+        readFieldFilterFragment("nested-children.http", "nested-children.json", "children");
+
+    assertThat(response.path("children").get(0).path("nickName").asText()).isEqualTo("Yassie");
+  }
+
+  @Test
+  void shouldKeepFullSubtreeForNestedAnnotatedChildByDefault() {
+    JsonNode johnny =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("jdoe-and-children")
+            .queryParam(
+                "fields",
+                "children.nickName,renamedCustomProp.myNestedResource.anotherNestedField,address.city")
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+
+    JsonNode child = johnny.path("children").get(0);
+    assertThat(child.has("firstName")).isTrue();
+    assertThat(child.has("lastName")).isTrue();
+
+    JsonNode customNested = johnny.path("renamedCustomProp");
+    assertThat(customNested.has("myNestedField")).isTrue();
+    assertThat(customNested.has("someNumber")).isTrue();
+
+    JsonNode nestedResource = customNested.path("myNestedResource");
+    assertThat(nestedResource.has("anotherNestedField")).isTrue();
+    assertThat(nestedResource.has("someNumber")).isTrue();
+
+    assertThat(johnny.path("address").has("id")).isTrue();
+    assertThat(johnny.path("address").has("city")).isTrue();
+  }
+
+  @Test
+  void shouldKeepFullSubtreeForParentPathsFromRepeatedFieldParams() {
+    JsonNode johnny =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("jdoe-and-children")
+            .queryParam("fields", "children")
+            .queryParam("fields", "renamedCustomProp")
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+
+    assertThat(johnny.has("_links")).isTrue();
+    assertThat(johnny.has("children")).isTrue();
+    assertThat(johnny.has("renamedCustomProp")).isTrue();
+    assertThat(johnny.has("firstName")).isFalse();
+    assertThat(johnny.has("lastName")).isFalse();
+    assertThat(johnny.has("nickName")).isFalse();
+    assertThat(johnny.has("address")).isFalse();
+
+    JsonNode child = johnny.path("children").get(0);
+    assertThat(child.has("_links")).isTrue();
+    assertThat(child.path("firstName").asText()).isEqualTo("Yasmine");
+    assertThat(child.path("lastName").asText()).isEqualTo("Doe");
+    assertThat(child.path("nickName").asText()).isEqualTo("Yassie");
+
+    JsonNode customNested = johnny.path("renamedCustomProp");
+    assertThat(customNested.has("myNestedField")).isTrue();
+    assertThat(customNested.has("someNumber")).isTrue();
+    assertThat(customNested.has("myNestedResource")).isTrue();
+
+    JsonNode nestedResource = customNested.path("myNestedResource");
+    assertThat(nestedResource.has("anotherNestedField")).isTrue();
+    assertThat(nestedResource.has("someNumber")).isTrue();
+  }
+
+  @Test
+  void shouldKeepFullSubtreeForUnannotatedChildEvenIfSubFieldIsRequested() {
+    JsonNode johnny =
+        readFieldFilterFragment(
+            "unfiltered-child.http", "unfiltered-child.json", "unfilteredChild");
+
+    JsonNode unfilteredChild = johnny.path("unfilteredChild");
+    assertThat(unfilteredChild.path("name").asText()).isEqualTo("Jane");
+    assertThat(unfilteredChild.path("lastName").asText()).isEqualTo("Doey");
+  }
+
+  @Test
+  void shouldKeepFullSubtreeForUnannotatedListChildEvenIfSubFieldIsRequested() {
+    JsonNode response =
+        readFieldFilterFragment(
+            "unfiltered-list-child.http", "unfiltered-list-child.json", "unfilteredChildren");
+
+    JsonNode unfilteredChild = response.path("unfilteredChildren").get(0);
+    assertThat(unfilteredChild.path("name").asText()).isEqualTo("Janet");
+    assertThat(unfilteredChild.path("lastName").asText()).isEqualTo("Doe");
+  }
+
+  @Test
+  void shouldMatchParentListDocumentationExample() {
+    JsonNode response =
+        readFieldFilterFragment("parent-children.http", "parent-children.json", "children");
+
+    assertThat(response.path("children").get(0).path("firstName").asText()).isEqualTo("Yasmine");
+    assertThat(response.path("children").get(0).path("lastName").asText()).isEqualTo("Doe");
+    assertThat(response.path("children").get(0).path("nickName").asText()).isEqualTo("Yassie");
+  }
+
+  @Test
+  void shouldMatchParentSubtreesDocumentationExample() {
+    JsonNode response =
+        readFieldFilterFragments(
+            "parent-subtrees.http", "parent-subtrees.json", "children", "address");
+
+    assertThat(response.path("address").path("id").asText()).isEqualTo("Hamburg");
+  }
+
+  @Test
+  void shouldFilterNestedFieldsInsideMapValuesWithoutTreatingKeysAsPathSegments() {
+    JsonNode response = readFieldFilterExample("nested-fields.http", "nested-fields.json");
+
+    assertThat(response.has("attributes")).isTrue();
+    assertThat(response.has("id")).isFalse();
+
+    JsonNode attributes = response.path("attributes");
+    assertThat(attributes.path("alpha").path("name").asText()).isEqualTo("first");
+    assertThat(attributes.path("alpha").has("description")).isFalse();
+    assertThat(attributes.path("beta").path("name").asText()).isEqualTo("second");
+    assertThat(attributes.path("beta").has("description")).isFalse();
+  }
+
+  @Test
+  void shouldKeepFullMapWhenParentFieldRequested() {
+    JsonNode response = readFieldFilterExample("full-subtree.http", "full-subtree.json");
+
+    assertThat(response.has("attributes")).isTrue();
+    assertThat(response.has("id")).isFalse();
+
+    JsonNode attributes = response.path("attributes");
+    assertThat(attributes.path("alpha").path("name").asText()).isEqualTo("first");
+    assertThat(attributes.path("alpha").has("description")).isTrue();
+    assertThat(attributes.path("beta").path("name").asText()).isEqualTo("second");
+    assertThat(attributes.path("beta").has("description")).isTrue();
+  }
+
+  @Test
+  void shouldKeepFullMapSubtreeWhenNestedFilteringDisabled() {
+    JsonNode response =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("attributes-without-flag")
+            .queryParam("fields", "attributes.name")
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+
+    assertThat(response.has("attributes")).isTrue();
+    assertThat(response.has("id")).isFalse();
+
+    JsonNode attributes = response.path("attributes");
+    assertThat(attributes.path("alpha").path("name").asText()).isEqualTo("first");
+    assertThat(attributes.path("alpha").path("description").asText()).isEqualTo("hidden-one");
+    assertThat(attributes.path("beta").path("name").asText()).isEqualTo("second");
+    assertThat(attributes.path("beta").path("description").asText()).isEqualTo("hidden-two");
+  }
+
+  @Test
+  void shouldKeepExcludedNestedFieldAsNullInDefaultMode() {
+    PersonSearchResultResource result =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path("people")
+            .path("search-result-list")
+            .queryParam("fields", "results.name")
+            .request(MediaType.APPLICATION_JSON)
+            .get(PersonSearchResultResource.class);
+
+    assertThat(result.getResults()).hasSize(1);
+    assertThat(result.getResults().get(0).getName()).isEqualTo("bundle-a");
+    assertThat(result.getResults().get(0).getCustomMap()).isNull();
+  }
+
+  @Test
+  void shouldMatchWrappedListDocumentationExample() {
+    JsonNode response = readFieldFilterExample("wrapped-results.http", "wrapped-results.json");
+
+    assertThat(response.path("results").get(0).path("name").asText()).isEqualTo("bundle-a");
+    assertThat(response.path("results").get(0).path("customMap").isNull()).isTrue();
+  }
+
+  @Test
   void shouldFilterNickNameInList() {
     List<PersonWithChildrenResource> people =
         DropwizardLegacyHelper.client(DW.getObjectMapper())
@@ -735,6 +977,84 @@ class JacksonConfigurationBundleIT {
       assertThat(error.getInvalidParams())
           .extracting(ApiInvalidParam::getField, ApiInvalidParam::getErrorCode)
           .containsExactly(tuple("file", "NOT_NULL"));
+    }
+  }
+
+  private static JsonNode readFieldFilterExample(String requestFile, String responseFile) {
+    JsonNode actual = requestFieldFilterExample(requestFile);
+    assertThat(actual).isEqualTo(readFieldFilterFixture(responseFile));
+    return actual;
+  }
+
+  private static JsonNode readFieldFilterFragment(
+      String requestFile, String responseFile, String responseField) {
+    return readFieldFilterFragments(requestFile, responseFile, responseField);
+  }
+
+  private static JsonNode readFieldFilterFragments(
+      String requestFile, String responseFile, String... responseFields) {
+    JsonNode actual = requestFieldFilterExample(requestFile);
+    JsonNode expected = readFieldFilterFixture(responseFile);
+    for (String responseField : responseFields) {
+      assertThat(removeHalLinks(actual.path(responseField).deepCopy()))
+          .isEqualTo(expected.path(responseField));
+    }
+    return actual;
+  }
+
+  private static JsonNode removeHalLinks(JsonNode node) {
+    if (node.isObject()) {
+      ObjectNode objectNode = (ObjectNode) node;
+      objectNode.remove("_links");
+      objectNode.elements().forEachRemaining(JacksonConfigurationBundleIT::removeHalLinks);
+    } else if (node.isArray()) {
+      node.elements().forEachRemaining(JacksonConfigurationBundleIT::removeHalLinks);
+    }
+    return node;
+  }
+
+  private static JsonNode requestFieldFilterExample(String requestFile) {
+    URI request = readFieldFilterRequest(requestFile);
+    String query = request.getQuery();
+    if (query == null || !query.startsWith("fields=")) {
+      throw new IllegalStateException("Expected fields query parameter in " + requestFile);
+    }
+
+    JsonNode actual =
+        DW.client()
+            .target("http://localhost:" + DW.getLocalPort())
+            .path(request.getPath())
+            .queryParam("fields", query.substring("fields=".length()))
+            .request(MediaType.APPLICATION_JSON)
+            .get(JsonNode.class);
+    return actual;
+  }
+
+  private static URI readFieldFilterRequest(String fileName) {
+    try (InputStream resource =
+        JacksonConfigurationBundleIT.class.getResourceAsStream("/field-filtering/" + fileName)) {
+      if (resource == null) {
+        throw new IllegalStateException("Missing field-filter request fixture: " + fileName);
+      }
+      String request = new String(resource.readAllBytes(), StandardCharsets.UTF_8).trim();
+      if (!request.startsWith("GET ")) {
+        throw new IllegalStateException("Expected GET request fixture: " + fileName);
+      }
+      return URI.create(request.substring("GET ".length()).trim());
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  private static JsonNode readFieldFilterFixture(String fileName) {
+    try (InputStream resource =
+        JacksonConfigurationBundleIT.class.getResourceAsStream("/field-filtering/" + fileName)) {
+      if (resource == null) {
+        throw new IllegalStateException("Missing field-filter response fixture: " + fileName);
+      }
+      return DW.getObjectMapper().readTree(resource);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
   }
 }

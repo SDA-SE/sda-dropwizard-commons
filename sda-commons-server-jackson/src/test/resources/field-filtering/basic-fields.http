@@ -1,0 +1,1 @@
+GET /people/jdoe?fields=firstName,nickName
