@@ -29,14 +29,14 @@ import org.sdase.commons.server.jackson.EnableFieldFilter;
  *   <li>The property is <b>not</b> returned if the field path is <b>not</b> part of the filtered
  *       fields ({@code &fields=} parameter)
  *   <li>The property is returned if it is part of an embedded object
- *   <li>If {@link EnableFieldFilter#filterNestedPaths()} is {@code false}, nested properties keep
+ *   <li>If {@link EnableFieldFilter#enableNestedPathFiltering()} is {@code false}, nested properties keep
  *       the full subtree once the parent property is included
  * </ol>
  *
  * <p>Nested field paths are only applied inside nested object types that are also annotated. If a
  * nested object type is not annotated, selecting one of its sub-fields keeps the whole nested
  * object. If a nested annotated type should also filter by nested paths, it must set {@link
- * EnableFieldFilter#filterNestedPaths()} to {@code true}.
+ * EnableFieldFilter#enableNestedPathFiltering()} to {@code true}.
  */
 public class FieldFilterSerializerModifier extends BeanSerializerModifier {
 
@@ -50,7 +50,7 @@ public class FieldFilterSerializerModifier extends BeanSerializerModifier {
     EnableFieldFilter fieldFilterAnnotation = getFieldFilterAnnotation(beanDesc);
     if (serializer instanceof BeanSerializer beanSerializer && fieldFilterAnnotation != null) {
       return new FieldFilterSerializer(
-          beanSerializer, uriInfo, fieldFilterAnnotation.filterNestedPaths());
+          beanSerializer, uriInfo, fieldFilterAnnotation.enableNestedPathFiltering());
     } else {
       return serializer;
     }

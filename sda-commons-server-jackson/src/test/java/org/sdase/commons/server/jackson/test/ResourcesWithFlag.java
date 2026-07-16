@@ -12,7 +12,7 @@ import java.util.Map;
 import org.sdase.commons.server.jackson.EnableFieldFilter;
 
 @Resource
-@EnableFieldFilter(filterNestedPaths = true)
+@EnableFieldFilter(enableNestedPathFiltering = true)
 class AddressResourceWithFlag {
 
   private String id;
@@ -37,7 +37,7 @@ class AddressResourceWithFlag {
   }
 }
 
-@EnableFieldFilter(filterNestedPaths = true)
+@EnableFieldFilter(enableNestedPathFiltering = true)
 class NestedNestedResourceWithFlag {
 
   @NotEmpty()
@@ -53,7 +53,7 @@ class NestedNestedResourceWithFlag {
   }
 }
 
-@EnableFieldFilter(filterNestedPaths = true)
+@EnableFieldFilter(enableNestedPathFiltering = true)
 class NestedResourceWithFlag {
 
   @NotEmpty()
@@ -79,7 +79,7 @@ class NestedResourceWithFlag {
 }
 
 @Resource
-@EnableFieldFilter(filterNestedPaths = true)
+@EnableFieldFilter(enableNestedPathFiltering = true)
 @SuppressWarnings("WeakerAccess")
 class PersonResourceWithFlag {
 
@@ -149,7 +149,7 @@ class PersonResourceWithFlag {
 }
 
 @Resource
-@EnableFieldFilter(filterNestedPaths = true)
+@EnableFieldFilter(enableNestedPathFiltering = true)
 @SuppressWarnings("WeakerAccess")
 class PersonWithChildrenResourceWithFlag {
 
@@ -240,7 +240,7 @@ class PersonWithChildrenResourceWithFlag {
   }
 }
 
-@EnableFieldFilter(filterNestedPaths = true)
+@EnableFieldFilter(enableNestedPathFiltering = true)
 class MapChildResourceWithFlag {
 
   private String name;
@@ -265,7 +265,7 @@ class MapChildResourceWithFlag {
   }
 }
 
-@EnableFieldFilter(filterNestedPaths = true)
+@EnableFieldFilter(enableNestedPathFiltering = true)
 class MapContainerResourceWithFlag {
 
   private String id;
