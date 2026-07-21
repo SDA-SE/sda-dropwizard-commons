@@ -1,4 +1,6 @@
 dependencies {
+  compileOnly 'io.swagger.core.v3:swagger-annotations-jakarta'
+
   api 'io.dropwizard:dropwizard-core'
   api 'jakarta.servlet:jakarta.servlet-api'
   api 'io.dropwizard:dropwizard-json-logging'
@@ -8,4 +10,10 @@ dependencies {
   testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-server-healthcheck')
   testImplementation('org.awaitility:awaitility')
+}
+
+test {
+  // We need to disable this property, otherwise Jersey doesn't allow to set the Origin header
+  // for CORS testing.
+  systemProperty "sun.net.http.allowRestrictedHeaders", "true"
 }

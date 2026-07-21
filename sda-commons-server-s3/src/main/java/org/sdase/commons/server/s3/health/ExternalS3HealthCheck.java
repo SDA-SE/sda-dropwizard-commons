@@ -1,7 +1,7 @@
 package org.sdase.commons.server.s3.health;
 
 import java.util.Set;
-import org.sdase.commons.server.healthcheck.ExternalHealthCheck;
+import org.sdase.commons.server.dropwizard.healthcheck.ExternalHealthCheck;
 import software.amazon.awssdk.services.s3.S3Client;
 
 @ExternalHealthCheck

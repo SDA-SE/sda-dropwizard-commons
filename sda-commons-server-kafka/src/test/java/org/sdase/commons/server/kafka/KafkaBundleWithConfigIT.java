@@ -38,6 +38,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.server.dropwizard.tracing.TraceTokenContext;
 import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.config.ConsumerConfig;
@@ -59,7 +60,6 @@ import org.sdase.commons.server.kafka.serializers.KafkaJsonDeserializer;
 import org.sdase.commons.server.kafka.serializers.KafkaJsonSerializer;
 import org.sdase.commons.server.kafka.serializers.SimpleEntity;
 import org.sdase.commons.server.kafka.serializers.WrappedNoSerializationErrorDeserializer;
-import org.sdase.commons.shared.tracing.TraceTokenContext;
 import org.slf4j.MDC;
 
 class KafkaBundleWithConfigIT {
