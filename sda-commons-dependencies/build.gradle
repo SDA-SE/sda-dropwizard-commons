@@ -81,7 +81,7 @@ dependencies {
     api "org.apache.httpcomponents.core5:httpcore5-h2:${apacheHttpCore5Version}"
     api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
-    api "io.github.classgraph:classgraph:4.8.184"
+    api "io.github.classgraph:classgraph:4.8.185"
 
     api "org.jboss.logging:jboss-logging:3.6.3.Final", {
       because "conflict between org.hibernate.validator:hibernate-validator and org.jboss.weld.se:weld-se-core"
