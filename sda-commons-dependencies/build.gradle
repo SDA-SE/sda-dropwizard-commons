@@ -229,6 +229,6 @@ dependencies {
     //Instead we can add the spring-core dependency to fix spring related CVEs.
     api 'org.springframework:spring-core:6.2.17'
 
-    api 'com.github.jknack:handlebars:4.5.2' //CVE-2026-55760 (check if still needed by next wiremock update)
+    api 'com.github.jknack:handlebars:4.5.3' //CVE-2026-55760 (check if still needed by next wiremock update)
   }
 }
