@@ -12,6 +12,14 @@ ignore_cves := {
   "CVE-2026-2332",
   # Spring Context is just in the background because we use Spring Data MongoDB.
   "CVE-2024-38820",
+  # Jetty bound to Jetty 11 on this branch, no upgrade available
+  # consumers may upgrade to 11.0.31 with commercial support
+  # consumers of this library are likely not affected because we propagate bearer token
+  # authentication and not HTTP Digest.
+  "CVE-2026-10050",
+  # Jetty bound to Jetty 11 on this branch, no upgrade available
+  # consumers may upgrade to 11.0.29 with commercial support
+  "CVE-2026-6790",
 }
 
 ignore {
