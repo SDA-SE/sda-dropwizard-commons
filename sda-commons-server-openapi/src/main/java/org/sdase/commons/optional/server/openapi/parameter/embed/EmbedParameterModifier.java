@@ -7,24 +7,24 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.integration.api.OpenApiReader;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.ComposedSchema;
-import io.swagger.v3.oas.models.media.MediaType;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.*;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.QueryParameter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Adds the embeddable resources as query parameter, so they can be selected in the swagger ui. */
 @OpenAPIDefinition
 @SuppressWarnings({"java:S3740", "rawtypes"})
 // ignore "Raw types should not be used" introduced by swagger-core
 public class EmbedParameterModifier implements ReaderListener {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(EmbedParameterModifier.class);
+
   private static final String EMBEDDED_PROPERTY = "_embedded";
+  private static final String EMBED_PARAMETER_NAME = "embed";
+  private static final String QUERY_PARAMETER_LOCATION = "query";
 
   @Override
   public void beforeScan(OpenApiReader reader, OpenAPI openAPI) {
@@ -80,8 +80,7 @@ public class EmbedParameterModifier implements ReaderListener {
               if (embedQueryParameter == null) {
                 return;
               }
-
-              operation.addParametersItem(embedQueryParameter);
+              addEmbedParameter(operation, embedQueryParameter);
             });
   }
 
@@ -91,6 +90,57 @@ public class EmbedParameterModifier implements ReaderListener {
     }
 
     return null;
+  }
+
+  private void addEmbedParameter(Operation operation, Parameter generatedParameter) {
+    Parameter existingEmbedParameter = null;
+
+    if (operation.getParameters() != null) {
+      for (Parameter parameter : operation.getParameters()) {
+        if (parameter == null || !isEmbedQueryParameter(parameter)) {
+          continue;
+        }
+
+        if (existingEmbedParameter != null) {
+          throw new IllegalStateException(
+              "The operation contains multiple 'embed' query parameters already.");
+        }
+
+        existingEmbedParameter = parameter;
+      }
+    }
+
+    if (existingEmbedParameter == null) {
+      operation.addParametersItem(generatedParameter);
+      return;
+    }
+
+    if (!isCompatibleEmbedParameter(existingEmbedParameter)) {
+      throw new IllegalStateException(
+          "The query parameter 'embed' conflicts with the generated embed parameter. "
+              + "It must be an array of strings or use a different name.");
+    }
+
+    LOGGER.info(
+        "A compatible 'embed' query parameter already exists for operation '{}'. "
+            + "Adding another one was skipped.",
+        operation.getOperationId());
+  }
+
+  private boolean isEmbedQueryParameter(Parameter parameter) {
+    return EMBED_PARAMETER_NAME.equals(parameter.getName())
+        && QUERY_PARAMETER_LOCATION.equals(parameter.getIn());
+  }
+
+  private boolean isCompatibleEmbedParameter(Parameter parameter) {
+    Schema<?> schema = parameter.getSchema();
+
+    if (schema == null || !"array".equals(schema.getType())) {
+      return false;
+    }
+
+    Schema<?> itemSchema = schema.getItems();
+    return itemSchema != null && "string".equals(itemSchema.getType());
   }
 
   private String getResponseModelName(MediaType responseSchema) {
@@ -166,7 +216,7 @@ public class EmbedParameterModifier implements ReaderListener {
 
       return new QueryParameter()
           .schema(new ArraySchema().items(new StringSchema()._enum(embeddableObjects)))
-          .name("embed")
+          .name(EMBED_PARAMETER_NAME)
           .description(
               "Select linked resources that should be resolved and embedded into the response");
     }
