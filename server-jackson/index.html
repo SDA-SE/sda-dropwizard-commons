@@ -908,62 +908,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Field filtering feature for resources">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#nested-fields" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Nested fields
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Nested fields">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#nested-filtering-on-maps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Nested filtering on maps
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#nested-filtering-on-lists" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Nested filtering on lists
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#wrapped-lists" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Wrapped lists
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -1907,34 +1851,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../migration-guides/MIGRATION_GUIDE_v8_to_v9/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Migrate from v8 to v9
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -2027,62 +1943,6 @@
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Field filtering feature for resources">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#nested-fields" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Nested fields
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Nested fields">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#nested-filtering-on-maps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Nested filtering on maps
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#nested-filtering-on-lists" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Nested filtering on lists
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#wrapped-lists" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Wrapped lists
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -2385,311 +2245,32 @@ can be used to check whether a resource should be embedded:</p>
 <span class="w">   </span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="field-filtering-feature-for-resources">Field filtering feature for resources<a class="headerlink" href="#field-filtering-feature-for-resources" title="Permanent link">&para;</a></h3>
-<p>The <code>JacksonConfigurationBundle</code> registers the <code>JacksonFieldFilterModule</code>, which adds the
-<code>FieldFilterSerializerModifier</code>. The modifier reads the <code>fields</code> query parameter from the JAX-RS request
-context. If <code>fields</code> is present, only requested fields are rendered. Field names can be comma-separated or
-provided through repeated query parameters. Whitespace is ignored.</p>
-<p>Field filtering is enabled per serialized type with <code>@EnableFieldFilter</code>. If no <code>fields</code> parameter is
-provided, the complete response is rendered. HAL links and embedded resources are rendered regardless of
-the requested fields.</p>
+<p>The <code>JacksonConfigurationBundle</code> registers the <code>FieldFilterModule</code> to add the <code>FieldFilterSerializerModifier</code>. The
+modifier uses the JAX-RS request context to identify the query param <code>fields</code>. If such a query param is present, only
+the requested fields (comma separated) are rendered in the resource view. additionally HAL links and embedded resources
+are rendered as well.  </p>
 <p>Field filtering support may be disabled in the <code>JacksonConfigurationBundle.builder()</code>.</p>
-<p>Response fixtures below omit HAL <code>_links</code>; field-filtering tests still verify links remain present.</p>
-<p>Example model:</p>
-<div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Map</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">org.sdase.commons.server.jackson.EnableFieldFilter</span><span class="p">;</span>
-
-<span class="nd">@EnableFieldFilter</span><span class="p">(</span><span class="n">enableNestedPathFiltering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
-<span class="kd">record</span> <span class="nc">Person</span><span class="p">(</span>
-<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
-<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">firstName</span><span class="p">,</span>
-<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">lastName</span><span class="p">,</span>
-<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">nickName</span><span class="p">,</span>
-<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Child</span><span class="o">&gt;</span><span class="w"> </span><span class="n">children</span><span class="p">,</span>
-<span class="w">    </span><span class="n">Address</span><span class="w"> </span><span class="n">address</span><span class="p">,</span>
-<span class="w">    </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Attribute</span><span class="o">&gt;</span><span class="w"> </span><span class="n">attributes</span><span class="p">,</span>
-<span class="w">    </span><span class="n">NestedResource</span><span class="w"> </span><span class="n">renamedCustomProp</span><span class="p">,</span>
-<span class="w">    </span><span class="n">UnfilteredChild</span><span class="w"> </span><span class="n">unfilteredChild</span><span class="p">,</span>
-<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UnfilteredChild</span><span class="o">&gt;</span><span class="w"> </span><span class="n">unfilteredChildren</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="nd">@EnableFieldFilter</span><span class="p">(</span><span class="n">enableNestedPathFiltering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
-<span class="kd">record</span> <span class="nc">Child</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">nickName</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">firstName</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">lastName</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="nd">@EnableFieldFilter</span><span class="p">(</span><span class="n">enableNestedPathFiltering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
-<span class="kd">record</span> <span class="nc">Address</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">city</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="nd">@EnableFieldFilter</span><span class="p">(</span><span class="n">enableNestedPathFiltering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
-<span class="kd">record</span> <span class="nc">Attribute</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">description</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="nd">@EnableFieldFilter</span><span class="p">(</span><span class="n">enableNestedPathFiltering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
-<span class="kd">record</span> <span class="nc">NestedResource</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">myNestedField</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">someNumber</span><span class="p">,</span><span class="w"> </span><span class="n">NestedNestedResource</span><span class="w"> </span><span class="n">myNestedResource</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="nd">@EnableFieldFilter</span><span class="p">(</span><span class="n">enableNestedPathFiltering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
-<span class="kd">record</span> <span class="nc">NestedNestedResource</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">anotherNestedField</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">someNumber</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="kd">record</span> <span class="nc">UnfilteredChild</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">lastName</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-</code></pre></div></td></tr></table></div>
-<p>To enable field filtering for a resource, annotate the serialized type with <code>@EnableFieldFilter</code>.</p>
-<div class="language-http highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err">GET /people/jdoe?fields=firstName,nickName</span>
-</code></pre></div></td></tr></table></div>
-<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;nickName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Johnny&quot;</span>
-<span class="p">}</span>
-</code></pre></div></td></tr></table></div>
-<h4 id="nested-fields">Nested fields<a class="headerlink" href="#nested-fields" title="Permanent link">&para;</a></h4>
-<p>Nested paths use dot notation. Nested filtering is configured per annotated type. A nested type must
-enable <code>enableNestedPathFiltering</code> to filter its own properties; parent and child settings are independent:</p>
-<div class="language-http highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err">GET /people/jdoe-and-children-with-flag?fields=children.nickName,renamedCustomProp.myNestedResource.anotherNestedField,address.city</span>
-</code></pre></div></td></tr></table></div>
-<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;nickName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yassie&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;address&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;city&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hamburg&quot;</span>
-<span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;renamedCustomProp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;myNestedResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;anotherNestedField&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deep&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></td></tr></table></div>
-<p>By default, <code>enableNestedPathFiltering</code> is <code>false</code>. Once a parent property is selected, its complete subtree is
-kept. For example:</p>
-<div class="language-http highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err">GET /people/jdoe-and-children?fields=children,address</span>
-</code></pre></div></td></tr></table></div>
-<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yasmine&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Doe&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;nickName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yassie&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;address&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hamburg&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;city&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hamburg&quot;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></td></tr></table></div>
-<p>If a nested object is not annotated with <code>@EnableFieldFilter</code>, selecting one of its sub-fields keeps the
-complete nested object. The <code>enableNestedPathFiltering</code> setting is evaluated per annotated type.</p>
-<div class="language-http highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err">GET /people/jdoe-and-children?fields=unfilteredChild.name</span>
-</code></pre></div></td></tr></table></div>
-<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;unfilteredChild&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jane&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Doey&quot;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></td></tr></table></div>
-<p>The same rule applies to unannotated list items:</p>
-<div class="language-http highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err">GET /people/jdoe-and-children-with-flag?fields=unfilteredChildren.name</span>
-</code></pre></div></td></tr></table></div>
-<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<p>Example:</p>
+<p><div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span>
 <span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;unfilteredChildren&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Janet&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Doe&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@EnableFieldFilter</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Person</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">firstName</span><span class="p">;</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">surName</span><span class="p">;</span>
+<span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">nickName</span><span class="p">;</span>
+<span class="w">   </span><span class="c1">// ...</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
-<h5 id="nested-filtering-on-maps">Nested filtering on maps<a class="headerlink" href="#nested-filtering-on-maps" title="Permanent link">&para;</a></h5>
-<p>Requesting <code>attributes.name</code> filters each map value. Map keys are not path segments. To filter
-fields inside map values, nested filtering must be enabled on the serialized container type and on
-the map value type with <code>@EnableFieldFilter(enableNestedPathFiltering = true)</code>. If either type does
-not enable nested path filtering, the complete map value is kept.</p>
-<div class="language-http highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err">GET /people/attributes-with-flag?fields=attributes.name</span>
-</code></pre></div></td></tr></table></div>
-<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;attributes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;alpha&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;first&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;beta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;second&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></td></tr></table></div>
-<p>Requesting parent map keeps complete values:</p>
-<div class="language-http highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err">GET /people/attributes-with-flag?fields=attributes</span>
-</code></pre></div></td></tr></table></div>
-<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;attributes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;alpha&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;first&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hidden-one&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;beta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;second&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hidden-two&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></td></tr></table></div>
-<h5 id="nested-filtering-on-lists">Nested filtering on lists<a class="headerlink" href="#nested-filtering-on-lists" title="Permanent link">&para;</a></h5>
-<p>The same rules apply to list items. Requesting a nested path filters each item in the list. To
-filter fields inside list items, nested filtering must be enabled on the serialized parent type and
-on the list item type with <code>@EnableFieldFilter(enableNestedPathFiltering = true)</code>. If either type
-does not enable nested path filtering, the complete list item is kept.</p>
-<div class="language-http highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err">GET /people/jdoe-and-children-with-flag?fields=children.nickName</span>
-</code></pre></div></td></tr></table></div>
-<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<div class="language-javascript highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;nickName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yassie&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div></td></tr></table></div>
-<p>Requesting the parent list keeps the complete subtree of each item.</p>
-<div class="language-http highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err">GET /people/jdoe-and-children?fields=children</span>
-</code></pre></div></td></tr></table></div>
-<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span>
-<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yasmine&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Doe&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;nickName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yassie&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div></td></tr></table></div>
-<p>HAL links remain included; omitted from fixtures for stable documentation output.</p>
-<h5 id="wrapped-lists">Wrapped lists<a class="headerlink" href="#wrapped-lists" title="Permanent link">&para;</a></h5>
-<p>For wrapped lists, include wrapper property in field path. Wrapper and item types must be annotated
-when nested item filtering is enabled.</p>
-<div class="language-http highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err">GET /people/search-result-list?fields=results.name</span>
-</code></pre></div></td></tr></table></div>
-<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bundle-a&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;customMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div></td></tr></table></div>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nx">GET</span><span class="w"> </span><span class="o">/</span><span class="nx">persons</span><span class="o">/</span><span class="mf">123</span><span class="o">?</span><span class="nx">fields</span><span class="o">=</span><span class="nx">firstName</span><span class="p">,</span><span class="nx">nickName</span>
+
+<span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;firstName&quot;</span><span class="o">:</span><span class="s2">&quot;John&quot;</span><span class="p">,</span><span class="s2">&quot;nickName&quot;</span><span class="o">:</span><span class="s2">&quot;Johnny&quot;</span><span class="p">}</span>
+</code></pre></div></td></tr></table></div></p>
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
 <h3 id="disable-hal-support">Disable HAL support<a class="headerlink" href="#disable-hal-support" title="Permanent link">&para;</a></h3>
 <p>The <code>JacksonConfigurationBundle</code> may be initialized without HAL support, if links are not needed or achieved in another
