@@ -1889,6 +1889,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration-guides/MIGRATION_GUIDE_v8_to_v9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrate from v8 to v9
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2374,8 +2402,10 @@ and passing it to the PlatformClientBuilder:</p>
 <span class="normal"> 7</span>
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">oidc</span><span class="p">:</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">oidc</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">disabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_DISABLED:-false}</span>
+<span class="w">  </span><span class="nt">enableStartupValidation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_ENABLE_STARTUP_VALIDATION:-false}</span>
 <span class="w">  </span><span class="nt">grantType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_GRANT_TYPE:-client_credentials}</span>
 <span class="w">  </span><span class="nt">clientId</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_CLIENT_ID}</span>
 <span class="w">  </span><span class="nt">clientSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OIDC_CLIENT_SECRET}</span>
@@ -2389,6 +2419,16 @@ and passing it to the PlatformClientBuilder:</p>
 <li><em>OIDC_DISABLED</em><ul>
 <li>Disable retrieving a new token completely. Not meant for production! </li>
 <li>Example: <code>false</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><em>OIDC_ENABLE_STARTUP_VALIDATION</em><ul>
+<li>Enables startup validation of the OIDC configuration by performing an initial access-token retrieval.
+  Set to <code>true</code> to fail fast during startup if the OIDC provider is unreachable or misconfigured.</li>
+<li>Note: this only verifies that a token can be retrieved — it does <strong>not</strong> check whether the token
+  has the required scopes or permissions to access the target resource server.</li>
+<li>Default: <code>false</code></li>
 </ul>
 </li>
 </ul>
