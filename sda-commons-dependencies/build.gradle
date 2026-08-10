@@ -109,7 +109,7 @@ dependencies {
     // sda-commons-server-circuitbreaker
     api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
     api "io.github.resilience4j:resilience4j-micrometer:${resilience4jVersion}"
-    api "org.objenesis:objenesis:3.5"
+    api "org.objenesis:objenesis:3.6"
 
     // sda-commons-server-hibernate
     api "org.postgresql:postgresql:42.7.13"
