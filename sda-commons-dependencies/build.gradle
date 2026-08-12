@@ -8,12 +8,12 @@ javaPlatform {
 
 ext {
   antlr4Version = '4.13.2'
-  apacheHttpClient5Version = '5.6.2'
+  apacheHttpClient5Version = '5.6.3'
   apacheHttpCore5Version = '5.4.3'
   dropwizardVersion = '5.0.2'
   prometheusVersion = '1.8.0'
   micrometerVersion = '1.17.0'
-  swaggerCoreV3Version = '2.2.52'
+  swaggerCoreV3Version = '2.2.53'
   weldVersion = '6.0.4.Final'
   jacksonVersion = '2.22.1'
   jackson3Version = '3.2.1'
@@ -32,9 +32,9 @@ ext {
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
   bouncyCastleVersion = '1.85'
   victoolsVersion = '4.38.0'
-  flywayVersion = '13.0.0'
+  flywayVersion = '13.2.0'
   logbackVersion = "1.5.38"
-  jettyVersion = "12.1.11"
+  jettyVersion = "12.1.12"
 }
 
 dependencies {
@@ -65,7 +65,7 @@ dependencies {
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
-  api enforcedPlatform("io.netty:netty-bom:4.2.16.Final"), {
+  api enforcedPlatform("io.netty:netty-bom:4.2.17.Final"), {
     because "various CVEs in earlier versions"
   }
   api enforcedPlatform("io.prometheus:prometheus-metrics-bom:${prometheusVersion}")
@@ -109,7 +109,7 @@ dependencies {
     // sda-commons-server-circuitbreaker
     api "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion"
     api "io.github.resilience4j:resilience4j-micrometer:${resilience4jVersion}"
-    api "org.objenesis:objenesis:3.5"
+    api "org.objenesis:objenesis:3.6"
 
     // sda-commons-server-hibernate
     api "org.postgresql:postgresql:42.7.13"
@@ -140,7 +140,7 @@ dependencies {
     api "io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2-jakarta:$swaggerCoreV3Version"
     api "io.swagger.core.v3:swagger-annotations-jakarta:$swaggerCoreV3Version"
-    api "io.swagger.parser.v3:swagger-parser-v3:2.1.43"
+    api "io.swagger.parser.v3:swagger-parser-v3:2.1.46"
 
     api "io.micrometer:micrometer-core:$micrometerVersion"
     api "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
@@ -225,6 +225,6 @@ dependencies {
     //Fixes CVE-2024-29371, Kafka 3.9.1 still uses 0.9.4; can be removed at a future update of Kafka
     api 'org.bitbucket.b_c:jose4j:0.9.6'
 
-    api 'com.github.jknack:handlebars:4.5.3' //CVE-2026-55760 (check if still needed by next wiremock update)
+    api 'com.github.jknack:handlebars:4.5.4' //CVE-2026-55760 (check if still needed by next wiremock update)
   }
 }
