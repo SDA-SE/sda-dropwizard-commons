@@ -33,7 +33,7 @@ ext {
   bouncyCastleVersion = '1.85'
   victoolsVersion = '4.38.0'
   flywayVersion = '13.2.0'
-  logbackVersion = "1.6.1"
+  flapdoodleCommonsReverseVersion = '1.4.1'
   jettyVersion = "12.1.12"
 }
 
@@ -218,10 +218,6 @@ dependencies {
     api "com.typesafe.scala-logging:scala-logging_2.13:3.9.6"
 
     api "jakarta.xml.bind:jakarta.xml.bind-api:4.0.5"
-
-    //Fixes CVE-2025-11226, future updates of Dropwizard have to be checked if this is still necessary
-    api "ch.qos.logback:logback-core:$logbackVersion"
-    api "ch.qos.logback:logback-classic:$logbackVersion"
 
     //Fixes CVE-2024-29371, Kafka 3.9.1 still uses 0.9.4; can be removed at a future update of Kafka
     api 'org.bitbucket.b_c:jose4j:0.9.6'
