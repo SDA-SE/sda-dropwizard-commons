@@ -103,6 +103,7 @@ public interface MongoDb {
 
     public static final Version.Main DEFAULT_VERSION = V6_0;
     public static final Version.Main WINDOWS_VERSION = DEFAULT_VERSION;
+    public static final Version.Main MAC_OS_ARM64_MINIMUM_VERSION = DEFAULT_VERSION;
 
     protected static final long DEFAULT_TIMEOUT_MS = MINUTES.toMillis(1L);
 
@@ -193,7 +194,7 @@ public interface MongoDb {
 
     protected IFeatureAwareVersion determineMongoDbVersion() {
       if (version != null) {
-        return version;
+        return normalizeMongoDbVersion(version);
       } else if (SystemUtils.IS_OS_WINDOWS) {
         LOG.warn(
             "Using MongoDB {} as any version of MongoDB < 4.x may cause issues on a Windows system",
@@ -202,6 +203,21 @@ public interface MongoDb {
       } else {
         return DEFAULT_VERSION;
       }
+    }
+
+    private IFeatureAwareVersion normalizeMongoDbVersion(IFeatureAwareVersion requestedVersion) {
+      if (SystemUtils.IS_OS_MAC_OSX
+          && SystemUtils.OS_ARCH != null
+          && SystemUtils.OS_ARCH.contains("aarch64")
+          && requestedVersion instanceof Version.Main mainVersion
+          && mainVersion.ordinal() < MAC_OS_ARM64_MINIMUM_VERSION.ordinal()) {
+        LOG.warn(
+            "Using MongoDB {} instead of {} because Flapdoodle 5 does not provide macOS ARM64 binaries for older MongoDB versions.",
+            MAC_OS_ARM64_MINIMUM_VERSION,
+            requestedVersion);
+        return MAC_OS_ARM64_MINIMUM_VERSION;
+      }
+      return requestedVersion;
     }
 
     protected long getTimeoutMs() {

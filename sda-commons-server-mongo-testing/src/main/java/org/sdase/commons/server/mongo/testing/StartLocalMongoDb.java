@@ -1,7 +1,5 @@
 package org.sdase.commons.server.mongo.testing;
 
-import static de.flapdoodle.net.Net.freeServerPort;
-import static de.flapdoodle.net.Net.getLocalHost;
 import static java.lang.Runtime.getRuntime;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -15,6 +13,9 @@ import com.mongodb.event.ServerClosedEvent;
 import com.mongodb.event.ServerDescriptionChangedEvent;
 import com.mongodb.event.ServerListener;
 import com.mongodb.event.ServerOpeningEvent;
+import de.flapdoodle.commons.reverse.Transition;
+import de.flapdoodle.commons.reverse.transitions.ImmutableStart;
+import de.flapdoodle.commons.reverse.transitions.Start;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.ImmutableNet;
 import de.flapdoodle.embed.mongo.config.Net;
@@ -29,11 +30,9 @@ import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.distribution.Version;
 import de.flapdoodle.os.CommonOS;
 import de.flapdoodle.os.Platform;
-import de.flapdoodle.reverse.Transition;
-import de.flapdoodle.reverse.transitions.ImmutableStart;
-import de.flapdoodle.reverse.transitions.Start;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -80,7 +79,7 @@ public class StartLocalMongoDb implements MongoDb {
     }
 
     try {
-      InetAddress host = getLocalHost();
+      InetAddress host = localHost();
       int serverPort = freeServerPort(host);
       var connectionString =
           "mongodb://"
@@ -151,6 +150,16 @@ public class StartLocalMongoDb implements MongoDb {
 
     // safety net
     getRuntime().addShutdownHook(new Thread(this::stopMongo, "shutdown mongo"));
+  }
+
+  private static InetAddress localHost() throws IOException {
+    return InetAddress.getByName("127.0.0.1");
+  }
+
+  private static int freeServerPort(InetAddress host) throws IOException {
+    try (ServerSocket socket = new ServerSocket(0, 0, host)) {
+      return socket.getLocalPort();
+    }
   }
 
   private static ImmutableStart<Net> createNet(InetAddress host, int serverPort) {
