@@ -84,7 +84,7 @@ dependencies {
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
     api "io.github.classgraph:classgraph:4.8.189"
 
-    api "at.yawk.lz4:lz4-java:1.11.1"
+    api "at.yawk.lz4:lz4-java:1.11.2"
 
     api "org.yaml:snakeyaml:2.3", {
       because "conflict between com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
