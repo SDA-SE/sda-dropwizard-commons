@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
 import org.sdase.commons.client.jersey.HttpClientConfiguration;
+import org.sdase.commons.client.jersey.filter.CompressedResponseHeaderFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,6 +119,9 @@ abstract class AbstractBaseClientBuilder<T extends AbstractBaseClientBuilder<T>>
     Client client = jerseyClientBuilder.using(configuration).build(name);
     filters.forEach(client::register);
     features.forEach(client::register);
+    if (configuration.isGzipEnabled()) {
+      client.register(new CompressedResponseHeaderFilter());
+    }
     client.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
     registerMultiPartIfAvailable(client);
     return client;
