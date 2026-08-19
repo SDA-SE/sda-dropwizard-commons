@@ -14,6 +14,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.http.RequestMethod.GET;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
@@ -43,11 +44,13 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -319,6 +322,28 @@ public class ApiClientTest {
           RequestPatternBuilder.newRequestPattern(GET, urlEqualTo("/api/cars"))
               .withHeader("Trace-Token", equalTo("test-trace-token-1"))
               .withoutHeader(HttpHeaders.AUTHORIZATION));
+    }
+  }
+
+  @Test
+  void stripEntityTransportHeadersFromDecompressedResponse() throws IOException {
+    byte[] compressedBody = gzip(OM.writeValueAsString(asList(BRIGHT_BLUE_CAR, LIGHT_BLUE_CAR)));
+
+    WIRE.stubFor(
+        get("/api/cars")
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .withHeader(HttpHeaders.CONTENT_ENCODING, "gzip")
+                    .withHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(compressedBody.length))
+                    .withBody(compressedBody)));
+
+    try (Response response =
+        dwClient().path("api").path("cars").request(MediaType.APPLICATION_JSON_TYPE).get()) {
+      assertThat(response.getStatus()).isEqualTo(200);
+      assertThat(response.getHeaderString(HttpHeaders.CONTENT_ENCODING)).isNull();
+      assertThat(response.readEntity(String.class)).contains(BRIGHT_BLUE_CAR.getSign(), LIGHT_BLUE_CAR.getSign(), BRIGHT_BLUE_CAR.getColor(), LIGHT_BLUE_CAR.getColor());
     }
   }
 
@@ -685,6 +710,14 @@ public class ApiClientTest {
 
   private WebTarget dwClient() {
     return DW.client().target("http://localhost:" + DW.getLocalPort());
+  }
+
+  private static byte[] gzip(String body) throws IOException {
+    var output = new ByteArrayOutputStream();
+    try (var gzip = new GZIPOutputStream(output)) {
+      gzip.write(body.getBytes(UTF_8));
+    }
+    return output.toByteArray();
   }
 
   private StringValuePattern matchingUuid() {
