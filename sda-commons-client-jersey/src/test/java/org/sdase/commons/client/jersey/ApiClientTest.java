@@ -343,7 +343,12 @@ public class ApiClientTest {
         dwClient().path("api").path("cars").request(MediaType.APPLICATION_JSON_TYPE).get()) {
       assertThat(response.getStatus()).isEqualTo(200);
       assertThat(response.getHeaderString(HttpHeaders.CONTENT_ENCODING)).isNull();
-      assertThat(response.readEntity(String.class)).contains(BRIGHT_BLUE_CAR.getSign(), LIGHT_BLUE_CAR.getSign(), BRIGHT_BLUE_CAR.getColor(), LIGHT_BLUE_CAR.getColor());
+      assertThat(response.readEntity(String.class))
+          .contains(
+              BRIGHT_BLUE_CAR.getSign(),
+              LIGHT_BLUE_CAR.getSign(),
+              BRIGHT_BLUE_CAR.getColor(),
+              LIGHT_BLUE_CAR.getColor());
     }
   }
 
