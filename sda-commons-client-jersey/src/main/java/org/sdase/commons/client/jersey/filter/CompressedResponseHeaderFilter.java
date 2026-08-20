@@ -9,12 +9,19 @@ import jakarta.ws.rs.client.ClientResponseFilter;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.hc.client5.http.entity.compress.ContentCoding;
 
+// compatibility patch https://github.com/dropwizard/dropwizard/issues/11249 until Dropwizard ships
+// an upstream connector-level fix
 public final class CompressedResponseHeaderFilter implements ClientResponseFilter {
 
   private static final String CONTENT_MD5 = "Content-MD5";
 
-  private static final Set<String> COMPRESSED_ENCODINGS = Set.of("br", "deflate", "gzip", "x-gzip");
+  private static final Set<String> COMPRESSED_ENCODINGS =
+      Arrays.stream(ContentCoding.values())
+          .map(ContentCoding::token)
+          .collect(Collectors.toUnmodifiableSet());
 
   private static final Set<String> ENTITY_TRANSPORT_HEADERS =
       Set.of(CONTENT_ENCODING, CONTENT_LENGTH, CONTENT_MD5);
