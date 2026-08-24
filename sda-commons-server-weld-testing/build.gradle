@@ -11,7 +11,7 @@ dependencies {
   }
 
   testImplementation project(':sda-commons-server-jackson')
-  testImplementation 'io.github.dropwizard-jobs:dropwizard-jobs-core:7.0.2'
+  testImplementation 'io.github.dropwizard-jobs:dropwizard-jobs-core:7.0.3'
 }
 
 tasks.register('copyTestResources', Copy) {
