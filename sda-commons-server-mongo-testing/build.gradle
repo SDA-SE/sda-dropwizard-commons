@@ -4,5 +4,4 @@ dependencies {
 
   api 'org.mongodb:mongodb-driver-legacy'
   api 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
-  api 'de.flapdoodle.commons:de.flapdoodle.commons.reverse'
 }

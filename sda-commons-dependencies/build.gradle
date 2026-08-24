@@ -33,7 +33,6 @@ ext {
   bouncyCastleVersion = '1.85'
   victoolsVersion = '4.38.0'
   flywayVersion = '13.2.0'
-  flapdoodleCommonsReverseVersion = '1.5.1'
   jettyVersion = "12.1.12"
 }
 
@@ -97,7 +96,6 @@ dependencies {
     api "net.minidev:json-smart:2.6.0", {
       because 'conflict between json-path 2.7.0 (2.4.7) and wiremock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
     }
-    api "de.flapdoodle.commons:de.flapdoodle.commons.reverse:${flapdoodleCommonsReverseVersion}"
 
     // sda-commons-shared-asyncapi
     api "io.swagger.core.v3:swagger-models-jakarta:${swaggerCoreV3Version}"
