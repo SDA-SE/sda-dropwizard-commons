@@ -25,7 +25,7 @@ ext {
   kotlinVersion = '2.4.10'
   kotlinxCoroutinesVersion = '1.11.0'
   resilience4jVersion = '2.4.0'
-  openTelemetryVersion = '1.64.0'
+  openTelemetryVersion = '1.65.0'
   openTelemetryAlpha2Version = '2.31.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '5.9.1'
@@ -190,7 +190,8 @@ dependencies {
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.semconv:opentelemetry-semconv:1.43.0"
-    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.30.0"
+    // stable artifact of the same release train as openTelemetryAlpha2Version, published without the -alpha suffix
+    api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:${openTelemetryAlpha2Version - '-alpha'}"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator:${openTelemetryAlpha2Version}"
 
     // Kafka
