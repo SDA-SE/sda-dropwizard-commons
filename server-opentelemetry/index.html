@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -2020,7 +2020,7 @@ The module also creating server traces to insure proper context propagation.</p>
 <p>Here you can find a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/docs/migration-guides/MIGRATION_GUIDE_v2_to_v3.md">migration guide</a>, if you use OpenTracing on your project.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <p>The bundle must be initialized before other bundles in the dependent applications, as it is responsible for initializing the openTelemetry Sdk and registering the created instance as global, so that dependent bundles can use it.</p>
-<div class="language-groovy highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="n">api</span><span class="w"> </span><span class="n">project</span><span class="o">(</span><span class="s1">&#39;:sda-commons-server-opentelemetry&#39;</span><span class="o">)</span>
+<div class="language-groovy highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="n">api</span><span class="w"> </span><span class="n">project</span><span class="o">(</span><span class="s1">':sda-commons-server-opentelemetry'</span><span class="o">)</span>
 </code></pre></div></td></tr></table></div>
 <p>Then the bundle is ready to be added to the application.</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -2096,8 +2096,8 @@ A very basic skeleton for a creating more traces:
 <span class="w">  </span><span class="c1">// ...</span>
 <span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doSomething</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// ...</span>
-<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">tracer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GlobalTelemetry</span><span class="p">.</span><span class="na">get</span><span class="p">().</span><span class="na">getTracer</span><span class="p">(</span><span class="s">&quot;sda-commons.component&quot;</span><span class="p">);</span>
-<span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="n">span</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tracer</span><span class="p">.</span><span class="na">spanBuilder</span><span class="p">(</span><span class="s">&quot;doSomething&quot;</span><span class="p">).</span><span class="na">startSpan</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">tracer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GlobalTelemetry</span><span class="p">.</span><span class="na">get</span><span class="p">().</span><span class="na">getTracer</span><span class="p">(</span><span class="s">"sda-commons.component"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="n">span</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tracer</span><span class="p">.</span><span class="na">spanBuilder</span><span class="p">(</span><span class="s">"doSomething"</span><span class="p">).</span><span class="na">startSpan</span><span class="p">();</span>
 <span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">Scope</span><span class="w"> </span><span class="n">ignored</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">span</span><span class="p">.</span><span class="na">makeCurrent</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="c1">// The actual work</span>
 <span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
@@ -2199,7 +2199,7 @@ A very basic skeleton for a creating more traces:
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

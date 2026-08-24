@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -2519,7 +2519,7 @@ functionality to create Kafka consumers, producers, and topics via configuration
 implements a polling loop for Kafka consumers. The user of this bundle must only implement the functional logic.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <p>Add the following dependency:
-<div class="language-groovy highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">compile</span><span class="w"> </span><span class="s1">&#39;org.sdase.commons:sda-commons-server-kafka:&lt;current-version&gt;&#39;</span>
+<div class="language-groovy highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">compile</span><span class="w"> </span><span class="s1">'org.sdase.commons:sda-commons-server-kafka:&lt;current-version&gt;'</span>
 </code></pre></div></td></tr></table></div></p>
 <p>Add the Kafka Configuration to your configuration class:
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -2578,8 +2578,8 @@ Other defaults can be added, if needed by the service.</p>
 
 <span class="w">  </span><span class="c1"># Security information used for all consumers and providers to connect to kafka.</span>
 <span class="w">  </span><span class="nt">security</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${KAFKA_SECURITY_USER}&quot;</span>
-<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${KAFKA_SECURITY_PASSWORD}&quot;</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">"${KAFKA_SECURITY_USER}"</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">"${KAFKA_SECURITY_PASSWORD}"</span>
 <span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${KAFKA_SECURITY_PROTOCOL:-PLAINTEXT}</span>
 <span class="w">    </span><span class="nt">saslMechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${KAFKA_SECURITY_SASL_MECHANISM:-PLAIN}</span>
 
@@ -2665,14 +2665,14 @@ The following properties can be set:
 
 <span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_BROKERS`</span> <span class="ge">_array_</span>
 <span class="w">  </span><span class="k">*</span><span class="w"> </span>The list of Kafka brokers
-<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`[&quot;kafka-broker1:9092&quot;, &quot;kafka-broker2:9092&quot;]`</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`["kafka-broker1:9092", "kafka-broker2:9092"]`</span>
 <span class="w">  </span><span class="k">*</span><span class="w"> </span>Default: <span class="sb">`[]`</span>
 <span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_SECURITY_USER`</span> <span class="ge">_string_</span>
 <span class="w">  </span><span class="k">*</span><span class="w"> </span>The username used to connect to Kafka.
-<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`&quot;&quot;`</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`""`</span>
 <span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_SECURITY_PASSWORD`</span> <span class="ge">_string_</span>
 <span class="w">  </span><span class="k">*</span><span class="w"> </span>The password used to connect to Kafka.
-<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`&quot;&quot;`</span>
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`""`</span>
 <span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_SECURITY_PROTOCOL`</span> <span class="ge">_string_</span>
 <span class="w">  </span><span class="k">*</span><span class="w"> </span>The security protocol used by Kafka.
 <span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`PLAINTEXT`</span> or <span class="sb">`SASL_SSL`</span>
@@ -2684,7 +2684,7 @@ The following properties can be set:
 
 <span class="gu">#### Topics</span>
 <span class="k">*</span><span class="w"> </span><span class="sb">`KAFKA_TOPICS_&lt;YOUR_CONFIG&gt;_NAME`</span> <span class="ge">_string_</span>
-<span class="w">  </span><span class="k">*</span><span class="w"> </span>Topic name where to read medical record updates. It is checked that the topic is configured in &quot;compact&quot; mode.
+<span class="w">  </span><span class="k">*</span><span class="w"> </span>Topic name where to read medical record updates. It is checked that the topic is configured in "compact" mode.
 <span class="w">  </span><span class="k">*</span><span class="w"> </span>Example: <span class="sb">`medicalRecordsTopic`</span>
 <span class="w">  </span><span class="k">*</span><span class="w"> </span>Default: <span class="sb">`default`</span>
 
@@ -2818,8 +2818,8 @@ The Builders for <code>MessageListenerRegistration</code> and <code>ProducerRegi
 <span class="w">      </span><span class="n">List</span><span class="o">&lt;</span><span class="n">MessageListener</span><span class="o">&gt;</span><span class="w"> </span><span class="n">listener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span>
 <span class="w">            </span><span class="p">.</span><span class="na">createMessageListener</span><span class="p">(</span><span class="n">MessageListenerRegistration</span><span class="p">.</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">builder</span><span class="p">()</span>
 <span class="w">                  </span><span class="p">.</span><span class="na">withListenerConfig</span><span class="p">(</span><span class="n">ListenerConfig</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">withPollInterval</span><span class="p">(</span><span class="mi">60000</span><span class="p">).</span><span class="na">build</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-<span class="w">                  </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="s">&quot;topic&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// replace topic with your topic name</span>
-<span class="w">                  </span><span class="p">.</span><span class="na">withConsumerConfig</span><span class="p">(</span><span class="s">&quot;consumer2&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// use consumer config from config yaml</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="s">"topic"</span><span class="p">)</span><span class="w"> </span><span class="c1">// replace topic with your topic name</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withConsumerConfig</span><span class="p">(</span><span class="s">"consumer2"</span><span class="p">)</span><span class="w"> </span><span class="c1">// use consumer config from config yaml</span>
 <span class="w">                  </span><span class="p">.</span><span class="na">withListenerStrategy</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">AutocommitMLS</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span><span class="w"> </span><span class="n">errorHandler</span><span class="p">))</span>
 <span class="w">                  </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
 
@@ -2827,15 +2827,15 @@ The Builders for <code>MessageListenerRegistration</code> and <code>ProducerRegi
 <span class="w">      </span><span class="n">MessageProducer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">ProductBundle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">producer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span>
 <span class="w">            </span><span class="p">.</span><span class="na">registerProducerForTopic</span><span class="p">(</span><span class="n">ProducerRegistration</span>
 <span class="w">                  </span><span class="p">.</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">builder</span><span class="p">()</span>
-<span class="w">                  </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="s">&quot;topic&quot;</span><span class="p">)</span><span class="w">         </span><span class="c1">// simple topic definition (name only, partition and replication Factor 1)</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="s">"topic"</span><span class="p">)</span><span class="w">         </span><span class="c1">// simple topic definition (name only, partition and replication Factor 1)</span>
 <span class="w">                  </span><span class="p">.</span><span class="na">withDefaultProducer</span><span class="p">()</span>
 <span class="w">                  </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
 
 <span class="w">      </span><span class="c1">// Create message with a detailed topic specification that checks the topic</span>
 <span class="w">      </span><span class="n">MessageProducer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">producerConfigured</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span>
 <span class="w">            </span><span class="p">.</span><span class="na">registerProducer</span><span class="p">(</span><span class="n">ProducerRegistration</span><span class="p">.</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">builder</span><span class="p">()</span>
-<span class="w">                  </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="n">TopicConfig</span><span class="p">.</span><span class="na">builder</span><span class="p">(</span><span class="s">&quot;mytopic&quot;</span><span class="p">).</span><span class="na">build</span><span class="p">())</span>
-<span class="w">                  </span><span class="p">.</span><span class="na">withProducerConfig</span><span class="p">(</span><span class="s">&quot;producer1&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// use producer config from config yaml</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">forTopic</span><span class="p">(</span><span class="n">TopicConfig</span><span class="p">.</span><span class="na">builder</span><span class="p">(</span><span class="s">"mytopic"</span><span class="p">).</span><span class="na">build</span><span class="p">())</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">withProducerConfig</span><span class="p">(</span><span class="s">"producer1"</span><span class="p">)</span><span class="w"> </span><span class="c1">// use producer config from config yaml</span>
 <span class="w">                  </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
 
 <span class="w">      </span><span class="c1">// JSON Example</span>
@@ -2862,14 +2862,14 @@ The Builders for <code>MessageListenerRegistration</code> and <code>ProducerRegi
 <span class="w">      </span><span class="c1">// plain consumer where the user has full control and take over responsibility to close te consumer</span>
 <span class="w">      </span><span class="c1">// by name of a valid consumer configuration from config yaml</span>
 <span class="w">      </span><span class="n">KafkaConsumer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">consumer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span><span class="p">.</span><span class="na">createConsumer</span><span class="p">(</span>
-<span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">(),</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;consumer1&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">(),</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">(),</span><span class="w"> </span><span class="s">"consumer1"</span><span class="p">);</span>
 
 <span class="w">      </span><span class="c1">// by given consumer configuration</span>
 <span class="w">      </span><span class="n">KafkaConsumer</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">consumer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaBundle</span><span class="p">.</span><span class="na">createConsumer</span><span class="p">(</span>
 <span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">(),</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringDeserializer</span><span class="p">(),</span><span class="w"> </span><span class="n">ConsumerConfig</span><span class="p">.</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="n">builder</span><span class="p">()</span>
-<span class="w">                </span><span class="p">.</span><span class="na">withGroup</span><span class="p">(</span><span class="s">&quot;test-consumer&quot;</span><span class="p">)</span>
-<span class="w">                </span><span class="p">.</span><span class="na">addConfig</span><span class="p">(</span><span class="s">&quot;max.poll.records&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;100&quot;</span><span class="p">)</span>
-<span class="w">                </span><span class="p">.</span><span class="na">addConfig</span><span class="p">(</span><span class="s">&quot;enable.auto.commit&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="p">).</span><span class="na">build</span><span class="p">());</span>
+<span class="w">                </span><span class="p">.</span><span class="na">withGroup</span><span class="p">(</span><span class="s">"test-consumer"</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">addConfig</span><span class="p">(</span><span class="s">"max.poll.records"</span><span class="p">,</span><span class="w"> </span><span class="s">"100"</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">addConfig</span><span class="p">(</span><span class="s">"enable.auto.commit"</span><span class="p">,</span><span class="w"> </span><span class="s">"false"</span><span class="p">).</span><span class="na">build</span><span class="p">());</span>
 
 <span class="w">      </span><span class="c1">// There are similar methods for producer creation</span>
 <span class="w">   </span><span class="p">}</span>
@@ -2928,14 +2928,14 @@ Only in this case, the name of the health check for each bundle must be customiz
 <span class="w">       </span><span class="n">KafkaBundle</span>
 <span class="w">           </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
 <span class="w">           </span><span class="p">.</span><span class="na">withConfigurationProvider</span><span class="p">(</span><span class="n">YourConfiguration</span><span class="p">::</span><span class="n">getKafkaExternal</span><span class="p">)</span>
-<span class="w">           </span><span class="p">.</span><span class="na">withHealthCheckName</span><span class="p">(</span><span class="s">&quot;kafkaConnectionExternal&quot;</span><span class="p">)</span>
+<span class="w">           </span><span class="p">.</span><span class="na">withHealthCheckName</span><span class="p">(</span><span class="s">"kafkaConnectionExternal"</span><span class="p">)</span>
 <span class="w">           </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 
 <span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">KafkaBundle</span><span class="o">&lt;</span><span class="n">YourConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">kafkaBundleInternal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
 <span class="w">       </span><span class="n">KafkaBundle</span>
 <span class="w">           </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
 <span class="w">           </span><span class="p">.</span><span class="na">withConfigurationProvider</span><span class="p">(</span><span class="n">YourConfiguration</span><span class="p">::</span><span class="n">getKafkaInternal</span><span class="p">)</span>
-<span class="w">           </span><span class="p">.</span><span class="na">withHealthCheckName</span><span class="p">(</span><span class="s">&quot;kafkaConnectionInternal&quot;</span><span class="p">)</span>
+<span class="w">           </span><span class="p">.</span><span class="na">withHealthCheckName</span><span class="p">(</span><span class="s">"kafkaConnectionInternal"</span><span class="p">)</span>
 <span class="w">           </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 
 <span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">AppConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bootstrap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -3145,14 +3145,14 @@ strategy.</p>
 <span class="w">  </span><span class="nt">consumers</span><span class="p">:</span>
 <span class="w">    </span><span class="c1"># id/name of the consumer configuration</span>
 <span class="w">    </span><span class="nt">consumer1</span><span class="p">:</span>
-<span class="w">      </span><span class="c1"># name of the consumer group the consumer belongs to. If not defined, &#39;default&#39; is the default</span>
+<span class="w">      </span><span class="c1"># name of the consumer group the consumer belongs to. If not defined, 'default' is the default</span>
 <span class="w">      </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">newGroup</span>
 <span class="w">      </span><span class="nt">config</span><span class="p">:</span>
 <span class="w">        </span><span class="c1"># Deserializers can be set here within the configuration or within the builder DSL</span>
 <span class="w">        </span><span class="nt">key.deserializer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.serialization.LongDeserializer</span>
 <span class="w">        </span><span class="nt">value.deserializer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.serialization.LongDeserializer</span>
 <span class="w">    </span><span class="nt">cons2</span><span class="p">:</span>
-<span class="w">      </span><span class="c1"># if no attribute &quot;group&quot; is given, a default is used</span>
+<span class="w">      </span><span class="c1"># if no attribute "group" is given, a default is used</span>
 <span class="w">      </span><span class="nt">config</span><span class="p">:</span>
 <span class="w">         </span><span class="nt">fetch.min.bytes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
 <span class="w">         </span><span class="nt">auto.offset.reset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">latest</span>
@@ -3291,7 +3291,7 @@ security configuration before the configuration is applied.</p>
 <span class="w">    </span><span class="nt">ssl.truststore.location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clientTruststore.jks</span>
 <span class="w">    </span><span class="nt">ssl.truststore.password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">some-password-for-truststore</span>
 <span class="w">    </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OAUTHBEARER</span><span class="w"> </span><span class="c1"># set here</span>
-<span class="w">    </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required clientId=&quot;your-client-id&quot; clientSecret=&quot;your-client-secret&quot;;</span>
+<span class="w">    </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required clientId="your-client-id" clientSecret="your-client-secret";</span>
 <span class="w">    </span><span class="nt">sasl.login.callback.handler.class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler</span>
 <span class="w">    </span><span class="nt">sasl.oauthbearer.token.endpoint.url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://idp.example.com/token</span>
 </code></pre></div></td></tr></table></div>
@@ -3320,18 +3320,18 @@ client.</p>
 <span class="w">    </span><span class="nt">yourConsumer</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">config</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OTHER-VALUE</span>
-<span class="w">        </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username=&#39;youruser&#39;</span><span class="nv"> </span><span class="s">password=&#39;yourpassword&#39;;&quot;</span>
+<span class="w">        </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">"org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username='youruser'</span><span class="nv"> </span><span class="s">password='yourpassword';"</span>
 
 <span class="w">  </span><span class="nt">producers</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">yourProducer</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">config</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OTHER-VALUE</span>
-<span class="w">        </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username=&#39;youruser&#39;</span><span class="nv"> </span><span class="s">password=&#39;yourpassword&#39;;&quot;</span>
+<span class="w">        </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">"org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username='youruser'</span><span class="nv"> </span><span class="s">password='yourpassword';"</span>
 
 <span class="w">  </span><span class="nt">adminConfig</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">config</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">sasl.mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OTHER-VALUE</span>
-<span class="w">      </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username=&#39;youruser&#39;</span><span class="nv"> </span><span class="s">password=&#39;yourpassword&#39;;&quot;</span>
+<span class="w">      </span><span class="nt">sasl.jaas.config</span><span class="p">:</span><span class="w"> </span><span class="s">"org.apache.kafka.common.security.scram.ScramLoginModule</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">username='youruser'</span><span class="nv"> </span><span class="s">password='yourpassword';"</span>
 </code></pre></div></td></tr></table></div>
 </details>
 <h4 id="custom-certificate-authority-and-client-certificates">Custom Certificate Authority and Client Certificates<a class="headerlink" href="#custom-certificate-authority-and-client-certificates" title="Permanent link">&para;</a></h4>
@@ -3595,8 +3595,8 @@ This implementation must be considered when migrating older implementations sinc
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">[</span>
-<span class="w">  </span><span class="s2">&quot;kafka-broker:12345&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="s2">&quot;kafka-broker:54321&quot;</span>
+<span class="w">  </span><span class="s2">"kafka-broker:12345"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"kafka-broker:54321"</span>
 <span class="p">]</span>
 </code></pre></div></td></tr></table></div>
 <h2 id="health-check">Health check<a class="headerlink" href="#health-check" title="Permanent link">&para;</a></h2>
@@ -3698,7 +3698,7 @@ might check out our module <a href="../server-cloud-events/"><code>sda-commons-s
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

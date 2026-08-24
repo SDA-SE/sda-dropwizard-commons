@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -2338,7 +2338,7 @@ added to the dependencies. <code>io.openapitools.hal:swagger-hal</code> is shipp
 <span class="normal">2</span>
 <span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nx">GET</span><span class="w"> </span><span class="o">/</span><span class="nx">persons</span><span class="o">/</span><span class="mf">123</span>
 
-<span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;_links&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;self&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;href&quot;</span><span class="o">:</span><span class="s2">&quot;/persons/123&quot;</span><span class="p">}},</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;John Doe&quot;</span><span class="p">}</span>
+<span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="s2">"_links"</span><span class="o">:</span><span class="p">{</span><span class="s2">"self"</span><span class="o">:</span><span class="p">{</span><span class="s2">"href"</span><span class="o">:</span><span class="s2">"/persons/123"</span><span class="p">}},</span><span class="s2">"name"</span><span class="o">:</span><span class="s2">"John Doe"</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div></p>
 <h4 id="embedhelper">EmbedHelper<a class="headerlink" href="#embedhelper" title="Permanent link">&para;</a></h4>
 <p>To decide whether a resource is just linked or embedded, the 
@@ -2355,7 +2355,7 @@ can be used to check whether a resource should be embedded:</p>
 
 <span class="p">...</span>
 
-<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">embedHelper</span><span class="p">.</span><span class="na">isEmbeddingOfRelationRequested</span><span class="p">(</span><span class="s">&quot;owner&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">embedHelper</span><span class="p">.</span><span class="na">isEmbeddingOfRelationRequested</span><span class="p">(</span><span class="s">"owner"</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">   </span><span class="n">carResource</span><span class="p">.</span><span class="na">setOwner</span><span class="p">(</span><span class="n">createPerson</span><span class="p">(</span><span class="n">ownerId</span><span class="p">));</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
@@ -2468,8 +2468,8 @@ the requested fields.</p>
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;nickName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Johnny&quot;</span>
+<span class="w">  </span><span class="nt">"firstName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"nickName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Johnny"</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
 <h4 id="nested-fields">Nested fields<a class="headerlink" href="#nested-fields" title="Permanent link">&para;</a></h4>
@@ -2492,17 +2492,17 @@ enable <code>enableNestedPathFiltering</code> to filter its own properties; pare
 <span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"children"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;nickName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yassie&quot;</span>
+<span class="w">      </span><span class="nt">"nickName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Yassie"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;address&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;city&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hamburg&quot;</span>
+<span class="w">  </span><span class="nt">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hamburg"</span>
 <span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;renamedCustomProp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;myNestedResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;anotherNestedField&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deep&quot;</span>
+<span class="w">  </span><span class="nt">"renamedCustomProp"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"myNestedResource"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"anotherNestedField"</span><span class="p">:</span><span class="w"> </span><span class="s2">"deep"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
@@ -2524,16 +2524,16 @@ kept. For example:</p>
 <span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"children"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yasmine&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Doe&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;nickName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yassie&quot;</span>
+<span class="w">      </span><span class="nt">"firstName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Yasmine"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"lastName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Doe"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"nickName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Yassie"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;address&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hamburg&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;city&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hamburg&quot;</span>
+<span class="w">  </span><span class="nt">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hamburg"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hamburg"</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
@@ -2547,9 +2547,9 @@ complete nested object. The <code>enableNestedPathFiltering</code> setting is ev
 <span class="normal">4</span>
 <span class="normal">5</span>
 <span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;unfilteredChild&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jane&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Doey&quot;</span>
+<span class="w">  </span><span class="nt">"unfilteredChild"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Jane"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"lastName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Doey"</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
@@ -2564,10 +2564,10 @@ complete nested object. The <code>enableNestedPathFiltering</code> setting is ev
 <span class="normal">6</span>
 <span class="normal">7</span>
 <span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;unfilteredChildren&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"unfilteredChildren"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Janet&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Doe&quot;</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Janet"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"lastName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Doe"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
@@ -2589,12 +2589,12 @@ not enable nested path filtering, the complete map value is kept.</p>
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
 <span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;attributes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;alpha&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;first&quot;</span>
+<span class="w">  </span><span class="nt">"attributes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"alpha"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"first"</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;beta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;second&quot;</span>
+<span class="w">    </span><span class="nt">"beta"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"second"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
@@ -2614,14 +2614,14 @@ not enable nested path filtering, the complete map value is kept.</p>
 <span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;attributes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;alpha&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;first&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hidden-one&quot;</span>
+<span class="w">  </span><span class="nt">"attributes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"alpha"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"first"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hidden-one"</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;beta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;second&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hidden-two&quot;</span>
+<span class="w">    </span><span class="nt">"beta"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"second"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hidden-two"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
@@ -2640,9 +2640,9 @@ does not enable nested path filtering, the complete list item is kept.</p>
 <span class="normal">5</span>
 <span class="normal">6</span>
 <span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"children"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;nickName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yassie&quot;</span>
+<span class="w">      </span><span class="nt">"nickName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Yassie"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
@@ -2659,11 +2659,11 @@ does not enable nested path filtering, the complete list item is kept.</p>
 <span class="normal">7</span>
 <span class="normal">8</span>
 <span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"children"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yasmine&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Doe&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;nickName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Yassie&quot;</span>
+<span class="w">      </span><span class="nt">"firstName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Yasmine"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"lastName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Doe"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"nickName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Yassie"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
@@ -2682,10 +2682,10 @@ when nested item filtering is enabled.</p>
 <span class="normal">6</span>
 <span class="normal">7</span>
 <span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"results"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bundle-a&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;customMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bundle-a"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"customMap"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
@@ -2730,17 +2730,17 @@ is shipped in an appropriate version with <a href="../server-open-api/"><code>sd
 <span class="normal">15</span>
 <span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="mf">422</span><span class="w"> </span><span class="nx">Unprocessable</span><span class="w"> </span><span class="nx">Entity</span>
 <span class="p">{</span>
-<span class="w">    </span><span class="s2">&quot;title&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Request parameters are not valid&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;invalidParams&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"title"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Request parameters are not valid"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"invalidParams"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">         </span><span class="p">{</span>
-<span class="w">            </span><span class="s2">&quot;field&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;manufacture&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="s2">&quot;reason&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Audi has no Golf GTI model (not found)&quot;</span>
-<span class="w">            </span><span class="s2">&quot;errorCode&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;FIELD_CORRELATION_ERROR&quot;</span>
+<span class="w">            </span><span class="s2">"field"</span><span class="o">:</span><span class="w"> </span><span class="s2">"manufacture"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"reason"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Audi has no Golf GTI model (not found)"</span>
+<span class="w">            </span><span class="s2">"errorCode"</span><span class="o">:</span><span class="w"> </span><span class="s2">"FIELD_CORRELATION_ERROR"</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="s2">&quot;field&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;model&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="s2">&quot;reason&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Golf GTI is unkown by Audi (not found)&quot;</span>
-<span class="w">            </span><span class="s2">&quot;errorCode&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;FIELD_CORRELATION_ERROR&quot;</span>
+<span class="w">            </span><span class="s2">"field"</span><span class="o">:</span><span class="w"> </span><span class="s2">"model"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"reason"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Golf GTI is unkown by Audi (not found)"</span>
+<span class="w">            </span><span class="s2">"errorCode"</span><span class="o">:</span><span class="w"> </span><span class="s2">"FIELD_CORRELATION_ERROR"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
@@ -2846,7 +2846,7 @@ is shipped in an appropriate version with <a href="../server-open-api/"><code>sd
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

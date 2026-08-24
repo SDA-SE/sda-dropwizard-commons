@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -1911,8 +1911,8 @@ provides an overloaded method for loading YAML-files and one for serialization.<
 <h3 id="a-single-object">A single object<a class="headerlink" href="#a-single-object" title="Permanent link">&para;</a></h3>
 <p>Given the following YAML-file</p>
 <div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">message</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;Hello&quot;</span>
-<span class="nt">attribute</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;attribute1&quot;</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">message</span><span class="p">:</span><span class="w">  </span><span class="s">"Hello"</span>
+<span class="nt">attribute</span><span class="p">:</span><span class="w"> </span><span class="s">"attribute1"</span>
 </code></pre></div></td></tr></table></div>
 <p>it's possible to load and serialize a single object:</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -1932,7 +1932,7 @@ provides an overloaded method for loading YAML-files and one for serialization.<
 <span class="kd">class</span> <span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">InputStream</span><span class="w"> </span><span class="n">resource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getClassLoader</span><span class="p">().</span><span class="na">getResourceAsStream</span><span class="p">(</span><span class="s">&quot;sample.yml&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">InputStream</span><span class="w"> </span><span class="n">resource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getClassLoader</span><span class="p">().</span><span class="na">getResourceAsStream</span><span class="p">(</span><span class="s">"sample.yml"</span><span class="p">);</span>
 <span class="w">    </span><span class="n">TestBean</span><span class="w"> </span><span class="n">tb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">YamlUtil</span><span class="p">.</span><span class="na">load</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span><span class="w"> </span><span class="n">TestBean</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
 
 <span class="w">    </span><span class="c1">// ...</span>
@@ -2069,7 +2069,7 @@ provides an overloaded method for loading YAML-files and one for serialization.<
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

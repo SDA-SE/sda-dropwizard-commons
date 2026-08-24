@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -1897,8 +1897,8 @@ bootstrap servers. This is normally done via the configuration YAML file within 
 <span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">DropwizardAppExtension</span><span class="o">&lt;</span><span class="n">KafkaTestConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DW</span><span class="w"> </span><span class="o">=</span>
 <span class="w">      </span><span class="k">new</span><span class="w"> </span><span class="n">DropwizardAppExtension</span><span class="o">&lt;&gt;</span><span class="p">(</span>
 <span class="w">          </span><span class="n">KafkaTestApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
-<span class="w">          </span><span class="n">resourceFilePath</span><span class="p">(</span><span class="s">&quot;test-config.yaml&quot;</span><span class="p">),</span>
-<span class="w">          </span><span class="n">config</span><span class="p">(</span><span class="s">&quot;kafka.brokers&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">KAFKA</span><span class="p">::</span><span class="n">getKafkaConnectString</span><span class="p">)</span><span class="w"> </span><span class="c1">// Override the Kafka brokers</span>
+<span class="w">          </span><span class="n">resourceFilePath</span><span class="p">(</span><span class="s">"test-config.yaml"</span><span class="p">),</span>
+<span class="w">          </span><span class="n">config</span><span class="p">(</span><span class="s">"kafka.brokers"</span><span class="p">,</span><span class="w"> </span><span class="n">KAFKA</span><span class="p">::</span><span class="n">getKafkaConnectString</span><span class="p">)</span><span class="w"> </span><span class="c1">// Override the Kafka brokers</span>
 <span class="w">      </span><span class="p">);</span>
 
 <span class="p">}</span>
@@ -1930,15 +1930,15 @@ started but <strong>before</strong> your application starts up. Example:</p>
 <span class="w">  </span><span class="nd">@RegisterExtension</span>
 <span class="w">  </span><span class="nd">@Order</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">CreateKafkaTopicsClassExtension</span><span class="w"> </span><span class="n">TOPICS</span><span class="w"> </span><span class="o">=</span>
-<span class="w">      </span><span class="k">new</span><span class="w"> </span><span class="n">CreateKafkaTopicsClassExtension</span><span class="p">(</span><span class="n">KAFKA</span><span class="p">,</span><span class="w"> </span><span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p">));</span>
+<span class="w">      </span><span class="k">new</span><span class="w"> </span><span class="n">CreateKafkaTopicsClassExtension</span><span class="p">(</span><span class="n">KAFKA</span><span class="p">,</span><span class="w"> </span><span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="s">"foo"</span><span class="p">,</span><span class="w"> </span><span class="s">"bar"</span><span class="p">));</span>
 
 <span class="w">  </span><span class="nd">@RegisterExtension</span>
 <span class="w">  </span><span class="nd">@Order</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">DropwizardAppExtension</span><span class="o">&lt;</span><span class="n">KafkaExampleConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DW</span><span class="w"> </span><span class="o">=</span>
 <span class="w">      </span><span class="k">new</span><span class="w"> </span><span class="n">DropwizardAppExtension</span><span class="o">&lt;&gt;</span><span class="p">(</span>
 <span class="w">          </span><span class="n">KafkaExampleProducerApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
-<span class="w">          </span><span class="n">resourceFilePath</span><span class="p">(</span><span class="s">&quot;test-config-producer.yml&quot;</span><span class="p">),</span>
-<span class="w">          </span><span class="n">config</span><span class="p">(</span><span class="s">&quot;kafka.brokers&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">KAFKA</span><span class="p">::</span><span class="n">getKafkaConnectString</span><span class="p">));</span>
+<span class="w">          </span><span class="n">resourceFilePath</span><span class="p">(</span><span class="s">"test-config-producer.yml"</span><span class="p">),</span>
+<span class="w">          </span><span class="n">config</span><span class="p">(</span><span class="s">"kafka.brokers"</span><span class="p">,</span><span class="w"> </span><span class="n">KAFKA</span><span class="p">::</span><span class="n">getKafkaConnectString</span><span class="p">));</span>
 </code></pre></div></td></tr></table></div>
 
 
@@ -2032,7 +2032,7 @@ started but <strong>before</strong> your application starts up. Example:</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

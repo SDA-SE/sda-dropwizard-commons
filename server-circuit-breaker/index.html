@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -1926,7 +1926,7 @@ might be required. A custom configuration can be specified globally at the bundl
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">CircuitBreaker</span><span class="w"> </span><span class="n">circuitBreaker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">circuitBreakerBundle</span>
-<span class="w">      </span><span class="p">.</span><span class="na">createCircuitBreaker</span><span class="p">(</span><span class="s">&quot;nameInMetrics&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="na">createCircuitBreaker</span><span class="p">(</span><span class="s">"nameInMetrics"</span><span class="p">)</span>
 <span class="w">      </span><span class="p">.</span><span class="na">withDefaultConfig</span><span class="p">()</span>
 <span class="w">      </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </code></pre></div></td></tr></table></div>
@@ -1937,7 +1937,7 @@ configuration can be provided (or loaded from the Dropwizard config using <code>
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">CircuitBreaker</span><span class="w"> </span><span class="n">circuitBreaker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">circuitBreakerBundle</span>
-<span class="w">      </span><span class="p">.</span><span class="na">createCircuitBreaker</span><span class="p">(</span><span class="s">&quot;nameInMetrics&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="na">createCircuitBreaker</span><span class="p">(</span><span class="s">"nameInMetrics"</span><span class="p">)</span>
 <span class="w">      </span><span class="p">.</span><span class="na">withCustomConfig</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CircuitBreakerConfiguration</span><span class="p">()</span>
 <span class="w">            </span><span class="p">.</span><span class="na">setFailureRateThreshold</span><span class="p">(</span><span class="mf">75.0f</span><span class="p">))</span>
 <span class="w">      </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
@@ -1962,7 +1962,7 @@ simple way to achieve this. For example, a Jersey client can be wrapped with a p
 <span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">serviceClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">circuitBreakerBundle</span>
-<span class="w">      </span><span class="p">.</span><span class="na">createCircuitBreaker</span><span class="p">(</span><span class="s">&quot;ServiceClient&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="na">createCircuitBreaker</span><span class="p">(</span><span class="s">"ServiceClient"</span><span class="p">)</span>
 <span class="w">      </span><span class="p">.</span><span class="na">withDefaultConfig</span><span class="p">())</span>
 <span class="w">      </span><span class="p">.</span><span class="na">wrap</span><span class="p">(</span><span class="n">jerseyClientBundle</span>
 <span class="w">          </span><span class="p">.</span><span class="na">getClientFactory</span><span class="p">()</span>
@@ -2066,7 +2066,7 @@ simple way to achieve this. For example, a Jersey client can be wrapped with a p
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

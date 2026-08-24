@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -2029,7 +2029,7 @@
 users based on JSON Web Tokens and an <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/opa/OpaBundle.java"><code>OpaBundle</code></a> to
 authorize the request with help of the <a href="http://www.openpolicyagent.org"><code>Open Policy Agent</code></a>.</p>
 <p>To use the bundle, a dependency to this module has to be added:</p>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>compile &#39;org.sdase.commons:sda-commons-server-auth:&lt;current-version&gt;&#39;
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>compile 'org.sdase.commons:sda-commons-server-auth:&lt;current-version&gt;'
 </code></pre></div></td></tr></table></div>
 <h2 id="auth-bundle">Auth Bundle<a class="headerlink" href="#auth-bundle" title="Permanent link">&para;</a></h2>
 <p>The authentication creates a <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/JwtPrincipal.java"><code>JwtPrincipal</code></a> per 
@@ -2047,7 +2047,7 @@ request. This can be accessed from the <code>SecurityContext</code>:</p>
 <span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@PermitAll</span>
-<span class="nd">@Path</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">)</span>
+<span class="nd">@Path</span><span class="p">(</span><span class="s">"/secure"</span><span class="p">)</span>
 <span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SecureEndPoint</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">   </span><span class="nd">@Context</span>
@@ -2174,15 +2174,15 @@ Example config:
 <span class="w">  </span><span class="c1"># Definition of key sources providing public keys to verify signed tokens.</span>
 <span class="w">  </span><span class="nt">keys</span><span class="p">:</span>
 <span class="w">    </span><span class="c1"># A public key derived from a local PEM certificate.</span>
-<span class="w">    </span><span class="c1"># The pemKeyId must match the &#39;kid&#39; the signing authority sets in the token.</span>
-<span class="w">    </span><span class="c1"># It may be null if the &#39;kid&#39; in the token is not set by the signing authority.</span>
+<span class="w">    </span><span class="c1"># The pemKeyId must match the 'kid' the signing authority sets in the token.</span>
+<span class="w">    </span><span class="c1"># It may be null if the 'kid' in the token is not set by the signing authority.</span>
 <span class="w">    </span><span class="c1"># The pemKeyId is only considered for type: PEM</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PEM</span>
 <span class="w">    </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">file:///secure/example.pem</span>
 <span class="w">    </span><span class="nt">pemKeyId</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example</span>
 <span class="w">    </span><span class="c1"># A public key derived from a PEM certificate that is provided from a http server</span>
-<span class="w">    </span><span class="c1"># The pemKeyId must match the &#39;kid&#39; the signing authority sets in the token.</span>
-<span class="w">    </span><span class="c1"># It may be null if the &#39;kid&#39; in the token is not set by the signing authority.</span>
+<span class="w">    </span><span class="c1"># The pemKeyId must match the 'kid' the signing authority sets in the token.</span>
+<span class="w">    </span><span class="c1"># It may be null if the 'kid' in the token is not set by the signing authority.</span>
 <span class="w">    </span><span class="c1"># The pemSignAlg must match the signing algorithm used in the PEM. Defaults to RS256.</span>
 <span class="w">    </span><span class="c1"># The pemKeyId and pemSignAlg is only considered for type: PEM</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PEM</span>
@@ -2201,7 +2201,7 @@ Example config:
 <span class="w">  </span><span class="c1"># shorten the configuration when the discovery base URL matches the iss claim, the IDP sets.</span>
 <span class="w">  </span><span class="c1"># The value used for configuration here must exactly match the iss claim.</span>
 <span class="w">  </span><span class="c1"># keys and issuers can be used at the same time. Both are added to the accepted key sources.</span>
-<span class="w">  </span><span class="nt">issuers</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://keycloak.example.com/auth/realms/my-realm,</span><span class="nv"> </span><span class="s">https://keycloak.example.com/auth/realms/my-other-realm&quot;</span>
+<span class="w">  </span><span class="nt">issuers</span><span class="p">:</span><span class="w"> </span><span class="s">"https://keycloak.example.com/auth/realms/my-realm,</span><span class="nv"> </span><span class="s">https://keycloak.example.com/auth/realms/my-other-realm"</span>
 </code></pre></div></td></tr></table></div></p>
 <p>The config may be filled from environment variables if the
 <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-dropwizard/src/main/java/org/sdase/commons/server/dropwizard/bundles/ConfigurationSubstitutionBundle.java"><code>ConfigurationSubstitutionBundle</code></a>
@@ -2214,7 +2214,7 @@ is used:</p>
 <span class="w">  </span><span class="nt">disableAuth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${DISABLE_AUTH:-false}</span>
 <span class="w">  </span><span class="nt">leeway</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${AUTH_LEEWAY:-0}</span>
 <span class="w">  </span><span class="nt">keys</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${AUTH_KEYS:-[]}</span>
-<span class="w">  </span><span class="nt">issuers</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${AUTH_ISSUERS:-}&quot;</span>
+<span class="w">  </span><span class="nt">issuers</span><span class="p">:</span><span class="w"> </span><span class="s">"${AUTH_ISSUERS:-}"</span>
 </code></pre></div></td></tr></table></div>
 <p>In this case, the <code>AUTH_KEYS</code> variable should contain a JSON array of 
 <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-auth/src/main/java/org/sdase/commons/server/auth/config/KeyLocation.java"><code>KeyLocation</code></a> objects:</p>
@@ -2229,12 +2229,12 @@ is used:</p>
 <span class="normal"> 9</span>
 <span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">[</span>
 <span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OPEN_ID_DISCOVERY&quot;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">    </span><span class="nt">&quot;location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://keycloak.example.com/auth/realms/my-realm&quot;</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OPEN_ID_DISCOVERY"</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">"location"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://keycloak.example.com/auth/realms/my-realm"</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OPEN_ID_DISCOVERY&quot;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">    </span><span class="nt">&quot;location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://keycloak.example.com/auth/realms/my-other-realm&quot;</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OPEN_ID_DISCOVERY"</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">"location"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://keycloak.example.com/auth/realms/my-other-realm"</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">]</span>
 </code></pre></div></td></tr></table></div>
@@ -2327,8 +2327,8 @@ Consider this in your policy when you want to make sure you authorize on the sam
 <span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># each policy lies in a package that is referenced in the configuration of the OpaBundle</span>
 <span class="k">package</span><span class="w"> </span><span class="n">example</span>
 
-<span class="c1"># decode the JWT as new variable &#39;token&#39;</span>
-<span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;payload&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">payload</span><span class="p">}</span><span class="w"> </span><span class="p">{</span>
+<span class="c1"># decode the JWT as new variable 'token'</span>
+<span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s2">"payload"</span><span class="p">:</span><span class="w"> </span><span class="n">payload</span><span class="p">}</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">not</span><span class="w"> </span><span class="nb">input</span><span class="p">.</span><span class="n">jwt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">null</span>
 <span class="w">    </span><span class="n">io</span><span class="p">.</span><span class="n">jwt</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="nb">input</span><span class="p">.</span><span class="n">jwt</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">])</span>
 <span class="p">}</span>
@@ -2337,23 +2337,23 @@ Consider this in your policy when you want to make sure you authorize on the sam
 <span class="k">default</span><span class="w"> </span><span class="n">allow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">false</span>
 
 <span class="n">allow</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1"># allow if path match &#39;/contracts/:anyid&#39; </span>
-<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;contracts&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">]</span>
+<span class="w">    </span><span class="c1"># allow if path match '/contracts/:anyid' </span>
+<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"contracts"</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">]</span>
 
-<span class="w">    </span><span class="c1"># allow if request method &#39;GET&#39; is used</span>
-<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">httpMethod</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span>
+<span class="w">    </span><span class="c1"># allow if request method 'GET' is used</span>
+<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">httpMethod</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"GET"</span>
 
-<span class="w">    </span><span class="c1"># allow if &#39;claim&#39; exists in the JWT payload</span>
+<span class="w">    </span><span class="c1"># allow if 'claim' exists in the JWT payload</span>
 <span class="w">    </span><span class="n">token</span><span class="p">.</span><span class="n">payload</span><span class="p">.</span><span class="n">claim</span>
 
-<span class="w">    </span><span class="c1"># allow if a request header &#39;HttpRequestHeaderName&#39; has a certain value </span>
-<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;httprequestheadername&quot;</span><span class="p">][</span><span class="n">_</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;certain-value&quot;</span>
+<span class="w">    </span><span class="c1"># allow if a request header 'HttpRequestHeaderName' has a certain value </span>
+<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"httprequestheadername"</span><span class="p">][</span><span class="n">_</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"certain-value"</span>
 <span class="p">}</span>
 
 <span class="c1"># set some example constraints </span>
 <span class="n">constraint1</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">true</span><span class="w">                </span><span class="c1"># always true</span>
-<span class="n">constraint2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;v2.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;v2.2&quot;</span><span class="w"> </span><span class="p">]</span><span class="w">  </span><span class="c1"># always an array of &quot;v2.1&quot; and &quot;v2.2&quot;</span>
-<span class="n">constraint3</span><span class="p">[</span><span class="n">token</span><span class="p">.</span><span class="n">payload</span><span class="p">.</span><span class="n">sub</span><span class="p">].</span><span class="w">    </span><span class="c1"># always a set that contains the &#39;sub&#39; claim from the token</span>
+<span class="n">constraint2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"v2.1"</span><span class="p">,</span><span class="w"> </span><span class="s2">"v2.2"</span><span class="w"> </span><span class="p">]</span><span class="w">  </span><span class="c1"># always an array of "v2.1" and "v2.2"</span>
+<span class="n">constraint3</span><span class="p">[</span><span class="n">token</span><span class="p">.</span><span class="n">payload</span><span class="p">.</span><span class="n">sub</span><span class="p">].</span><span class="w">    </span><span class="c1"># always a set that contains the 'sub' claim from the token</span>
 <span class="w">                                   </span><span class="c1"># or is empty if no token is present</span>
 </code></pre></div></td></tr></table></div></p>
 <p>The response consists of two parts: The overall <code>allow</code> decision, and optional rules that represent <em>constraints</em> to limit data access
@@ -2369,11 +2369,11 @@ with a list of string values.
 <span class="normal">6</span>
 <span class="normal">7</span>
 <span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;allow&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;constraint1&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;constraint2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;v2.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;v2.2&quot;</span><span class="w"> </span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;constraint3&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;my-sub&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="nt">"result"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"allow"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"constraint1"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"constraint2"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"v2.1"</span><span class="p">,</span><span class="w"> </span><span class="s2">"v2.2"</span><span class="w"> </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"constraint3"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"my-sub"</span><span class="p">]</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div></p>
@@ -2417,7 +2417,7 @@ injected as field using <code>@Context</code> in
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
 <span class="normal">10</span>
-<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@Path</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">)</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@Path</span><span class="p">(</span><span class="s">"/secure"</span><span class="p">)</span>
 <span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SecureEndPoint</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">   </span><span class="nd">@Context</span>
@@ -2580,7 +2580,7 @@ While the service (e.g. in case of query parameters) only considers the first va
 <span class="normal">3</span>
 <span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">OpaBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
 <span class="w">    </span><span class="p">.</span><span class="na">withOpaConfigProvider</span><span class="p">(</span><span class="n">YourConfiguration</span><span class="p">::</span><span class="n">getOpa</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="na">withInputExtension</span><span class="p">(</span><span class="s">&quot;myExtension&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ExampleOpaInputExtension</span><span class="p">())</span>
+<span class="w">    </span><span class="p">.</span><span class="na">withInputExtension</span><span class="p">(</span><span class="s">"myExtension"</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ExampleOpaInputExtension</span><span class="p">())</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </code></pre></div></td></tr></table></div></p>
 <p>Access the additional input inside a policy <code>.rego</code>-file in this way:
@@ -2591,8 +2591,8 @@ While the service (e.g. in case of query parameters) only considers the first va
 <span class="normal">5</span>
 <span class="normal">6</span>
 <span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">exampleExtensionWorks</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1"># check if path match &#39;/contracts&#39; </span>
-<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;contracts&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="c1"># check if path match '/contracts' </span>
+<span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"contracts"</span><span class="p">]</span>
 
 <span class="w">    </span><span class="c1"># check if the custom input has a certain value </span>
 <span class="w">    </span><span class="nb">input</span><span class="p">.</span><span class="n">myExtension</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">true</span><span class="w"> </span>
@@ -2690,7 +2690,7 @@ While the service (e.g. in case of query parameters) only considers the first va
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

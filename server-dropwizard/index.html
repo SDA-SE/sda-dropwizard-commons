@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -1992,7 +1992,7 @@ The default value of a value modified by <code>toJsonString</code> must be valid
 <span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">database</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">driverClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.postgresql.Driver</span>
 <span class="w">  </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_USER:-dev}</span>
-<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD | toJsonString:-&quot;s3cr3t&quot;}</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD | toJsonString:-"s3cr3t"}</span>
 <span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_URL:-localhost:12345}</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="configurationvaluesupplierbundle">ConfigurationValueSupplierBundle<a class="headerlink" href="#configurationvaluesupplierbundle" title="Permanent link">&para;</a></h3>
@@ -2035,7 +2035,7 @@ by a configuration property or another service.</p>
 <span class="w">            </span><span class="n">ConfigurationValueSupplierBundle</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">withAccessor</span><span class="p">(</span><span class="n">MyConfiguration</span><span class="p">::</span><span class="n">getConfigString</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
 <span class="w">      </span><span class="n">bootstrap</span><span class="p">.</span><span class="na">addBundle</span><span class="p">(</span><span class="n">configStringBundle</span><span class="p">);</span>
 <span class="w">      </span><span class="n">Supplier</span><span class="o">&lt;</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">configStringSupplier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">configStringBundle</span><span class="p">.</span><span class="na">supplier</span><span class="p">();</span>
-<span class="w">      </span><span class="c1">// configStringSupplier may be added to other bundles and services, it&#39;s get() method can be access after run()</span>
+<span class="w">      </span><span class="c1">// configStringSupplier may be added to other bundles and services, it's get() method can be access after run()</span>
 <span class="w">      </span><span class="c1">// ...</span>
 <span class="w">   </span><span class="p">}</span>
 
@@ -2203,7 +2203,7 @@ With <code>DISABLE_HEALTHCHECK_LOGS</code> active request logs for all paths rel
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

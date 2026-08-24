@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -1831,16 +1831,16 @@ API should be documented with Swagger annotations: </p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">SdaPlatformConfiguration</span><span class="p">;</span>
 
 <span class="nd">@OpenAPIDefinition</span><span class="p">(</span><span class="n">info</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nd">@Info</span><span class="p">(</span>
-<span class="w">    </span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;My First App&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"My First App"</span><span class="p">,</span>
 <span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="o">=</span>
-<span class="w">        </span><span class="s">&quot;The description of my first application&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.0.0&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">"The description of my first application"</span><span class="p">,</span>
+<span class="w">    </span><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"1.0.0"</span><span class="p">,</span>
 <span class="w">    </span><span class="n">contact</span><span class="w"> </span><span class="o">=</span>
 <span class="w">    </span><span class="nd">@Contact</span><span class="p">(</span>
-<span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;John Doe&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;info@example.com&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;j.doe@example.com&quot;</span><span class="p">),</span>
-<span class="w">    </span><span class="n">license</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nd">@License</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Sample License&quot;</span><span class="p">)))</span>
+<span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"John Doe"</span><span class="p">,</span>
+<span class="w">        </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"info@example.com"</span><span class="p">,</span>
+<span class="w">        </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"j.doe@example.com"</span><span class="p">),</span>
+<span class="w">    </span><span class="n">license</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nd">@License</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Sample License"</span><span class="p">)))</span>
 <span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyFirstApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Application</span><span class="o">&lt;</span><span class="n">SdaPlatformConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
@@ -1854,7 +1854,7 @@ API should be documented with Swagger annotations: </p>
 <span class="w">            </span><span class="c1">// more Open API data that may also be added with annotations</span>
 <span class="w">            </span><span class="p">.</span><span class="na">addOpenApiResourcePackageClass</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">getClass</span><span class="p">())</span>
 <span class="w">            </span><span class="c1">// or use an existing OpenApi definition</span>
-<span class="w">            </span><span class="p">.</span><span class="na">withExistingOpenAPI</span><span class="p">(</span><span class="s">&quot;openApiJsonOrYaml&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="na">withExistingOpenAPI</span><span class="p">(</span><span class="s">"openApiJsonOrYaml"</span><span class="p">)</span>
 <span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
 <span class="w">   </span><span class="p">}</span>
 
@@ -1912,15 +1912,15 @@ additionally to the defaults of Dropwizard's <code>Configuration</code>:</p>
 
 <span class="c1"># See sda-commons-server-cors</span>
 <span class="nt">cors</span><span class="p">:</span>
-<span class="w">  </span><span class="c1"># List of origins that are allowed to use the service. &quot;*&quot; allows all origins</span>
+<span class="w">  </span><span class="c1"># List of origins that are allowed to use the service. "*" allows all origins</span>
 <span class="w">  </span><span class="nt">allowedOrigins</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"*"</span>
 <span class="w">  </span><span class="c1"># Alternative: If the origins should be restricted, you should add the pattern</span>
 <span class="w">  </span><span class="c1"># allowedOrigins:</span>
 <span class="w">  </span><span class="c1">#    - https://*.sdase.com</span>
 <span class="w">  </span><span class="c1">#    - https://*test.sdase.com</span>
 <span class="w">  </span><span class="c1"># To use configurable patterns per environment the Json in Yaml syntax may be used with an environment placeholder:</span>
-<span class="w">  </span><span class="c1"># allowedOrigins: ${CORS_ALLOWED_ORIGINS:-[&quot;*&quot;]}</span>
+<span class="w">  </span><span class="c1"># allowedOrigins: ${CORS_ALLOWED_ORIGINS:-["*"]}</span>
 
 <span class="c1"># See server-prometheus for other possible configurations.</span>
 <span class="nt">prometheus</span><span class="p">:</span>
@@ -2030,7 +2030,7 @@ using this option.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

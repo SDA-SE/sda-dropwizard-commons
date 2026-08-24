@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -1850,7 +1850,7 @@
 <p>This module provides support for testing applications that are secured with 
 <a href="../server-auth/"><code>sda-commons-server-auth</code></a>. To use the support, this module has to be added as
 dependency:</p>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>testCompile &#39;org.sdase.commons:sda-commons-server-auth-testing:&lt;current-version&gt;&#39;
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>testCompile 'org.sdase.commons:sda-commons-server-auth-testing:&lt;current-version&gt;'
 </code></pre></div></td></tr></table></div>
 <h2 id="auth-extension">Auth Extension<a class="headerlink" href="#auth-extension" title="Permanent link">&para;</a></h2>
 <p>The <code>AuthClassExtension</code> puts the <code>AuthConfig</code> in an environment variable named <code>AUTH_KEYS</code> (for backwards compatibility).
@@ -1928,7 +1928,7 @@ from <a href="../server-dropwizard/"><code>sda-commons-server-dropwizard</code><
 <span class="w">  </span><span class="nd">@RegisterExtension</span>
 <span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">DropwizardAppExtension</span><span class="o">&lt;</span><span class="n">AuthTestConfig</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DW</span><span class="w"> </span><span class="o">=</span>
 <span class="w">      </span><span class="k">new</span><span class="w"> </span><span class="n">DropwizardAppExtension</span><span class="o">&lt;&gt;</span><span class="p">(</span>
-<span class="w">          </span><span class="n">AuthTestApp</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">ResourceHelpers</span><span class="p">.</span><span class="na">resourceFilePath</span><span class="p">(</span><span class="s">&quot;test-config.yaml&quot;</span><span class="p">));</span>
+<span class="w">          </span><span class="n">AuthTestApp</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">ResourceHelpers</span><span class="p">.</span><span class="na">resourceFilePath</span><span class="p">(</span><span class="s">"test-config.yaml"</span><span class="p">));</span>
 <span class="w">   </span><span class="c1">// @Test</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
@@ -1941,11 +1941,11 @@ from <a href="../server-dropwizard/"><code>sda-commons-server-dropwizard</code><
 <span class="normal">6</span>
 <span class="normal">7</span>
 <span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">   </span><span class="n">Response</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createWebTarget</span><span class="p">()</span>
-<span class="w">            </span><span class="p">.</span><span class="na">path</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="na">path</span><span class="p">(</span><span class="s">"/secure"</span><span class="p">)</span>
 <span class="w">            </span><span class="p">.</span><span class="na">request</span><span class="p">(</span><span class="n">APPLICATION_JSON</span><span class="p">)</span>
 <span class="w">            </span><span class="p">.</span><span class="na">headers</span><span class="p">(</span><span class="n">AUTH</span><span class="p">.</span><span class="na">auth</span><span class="p">()</span><span class="w">   </span>
-<span class="w">                  </span><span class="p">.</span><span class="na">addClaim</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;testClaim&quot;</span><span class="p">)</span>
-<span class="w">                  </span><span class="p">.</span><span class="na">addClaims</span><span class="p">(</span><span class="n">singletonMap</span><span class="p">(</span><span class="s">&quot;mapKey&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;testClaimFromMap&quot;</span><span class="p">))</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">addClaim</span><span class="p">(</span><span class="s">"test"</span><span class="p">,</span><span class="w"> </span><span class="s">"testClaim"</span><span class="p">)</span>
+<span class="w">                  </span><span class="p">.</span><span class="na">addClaims</span><span class="p">(</span><span class="n">singletonMap</span><span class="p">(</span><span class="s">"mapKey"</span><span class="p">,</span><span class="w"> </span><span class="s">"testClaimFromMap"</span><span class="p">))</span>
 <span class="w">                  </span><span class="p">.</span><span class="na">buildAuthHeader</span><span class="p">())</span><span class="w">  </span><span class="c1">// creates a valid Authorization header with a valid JWT </span>
 <span class="w">            </span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
 </code></pre></div></td></tr></table></div></p>
@@ -1987,8 +1987,8 @@ of the module sda-commons-server-auth-testing. There is</p>
 <span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">DropwizardAppExtension</span><span class="o">&lt;</span><span class="n">OpaBundeTestAppConfiguration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DW</span><span class="w"> </span><span class="o">=</span>
 <span class="w">         </span><span class="k">new</span><span class="w"> </span><span class="n">DropwizardAppExtension</span><span class="o">&lt;&gt;</span><span class="p">(</span>
 <span class="w">                  </span><span class="n">OpaBundleTestApp</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
-<span class="w">                  </span><span class="n">ResourceHelpers</span><span class="p">.</span><span class="na">resourceFilePath</span><span class="p">(</span><span class="s">&quot;test-opa-config.yaml&quot;</span><span class="p">),</span>
-<span class="w">                  </span><span class="n">ConfigOverride</span><span class="p">.</span><span class="na">config</span><span class="p">(</span><span class="s">&quot;opa.baseUrl&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">OPA_EXTENSION</span><span class="p">::</span><span class="n">getUrl</span><span class="p">));</span>
+<span class="w">                  </span><span class="n">ResourceHelpers</span><span class="p">.</span><span class="na">resourceFilePath</span><span class="p">(</span><span class="s">"test-opa-config.yaml"</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">ConfigOverride</span><span class="p">.</span><span class="na">config</span><span class="p">(</span><span class="s">"opa.baseUrl"</span><span class="p">,</span><span class="w"> </span><span class="n">OPA_EXTENSION</span><span class="p">::</span><span class="n">getUrl</span><span class="p">));</span>
 
 <span class="w">   </span><span class="c1">// @Test</span>
 <span class="p">}</span>
@@ -2136,7 +2136,7 @@ of the module sda-commons-server-auth-testing. There is</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

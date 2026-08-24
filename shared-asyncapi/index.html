@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -2024,20 +2024,20 @@ from the test module help here.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.validation.constraints.NotNull</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">java.time.Instant</span><span class="p">;</span>
 
-<span class="nd">@Schema</span><span class="p">(</span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Car manufactured&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;A new car was manufactured&quot;</span><span class="p">)</span>
-<span class="nd">@SuppressWarnings</span><span class="p">(</span><span class="s">&quot;unused&quot;</span><span class="p">)</span>
+<span class="nd">@Schema</span><span class="p">(</span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Car manufactured"</span><span class="p">,</span><span class="w"> </span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"A new car was manufactured"</span><span class="p">)</span>
+<span class="nd">@SuppressWarnings</span><span class="p">(</span><span class="s">"unused"</span><span class="p">)</span>
 <span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CarManufactured</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseEvent</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">  </span><span class="nd">@NotBlank</span>
-<span class="w">  </span><span class="nd">@Schema</span><span class="p">(</span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;The registration of the vehicle&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">example</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;BB324A81&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="nd">@Schema</span><span class="p">(</span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"The registration of the vehicle"</span><span class="p">,</span><span class="w"> </span><span class="n">example</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"BB324A81"</span><span class="p">)</span>
 <span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">vehicleRegistration</span><span class="p">;</span>
 
 <span class="w">  </span><span class="nd">@NotNull</span>
-<span class="w">  </span><span class="nd">@JsonPropertyDescription</span><span class="p">(</span><span class="s">&quot;The time of manufacturing&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="nd">@JsonPropertyDescription</span><span class="p">(</span><span class="s">"The time of manufacturing"</span><span class="p">)</span>
 <span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">Instant</span><span class="w"> </span><span class="n">date</span><span class="p">;</span>
 
 <span class="w">  </span><span class="nd">@NotNull</span>
-<span class="w">  </span><span class="nd">@JsonPropertyDescription</span><span class="p">(</span><span class="s">&quot;The model of the car&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="nd">@JsonPropertyDescription</span><span class="p">(</span><span class="s">"The model of the car"</span><span class="p">)</span>
 <span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">CarModel</span><span class="w"> </span><span class="n">model</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getVehicleRegistration</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -2130,20 +2130,20 @@ from the test module help here.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.validation.constraints.NotNull</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">java.time.Instant</span><span class="p">;</span>
 
-<span class="nd">@JsonClassDescription</span><span class="p">(</span><span class="s">&quot;A car was scrapped&quot;</span><span class="p">)</span>
-<span class="nd">@SuppressWarnings</span><span class="p">(</span><span class="s">&quot;unused&quot;</span><span class="p">)</span>
+<span class="nd">@JsonClassDescription</span><span class="p">(</span><span class="s">"A car was scrapped"</span><span class="p">)</span>
+<span class="nd">@SuppressWarnings</span><span class="p">(</span><span class="s">"unused"</span><span class="p">)</span>
 <span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CarScrapped</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseEvent</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">  </span><span class="nd">@NotBlank</span>
-<span class="w">  </span><span class="nd">@JsonPropertyDescription</span><span class="p">(</span><span class="s">&quot;The registration of the vehicle&quot;</span><span class="p">)</span>
-<span class="w">  </span><span class="nd">@Schema</span><span class="p">(</span><span class="n">example</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;BB324A81&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="nd">@JsonPropertyDescription</span><span class="p">(</span><span class="s">"The registration of the vehicle"</span><span class="p">)</span>
+<span class="w">  </span><span class="nd">@Schema</span><span class="p">(</span><span class="n">example</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"BB324A81"</span><span class="p">)</span>
 <span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">vehicleRegistration</span><span class="p">;</span>
 
 <span class="w">  </span><span class="nd">@NotNull</span>
-<span class="w">  </span><span class="nd">@JsonPropertyDescription</span><span class="p">(</span><span class="s">&quot;The time of scrapping&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="nd">@JsonPropertyDescription</span><span class="p">(</span><span class="s">"The time of scrapping"</span><span class="p">)</span>
 <span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">Instant</span><span class="w"> </span><span class="n">date</span><span class="p">;</span>
 
-<span class="w">  </span><span class="nd">@JsonPropertyDescription</span><span class="p">(</span><span class="s">&quot;The location where the car was scrapped&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="nd">@JsonPropertyDescription</span><span class="p">(</span><span class="s">"The location where the car was scrapped"</span><span class="p">)</span>
 <span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">location</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getVehicleRegistration</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -2210,11 +2210,11 @@ from the test module help here.</p>
 <span class="w">  </span><span class="nd">@Test</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateAndVerifySpec</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// get template</span>
-<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getClass</span><span class="p">().</span><span class="na">getResource</span><span class="p">(</span><span class="s">&quot;/demo/asyncapi_template.yaml&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getClass</span><span class="p">().</span><span class="na">getResource</span><span class="p">(</span><span class="s">"/demo/asyncapi_template.yaml"</span><span class="p">);</span>
 <span class="w">    </span><span class="c1">// generate AsyncAPI yaml</span>
 <span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AsyncApiGenerator</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">withAsyncApiBase</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="na">generateYaml</span><span class="p">();</span>
-<span class="w">    </span><span class="c1">// specify where to store the result, e.g. Path.of(&quot;asyncapi.yaml&quot;) for the project root.</span>
-<span class="w">    </span><span class="n">Path</span><span class="w"> </span><span class="n">filePath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paths</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;asyncapi.yaml&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// specify where to store the result, e.g. Path.of("asyncapi.yaml") for the project root.</span>
+<span class="w">    </span><span class="n">Path</span><span class="w"> </span><span class="n">filePath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paths</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">"asyncapi.yaml"</span><span class="p">);</span>
 <span class="w">    </span><span class="c1">// check and update the file</span>
 <span class="w">    </span><span class="n">GoldenFileAssertions</span><span class="p">.</span><span class="na">assertThat</span><span class="p">(</span><span class="n">filePath</span><span class="p">).</span><span class="na">hasYamlContentAndUpdateGolden</span><span class="p">(</span><span class="n">expected</span><span class="p">);</span>
 <span class="w">  </span><span class="p">}</span>
@@ -2399,182 +2399,182 @@ from the test module help here.</p>
 <span class="normal">175</span>
 <span class="normal">176</span>
 <span class="normal">177</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nn">---</span>
-<span class="nt">asyncapi</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2.5.0&quot;</span>
-<span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;urn:org:sdase:example:cars&quot;</span>
-<span class="nt">defaultContentType</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;application/json&quot;</span>
+<span class="nt">asyncapi</span><span class="p">:</span><span class="w"> </span><span class="s">"2.5.0"</span>
+<span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">"urn:org:sdase:example:cars"</span>
+<span class="nt">defaultContentType</span><span class="p">:</span><span class="w"> </span><span class="s">"application/json"</span>
 <span class="nt">info</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Cars</span><span class="nv"> </span><span class="s">Example&quot;</span>
-<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">example</span><span class="nv"> </span><span class="s">demonstrates</span><span class="nv"> </span><span class="s">how</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">define</span><span class="nv"> </span><span class="s">events</span><span class="nv"> </span><span class="s">around</span><span class="nv"> </span><span class="s">*cars*.&quot;</span>
-<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.0.0&quot;</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Cars</span><span class="nv"> </span><span class="s">Example"</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"This</span><span class="nv"> </span><span class="s">example</span><span class="nv"> </span><span class="s">demonstrates</span><span class="nv"> </span><span class="s">how</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">define</span><span class="nv"> </span><span class="s">events</span><span class="nv"> </span><span class="s">around</span><span class="nv"> </span><span class="s">*cars*."</span>
+<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">"1.0.0"</span>
 <span class="nt">channels</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">car-events</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">publish</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">operationId</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;publishCarEvents&quot;</span>
-<span class="w">      </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Car</span><span class="nv"> </span><span class="s">related</span><span class="nv"> </span><span class="s">events&quot;</span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;These</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">all</span><span class="nv"> </span><span class="s">events</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">related</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">car&quot;</span>
+<span class="w">      </span><span class="nt">operationId</span><span class="p">:</span><span class="w"> </span><span class="s">"publishCarEvents"</span>
+<span class="w">      </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">"Car</span><span class="nv"> </span><span class="s">related</span><span class="nv"> </span><span class="s">events"</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"These</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">all</span><span class="nv"> </span><span class="s">events</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">related</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">car"</span>
 <span class="w">      </span><span class="nt">message</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">oneOf</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#/components/messages/CarManufactured&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#/components/messages/CarScrapped&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">"#/components/messages/CarManufactured"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">"#/components/messages/CarScrapped"</span>
 <span class="nt">components</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">messages</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">CarManufactured</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Car</span><span class="nv"> </span><span class="s">Manufactured&quot;</span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;An</span><span class="nv"> </span><span class="s">event</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">represents</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">new</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">manufactured&quot;</span>
+<span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Car</span><span class="nv"> </span><span class="s">Manufactured"</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"An</span><span class="nv"> </span><span class="s">event</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">represents</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">new</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">manufactured"</span>
 <span class="w">      </span><span class="nt">payload</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#/components/schemas/CarManufactured&quot;</span>
+<span class="w">        </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">"#/components/schemas/CarManufactured"</span>
 <span class="w">    </span><span class="nt">CarScrapped</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Car</span><span class="nv"> </span><span class="s">Scrapped&quot;</span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;An</span><span class="nv"> </span><span class="s">event</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">represents</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">scrapped&quot;</span>
+<span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Car</span><span class="nv"> </span><span class="s">Scrapped"</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"An</span><span class="nv"> </span><span class="s">event</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">represents</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">scrapped"</span>
 <span class="w">      </span><span class="nt">payload</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#/components/schemas/CarScrapped&quot;</span>
+<span class="w">        </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">"#/components/schemas/CarScrapped"</span>
 <span class="w">  </span><span class="nt">schemas</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">CarManufactured</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">allOf</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"object"</span>
 <span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">id</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
 <span class="w">            </span><span class="nt">minLength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="w">            </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;^.*\\S+.*$&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">id</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">message&quot;</span>
+<span class="w">            </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">"^.*\\S+.*$"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">id</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">message"</span>
 <span class="w">            </span><span class="nt">examples</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;626A0F21-D940-4B44-BD36-23F0F567B0D0&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"626A0F21-D940-4B44-BD36-23F0F567B0D0"</span>
 <span class="w">          </span><span class="nt">type</span><span class="p">:</span>
 <span class="w">            </span><span class="nt">allOf</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#/components/schemas/Type&quot;</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">type</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">message&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">"#/components/schemas/Type"</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">type</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">message"</span>
 <span class="w">          </span><span class="nt">vehicleRegistration</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
 <span class="w">            </span><span class="nt">minLength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="w">            </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;^.*\\S+.*$&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">registration</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">vehicle&quot;</span>
+<span class="w">            </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">"^.*\\S+.*$"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">registration</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">vehicle"</span>
 <span class="w">            </span><span class="nt">examples</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;BB324A81&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"BB324A81"</span>
 <span class="w">          </span><span class="nt">date</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
-<span class="w">            </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;date-time&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">time</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">manufacturing&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
+<span class="w">            </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">"date-time"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">time</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">manufacturing"</span>
 <span class="w">          </span><span class="nt">model</span><span class="p">:</span>
 <span class="w">            </span><span class="nt">allOf</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#/components/schemas/CarModel&quot;</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">model</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">car&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">"#/components/schemas/CarModel"</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">model</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">car"</span>
 <span class="w">        </span><span class="nt">required</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;id&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;vehicleRegistration&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;date&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;model&quot;</span>
-<span class="w">        </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Car</span><span class="nv"> </span><span class="s">manufactured&quot;</span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;A</span><span class="nv"> </span><span class="s">new</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">was</span><span class="nv"> </span><span class="s">manufactured&quot;</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"id"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"vehicleRegistration"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"date"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"model"</span>
+<span class="w">        </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Car</span><span class="nv"> </span><span class="s">manufactured"</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"A</span><span class="nv"> </span><span class="s">new</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">was</span><span class="nv"> </span><span class="s">manufactured"</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"object"</span>
 <span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">type</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">const</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CAR_MANUFACTURED&quot;</span>
+<span class="w">            </span><span class="nt">const</span><span class="p">:</span><span class="w"> </span><span class="s">"CAR_MANUFACTURED"</span>
 <span class="w">        </span><span class="nt">required</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;type&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"type"</span>
 <span class="w">    </span><span class="nt">CarModel</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">anyOf</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#/components/schemas/Electrical&quot;</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#/components/schemas/Combustion&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">"#/components/schemas/Electrical"</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">"#/components/schemas/Combustion"</span>
 <span class="w">    </span><span class="nt">CarScrapped</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">allOf</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"object"</span>
 <span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">id</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
 <span class="w">            </span><span class="nt">minLength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="w">            </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;^.*\\S+.*$&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">id</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">message&quot;</span>
+<span class="w">            </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">"^.*\\S+.*$"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">id</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">message"</span>
 <span class="w">            </span><span class="nt">examples</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;626A0F21-D940-4B44-BD36-23F0F567B0D0&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"626A0F21-D940-4B44-BD36-23F0F567B0D0"</span>
 <span class="w">          </span><span class="nt">type</span><span class="p">:</span>
 <span class="w">            </span><span class="nt">allOf</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#/components/schemas/Type&quot;</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">type</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">message&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">"#/components/schemas/Type"</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">type</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">message"</span>
 <span class="w">          </span><span class="nt">vehicleRegistration</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
 <span class="w">            </span><span class="nt">minLength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="w">            </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;^.*\\S+.*$&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">registration</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">vehicle&quot;</span>
+<span class="w">            </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">"^.*\\S+.*$"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">registration</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">vehicle"</span>
 <span class="w">            </span><span class="nt">examples</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;BB324A81&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"BB324A81"</span>
 <span class="w">          </span><span class="nt">date</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
-<span class="w">            </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;date-time&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">time</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">scrapping&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
+<span class="w">            </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">"date-time"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">time</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">scrapping"</span>
 <span class="w">          </span><span class="nt">location</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">location</span><span class="nv"> </span><span class="s">where</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">was</span><span class="nv"> </span><span class="s">scrapped&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">location</span><span class="nv"> </span><span class="s">where</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">was</span><span class="nv"> </span><span class="s">scrapped"</span>
 <span class="w">        </span><span class="nt">required</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;id&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;vehicleRegistration&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;date&quot;</span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;A</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">was</span><span class="nv"> </span><span class="s">scrapped&quot;</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"id"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"vehicleRegistration"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"date"</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"A</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">was</span><span class="nv"> </span><span class="s">scrapped"</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"object"</span>
 <span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">type</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">const</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CAR_SCRAPPED&quot;</span>
+<span class="w">            </span><span class="nt">const</span><span class="p">:</span><span class="w"> </span><span class="s">"CAR_SCRAPPED"</span>
 <span class="w">        </span><span class="nt">required</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;type&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"type"</span>
 <span class="w">    </span><span class="nt">Combustion</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">allOf</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"object"</span>
 <span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">name</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">model&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">model"</span>
 <span class="w">            </span><span class="nt">examples</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Tesla</span><span class="nv"> </span><span class="s">Roadster&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"Tesla</span><span class="nv"> </span><span class="s">Roadster"</span>
 <span class="w">          </span><span class="nt">engineType</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">type</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">engine&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">type</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">engine"</span>
 <span class="w">          </span><span class="nt">tankVolume</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;integer&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">capacity</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">tank</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">liter&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"integer"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">capacity</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">tank</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">liter"</span>
 <span class="w">            </span><span class="nt">examples</span><span class="p">:</span>
 <span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">95</span>
 <span class="w">        </span><span class="nt">required</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tankVolume&quot;</span>
-<span class="w">        </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Combustion</span><span class="nv"> </span><span class="s">engine&quot;</span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;An</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">model</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">combustion</span><span class="nv"> </span><span class="s">engine&quot;</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"tankVolume"</span>
+<span class="w">        </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Combustion</span><span class="nv"> </span><span class="s">engine"</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"An</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">model</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">combustion</span><span class="nv"> </span><span class="s">engine"</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"object"</span>
 <span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">engineType</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">const</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;COMBUSTION&quot;</span>
+<span class="w">            </span><span class="nt">const</span><span class="p">:</span><span class="w"> </span><span class="s">"COMBUSTION"</span>
 <span class="w">        </span><span class="nt">required</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;engineType&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"engineType"</span>
 <span class="w">    </span><span class="nt">Electrical</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">allOf</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"object"</span>
 <span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">name</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">model&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">model"</span>
 <span class="w">            </span><span class="nt">examples</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Tesla</span><span class="nv"> </span><span class="s">Roadster&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"Tesla</span><span class="nv"> </span><span class="s">Roadster"</span>
 <span class="w">          </span><span class="nt">engineType</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">type</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">engine&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">type</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">engine"</span>
 <span class="w">          </span><span class="nt">batteryCapacity</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;integer&quot;</span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">capacity</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">battery</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">kwH&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"integer"</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"The</span><span class="nv"> </span><span class="s">capacity</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">battery</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">kwH"</span>
 <span class="w">            </span><span class="nt">examples</span><span class="p">:</span>
 <span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
 <span class="w">        </span><span class="nt">required</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;batteryCapacity&quot;</span>
-<span class="w">        </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Electrical</span><span class="nv"> </span><span class="s">engine&quot;</span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;An</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">model</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">an</span><span class="nv"> </span><span class="s">electrical</span><span class="nv"> </span><span class="s">engine&quot;</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"batteryCapacity"</span>
+<span class="w">        </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Electrical</span><span class="nv"> </span><span class="s">engine"</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"An</span><span class="nv"> </span><span class="s">car</span><span class="nv"> </span><span class="s">model</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">an</span><span class="nv"> </span><span class="s">electrical</span><span class="nv"> </span><span class="s">engine"</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"object"</span>
 <span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">engineType</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">const</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ELECTRICAL&quot;</span>
+<span class="w">            </span><span class="nt">const</span><span class="p">:</span><span class="w"> </span><span class="s">"ELECTRICAL"</span>
 <span class="w">        </span><span class="nt">required</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;engineType&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"engineType"</span>
 <span class="w">    </span><span class="nt">Type</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"string"</span>
 <span class="w">      </span><span class="nt">enum</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;CAR_MANUFACTURED&quot;</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;CAR_SCRAPPED&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"CAR_MANUFACTURED"</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"CAR_SCRAPPED"</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
@@ -2635,24 +2635,24 @@ diverge over time.</p>
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
-<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">asyncapi</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2.5.0&#39;</span>
-<span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;urn:org:sdase:example&#39;</span>
+<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">asyncapi</span><span class="p">:</span><span class="w"> </span><span class="s">'2.5.0'</span>
+<span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">'urn:org:sdase:example'</span>
 <span class="nt">defaultContentType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">application/json</span>
 
 <span class="nt">info</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Example</span>
 <span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">This example demonstrates how to define messages with hand crafted schemas.</span>
-<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1.0.0&#39;</span>
+<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">'1.0.0'</span>
 
 <span class="nt">channels</span><span class="p">:</span>
-<span class="w">  </span><span class="s">&#39;car-events&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">  </span><span class="s">'car-events'</span><span class="p p-Indicator">:</span>
 <span class="w">    </span><span class="nt">publish</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An entity stream</span>
 <span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">What happens to an entity</span>
 <span class="w">      </span><span class="nt">message</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">oneOf</span><span class="p">:</span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/messages/Created&#39;</span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/messages/Deleted&#39;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">'#/components/messages/Created'</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">'#/components/messages/Deleted'</span>
 
 <span class="nt">components</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">messages</span><span class="p">:</span>
@@ -2660,13 +2660,13 @@ diverge over time.</p>
 <span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Entity created</span>
 <span class="w">      </span><span class="nt">payload</span><span class="p">:</span>
 <span class="w">        </span><span class="c1"># referencing the full name of the Class</span>
-<span class="w">        </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;class://org.sdase.commons.shared.asyncapi.test.data.models.Created&#39;</span>
+<span class="w">        </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">'class://org.sdase.commons.shared.asyncapi.test.data.models.Created'</span>
 <span class="w">    </span><span class="nt">Deleted</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Entity deleted</span>
 <span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deletion of the entity is represented by an external tombstone message.</span>
 <span class="w">      </span><span class="nt">payload</span><span class="p">:</span>
 <span class="w">        </span><span class="c1"># referencing the existing schema</span>
-<span class="w">        </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/schemas/Tombstone&#39;</span>
+<span class="w">        </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">'#/components/schemas/Tombstone'</span>
 
 <span class="w">  </span><span class="nt">schemas</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">Tombstone</span><span class="p">:</span>
@@ -2721,11 +2721,11 @@ diverge over time.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.validation.constraints.NotNull</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.validation.constraints.Pattern</span><span class="p">;</span>
 
-<span class="nd">@SuppressWarnings</span><span class="p">(</span><span class="s">&quot;unused&quot;</span><span class="p">)</span>
+<span class="nd">@SuppressWarnings</span><span class="p">(</span><span class="s">"unused"</span><span class="p">)</span>
 <span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Created</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">  </span><span class="nd">@NotNull</span>
-<span class="w">  </span><span class="nd">@Pattern</span><span class="p">(</span><span class="n">regexp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;[a-zA-Z0-9-_]{10,}&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="nd">@Pattern</span><span class="p">(</span><span class="n">regexp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"[a-zA-Z0-9-_]{10,}"</span><span class="p">)</span>
 <span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
 
 <span class="w">  </span><span class="nd">@NotBlank</span><span class="w"> </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
@@ -2785,11 +2785,11 @@ diverge over time.</p>
 <span class="w">  </span><span class="nd">@Test</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateAndVerifySpec</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// get template</span>
-<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getClass</span><span class="p">().</span><span class="na">getResource</span><span class="p">(</span><span class="s">&quot;/demo/template_with_schema.yaml&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getClass</span><span class="p">().</span><span class="na">getResource</span><span class="p">(</span><span class="s">"/demo/template_with_schema.yaml"</span><span class="p">);</span>
 <span class="w">    </span><span class="c1">// generate AsyncAPI yaml</span>
 <span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AsyncApiGenerator</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">withAsyncApiBase</span><span class="p">(</span><span class="n">template</span><span class="p">).</span><span class="na">generateYaml</span><span class="p">();</span>
-<span class="w">    </span><span class="c1">// specify where to store the result, e.g. Path.of(&quot;asyncapi.yaml&quot;) for the project root.</span>
-<span class="w">    </span><span class="n">Path</span><span class="w"> </span><span class="n">filePath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paths</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;asyncapi-schema.yaml&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// specify where to store the result, e.g. Path.of("asyncapi.yaml") for the project root.</span>
+<span class="w">    </span><span class="n">Path</span><span class="w"> </span><span class="n">filePath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paths</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">"asyncapi-schema.yaml"</span><span class="p">);</span>
 <span class="w">    </span><span class="c1">// check and update the file</span>
 <span class="w">    </span><span class="n">GoldenFileAssertions</span><span class="p">.</span><span class="na">assertThat</span><span class="p">(</span><span class="n">filePath</span><span class="p">).</span><span class="na">hasYamlContentAndUpdateGolden</span><span class="p">(</span><span class="n">expected</span><span class="p">);</span>
 <span class="w">  </span><span class="p">}</span>
@@ -2913,7 +2913,7 @@ Note that this requires to add the module as compile time dependency.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       

@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -2681,15 +2681,15 @@ you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTele
 <span class="gi">+ bootstrap.addBundle(</span>
 <span class="gi">+     OpenTelemetryBundle.builder()</span>
 <span class="gi">+       .withAutoConfiguredTelemetryInstance()</span>
-<span class="gi">+       .withExcludedUrlsPattern(Pattern.compile(String.join(&quot;|&quot;, Arrays.asList(</span>
-<span class="gi">+         &quot;/ping&quot;, &quot;/healthcheck&quot;, &quot;/healthcheck/internal&quot;, &quot;/metrics&quot;,</span>
-<span class="gi">+         &quot;/metrics/prometheus&quot;))))</span>
+<span class="gi">+       .withExcludedUrlsPattern(Pattern.compile(String.join("|", Arrays.asList(</span>
+<span class="gi">+         "/ping", "/healthcheck", "/healthcheck/internal", "/metrics",</span>
+<span class="gi">+         "/metrics/prometheus"))))</span>
 <span class="gi">+       .build());</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="replace-opentracing-dependencies-to-opentelemetry-dependencies">Replace OpenTracing dependencies to OpenTelemetry dependencies<a class="headerlink" href="#replace-opentracing-dependencies-to-opentelemetry-dependencies" title="Permanent link">&para;</a></h3>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- testImplementation &#39;io.opentracing:opentracing-mock&#39;</span>
-<span class="gi">+ testImplementation &#39;io.opentelemetry:opentelemetry-sdk-testing&#39;</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- testImplementation 'io.opentracing:opentracing-mock'</span>
+<span class="gi">+ testImplementation 'io.opentelemetry:opentelemetry-sdk-testing'</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="executors-need-to-be-instrumented-to-follow-traces-when-parts-of-the-request-are-handled-asynchronously">Executors need to be instrumented to follow traces when parts of the request are handled asynchronously.<a class="headerlink" href="#executors-need-to-be-instrumented-to-follow-traces-when-parts-of-the-request-are-handled-asynchronously" title="Permanent link">&para;</a></h3>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -2712,7 +2712,7 @@ you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTele
 <span class="gd">-   new InMemoryAsyncTaskRepository&lt;&gt;(limits.getMaxAttempts()),</span>
 <span class="gd">-   environment</span>
 <span class="gd">-       .lifecycle()</span>
-<span class="gd">-       .executorService(&quot;email-sender-%d&quot;)</span>
+<span class="gd">-       .executorService("email-sender-%d")</span>
 <span class="gd">-       .minThreads(1)</span>
 <span class="gd">-       .maxThreads(limits.getMaxParallel())</span>
 <span class="gd">-       .build(),</span>
@@ -2721,7 +2721,7 @@ you need to remove the Jaeger bundle and OpenTracing bundle and add the OpenTele
 <span class="gi">+     io.opentelemetry.context.Context.taskWrapping(</span>
 <span class="gi">+       environment</span>
 <span class="gi">+           .lifecycle()</span>
-<span class="gi">+           .executorService(&quot;email-sender-%d&quot;)</span>
+<span class="gi">+           .executorService("email-sender-%d")</span>
 <span class="gi">+           .minThreads(1)</span>
 <span class="gi">+           .maxThreads(limits.getMaxParallel())</span>
 <span class="gi">+           .build()),</span>
@@ -2792,7 +2792,7 @@ to see all the possible methods.</p>
 <span class="normal">15</span>
 <span class="normal">16</span>
 <span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- public void sendEmail(To recipient, String subject, EmailBody body) {</span>
-<span class="gd">-   Span span = GlobalTracer.get().buildSpan(&quot;sendSmtpMail&quot;).start();</span>
+<span class="gd">-   Span span = GlobalTracer.get().buildSpan("sendSmtpMail").start();</span>
 <span class="gd">-   try (Scope ignored = GlobalTracer.get().scopeManager().activate(span)) {</span>
 <span class="gd">-     delegate.sendEmail(recipient, subject, body);</span>
 <span class="gd">-   } finally {</span>
@@ -2801,7 +2801,7 @@ to see all the possible methods.</p>
 <span class="gd">- }</span>
 <span class="gi">+ public void sendEmail(To recipient, String subject, EmailBody body) {</span>
 <span class="gi">+   var tracer = GlobalOpenTelemetry.get().getTracer(getClass().getName());</span>
-<span class="gi">+   var span = tracer.spanBuilder(&quot;sendSmtpMail&quot;).startSpan();</span>
+<span class="gi">+   var span = tracer.spanBuilder("sendSmtpMail").startSpan();</span>
 <span class="gi">+   try (var ignored = span.makeCurrent()) {</span>
 <span class="gi">+     delegate.sendEmail(recipient, subject, body);</span>
 <span class="gi">+   } finally {</span>
@@ -2812,7 +2812,7 @@ to see all the possible methods.</p>
 <h3 id="test-setup">Test Setup<a class="headerlink" href="#test-setup" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Add the opentelemetry test dependency
-  <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>testImplementation &#39;io.opentelemetry:opentelemetry-sdk-testing&#39; 
+  <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>testImplementation 'io.opentelemetry:opentelemetry-sdk-testing' 
 </code></pre></div></td></tr></table></div></li>
 </ul>
 <ul>
@@ -2854,15 +2854,15 @@ to see all the possible methods.</p>
 <li>Capture spans using <code>OpenTelemetryExtension</code> and <code>io.opentelemetry.sdk.trace.data.SpanData</code><div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gd">- assertThat(mockTracer.finishedSpans().stream()</span>
-<span class="gd">-     .filter(s -&gt; s.operationName().equals(&quot;expectedTracing&quot;)));</span>
-<span class="gi">+ assertThat(OTEL.getSpans().stream().filter(s -&gt; s.getName().equals(&quot;expectedTracing&quot;)));</span>
+<span class="gd">-     .filter(s -&gt; s.operationName().equals("expectedTracing")));</span>
+<span class="gi">+ assertThat(OTEL.getSpans().stream().filter(s -&gt; s.getName().equals("expectedTracing")));</span>
 </code></pre></div></td></tr></table></div>
 </li>
 </ul>
 <h2 id="5-sda-commons-server-morphia">5 sda-commons-server-morphia<a class="headerlink" href="#5-sda-commons-server-morphia" title="Permanent link">&para;</a></h2>
 <p>Migrate to <a href="https://docs.spring.io/spring-data/mongodb/docs/">Spring Data Mongo</a>.</p>
 <p>The spring-data-mongo package is available at the following coordinates:</p>
-<div class="language-groovy highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">implementation</span><span class="w"> </span><span class="s2">&quot;org.sdase.commons:sda-commons-server-spring-data-mongo&quot;</span>
+<div class="language-groovy highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">implementation</span><span class="w"> </span><span class="s2">"org.sdase.commons:sda-commons-server-spring-data-mongo"</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="replacing-the-morphiabundle">Replacing the MorphiaBundle:<a class="headerlink" href="#replacing-the-morphiabundle" title="Permanent link">&para;</a></h3>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -3292,7 +3292,7 @@ inform about the deprecation in the release notes.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.footer", "content.action.edit"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../search/main.js"></script>
       

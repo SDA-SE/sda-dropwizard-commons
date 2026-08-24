@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -1953,7 +1953,7 @@ only in the direction from api to implementation, and <code>PLACEHOLDER_IMPL_TO_
 direction from implementation to api. (If no substitution is performed, the mapper continues to
 throw an <code>IllegalArgumentException</code> for unmappable values.)</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>    implementation &#39;org.sdase.commons:sda-commons-server-key-mgmt:&lt;version&gt;&#39;
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>    implementation 'org.sdase.commons:sda-commons-server-key-mgmt:&lt;version&gt;'
 </code></pre></div></td></tr></table></div>
 <p>Initialization of bundle:
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1972,20 +1972,20 @@ The following listing shows a yaml snippet for the <code>keyMgmt</code> configur
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">keyMgmt</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">apiKeysDefinitionPath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/keys&quot;</span><span class="w">     </span><span class="c1"># path to key definition yaml files</span>
-<span class="w">  </span><span class="nt">mappingDefinitionPath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/mappings&quot;</span><span class="w"> </span><span class="c1"># path to mapping definition yaml files</span>
+<span class="w">  </span><span class="nt">apiKeysDefinitionPath</span><span class="p">:</span><span class="w"> </span><span class="s">"/keys"</span><span class="w">     </span><span class="c1"># path to key definition yaml files</span>
+<span class="w">  </span><span class="nt">mappingDefinitionPath</span><span class="p">:</span><span class="w"> </span><span class="s">"/mappings"</span><span class="w"> </span><span class="c1"># path to mapping definition yaml files</span>
 <span class="w">  </span><span class="nt">disableValidation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">           </span><span class="c1"># option to deactivate input value validation for keys. Default: false</span>
 </code></pre></div></td></tr></table></div></p>
 <h3 id="platformkey">@PlatformKey<a class="headerlink" href="#platformkey" title="Permanent link">&para;</a></h3>
 <p>The annotation <code>@PlatformKey</code> will trigger a validator to verify if the received value is a valid key for the referenced platform key.
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@PlatformKey</span><span class="p">(</span><span class="s">&quot;GENDER&quot;</span><span class="p">)</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@PlatformKey</span><span class="p">(</span><span class="s">"GENDER"</span><span class="p">)</span>
 <span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">genderKey</span>
 </code></pre></div></td></tr></table></div></p>
 <h3 id="platformkeys">@PlatformKeys<a class="headerlink" href="#platformkeys" title="Permanent link">&para;</a></h3>
 <p>The annotation <code>@PlatformKeys</code> will trigger a validator to verify if the received value is a valid key within a list of referenced platform keys.
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@PlatformKeys</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;GENDER, SALUTATION&quot;</span><span class="p">})</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@PlatformKeys</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">"GENDER, SALUTATION"</span><span class="p">})</span>
 <span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">genderOrSalutationKey</span>
 </code></pre></div></td></tr></table></div></p>
 <h3 id="key-yaml-file">Key yaml file<a class="headerlink" href="#key-yaml-file" title="Permanent link">&para;</a></h3>
@@ -2000,14 +2000,14 @@ The following listing shows a yaml snippet for the <code>keyMgmt</code> configur
 <span class="normal">7</span>
 <span class="normal">8</span>
 <span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GENDER</span>
-<span class="nt">desciption</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Gender</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">human&quot;</span>
+<span class="nt">desciption</span><span class="p">:</span><span class="w"> </span><span class="s">"Gender</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">human"</span>
 <span class="nt">values</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MALE</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;male</span><span class="nv"> </span><span class="s">gender&quot;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"male</span><span class="nv"> </span><span class="s">gender"</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FEMALE</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;female</span><span class="nv"> </span><span class="s">gender&quot;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"female</span><span class="nv"> </span><span class="s">gender"</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Other</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;other</span><span class="nv"> </span><span class="s">if</span><span class="nv"> </span><span class="s">male</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">female</span><span class="nv"> </span><span class="s">does</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">fit&quot;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"other</span><span class="nv"> </span><span class="s">if</span><span class="nv"> </span><span class="s">male</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">female</span><span class="nv"> </span><span class="s">does</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">fit"</span>
 </code></pre></div></td></tr></table></div></p>
 <h3 id="mapping-yaml-file">Mapping yaml file<a class="headerlink" href="#mapping-yaml-file" title="Permanent link">&para;</a></h3>
 <p>The yaml file for mappings may contain one or more <a href="https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-server-key-mgmt/src/main/java/org/sdase/commons/keymgmt/model/KeyMappingModel.java">KeyMappingModel</a> documents.</p>
@@ -2034,23 +2034,23 @@ The following listing shows a yaml snippet for the <code>keyMgmt</code> configur
 <span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GENDER</span>
 <span class="nt">mapping</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">apiToImplBidirectional</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MALE&quot;</span>
-<span class="w">      </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;m&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;FEMALE&quot;</span>
-<span class="w">      </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;F&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;OTHER&quot;</span>
-<span class="w">      </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;d&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">"MALE"</span>
+<span class="w">      </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">"m"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">"FEMALE"</span>
+<span class="w">      </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">"F"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">"OTHER"</span>
+<span class="w">      </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">"d"</span>
 <span class="nn">---</span>
 <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SALUTATION</span>
 <span class="nt">mapping</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">apiToImplBidirectional</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MRS&quot;</span>
-<span class="w">      </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MR&quot;</span>
-<span class="w">      </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">"MRS"</span>
+<span class="w">      </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">"1"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">"MR"</span>
+<span class="w">      </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">"0"</span>
 <span class="w">  </span><span class="nt">implToApi</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span>
-<span class="w">      </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MRS&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">impl</span><span class="p">:</span><span class="w"> </span><span class="s">"2"</span>
+<span class="w">      </span><span class="nt">api</span><span class="p">:</span><span class="w"> </span><span class="s">"MRS"</span>
 </code></pre></div></td></tr></table></div></p>
 
 
@@ -2144,7 +2144,7 @@ The following listing shows a yaml snippet for the <code>keyMgmt</code> configur
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../search/main.js"></script>
       
