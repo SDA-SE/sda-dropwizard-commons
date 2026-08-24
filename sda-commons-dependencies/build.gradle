@@ -12,7 +12,7 @@ ext {
   apacheHttpCore5Version = '5.4.3'
   dropwizardVersion = '5.0.2'
   prometheusVersion = '1.8.0'
-  micrometerVersion = '1.17.0'
+  micrometerVersion = '1.17.1'
   swaggerCoreV3Version = '2.2.53'
   weldVersion = '6.0.4.Final'
   jacksonVersion = '2.22.1'
