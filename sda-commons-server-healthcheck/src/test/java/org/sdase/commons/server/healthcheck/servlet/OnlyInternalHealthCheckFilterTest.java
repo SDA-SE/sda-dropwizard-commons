@@ -21,6 +21,11 @@ class OnlyInternalHealthCheckFilterTest {
   }
 
   @Test
+  void identifyNewAnnotatedCheckAsExternal() {
+    assertThat(filter.matches("external", new NewExternalBaseHealthCheck())).isFalse();
+  }
+
+  @Test
   void identifySubclassOfAnnotatedCheckAsExternal() {
     assertThat(filter.matches("childOfExternal", new ExternalCustomHealthCheck())).isFalse();
   }
@@ -36,6 +41,15 @@ class OnlyInternalHealthCheckFilterTest {
 
   @ExternalHealthCheck
   static class ExternalBaseHealthCheck extends HealthCheck {
+
+    @Override
+    protected Result check() {
+      return null;
+    }
+  }
+
+  @org.sdase.commons.server.dropwizard.healthcheck.ExternalHealthCheck
+  static class NewExternalBaseHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() {

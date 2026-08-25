@@ -3,7 +3,7 @@ package org.sdase.commons.server.jackson.errors;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
-import org.sdase.commons.shared.api.error.ApiException;
+import org.sdase.commons.server.dropwizard.model.error.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

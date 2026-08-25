@@ -1,0 +1,13 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+  rootPath: "/api/*"
+
+
+consumerToken:
+  optional: ${CONSUMER_TOKEN_OPTIONAL:-false}
+  excludePatterns: ${CONSUMER_TOKEN_EXCLUDE:-["swagger\\.(json|yaml)", "openapi\\.(json|yaml)"]}

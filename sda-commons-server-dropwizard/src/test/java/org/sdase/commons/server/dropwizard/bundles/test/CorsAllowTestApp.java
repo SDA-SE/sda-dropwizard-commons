@@ -1,0 +1,21 @@
+package org.sdase.commons.server.dropwizard.bundles.test;
+
+import io.dropwizard.core.setup.Bootstrap;
+import org.sdase.commons.server.dropwizard.bundles.CorsBundle;
+
+public class CorsAllowTestApp extends CorsTestApp {
+
+  public static void main(String[] args) throws Exception {
+    new CorsAllowTestApp().run(args);
+  }
+
+  @Override
+  public void initialize(Bootstrap<CorsTestConfiguration> bootstrap) {
+    bootstrap.addBundle(
+        CorsBundle.builder()
+            .withCorsConfigProvider(CorsTestConfiguration::getCors)
+            .withAdditionalAllowedHeaders("some")
+            .withAdditionalExposedHeaders("exposed")
+            .build());
+  }
+}
