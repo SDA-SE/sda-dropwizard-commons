@@ -1,0 +1,191 @@
+package org.sdase.commons.server.dropwizard.bundles;
+
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.ConfiguredBundle;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
+import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import org.sdase.commons.server.dropwizard.filter.ConsumerTokenServerFilter;
+
+public class ConsumerTokenBundle<C extends Configuration> implements ConfiguredBundle<C> {
+
+  private final Function<C, ConsumerTokenConfig> consumerTokenConfigProvider;
+
+  private ConsumerTokenBundle(Function<C, ConsumerTokenConfig> consumerTokenConfigProvider) {
+    this.consumerTokenConfigProvider = consumerTokenConfigProvider;
+  }
+
+  /**
+   * @deprecated TODO next-major to be removed
+   */
+  @Deprecated(forRemoval = true)
+  protected ConsumerTokenBundle(ConsumerTokenBundle<C> original) {
+    this.consumerTokenConfigProvider = original.consumerTokenConfigProvider;
+  }
+
+  @Override
+  public void initialize(Bootstrap<?> bootstrap) {
+    // nothing to initialize
+  }
+
+  @Override
+  public void run(C configuration, Environment environment) {
+    ConsumerTokenConfig config = consumerTokenConfigProvider.apply(configuration);
+    boolean requireIdentifiedConsumer = !config.isOptional();
+    ConsumerTokenServerFilter consumerTokenServerFilter =
+        new ConsumerTokenServerFilter(requireIdentifiedConsumer, config.getExcludePatterns());
+    environment.jersey().register(consumerTokenServerFilter);
+  }
+
+  public static OptionsBuilder builder() {
+    return new Builder<>();
+  }
+
+  @FunctionalInterface
+  public interface ConsumerTokenConfigProvider<C extends Configuration>
+      extends Function<C, ConsumerTokenConfig> {}
+
+  //
+  // builder
+  //
+
+  public interface OptionsBuilder {
+    /**
+     * Creates the bundle with the consumer token being optional.
+     *
+     * @return a builder to create the bundle
+     */
+    FinalBuilder<Configuration> withOptionalConsumerToken();
+
+    /**
+     * Creates the bundle with a consumer token required for every request.
+     *
+     * @return a builder to create the bundle
+     */
+    ExcludeBuilder<Configuration> withRequiredConsumerToken();
+
+    /**
+     * @param configProvider the method returning the {@link ConsumerTokenConfig} from the
+     *     applications {@link Configuration}.
+     * @param <C> the applications configuration type
+     * @return a builder to create the bundle
+     */
+    <C extends Configuration> FinalBuilder<C> withConfigProvider(
+        ConsumerTokenConfigProvider<C> configProvider);
+  }
+
+  public interface ExcludeBuilder<C extends Configuration> extends FinalBuilder<C> {
+
+    /**
+     * Creates the bundle but ignores urls that matches the given exclude pattern regex
+     *
+     * @param regex regex that must be includeed
+     * @return a builder for further options
+     */
+    FinalBuilder<C> withExcludePatterns(@NotNull String... regex);
+  }
+
+  public interface FinalBuilder<C extends Configuration> {
+    ConsumerTokenBundle<C> build();
+  }
+
+  public static class Builder<C extends Configuration>
+      implements FinalBuilder<C>, OptionsBuilder, ExcludeBuilder<C> {
+
+    /**
+     * TODO next-major consider this as private and change when deprecated subclasses are removed
+     */
+    protected Function<C, ConsumerTokenConfig> configProvider;
+
+    /**
+     * TODO next-major consider this as private and change when deprecated subclasses are removed
+     */
+    protected Boolean requireConsumerToken;
+
+    /**
+     * TODO next-major consider this as private and change when deprecated subclasses are removed
+     */
+    protected List<String> excludePattern = new ArrayList<>();
+
+    /**
+     * TODO next-major consider this as private and change when deprecated subclasses are removed
+     */
+    protected Builder() {}
+
+    /**
+     * TODO next-major consider this as private and change when deprecated subclasses are removed
+     */
+    protected Builder(boolean requireConsumerToken, List<String> excludePattern) {
+      this.requireConsumerToken = requireConsumerToken;
+      this.excludePattern = excludePattern;
+    }
+
+    /**
+     * TODO next-major consider this as private and change when deprecated subclasses are removed
+     */
+    protected Builder(ConsumerTokenConfigProvider<C> configProvider) {
+      this.configProvider = configProvider;
+    }
+
+    @Override
+    public <T extends Configuration> FinalBuilder<T> withConfigProvider(
+        ConsumerTokenConfigProvider<T> configProvider) {
+      return new Builder<>(configProvider);
+    }
+
+    @Override
+    public FinalBuilder<Configuration> withOptionalConsumerToken() {
+      return new Builder<>(false, this.excludePattern);
+    }
+
+    @Override
+    public ExcludeBuilder<Configuration> withRequiredConsumerToken() {
+      return new Builder<>(true, excludePattern);
+    }
+
+    @Override
+    public FinalBuilder<C> withExcludePatterns(String... pattern) {
+      return new Builder<>(this.requireConsumerToken, Arrays.asList(pattern));
+    }
+
+    @Override
+    public ConsumerTokenBundle<C> build() {
+      if (configProvider == null) {
+        if (requireConsumerToken == null) {
+          throw new IllegalStateException("Missing either a config provider or an explicit config");
+        }
+        ConsumerTokenConfig consumerTokenConfig = new ConsumerTokenConfig();
+        consumerTokenConfig.setOptional(!requireConsumerToken);
+        consumerTokenConfig.setExcludePatterns(excludePattern);
+        configProvider = c -> consumerTokenConfig;
+      }
+      if (excludeOpenApi()) {
+        configProvider = configProvider.andThen(this::addOpenApiConfigExclude);
+      }
+      return new ConsumerTokenBundle<>(configProvider);
+    }
+
+    private ConsumerTokenConfig addOpenApiConfigExclude(ConsumerTokenConfig consumerTokenConfig) {
+      ArrayList<String> patterns = new ArrayList<>(consumerTokenConfig.getExcludePatterns());
+      patterns.add("openapi\\.(json|yaml)");
+      consumerTokenConfig.setExcludePatterns(patterns);
+      return consumerTokenConfig;
+    }
+
+    private boolean excludeOpenApi() {
+      try {
+        if (getClass().getClassLoader().loadClass("org.sdase.commons.server.openapi.OpenApiBundle")
+            != null) {
+          return true;
+        }
+      } catch (ClassNotFoundException e) {
+        // silently ignored
+      }
+      return false;
+    }
+  }
+}

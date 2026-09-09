@@ -2,7 +2,7 @@ package org.sdase.commons.starter.builder;
 
 import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
-import org.sdase.commons.server.cors.CorsConfigProvider;
+import org.sdase.commons.server.dropwizard.bundles.CorsBundle.CorsConfigProvider;
 import org.sdase.commons.server.opa.config.OpaConfigProvider;
 import org.sdase.commons.server.prometheus.PrometheusConfigurationProvider;
 import org.sdase.commons.starter.builder.OpenApiCustomizer.OpenApiInitialBuilder;
@@ -59,7 +59,8 @@ public interface CustomConfigurationProviders {
 
     /**
      * @param corsConfigProvider a provider, for the {@link
-     *     org.sdase.commons.server.cors.CorsConfiguration}, e.g. {@code MyAppConfig::getCors}
+     *     org.sdase.commons.server.dropwizard.bundles.CorsConfiguration}, e.g. {@code
+     *     MyAppConfig::getCors}
      * @return the builder instance
      */
     OpenApiInitialBuilder<C> withCorsConfigProvider(CorsConfigProvider<C> corsConfigProvider);

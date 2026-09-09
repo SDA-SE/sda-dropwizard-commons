@@ -5,7 +5,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.header.internals.RecordHeaders;
-import org.sdase.commons.shared.tracing.TraceTokenContext;
+import org.sdase.commons.server.dropwizard.tracing.TraceTokenContext;
 
 /**
  * A delegating {@link Producer} that adds an additional {@value

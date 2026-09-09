@@ -1,6 +1,6 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-shared-tracing')
+  api project(':sda-commons-shared-tracing') // TODO next-major remove deprecated dependency
 
   testImplementation project(':sda-commons-server-testing')
 }

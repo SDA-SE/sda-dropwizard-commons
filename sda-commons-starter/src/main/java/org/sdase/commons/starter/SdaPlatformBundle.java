@@ -12,13 +12,13 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import org.sdase.commons.server.auth.AuthBundle;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
-import org.sdase.commons.server.consumer.ConsumerTokenBundle;
-import org.sdase.commons.server.cors.CorsBundle;
-import org.sdase.commons.server.cors.CorsConfigProvider;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
+import org.sdase.commons.server.dropwizard.bundles.ConsumerTokenBundle;
+import org.sdase.commons.server.dropwizard.bundles.CorsBundle;
 import org.sdase.commons.server.dropwizard.bundles.DefaultLoggingConfigurationBundle;
+import org.sdase.commons.server.dropwizard.bundles.InternalHealthCheckEndpointBundle;
 import org.sdase.commons.server.dropwizard.bundles.MetadataContextBundle;
-import org.sdase.commons.server.healthcheck.InternalHealthCheckEndpointBundle;
+import org.sdase.commons.server.dropwizard.bundles.TraceTokenBundle;
 import org.sdase.commons.server.jackson.JacksonConfigurationBundle;
 import org.sdase.commons.server.opa.OpaBundle;
 import org.sdase.commons.server.opa.OpaBundle.OpaBuilder;
@@ -28,7 +28,6 @@ import org.sdase.commons.server.opentelemetry.OpenTelemetryBundle;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
 import org.sdase.commons.server.prometheus.PrometheusConfigurationProvider;
 import org.sdase.commons.server.security.SecurityBundle;
-import org.sdase.commons.server.trace.TraceTokenBundle;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders.AuthConfigProviderBuilder;
 import org.sdase.commons.starter.builder.CustomConfigurationProviders.CorsConfigProviderBuilder;
@@ -212,7 +211,7 @@ public class SdaPlatformBundle<C extends Configuration> implements ConfiguredBun
 
     @Override
     public OpenApiInitialBuilder<C> withCorsConfigProvider(
-        CorsConfigProvider<C> corsConfigProvider) {
+        CorsBundle.CorsConfigProvider<C> corsConfigProvider) {
       this.corsBundleBuilder = CorsBundle.builder().withCorsConfigProvider(corsConfigProvider);
       return this;
     }

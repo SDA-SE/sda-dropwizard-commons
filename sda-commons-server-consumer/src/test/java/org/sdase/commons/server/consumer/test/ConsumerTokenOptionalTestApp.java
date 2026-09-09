@@ -13,7 +13,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.sdase.commons.server.consumer.ConsumerTokenBundle;
 import org.sdase.commons.server.dropwizard.bundles.ConfigurationSubstitutionBundle;
-import org.sdase.commons.shared.tracing.ConsumerTracing;
+import org.sdase.commons.server.dropwizard.tracing.ConsumerTracing;
 
 @Path("/")
 public class ConsumerTokenOptionalTestApp extends Application<ConsumerTokenTestConfig> {

@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.jetty.io.EofException;
 import org.junit.jupiter.api.Test;
+import org.sdase.commons.server.dropwizard.model.error.ApiError;
+import org.sdase.commons.server.dropwizard.model.error.ApiException;
 import org.sdase.commons.server.jackson.errors.EarlyEofExceptionMapper;
-import org.sdase.commons.shared.api.error.ApiError;
-import org.sdase.commons.shared.api.error.ApiException;
 
 /*
  * Test for exception mapper. Most of the exception mapper are tested within integration tests

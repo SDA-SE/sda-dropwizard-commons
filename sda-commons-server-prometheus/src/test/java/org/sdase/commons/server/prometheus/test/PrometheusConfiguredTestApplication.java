@@ -13,8 +13,8 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Response;
 import org.sdase.commons.client.jersey.ClientFactory;
 import org.sdase.commons.client.jersey.JerseyClientBundle;
+import org.sdase.commons.server.dropwizard.tracing.ConsumerTracing;
 import org.sdase.commons.server.prometheus.PrometheusBundle;
-import org.sdase.commons.shared.tracing.ConsumerTracing;
 
 @Path("/")
 public class PrometheusConfiguredTestApplication extends Application<PrometheusTestConfiguration> {
