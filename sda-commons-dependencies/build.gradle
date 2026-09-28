@@ -187,7 +187,7 @@ dependencies {
     // sda-commons-server-opentelemetry
     api "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-apache-httpclient-5.0:${openTelemetryAlpha2Version}"
     api "io.opentelemetry.instrumentation:opentelemetry-apache-httpclient-5.2:${openTelemetryAlpha2Version}"
-    api "io.opentelemetry.semconv:opentelemetry-semconv:1.43.0"
+    api "io.opentelemetry.semconv:opentelemetry-semconv:1.44.0"
     // stable artifact of the same release train as openTelemetryAlpha2Version, published without the -alpha suffix
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:${openTelemetryAlpha2Version - '-alpha'}"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator:${openTelemetryAlpha2Version}"
