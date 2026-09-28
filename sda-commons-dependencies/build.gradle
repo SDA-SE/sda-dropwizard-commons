@@ -9,7 +9,7 @@ javaPlatform {
 ext {
   antlr4Version = '4.13.2'
   apacheHttpClient5Version = '5.6.4'
-  apacheHttpCore5Version = '5.4.3'
+  apacheHttpCore5Version = '5.4.4'
   dropwizardVersion = '5.0.2'
   prometheusVersion = '1.9.0'
   micrometerVersion = '1.17.1'
