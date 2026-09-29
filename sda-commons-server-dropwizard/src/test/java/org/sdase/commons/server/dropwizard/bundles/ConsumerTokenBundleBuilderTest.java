@@ -1,0 +1,26 @@
+package org.sdase.commons.server.dropwizard.bundles;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Environment;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+class ConsumerTokenBundleBuilderTest {
+
+  @Test
+  void shouldAddAutoExcludeForSwaggerAndOpenApi() {
+
+    ConsumerTokenConfig config = new ConsumerTokenConfig();
+
+    ConsumerTokenBundle<Configuration> bundle =
+        ConsumerTokenBundle.builder().withConfigProvider(c -> config).build();
+
+    bundle.run(
+        Mockito.mock(Configuration.class),
+        Mockito.mock(Environment.class, Mockito.RETURNS_DEEP_STUBS));
+
+    assertThat(config.getExcludePatterns()).containsExactly("openapi\\.(json|yaml)");
+  }
+}

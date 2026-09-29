@@ -1,37 +1,13 @@
 package org.sdase.commons.server.cors;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class CorsConfiguration {
-
-  /**
-   * The allowed origins. An empty List if no cross origin requests are allowed. These origins are
-   * added to the {@link org.eclipse.jetty.servlets.CrossOriginFilter} where they are defined as a
-   * magic regular expression:
-   *
-   * <blockquote>
-   *
-   * <p>If an allowed origin contains one or more * characters (for example http://*.domain.com),
-   * then "*" characters are converted to ".*", "." characters are escaped to "\." and the resulting
-   * allowed origin interpreted as a regular expression.
-   *
-   * <p>Allowed origins can therefore be more complex expressions such as https?://*.domain.[a-z]{3}
-   * that matches http or https, multiple subdomains and any 3 letter top-level domain (.com, .net,
-   * .org, etc.).
-   *
-   * </blockquote>
-   */
-  private List<String> allowedOrigins = new ArrayList<>();
-
-  public List<String> getAllowedOrigins() {
-    if (allowedOrigins == null) {
-      return new ArrayList<>();
-    }
-    return allowedOrigins;
-  }
-
-  public void setAllowedOrigins(List<String> allowedOrigins) {
-    this.allowedOrigins = allowedOrigins;
-  }
-}
+/**
+ * @deprecated This class will be replaced by {@link
+ *     org.sdase.commons.server.dropwizard.bundles.CorsConfiguration} when removing the module
+ *     {@code sda-commons-server-cors}. To prepare for the upcoming breaking change, update all
+ *     references to {@link org.sdase.commons.server.dropwizard.bundles.CorsConfiguration} and
+ *     remove direct dependencies to {@code sda-commons-server-cors}.
+ */
+@Deprecated(forRemoval = true)
+@SuppressWarnings("java:S2176") // intentionally the same name until removed
+public class CorsConfiguration
+    extends org.sdase.commons.server.dropwizard.bundles.CorsConfiguration {}

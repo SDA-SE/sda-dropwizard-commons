@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.auth.config.AuthConfig;
-import org.sdase.commons.server.cors.CorsBundle;
+import org.sdase.commons.server.dropwizard.bundles.CorsBundle;
 import org.sdase.commons.starter.test.BundleAssertion;
 
 class CorsBuilderTest {

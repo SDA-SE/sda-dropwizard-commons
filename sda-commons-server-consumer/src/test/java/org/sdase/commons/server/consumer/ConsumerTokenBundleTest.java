@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.consumer.test.ConsumerTokenRequiredTestApp;
 import org.sdase.commons.server.consumer.test.ConsumerTokenTestApp;
 import org.sdase.commons.server.consumer.test.ConsumerTokenTestConfig;
-import org.sdase.commons.shared.api.error.ApiError;
+import org.sdase.commons.server.dropwizard.model.error.ApiError;
 
 class ConsumerTokenBundleTest {
 

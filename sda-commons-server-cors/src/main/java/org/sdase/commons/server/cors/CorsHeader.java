@@ -1,5 +1,9 @@
 package org.sdase.commons.server.cors;
 
+/**
+ * @deprecated Will be removed without replacement. The provided header keys are used in tests only.
+ */
+@Deprecated(forRemoval = true)
 public class CorsHeader {
 
   // Request headers

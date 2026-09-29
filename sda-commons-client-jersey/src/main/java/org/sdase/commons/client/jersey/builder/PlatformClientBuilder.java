@@ -11,7 +11,7 @@ import org.sdase.commons.client.jersey.filter.AuthHeaderClientFilter;
 import org.sdase.commons.client.jersey.filter.TraceTokenClientFilter;
 import org.sdase.commons.server.dropwizard.metadata.MetadataContext;
 import org.sdase.commons.server.dropwizard.metadata.MetadataContextClientRequestFilter;
-import org.sdase.commons.shared.tracing.ConsumerTracing;
+import org.sdase.commons.server.dropwizard.tracing.ConsumerTracing;
 
 public class PlatformClientBuilder extends AbstractBaseClientBuilder<PlatformClientBuilder> {
 

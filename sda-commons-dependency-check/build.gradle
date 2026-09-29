@@ -37,7 +37,7 @@ dependencies {
   api project(':sda-commons-shared-certificates')
   api project(':sda-commons-shared-error')
   api project(':sda-commons-shared-forms')
-  api project(':sda-commons-shared-tracing')
+  api project(':sda-commons-shared-tracing') // TODO next-major remove deprecated dependency
   api project(':sda-commons-shared-yaml')
   api project(':sda-commons-starter')
 }
