@@ -4,22 +4,16 @@ package org.sdase.commons.shared.tracing;
  * Shared properties to trace the consumer that initiated a request. A consumer identifies itself in
  * the request header. The consumer information is shared in the request and used for logging and
  * monitoring.
+ *
+ * @deprecated This class will be replaced by {@link
+ *     org.sdase.commons.server.dropwizard.tracing.ConsumerTracing} when removing the module {@code
+ *     sda-commons-shared-tracing}. To prepare for the upcoming breaking change, update all
+ *     references to {@link org.sdase.commons.server.dropwizard.tracing.ConsumerTracing} and remove
+ *     direct dependencies to {@code sda-commons-shared-tracing}.
  */
-public class ConsumerTracing {
+@Deprecated(forRemoval = true)
+@SuppressWarnings("java:S2176") // intentionally the same name until removed
+public class ConsumerTracing extends org.sdase.commons.server.dropwizard.tracing.ConsumerTracing {
 
   private ConsumerTracing() {}
-
-  /** The header name used to send the consumer token. */
-  public static final String TOKEN_HEADER = "Consumer-Token";
-
-  /** Common name to share the consumer name internally, e.g. as attribute in the request context */
-  public static final String NAME_ATTRIBUTE = ConsumerTracing.class.getName() + "_NAME";
-
-  /**
-   * Common name to share the consumer token internally, e.g. as attribute in the request context
-   */
-  public static final String TOKEN_ATTRIBUTE = ConsumerTracing.class.getName() + "_TOKEN";
-
-  /** Name of the consumer name used to promote it in the {@code org.slf4j.MDC} */
-  public static final String NAME_MDC_KEY = "Consumer-Name";
 }

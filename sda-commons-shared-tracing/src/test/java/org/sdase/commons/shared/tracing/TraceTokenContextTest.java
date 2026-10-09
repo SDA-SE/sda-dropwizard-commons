@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.MDC;
 
+@Deprecated(forRemoval = true) // until removed, this test ensures backward compatibility
 @SuppressWarnings("resource")
 class TraceTokenContextTest {
 

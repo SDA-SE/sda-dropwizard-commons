@@ -2,7 +2,7 @@ package org.sdase.commons.starter.builder;
 
 import io.dropwizard.core.Configuration;
 import org.sdase.commons.server.auth.config.AuthConfigProvider;
-import org.sdase.commons.server.cors.CorsConfigProvider;
+import org.sdase.commons.server.dropwizard.bundles.CorsBundle.CorsConfigProvider;
 import org.sdase.commons.server.opa.config.OpaConfigProvider;
 import org.sdase.commons.starter.SdaPlatformBundle;
 import org.sdase.commons.starter.SdaPlatformConfiguration;

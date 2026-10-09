@@ -1,7 +1,7 @@
 package org.sdase.commons.starter.builder;
 
 import io.dropwizard.core.Configuration;
-import org.sdase.commons.server.cors.CorsBundle;
+import org.sdase.commons.server.dropwizard.bundles.CorsBundle;
 
 public interface CorsCustomizer<T extends Configuration> {
 

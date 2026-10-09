@@ -2,7 +2,7 @@ dependencies {
   api project(':sda-commons-server-dropwizard')
 
   api project(':sda-commons-server-healthcheck')
-  api project(':sda-commons-shared-tracing')
+  api project(':sda-commons-shared-tracing') // TODO next-major remove deprecated dependency
 
   api "org.apache.kafka:kafka-clients"
 

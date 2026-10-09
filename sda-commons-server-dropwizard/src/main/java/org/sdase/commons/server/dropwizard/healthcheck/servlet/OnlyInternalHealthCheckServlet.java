@@ -1,0 +1,117 @@
+package org.sdase.commons.server.dropwizard.healthcheck.servlet;
+
+import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
+
+import com.codahale.metrics.health.HealthCheck;
+import com.codahale.metrics.health.HealthCheckFilter;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.json.HealthCheckModule;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import io.dropwizard.metrics.servlets.HealthCheckServlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.concurrent.ExecutorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Servlet that provides only the <b>internal</b> health check data of the application as JSON
+ * response
+ */
+public class OnlyInternalHealthCheckServlet extends HttpServlet {
+
+  private static final String HEALTH_CHECK_EXECUTOR =
+      HealthCheckServlet.class.getCanonicalName() + ".executor";
+
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(OnlyInternalHealthCheckServlet.class);
+
+  private final transient HealthCheckRegistry healthCheckRegistry;
+  private transient ExecutorService executorService;
+  private transient HealthCheckFilter healthCheckFilter;
+  private final transient ObjectMapper mapper;
+
+  public OnlyInternalHealthCheckServlet(HealthCheckRegistry healthCheckRegistry) {
+    this.healthCheckRegistry = healthCheckRegistry;
+    this.mapper = new ObjectMapper().registerModule(new HealthCheckModule());
+  }
+
+  @Override
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
+
+    final ServletContext context = config.getServletContext();
+    final Object executorAttr = context.getAttribute(HEALTH_CHECK_EXECUTOR);
+
+    if (executorAttr instanceof ExecutorService executorService1) {
+      executorService = executorService1;
+    }
+
+    healthCheckFilter = new OnlyInternalHealthCheckFilter();
+  }
+
+  @Override
+  public void destroy() {
+    super.destroy();
+    healthCheckRegistry.shutdown();
+  }
+
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+    final Map<String, HealthCheck.Result> results = runHealthChecks();
+
+    resp.setContentType(MediaType.APPLICATION_JSON);
+    resp.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
+
+    if (results.isEmpty()) {
+      resp.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
+
+    } else {
+      if (isAllHealthy(results)) {
+        resp.setStatus(SC_OK);
+      } else {
+        results.entrySet().stream()
+            .filter(entry -> !entry.getValue().isHealthy())
+            .forEach(
+                entry ->
+                    LOGGER.warn(
+                        "Internal healthcheck failed: {}, message: {}",
+                        entry.getKey(),
+                        entry.getValue().getMessage()));
+        resp.setStatus(SC_INTERNAL_SERVER_ERROR);
+      }
+
+      try {
+        getWriter(Boolean.parseBoolean(req.getParameter("pretty")))
+            .writeValue(resp.getWriter(), results);
+      } catch (IOException e) {
+        // nothing to do here, sonar likes to have this exception caught: squid:S1989
+      }
+    }
+  }
+
+  private ObjectWriter getWriter(boolean prettyPrint) {
+    return prettyPrint ? mapper.writerWithDefaultPrettyPrinter() : mapper.writer();
+  }
+
+  private SortedMap<String, HealthCheck.Result> runHealthChecks() {
+    if (executorService == null) {
+      return healthCheckRegistry.runHealthChecks(healthCheckFilter);
+    }
+    return healthCheckRegistry.runHealthChecks(executorService, healthCheckFilter);
+  }
+
+  private static boolean isAllHealthy(Map<String, HealthCheck.Result> results) {
+    return results.values().stream().allMatch(HealthCheck.Result::isHealthy);
+  }
+}

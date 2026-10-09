@@ -4,7 +4,7 @@ import io.dropwizard.servlets.tasks.Task;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
-import org.sdase.commons.shared.tracing.TraceTokenContext;
+import org.sdase.commons.server.dropwizard.tracing.TraceTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

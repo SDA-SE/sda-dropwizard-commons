@@ -28,13 +28,13 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.NotImplementedException;
 import org.sdase.commons.server.auth.JwtPrincipal;
+import org.sdase.commons.server.dropwizard.tracing.TraceTokenContext;
 import org.sdase.commons.server.opa.OpaJwtPrincipal;
 import org.sdase.commons.server.opa.config.OpaConfig;
 import org.sdase.commons.server.opa.extension.OpaInputExtension;
 import org.sdase.commons.server.opa.filter.model.OpaInput;
 import org.sdase.commons.server.opa.filter.model.OpaRequest;
 import org.sdase.commons.server.opa.filter.model.OpaResponse;
-import org.sdase.commons.shared.tracing.TraceTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
