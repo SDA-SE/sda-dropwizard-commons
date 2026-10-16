@@ -8,32 +8,56 @@ javaPlatform {
 
 ext {
   antlr4Version = '4.13.2'
+  //
   apacheHttpClient5Version = '5.6.5'
+  //
   apacheHttpCore5Version = '5.4.4'
-  dropwizardVersion = '5.0.2'
+  //
   prometheusVersion = '1.9.0'
+  //
   micrometerVersion = '1.17.1'
+  //
   swaggerCoreV3Version = '2.2.55'
+  //
   weldVersion = '6.0.4.Final'
+  //
   jacksonVersion = '2.22.3'
+  //
   jackson3Version = '3.2.3'
+  //
   jsonUnitVersion = '6.2.0'
+  //
   scalaVersion = '2.13.18' // align transitive dependency from various modules, keep up to date
+  //
   kafkaVersion = '3.9.2'
+  //
   kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
+  //
   dbRiderVersion = '1.44.0'
+  //
   kotlinVersion = '2.4.20'
+  //
   kotlinxCoroutinesVersion = '1.11.0'
+  //
   resilience4jVersion = '2.4.0'
+  //
   openTelemetryVersion = '1.65.0'
+  //
   openTelemetryAlpha2Version = '2.32.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
   mongoDbDriverVersion = '5.13.0'
+  //
   tuprologVersion = '0.20.9' // don't upgrade separately! use version from database-rider
+  //
   bouncyCastleVersion = '1.86'
+  //
   victoolsVersion = '4.38.0'
+  //
   flywayVersion = '13.10.0'
+  //
   jettyVersion = "12.1.14"
+  //
+  dropwizardVersion = '5.0.2'
 }
 
 dependencies {
@@ -61,6 +85,7 @@ dependencies {
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
   }
   api enforcedPlatform("software.amazon.awssdk:bom:2.55.13")
+  //
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryVersion}-alpha")
@@ -82,16 +107,16 @@ dependencies {
     api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
     api "io.github.classgraph:classgraph:4.8.197"
-
+    //
     api "at.yawk.lz4:lz4-java:1.12.0"
-
+    //
     api "org.yaml:snakeyaml:2.3", {
       because "conflict between com.github.database-rider:rider-core and com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
       because "vulnerability CVE-2022-1471 in 1.33 and below"
     }
-
+    //
     api 'jakarta.annotation:jakarta.annotation-api:2.1.1'
-
+    //
     api "org.wiremock:wiremock-jetty12:3.13.2"
     api "net.minidev:json-smart:2.6.0", {
       because 'conflict between json-path 2.7.0 (2.4.7) and wiremock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
@@ -125,6 +150,7 @@ dependencies {
 
     // sda-commons-server-mongo-testing, sda-commons-server-spring-data-mongo
     api 'org.springframework.data:spring-data-mongodb:5.1.1'
+    //
     api "de.flapdoodle.embed:de.flapdoodle.embed.mongo:5.0.0"
     api "io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:${openTelemetryAlpha2Version}"
     // check if commons-compress management is still needed after flapdoodle upgrade
@@ -211,6 +237,7 @@ dependencies {
 
     // Scala: Version conflicts between Jackson and Kafka
     api "org.scala-lang.modules:scala-java8-compat_2.13:1.0.2"
+    //
     api "org.scala-lang.modules:scala-collection-compat_2.13:2.14.0"
     api "org.scala-lang:scala-library:$scalaVersion"
     api "org.scala-lang:scala-reflect:$scalaVersion"
@@ -220,7 +247,7 @@ dependencies {
 
     //Fixes CVE-2024-29371, Kafka 3.9.1 still uses 0.9.4; can be removed at a future update of Kafka
     api 'org.bitbucket.b_c:jose4j:0.9.7'
-
+    //
     api 'com.github.jknack:handlebars:4.5.5' //CVE-2026-55760 (check if still needed by next wiremock update)
   }
 }
