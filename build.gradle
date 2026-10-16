@@ -258,7 +258,7 @@ tasks.register("testReport", TestReport) {
       subprojects.findAll {
         !javaPlatformModules.contains(it.name)
       }*.test.binaryResultsDirectory
-      )
+  )
 }
 
 // Create a combined XML report of all modules in the root project
