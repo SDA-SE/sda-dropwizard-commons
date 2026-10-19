@@ -83,6 +83,10 @@ dependencies {
     exclude group: 'com.fasterxml.jackson.module'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
+    exclude group: 'org.apache.httpcomponents.core5', module: 'httpcore5'
+    exclude group: 'org.apache.httpcomponents.core5', module: 'httpcore5-h2'
+    exclude group: 'org.apache.httpcomponents.client5', module: 'httpclient5'
+    exclude group: 'org.apache.httpcomponents.client5', module: 'httpclient5-fluent'
   }
   api enforcedPlatform("software.amazon.awssdk:bom:2.56.0")
   //
