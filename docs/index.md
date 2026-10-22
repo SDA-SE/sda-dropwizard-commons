@@ -83,6 +83,11 @@ Cross-origin resource sharing for the service.
 The module [`sda-commons-shared-forms`](./shared-forms.md) adds all required dependencies to support
 `multipart/*` in Dropwizard applications.
 
+##### JSON Schema
+
+The module [`sda-commons-shared-jsonschema`](./shared-jsonschema.md) generates JSON Schema Draft
+2020-12 documents from Java types and their Jackson, Jakarta Validation, and Swagger annotations.
+
 ##### Dropwizard
 
 The module [`sda-commons-server-dropwizard`](./server-dropwizard.md) provides

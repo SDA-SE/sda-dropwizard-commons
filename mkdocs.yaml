@@ -55,6 +55,7 @@ nav:
     - Shared Certificates: shared-certificates.md
     - Shared Error: shared-error.md
     - Shared Forms: shared-forms.md
+    - Shared JSON Schema: shared-jsonschema.md
     - Shared Tracing: shared-tracing.md
     - Shared Yaml: shared-yaml.md
     - Starter: starter.md
