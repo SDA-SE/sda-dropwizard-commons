@@ -23,7 +23,7 @@ ext {
   //
   jacksonVersion = '2.22.3'
   //
-  jackson3Version = '3.2.3'
+  jackson3Version = '3.2.4'
   //
   jsonUnitVersion = '6.3.0'
   //
