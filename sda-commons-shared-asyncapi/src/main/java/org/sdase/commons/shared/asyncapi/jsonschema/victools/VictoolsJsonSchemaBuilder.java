@@ -49,7 +49,7 @@ public class VictoolsJsonSchemaBuilder implements JsonSchemaBuilder {
             .with(jacksonModule)
             .with(jakartaValidationModule)
             .with(swagger2Module)
-            .with(new SwaggerExampleModule())
+            .with(new org.sdase.commons.shared.jsonschema.victools.SwaggerExampleModule())
             .with(new NotBlankModule());
     // see https://github.com/victools/jsonschema-generator/issues/125#issuecomment-657014858
     configBuilder
