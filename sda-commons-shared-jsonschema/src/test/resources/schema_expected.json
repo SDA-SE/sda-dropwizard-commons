@@ -1,16 +1,16 @@
 {
-  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "$schema" : "https://json-schema.org/draft/2020-12/schema",
   "oneOf" : [ {
-    "$ref" : "#/definitions/CustomerCreated"
+    "$ref" : "#/$defs/CustomerCreated"
   }, {
-    "$ref" : "#/definitions/CustomerUpdated"
+    "$ref" : "#/$defs/CustomerUpdated"
   }, {
     "type" : "array",
     "items" : {
-      "$ref" : "#/definitions/CustomerCreated"
+      "$ref" : "#/$defs/CustomerCreated"
     }
   } ],
-  "definitions" : {
+  "$defs" : {
     "CustomerCreated" : {
       "type" : "object",
       "properties" : {

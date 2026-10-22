@@ -16,16 +16,15 @@ class JsonSchemaGeneratorTest {
   private final JsonSchemaGenerator generator = JsonSchemaGenerator.defaultGenerator();
 
   @Test
-  void generatesStandaloneDraft7SchemaWithValidationAndExamples() {
+  void generatesStandaloneDraft202012SchemaWithValidationAndExamples() {
     ObjectNode schema = generator.generate(ContractBundle.class);
 
     assertThat(schema.path("$schema").asText())
-        .isEqualTo("http://json-schema.org/draft-07/schema#");
-    assertThat(schema.at("/definitions/ContractBundle/properties/id/minLength").asInt())
-        .isEqualTo(1);
-    assertThat(schema.at("/definitions/ContractBundle/properties/id/pattern").asText())
+        .isEqualTo("https://json-schema.org/draft/2020-12/schema");
+    assertThat(schema.at("/$defs/ContractBundle/properties/id/minLength").asInt()).isEqualTo(1);
+    assertThat(schema.at("/$defs/ContractBundle/properties/id/pattern").asText())
         .isEqualTo("^.*\\S+.*$");
-    assertThat(schema.at("/definitions/ContractBundle/properties/id/examples/0").asText())
+    assertThat(schema.at("/$defs/ContractBundle/properties/id/examples/0").asText())
         .isEqualTo("contract-42");
     assertInternalReferencesResolve(schema);
   }
@@ -37,12 +36,11 @@ class JsonSchemaGeneratorTest {
     ObjectNode catalog = generator.generate(List.of(ContractBundle.class, listOfContractBundles));
 
     assertThat(catalog.path("$schema").asText())
-        .isEqualTo("http://json-schema.org/draft-07/schema#");
-    assertThat(catalog.at("/oneOf/0/$ref").asText()).isEqualTo("#/definitions/ContractBundle");
-    assertThat(catalog.at("/definitions/ContractBundle/type").asText()).isEqualTo("object");
+        .isEqualTo("https://json-schema.org/draft/2020-12/schema");
+    assertThat(catalog.at("/oneOf/0/$ref").asText()).isEqualTo("#/$defs/ContractBundle");
+    assertThat(catalog.at("/$defs/ContractBundle/type").asText()).isEqualTo("object");
     assertThat(catalog.at("/oneOf/1/type").asText()).isEqualTo("array");
-    assertThat(catalog.at("/oneOf/1/items/$ref").asText())
-        .isEqualTo("#/definitions/ContractBundle");
+    assertThat(catalog.at("/oneOf/1/items/$ref").asText()).isEqualTo("#/$defs/ContractBundle");
     assertInternalReferencesResolve(catalog);
   }
 
@@ -50,11 +48,10 @@ class JsonSchemaGeneratorTest {
   void keepsSameSimpleNameModelsAsSeparateDefinitions() {
     ObjectNode schema = generator.generate(DuplicateNames.class);
 
-    String firstReference = schema.at("/definitions/DuplicateNames/properties/first/$ref").asText();
-    String secondReference =
-        schema.at("/definitions/DuplicateNames/properties/second/$ref").asText();
+    String firstReference = schema.at("/$defs/DuplicateNames/properties/first/$ref").asText();
+    String secondReference = schema.at("/$defs/DuplicateNames/properties/second/$ref").asText();
 
-    assertThat(firstReference).startsWith("#/definitions/").isNotEqualTo(secondReference);
+    assertThat(firstReference).startsWith("#/$defs/").isNotEqualTo(secondReference);
     assertThat(schema.at(firstReference.substring(1) + "/properties/first").isMissingNode())
         .isFalse();
     assertThat(schema.at(secondReference.substring(1) + "/properties/second").isMissingNode())

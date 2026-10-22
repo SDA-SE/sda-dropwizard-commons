@@ -28,11 +28,12 @@ import org.sdase.commons.shared.jsonschema.victools.DefaultSchemaDefinitionNamin
 import org.sdase.commons.shared.jsonschema.victools.NotBlankModule;
 import org.sdase.commons.shared.jsonschema.victools.SwaggerExampleModule;
 
-/** Generates JSON Schema Draft 07 documents for explicit payload, request, and response types. */
+/**
+ * Generates JSON Schema Draft 2020-12 documents for explicit payload, request, and response types.
+ */
 public final class JsonSchemaGenerator {
 
-  private static final String DRAFT_7_META_SCHEMA = "http://json-schema.org/draft-07/schema#";
-
+  private static final SchemaVersion SCHEMA_VERSION = SchemaVersion.DRAFT_2020_12;
   private final SchemaGenerator schemaGenerator;
 
   /**
@@ -47,7 +48,7 @@ public final class JsonSchemaGenerator {
   /**
    * Creates generator with SDA Commons default configuration.
    *
-   * @return JSON Schema Draft 07 generator
+   * @return JSON Schema Draft 2020-12 generator
    */
   public static JsonSchemaGenerator defaultGenerator() {
     var jacksonModule =
@@ -59,7 +60,7 @@ public final class JsonSchemaGenerator {
     var jakartaValidationModule =
         new JakartaValidationModule(INCLUDE_PATTERN_EXPRESSIONS, NOT_NULLABLE_FIELD_IS_REQUIRED);
     var configBuilder =
-        new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_7, OptionPreset.PLAIN_JSON)
+        new SchemaGeneratorConfigBuilder(SCHEMA_VERSION, OptionPreset.PLAIN_JSON)
             .with(DEFINITIONS_FOR_ALL_OBJECTS)
             .with(DEFINITION_FOR_MAIN_SCHEMA)
             .with(DEFINITIONS_FOR_MEMBER_SUPERTYPES)
@@ -78,21 +79,21 @@ public final class JsonSchemaGenerator {
   }
 
   /**
-   * Generates standalone Draft 07 schema for one explicit payload type.
+   * Generates standalone Draft 2020-12 schema for one explicit payload type.
    *
    * @param root payload Java type
-   * @return schema with reusable models under {@code definitions}
+   * @return schema with reusable models under {@code $defs}
    */
   public ObjectNode generate(Type root) {
     return schemaGenerator.generateSchema(requireNonNull(root));
   }
 
   /**
-   * Generates Draft 07 catalog for explicit payload, request, or response types.
+   * Generates Draft 2020-12 catalog for explicit payload, request, or response types.
    *
    * <p>The catalog root references every supplied type in {@code oneOf}. Consumers requiring one
    * specific type can validate its definition directly, for example {@code
-   * schemas.json#/definitions/CustomerCreated}.
+   * schemas.json#/$defs/CustomerCreated}.
    *
    * @param roots payload, request, or response Java types
    * @return catalog with reusable models under {@code definitions}
@@ -107,9 +108,9 @@ public final class JsonSchemaGenerator {
     }
 
     ObjectNode catalog = JsonNodeFactory.instance.objectNode();
-    catalog.put("$schema", DRAFT_7_META_SCHEMA);
+    catalog.put("$schema", SCHEMA_VERSION.getIdentifier());
     catalog.set("oneOf", references);
-    catalog.set("definitions", schemas.collectDefinitions("definitions"));
+    catalog.set("$defs", schemas.collectDefinitions("$defs"));
     return catalog;
   }
 
