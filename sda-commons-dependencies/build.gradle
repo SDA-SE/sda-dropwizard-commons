@@ -21,7 +21,7 @@ ext {
   //
   weldVersion = '6.0.4.Final'
   //
-  jacksonVersion = '2.22.3'
+  jacksonVersion = '2.22.4'
   //
   jackson3Version = '3.2.3'
   //
