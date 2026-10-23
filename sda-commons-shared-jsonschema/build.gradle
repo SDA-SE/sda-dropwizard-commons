@@ -1,0 +1,12 @@
+dependencies {
+  api project(':sda-commons-server-jackson')
+
+  api 'com.github.victools:jsonschema-generator'
+  api 'com.github.victools:jsonschema-module-jackson'
+  api 'com.github.victools:jsonschema-module-jakarta-validation'
+  api 'com.github.victools:jsonschema-module-swagger-2'
+
+  api 'io.swagger.core.v3:swagger-annotations-jakarta'
+
+  testImplementation project(':sda-commons-server-testing')
+}

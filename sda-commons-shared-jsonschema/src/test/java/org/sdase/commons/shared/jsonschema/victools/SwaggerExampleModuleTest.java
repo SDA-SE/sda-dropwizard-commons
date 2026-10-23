@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.jsonschema.victools;
+package org.sdase.commons.shared.jsonschema.victools;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
