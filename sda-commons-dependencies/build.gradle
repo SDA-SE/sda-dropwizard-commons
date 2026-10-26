@@ -88,7 +88,7 @@ dependencies {
     exclude group: 'org.apache.httpcomponents.client5', module: 'httpclient5'
     exclude group: 'org.apache.httpcomponents.client5', module: 'httpclient5-fluent'
   }
-  api enforcedPlatform("software.amazon.awssdk:bom:2.56.0")
+  api enforcedPlatform("software.amazon.awssdk:bom:2.57.3")
   //
   api enforcedPlatform("jakarta.platform:jakarta.jakartaee-bom:11.0.0")
   api enforcedPlatform("io.opentelemetry:opentelemetry-bom:$openTelemetryVersion")
