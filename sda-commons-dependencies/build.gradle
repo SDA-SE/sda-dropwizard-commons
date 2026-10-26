@@ -25,7 +25,7 @@ ext {
   //
   jackson3Version = '3.2.4'
   //
-  jsonUnitVersion = '6.3.0'
+  jsonUnitVersion = '6.4.0'
   //
   scalaVersion = '2.13.18' // align transitive dependency from various modules, keep up to date
   //
