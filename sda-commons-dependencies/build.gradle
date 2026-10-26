@@ -15,7 +15,7 @@ ext {
   //
   prometheusVersion = '1.10.0'
   //
-  micrometerVersion = '1.17.1'
+  micrometerVersion = '1.17.2'
   //
   swaggerCoreV3Version = '2.2.55'
   //
