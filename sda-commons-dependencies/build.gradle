@@ -81,6 +81,7 @@ dependencies {
     exclude group: 'com.fasterxml.jackson.datatype'
     exclude group: 'com.fasterxml.jackson.jaxrs'
     exclude group: 'com.fasterxml.jackson.module'
+    exclude group: 'com.google.guava'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
     exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
     exclude group: 'org.apache.httpcomponents.core5', module: 'httpcore5'
@@ -102,6 +103,10 @@ dependencies {
   api enforcedPlatform("com.github.victools:jsonschema-generator-bom:${victoolsVersion}")
 
   api enforcedPlatform("org.ow2.asm:asm-bom:9.11.1") //because conflicts
+  //
+  api enforcedPlatform("com.google.guava:guava-bom:33.7.2-jre"), {
+    because "CVE-2026-102554 in 33.6.0-jre defined by dropwizard-dependencies 5.0.2"
+  }
 
   constraints {
     // overall conflicts
