@@ -1,5 +1,6 @@
 dependencies {
   api project(':sda-commons-server-jackson')
+  api project(':sda-commons-shared-jsonschema')
   api project(':sda-commons-shared-yaml')
 
   api 'com.github.victools:jsonschema-generator'

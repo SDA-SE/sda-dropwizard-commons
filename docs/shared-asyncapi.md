@@ -89,15 +89,11 @@ diverge over time.
 
 ### Generating Schema Files
 
-If desired, the module also allows to generate the JSON schema files, for example to use them to validate test data.
-Use [JsonSchemaGenerator](https://github.com/SDA-SE/sda-dropwizard-commons/tree/main/sda-commons-shared-asyncapi/src/main/java/org/sdase/commons/shared/asyncapi/JsonSchemaGenerator.java) to create standalone JSON schemas:
+Use the [`sda-commons-shared-jsonschema`](./shared-jsonschema.md) module to create standalone JSON
+Schema Draft 2020-12 documents, for example to validate test data:
 
 ```java
-String expected = JsonSchemaGenerator
-    .builder()
-    .forClass(BaseEvent.class)
-    .withFailOnUnknownProperties(true)
-    .generateYaml();
+ObjectNode schema = JsonSchemaGenerator.defaultGenerator().generate(BaseEvent.class);
 ```
 
 
