@@ -41,7 +41,7 @@ ext {
   //
   resilience4jVersion = '2.4.0'
   //
-  openTelemetryVersion = '1.65.0'
+  openTelemetryVersion = '1.67.0'
   //
   openTelemetryAlpha2Version = '2.32.0-alpha'
   // should be aligned with transitive dependency of Spring Data MongoDB
