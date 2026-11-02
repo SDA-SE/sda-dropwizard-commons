@@ -6,12 +6,7 @@ import static org.apache.kafka.clients.consumer.ConsumerRecord.NULL_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -65,7 +60,7 @@ class MessageListenerStrategyMetadataContextTest {
     recordsMap.put(
         new TopicPartition(TOPIC, 2),
         List.of(consumerRecord("three", "three-value", List.of(Map.entry("tenant-id", "three")))));
-    var givenRecords = new ConsumerRecords<>(recordsMap);
+    var givenRecords = new ConsumerRecords<>(recordsMap, Collections.emptyMap());
 
     //noinspection unchecked
     messageListenerStrategy.processRecords(givenRecords, mock(KafkaConsumer.class));
@@ -87,7 +82,8 @@ class MessageListenerStrategyMetadataContextTest {
             Map.of(
                 new TopicPartition(TOPIC, 1),
                 List.of(
-                    consumerRecord("one", "one-value", List.of(Map.entry("tenant-id", "one"))))));
+                    consumerRecord("one", "one-value", List.of(Map.entry("tenant-id", "one"))))),
+            Collections.emptyMap());
 
     //noinspection unchecked
     messageListenerStrategy.processRecords(givenRecords, mock(KafkaConsumer.class));
@@ -109,7 +105,8 @@ class MessageListenerStrategyMetadataContextTest {
                         List.of(
                             Map.entry("tenant-id", "one"),
                             Map.entry("tenant-id", " not normal "),
-                            Map.entry("tenant-id", "   "))))));
+                            Map.entry("tenant-id", "   "))))),
+            Collections.emptyMap());
 
     //noinspection unchecked
     messageListenerStrategy.processRecords(givenRecords, mock(KafkaConsumer.class));
@@ -128,7 +125,8 @@ class MessageListenerStrategyMetadataContextTest {
             Map.of(
                 new TopicPartition(TOPIC, 1),
                 List.of(
-                    consumerRecord("one", "one-value", List.of(Map.entry("customer-id", "one"))))));
+                    consumerRecord("one", "one-value", List.of(Map.entry("customer-id", "one"))))),
+            Collections.emptyMap());
 
     //noinspection unchecked
     messageListenerStrategy.processRecords(givenRecords, mock(KafkaConsumer.class));
@@ -151,7 +149,8 @@ class MessageListenerStrategyMetadataContextTest {
                         "one",
                         "one-value",
                         List.of(
-                            Map.entry("tenant-id", "t-one"), Map.entry("customer-id", "c-one"))))));
+                            Map.entry("tenant-id", "t-one"), Map.entry("customer-id", "c-one"))))),
+            Collections.emptyMap());
 
     //noinspection unchecked
     messageListenerStrategy.processRecords(givenRecords, mock(KafkaConsumer.class));

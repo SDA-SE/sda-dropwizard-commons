@@ -18,6 +18,7 @@ import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.errors.ProducerFencedException;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.header.internals.RecordHeaders;
+import org.apache.kafka.common.metrics.KafkaMetric;
 
 /**
  * A {@link Producer} that adds additional headers to the {@link ProducerRecord}s it sends. The
@@ -46,11 +47,13 @@ public abstract class AbstractDelegatingAdditionalHeadersProducer<K, V> implemen
   }
 
   @Override
-  @SuppressWarnings("deprecation")
-  public void sendOffsetsToTransaction(
-      Map<TopicPartition, OffsetAndMetadata> offsets, String consumerGroupId)
-      throws ProducerFencedException {
-    delegate.sendOffsetsToTransaction(offsets, consumerGroupId);
+  public void registerMetricForSubscription(KafkaMetric metric) {
+    delegate.registerMetricForSubscription(metric);
+  }
+
+  @Override
+  public void unregisterMetricFromSubscription(KafkaMetric metric) {
+    delegate.unregisterMetricFromSubscription(metric);
   }
 
   @Override
