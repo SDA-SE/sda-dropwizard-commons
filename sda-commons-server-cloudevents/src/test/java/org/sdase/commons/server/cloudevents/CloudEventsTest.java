@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -20,20 +19,30 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.cloudevents.app.CloudEventsTestApp;
 import org.sdase.commons.server.cloudevents.app.CloudEventsTestConfig;
 import org.sdase.commons.server.cloudevents.app.Partner;
 import org.sdase.commons.server.cloudevents.app.consume.ContractCreatedEvent;
 import org.sdase.commons.server.cloudevents.app.produce.PartnerCreatedEvent;
+import org.sdase.commons.server.kafka.testing.KraftKafkaTestResource;
 
 class CloudEventsTest {
 
   @Order(0)
   @RegisterExtension
-  static SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
+  static KraftKafkaTestResource KAFKA = new KraftKafkaTestResource();
 
   @Order(1)
+  @RegisterExtension
+  static BeforeAllCallback TOPICS =
+      context -> {
+        KAFKA.getKafkaTestUtils().createTopic("partner-created", 1, (short) 1);
+        KAFKA.getKafkaTestUtils().createTopic("contract-created", 1, (short) 1);
+      };
+
+  @Order(2)
   @RegisterExtension
   static DropwizardAppExtension<CloudEventsTestConfig> DW =
       new DropwizardAppExtension<>(
@@ -68,7 +77,7 @@ class CloudEventsTest {
               List<ConsumerRecord<byte[], byte[]>> records =
                   KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic("partner-created");
               assertThat(records).isNotEmpty();
-              ConsumerRecord<byte[], byte[]> record0 = records.get(0);
+              ConsumerRecord<byte[], byte[]> record0 = records.getFirst();
               eventRef.set(
                   DW.getObjectMapper().readValue(record0.value(), PartnerCreatedEvent.class));
             });
@@ -86,7 +95,7 @@ class CloudEventsTest {
         .untilAsserted(
             () -> {
               assertThat(app.getInMemoryStore().getContractCreatedEvents()).hasSize(1);
-              eventRef.set(app.getInMemoryStore().getContractCreatedEvents().get(0));
+              eventRef.set(app.getInMemoryStore().getContractCreatedEvents().getFirst());
             });
     assertThat(eventRef.get().getContractId()).isEqualTo("contract-id");
     assertThat(eventRef.get().getPartnerId()).isEqualTo("partner-id");
