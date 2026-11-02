@@ -4,7 +4,6 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
@@ -12,12 +11,13 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.sdase.commons.server.kafka.testing.KraftKafkaTestResource;
 
 class KafkaJUnit5IT {
 
   @RegisterExtension
   @Order(0)
-  static SharedKafkaTestResource KAFKA = new SharedKafkaTestResource().withBrokers(2);
+  static KraftKafkaTestResource KAFKA = new KraftKafkaTestResource();
 
   @RegisterExtension
   @Order(1)

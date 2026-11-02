@@ -33,10 +33,13 @@ public class DockerTest {
   private static void createProducerConfig() {
     var validConfig =
         Map.<String, Object>of(
+            "bootstrap.servers",
+            "localhost:9092",
             "key.serializer",
             "org.apache.kafka.common.serialization.StringSerializer",
             "value.serializer",
             "org.apache.kafka.common.serialization.StringSerializer");
+
     new org.apache.kafka.clients.producer.ProducerConfig(validConfig);
   }
 }

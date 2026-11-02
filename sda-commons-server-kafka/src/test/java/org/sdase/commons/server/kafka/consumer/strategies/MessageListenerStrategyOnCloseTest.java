@@ -8,12 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -94,7 +89,8 @@ class MessageListenerStrategyOnCloseTest {
         .commitAsync(any(), any());
     new Thread(
             () -> {
-              ConsumerRecords<String, String> records = new ConsumerRecords<>(recordsByPartition);
+              ConsumerRecords<String, String> records =
+                  new ConsumerRecords<>(recordsByPartition, Collections.emptyMap());
               strategy.resetOffsetsToCommitOnClose();
               strategy.processRecords(records, consumer);
             })

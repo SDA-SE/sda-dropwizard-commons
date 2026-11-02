@@ -6,8 +6,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
-import com.salesforce.kafka.test.listeners.SslListener;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +22,7 @@ import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
+import org.sdase.commons.server.kafka.secure.SecureKafkaTestResource;
 
 /** A test that configures the truststore and keystore in the kafka configuration */
 @ExtendWith(CleanupJaasConfigurationExtension.class)
@@ -31,22 +30,19 @@ class KafkaBundleWithSslIT {
 
   @RegisterExtension
   @Order(1)
-  static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResource()
-          .registerListener(
-              new SslListener()
-                  // require client authentication
-                  .withClientAuthRequired()
-                  .withKeyStoreLocation(resourceFilePath("ssl/kafka.server.keystore.jks"))
-                  .withKeyStorePassword("password")
-                  .withTrustStoreLocation(resourceFilePath("ssl/kafka.server.truststore.jks"))
-                  .withTrustStorePassword("password")
-                  .withKeyPassword("password"))
-          // we only need one consumer offsets partition
-          .withBrokerProperty("offsets.topic.num.partitions", "1")
-          // we don't need to wait that a consumer group rebalances since we always start with a
-          // fresh kafka instance
-          .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
+  static final SecureKafkaTestResource KAFKA =
+      SecureKafkaTestResource.ssl()
+          .withTlsStores(
+              resourceFilePath("ssl/kafka.server.keystore.jks"),
+              resourceFilePath("ssl/kafka.server.truststore.jks"),
+              "password",
+              "password",
+              resourceFilePath("ssl/kafka.client.truststore.jks"),
+              resourceFilePath("ssl/kafka.client.keystore.jks"),
+              "client-password",
+              "client-password")
+          .withClientAuth("required")
+          .withBrokerProperty("offsets.topic.num.partitions", "1");
 
   @RegisterExtension
   @Order(2)

@@ -230,17 +230,6 @@ class MetadataContextAwareKafkaProducerTest {
   }
 
   @Test
-  void shouldDelegateSendOffsetsToTransactionDeprecated() {
-    Map<TopicPartition, OffsetAndMetadata> arg1 =
-        Map.of(new TopicPartition("topic", 1), mock(OffsetAndMetadata.class));
-    String arg2 = "group-id";
-    producer.sendOffsetsToTransaction(arg1, arg2);
-    //noinspection deprecation
-    verify(delegateProducerMock, times(1)).sendOffsetsToTransaction(arg1, arg2);
-    verifyNoMoreInteractions(delegateProducerMock);
-  }
-
-  @Test
   void shouldDelegateSendOffsetsToTransaction() {
     Map<TopicPartition, OffsetAndMetadata> arg1 =
         Map.of(new TopicPartition("topic", 1), mock(OffsetAndMetadata.class));

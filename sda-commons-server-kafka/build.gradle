@@ -15,6 +15,8 @@ dependencies {
   testImplementation 'org.objenesis:objenesis'
 
   testImplementation 'org.assertj:assertj-core'
+  testImplementation "org.apache.kafka:kafka-test-common-runtime"
+  testImplementation "org.apache.kafka:kafka-clients"
 
   testImplementation project(':sda-commons-server-kafka-testing')
   testImplementation('io.micrometer:micrometer-registry-prometheus')

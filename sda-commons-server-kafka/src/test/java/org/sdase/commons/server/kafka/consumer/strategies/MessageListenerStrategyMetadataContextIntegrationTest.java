@@ -6,12 +6,7 @@ import static org.apache.kafka.clients.consumer.ConsumerRecord.NULL_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -104,9 +99,8 @@ class MessageListenerStrategyMetadataContextIntegrationTest {
         List.of(
             consumerRecord("three", "three-value", List.of(Map.entry("tenant-id", "three"))),
             consumerRecord("four", "four-value", List.of(Map.entry("Tenant-Id", "four")))));
-    var givenRecords = new ConsumerRecords<>(recordsMap);
+    var givenRecords = new ConsumerRecords<>(recordsMap, Collections.emptyMap());
 
-    //noinspection unchecked
     try {
       messageListenerStrategy.processRecords(givenRecords, mock(KafkaConsumer.class));
     } catch (Exception e) { // catches exception

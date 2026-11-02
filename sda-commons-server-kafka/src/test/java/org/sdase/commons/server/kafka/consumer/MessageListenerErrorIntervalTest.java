@@ -78,7 +78,8 @@ class MessageListenerErrorIntervalTest {
   @Test
   void shouldKeepConfiguredIntervalOnSuccess() {
     try {
-      when(consumerMock.poll(any())).thenReturn(new ConsumerRecords<>(recordMock));
+      when(consumerMock.poll(any()))
+          .thenReturn(new ConsumerRecords<>(recordMock, Collections.emptyMap()));
       executorService.submit(messageListener);
       await()
           .untilAsserted(
@@ -90,7 +91,8 @@ class MessageListenerErrorIntervalTest {
 
   @Test
   void shouldIncreaseWaitTimeBetweenPollsOnError() throws Exception {
-    when(consumerMock.poll(any())).thenReturn(new ConsumerRecords<>(recordMock));
+    when(consumerMock.poll(any()))
+        .thenReturn(new ConsumerRecords<>(recordMock, Collections.emptyMap()));
     doThrow(new RuntimeException())
         .when(messageListenerStrategyMock)
         .processRecords(any(), eq(consumerMock));
@@ -118,7 +120,8 @@ class MessageListenerErrorIntervalTest {
   @Test
   void shouldIncreaseIntervalOnErrorAndResetOnSuccess() throws Exception {
     try {
-      when(consumerMock.poll(any())).thenReturn(new ConsumerRecords<>(recordMock));
+      when(consumerMock.poll(any()))
+          .thenReturn(new ConsumerRecords<>(recordMock, Collections.emptyMap()));
       doThrow(new RuntimeException())
           .doThrow(new RuntimeException())
           .doThrow(new RuntimeException())

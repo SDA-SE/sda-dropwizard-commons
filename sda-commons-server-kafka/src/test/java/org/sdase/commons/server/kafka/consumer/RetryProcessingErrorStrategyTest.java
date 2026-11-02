@@ -46,7 +46,7 @@ class RetryProcessingErrorStrategyTest {
     ConsumerRecords<String, String> records = createConsumerRecords(2);
     strategy.processRecords(records, consumer);
 
-    verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler).handle(records.records(TOPIC_PARTITION).getFirst());
     verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(1));
     verifyNoMoreInteractions(messageHandler);
     verifyNoInteractions(intermediateErrorHandler, finalErrorHandler);
@@ -62,9 +62,9 @@ class RetryProcessingErrorStrategyTest {
     assertThrows(
         ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
-    verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler).handle(records.records(TOPIC_PARTITION).getFirst());
     verify(intermediateErrorHandler)
-        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+        .handleError(records.records(TOPIC_PARTITION).getFirst(), exception, consumer);
     verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
     verifyNoInteractions(finalErrorHandler);
 
@@ -72,7 +72,7 @@ class RetryProcessingErrorStrategyTest {
     doNothing().when(messageHandler).handle(any());
     strategy.processRecords(records, consumer);
 
-    verify(messageHandler, times(2)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler, times(2)).handle(records.records(TOPIC_PARTITION).getFirst());
     verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(1));
     verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
     verifyNoInteractions(finalErrorHandler);
@@ -88,9 +88,9 @@ class RetryProcessingErrorStrategyTest {
     assertThrows(
         ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
-    verify(messageHandler).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler).handle(records.records(TOPIC_PARTITION).getFirst());
     verify(intermediateErrorHandler)
-        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+        .handleError(records.records(TOPIC_PARTITION).getFirst(), exception, consumer);
     verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
     verifyNoInteractions(finalErrorHandler);
 
@@ -98,9 +98,9 @@ class RetryProcessingErrorStrategyTest {
     assertThrows(
         ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
-    verify(messageHandler, times(2)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler, times(2)).handle(records.records(TOPIC_PARTITION).getFirst());
     verify(intermediateErrorHandler, times(2))
-        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+        .handleError(records.records(TOPIC_PARTITION).getFirst(), exception, consumer);
     verifyNoMoreInteractions(messageHandler, intermediateErrorHandler);
     verifyNoInteractions(finalErrorHandler);
 
@@ -108,38 +108,38 @@ class RetryProcessingErrorStrategyTest {
     assertThrows(
         ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
-    verify(messageHandler, times(3)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler, times(3)).handle(records.records(TOPIC_PARTITION).getFirst());
     verify(intermediateErrorHandler, times(3))
-        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+        .handleError(records.records(TOPIC_PARTITION).getFirst(), exception, consumer);
     verifyNoInteractions(finalErrorHandler);
 
     // and we fail in the fourth call
     assertThrows(
         ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
-    verify(messageHandler, times(4)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler, times(4)).handle(records.records(TOPIC_PARTITION).getFirst());
     verify(intermediateErrorHandler, times(4))
-        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+        .handleError(records.records(TOPIC_PARTITION).getFirst(), exception, consumer);
     verifyNoInteractions(finalErrorHandler);
 
     // and we fail in the fifth call
     assertThrows(
         ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
-    verify(messageHandler, times(5)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler, times(5)).handle(records.records(TOPIC_PARTITION).getFirst());
     verify(intermediateErrorHandler, times(5))
-        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+        .handleError(records.records(TOPIC_PARTITION).getFirst(), exception, consumer);
     verifyNoInteractions(finalErrorHandler);
 
     // and we fail in the (last) sixth call
     assertThrows(
         ProcessingErrorRetryException.class, () -> strategy.processRecords(records, consumer));
 
-    verify(messageHandler, times(6)).handle(records.records(TOPIC_PARTITION).get(0));
+    verify(messageHandler, times(6)).handle(records.records(TOPIC_PARTITION).getFirst());
     verify(intermediateErrorHandler, times(5))
-        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+        .handleError(records.records(TOPIC_PARTITION).getFirst(), exception, consumer);
     verify(finalErrorHandler)
-        .handleError(records.records(TOPIC_PARTITION).get(0), exception, consumer);
+        .handleError(records.records(TOPIC_PARTITION).getFirst(), exception, consumer);
 
     // as the first record has been thrown away, the second now can also be processed (due to mock,
     // preparation it will also fail)
@@ -161,6 +161,6 @@ class RetryProcessingErrorStrategyTest {
           new ConsumerRecord<>(topic, TOPIC_PARTITION.partition(), i, topic, "message-" + i));
     }
     payload.put(TOPIC_PARTITION, messages);
-    return new ConsumerRecords<>(payload);
+    return new ConsumerRecords<>(payload, Collections.emptyMap());
   }
 }

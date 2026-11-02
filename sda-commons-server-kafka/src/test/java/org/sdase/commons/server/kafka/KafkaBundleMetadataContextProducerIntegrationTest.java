@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -27,13 +26,14 @@ import org.sdase.commons.server.kafka.builder.ProducerRegistration;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
+import org.sdase.commons.server.kafka.testing.KraftKafkaTestResource;
 
 @SetSystemProperty(key = "METADATA_FIELDS", value = "tenant-id")
 class KafkaBundleMetadataContextProducerIntegrationTest {
 
   @RegisterExtension
   @Order(0)
-  static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
+  static final KraftKafkaTestResource KAFKA = new KraftKafkaTestResource();
 
   @RegisterExtension
   @Order(1)
@@ -95,7 +95,7 @@ class KafkaBundleMetadataContextProducerIntegrationTest {
               List<ConsumerRecord<byte[], byte[]>> consumerRecords =
                   KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC);
               assertThat(consumerRecords).hasSize(messagesBefore + 1);
-              assertThat(consumerRecords.get(consumerRecords.size() - 1).headers())
+              assertThat(consumerRecords.getLast().headers())
                   .extracting(Header::key, Header::value)
                   .contains(tuple("tenant-id", "t-1".getBytes(StandardCharsets.UTF_8)));
             });
@@ -117,7 +117,7 @@ class KafkaBundleMetadataContextProducerIntegrationTest {
               List<ConsumerRecord<byte[], byte[]>> consumerRecords =
                   KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC);
               assertThat(consumerRecords).hasSize(messagesBefore + 1);
-              assertThat(consumerRecords.get(consumerRecords.size() - 1).headers())
+              assertThat(consumerRecords.getLast().headers())
                   .extracting(Header::key, Header::value)
                   .contains(
                       tuple("tenant-id", "t-1".getBytes(StandardCharsets.UTF_8)),
@@ -141,7 +141,7 @@ class KafkaBundleMetadataContextProducerIntegrationTest {
               List<ConsumerRecord<byte[], byte[]>> consumerRecords =
                   KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC);
               assertThat(consumerRecords).hasSize(messagesBefore + 1);
-              assertThat(consumerRecords.get(consumerRecords.size() - 1).headers())
+              assertThat(consumerRecords.getLast().headers())
                   .extracting(Header::key, Header::value)
                   .contains(tuple("tenant-id", "t-1".getBytes(StandardCharsets.UTF_8)));
             });
@@ -161,7 +161,7 @@ class KafkaBundleMetadataContextProducerIntegrationTest {
               List<ConsumerRecord<byte[], byte[]>> consumerRecords =
                   KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC);
               assertThat(consumerRecords).hasSize(messagesBefore + 1);
-              assertThat(consumerRecords.get(consumerRecords.size() - 1).headers())
+              assertThat(consumerRecords.getLast().headers())
                   .extracting(Header::key, Header::value)
                   .contains(
                       tuple("tenant-id", "t-1".getBytes(StandardCharsets.UTF_8)),
@@ -183,7 +183,7 @@ class KafkaBundleMetadataContextProducerIntegrationTest {
               List<ConsumerRecord<byte[], byte[]>> consumerRecords =
                   KAFKA.getKafkaTestUtils().consumeAllRecordsFromTopic(TOPIC);
               assertThat(consumerRecords).hasSize(messagesBefore + 1);
-              assertThat(consumerRecords.get(consumerRecords.size() - 1).headers())
+              assertThat(consumerRecords.getLast().headers())
                   .extracting(Header::key, Header::value)
                   .doesNotContain(tuple("shop-id", "s-1".getBytes(StandardCharsets.UTF_8)));
             });
