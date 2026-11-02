@@ -91,7 +91,8 @@ class SyncCommitStrategyTest {
     // given
     SyncCommitMLS<String, String> strategy = new SyncCommitMLS<>(handler, errorHandler);
     strategy.init(null);
-    ConsumerRecords<String, String> emptyRecords = new ConsumerRecords<>(Collections.emptyMap());
+    ConsumerRecords<String, String> emptyRecords =
+        new ConsumerRecords<>(Collections.emptyMap(), Collections.emptyMap());
 
     // when the strategy processes the empty records
     strategy.processRecords(emptyRecords, consumer);

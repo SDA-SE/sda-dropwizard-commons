@@ -2,74 +2,66 @@
 
 [![javadoc](https://javadoc.io/badge2/org.sdase.commons/sda-commons-server-kafka-testing/javadoc.svg)](https://javadoc.io/doc/org.sdase.commons/sda-commons-server-kafka-testing)
 
-The module `sda-commons-server-kafka-testing` is the base module to add unit and integration test for Kafka broker usage.
+The `sda-commons-server-kafka-testing` module provides utilities for unit and integration testing of Kafka-based applications.
 
-It includes the dependencies to [sda-commons-server-testing](./server-testing.md) module.
+It includes the dependencies from the [sda-commons-server-testing](./server-testing.md) module.
 
-The kafka-junit5 library provides means for easily setting up a Kafka broker that can be reconfigured easily by using the following class extension:
+The `KraftKafkaTestResource` JUnit 5 extension starts an embedded Kafka cluster using KRaft. Neither ZooKeeper nor Docker is required.
+
 ```java
 @RegisterExtension
-@Order(0) // Start the broker before the app
-static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource().withBrokers(2);
+@Order(0) // Start Kafka before the application
+static final KraftKafkaTestResource KAFKA =
+    new KraftKafkaTestResource();
 ```
 
-### Test support with random broker ports
-The usage of random ports allows to execute tests in parallel and reduce the probability of port conflicts, e.g. when local-infra is also started.
+## Test support with random broker ports
 
-The example above starts two Kafka brokers within a cluster. To test your application, you have to configure these servers as
-bootstrap servers. This is normally done via the configuration YAML file within the property `kafka -> brokers`.
+The embedded brokers use random ports to avoid conflicts with other services.
 
-You can override these properties programmatically using config overrides when creating your
-`DropwizardAppExtension`:
-
-Example:
+Configure the application to use the embedded cluster by overriding `kafka.brokers` in the `DropwizardAppExtension`:
 
 ```java
+@RegisterExtension
+@Order(0)
+static final KraftKafkaTestResource KAFKA =
+    new KraftKafkaTestResource();
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
-import io.dropwizard.testing.junit5.DropwizardAppExtension;
-// ...
-
-class KafkaJUnit5IT {
-
-  @RegisterExtension
-  @Order(0) // Start the broker before the app
-  static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource().withBrokers(2);
-
-  @RegisterExtension
-  @Order(1)
-  static final DropwizardAppExtension<KafkaTestConfiguration> DW =
-      new DropwizardAppExtension<>(
-          KafkaTestApplication.class,
-          resourceFilePath("test-config.yaml"),
-          config("kafka.brokers", KAFKA::getKafkaConnectString) // Override the Kafka brokers
-      );
-
-}
+@RegisterExtension
+@Order(1)
+static final DropwizardAppExtension<KafkaTestConfiguration> DW =
+    new DropwizardAppExtension<>(
+        KafkaTestApplication.class,
+        resourceFilePath("test-config.yaml"),
+        config("kafka.brokers", KAFKA::getKafkaConnectString));
 ```
 
 ## Create topics
 
-When setting up your test class you might have problems if producers or consumers want to register
-with a topic that does not exist. Do ease the creation of topics you can use the following
-Junit 5 extension. Make sure that this class extension is executed **after** the Kafka server was
-started but **before** your application starts up. Example:
+Use `CreateKafkaTopicsClassExtension` to create topics before starting the application.
 
 ```java
-  @RegisterExtension
-  @Order(0)
-  static final SharedKafkaTestResource KAFKA = new SharedKafkaTestResource();
+@RegisterExtension
+@Order(0)
+static final KraftKafkaTestResource KAFKA =
+    new KraftKafkaTestResource();
 
-  @RegisterExtension
-  @Order(1)
-  static final CreateKafkaTopicsClassExtension TOPICS =
-      new CreateKafkaTopicsClassExtension(KAFKA, Arrays.asList("foo", "bar"));
+@RegisterExtension
+@Order(1)
+static final CreateKafkaTopicsClassExtension TOPICS =
+    new CreateKafkaTopicsClassExtension(KAFKA, Arrays.asList("foo", "bar"));
 
-  @RegisterExtension
-  @Order(2)
-  static final DropwizardAppExtension<KafkaExampleConfiguration> DW =
-      new DropwizardAppExtension<>(
-          KafkaExampleProducerApplication.class,
-          resourceFilePath("test-config-producer.yml"),
-          config("kafka.brokers", KAFKA::getKafkaConnectString));
+@RegisterExtension
+@Order(2)
+static final DropwizardAppExtension<KafkaExampleConfiguration> DW =
+    new DropwizardAppExtension<>(
+        KafkaExampleProducerApplication.class,
+        resourceFilePath("test-config-producer.yml"),
+        config("kafka.brokers", KAFKA::getKafkaConnectString));
 ```
+
+## Security testing
+
+For SSL and SASL integration tests, use `SecureKafkaTestResource`.
+
+It supports SSL, SASL/PLAIN and SASL/SCRAM-SHA-512 using an embedded KRaft cluster.
