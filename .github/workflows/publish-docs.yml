@@ -22,7 +22,7 @@ jobs:
       - run: pip install mkdocs-techdocs-core # Includes material theme
       # Workaround: install six explicitly until the upstream fix is merged and released.
       # https://github.com/christo-ph/mkdocs_build_plantuml/pull/48
-      - run: pip install mkdocs-build-plantuml-plugin six
+      - run: 'pip install --only-binary=:all: mkdocs-build-plantuml-plugin==2.1.0 six==1.17.0'
       - run: git fetch origin gh-pages # Get latest history
       - run: > # required for mkdocs, not for techdocs
           yq -i '.plugins |= . +
