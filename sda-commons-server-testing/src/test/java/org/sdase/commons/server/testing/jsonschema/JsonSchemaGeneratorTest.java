@@ -3,6 +3,7 @@ package org.sdase.commons.server.testing.jsonschema;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +15,33 @@ import org.junit.jupiter.api.Test;
 class JsonSchemaGeneratorTest {
 
   private final JsonSchemaGenerator generator = JsonSchemaGenerator.defaultGenerator();
+
+  @Test
+  void preservesFieldOrderWithoutAnnotation() {
+    ObjectNode schema = generator.generate(UnorderedFields.class);
+
+    assertThat(schema.at("/$defs/UnorderedFields/properties").fieldNames())
+        .toIterable()
+        .containsExactly("zebra", "alpha", "middle");
+  }
+
+  @Test
+  void honorsExplicitPropertyOrderAndPreservesRemainingFieldOrder() {
+    ObjectNode schema = generator.generate(ExplicitlyOrderedFields.class);
+
+    assertThat(schema.at("/$defs/ExplicitlyOrderedFields/properties").fieldNames())
+        .toIterable()
+        .containsExactly("middle", "zebra", "alpha");
+  }
+
+  @Test
+  void honorsAlphabeticalPropertyOrder() {
+    ObjectNode schema = generator.generate(AlphabeticallyOrderedFields.class);
+
+    assertThat(schema.at("/$defs/AlphabeticallyOrderedFields/properties").fieldNames())
+        .toIterable()
+        .containsExactly("alpha", "middle", "zebra");
+  }
 
   @Test
   void generatesStandaloneDraft202012SchemaWithValidationAndExamples() {
@@ -89,46 +117,23 @@ class JsonSchemaGeneratorTest {
             });
   }
 
-  static class ContractBundle {
-    @NotBlank
-    @Schema(example = "contract-42")
-    private String id;
+  record UnorderedFields(String zebra, String alpha, String middle) {}
 
-    public String getId() {
-      return id;
-    }
-  }
+  @JsonPropertyOrder({"middle"})
+  record ExplicitlyOrderedFields(String zebra, String alpha, String middle) {}
 
-  static class DuplicateNames {
-    private First.Status first;
-    private Second.Status second;
+  @JsonPropertyOrder(alphabetic = true)
+  record AlphabeticallyOrderedFields(String zebra, String alpha, String middle) {}
 
-    public First.Status getFirst() {
-      return first;
-    }
+  record ContractBundle(@NotBlank @Schema(example = "contract-42") String id) {}
 
-    public Second.Status getSecond() {
-      return second;
-    }
-  }
+  record DuplicateNames(First.Status first, Second.Status second) {}
 
   static class First {
-    static class Status {
-      private String first;
-
-      public String getFirst() {
-        return first;
-      }
-    }
+    record Status(String first) {}
   }
 
   static class Second {
-    static class Status {
-      private String second;
-
-      public String getSecond() {
-        return second;
-      }
-    }
+    record Status(String second) {}
   }
 }
