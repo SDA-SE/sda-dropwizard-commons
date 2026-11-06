@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.victools.jsonschema.generator.*;
 import com.github.victools.jsonschema.module.jackson.JacksonModule;
+import com.github.victools.jsonschema.module.jackson.JsonPropertySorter;
 import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationModule;
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module;
 import java.lang.reflect.Type;
@@ -51,10 +52,10 @@ public class VictoolsJsonSchemaBuilder implements JsonSchemaBuilder {
             .with(swagger2Module)
             .with(new SwaggerExampleModule())
             .with(new NotBlankModule());
-    // see https://github.com/victools/jsonschema-generator/issues/125#issuecomment-657014858
+    // Honor @JsonPropertyOrder while preserving discovered field order when it is absent.
     configBuilder
         .forTypesInGeneral()
-        .withPropertySorter((o1, o2) -> 0)
+        .withPropertySorter(new JsonPropertySorter(false))
         .withDefinitionNamingStrategy(new DefaultSchemaDefinitionNamingStrategy());
 
     SchemaGeneratorConfig config = configBuilder.build();
