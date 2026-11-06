@@ -15,6 +15,11 @@ dependencies {
   }
   api 'org.junit.jupiter:junit-jupiter-params'
   api 'org.mockito:mockito-junit-jupiter'
+  api 'io.swagger.core.v3:swagger-annotations-jakarta'
+  api 'com.github.victools:jsonschema-generator'
+  api 'com.github.victools:jsonschema-module-jackson'
+  api 'com.github.victools:jsonschema-module-jakarta-validation'
+  api 'com.github.victools:jsonschema-module-swagger-2'
 
   runtimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
