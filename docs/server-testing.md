@@ -23,6 +23,12 @@ In case you want to use JUnit 5 you also have to activate it in your build.gradl
   }
 ```
 
+## JSON Schema generation
+
+Use `JsonSchemaGenerator` to generate JSON Schema Draft 2020-12 documents from Java types in tests.
+See [Generate JSON Schema with Server Testing](./server-testing-jsonschema.md) for dependency setup,
+single-type generation, schema catalogs, and supported annotations.
+
 ## Provided Assertions
 
 ### [GoldenFileAssertions](https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/GoldenFileAssertions.java)
