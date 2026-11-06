@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 #v.7.1.0
         with:
           python-version: 3.12
-      - run: pip install mkdocs-techdocs-core # Includes material theme
+      - run: 'pip install --only-binary=:all: mkdocs-techdocs-core==1.7.1' # Includes material theme
       # Workaround: install six explicitly until the upstream fix is merged and released.
       # https://github.com/christo-ph/mkdocs_build_plantuml/pull/48
       - run: 'pip install --only-binary=:all: mkdocs-build-plantuml-plugin==2.1.0 six==1.17.0'
