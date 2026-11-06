@@ -1,0 +1,52 @@
+{
+  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+  "oneOf" : [ {
+    "$ref" : "#/$defs/CustomerCreated"
+  }, {
+    "$ref" : "#/$defs/CustomerUpdated"
+  }, {
+    "type" : "array",
+    "items" : {
+      "$ref" : "#/$defs/CustomerCreated"
+    }
+  } ],
+  "$defs" : {
+    "CustomerCreated" : {
+      "type" : "object",
+      "properties" : {
+        "customerId" : {
+          "type" : "string",
+          "minLength" : 1,
+          "pattern" : "^.*\\S+.*$",
+          "description" : "Customer identifier",
+          "examples" : [ "customer-42" ]
+        },
+        "occurredAt" : {
+          "type" : "string",
+          "format" : "date-time"
+        }
+      },
+      "required" : [ "customerId", "occurredAt" ],
+      "title" : "Customer created",
+      "description" : "Customer creation event"
+    },
+    "CustomerUpdated" : {
+      "type" : "object",
+      "properties" : {
+        "customerId" : {
+          "type" : "string",
+          "minLength" : 1,
+          "pattern" : "^.*\\S+.*$"
+        },
+        "changedField" : {
+          "type" : "string",
+          "minLength" : 1,
+          "pattern" : "^.*\\S+.*$"
+        }
+      },
+      "required" : [ "customerId", "changedField" ],
+      "title" : "Customer updated",
+      "description" : "Customer update event"
+    }
+  }
+}
