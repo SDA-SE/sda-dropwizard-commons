@@ -5,9 +5,8 @@ import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.TypeScope;
 import jakarta.validation.constraints.NotBlank;
-import java.net.URI;
 
-/** A module that adds the correct {@code format} to {@link URI} related types. */
+/** Adds JSON Schema constraints for Jakarta Validation {@link NotBlank}. */
 public class NotBlankModule implements Module {
 
   @Override
