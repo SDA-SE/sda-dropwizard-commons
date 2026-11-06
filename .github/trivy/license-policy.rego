@@ -135,3 +135,19 @@ ignore {
   input.PkgName == glassfishAllowedInFossa[_]
   input.Name == "jQuery license"
 }
+
+# RE2/J uses the permissive, BSD-3-Clause-style Go License.
+# It does not impose copyleft obligations and is only used by the embedded Kafka test infrastructure.
+# https://github.com/google/re2j/blob/master/LICENSE
+ignore {
+    input.PkgName == "com.google.re2j:re2j"
+    input.Name == "Go License"
+}
+
+# RocksDB is dual-licensed under Apache-2.0 OR GPL-2.0.
+# We use the Apache-2.0 licensing option.
+# https://github.com/facebook/rocksdb/blob/main/README.md
+ignore {
+    input.PkgName == "org.rocksdb:rocksdbjni"
+    input.Name == "GNU General Public License, version 2"
+}

@@ -2,7 +2,6 @@ package org.sdase.commons.server.kafka.testing;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.Order;
@@ -13,8 +12,8 @@ class CreateKafkaTopicsClassExtensionTest {
 
   @RegisterExtension
   @Order(0)
-  static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResource().withBrokerProperty("auto.create.topics.enable", "false");
+  static final KraftKafkaTestResource KAFKA =
+      new KraftKafkaTestResource().withBrokerProperty("auto.create.topics.enable", "false");
 
   @RegisterExtension
   @Order(1)

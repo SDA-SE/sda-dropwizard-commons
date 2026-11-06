@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.MAP;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
@@ -19,6 +18,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.jackson.ObjectMapperConfigurationUtil;
+import org.sdase.commons.server.kafka.testing.KraftKafkaTestResource;
 
 class KafkaDoubleAppTest {
 
@@ -27,11 +27,11 @@ class KafkaDoubleAppTest {
 
   @RegisterExtension
   @Order(0)
-  static final SharedKafkaTestResource SOURCE_KAFKA = new SharedKafkaTestResource();
+  static final KraftKafkaTestResource SOURCE_KAFKA = new KraftKafkaTestResource();
 
   @RegisterExtension
   @Order(0)
-  static final SharedKafkaTestResource TARGET_KAFKA = new SharedKafkaTestResource();
+  static final KraftKafkaTestResource TARGET_KAFKA = new KraftKafkaTestResource();
 
   @RegisterExtension
   @Order(1)
