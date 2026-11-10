@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.jsonschema;
+package org.sdase.commons.server.testing.jsonschema;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
@@ -23,24 +23,24 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.sdase.commons.server.testing.GoldenFileAssertions;
-import org.sdase.commons.shared.asyncapi.test.data.models.BaseEvent;
-import org.sdase.commons.shared.asyncapi.test.data.models.CarScrapped;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Description.DescriptionSwaggerSchema;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Enums.EnumJackson;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Enums.EnumPlain;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Required.JakartaNotBlank;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Required.JakartaNotNull;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Required.JsonPropertyRequired;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Required.SwaggerRequired;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Required.SwaggerRequiredMode;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Temporal.TemporalDate;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Temporal.TemporalDuration;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Temporal.TemporalInstant;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Temporal.TemporalLocalDate;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Temporal.TemporalOffsetDateTime;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Temporal.TemporalPeriod;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.Temporal.TemporalZonedDateTime;
-import org.sdase.commons.shared.asyncapi.test.data.models.MinimalTestModels.UriProperties;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.BaseEvent;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.CarScrapped;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Description.DescriptionSwaggerSchema;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Enums.EnumJackson;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Enums.EnumPlain;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Required.JakartaNotBlank;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Required.JakartaNotNull;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Required.JsonPropertyRequired;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Required.SwaggerRequired;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Required.SwaggerRequiredMode;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Temporal.TemporalDate;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Temporal.TemporalDuration;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Temporal.TemporalInstant;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Temporal.TemporalLocalDate;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Temporal.TemporalOffsetDateTime;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Temporal.TemporalPeriod;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.Temporal.TemporalZonedDateTime;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.MinimalTestModels.UriProperties;
 
 public abstract class AbstractJsonSchemaBuilderTest {
 

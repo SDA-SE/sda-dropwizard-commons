@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.jsonschema.victools;
+package org.sdase.commons.server.testing.jsonschema.victools;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,16 +17,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * examples} array of the definition of that property. Examples are parsed as Json unless the
  * property type is {@code string}. The raw string value is used as fallback when it's not parseable
  * as Json.
- *
- * @deprecated This class will be moved to server-testing with the next major update. It is assumed
- *     that no direct access from consumers is required. In case this assumption is wrong, a
- *     migration path will be provided with the next major update. Reach out to the maintainers in
- *     case migrating with the next major is not an option.
  */
 // In the long term, we should contribute a better solution for examples as suggested here:
 // https://github.com/SDA-SE/sda-dropwizard-commons/pull/409/files#r517230013
 // (This code is inspired by that PR)
-@Deprecated(forRemoval = true)
 public class SwaggerExampleModule implements Module {
 
   @Override
