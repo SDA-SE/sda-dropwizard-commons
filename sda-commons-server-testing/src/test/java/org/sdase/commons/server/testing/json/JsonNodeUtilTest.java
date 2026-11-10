@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.util;
+package org.sdase.commons.server.testing.json;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
