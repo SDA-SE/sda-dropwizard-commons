@@ -1,6 +1,5 @@
 package org.sdase.commons.server.testing.asyncapi;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
@@ -92,9 +91,6 @@ public class AsyncApiGenerator {
   public interface SchemaBuilder
       extends FinalBuilder, org.sdase.commons.shared.asyncapi.AsyncApiGenerator.SchemaBuilder {
     // next-major: org.sdase.commons.shared.asyncapi.AsyncApiGenerator.AsyncApiBaseBuilder to here
-
-    @Override
-    JsonNode generate();
 
     @Override
     FinalBuilder withJsonSchemaBuilder(JsonSchemaBuilder jsonSchemaBuilder);
