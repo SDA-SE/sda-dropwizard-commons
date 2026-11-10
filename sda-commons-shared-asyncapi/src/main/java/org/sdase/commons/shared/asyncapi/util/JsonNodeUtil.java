@@ -11,6 +11,11 @@ public class JsonNodeUtil {
     // No constructor
   }
 
+  /**
+   * @deprecated use {@code org.sdase.commons.server.testing.json.JsonNodeUtil} from
+   *     sda-commons-server-testing instead
+   */
+  @Deprecated(forRemoval = true)
   public static void sortJsonNodeInPlace(JsonNode node) {
     if (!node.isMissingNode() && node.isObject()) {
       ObjectNode objectNode = (ObjectNode) node;
