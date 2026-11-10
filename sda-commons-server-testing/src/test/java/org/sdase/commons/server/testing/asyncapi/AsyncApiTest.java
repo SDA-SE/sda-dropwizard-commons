@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.testing.GoldenFileAssertions;
-import org.sdase.commons.shared.asyncapi.AsyncApiGenerator;
 
 class AsyncApiTest {
 

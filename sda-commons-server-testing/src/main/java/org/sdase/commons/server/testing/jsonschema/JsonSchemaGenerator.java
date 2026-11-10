@@ -15,9 +15,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.sdase.commons.shared.asyncapi.jsonschema.victools.DefaultSchemaDefinitionNamingStrategy;
-import org.sdase.commons.shared.asyncapi.jsonschema.victools.NotBlankModule;
-import org.sdase.commons.shared.asyncapi.jsonschema.victools.SwaggerExampleModule;
+import org.sdase.commons.server.testing.jsonschema.victools.DefaultSchemaDefinitionNamingStrategy;
+import org.sdase.commons.server.testing.jsonschema.victools.NotBlankModule;
+import org.sdase.commons.server.testing.jsonschema.victools.SwaggerExampleModule;
 
 /**
  * Generates JSON Schema Draft 2020-12 documents for explicit payload, request, and response types.
