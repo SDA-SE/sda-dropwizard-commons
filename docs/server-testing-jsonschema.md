@@ -61,6 +61,19 @@ ObjectNode schemaCatalog =
         .generate(List.of(CustomerCreated.class, CustomerUpdated.class, customerCreatedList));
 ```
 
+To add a root-level `$id`, pass it as the second argument:
+
+```java
+String schemaId = "https://schemas.example.com/customer-events/1.2.0";
+ObjectNode schemaCatalog =
+    JsonSchemaGenerator.defaultGenerator()
+        .generate(
+            List.of(CustomerCreated.class, CustomerUpdated.class, customerCreatedList), schemaId);
+```
+
+The generator writes the supplied string unchanged and does not derive or add a version. Passing 
+`null` omits `$id`.
+
 Use `TypeReference` when a root type contains generic type information that must be retained, such
 as `List<CustomerCreated>`.
 
