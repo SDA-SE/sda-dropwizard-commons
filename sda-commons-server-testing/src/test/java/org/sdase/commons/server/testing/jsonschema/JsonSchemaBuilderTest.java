@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.jsonschema;
+package org.sdase.commons.server.testing.jsonschema;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

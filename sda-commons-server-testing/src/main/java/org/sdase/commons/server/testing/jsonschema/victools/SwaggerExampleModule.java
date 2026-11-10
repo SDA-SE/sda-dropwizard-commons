@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.jsonschema.victools;
+package org.sdase.commons.server.testing.jsonschema.victools;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.testing.GoldenFileAssertions;
-import org.sdase.commons.shared.asyncapi.ReferencedClassNotFoundException;
 
 class AsyncApiGeneratorTest {
 
@@ -26,7 +25,7 @@ class AsyncApiGeneratorTest {
   @Test
   void shouldGenerateAsyncApi() throws IOException {
     String actual =
-        org.sdase.commons.shared.asyncapi.AsyncApiGenerator.builder()
+        AsyncApiGenerator.builder()
             .withAsyncApiBase(getClass().getResource(GIVEN_ASYNC_API_TEMPLATE))
             .generateYaml();
 
@@ -38,7 +37,7 @@ class AsyncApiGeneratorTest {
   @Test
   void shouldSortSchemas() {
     JsonNode actual =
-        org.sdase.commons.shared.asyncapi.AsyncApiGenerator.builder()
+        AsyncApiGenerator.builder()
             .withAsyncApiBase(getClass().getResource(GIVEN_ASYNC_API_TEMPLATE))
             .generate();
     JsonNode schemas = actual.at("/components/schemas");
@@ -52,7 +51,7 @@ class AsyncApiGeneratorTest {
   void shouldUseCustomSchemaGenerator() {
     ObjectMapper om = new ObjectMapper();
     JsonNode actual =
-        org.sdase.commons.shared.asyncapi.AsyncApiGenerator.builder()
+        AsyncApiGenerator.builder()
             .withAsyncApiBase(getClass().getResource(GIVEN_ASYNC_API_TEMPLATE))
             .withJsonSchemaBuilder(
                 c -> Map.of(((Class<?>) c).getSimpleName() + "Custom", om.createObjectNode()))

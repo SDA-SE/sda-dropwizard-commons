@@ -1,12 +1,16 @@
 package org.sdase.commons.server.testing.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import java.util.function.Function;
 
 /** A utility to manipulate {@code $ref}erences in schemas. */
 public class RefUtil {
+
+  private static final String REF_KEY = "$ref";
 
   private RefUtil() {
     // utility class
@@ -38,11 +42,12 @@ public class RefUtil {
    */
   public static void updateAllRefsRecursively(
       JsonNode node, Function<TextNode, String> refRewriter) {
-    // Copy code from org.sdase.commons.shared.asyncapi.util.RefUtil.updateAllRefsRecursively
-    // to here when removing the asyncapi module.
-    // So far we avoid the code duplication.
-
-    org.sdase.commons.shared.asyncapi.util.RefUtil.updateAllRefsRecursively(node, refRewriter);
+    // only container nodes can contain properties (directly or in nested structures)
+    if (node instanceof ContainerNode<?> containerNode) {
+      mergeAllObjectsWithRefsRecursively(
+          containerNode,
+          textNode -> containerNode.objectNode().put(REF_KEY, refRewriter.apply(textNode)));
+    }
   }
 
   /**
@@ -61,12 +66,27 @@ public class RefUtil {
    */
   public static void mergeAllObjectsWithRefsRecursively(
       JsonNode node, Function<TextNode, ObjectNode> refRewriter) {
-    // Copy code from
-    // org.sdase.commons.shared.asyncapi.util.RefUtil.mergeAllObjectsWithRefsRecursively
-    // to here when removing the asyncapi module.
-    // So far we avoid the code duplication.
-
-    org.sdase.commons.shared.asyncapi.util.RefUtil.mergeAllObjectsWithRefsRecursively(
-        node, refRewriter);
+    if (node instanceof ObjectNode objectNode) {
+      ObjectNode iteratorNode = objectNode.deepCopy(); // avoid concurrent modification
+      iteratorNode
+          .fieldNames()
+          .forEachRemaining(
+              fieldName -> {
+                JsonNode fieldValueNode = objectNode.get(fieldName);
+                if (fieldName.equals(REF_KEY) && fieldValueNode instanceof TextNode ref) {
+                  var replacementForObjectWithRef = refRewriter.apply(ref);
+                  if (replacementForObjectWithRef != null) {
+                    objectNode.remove(REF_KEY);
+                    objectNode.setAll(replacementForObjectWithRef);
+                  }
+                } else if (fieldValueNode instanceof ArrayNode arrayNode) {
+                  arrayNode.forEach(item -> mergeAllObjectsWithRefsRecursively(item, refRewriter));
+                } else {
+                  mergeAllObjectsWithRefsRecursively(fieldValueNode, refRewriter);
+                }
+              });
+    } else if (node instanceof ArrayNode arrayNode) {
+      arrayNode.forEach(item -> mergeAllObjectsWithRefsRecursively(item, refRewriter));
+    }
   }
 }

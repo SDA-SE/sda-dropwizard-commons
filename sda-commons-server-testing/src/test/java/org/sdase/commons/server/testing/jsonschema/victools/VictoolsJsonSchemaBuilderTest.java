@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.jsonschema.victools;
+package org.sdase.commons.server.testing.jsonschema.victools;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,13 +7,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
-import org.sdase.commons.shared.asyncapi.jsonschema.AbstractJsonSchemaBuilderTest;
-import org.sdase.commons.shared.asyncapi.test.data.models.Plane;
+import org.sdase.commons.server.testing.asyncapi.testdata.models.Plane;
+import org.sdase.commons.server.testing.jsonschema.AbstractJsonSchemaBuilderTest;
 
 class VictoolsJsonSchemaBuilderTest extends AbstractJsonSchemaBuilderTest {
 
   public VictoolsJsonSchemaBuilderTest() {
-    super(VictoolsJsonSchemaBuilder.fromDefaultConfig());
+    super(
+        org.sdase.commons.server.testing.jsonschema.victools.VictoolsJsonSchemaBuilder
+            .fromDefaultConfig());
   }
 
   @Override

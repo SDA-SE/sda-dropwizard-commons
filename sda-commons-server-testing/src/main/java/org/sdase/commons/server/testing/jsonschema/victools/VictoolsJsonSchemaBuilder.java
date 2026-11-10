@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.jsonschema.victools;
+package org.sdase.commons.server.testing.jsonschema.victools;
 
 import static com.github.victools.jsonschema.generator.Option.*;
 import static com.github.victools.jsonschema.module.jackson.JacksonOption.*;
@@ -16,20 +16,14 @@ import com.github.victools.jsonschema.module.swagger2.Swagger2Module;
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.sdase.commons.shared.asyncapi.jsonschema.JsonSchemaBuilder;
-import org.sdase.commons.shared.asyncapi.util.RefUtil;
+import org.sdase.commons.server.testing.json.RefUtil;
+import org.sdase.commons.server.testing.jsonschema.JsonSchemaBuilder;
 
 /**
  * A {@link JsonSchemaBuilder} that uses <a
  * href="https://github.com/victools/jsonschema-generator">victools/json-schema-generator</a> to
  * build Json Schemas from Java code.
- *
- * @deprecated This class will be moved to server-testing with the next major update. It is assumed
- *     that no direct access from consumers is required. In case this assumption is wrong, a
- *     migration path will be provided with the next major update. Reach out to the maintainers in
- *     case migrating with the next major is not an option.
  */
-@Deprecated(forRemoval = true)
 public class VictoolsJsonSchemaBuilder implements JsonSchemaBuilder {
 
   private final SchemaGenerator schemaGenerator;
