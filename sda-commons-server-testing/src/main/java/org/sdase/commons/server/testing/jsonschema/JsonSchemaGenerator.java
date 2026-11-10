@@ -78,7 +78,23 @@ public final class JsonSchemaGenerator {
    * @return schema with reusable models under {@code $defs}
    */
   public ObjectNode generate(Type root) {
-    return schemaGenerator.generateSchema(requireNonNull(root));
+    return generate(root, null);
+  }
+
+  /**
+   * Generates standalone Draft 2020-12 schema for one explicit payload type with an optional
+   * root-level identifier.
+   *
+   * @param root payload Java type
+   * @param id identifier written to the generated schema root, or {@code null} to omit it
+   * @return schema with reusable models under {@code $defs}
+   */
+  public ObjectNode generate(Type root, String id) {
+    ObjectNode schema = schemaGenerator.generateSchema(requireNonNull(root));
+    if (id != null) {
+      schema.put("$id", id);
+    }
+    return schema;
   }
 
   /**
@@ -90,9 +106,26 @@ public final class JsonSchemaGenerator {
    * standalone schema without {@code oneOf}.
    *
    * @param roots payload, request, or response Java types
-   * @return catalog with reusable models under {@code definitions}
+   * @return catalog with reusable models under {@code $defs}
    */
   public ObjectNode generate(Iterable<? extends Type> roots) {
+    return generate(roots, null);
+  }
+
+  /**
+   * Generates Draft 2020-12 catalog for explicit payload, request, or response types with an
+   * optional root-level identifier.
+   *
+   * <p>The catalog root references every supplied type in {@code oneOf}. Consumers requiring one
+   * specific type can validate its definition directly, for example {@code
+   * schemas.json#/$defs/CustomerCreated}. Duplicate roots are ignored. One distinct root produces a
+   * standalone schema without {@code oneOf}.
+   *
+   * @param roots payload, request, or response Java types
+   * @param id identifier written to the generated schema root, or {@code null} to omit it
+   * @return catalog with reusable models under {@code $defs}
+   */
+  public ObjectNode generate(Iterable<? extends Type> roots, String id) {
     requireNonNull(roots);
 
     Set<Type> distinctRoots =
@@ -100,7 +133,7 @@ public final class JsonSchemaGenerator {
             .map(JsonSchemaGenerator::requireNonNull)
             .collect(Collectors.toCollection(LinkedHashSet::new));
     if (distinctRoots.size() == 1) {
-      return generate(distinctRoots.iterator().next());
+      return generate(distinctRoots.iterator().next(), id);
     }
 
     SchemaBuilder schemas = schemaGenerator.buildMultipleSchemaDefinitions();
@@ -109,6 +142,9 @@ public final class JsonSchemaGenerator {
 
     ObjectNode catalog = JsonNodeFactory.instance.objectNode();
     catalog.put("$schema", SCHEMA_VERSION.getIdentifier());
+    if (id != null) {
+      catalog.put("$id", id);
+    }
     catalog.set("oneOf", references);
     catalog.set("$defs", schemas.collectDefinitions("$defs"));
     return catalog;

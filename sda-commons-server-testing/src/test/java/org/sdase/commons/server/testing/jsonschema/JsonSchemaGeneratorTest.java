@@ -58,6 +58,17 @@ class JsonSchemaGeneratorTest {
   }
 
   @Test
+  void addsSchemaIdToStandaloneSchema() {
+    String schemaId = "https://schemas.example.com/contracts/contract-bundle/1.2.0";
+
+    ObjectNode schema = generator.generate(ContractBundle.class, schemaId);
+
+    assertThat(schema.path("$id").asText()).isEqualTo(schemaId);
+    assertThat(schema.findValues("$id")).containsExactly(schema.path("$id"));
+    assertInternalReferencesResolve(schema);
+  }
+
+  @Test
   void generatesCatalogWithObjectAndListRoots() {
     Type listOfContractBundles = new TypeReference<List<ContractBundle>>() {}.getType();
 
@@ -73,11 +84,35 @@ class JsonSchemaGeneratorTest {
   }
 
   @Test
+  void addsSchemaIdToCatalog() {
+    String schemaId = "https://schemas.example.com/contracts/contract-bundle/1.3.0";
+
+    ObjectNode catalog =
+        generator.generate(List.of(ContractBundle.class, UnorderedFields.class), schemaId);
+
+    assertThat(catalog.path("$id").asText()).isEqualTo(schemaId);
+    assertThat(catalog.fieldNames()).toIterable().startsWith("$schema", "$id", "oneOf");
+    assertThat(catalog.findValues("$id")).containsExactly(catalog.path("$id"));
+    assertInternalReferencesResolve(catalog);
+  }
+
+  @Test
   void generatesStandaloneSchemaForOneDistinctRoot() {
     ObjectNode schema = generator.generate(List.of(ContractBundle.class, ContractBundle.class));
 
     assertThat(schema.path("oneOf").isMissingNode()).isTrue();
     assertThat(schema.path("$ref").asText()).isEqualTo("#/$defs/ContractBundle");
+    assertInternalReferencesResolve(schema);
+  }
+
+  @Test
+  void addsSchemaIdToSingleRootGeneratedFromIterable() {
+    String schemaId = "https://schemas.example.com/contracts/contract-bundle/1.4.0";
+
+    ObjectNode schema = generator.generate(List.of(ContractBundle.class), schemaId);
+
+    assertThat(schema.path("$id").asText()).isEqualTo(schemaId);
+    assertThat(schema.findValues("$id")).containsExactly(schema.path("$id"));
     assertInternalReferencesResolve(schema);
   }
 
