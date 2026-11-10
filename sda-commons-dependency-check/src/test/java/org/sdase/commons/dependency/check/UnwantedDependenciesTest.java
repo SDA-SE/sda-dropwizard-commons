@@ -52,12 +52,23 @@ class UnwantedDependenciesTest {
   static void beforeAll() {
     try (ScanResult scanResult =
         new ClassGraph()
+            .enableClasspath()
             .enableClassInfo()
             .filterClasspathElements(path -> ALLOWED_FILE_PARTS.stream().noneMatch(path::contains))
             .scan()) {
       allClasses = scanResult.getAllClasses();
       classpathURIs = scanResult.getClasspathURIs();
     }
+  }
+
+  @Test
+  void shouldHaveIdentifiedClasses() {
+    assertThat(allClasses).isNotEmpty();
+  }
+
+  @Test
+  void shouldHaveIdentifiedClasspathUris() {
+    assertThat(classpathURIs).isNotEmpty();
   }
 
   /**

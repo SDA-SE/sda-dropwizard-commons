@@ -107,6 +107,8 @@ dependencies {
   api enforcedPlatform("com.google.guava:guava-bom:33.8.0-jre"), {
     because "CVE-2026-102554 in 33.6.0-jre defined by dropwizard-dependencies 5.0.2"
   }
+  //
+  api enforcedPlatform("io.github.classgraph:classgraph-bom:5.0.2")
 
   constraints {
     // overall conflicts
@@ -115,7 +117,6 @@ dependencies {
     api "org.apache.httpcomponents.core5:httpcore5-h2:${apacheHttpCore5Version}"
     api "org.apache.httpcomponents.client5:httpclient5:${apacheHttpClient5Version}"
     api "org.apache.httpcomponents.client5:httpclient5-fluent:${apacheHttpClient5Version}"
-    api "io.github.classgraph:classgraph:5.0.2"
     //
     api "at.yawk.lz4:lz4-java:1.13.0"
     //

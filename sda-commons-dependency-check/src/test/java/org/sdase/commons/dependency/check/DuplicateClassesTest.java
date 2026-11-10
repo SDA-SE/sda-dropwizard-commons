@@ -43,8 +43,9 @@ class DuplicateClassesTest {
   @Test
   void checkForDuplicateClasses() {
     int numberOfDuplicates = 0;
-    try (ScanResult scanResult = new ClassGraph().scan()) {
+    try (ScanResult scanResult = new ClassGraph().enableClasspath().scan()) {
       ResourceList allResourcesInClasspath = scanResult.getAllResources();
+      assertThat(allResourcesInClasspath).isNotEmpty();
       ResourceList classFilesInClasspath =
           allResourcesInClasspath
               .filter(resource -> !resource.getURL().toString().contains("/.gradle/wrapper/"))
