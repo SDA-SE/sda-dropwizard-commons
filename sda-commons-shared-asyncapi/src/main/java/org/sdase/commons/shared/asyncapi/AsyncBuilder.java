@@ -15,6 +15,10 @@ import org.sdase.commons.shared.asyncapi.jsonschema.victools.VictoolsJsonSchemaB
 import org.sdase.commons.shared.asyncapi.util.JsonNodeUtil;
 import org.sdase.commons.shared.asyncapi.util.RefUtil;
 
+/**
+ * @deprecated use use {@code org.sdase.commons.server.testing.asyncapi.AsyncBuilder}
+ */
+@Deprecated(forRemoval = true)
 public class AsyncBuilder
     implements AsyncApiGenerator.AsyncApiBaseBuilder,
         AsyncApiGenerator.SchemaBuilder,

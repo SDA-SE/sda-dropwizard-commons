@@ -45,7 +45,14 @@ import org.sdase.commons.shared.asyncapi.jsonschema.JsonSchemaBuilder;
  * These referenced files are automatically created from Java classes annotated with Jackson,
  * Swagger and Jakarta Validation annotations. Afterwards everything is embedded into a single
  * self-contained AsyncAPI yaml file.
+ *
+ * @deprecated use {@code org.sdase.commons.server.testing.asyncapi.AsyncApiGenerator} for AsyncApi
+ *     generation and make sure no imports for {@code org.sdase.commons.shared.asyncapi.*} are used
+ *     for a smooth transition to the next major version. For JSON Schema generation migrate to
+ *     {@code org.sdase.commons.server.testing.jsonschema.JsonSchemaGenerator} in case there are
+ *     direct imports for {@code org.sdase.commons.shared.asyncapi.jsonschema.*}.
  */
+@Deprecated(forRemoval = true)
 public class AsyncApiGenerator {
 
   private AsyncApiGenerator() {
