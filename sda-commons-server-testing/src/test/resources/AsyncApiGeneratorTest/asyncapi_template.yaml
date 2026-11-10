@@ -1,4 +1,4 @@
-asyncapi: '2.5.0'
+asyncapi: '2.0.0'
 id: 'urn:org:sdase:example:cars'
 defaultContentType: application/json
 
@@ -24,11 +24,9 @@ components:
       title: Car Manufactured
       description: An event that represents when a new car is manufactured
       payload:
-        # referencing the full name of the Class
-        $ref: 'class://org.sdase.commons.shared.asyncapi.test.data.models.CarManufactured'
+        $ref: 'class://org.sdase.commons.server.testing.asyncapi.testdata.models.CarManufactured'
     CarScrapped:
       title: Car Scrapped
       description: An event that represents when a car is scrapped
       payload:
-        # referencing the full name of the Class
-        $ref: 'class://org.sdase.commons.shared.asyncapi.test.data.models.CarScrapped'
+        $ref: 'class://org.sdase.commons.server.testing.asyncapi.testdata.models.CarScrapped'

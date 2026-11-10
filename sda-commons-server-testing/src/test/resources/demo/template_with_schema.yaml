@@ -23,7 +23,7 @@ components:
       title: Entity created
       payload:
         # referencing the full name of the Class
-        $ref: 'class://org.sdase.commons.shared.asyncapi.test.data.models.Created'
+        $ref: 'class://org.sdase.commons.server.testing.asyncapi.testdata.models.Created'
     Deleted:
       title: Entity deleted
       description: Deletion of the entity is represented by an external tombstone message.
