@@ -1,6 +1,6 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
-  implementation project(':sda-commons-shared-asyncapi')
+  api project(':sda-commons-shared-asyncapi')
 
   api 'io.dropwizard:dropwizard-testing'
   api 'jakarta.servlet:jakarta.servlet-api'
