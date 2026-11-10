@@ -1,9 +1,10 @@
 dependencies {
-  api project(':sda-commons-shared-asyncapi')
-
   api "jakarta.validation:jakarta.validation-api"
+  api "io.swagger.core.v3:swagger-annotations-jakarta"
+  api "com.fasterxml.jackson.core:jackson-annotations"
 
   testImplementation project(':sda-commons-server-dropwizard')
+  testImplementation project(':sda-commons-server-testing')
   testImplementation project(':sda-commons-server-kafka')
   testImplementation project(':sda-commons-server-kafka-testing')
 }
