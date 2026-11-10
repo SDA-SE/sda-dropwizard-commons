@@ -29,6 +29,11 @@ Use `JsonSchemaGenerator` to generate JSON Schema Draft 2020-12 documents from J
 See [Generate JSON Schema with Server Testing](./server-testing-jsonschema.md) for dependency setup,
 single-type generation, schema catalogs, and supported annotations.
 
+## AsyncAPI generation
+
+Use `AsyncApiGenerator` to generate AsyncAPI specifications for asynchronous messaging.
+See [Generate AsyncAPI with Server Testing](./server-testing-asyncapi.md) for more details.
+
 ## Provided Assertions
 
 ### [GoldenFileAssertions](https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/GoldenFileAssertions.java)
