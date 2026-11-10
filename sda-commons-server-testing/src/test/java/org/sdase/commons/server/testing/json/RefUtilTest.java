@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.util;
+package org.sdase.commons.server.testing.json;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,7 +47,7 @@ class RefUtilTest {
 
   @Test
   void shouldFindAllRefsRecursivelyInObject() throws JsonProcessingException {
-    JsonNode given = YAML_MAPPER.readTree("" /* avoids warning */ + YAML_OBJECT_WITH_REFS);
+    JsonNode given = YAML_MAPPER.readTree(YAML_OBJECT_WITH_REFS);
     List<String> actualFoundRefs = findAllRefs(given);
     assertThat(actualFoundRefs)
         .containsExactlyInAnyOrder(
@@ -62,8 +62,8 @@ class RefUtilTest {
 
   @Test
   void shouldReplaceAllRefsRecursivelyInObject() throws JsonProcessingException {
-    JsonNode given = YAML_MAPPER.readTree("" /* avoids warning */ + YAML_OBJECT_WITH_REFS);
-    RefUtil.updateAllRefsRecursively(
+    JsonNode given = YAML_MAPPER.readTree(YAML_OBJECT_WITH_REFS);
+    org.sdase.commons.shared.asyncapi.util.RefUtil.updateAllRefsRecursively(
         given,
         textNode ->
             "https://example.com/%s"
@@ -82,7 +82,7 @@ class RefUtilTest {
 
   @Test
   void shouldFindAllRefsRecursivelyInArray() throws JsonProcessingException {
-    JsonNode given = new YAMLMapper().readTree("" /* avoids warning */ + YAML_ARRAY_WITH_REFS);
+    JsonNode given = new YAMLMapper().readTree(YAML_ARRAY_WITH_REFS);
     List<String> actualFoundRefs = findAllRefs(given);
     assertThat(actualFoundRefs)
         .containsExactlyInAnyOrder(
@@ -95,8 +95,8 @@ class RefUtilTest {
 
   @Test
   void shouldReplaceAllRefsRecursivelyInArray() throws JsonProcessingException {
-    JsonNode given = YAML_MAPPER.readTree("" /* avoids warning */ + YAML_ARRAY_WITH_REFS);
-    RefUtil.updateAllRefsRecursively(
+    JsonNode given = YAML_MAPPER.readTree(YAML_ARRAY_WITH_REFS);
+    org.sdase.commons.shared.asyncapi.util.RefUtil.updateAllRefsRecursively(
         given,
         textNode ->
             "https://example.com/%s"
@@ -114,7 +114,7 @@ class RefUtilTest {
   @Test
   void shouldExpandRef() throws JsonProcessingException {
     JsonNode given = YAML_MAPPER.readTree("$ref: '%s'".formatted("#/components/schemas/Foo"));
-    RefUtil.mergeAllObjectsWithRefsRecursively(
+    org.sdase.commons.shared.asyncapi.util.RefUtil.mergeAllObjectsWithRefsRecursively(
         given,
         textNode -> {
           try {
@@ -146,7 +146,7 @@ class RefUtilTest {
             someOtherField: original value
             """
                 .formatted("#/components/schemas/Foo"));
-    RefUtil.mergeAllObjectsWithRefsRecursively(
+    org.sdase.commons.shared.asyncapi.util.RefUtil.mergeAllObjectsWithRefsRecursively(
         given,
         textNode -> {
           try {
@@ -180,7 +180,7 @@ class RefUtilTest {
             notToBeChangedField: should stay
             """
                 .formatted("#/components/schemas/Foo"));
-    RefUtil.mergeAllObjectsWithRefsRecursively(
+    org.sdase.commons.shared.asyncapi.util.RefUtil.mergeAllObjectsWithRefsRecursively(
         given,
         textNode -> {
           try {
@@ -207,7 +207,7 @@ class RefUtilTest {
   @Test
   void shouldExpandRefInArray() throws JsonProcessingException {
     JsonNode given = YAML_MAPPER.readTree("- $ref: '%s'".formatted("#/components/schemas/Foo"));
-    RefUtil.mergeAllObjectsWithRefsRecursively(
+    org.sdase.commons.shared.asyncapi.util.RefUtil.mergeAllObjectsWithRefsRecursively(
         given,
         textNode -> {
           try {
