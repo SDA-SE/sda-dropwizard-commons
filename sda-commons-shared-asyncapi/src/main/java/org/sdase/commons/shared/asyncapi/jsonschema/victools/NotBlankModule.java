@@ -6,7 +6,15 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.TypeScope;
 import jakarta.validation.constraints.NotBlank;
 
-/** Adds JSON Schema constraints for Jakarta Validation {@link NotBlank}. */
+/**
+ * Adds JSON Schema constraints for Jakarta Validation {@link NotBlank}.
+ *
+ * @deprecated This class will be moved to server-testing with the next major update. It is assumed
+ *     that no direct access from consumers is required. In case this assumption is wrong, a
+ *     migration path will be provided with the next major update. Reach out to the maintainers in
+ *     case migrating with the next major is not an option.
+ */
+@Deprecated(forRemoval = true)
 public class NotBlankModule implements Module {
 
   @Override
