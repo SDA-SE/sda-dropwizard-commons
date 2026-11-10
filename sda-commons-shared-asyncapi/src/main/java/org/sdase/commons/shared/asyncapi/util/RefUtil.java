@@ -39,7 +39,10 @@ public class RefUtil {
    * @param refRewriter A function that receives the current value of every {@code $ref} field and
    *     returns the new value as {@code String}. If a specific {@code $ref} is not handled, the
    *     function MUST return the original {@linkplain TextNode#asText() String value} to keep it.
+   * @deprecated use {@code org.sdase.commons.server.testing.json.RefUtil} from
+   *     sda-commons-server-testing instead
    */
+  @Deprecated(forRemoval = true)
   public static void updateAllRefsRecursively(
       JsonNode node, Function<TextNode, String> refRewriter) {
     // only container nodes can contain properties (directly or in nested structures)
@@ -63,7 +66,10 @@ public class RefUtil {
    *     the {@link ObjectNode} containing the {@code $ref} property. If a specific {@code $ref} is
    *     not handled, the function MUST return an {@link ObjectNode} with a {@code $ref} property
    *     having the given value.
+   * @deprecated use {@code org.sdase.commons.server.testing.json.RefUtil} from
+   *     sda-commons-server-testing instead
    */
+  @Deprecated(forRemoval = true)
   public static void mergeAllObjectsWithRefsRecursively(
       JsonNode node, Function<TextNode, ObjectNode> refRewriter) {
     if (node instanceof ObjectNode objectNode) {
