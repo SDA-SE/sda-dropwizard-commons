@@ -26,7 +26,7 @@ class AsyncApiGeneratorTest {
   @Test
   void shouldGenerateAsyncApi() throws IOException {
     String actual =
-        AsyncApiGenerator.builder()
+        org.sdase.commons.shared.asyncapi.AsyncApiGenerator.builder()
             .withAsyncApiBase(getClass().getResource(GIVEN_ASYNC_API_TEMPLATE))
             .generateYaml();
 
@@ -38,7 +38,7 @@ class AsyncApiGeneratorTest {
   @Test
   void shouldSortSchemas() {
     JsonNode actual =
-        AsyncApiGenerator.builder()
+        org.sdase.commons.shared.asyncapi.AsyncApiGenerator.builder()
             .withAsyncApiBase(getClass().getResource(GIVEN_ASYNC_API_TEMPLATE))
             .generate();
     JsonNode schemas = actual.at("/components/schemas");
@@ -52,7 +52,7 @@ class AsyncApiGeneratorTest {
   void shouldUseCustomSchemaGenerator() {
     ObjectMapper om = new ObjectMapper();
     JsonNode actual =
-        AsyncApiGenerator.builder()
+        org.sdase.commons.shared.asyncapi.AsyncApiGenerator.builder()
             .withAsyncApiBase(getClass().getResource(GIVEN_ASYNC_API_TEMPLATE))
             .withJsonSchemaBuilder(
                 c -> Map.of(((Class<?>) c).getSimpleName() + "Custom", om.createObjectNode()))
