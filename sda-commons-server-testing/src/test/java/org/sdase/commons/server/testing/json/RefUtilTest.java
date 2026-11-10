@@ -63,7 +63,7 @@ class RefUtilTest {
   @Test
   void shouldReplaceAllRefsRecursivelyInObject() throws JsonProcessingException {
     JsonNode given = YAML_MAPPER.readTree(YAML_OBJECT_WITH_REFS);
-    org.sdase.commons.shared.asyncapi.util.RefUtil.updateAllRefsRecursively(
+    RefUtil.updateAllRefsRecursively(
         given,
         textNode ->
             "https://example.com/%s"
@@ -96,7 +96,7 @@ class RefUtilTest {
   @Test
   void shouldReplaceAllRefsRecursivelyInArray() throws JsonProcessingException {
     JsonNode given = YAML_MAPPER.readTree(YAML_ARRAY_WITH_REFS);
-    org.sdase.commons.shared.asyncapi.util.RefUtil.updateAllRefsRecursively(
+    RefUtil.updateAllRefsRecursively(
         given,
         textNode ->
             "https://example.com/%s"
@@ -114,7 +114,7 @@ class RefUtilTest {
   @Test
   void shouldExpandRef() throws JsonProcessingException {
     JsonNode given = YAML_MAPPER.readTree("$ref: '%s'".formatted("#/components/schemas/Foo"));
-    org.sdase.commons.shared.asyncapi.util.RefUtil.mergeAllObjectsWithRefsRecursively(
+    RefUtil.mergeAllObjectsWithRefsRecursively(
         given,
         textNode -> {
           try {
@@ -146,7 +146,7 @@ class RefUtilTest {
             someOtherField: original value
             """
                 .formatted("#/components/schemas/Foo"));
-    org.sdase.commons.shared.asyncapi.util.RefUtil.mergeAllObjectsWithRefsRecursively(
+    RefUtil.mergeAllObjectsWithRefsRecursively(
         given,
         textNode -> {
           try {
@@ -180,7 +180,7 @@ class RefUtilTest {
             notToBeChangedField: should stay
             """
                 .formatted("#/components/schemas/Foo"));
-    org.sdase.commons.shared.asyncapi.util.RefUtil.mergeAllObjectsWithRefsRecursively(
+    RefUtil.mergeAllObjectsWithRefsRecursively(
         given,
         textNode -> {
           try {
@@ -207,7 +207,7 @@ class RefUtilTest {
   @Test
   void shouldExpandRefInArray() throws JsonProcessingException {
     JsonNode given = YAML_MAPPER.readTree("- $ref: '%s'".formatted("#/components/schemas/Foo"));
-    org.sdase.commons.shared.asyncapi.util.RefUtil.mergeAllObjectsWithRefsRecursively(
+    RefUtil.mergeAllObjectsWithRefsRecursively(
         given,
         textNode -> {
           try {
