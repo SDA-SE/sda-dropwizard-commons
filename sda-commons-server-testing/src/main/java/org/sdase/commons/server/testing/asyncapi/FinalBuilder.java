@@ -1,9 +1,8 @@
 package org.sdase.commons.server.testing.asyncapi;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import java.io.UncheckedIOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 public interface FinalBuilder {
 
@@ -18,13 +17,9 @@ public interface FinalBuilder {
    * Generates a new JSON schema for the supplied class.
    *
    * @return A YAML representation for the JSON schema.
-   * @throws UncheckedIOException if json processing fails
+   * @throws JacksonException if json processing fails
    */
-  default String generateYaml() {
-    try {
-      return YAMLMapper.builder().build().writeValueAsString(generate());
-    } catch (JsonProcessingException e) {
-      throw new UncheckedIOException("Error while converting JSON to YAML.", e);
-    }
+  default String generateYaml() throws JacksonException {
+    return YAMLMapper.builder().build().writeValueAsString(generate());
   }
 }

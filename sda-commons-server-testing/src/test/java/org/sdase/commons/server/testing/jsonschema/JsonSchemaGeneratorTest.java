@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.lang.reflect.Type;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.node.ObjectNode;
 
 class JsonSchemaGeneratorTest {
 
@@ -20,8 +20,7 @@ class JsonSchemaGeneratorTest {
   void preservesFieldOrderWithoutAnnotation() {
     ObjectNode schema = generator.generate(UnorderedFields.class);
 
-    assertThat(schema.at("/$defs/UnorderedFields/properties").fieldNames())
-        .toIterable()
+    assertThat(schema.at("/$defs/UnorderedFields/properties").propertyNames())
         .containsExactly("zebra", "alpha", "middle");
   }
 
@@ -29,8 +28,7 @@ class JsonSchemaGeneratorTest {
   void honorsExplicitPropertyOrderAndPreservesRemainingFieldOrder() {
     ObjectNode schema = generator.generate(ExplicitlyOrderedFields.class);
 
-    assertThat(schema.at("/$defs/ExplicitlyOrderedFields/properties").fieldNames())
-        .toIterable()
+    assertThat(schema.at("/$defs/ExplicitlyOrderedFields/properties").propertyNames())
         .containsExactly("middle", "zebra", "alpha");
   }
 
@@ -38,8 +36,7 @@ class JsonSchemaGeneratorTest {
   void honorsAlphabeticalPropertyOrder() {
     ObjectNode schema = generator.generate(AlphabeticallyOrderedFields.class);
 
-    assertThat(schema.at("/$defs/AlphabeticallyOrderedFields/properties").fieldNames())
-        .toIterable()
+    assertThat(schema.at("/$defs/AlphabeticallyOrderedFields/properties").propertyNames())
         .containsExactly("alpha", "middle", "zebra");
   }
 
@@ -47,12 +44,12 @@ class JsonSchemaGeneratorTest {
   void generatesStandaloneDraft202012SchemaWithValidationAndExamples() {
     ObjectNode schema = generator.generate(ContractBundle.class);
 
-    assertThat(schema.path("$schema").asText())
+    assertThat(schema.path("$schema").asString())
         .isEqualTo("https://json-schema.org/draft/2020-12/schema");
     assertThat(schema.at("/$defs/ContractBundle/properties/id/minLength").asInt()).isEqualTo(1);
-    assertThat(schema.at("/$defs/ContractBundle/properties/id/pattern").asText())
+    assertThat(schema.at("/$defs/ContractBundle/properties/id/pattern").asString())
         .isEqualTo("^.*\\S+.*$");
-    assertThat(schema.at("/$defs/ContractBundle/properties/id/examples/0").asText())
+    assertThat(schema.at("/$defs/ContractBundle/properties/id/examples/0").asString())
         .isEqualTo("contract-42");
     assertInternalReferencesResolve(schema);
   }
@@ -63,7 +60,7 @@ class JsonSchemaGeneratorTest {
 
     ObjectNode schema = generator.generate(ContractBundle.class, schemaId);
 
-    assertThat(schema.path("$id").asText()).isEqualTo(schemaId);
+    assertThat(schema.path("$id").asString()).isEqualTo(schemaId);
     assertThat(schema.findValues("$id")).containsExactly(schema.path("$id"));
     assertInternalReferencesResolve(schema);
   }
@@ -74,12 +71,12 @@ class JsonSchemaGeneratorTest {
 
     ObjectNode catalog = generator.generate(List.of(ContractBundle.class, listOfContractBundles));
 
-    assertThat(catalog.path("$schema").asText())
+    assertThat(catalog.path("$schema").asString())
         .isEqualTo("https://json-schema.org/draft/2020-12/schema");
-    assertThat(catalog.at("/oneOf/0/$ref").asText()).isEqualTo("#/$defs/ContractBundle");
-    assertThat(catalog.at("/$defs/ContractBundle/type").asText()).isEqualTo("object");
-    assertThat(catalog.at("/oneOf/1/type").asText()).isEqualTo("array");
-    assertThat(catalog.at("/oneOf/1/items/$ref").asText()).isEqualTo("#/$defs/ContractBundle");
+    assertThat(catalog.at("/oneOf/0/$ref").asString()).isEqualTo("#/$defs/ContractBundle");
+    assertThat(catalog.at("/$defs/ContractBundle/type").asString()).isEqualTo("object");
+    assertThat(catalog.at("/oneOf/1/type").asString()).isEqualTo("array");
+    assertThat(catalog.at("/oneOf/1/items/$ref").asString()).isEqualTo("#/$defs/ContractBundle");
     assertInternalReferencesResolve(catalog);
   }
 
@@ -90,8 +87,8 @@ class JsonSchemaGeneratorTest {
     ObjectNode catalog =
         generator.generate(List.of(ContractBundle.class, UnorderedFields.class), schemaId);
 
-    assertThat(catalog.path("$id").asText()).isEqualTo(schemaId);
-    assertThat(catalog.fieldNames()).toIterable().startsWith("$schema", "$id", "oneOf");
+    assertThat(catalog.path("$id").asString()).isEqualTo(schemaId);
+    assertThat(catalog.propertyNames()).startsWith("$schema", "$id", "oneOf");
     assertThat(catalog.findValues("$id")).containsExactly(catalog.path("$id"));
     assertInternalReferencesResolve(catalog);
   }
@@ -101,7 +98,7 @@ class JsonSchemaGeneratorTest {
     ObjectNode schema = generator.generate(List.of(ContractBundle.class, ContractBundle.class));
 
     assertThat(schema.path("oneOf").isMissingNode()).isTrue();
-    assertThat(schema.path("$ref").asText()).isEqualTo("#/$defs/ContractBundle");
+    assertThat(schema.path("$ref").asString()).isEqualTo("#/$defs/ContractBundle");
     assertInternalReferencesResolve(schema);
   }
 
@@ -111,7 +108,7 @@ class JsonSchemaGeneratorTest {
 
     ObjectNode schema = generator.generate(List.of(ContractBundle.class), schemaId);
 
-    assertThat(schema.path("$id").asText()).isEqualTo(schemaId);
+    assertThat(schema.path("$id").asString()).isEqualTo(schemaId);
     assertThat(schema.findValues("$id")).containsExactly(schema.path("$id"));
     assertInternalReferencesResolve(schema);
   }
@@ -120,8 +117,8 @@ class JsonSchemaGeneratorTest {
   void keepsSameSimpleNameModelsAsSeparateDefinitions() {
     ObjectNode schema = generator.generate(DuplicateNames.class);
 
-    String firstReference = schema.at("/$defs/DuplicateNames/properties/first/$ref").asText();
-    String secondReference = schema.at("/$defs/DuplicateNames/properties/second/$ref").asText();
+    String firstReference = schema.at("/$defs/DuplicateNames/properties/first/$ref").asString();
+    String secondReference = schema.at("/$defs/DuplicateNames/properties/second/$ref").asString();
 
     assertThat(firstReference).startsWith("#/$defs/").isNotEqualTo(secondReference);
     assertThat(schema.at(firstReference.substring(1) + "/properties/first").isMissingNode())
@@ -144,7 +141,7 @@ class JsonSchemaGeneratorTest {
         .findValues("$ref")
         .forEach(
             reference -> {
-              String value = reference.asText();
+              String value = reference.asString();
               if (value.startsWith("#/")) {
                 assertThat(schema.at(value.substring(1))).isNotNull();
                 assertThat(schema.at(value.substring(1)).isMissingNode()).isFalse();
