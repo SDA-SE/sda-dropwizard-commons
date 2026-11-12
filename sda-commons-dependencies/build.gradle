@@ -248,3 +248,26 @@ dependencies {
     api 'com.github.jknack:handlebars:4.5.8' //CVE-2026-55760 (check if still needed by next wiremock update)
   }
 }
+
+// manage version of the test-fixtures classifier of apache kafka-clients for kafka-testing
+plugins.withId('maven-publish') {
+  publishing.publications.withType(MavenPublication).configureEach {
+    pom.withXml {
+      def root = asNode()
+      def management = root.dependencyManagement
+          ? root.dependencyManagement[0]
+          : root.appendNode('dependencyManagement')
+
+      def dependencies = management.dependencies
+          ? management.dependencies[0]
+          : management.appendNode('dependencies')
+
+      def dependency = dependencies.appendNode('dependency')
+      dependency.appendNode('groupId', 'org.apache.kafka')
+      dependency.appendNode('artifactId', 'kafka-clients')
+      dependency.appendNode('version', '4.4.0')
+      dependency.appendNode('type', 'jar')
+      dependency.appendNode('classifier', 'test-fixtures')
+    }
+  }
+}

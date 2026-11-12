@@ -11,7 +11,12 @@ dependencies {
 
   implementation "org.apache.kafka:kafka-test-common-runtime"
 
-  implementation "org.apache.kafka:kafka-clients:4.4.0:test-fixtures"
+  implementation('org.apache.kafka:kafka-clients') {
+    artifact {
+      classifier = 'test-fixtures'
+      type = 'jar'
+    }
+  }
 
   implementation 'org.bouncycastle:bcpkix-jdk18on'
 
