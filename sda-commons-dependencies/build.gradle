@@ -51,7 +51,7 @@ ext {
   //
   bouncyCastleVersion = '1.86'
   //
-  victoolsVersion = '4.38.0'
+  victoolsVersion = '5.0.0'
   //
   flywayVersion = '13.12.1'
   //
