@@ -1,10 +1,11 @@
 package org.sdase.commons.server.testing.json;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
 
+/** A utility to sort the fields of a Jackson 3 object node in place. */
 public class JsonNodeUtil {
   private JsonNodeUtil() {
     // No constructor

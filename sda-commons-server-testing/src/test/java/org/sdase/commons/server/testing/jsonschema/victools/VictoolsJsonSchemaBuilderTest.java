@@ -3,12 +3,12 @@ package org.sdase.commons.server.testing.jsonschema.victools;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.testing.asyncapi.testdata.models.Plane;
 import org.sdase.commons.server.testing.jsonschema.AbstractJsonSchemaBuilderTest;
+import tools.jackson.databind.JsonNode;
 
 class VictoolsJsonSchemaBuilderTest extends AbstractJsonSchemaBuilderTest {
 
@@ -27,8 +27,7 @@ class VictoolsJsonSchemaBuilderTest extends AbstractJsonSchemaBuilderTest {
   void preservesFieldOrderWithoutAnnotation() {
     var schemas = jsonSchemaBuilder.toJsonSchema(UnorderedFields.class);
 
-    assertThat(schemas.get("UnorderedFields").path("properties").fieldNames())
-        .toIterable()
+    assertThat(schemas.get("UnorderedFields").path("properties").propertyNames())
         .containsExactly("zebra", "alpha", "middle");
   }
 
@@ -36,8 +35,7 @@ class VictoolsJsonSchemaBuilderTest extends AbstractJsonSchemaBuilderTest {
   void honorsExplicitPropertyOrderAndPreservesRemainingFieldOrder() {
     var schemas = jsonSchemaBuilder.toJsonSchema(ExplicitlyOrderedFields.class);
 
-    assertThat(schemas.get("ExplicitlyOrderedFields").path("properties").fieldNames())
-        .toIterable()
+    assertThat(schemas.get("ExplicitlyOrderedFields").path("properties").propertyNames())
         .containsExactly("middle", "zebra", "alpha");
   }
 
@@ -45,8 +43,7 @@ class VictoolsJsonSchemaBuilderTest extends AbstractJsonSchemaBuilderTest {
   void honorsAlphabeticalPropertyOrder() {
     var schemas = jsonSchemaBuilder.toJsonSchema(AlphabeticallyOrderedFields.class);
 
-    assertThat(schemas.get("AlphabeticallyOrderedFields").path("properties").fieldNames())
-        .toIterable()
+    assertThat(schemas.get("AlphabeticallyOrderedFields").path("properties").propertyNames())
         .containsExactly("alpha", "middle", "zebra");
   }
 

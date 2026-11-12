@@ -3,16 +3,14 @@ package org.sdase.commons.server.testing.jsonschema;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import java.io.UncheckedIOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 class JsonSchemaBuilderTest {
 
@@ -216,10 +214,7 @@ class JsonSchemaBuilderTest {
   }
 
   private static Map<String, JsonNode> yamlAsJsonNodeMap(String yamlContent) {
-    try {
-      return YAMLMapper.builder().build().readValue(yamlContent, new TypeReference<>() {});
-    } catch (JsonProcessingException e) {
-      throw new UncheckedIOException(e);
-    }
+
+    return YAMLMapper.builder().build().readValue(yamlContent, new TypeReference<>() {});
   }
 }

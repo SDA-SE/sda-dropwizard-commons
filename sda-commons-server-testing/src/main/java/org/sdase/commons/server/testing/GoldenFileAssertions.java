@@ -1,8 +1,5 @@
 package org.sdase.commons.server.testing;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.dropwizard.jackson.Jackson;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +9,9 @@ import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.dataformat.yaml.YAMLFactory;
+import tools.jackson.dataformat.yaml.YAMLMapper;
+import tools.jackson.dataformat.yaml.YAMLSchema;
 
 /**
  * Special assertions for {@link Path} objects to check if a file matches the expected contents and
@@ -159,7 +159,8 @@ public class GoldenFileAssertions extends AbstractAssert<GoldenFileAssertions, P
       Assertions.assertThat(actual).as(ASSERTION_TEXT, fileName, fileName, fileName).exists();
 
       // assert YAML / JSON
-      ObjectMapper objectMapper = Jackson.newObjectMapper(new YAMLFactory());
+      YAMLMapper objectMapper =
+          YAMLMapper.builder(YAMLFactory.builder().yamlSchema(YAMLSchema.CORE).build()).build();
       Assertions.assertThat(objectMapper.readTree(actual.toFile()))
           .as(ASSERTION_TEXT, fileName, fileName, fileName)
           .isEqualTo(objectMapper.readTree(expected));

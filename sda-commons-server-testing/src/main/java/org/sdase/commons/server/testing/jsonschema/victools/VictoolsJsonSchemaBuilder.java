@@ -5,11 +5,8 @@ import static com.github.victools.jsonschema.module.jackson.JacksonOption.*;
 import static com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationOption.INCLUDE_PATTERN_EXPRESSIONS;
 import static com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationOption.NOT_NULLABLE_FIELD_IS_REQUIRED;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.victools.jsonschema.generator.*;
-import com.github.victools.jsonschema.module.jackson.JacksonModule;
+import com.github.victools.jsonschema.module.jackson.JacksonSchemaModule;
 import com.github.victools.jsonschema.module.jackson.JsonPropertySorter;
 import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationModule;
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module;
@@ -18,6 +15,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.sdase.commons.server.testing.json.RefUtil;
 import org.sdase.commons.server.testing.jsonschema.JsonSchemaBuilder;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.StringNode;
 
 /**
  * A {@link JsonSchemaBuilder} that uses <a
@@ -33,7 +33,7 @@ public class VictoolsJsonSchemaBuilder implements JsonSchemaBuilder {
    */
   public static VictoolsJsonSchemaBuilder fromDefaultConfig() {
     var jacksonModule =
-        new JacksonModule(
+        new JacksonSchemaModule(
             RESPECT_JSONPROPERTY_ORDER,
             RESPECT_JSONPROPERTY_REQUIRED,
             INLINE_TRANSFORMED_SUBTYPES,
@@ -83,8 +83,8 @@ public class VictoolsJsonSchemaBuilder implements JsonSchemaBuilder {
         jsonSchemaOfType, this::convertRefToDefinitionsIntoRefToComponentsSchemas);
   }
 
-  private String convertRefToDefinitionsIntoRefToComponentsSchemas(TextNode refValue) {
-    String ref = refValue.asText();
+  private String convertRefToDefinitionsIntoRefToComponentsSchemas(StringNode refValue) {
+    String ref = refValue.asString();
     if (ref.startsWith("#/definitions/")) {
       return "#/components/schemas/" + ref.substring("#/definitions/".length());
     } else {
@@ -96,8 +96,8 @@ public class VictoolsJsonSchemaBuilder implements JsonSchemaBuilder {
     JsonNode generatedDefinitions = jsonNodesFromVictools.get("definitions");
     Map<String, JsonNode> definitions = new LinkedHashMap<>();
     generatedDefinitions
-        .fieldNames()
-        .forEachRemaining(name -> definitions.put(name, generatedDefinitions.get(name)));
+        .propertyNames()
+        .forEach(name -> definitions.put(name, generatedDefinitions.get(name)));
     return definitions;
   }
 }

@@ -1,10 +1,5 @@
 package org.sdase.commons.server.testing.asyncapi;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.lang.reflect.Type;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -14,6 +9,10 @@ import org.sdase.commons.server.testing.json.JsonNodeUtil;
 import org.sdase.commons.server.testing.json.RefUtil;
 import org.sdase.commons.server.testing.jsonschema.JsonSchemaBuilder;
 import org.sdase.commons.server.testing.jsonschema.victools.VictoolsJsonSchemaBuilder;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 public class AsyncBuilder
     implements AsyncApiGenerator.AsyncApiBaseBuilder,
@@ -28,12 +27,9 @@ public class AsyncBuilder
   }
 
   @Override
-  public AsyncApiGenerator.SchemaBuilder withAsyncApiBase(String yamlAsyncApiContent) {
-    try {
-      asyncApiBaseTemplate = YAMLMapper.builder().build().readTree(yamlAsyncApiContent);
-    } catch (IOException e) {
-      throw new UncheckedIOException("Error while converting YAML to JSONNode", e);
-    }
+  public AsyncApiGenerator.SchemaBuilder withAsyncApiBase(String yamlAsyncApiContent)
+      throws JacksonException {
+    asyncApiBaseTemplate = YAMLMapper.builder().build().readTree(yamlAsyncApiContent);
     return this;
   }
 
@@ -45,7 +41,7 @@ public class AsyncBuilder
 
   @Override
   public JsonNode generate() {
-    ObjectNode asyncApiObject = asyncApiBaseTemplate.deepCopy();
+    ObjectNode asyncApiObject = asyncApiBaseTemplate.deepCopy().asObject();
     var jsonSchemas = createSchemasFromReferencedClasses(asyncApiObject);
     insertSchemas(jsonSchemas, asyncApiObject);
     JsonNodeUtil.sortJsonNodeInPlace(asyncApiObject.at("/components/schemas"));
@@ -64,7 +60,7 @@ public class AsyncBuilder
     RefUtil.updateAllRefsRecursively(
         asyncApiJsonNode,
         ref -> {
-          String refText = ref.asText();
+          String refText = ref.asString();
           if (refText.startsWith(prefix)) {
             result.add(refText.substring(prefix.length()));
             String simpleClassName = refText.substring(refText.lastIndexOf(".") + 1);
