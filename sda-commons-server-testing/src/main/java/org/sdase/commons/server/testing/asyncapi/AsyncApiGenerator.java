@@ -5,6 +5,7 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import org.sdase.commons.server.testing.jsonschema.JsonSchemaBuilder;
+import tools.jackson.core.JacksonException;
 
 /**
  * Generator used to build AsyncAPI specs from a template base file and schemas generated from code.
@@ -83,9 +84,9 @@ public class AsyncApiGenerator {
      *
      * @param yamlAsyncApiContent The content of an AsyncAPI yaml schema.
      * @return builder
-     * @throws UncheckedIOException when parsing as yaml failed
+     * @throws JacksonException when parsing as yaml failed
      */
-    SchemaBuilder withAsyncApiBase(String yamlAsyncApiContent);
+    SchemaBuilder withAsyncApiBase(String yamlAsyncApiContent) throws JacksonException;
   }
 
   public interface SchemaBuilder extends FinalBuilder {

@@ -1,13 +1,13 @@
 package org.sdase.commons.server.testing.json;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ContainerNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import java.util.function.Function;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ContainerNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.StringNode;
 
-/** A utility to manipulate {@code $ref}erences in schemas. */
+/** A utility to manipulate {@code $ref}erences in schemas represented by Jackson 3 nodes. */
 public class RefUtil {
 
   private static final String REF_KEY = "$ref";
@@ -38,10 +38,11 @@ public class RefUtil {
    *     Json structure
    * @param refRewriter A function that receives the current value of every {@code $ref} field and
    *     returns the new value as {@code String}. If a specific {@code $ref} is not handled, the
-   *     function MUST return the original {@linkplain TextNode#asText() String value} to keep it.
+   *     function MUST return the original {@linkplain StringNode#asString() String value} to keep
+   *     it.
    */
   public static void updateAllRefsRecursively(
-      JsonNode node, Function<TextNode, String> refRewriter) {
+      JsonNode node, Function<StringNode, String> refRewriter) {
     // only container nodes can contain properties (directly or in nested structures)
     if (node instanceof ContainerNode<?> containerNode) {
       mergeAllObjectsWithRefsRecursively(
@@ -65,15 +66,15 @@ public class RefUtil {
    *     having the given value.
    */
   public static void mergeAllObjectsWithRefsRecursively(
-      JsonNode node, Function<TextNode, ObjectNode> refRewriter) {
+      JsonNode node, Function<StringNode, ObjectNode> refRewriter) {
     if (node instanceof ObjectNode objectNode) {
       ObjectNode iteratorNode = objectNode.deepCopy(); // avoid concurrent modification
       iteratorNode
-          .fieldNames()
-          .forEachRemaining(
+          .propertyNames()
+          .forEach(
               fieldName -> {
                 JsonNode fieldValueNode = objectNode.get(fieldName);
-                if (fieldName.equals(REF_KEY) && fieldValueNode instanceof TextNode ref) {
+                if (fieldName.equals(REF_KEY) && fieldValueNode instanceof StringNode ref) {
                   var replacementForObjectWithRef = refRewriter.apply(ref);
                   if (replacementForObjectWithRef != null) {
                     objectNode.remove(REF_KEY);

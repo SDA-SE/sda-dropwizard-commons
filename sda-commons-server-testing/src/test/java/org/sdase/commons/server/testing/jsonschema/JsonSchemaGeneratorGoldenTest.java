@@ -1,7 +1,5 @@
 package org.sdase.commons.server.testing.jsonschema;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.IOException;
@@ -10,6 +8,8 @@ import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.testing.GoldenFileAssertions;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 class JsonSchemaGeneratorGoldenTest {
 
