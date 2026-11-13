@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -51,12 +50,6 @@ class CloudEventsTest {
           config("kafka.brokers", KAFKA::getKafkaConnectString));
 
   private CloudEventsTestApp app;
-
-  @BeforeAll
-  static void beforeAll() {
-    KAFKA.getKafkaTestUtils().createTopic("partner-created", 1, (short) 1);
-    KAFKA.getKafkaTestUtils().createTopic("contract-created", 1, (short) 1);
-  }
 
   @BeforeEach
   void beforeEach() {
