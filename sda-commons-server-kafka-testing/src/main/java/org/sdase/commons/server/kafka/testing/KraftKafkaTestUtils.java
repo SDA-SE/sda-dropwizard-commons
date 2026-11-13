@@ -96,8 +96,8 @@ public class KraftKafkaTestUtils {
     try (KafkaProducer<byte[], byte[]> producer =
         getKafkaProducer(ByteArraySerializer.class, ByteArraySerializer.class)) {
 
-      for (ProducerRecord<byte[], byte[]> record : records) {
-        producer.send(record).get(TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
+      for (ProducerRecord<byte[], byte[]> producerRecord : records) {
+        producer.send(producerRecord).get(TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
       }
 
     } catch (InterruptedException e) {
@@ -119,9 +119,9 @@ public class KraftKafkaTestUtils {
 
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
 
-      for (Map.Entry<byte[], byte[]> record : records.entrySet()) {
+      for (Map.Entry<byte[], byte[]> entry : records.entrySet()) {
         producer
-            .send(new ProducerRecord<>(topic, partition, record.getKey(), record.getValue()))
+            .send(new ProducerRecord<>(topic, partition, entry.getKey(), entry.getValue()))
             .get(TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
       }
 

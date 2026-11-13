@@ -64,8 +64,8 @@ public final class SecureKafkaTestUtils {
   public void produceRecords(List<ProducerRecord<byte[], byte[]>> records) {
     try (KafkaProducer<byte[], byte[]> producer =
         getKafkaProducer(ByteArraySerializer.class, ByteArraySerializer.class)) {
-      for (ProducerRecord<byte[], byte[]> record : records) {
-        producer.send(record).get(TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
+      for (ProducerRecord<byte[], byte[]> producerRecord : records) {
+        producer.send(producerRecord).get(TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();

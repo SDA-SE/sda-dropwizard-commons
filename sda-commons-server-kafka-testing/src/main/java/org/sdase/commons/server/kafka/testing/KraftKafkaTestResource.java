@@ -15,7 +15,10 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  */
 public class KraftKafkaTestResource implements BeforeAllCallback, AfterAllCallback {
   private KafkaClusterTestKit cluster;
+
+  @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
   private int brokerCount = 1;
+
   private final Map<String, Object> brokerProperties = new HashMap<>();
 
   public KraftKafkaTestResource withBrokerProperty(String name, String value) {
