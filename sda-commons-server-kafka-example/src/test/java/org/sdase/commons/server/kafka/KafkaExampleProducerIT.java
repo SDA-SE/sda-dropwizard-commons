@@ -101,10 +101,10 @@ class KafkaExampleProducerIT {
               records.addAll(consumerRecords);
             });
 
-    ConsumerRecord<byte[], byte[]> record = records.getFirst();
+    ConsumerRecord<byte[], byte[]> consumerRecord = records.getFirst();
 
-    assertThat(getLong(record.key())).isEqualTo(1L);
-    assertThat(getLong(record.value())).isEqualTo(2L);
+    assertThat(getLong(consumerRecord.key())).isEqualTo(1L);
+    assertThat(getLong(consumerRecord.value())).isEqualTo(2L);
   }
 
   private static long getLong(byte[] array) {
