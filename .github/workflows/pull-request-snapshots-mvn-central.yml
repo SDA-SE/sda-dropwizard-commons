@@ -10,6 +10,9 @@ jobs:
   pull-request-snapshots:
     # do not execute for PRs that origin from forks or created by dependabot since we are missing the secrets for the push
     if: "!(github.event.pull_request && github.event.pull_request.head.repo.fork) && github.actor != 'dependabot[bot]'"
+    concurrency:
+      group: maven-central-snapshot-publishing
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -28,7 +31,7 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
 
       - name: Upload SNAPSHOT to Maven Central
-        run: ./gradlew publishToMavenCentral
+        run: ./gradlew publishToMavenCentral -PmavenCentralPublishDelayMillis=30000
         env:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PRIVATE_KEY_SECRET }}
