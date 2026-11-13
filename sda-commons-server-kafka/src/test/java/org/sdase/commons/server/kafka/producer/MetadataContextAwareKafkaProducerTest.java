@@ -240,6 +240,22 @@ class MetadataContextAwareKafkaProducerTest {
   }
 
   @Test
+  void shouldDelegateRegisterMetricForSubscription() {
+    var given = mock(KafkaMetric.class);
+    producer.registerMetricForSubscription(given);
+    verify(delegateProducerMock, times(1)).registerMetricForSubscription(given);
+    verifyNoMoreInteractions(delegateProducerMock);
+  }
+
+  @Test
+  void shouldDelegateUnregisterMetricForSubscription() {
+    var given = mock(KafkaMetric.class);
+    producer.unregisterMetricFromSubscription(given);
+    verify(delegateProducerMock, times(1)).unregisterMetricFromSubscription(given);
+    verifyNoMoreInteractions(delegateProducerMock);
+  }
+
+  @Test
   void shouldDelegateCommitTransaction() {
     producer.commitTransaction();
     verify(delegateProducerMock, times(1)).commitTransaction();
