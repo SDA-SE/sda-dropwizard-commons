@@ -61,9 +61,10 @@ class KeyLoaderSchedulerTest {
     RSAPublicKey keyToBeRevoked = mock(RSAPublicKey.class);
 
     // initially, two known keys are published
-    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null, "RS256"));
+    actualKeys.add(new LoadedPublicKey("kidForValidKey", null, validKey, keySource, null, "RS256"));
     actualKeys.add(
-        new LoadedPublicKey("kidForKeyToBeRevoked", keyToBeRevoked, keySource, null, "RS256"));
+        new LoadedPublicKey(
+            "kidForKeyToBeRevoked", null, keyToBeRevoked, keySource, null, "RS256"));
 
     waitForNextReload();
     assertThatKeyIsKnown("kidForValidKey", validKey);
@@ -81,7 +82,7 @@ class KeyLoaderSchedulerTest {
   void shouldKeepKeysOnLoadingFailure() {
     final RSAPublicKey validKey = mock(RSAPublicKey.class);
 
-    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null, "RS256"));
+    actualKeys.add(new LoadedPublicKey("kidForValidKey", null, validKey, keySource, null, "RS256"));
 
     waitForNextReload();
     assertThatKeyIsKnown("kidForValidKey", validKey);
@@ -106,7 +107,7 @@ class KeyLoaderSchedulerTest {
 
     // expect more schedules
     actualInvocationFails.set(false);
-    actualKeys.add(new LoadedPublicKey("kidForValidKey", validKey, keySource, null, "RS256"));
+    actualKeys.add(new LoadedPublicKey("kidForValidKey", null, validKey, keySource, null, "RS256"));
 
     waitForNextReload();
     assertThatKeyIsKnown("kidForValidKey", validKey);

@@ -20,17 +20,6 @@ public class MapOrFailKeyMapper implements KeyMapper {
   private final boolean useImplToApiPlaceholder;
 
   /**
-   * Creates a new {@link MapOrFailKeyMapper} that fails for missing mappings.
-   *
-   * @param mappingModel the mapping model to use
-   * @deprecated in favor of {@link #MapOrFailKeyMapper(KeyMappingModel, boolean, boolean)}
-   */
-  @Deprecated(forRemoval = true)
-  public MapOrFailKeyMapper(KeyMappingModel mappingModel) {
-    this(mappingModel, false, false);
-  }
-
-  /**
    * Creates a new {@link MapOrFailKeyMapper}, optionally using placeholders for missing mappings.
    *
    * @param mappingModel the mapping model to use

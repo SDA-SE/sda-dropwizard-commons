@@ -1,5 +1,11 @@
 # Migration Guide from v9 to v10
 
+## Deprecated Code
+
+Deprecated code and API methods have been removed.
+Before upgrading, their usage should be replaced with the documented alternatives.
+
+
 ## Kafka is upgraded from 3.9.2 to 4.4.0
 
 Kafka is upgraded to 4.4.0 to fix
