@@ -59,9 +59,3 @@ static final DropwizardAppExtension<KafkaExampleConfiguration> DW =
         resourceFilePath("test-config-producer.yml"),
         config("kafka.brokers", KAFKA::getKafkaConnectString));
 ```
-
-## Security testing
-
-For SSL and SASL integration tests, use `SecureKafkaTestResource`.
-
-It supports SSL, SASL/PLAIN and SASL/SCRAM-SHA-512 using an embedded KRaft cluster.
