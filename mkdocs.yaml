@@ -48,11 +48,11 @@ nav:
     - Server Spring Data Mongo: server-spring-data-mongo.md
     - Server Testing: server-testing.md
     - Server Testing JSON Schema: server-testing-jsonschema.md
+    - Server Testing AsyncAPI: server-testing-asyncapi.md
     - Server Trace: server-trace.md
     - Server Weld: server-weld.md
     - Server Weld Example: server-weld-example.md
     - Server Weld Testing: server-weld-testing.md
-    - Shared Async API: shared-asyncapi.md
     - Shared Certificates: shared-certificates.md
     - Shared Error: shared-error.md
     - Shared Forms: shared-forms.md
@@ -64,6 +64,7 @@ nav:
     - Migrate from v2 to v3: migration-guides/MIGRATION_GUIDE_v2_to_v3.md
     - Migrate from v5 to v6: migration-guides/MIGRATION_GUIDE_v5_to_v6.md
     - Migrate from v8 to v9: migration-guides/MIGRATION_GUIDE_v8_to_v9.md
+    - Migrate from v9 to v10: migration-guides/MIGRATION_GUIDE_v9_to_v10.md
 
 # Always include the techdocs-core plugin, otherwise it's not possible to
 # display the documentation in Backstage. We don't support other plugins

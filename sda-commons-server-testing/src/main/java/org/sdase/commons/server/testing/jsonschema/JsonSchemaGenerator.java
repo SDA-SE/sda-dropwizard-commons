@@ -1,11 +1,8 @@
 package org.sdase.commons.server.testing.jsonschema;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.*;
-import com.github.victools.jsonschema.module.jackson.JacksonModule;
 import com.github.victools.jsonschema.module.jackson.JacksonOption;
+import com.github.victools.jsonschema.module.jackson.JacksonSchemaModule;
 import com.github.victools.jsonschema.module.jackson.JsonPropertySorter;
 import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationModule;
 import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationOption;
@@ -15,9 +12,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.sdase.commons.shared.asyncapi.jsonschema.victools.DefaultSchemaDefinitionNamingStrategy;
-import org.sdase.commons.shared.asyncapi.jsonschema.victools.NotBlankModule;
-import org.sdase.commons.shared.asyncapi.jsonschema.victools.SwaggerExampleModule;
+import org.sdase.commons.server.testing.jsonschema.victools.DefaultSchemaDefinitionNamingStrategy;
+import org.sdase.commons.server.testing.jsonschema.victools.NotBlankModule;
+import org.sdase.commons.server.testing.jsonschema.victools.SwaggerExampleModule;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Generates JSON Schema Draft 2020-12 documents for explicit payload, request, and response types.
@@ -43,7 +43,7 @@ public final class JsonSchemaGenerator {
    */
   public static JsonSchemaGenerator defaultGenerator() {
     var jacksonModule =
-        new JacksonModule(
+        new JacksonSchemaModule(
             JacksonOption.RESPECT_JSONPROPERTY_ORDER,
             JacksonOption.RESPECT_JSONPROPERTY_REQUIRED,
             JacksonOption.INLINE_TRANSFORMED_SUBTYPES,

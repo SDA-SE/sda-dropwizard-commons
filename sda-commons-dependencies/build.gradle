@@ -51,7 +51,7 @@ ext {
   //
   bouncyCastleVersion = '1.86'
   //
-  victoolsVersion = '4.38.0'
+  victoolsVersion = '5.0.0'
   //
   flywayVersion = '13.12.1'
   //
@@ -131,7 +131,7 @@ dependencies {
       because 'conflict between json-path 2.7.0 (2.4.7) and wiremock-jre8 (2.4.7 via json-path and 2.4.8 directly)'
     }
 
-    // sda-commons-shared-asyncapi
+    // asyncapi in sda-commons-server-testing
     api "io.swagger.core.v3:swagger-models-jakarta:${swaggerCoreV3Version}"
 
     // sda-commons-server-auth

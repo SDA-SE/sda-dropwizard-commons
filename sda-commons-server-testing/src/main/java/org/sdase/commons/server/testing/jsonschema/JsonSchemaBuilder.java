@@ -1,24 +1,17 @@
-package org.sdase.commons.shared.asyncapi.jsonschema;
+package org.sdase.commons.server.testing.jsonschema;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.sdase.commons.shared.asyncapi.util.RefUtil;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Creates Json Schema from (annotated) class files. Considered annotations depend on the
  * implementation.
- *
- * @deprecated This class will be moved to server-testing with the next major update. It is assumed
- *     that no direct access from consumers is required. In case this assumption is wrong, a
- *     migration path will be provided with the next major update. Reach out to the maintainers in
- *     case migrating with the next major is not an option.
  */
-@Deprecated(forRemoval = true)
 public interface JsonSchemaBuilder {
 
   /**
@@ -35,8 +28,9 @@ public interface JsonSchemaBuilder {
    *     {@link Class#getSimpleName()} of the given {@code type} and refers to the Json Schema of
    *     that type. All references to other generated schemas in the returned map are qualified as
    *     {@code $ref: "#/components/messages/<map-entry-key>} when referenced.
-   * @see RefUtil#updateAllRefsRecursively(JsonNode, java.util.function.Function) Adapting the
-   *     references, when using the generated schemas in another documentation structure.
+   * @see org.sdase.commons.server.testing.json.RefUtil#updateAllRefsRecursively(JsonNode,
+   *     java.util.function.Function) Adapting the references, when using the generated schemas in
+   *     another documentation structure.
    */
   Map<String, JsonNode> toJsonSchema(Type type);
 
@@ -62,8 +56,9 @@ public interface JsonSchemaBuilder {
    *     that type. All references to other generated schemas in the returned map are qualified as
    *     {@code $ref: "#/components/messages/<map-entry-key>} when referenced.
    * @throws IllegalStateException if conflicting schemas are produced.
-   * @see RefUtil#updateAllRefsRecursively(JsonNode, java.util.function.Function) Adapting the
-   *     references, when using the generated schemas in another documentation structure.
+   * @see org.sdase.commons.server.testing.json.RefUtil#updateAllRefsRecursively(JsonNode,
+   *     java.util.function.Function) Adapting the references, when using the generated schemas in
+   *     another documentation structure.
    */
   default Map<String, JsonNode> toJsonSchema(Iterable<Type> types) {
     return StreamSupport.stream(types.spliterator(), false)

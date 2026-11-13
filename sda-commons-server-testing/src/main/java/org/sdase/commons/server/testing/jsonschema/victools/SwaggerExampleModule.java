@@ -1,32 +1,26 @@
-package org.sdase.commons.shared.asyncapi.jsonschema.victools;
+package org.sdase.commons.server.testing.jsonschema.victools;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.victools.jsonschema.generator.FieldScope;
 import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaKeyword;
 import io.swagger.v3.oas.annotations.media.Schema;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.StringNode;
 
 /**
  * A module that picks up {@link Schema#example()} from properties and adds it as item in the {@code
  * examples} array of the definition of that property. Examples are parsed as Json unless the
  * property type is {@code string}. The raw string value is used as fallback when it's not parseable
  * as Json.
- *
- * @deprecated This class will be moved to server-testing with the next major update. It is assumed
- *     that no direct access from consumers is required. In case this assumption is wrong, a
- *     migration path will be provided with the next major update. Reach out to the maintainers in
- *     case migrating with the next major is not an option.
  */
 // In the long term, we should contribute a better solution for examples as suggested here:
 // https://github.com/SDA-SE/sda-dropwizard-commons/pull/409/files#r517230013
 // (This code is inspired by that PR)
-@Deprecated(forRemoval = true)
 public class SwaggerExampleModule implements Module {
 
   @Override
@@ -68,7 +62,7 @@ public class SwaggerExampleModule implements Module {
                   .getCustomDefinition(member.getType(), context, null)
                   .getValue()
                   .get("type")
-                  .asText());
+                  .asString());
     } catch (Exception ignored) {
       return false;
     }
@@ -77,11 +71,11 @@ public class SwaggerExampleModule implements Module {
   private JsonNode readExampleAsJson(SchemaGenerationContext context, String exampleValue) {
     try {
       return context.getGeneratorConfig().getObjectMapper().readValue(exampleValue, JsonNode.class);
-    } catch (JsonProcessingException ignored) {
+    } catch (JacksonException ignored) {
       // Unable to parse the JSON, in that case we handle it as a raw string, this
       // also makes it easier to pass string examples (without using multiple
       // quotes).
-      return new TextNode(exampleValue);
+      return new StringNode(exampleValue);
     }
   }
 }

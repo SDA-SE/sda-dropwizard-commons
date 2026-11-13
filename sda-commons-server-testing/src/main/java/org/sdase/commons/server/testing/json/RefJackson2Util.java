@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.util;
+package org.sdase.commons.server.testing.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -7,12 +7,18 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import java.util.function.Function;
 
-/** A utility to manipulate {@code $ref}erences in schemas. */
-public class RefUtil {
+/**
+ * A utility to manipulate {@code $ref}erences in schemas represented by Jackson 2 nodes.
+ *
+ * @deprecated Since 10.0.0. Migrate to Jackson 3 nodes and use {@link RefUtil} instead. Jackson 2
+ *     and Jackson 3 node types are not interchangeable.
+ */
+@Deprecated(since = "10.0.0")
+public class RefJackson2Util {
 
   private static final String REF_KEY = "$ref";
 
-  private RefUtil() {
+  private RefJackson2Util() {
     // utility class
   }
 
@@ -24,7 +30,7 @@ public class RefUtil {
    * {@code components/schemas} will look like this:
    *
    * <pre>
-   *   RefUtil.updateAllRefsRecursively(schemaNode, refValueTextNode -> {
+   *   RefJackson2Util.updateAllRefsRecursively(schemaNode, refValueTextNode -> {
    *     String ref = refValueTextNode.asText();
    *     if (ref.startsWith("#/definitions/")) {
    *       return "#/components/schemas/" + ref.substring("#/definitions/".length());
@@ -39,10 +45,7 @@ public class RefUtil {
    * @param refRewriter A function that receives the current value of every {@code $ref} field and
    *     returns the new value as {@code String}. If a specific {@code $ref} is not handled, the
    *     function MUST return the original {@linkplain TextNode#asText() String value} to keep it.
-   * @deprecated use {@code org.sdase.commons.server.testing.json.RefUtil} from
-   *     sda-commons-server-testing instead
    */
-  @Deprecated(forRemoval = true)
   public static void updateAllRefsRecursively(
       JsonNode node, Function<TextNode, String> refRewriter) {
     // only container nodes can contain properties (directly or in nested structures)
@@ -66,10 +69,7 @@ public class RefUtil {
    *     the {@link ObjectNode} containing the {@code $ref} property. If a specific {@code $ref} is
    *     not handled, the function MUST return an {@link ObjectNode} with a {@code $ref} property
    *     having the given value.
-   * @deprecated use {@code org.sdase.commons.server.testing.json.RefUtil} from
-   *     sda-commons-server-testing instead
    */
-  @Deprecated(forRemoval = true)
   public static void mergeAllObjectsWithRefsRecursively(
       JsonNode node, Function<TextNode, ObjectNode> refRewriter) {
     if (node instanceof ObjectNode objectNode) {

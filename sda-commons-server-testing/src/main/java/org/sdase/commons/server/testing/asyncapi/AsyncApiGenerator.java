@@ -1,11 +1,11 @@
 package org.sdase.commons.server.testing.asyncapi;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import org.sdase.commons.shared.asyncapi.jsonschema.JsonSchemaBuilder;
+import org.sdase.commons.server.testing.jsonschema.JsonSchemaBuilder;
+import tools.jackson.core.JacksonException;
 
 /**
  * Generator used to build AsyncAPI specs from a template base file and schemas generated from code.
@@ -47,9 +47,6 @@ import org.sdase.commons.shared.asyncapi.jsonschema.JsonSchemaBuilder;
  * Swagger and Jakarta Validation annotations. Afterwards everything is embedded into a single
  * self-contained AsyncAPI yaml file.
  */
-@SuppressWarnings(
-    // temporary issue until org.sdase.commons.shared.asyncapi.AsyncApiGenerator is removed
-    "java:S2176")
 public class AsyncApiGenerator {
 
   private AsyncApiGenerator() {
@@ -65,9 +62,7 @@ public class AsyncApiGenerator {
     return new AsyncBuilder();
   }
 
-  public interface AsyncApiBaseBuilder
-      extends org.sdase.commons.shared.asyncapi.AsyncApiGenerator.AsyncApiBaseBuilder {
-    // next-major: org.sdase.commons.shared.asyncapi.AsyncApiGenerator.AsyncApiBaseBuilder to here
+  public interface AsyncApiBaseBuilder {
 
     /**
      * Supply a base AsyncAPI file to be used as a template
@@ -76,8 +71,7 @@ public class AsyncApiGenerator {
      * @return builder
      * @throws UncheckedIOException when reading the url as yaml failed
      */
-    @Override
-    default AsyncApiGenerator.SchemaBuilder withAsyncApiBase(URL url) {
+    default SchemaBuilder withAsyncApiBase(URL url) {
       try (var is = url.openStream()) {
         return withAsyncApiBase(new String(is.readAllBytes(), StandardCharsets.UTF_8));
       } catch (IOException e) {
@@ -85,18 +79,23 @@ public class AsyncApiGenerator {
       }
     }
 
-    @Override
-    AsyncApiGenerator.SchemaBuilder withAsyncApiBase(String yamlAsyncApiContent);
+    /**
+     * Supply base AsyncAPI yaml content to be used as a template.
+     *
+     * @param yamlAsyncApiContent The content of an AsyncAPI yaml schema.
+     * @return builder
+     * @throws JacksonException when parsing as yaml failed
+     */
+    SchemaBuilder withAsyncApiBase(String yamlAsyncApiContent) throws JacksonException;
   }
 
-  public interface SchemaBuilder
-      extends FinalBuilder, org.sdase.commons.shared.asyncapi.AsyncApiGenerator.SchemaBuilder {
-    // next-major: org.sdase.commons.shared.asyncapi.AsyncApiGenerator.AsyncApiBaseBuilder to here
+  public interface SchemaBuilder extends FinalBuilder {
 
-    @Override
-    JsonNode generate();
-
-    @Override
+    /**
+     * @param jsonSchemaBuilder the {@link JsonSchemaBuilder} that creates Json Schema Draft 07 for
+     *     classes referenced as {@code $ref: class://fully.qualified.classname.of.the.Model}.
+     * @return The {@code FinalBuilder} to create the AsyncAPI
+     */
     FinalBuilder withJsonSchemaBuilder(JsonSchemaBuilder jsonSchemaBuilder);
   }
 }
