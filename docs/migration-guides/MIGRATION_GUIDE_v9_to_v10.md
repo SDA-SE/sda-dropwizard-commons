@@ -1,5 +1,85 @@
 # Migration Guide from v9 to v10
 
+## Kafka is upgraded from 3.9.2 to 4.4.0
+
+Kafka is upgraded to 4.4.0 to fix
+[CVE-2026-111551](https://kafka.apache.org/community/cve-list/#CVE-2026-111551), which allows
+crafted records to exhaust memory in applications using `ListDeserializer`/`ListSerde` with Kafka
+clients 3.9.2.
+
+Kafka 4.4.0 removes previously deprecated APIs.
+`sda-commons-server-kafka-testing` replaces Salesforce's `kafka-junit5` support with
+`KraftKafkaTestResource`, an embedded KRaft cluster without ZooKeeper.
+This replacement provides fewer test features and requires changes to existing tests.
+
+For now, the new test resource supports only a single broker.
+Multiple brokers, individual broker control, ZooKeeper access, and listener registration are no
+longer exposed.
+The replacement test utilities also omit several administration, consumer creation, and producer
+configuration helpers.
+
+Migration actions:
+
+1. Replace `com.salesforce.kafka.test.junit5.SharedKafkaTestResource` with
+   `org.sdase.commons.server.kafka.testing.KraftKafkaTestResource`.
+2. Remove `.withBrokers(...)` for single-broker tests. Tests that require replication, failover,
+   individual broker restarts, or ZooKeeper need another test fixture. Replace address lookups
+   through `getKafkaBrokers()` with `getKafkaConnectString()`; use `KAFKA.stop()` to stop the
+   entire embedded cluster when testing an outage.
+3. Replace explicit `KafkaTestUtils` types with
+   `org.sdase.commons.server.kafka.testing.KraftKafkaTestUtils` and adapt helper calls:
+
+   | Previous usage                                                                    | Migration                                                                                                                            |
+   |-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+   | `produceRecords(Collection)`                                                      | Pass a `List`. Both retained `produceRecords` overloads return `void`; use a Kafka producer directly when record metadata is needed. |
+   | `produceRecords(numberOfRecords, topic, partition)`                               | Construct the records explicitly.                                                                                                    |
+   | Partition-selective `consumeAllRecordsFromTopic(...)`                             | Use a Kafka consumer directly. The retained helpers read all partitions.                                                             |
+   | `getKafkaConsumer(...)` or `getKafkaProducer(..., Properties)`                    | Create and configure the client directly.                                                                                            |
+   | `getAdminClient()`, `describeTopic()`, `getTopics()`, or `describeClusterNodes()` | Use Kafka's `Admin` API directly.                                                                                                    |
+   | `waitForBrokerToComeOnLine(...)`                                                  | Implement the readiness check required by the test fixture.                                                                          |
+
+   The new consumption helper stops once it reaches offsets captured at the start of the call.
+   Await expected results explicitly when records are produced asynchronously.
+4. Replace tests using `registerListener(...)`, including SSL and SASL listeners, with another
+   security-capable fixture.
+5. Update direct Kafka API calls where applicable:
+
+   | Removed API                                                   | Replacement                                                            |
+   |---------------------------------------------------------------|------------------------------------------------------------------------|
+   | `consumer.poll(long)`                                         | `consumer.poll(Duration)`                                              |
+   | `consumer.committed(TopicPartition)` and its timeout overload | The corresponding `committed(Set<TopicPartition>)` overload            |
+   | `producer.sendOffsetsToTransaction(offsets, groupId)`         | `producer.sendOffsetsToTransaction(offsets, consumer.groupMetadata())` |
+   | `MockConsumer.setException(...)`                              | `MockConsumer.setPollException(...)`                                   |
+   | `Admin.alterConfigs(...)`                                     | `Admin.incrementalAlterConfigs(...)`                                   |
+
+   The producer change also applies to SDA's wrapped producers. Review other direct Kafka API
+   usage against the [Kafka upgrade guide](https://kafka.apache.org/44/getting-started/upgrade/).
+6. Review producer configuration: Kafka changes the default `linger.ms` from `0` to `5`.
+   Set it explicitly if the previous batching behavior is required.
+   **Ensure production brokers are version 2.1 or later**.
+   Upgrading the client alone does not require migrating an existing compatible broker cluster to
+   KRaft.
+
+
+### Removed Kafka client metrics
+
+Kafka 4.0 removed the deprecated metric names below, so they are also unavailable with the
+Kafka 4.4.0 clients used in v10. Replace references in dashboards, alerts, and custom metric
+reporters with the direct replacements:
+
+For Micrometer's Prometheus export, update the corresponding names as follows:
+
+| Removed Prometheus series                   | Replacement Prometheus series                  |
+|---------------------------------------------|------------------------------------------------|
+| `kafka_producer_bufferpool_wait_time_total` | `kafka_producer_bufferpool_wait_time_ns_total` |
+| `kafka_producer_io_waittime_total`          | `kafka_producer_io_wait_time_ns_total`         |
+| `kafka_producer_iotime_total`               | `kafka_producer_io_time_ns_total`              |
+| `kafka_consumer_io_waittime_total`          | `kafka_consumer_io_wait_time_ns_total`         |
+| `kafka_consumer_iotime_total`               | `kafka_consumer_io_time_ns_total`              |
+
+See the [Kafka upgrade guide](https://kafka.apache.org/44/getting-started/upgrade/#upgrade_400_notable)
+and [KIP-773](https://cwiki.apache.org/confluence/spaces/KAFKA/pages/188744551).
+
 ## Golden-file YAML assertions use Jackson 3
 
 `GoldenFileAssertions.hasYamlContentAndUpdateGolden` now uses Jackson 3's `YAMLMapper`
