@@ -175,8 +175,12 @@ class AutocommitStrategyTest {
                 });
 
     startListenerThread();
-    await().until(() -> count.get() >= 1);
-    Mockito.verify(consumer, Mockito.atLeastOnce()).close();
+    await()
+        .untilAsserted(
+            () -> {
+              assertThat(count.get()).isGreaterThanOrEqualTo(1);
+              Mockito.verify(consumer, Mockito.atLeastOnce()).close();
+            });
   }
 
   @Test

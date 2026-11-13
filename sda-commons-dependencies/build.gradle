@@ -29,9 +29,7 @@ ext {
   //
   scalaVersion = '2.13.18' // align transitive dependency from various modules, keep up to date
   //
-  kafkaVersion = '3.9.2'
-  //
-  kafkaJunitVersion = '3.2.5' // Matching version: https://github.com/salesforce/kafka-junit/tree/master/kafka-junit5
+  kafkaVersion = '4.4.0'
   //
   dbRiderVersion = '1.44.0'
   //
@@ -228,20 +226,10 @@ dependencies {
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator:${openTelemetryAlpha2Version}"
 
     // Kafka
-    api "org.apache.kafka:kafka_2.13:$kafkaVersion"
     api "org.apache.kafka:kafka-clients:$kafkaVersion"
-    api "org.apache.zookeeper:zookeeper:3.9.7"
-    api "com.salesforce.kafka.test:kafka-junit5:$kafkaJunitVersion"
-    api "org.apache.curator:curator-test:5.9.0", {
-      because '''\
-          Upgrade because kafka-junit still uses curator 2.12.0.
-          The older version does not work when executing tests parallel because it starts the
-          Zookeeper Admin Server on a fixed port. More recent versions do not start the admin server
-          anymore.
-        '''
-    }
+    api "org.apache.kafka:kafka-test-common-runtime:$kafkaVersion"
     api "org.xerial.snappy:snappy-java:1.1.10.12", {
-      because "conflict between org.apache.kafka:kafka-clients and org.apache.curator:curator-test upgrade"
+      because "keep Kafka compression support on a managed version"
     }
 
     // Scala: Version conflicts between Jackson and Kafka
@@ -258,5 +246,28 @@ dependencies {
     api 'org.bitbucket.b_c:jose4j:0.9.7'
     //
     api 'com.github.jknack:handlebars:4.5.8' //CVE-2026-55760 (check if still needed by next wiremock update)
+  }
+}
+
+// manage version of the test-fixtures classifier of apache kafka-clients for kafka-testing
+plugins.withId('maven-publish') {
+  publishing.publications.withType(MavenPublication).configureEach {
+    pom.withXml {
+      def root = asNode()
+      def management = root.dependencyManagement
+          ? root.dependencyManagement[0]
+          : root.appendNode('dependencyManagement')
+
+      def dependencies = management.dependencies
+          ? management.dependencies[0]
+          : management.appendNode('dependencies')
+
+      def dependency = dependencies.appendNode('dependency')
+      dependency.appendNode('groupId', 'org.apache.kafka')
+      dependency.appendNode('artifactId', 'kafka-clients')
+      dependency.appendNode('version', '4.4.0')
+      dependency.appendNode('type', 'jar')
+      dependency.appendNode('classifier', 'test-fixtures')
+    }
   }
 }

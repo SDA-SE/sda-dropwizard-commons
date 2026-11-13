@@ -32,14 +32,6 @@ public class PublicKeyLoader {
     return new ArrayList<>(keysWithoutAnyId);
   }
 
-  /**
-   * @deprecated Deprecated due to the extension of the loader managing more than one id
-   */
-  @Deprecated
-  public List<LoadedPublicKey> getKeysWithoutId() {
-    return getKeysWithoutAnyId();
-  }
-
   public LoadedPublicKey getLoadedPublicKey(String kid, String x5t) {
     if (StringUtils.isBlank(kid) && StringUtils.isBlank(x5t)) {
       return null;

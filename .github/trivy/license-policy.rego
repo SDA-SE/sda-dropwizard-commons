@@ -135,3 +135,11 @@ ignore {
   input.PkgName == glassfishAllowedInFossa[_]
   input.Name == "jQuery license"
 }
+
+# RE2/J uses the permissive, BSD-3-Clause-style Go License.
+# It does not impose copyleft obligations and is only used by the embedded Kafka test infrastructure.
+# https://github.com/google/re2j/blob/master/LICENSE
+ignore {
+    input.PkgName == "com.google.re2j:re2j"
+    input.Name == "Go License"
+}

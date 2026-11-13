@@ -6,7 +6,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Metrics;
@@ -30,13 +29,14 @@ import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.helper.MetricsHelper;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
+import org.sdase.commons.server.kafka.testing.KraftKafkaTestResource;
 
 class KafkaPrometheusMonitoringIT {
 
   @RegisterExtension
   @Order(0)
-  static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResource()
+  static final KraftKafkaTestResource KAFKA =
+      new KraftKafkaTestResource()
           // we only need one consumer offsets partition
           .withBrokerProperty("offsets.topic.num.partitions", "1")
           // we don't need to wait that a consumer group rebalances since we always start with a
@@ -171,7 +171,6 @@ class KafkaPrometheusMonitoringIT {
         "producer-metrics-metadata-wait-time-ns-total",
         "producer-metrics-buffer-exhausted-total",
         "producer-metrics-buffer-exhausted-rate",
-        "producer-metrics-bufferpool-wait-time-total",
         "producer-metrics-bufferpool-wait-ratio",
         "producer-metrics-bufferpool-wait-time-ns-total",
         "producer-metrics-waiting-threads",
@@ -209,11 +208,9 @@ class KafkaPrometheusMonitoringIT {
         "producer-metrics-select-total",
         "producer-metrics-select-rate",
         "producer-metrics-io-wait-time-ns-avg",
-        "producer-metrics-io-waittime-total",
         "producer-metrics-io-wait-ratio",
         "producer-metrics-io-wait-time-ns-total",
         "producer-metrics-io-time-ns-avg",
-        "producer-metrics-iotime-total",
         "producer-metrics-io-ratio",
         "producer-metrics-io-time-ns-total",
         "producer-metrics-connection-count",
@@ -312,11 +309,9 @@ class KafkaPrometheusMonitoringIT {
         "consumer-metrics-select-total",
         "consumer-metrics-select-rate",
         "consumer-metrics-io-wait-time-ns-avg",
-        "consumer-metrics-io-waittime-total",
         "consumer-metrics-io-wait-ratio",
         "consumer-metrics-io-wait-time-ns-total",
         "consumer-metrics-io-time-ns-avg",
-        "consumer-metrics-iotime-total",
         "consumer-metrics-io-ratio",
         "consumer-metrics-io-time-ns-total",
         "consumer-metrics-connection-count",

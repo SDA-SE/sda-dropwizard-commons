@@ -4,7 +4,6 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
@@ -16,13 +15,14 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.KafkaBundle;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.dropwizard.KafkaWithoutHealthCheckTestApplication;
+import org.sdase.commons.server.kafka.testing.KraftKafkaTestResource;
 
 class KafkaWithoutHealthCheckIT {
 
   @RegisterExtension
   @Order(0)
-  static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResource()
+  static final KraftKafkaTestResource KAFKA =
+      new KraftKafkaTestResource()
           // we only need one consumer offsets partition
           .withBrokerProperty("offsets.topic.num.partitions", "1")
           // we don't need to wait that a consumer group rebalances since we always start with a

@@ -7,7 +7,6 @@ import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,21 +19,21 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.model.Key;
 import org.sdase.commons.server.kafka.model.Value;
 import org.sdase.commons.server.kafka.testing.CreateKafkaTopicsClassExtension;
+import org.sdase.commons.server.kafka.testing.KraftKafkaTestResource;
 
 class KafkaExampleProducerIT {
   private static final String TOPIC_NAME = "exampleTopic";
 
   @RegisterExtension
   @Order(0)
-  static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResource()
+  static final KraftKafkaTestResource KAFKA =
+      new KraftKafkaTestResource()
           .withBrokerProperty("auto.create.topics.enable", "false")
           // we only need one consumer offsets partition
           .withBrokerProperty("offsets.topic.num.partitions", "1")
           // we don't need to wait that a consumer group rebalances since we always start with a
           // fresh kafka instance
-          .withBrokerProperty("group.initial.rebalance.delay.ms", "0")
-          .withBrokers(2);
+          .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
   @RegisterExtension
   @Order(1)
@@ -102,10 +101,10 @@ class KafkaExampleProducerIT {
               records.addAll(consumerRecords);
             });
 
-    ConsumerRecord<byte[], byte[]> record = records.get(0);
+    ConsumerRecord<byte[], byte[]> consumerRecord = records.getFirst();
 
-    assertThat(getLong(record.key())).isEqualTo(1L);
-    assertThat(getLong(record.value())).isEqualTo(2L);
+    assertThat(getLong(consumerRecord.key())).isEqualTo(1L);
+    assertThat(getLong(consumerRecord.value())).isEqualTo(2L);
   }
 
   private static long getLong(byte[] array) {

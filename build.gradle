@@ -237,6 +237,23 @@ configure(subprojects.findAll { !javaPlatformModules.contains(it.name) }) {
   dependencies {
     api enforcedPlatform(project(':sda-commons-dependencies'))
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Workaround: org.apache.kafka:kafka-test-common-runtime:4.4.0 publishes Gradle Module
+    // Metadata requesting the "kafka-clients-test-fixtures" capability from kafka-clients, but
+    // kafka-clients only publishes a POM (no capability). Resolution fails even though we
+    // don't use the test-fixtures classes, so replace the broken dependency with a plain one.
+    components {
+      withModule('org.apache.kafka:kafka-test-common-runtime') { details ->
+        details.allVariants {
+          withDependencies { deps ->
+            deps.removeAll {
+              it.group == 'org.apache.kafka' && it.name == 'kafka-clients'
+            }
+            add('org.apache.kafka:kafka-clients')
+          }
+        }
+      }
+    }
   }
 }
 

@@ -4,7 +4,6 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,20 +22,20 @@ import org.sdase.commons.server.kafka.consumer.strategies.autocommit.AutocommitM
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
 import org.sdase.commons.server.kafka.producer.MessageProducer;
+import org.sdase.commons.server.kafka.testing.KraftKafkaTestResource;
 
 class KafkaTopicIT {
 
   @RegisterExtension
   @Order(0)
-  static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResource()
+  static final KraftKafkaTestResource KAFKA =
+      new KraftKafkaTestResource()
           .withBrokerProperty("auto.create.topics.enable", "false")
           // we only need one consumer offsets partition
           .withBrokerProperty("offsets.topic.num.partitions", "1")
           // we don't need to wait that a consumer group rebalances since we always start with a
           // fresh kafka instance
-          .withBrokerProperty("group.initial.rebalance.delay.ms", "0")
-          .withBrokers(2);
+          .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
 
   @RegisterExtension
   @Order(1)

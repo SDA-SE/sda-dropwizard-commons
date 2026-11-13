@@ -1,6 +1,5 @@
 package org.sdase.commons.server.kafka.testing;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import java.util.List;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -25,9 +24,9 @@ public class CreateKafkaTopicsClassExtension implements BeforeAllCallback {
   private final List<String> topics;
 
   /** Helper class to create the topics. */
-  private final SharedKafkaTestResource kafka;
+  private final KraftKafkaTestResource kafka;
 
-  public CreateKafkaTopicsClassExtension(SharedKafkaTestResource kafka, List<String> topics) {
+  public CreateKafkaTopicsClassExtension(KraftKafkaTestResource kafka, List<String> topics) {
     this.topics = topics;
     this.kafka = kafka;
   }

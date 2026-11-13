@@ -87,15 +87,6 @@ public class S3ClassExtension extends LocalS3Extension {
 
   /**
    * @return a new S3 client
-   * @deprecated Use {@link #newClient()} instead.
-   */
-  @Deprecated(forRemoval = true, since = "6.0.0")
-  public S3Client getClient() {
-    return newClient();
-  }
-
-  /**
-   * @return a new S3 client
    */
   public S3Client newClient() {
     var builder = S3Client.builder();
