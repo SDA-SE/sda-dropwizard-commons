@@ -9,7 +9,9 @@ dependencies {
 
   api "org.apache.kafka:kafka-clients"
 
-  implementation "org.apache.kafka:kafka-test-common-runtime"
+  implementation('org.apache.kafka:kafka-test-common-runtime') {
+    exclude group: 'org.apache.kafka', module: 'kafka-clients'
+  }
 
   implementation('org.apache.kafka:kafka-clients') {
     artifact {
