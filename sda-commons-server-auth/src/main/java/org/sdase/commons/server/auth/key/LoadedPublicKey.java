@@ -6,39 +6,22 @@ import java.util.Objects;
 public class LoadedPublicKey {
 
   /** The key id passed as {@code kid} with a JWT */
-  private String kid;
+  private final String kid;
 
   /** The x5t fingerprint passed as {@code x5t} with a JWT */
-  private String x5t;
+  private final String x5t;
 
   /** The public key that has been loaded. */
-  private PublicKey publicKey;
+  private final PublicKey publicKey;
 
   /* Intended sign algorithm*/
-  private String sigAlgorithm;
+  private final String sigAlgorithm;
 
   /** The source where the key has been loaded from. */
-  private KeySource keySource;
+  private final KeySource keySource;
 
   /** The required issuer for the JWT in correlation to the publicKey. */
-  private String requiredIssuer;
-
-  /**
-   * @deprecated due to introduction of additional header (x5t) that is used to identify the key
-   */
-  @Deprecated
-  public LoadedPublicKey(
-      String kid,
-      PublicKey publicKey,
-      KeySource keySource,
-      String requiredIssuer,
-      String sigAlgorithm) {
-    this.kid = kid;
-    this.publicKey = publicKey;
-    this.keySource = keySource;
-    this.requiredIssuer = requiredIssuer;
-    this.sigAlgorithm = sigAlgorithm;
-  }
+  private final String requiredIssuer;
 
   public LoadedPublicKey(
       String kid,

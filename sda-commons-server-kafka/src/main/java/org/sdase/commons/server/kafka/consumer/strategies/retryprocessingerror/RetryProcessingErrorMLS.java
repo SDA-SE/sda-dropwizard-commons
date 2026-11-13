@@ -45,30 +45,6 @@ public class RetryProcessingErrorMLS<K, V> extends MessageListenerStrategy<K, V>
   private RetryCounter retryCounter;
 
   /**
-   * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error for a
-   * given number of times configured in the listener configuration
-   *
-   * @param handler the message handler
-   * @param errorHandler the error handler called after each error, can be null
-   * @param maxRetryCount the maximum number of retries
-   * @param retryLimitExceededErrorHandler the error handler called if the retry limit is exceeded,
-   *     can be null
-   * @deprecated the parameter maxRetryCount will be removed in the future, it should be configured
-   *     in the listener config
-   */
-  @Deprecated
-  public RetryProcessingErrorMLS(
-      MessageHandler<K, V> handler,
-      @Nullable ErrorHandler<K, V> errorHandler,
-      long maxRetryCount,
-      @Nullable ErrorHandler<K, V> retryLimitExceededErrorHandler) {
-    this.handler = handler;
-    this.errorHandler = errorHandler;
-    this.retryLimitExceededErrorHandler = retryLimitExceededErrorHandler;
-    this.retryCounter = new RetryCounter(maxRetryCount);
-  }
-
-  /**
    * Creates a new instance of {@link RetryProcessingErrorMLS} retrying the message on error
    * infinite times.
    *

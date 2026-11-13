@@ -425,14 +425,6 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
         @NotNull PrometheusConfigurationProvider<C> configurationProvider);
 
     <C extends Configuration> FinalBuilder<C> withDefaultPrometheusConfig();
-
-    /**
-     * @deprecated Deprecated way to get a PrometheusBundle. Use
-     *     withoutConfigurationProvider().build() instead
-     * @return PrometheusBundle with default configuration
-     */
-    @Deprecated(since = "8.2.0")
-    PrometheusBundle<Configuration> build();
   }
 
   public interface FinalBuilder<C extends Configuration> {
@@ -450,12 +442,6 @@ public class PrometheusBundle<P extends Configuration> implements ConfiguredBund
     @Override
     public <C extends Configuration> FinalBuilder<C> withDefaultPrometheusConfig() {
       return new ConfigurationProviderBuilder<>();
-    }
-
-    @Override
-    public PrometheusBundle<Configuration> build() {
-      // to be consistent in the workflow we call ConfigurationProviderBuilder and then build()
-      return new ConfigurationProviderBuilder<>().build();
     }
   }
 
