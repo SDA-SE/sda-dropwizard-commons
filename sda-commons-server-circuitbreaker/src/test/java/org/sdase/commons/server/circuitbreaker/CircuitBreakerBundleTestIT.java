@@ -170,7 +170,7 @@ class CircuitBreakerBundleTestIT {
 
     @Override
     public void initialize(Bootstrap<AppConfiguration> bootstrap) {
-      bootstrap.addBundle(PrometheusBundle.builder().build());
+      bootstrap.addBundle(PrometheusBundle.builder().withDefaultPrometheusConfig().build());
       bootstrap.addBundle(circuitBreakerBundle);
     }
 
