@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import java.io.UncheckedIOException;
 
+/**
+ * @deprecated use {@code org.sdase.commons.server.testing.asyncapi.FinalBuilder}
+ */
+@Deprecated(forRemoval = true)
 public interface FinalBuilder {
   /**
    * Generates a new JSON schema for the supplied class.
