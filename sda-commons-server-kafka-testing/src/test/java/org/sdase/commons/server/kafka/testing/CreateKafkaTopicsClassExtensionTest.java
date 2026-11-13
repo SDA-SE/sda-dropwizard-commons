@@ -1,6 +1,7 @@
 package org.sdase.commons.server.kafka.testing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,5 +35,16 @@ class CreateKafkaTopicsClassExtensionTest {
     topics.beforeAll(null);
 
     assertThat(KAFKA.getKafkaTestUtils().getTopicNames()).contains("three");
+  }
+
+  @Test
+  void shouldNotFailOnCreateOfExistingTopic() {
+    var givenTopicName = "four";
+    assertThat(KAFKA.getKafkaTestUtils().getTopicNames()).doesNotContain(givenTopicName);
+    KAFKA.getKafkaTestUtils().createTopic(givenTopicName, 1, (short) 1);
+    assertThat(KAFKA.getKafkaTestUtils().getTopicNames()).contains(givenTopicName);
+
+    assertThatNoException()
+        .isThrownBy(() -> KAFKA.getKafkaTestUtils().createTopic(givenTopicName, 1, (short) 1));
   }
 }

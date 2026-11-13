@@ -31,20 +31,19 @@ public class KraftKafkaTestUtils {
   public void createTopic(String topic, int partitions, short replicationFactor) {
     Properties properties = new Properties();
     properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+
     try (Admin admin = Admin.create(properties)) {
-      try {
-        admin
-            .createTopics(List.of(new NewTopic(topic, partitions, replicationFactor)))
-            .all()
-            .get(TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
-      } catch (ExecutionException e) {
-        if (!(e.getCause() instanceof TopicExistsException)) {
-          throw new IllegalStateException("Could not create Kafka topic " + topic, e);
-        }
-      }
+      admin
+          .createTopics(List.of(new NewTopic(topic, partitions, replicationFactor)))
+          .all()
+          .get(TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       throw new IllegalStateException("Interrupted while creating Kafka topic " + topic, e);
+    } catch (ExecutionException e) {
+      if (!(e.getCause() instanceof TopicExistsException)) {
+        throw new IllegalStateException("Could not create Kafka topic " + topic, e);
+      }
     } catch (Exception e) {
       throw new IllegalStateException("Could not create Kafka topic " + topic, e);
     }
@@ -56,11 +55,9 @@ public class KraftKafkaTestUtils {
 
     try (Admin admin = Admin.create(properties)) {
       return admin.listTopics().names().get(TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
-
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       throw new IllegalStateException("Interrupted while listing Kafka topics", e);
-
     } catch (Exception e) {
       throw new IllegalStateException("Failed to retrieve Kafka topic names", e);
     }
