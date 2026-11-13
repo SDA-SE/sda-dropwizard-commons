@@ -50,11 +50,10 @@ public class KraftKafkaTestResource implements BeforeAllCallback, AfterAllCallba
       cluster.waitForReadyBrokers();
     } catch (Exception e) {
       try {
-        cluster.close();
+        stop();
       } catch (Exception closeError) {
         e.addSuppressed(closeError);
       }
-      cluster = null;
       throw e;
     }
   }
