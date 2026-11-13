@@ -45,7 +45,8 @@ class JerseyValidationExceptionMapperTest {
   static Stream<Arguments> realTestData() {
     String jakartaConstraintsPackageName = NotNull.class.getPackage().getName();
     String hibernateConstraintsPackageName = ISBN.class.getPackage().getName();
-    try (ScanResult scanResult = new ClassGraph().enableClassInfo().scan()) {
+    try (ScanResult scanResult = new ClassGraph().enableClasspath().enableClassInfo().scan()) {
+      assertThat(scanResult.getAllClasses()).isNotEmpty();
       return scanResult
           .getAllClasses()
           .filter(
