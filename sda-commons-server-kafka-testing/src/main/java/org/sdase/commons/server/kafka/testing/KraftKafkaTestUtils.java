@@ -76,6 +76,22 @@ public class KraftKafkaTestUtils {
     return new KafkaProducer<>(properties);
   }
 
+  public <K, V> KafkaConsumer<K, V> getKafkaConsumer(
+      Class<? extends Deserializer<K>> keyDeserializer,
+      Class<? extends Deserializer<V>> valueDeserializer,
+      Properties additionalProperties) {
+    Properties properties = new Properties();
+    properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
+    properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
+
+    if (additionalProperties != null) {
+      properties.putAll(additionalProperties);
+    }
+
+    return new KafkaConsumer<>(properties);
+  }
+
   public void produceRecords(List<ProducerRecord<byte[], byte[]>> records) {
     try (KafkaProducer<byte[], byte[]> producer =
         getKafkaProducer(ByteArraySerializer.class, ByteArraySerializer.class)) {
@@ -129,14 +145,12 @@ public class KraftKafkaTestUtils {
       Class<? extends Deserializer<V>> valueDeserializer) {
 
     Properties properties = new Properties();
-    properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     properties.put(ConsumerConfig.GROUP_ID_CONFIG, "sda-test-" + UUID.randomUUID());
     properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-    properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
-    properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
 
-    try (KafkaConsumer<K, V> consumer = new KafkaConsumer<>(properties)) {
+    try (KafkaConsumer<K, V> consumer =
+        getKafkaConsumer(keyDeserializer, valueDeserializer, properties)) {
       var partitionInfo = consumer.partitionsFor(topic, TIMEOUT);
 
       if (partitionInfo == null || partitionInfo.isEmpty()) {
