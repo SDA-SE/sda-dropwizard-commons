@@ -55,7 +55,7 @@ ext {
   //
   flywayVersion = '13.12.2'
   //
-  jettyVersion = "12.1.14"
+  jettyVersion = "12.1.15"
   //
   dropwizardVersion = '5.0.2'
 }
