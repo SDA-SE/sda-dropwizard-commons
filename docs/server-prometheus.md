@@ -326,7 +326,7 @@ public class MyApplication extends Application<MyConfiguration> {
    @Override
    public void initialize(Bootstrap<MyConfiguration> bootstrap) {
       // ...
-      bootstrap.addBundle(PrometheusBundle.builder().build());
+      bootstrap.addBundle(PrometheusBundle.builder().withDefaultPrometheusConfig().build());
       // ...
    }
 
