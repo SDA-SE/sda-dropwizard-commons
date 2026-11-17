@@ -265,7 +265,7 @@ plugins.withId('maven-publish') {
       def dependency = dependencies.appendNode('dependency')
       dependency.appendNode('groupId', 'org.apache.kafka')
       dependency.appendNode('artifactId', 'kafka-clients')
-      dependency.appendNode('version', '4.4.0')
+      dependency.appendNode('version', kafkaVersion)
       dependency.appendNode('type', 'jar')
       dependency.appendNode('classifier', 'test-fixtures')
     }
