@@ -21,8 +21,7 @@ This replacement provides fewer test features and requires changes to existing t
 For now, the new test resource supports only a single broker.
 Multiple brokers, individual broker control, ZooKeeper access, and listener registration are no
 longer exposed.
-The replacement test utilities also omit several administration, consumer creation, and producer
-configuration helpers.
+The replacement test utilities also omit several administration and producer configuration helpers.
 
 Migration actions:
 
@@ -40,7 +39,7 @@ Migration actions:
    | `produceRecords(Collection)`                                                      | Pass a `List`. Both retained `produceRecords` overloads return `void`; use a Kafka producer directly when record metadata is needed. |
    | `produceRecords(numberOfRecords, topic, partition)`                               | Construct the records explicitly.                                                                                                    |
    | Partition-selective `consumeAllRecordsFromTopic(...)`                             | Use a Kafka consumer directly. The retained helpers read all partitions.                                                             |
-   | `getKafkaConsumer(...)` or `getKafkaProducer(..., Properties)`                    | Create and configure the client directly.                                                                                            |
+   | `getKafkaProducer(..., Properties)`                                               | Create and configure the producer directly.                                                                                          |
    | `getAdminClient()`, `describeTopic()`, `getTopics()`, or `describeClusterNodes()` | Use Kafka's `Admin` API directly.                                                                                                    |
    | `waitForBrokerToComeOnLine(...)`                                                  | Implement the readiness check required by the test fixture.                                                                          |
 
@@ -61,7 +60,8 @@ Migration actions:
    The producer change also applies to SDA's wrapped producers. Review other direct Kafka API
    usage against the [Kafka upgrade guide](https://kafka.apache.org/44/getting-started/upgrade/).
 6. Review producer configuration: Kafka changes the default `linger.ms` from `0` to `5`.
-   Set it explicitly if the previous batching behavior is required.
+   `KafkaProperties.forProducer(...)` continues to set it to `0`. Set it explicitly for producers
+   created without this configuration if the previous batching behavior is required.
    **Ensure production brokers are version 2.1 or later**.
    Upgrading the client alone does not require migrating an existing compatible broker cluster to
    KRaft.
@@ -131,7 +131,6 @@ import tools.jackson.databind.node.ObjectNode;
 `generateYaml()` still returns a `String`. Review regenerated AsyncAPI golden files when upgrading.
 Base templates are parsed with Jackson 3's `YAMLMapper`, so the scalar parsing differences described
 above also apply. Templates must contain a single YAML document; trailing documents are rejected.
-YAML parsing and serialization failures are wrapped in `YamlGenerationException`.
 
 ## JSON utilities distinguish Jackson 2 and Jackson 3
 
@@ -152,8 +151,20 @@ Migrate the nodes and their callers to Jackson 3 before switching to `JsonNodeUt
 
 ## AsyncAPI module removed
 
-AsyncAPI generation, formally provided by `sda-commons-shared-asyncapi`, is now integrated in
-sda-commons-server-testing.
+AsyncAPI generation, formerly provided by `sda-commons-shared-asyncapi`, is now integrated in
+`sda-commons-server-testing`.
+
+Remove the old test dependency:
+
+```groovy
+testImplementation "org.sdase.commons:sda-commons-shared-asyncapi"
+```
+
+Add the replacement unless it is already present:
+
+```groovy
+testImplementation "org.sdase.commons:sda-commons-server-testing"
+```
 
 For migration imports need to be changed:
 
@@ -163,3 +174,16 @@ For migration imports need to be changed:
 | `org.sdase.commons.shared.asyncapi.jsonschema`          | `org.sdase.commons.server.testing.jsonschema`          |
 | `org.sdase.commons.shared.asyncapi.util`                | `org.sdase.commons.server.testing.json`                |
 | `org.sdase.commons.shared.asyncapi`                     | `org.sdase.commons.server.testing.asyncapi`            |
+
+## Deprecated APIs removed
+
+Version 10 removes APIs that were deprecated in earlier releases. Replace affected usages:
+
+| Removed API                                                                                         | Replacement                                                                                                     |
+|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| `new LoadedPublicKey(kid, publicKey, keySource, requiredIssuer, sigAlgorithm)`                      | Pass `x5t` as the second argument to the six-argument constructor. Use `null` when no fingerprint is available. |
+| `PublicKeyLoader.getKeysWithoutId()`                                                                | `PublicKeyLoader.getKeysWithoutAnyId()`                                                                         |
+| `new RetryProcessingErrorMLS(handler, errorHandler, maxRetryCount, retryLimitExceededErrorHandler)` | Use the three-argument constructor and configure `maxRetries` in the listener configuration.                    |
+| `new MapOrFailKeyMapper(mappingModel)`                                                              | `new MapOrFailKeyMapper(mappingModel, false, false)`                                                            |
+| `PrometheusBundle.builder().build()`                                                                | `PrometheusBundle.builder().withDefaultPrometheusConfig().build()`                                              |
+| `S3ClassExtension.getClient()`                                                                      | `S3ClassExtension.newClient()`                                                                                  |
