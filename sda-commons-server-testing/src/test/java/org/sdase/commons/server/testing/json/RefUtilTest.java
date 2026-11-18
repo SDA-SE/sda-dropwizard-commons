@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi.util;
+package org.sdase.commons.server.testing.json;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,7 +47,7 @@ class RefUtilTest {
 
   @Test
   void shouldFindAllRefsRecursivelyInObject() throws JsonProcessingException {
-    JsonNode given = YAML_MAPPER.readTree("" /* avoids warning */ + YAML_OBJECT_WITH_REFS);
+    JsonNode given = YAML_MAPPER.readTree(YAML_OBJECT_WITH_REFS);
     List<String> actualFoundRefs = findAllRefs(given);
     assertThat(actualFoundRefs)
         .containsExactlyInAnyOrder(
@@ -62,7 +62,7 @@ class RefUtilTest {
 
   @Test
   void shouldReplaceAllRefsRecursivelyInObject() throws JsonProcessingException {
-    JsonNode given = YAML_MAPPER.readTree("" /* avoids warning */ + YAML_OBJECT_WITH_REFS);
+    JsonNode given = YAML_MAPPER.readTree(YAML_OBJECT_WITH_REFS);
     RefUtil.updateAllRefsRecursively(
         given,
         textNode ->
@@ -82,7 +82,7 @@ class RefUtilTest {
 
   @Test
   void shouldFindAllRefsRecursivelyInArray() throws JsonProcessingException {
-    JsonNode given = new YAMLMapper().readTree("" /* avoids warning */ + YAML_ARRAY_WITH_REFS);
+    JsonNode given = new YAMLMapper().readTree(YAML_ARRAY_WITH_REFS);
     List<String> actualFoundRefs = findAllRefs(given);
     assertThat(actualFoundRefs)
         .containsExactlyInAnyOrder(
@@ -95,7 +95,7 @@ class RefUtilTest {
 
   @Test
   void shouldReplaceAllRefsRecursivelyInArray() throws JsonProcessingException {
-    JsonNode given = YAML_MAPPER.readTree("" /* avoids warning */ + YAML_ARRAY_WITH_REFS);
+    JsonNode given = YAML_MAPPER.readTree(YAML_ARRAY_WITH_REFS);
     RefUtil.updateAllRefsRecursively(
         given,
         textNode ->

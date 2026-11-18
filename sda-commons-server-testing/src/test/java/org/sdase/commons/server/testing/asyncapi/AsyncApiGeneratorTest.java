@@ -1,4 +1,4 @@
-package org.sdase.commons.shared.asyncapi;
+package org.sdase.commons.server.testing.asyncapi;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -6,6 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -13,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.sdase.commons.server.testing.GoldenFileAssertions;
-import org.sdase.commons.shared.asyncapi.AsyncApiGenerator.SchemaBuilder;
+import org.sdase.commons.shared.asyncapi.ReferencedClassNotFoundException;
 
 class AsyncApiGeneratorTest {
 
@@ -63,10 +66,18 @@ class AsyncApiGeneratorTest {
   void shouldFailIfRefIsNotFound() {
     URL asyncApiWithBadReferences =
         getClass().getResource("/AsyncApiGeneratorTest/asyncapi_reference_failure_template.yaml");
-    SchemaBuilder builderForSchemaWithBadReferences =
+    AsyncApiGenerator.SchemaBuilder builderForSchemaWithBadReferences =
         AsyncApiGenerator.builder().withAsyncApiBase(asyncApiWithBadReferences);
     assertThatExceptionOfType(ReferencedClassNotFoundException.class)
         .isThrownBy(builderForSchemaWithBadReferences::generate)
         .withMessageContaining("com.example.CarManufactured");
+  }
+
+  @Test
+  void shouldFailUncheckedForMissingUrl() throws MalformedURLException {
+    AsyncApiGenerator.AsyncApiBaseBuilder builder = AsyncApiGenerator.builder();
+    var givenUnknownUrl = URI.create("file:///some/path/that/does/not/exist").toURL();
+    assertThatExceptionOfType(UncheckedIOException.class)
+        .isThrownBy(() -> builder.withAsyncApiBase(givenUnknownUrl));
   }
 }
