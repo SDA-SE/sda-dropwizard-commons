@@ -1,8 +1,8 @@
 package org.sdase.commons.server.kafka.testing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.Order;
@@ -13,8 +13,8 @@ class CreateKafkaTopicsClassExtensionTest {
 
   @RegisterExtension
   @Order(0)
-  static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResource().withBrokerProperty("auto.create.topics.enable", "false");
+  static final KraftKafkaTestResource KAFKA =
+      new KraftKafkaTestResource().withBrokerProperty("auto.create.topics.enable", "false");
 
   @RegisterExtension
   @Order(1)
@@ -35,5 +35,16 @@ class CreateKafkaTopicsClassExtensionTest {
     topics.beforeAll(null);
 
     assertThat(KAFKA.getKafkaTestUtils().getTopicNames()).contains("three");
+  }
+
+  @Test
+  void shouldNotFailOnCreateOfExistingTopic() {
+    var givenTopicName = "four";
+    assertThat(KAFKA.getKafkaTestUtils().getTopicNames()).doesNotContain(givenTopicName);
+    KAFKA.getKafkaTestUtils().createTopic(givenTopicName, 1, (short) 1);
+    assertThat(KAFKA.getKafkaTestUtils().getTopicNames()).contains(givenTopicName);
+
+    assertThatNoException()
+        .isThrownBy(() -> KAFKA.getKafkaTestUtils().createTopic(givenTopicName, 1, (short) 1));
   }
 }

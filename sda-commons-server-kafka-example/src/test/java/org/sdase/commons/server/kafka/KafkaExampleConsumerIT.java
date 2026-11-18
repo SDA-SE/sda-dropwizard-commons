@@ -6,7 +6,6 @@ import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.HashMap;
@@ -17,14 +16,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sdase.commons.server.kafka.model.Key;
 import org.sdase.commons.server.kafka.model.Value;
+import org.sdase.commons.server.kafka.testing.KraftKafkaTestResource;
 
 class KafkaExampleConsumerIT {
 
   @RegisterExtension
   @Order(0)
-  static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResource()
-          .withBrokers(2)
+  static final KraftKafkaTestResource KAFKA =
+      new KraftKafkaTestResource()
           // we only need one consumer offsets partition
           .withBrokerProperty("offsets.topic.num.partitions", "1")
           // we don't need to wait that a consumer group rebalances since we always start with a

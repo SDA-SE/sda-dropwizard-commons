@@ -1,12 +1,25 @@
 package org.sdase.commons.server.testing.asyncapi;
 
-@SuppressWarnings("java:S2176") // temporary issue until shared.asyncapi.FinalBuilder is removed
-public interface FinalBuilder extends org.sdase.commons.shared.asyncapi.FinalBuilder {
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
-  // next-major: move code from org.sdase.commons.shared.asyncapi.FinalBuilder to here
+public interface FinalBuilder {
 
-  @Override
-  default String generateYaml() {
-    return org.sdase.commons.shared.asyncapi.FinalBuilder.super.generateYaml();
+  /**
+   * Generates a new JSON schema for the supplied class.
+   *
+   * @return A JSON object for the JSON schema.
+   */
+  JsonNode generate();
+
+  /**
+   * Generates a new JSON schema for the supplied class.
+   *
+   * @return A YAML representation for the JSON schema.
+   * @throws JacksonException if json processing fails
+   */
+  default String generateYaml() throws JacksonException {
+    return YAMLMapper.builder().build().writeValueAsString(generate());
   }
 }

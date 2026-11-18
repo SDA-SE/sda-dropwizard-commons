@@ -19,9 +19,6 @@ updates:
       # ignore all Dependabot updates for version 10, 11, 12
       # Major version should be in-sync with the version used by Dropwizard
       update-types: ["version-update:semver-major"]
-    - dependency-name: "org.apache.zookeeper:zookeeper"
-      # version should be in-sync with the version used by Kafka
-      update-types: ["version-update:semver-major", "version-update:semver-minor"]
     - dependency-name: "org.flywaydb:flyway-core"
       # version 10+ needs Java 17
       update-types: [ "version-update:semver-major" ]
