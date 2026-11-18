@@ -47,6 +47,7 @@ nav:
     - Server Security: server-security.md
     - Server Spring Data Mongo: server-spring-data-mongo.md
     - Server Testing: server-testing.md
+    - Server Testing JSON Schema: server-testing-jsonschema.md
     - Server Trace: server-trace.md
     - Server Weld: server-weld.md
     - Server Weld Example: server-weld-example.md

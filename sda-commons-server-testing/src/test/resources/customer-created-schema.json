@@ -1,0 +1,25 @@
+{
+  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+  "$ref" : "#/$defs/CustomerCreated",
+  "$defs" : {
+    "CustomerCreated" : {
+      "type" : "object",
+      "properties" : {
+        "customerId" : {
+          "type" : "string",
+          "minLength" : 1,
+          "pattern" : "^.*\\S+.*$",
+          "description" : "Customer identifier",
+          "examples" : [ "customer-42" ]
+        },
+        "occurredAt" : {
+          "type" : "string",
+          "format" : "date-time"
+        }
+      },
+      "required" : [ "customerId", "occurredAt" ],
+      "title" : "Customer created",
+      "description" : "Customer creation event"
+    }
+  }
+}
