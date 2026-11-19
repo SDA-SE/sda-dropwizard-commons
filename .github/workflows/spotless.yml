@@ -4,7 +4,7 @@ name: Spotless
 on:
   push:
     branches:
-      - main
+      - release/9.x.x
   pull_request:
 
 jobs:

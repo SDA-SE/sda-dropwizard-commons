@@ -10,6 +10,8 @@ on:
 concurrency:
   group: maven-central-release
   cancel-in-progress: false
+  # Keep releases serialized without replacing pending publications (up to 100).
+  queue: max
 
 env:
   SEMANTIC_VERSION: ${{ github.event.release.tag_name }}

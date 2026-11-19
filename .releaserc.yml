@@ -7,3 +7,5 @@ plugins:
   - "@semantic-release/github"
 branches:
   - name: 'main'
+  - name: 'release/9.x.x'
+    range: '9.x'
