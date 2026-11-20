@@ -34,6 +34,43 @@ updates:
     - dependency-name: "com.github.tomakehurst:wiremock-jre8"
       # Wiremock 3 needs Java 17
       update-types: [ "version-update:semver-major" ]
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "08:00"
+    timezone: Europe/Berlin
+  open-pull-requests-limit: 15
+  target-branch: release/9.x.x
+  commit-message:
+    prefix: fix
+    prefix-development: chore
+    include: scope
+  labels:
+    - 'dependencies'
+  ignore:
+    # Maintenance branches receive only minor and patch version updates.
+    - dependency-name: "*"
+      update-types: [ "version-update:semver-major" ]
+    - dependency-name: "org.eclipse.jetty:jetty-bom"
+      # ignore all Dependabot updates for version 10, 11, 12
+      # Major version should be in-sync with the version used by Dropwizard
+      update-types: [ "version-update:semver-major" ]
+    - dependency-name: "org.apache.zookeeper:zookeeper"
+      # version should be in-sync with the version used by Kafka
+      update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
+    - dependency-name: "org.flywaydb:flyway-core"
+      # version 10+ needs Java 17
+      update-types: [ "version-update:semver-major" ]
+    - dependency-name: "mongoDbDriverVersion"
+      # keep in-sync with the version used by spring-data-mongo
+      update-types: [ "version-update:semver-major" ]
+    - dependency-name: "dropwizardVersion"
+      # major release is breaking; manual preparation
+      update-types: [ "version-update:semver-major" ]
+    - dependency-name: "com.github.tomakehurst:wiremock-jre8"
+      # Wiremock 3 needs Java 17
+      update-types: [ "version-update:semver-major" ]
 - package-ecosystem: github-actions
   directory: "/"
   schedule:
