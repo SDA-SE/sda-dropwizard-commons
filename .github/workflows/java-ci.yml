@@ -6,6 +6,7 @@ on:
     branches:
       - main
   pull_request:
+  workflow_call:
 
 jobs:
   # build library
@@ -77,6 +78,7 @@ jobs:
 
   # create release and publish the artifacts
   semantic-release:
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     needs: build
@@ -98,10 +100,21 @@ jobs:
       - name: Install Semantic release
         run: |
           sudo npm install -g \
-            semantic-release@25.0.2 \
-            @semantic-release/github@12.0.6
+            semantic-release@25.0.8 \
+            @semantic-release/github@12.0.9 \
+            @semantic-release/exec@7.1.0
 
       - name: Release and Publish
+        id: release
         run: semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.NEXUS_LOGIN_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Remove tag of draft release
+        if: ${{ steps.release.outputs.tag }}
+        run: >
+          gh api -X DELETE "repos/${ORG_AND_REPO}/git/refs/tags/${TAG}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_AND_REPO: ${{ github.repository }}
+          TAG: ${{ steps.release.outputs.tag }}
