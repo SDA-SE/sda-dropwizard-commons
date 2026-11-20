@@ -12,7 +12,7 @@
         <link rel="prev" href="../server-spring-data-mongo/">
       
       
-        <link rel="next" href="../server-trace/">
+        <link rel="next" href="../server-testing-jsonschema/">
       
       
         
@@ -1269,6 +1269,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#json-schema-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Schema generation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#provided-assertions" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1350,6 +1361,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-testing-jsonschema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server Testing JSON Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1863,6 +1902,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#json-schema-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Schema generation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#provided-assertions" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1982,6 +2032,10 @@ In case you want to use JUnit 5 you also have to activate it in your build.gradl
 <span class="w">    </span><span class="n">useJUnitPlatform</span><span class="o">()</span>
 <span class="w">  </span><span class="o">}</span>
 </code></pre></div></td></tr></table></div></p>
+<h2 id="json-schema-generation">JSON Schema generation<a class="headerlink" href="#json-schema-generation" title="Permanent link">&para;</a></h2>
+<p>Use <code>JsonSchemaGenerator</code> to generate JSON Schema Draft 2020-12 documents from Java types in tests.
+See <a href="../server-testing-jsonschema/">Generate JSON Schema with Server Testing</a> for dependency setup,
+single-type generation, schema catalogs, and supported annotations.</p>
 <h2 id="provided-assertions">Provided Assertions<a class="headerlink" href="#provided-assertions" title="Permanent link">&para;</a></h2>
 <h3 id="goldenfileassertions"><a href="https://github.com/SDA-SE/sda-dropwizard-commons/blob/main/sda-commons-server-testing/src/main/java/org/sdase/commons/server/testing/GoldenFileAssertions.java">GoldenFileAssertions</a><a class="headerlink" href="#goldenfileassertions" title="Permanent link">&para;</a></h3>
 <p>Special assertions for <code>Path</code> objects to check if a file matches the expected contents and updates
@@ -2110,13 +2164,13 @@ a JUnit5 test extension to set and unset system properties before running an int
         
         
           
-          <a href="../server-trace/" class="md-footer__link md-footer__link--next" aria-label="Next: Server Trace">
+          <a href="../server-testing-jsonschema/" class="md-footer__link md-footer__link--next" aria-label="Next: Server Testing JSON Schema">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Server Trace
+                Server Testing JSON Schema
               </div>
             </div>
             <div class="md-footer__button md-icon">
