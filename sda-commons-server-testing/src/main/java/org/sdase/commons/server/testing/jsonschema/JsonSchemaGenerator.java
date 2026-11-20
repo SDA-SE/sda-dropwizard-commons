@@ -37,11 +37,17 @@ public final class JsonSchemaGenerator {
   }
 
   /**
-   * Creates generator with SDA Commons default configuration.
+   * Creates Victools generator configuration with SDA Commons default configuration.
    *
-   * @return JSON Schema Draft 2020-12 generator
+   * @param schemaVersion the jsonschema version to use
+   * @return Victools generator configuration
+   * @deprecated Use {@link #defaultGenerator()} instead. We provide this method for now for an
+   *     easier migration process. Please reach out to the maintainers of SDA Commons if you need to
+   *     use this method in the future and can't switch to {@link #defaultGenerator()} directly.
+   *     Otherwise, we will consider setting this method private in version 10.0.0 of the commons.
    */
-  public static JsonSchemaGenerator defaultGenerator() {
+  @Deprecated(forRemoval = true)
+  public static SchemaGeneratorConfig defaultConfig(SchemaVersion schemaVersion) {
     var jacksonModule =
         new JacksonModule(
             JacksonOption.RESPECT_JSONPROPERTY_ORDER,
@@ -53,7 +59,7 @@ public final class JsonSchemaGenerator {
             JakartaValidationOption.INCLUDE_PATTERN_EXPRESSIONS,
             JakartaValidationOption.NOT_NULLABLE_FIELD_IS_REQUIRED);
     var configBuilder =
-        new SchemaGeneratorConfigBuilder(SCHEMA_VERSION, OptionPreset.PLAIN_JSON)
+        new SchemaGeneratorConfigBuilder(schemaVersion, OptionPreset.PLAIN_JSON)
             .with(Option.DEFINITIONS_FOR_ALL_OBJECTS)
             .with(Option.DEFINITION_FOR_MAIN_SCHEMA)
             .with(Option.DEFINITIONS_FOR_MEMBER_SUPERTYPES)
@@ -68,7 +74,16 @@ public final class JsonSchemaGenerator {
         .forTypesInGeneral()
         .withPropertySorter(new JsonPropertySorter(false))
         .withDefinitionNamingStrategy(new DefaultSchemaDefinitionNamingStrategy());
-    return new JsonSchemaGenerator(configBuilder.build());
+    return configBuilder.build();
+  }
+
+  /**
+   * Creates generator with SDA Commons default configuration.
+   *
+   * @return JSON Schema Draft 2020-12 generator
+   */
+  public static JsonSchemaGenerator defaultGenerator() {
+    return new JsonSchemaGenerator(defaultConfig(SCHEMA_VERSION));
   }
 
   /**
