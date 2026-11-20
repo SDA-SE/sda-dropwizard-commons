@@ -15,7 +15,8 @@ on:
   pull_request: {}
   release:
     types:
-      - created
+      - released
+      - prereleased
 
 jobs:
   trivy-license-check:

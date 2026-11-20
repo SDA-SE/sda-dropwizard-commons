@@ -4,8 +4,7 @@ name: Publish Release to Maven Central
 on:
   release:
     types:
-      - released
-      - prereleased
+      - published
 
 concurrency:
   group: maven-central-release
@@ -15,7 +14,12 @@ env:
   SEMANTIC_VERSION: ${{ github.event.release.tag_name }}
 
 jobs:
+  build-and-test:
+    uses: ./.github/workflows/java-ci.yml
+
   upload-maven-central:
+    needs:
+      - build-and-test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
