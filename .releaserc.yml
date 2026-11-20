@@ -4,6 +4,17 @@ debug: true
 plugins:
   - "@semantic-release/commit-analyzer"
   - "@semantic-release/release-notes-generator"
-  - "@semantic-release/github"
+  - [
+    "@semantic-release/github",
+    {
+      "draftRelease": true
+    }
+  ]
+  - [
+      "@semantic-release/exec",
+      {
+        "verifyReleaseCmd": "echo \"tag=${nextRelease.version}\" >> $GITHUB_OUTPUT && gh release delete \"${nextRelease.version}\" -y || true"
+      }
+    ]
 branches:
   - name: 'main'
