@@ -19,7 +19,7 @@ ext {
   //
   swaggerCoreV3Version = '2.2.56'
   //
-  weldVersion = '6.0.4.Final'
+  weldVersion = '7.0.0.Final'
   //
   jacksonVersion = '2.23.0'
   //
