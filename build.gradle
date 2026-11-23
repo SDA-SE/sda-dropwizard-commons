@@ -20,7 +20,7 @@ plugins {
   //
   id 'project-report'
   //
-  id 'org.cyclonedx.bom' version '3.5.1'
+  id 'org.cyclonedx.bom' version '3.6.1'
 }
 
 import org.cyclonedx.Version
