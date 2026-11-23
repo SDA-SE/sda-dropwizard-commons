@@ -639,6 +639,54 @@ handler should throw `ProcessingErrorRetryException` which is then delegated to 
 stopped or retried (handleError returns `false`). In case of retry the consumer set the offset on the failing record and interrupt the processing of further
 records. The next poll will retry the records on this partition starting with the failing record.
 
+### Optional message processing log
+
+`KafkaMessageLoggingHandler` decorates a `MessageHandler` to provide a consistent INFO log for
+each processing attempt. This is opt-in: existing listeners are not changed. The decorator can be
+used with any listener strategy that accepts a message handler, without changing its retry or
+commit configuration. It provides the same operational context across consumers without requiring
+each business handler to implement its own logging.
+
+For a structured-mode CloudEvent whose Java value can be serialized as JSON, use the application's
+configured Jackson `ObjectMapper`:
+
+```java
+MessageHandler<String, MyEvent> loggingHandler =
+    KafkaMessageLoggingHandler.forCloudEvents("myListener", businessHandler, objectMapper);
+var strategy = new SyncCommitMLS<>(loggingHandler, errorHandler);
+```
+
+Alternatively, supply an extractor for another representation or message format:
+
+```java
+var loggingHandler = new KafkaMessageLoggingHandler<>(
+    "myListener", businessHandler,
+    event -> new CloudEventMetadata(event.getId(), event.getSource(), event.getType()));
+```
+
+Import `KafkaMessageLoggingHandler` and `CloudEventMetadata` from
+`org.sdase.commons.server.kafka.consumer.logging`. The JSON extractor reads `id`, `source`, and
+`type` from the value's JSON representation; it does not read CloudEvent attributes from Kafka
+headers. Missing attributes are logged as empty strings. The extractor runs before the handler, so
+use a side-effect-free extractor and consider the cost of serializing large values.
+
+The log contains `topicName`, `listenerName`, `kafkaMessageKey`, `partition`, `offset`,
+`cloudEventId`, `cloudEventSource`, `cloudEventType`, `successType`, and `errorType` in both the
+message and MDC. Configure the logging backend to include MDC for separately searchable fields.
+Existing MDC values are restored after logging. With INFO enabled, each handler invocation produces
+a separate entry, including retries. `OK` means the handler returned and the value was non-null; a null value
+is reported as `ERROR` with `errorType=MissingMessageValue` even when the handler returns normally.
+A runtime exception from the handler is logged by class name and rethrown to the listener
+strategy; no exception message or payload is logged. Java `Error`s are propagated without an
+attempt log. Runtime failures while extracting metadata or preparing the processing log produce a
+warning containing only the failure type; metadata extraction failures leave the fields empty.
+If the logging backend also fails while reporting a warning, SLF4J's internal reporter is used.
+Java `Error`s from logging or metadata extraction are propagated and can interrupt processing.
+
+Keys and CloudEvent attributes may themselves contain sensitive data. Review their contents and
+your log retention and access policies before enabling this decorator. INFO logging for every
+attempt, including retries, may also increase log volume.
+
 ## Create preconfigured consumers and producers
 To give the user more flexibility the bundle allows to create consumers and producers either by name of a valid configuration from the config YAML or
 by specifying a configuration in code. The user takes over the full responsibility and have to ensure that the consumer is closed when no
