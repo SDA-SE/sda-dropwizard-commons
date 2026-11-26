@@ -28,6 +28,23 @@ be affected every time, but we want to live by the semantic versioning approach 
 make it more transparent if there is change that may have an effect on you. This also affects 
 further maintenance of previous major releases. Not all of them will receive updates in the future.
 
+### Releasing
+
+After the build passes for a push to `main`, Semantic Release checks the commits since the last
+release. If they call for a new version, it prepares a GitHub draft with the proposed version and
+release notes.
+
+1. Open the draft targeting `main` and check its version and notes against the commits you intend
+   to ship. An earlier patch draft can still be visible after a feature commit produces a minor
+   draft. After publishing a minor release, check for remaining patch drafts and remove them manually.
+   [GitHub Releases](https://github.com/SDA-SE/sda-dropwizard-commons/releases)
+2. While the draft is open, a new run can replace it and overwrite manual edits. Make your final
+   edits, then choose **Publish release**.
+3. Check the Maven Central workflow run for that tag. The `build-and-test` job reruns Java CI on
+   the tagged commit. Once it passes, `upload-maven-central` signs and uploads the artifacts.
+   [Publish Release to Maven Central](https://github.com/SDA-SE/sda-dropwizard-commons/actions/workflows/publish-release-maven-central.yml)
+
+
 ## Contributing
 
 We are looking forward to contributions.
