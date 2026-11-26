@@ -19,7 +19,7 @@ import org.sdase.commons.shared.tracing.ConsumerTracing;
 
 @Path("/")
 public class PrometheusTestApplication extends Application<Configuration> {
-  private JerseyClientBundle<Configuration> jerseyClientBundle =
+  private final JerseyClientBundle<Configuration> jerseyClientBundle =
       JerseyClientBundle.builder().build();
   private Client myClient;
 
@@ -27,7 +27,7 @@ public class PrometheusTestApplication extends Application<Configuration> {
   public void initialize(final Bootstrap<Configuration> bootstrap) {
     bootstrap.addBundle(jerseyClientBundle);
 
-    bootstrap.addBundle(PrometheusBundle.builder().build());
+    bootstrap.addBundle(PrometheusBundle.builder().withDefaultPrometheusConfig().build());
   }
 
   @Override

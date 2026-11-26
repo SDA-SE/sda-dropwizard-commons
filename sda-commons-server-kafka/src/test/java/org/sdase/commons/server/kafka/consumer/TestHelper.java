@@ -1,10 +1,6 @@
 package org.sdase.commons.server.kafka.consumer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
@@ -32,6 +28,6 @@ class TestHelper {
       payload.put(tp, messages);
     }
 
-    return new ConsumerRecords<>(payload);
+    return new ConsumerRecords<>(payload, Collections.emptyMap());
   }
 }

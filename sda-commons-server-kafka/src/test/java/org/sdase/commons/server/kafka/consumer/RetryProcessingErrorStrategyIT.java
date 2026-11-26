@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.*;
 
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.util.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -28,6 +27,7 @@ import org.sdase.commons.server.kafka.config.ConsumerConfig;
 import org.sdase.commons.server.kafka.consumer.strategies.retryprocessingerror.RetryProcessingErrorMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
+import org.sdase.commons.server.kafka.testing.KraftKafkaTestResource;
 
 class RetryProcessingErrorStrategyIT {
 
@@ -40,9 +40,8 @@ class RetryProcessingErrorStrategyIT {
 
   @RegisterExtension
   @Order(0)
-  public static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaTestResource()
-          .withBrokers(1)
+  public static final KraftKafkaTestResource KAFKA =
+      new KraftKafkaTestResource()
           .withBrokerProperty("offsets.topic.num.partitions", "3")
           // we don't need to wait that a consumer group rebalances since we always start with a
           // fresh kafka instance

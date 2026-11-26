@@ -1,6 +1,5 @@
 dependencies {
   api project(':sda-commons-server-dropwizard')
-  api project(':sda-commons-shared-asyncapi')
 
   api 'io.dropwizard:dropwizard-testing'
   api 'jakarta.servlet:jakarta.servlet-api'
@@ -21,6 +20,7 @@ dependencies {
   api 'com.github.victools:jsonschema-module-jackson'
   api 'com.github.victools:jsonschema-module-jakarta-validation'
   api 'com.github.victools:jsonschema-module-swagger-2'
+  api 'tools.jackson.dataformat:jackson-dataformat-yaml'
 
   runtimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }

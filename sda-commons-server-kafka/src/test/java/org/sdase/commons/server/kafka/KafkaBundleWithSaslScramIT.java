@@ -6,9 +6,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.salesforce.kafka.test.SharedKafkaClassExtensionScram;
-import com.salesforce.kafka.test.junit5.SharedKafkaTestResource;
-import com.salesforce.kafka.test.listeners.SaslScramListener;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -27,6 +24,7 @@ import org.sdase.commons.server.kafka.builder.MessageListenerRegistration;
 import org.sdase.commons.server.kafka.consumer.strategies.synccommit.SyncCommitMLS;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestApplication;
 import org.sdase.commons.server.kafka.dropwizard.KafkaTestConfiguration;
+import org.sdase.commons.server.kafka.secure.SecureKafkaTestResource;
 import org.sdase.commons.server.testing.SystemPropertyClassExtension;
 
 // Disabled specifically for Java 23 to get notified when upgrading to the next latest or finally a
@@ -49,15 +47,8 @@ class KafkaBundleWithSaslScramIT {
 
   @RegisterExtension
   @Order(2)
-  static final SharedKafkaTestResource KAFKA =
-      new SharedKafkaClassExtensionScram()
-          .registerListener(
-              new SaslScramListener().withUsername("kafkaclient").withPassword("client-secret"))
-          // we only need one consumer offsets partition
-          .withBrokerProperty("offsets.topic.num.partitions", "1")
-          // we don't need to wait that a consumer group rebalances since we always start with a
-          // fresh kafka instance
-          .withBrokerProperty("group.initial.rebalance.delay.ms", "0");
+  static final SecureKafkaTestResource KAFKA =
+      SecureKafkaTestResource.scramSha512("kafkaclient", "client-secret");
 
   @RegisterExtension
   @Order(3)
