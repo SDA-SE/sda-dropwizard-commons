@@ -35,6 +35,9 @@ Some examples for semantic commits:
 
 Our [changelog](https://github.com/SDA-SE/sda-dropwizard-commons/releases/) is maintained in the GitHub releases.
 
+When changes merged to `main` call for a new version, CI prepares a draft for a maintainer to publish.
+See the [release process](./README.md#releasing).
+
 
 ### PR Snapshots
 
